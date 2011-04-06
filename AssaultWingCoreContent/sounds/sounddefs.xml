@@ -40,4 +40,5 @@
 	<sound name="venomSpray" volume="0.3"/>
   <sound name="meow" volume="1.0"/>
   <sound name="purpur" loop="true" volume="1.0"/>
+  <sound name="angry" volume="1.0"/>
 </group>

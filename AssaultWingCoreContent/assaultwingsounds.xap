@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 2485973594;
-    Last Modified High = 30081059;
+    Last Modified Low = 30081059;
+    Last Modified High = 2485973594;
 
     Category
     {
@@ -222,7 +222,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::c37a1a5a-f8f5-4355-9644-e71a2383beab;
+            Name = 1::3a64b885-2dce-481d-8c62-3d30ee8fd4b7;
             Property = 0;
             Sound = 0;
             Line Color = 4286398414;
@@ -255,7 +255,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::091c2cb4-005e-412e-b0c4-f15ba1a9e19a;
+            Name = 1::b8e4c404-6be8-4861-8cfd-3f3a40d4cbc3;
             Property = 0;
             Sound = 0;
             Line Color = 4279846310;
@@ -295,7 +295,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::c970cc7e-5eeb-4a4e-a4e1-9ed21c6bf913;
+            Name = 1::7bd44af1-029c-408e-8bdb-08e29df6d466;
             Property = 0;
             Sound = 0;
             Line Color = 4286596879;
@@ -323,7 +323,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::d39eb745-2bf8-46ee-afc3-c209168ebb18;
+            Name = 1::182f949d-7bd9-4baf-af83-f1a82a5634ac;
             Property = 0;
             Sound = 0;
             Line Color = 4289448844;
@@ -373,8 +373,8 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
-    Bank Last Revised Low = 2426666448;
-    Bank Last Revised High = 30142838;
+    Bank Last Revised Low = 3035115782;
+    Bank Last Revised High = 30143606;
 
     Wave
     {
@@ -2123,6 +2123,75 @@ Wave Bank
             Last Modified High = 30142811;
         }
     }
+
+    Wave
+    {
+        Name = angry01;
+        File = sounds\angry01.wav;
+        Build Settings Last Modified Low = 2622342172;
+        Build Settings Last Modified High = 30143606;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 157930;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2846898768;
+            Last Modified High = 30143217;
+        }
+    }
+
+    Wave
+    {
+        Name = angry02;
+        File = sounds\angry02.wav;
+        Build Settings Last Modified Low = 2622352173;
+        Build Settings Last Modified High = 30143606;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 211924;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3871838768;
+            Last Modified High = 30143217;
+        }
+    }
+
+    Wave
+    {
+        Name = angry03;
+        File = sounds\angry03.wav;
+        Build Settings Last Modified Low = 2622352173;
+        Build Settings Last Modified High = 30143606;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 145530;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1238971472;
+            Last Modified High = 30143218;
+        }
+    }
 }
 
 Sound Bank
@@ -2132,8 +2201,6 @@ Sound Bank
     Windows File = bin\x86\Debug\Sound Bank.xsb;
     Xbox Bank Path Edited = 1;
     Windows Bank Path Edited = 1;
-    Header Last Modified High = 0;
-    Header Last Modified Low = 0;
 
     Sound
     {
@@ -3936,7 +4003,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Dock loop;
-                RPC Curve Name = 1::c37a1a5a-f8f5-4355-9644-e71a2383beab;
+                RPC Curve Name = 1::3a64b885-2dce-481d-8c62-3d30ee8fd4b7;
             }
         }
     }
@@ -4323,7 +4390,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Lightning fadeout;
-                RPC Curve Name = 1::091c2cb4-005e-412e-b0c4-f15ba1a9e19a;
+                RPC Curve Name = 1::b8e4c404-6be8-4861-8cfd-3f3a40d4cbc3;
             }
         }
     }
@@ -4946,13 +5013,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::c970cc7e-5eeb-4a4e-a4e1-9ed21c6bf913;
+                RPC Curve Name = 1::7bd44af1-029c-408e-8bdb-08e29df6d466;
             }
 
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::d39eb745-2bf8-46ee-afc3-c209168ebb18;
+                RPC Curve Name = 1::182f949d-7bd9-4baf-af83-f1a82a5634ac;
             }
         }
     }
@@ -5755,6 +5822,147 @@ Sound Bank
                     Bank Index = 0;
                     Entry Name = meow06;
                     Entry Index = 75;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = angry01;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = angry01;
+                    Entry Index = 76;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = angry02;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = angry02;
+                    Entry Index = 77;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = angry03;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = angry03;
+                    Entry Index = 78;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -6762,6 +6970,42 @@ Sound Bank
         {
             Name = meow06;
             Index = 75;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = angry;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = angry01;
+            Index = 76;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = angry02;
+            Index = 77;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = angry03;
+            Index = 78;
             Weight Min = 0;
             Weight Max = 255;
         }

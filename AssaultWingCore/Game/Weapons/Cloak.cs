@@ -113,7 +113,9 @@ namespace AW2.Game.Weapons
 
         private void WeaponFiredHandler()
         {
-            if (_active) DeactivateCloak();
+            if (!_active) return;
+            DeactivateCloak();
+            Owner.Game.SoundEngine.PlaySound("angry", Owner);
         }
     }
 }

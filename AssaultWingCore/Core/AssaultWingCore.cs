@@ -18,18 +18,6 @@ namespace AW2.Core
     [DebuggerDisplay("AssaultWingCore {NetworkMode}")]
     public class AssaultWingCore : AWGame
     {
-        /// <summary>
-        /// Wraps <see cref="CounterCreationDataCollection"/>, adding to it an implementation
-        /// of <see cref="IEnumerable&lt;CounterCreationData&gt;"/>.
-        /// </summary>
-        private class AWCounterCreationDataCollection : CounterCreationDataCollection, IEnumerable<CounterCreationData>
-        {
-            public new IEnumerator<CounterCreationData> GetEnumerator()
-            {
-                foreach (var x in (System.Collections.IEnumerable)this) yield return (CounterCreationData)x;
-            }
-        }
-
         #region AssaultWing fields
 
         private UIEngineImpl _uiEngine;
@@ -87,40 +75,6 @@ namespace AW2.Core
 
         #endregion AssaultWing properties
 
-        #region AssaultWing performance counters
-
-        /// <summary>
-        /// Number of gobs created per frame, averaged over one second.
-        /// </summary>
-        public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondCounter { get; protected set; }
-
-        /// <summary>
-        /// Number of elapsed frames.
-        /// </summary>
-        public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondBaseCounter { get; protected set; }
-
-        /// <summary>
-        /// Number of gobs drawn per frame, averaged over one second.
-        /// </summary>
-        public AWPerformanceCounter GobsDrawnPerFrameAvgPerSecondCounter { get; protected set; }
-
-        /// <summary>
-        /// Number of elapsed frames.
-        /// </summary>
-        public AWPerformanceCounter GobsDrawnPerFrameAvgPerSecondBaseCounter { get; protected set; }
-
-        /// <summary>
-        /// Number of drawn frames per second.
-        /// </summary>
-        public AWPerformanceCounter FramesDrawnPerSecondCounter { get; protected set; }
-
-        /// <summary>
-        /// Number of gobs currently alive.
-        /// </summary>
-        public AWPerformanceCounter GobsCounter { get; protected set; }
-
-        #endregion
-
         public AssaultWingCore(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService)
         {
@@ -176,78 +130,6 @@ namespace AW2.Core
             SoundEngine.Enabled = true;
         }
 
-        [Conditional("DEBUG")]
-        private void InitializePerformanceCounters()
-        {
-            var categoryName = "Assault Wing";
-            var instanceName = "AW Instance " + Process.GetCurrentProcess().Id;
-
-            var counters = new AWCounterCreationDataCollection();
-            counters.Add(new CounterCreationData("Gobs Created/f Avg/s", "Number of gobs created per frame as an average over the last second", PerformanceCounterType.AverageCount64));
-            counters.Add(new CounterCreationData("Gobs Created/f Avg/s Base", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));
-            counters.Add(new CounterCreationData("Gobs Drawn/f Avg/s", "Number of gobs drawn per frame as an average over the last second", PerformanceCounterType.AverageCount64));
-            counters.Add(new CounterCreationData("Gobs Drawn/f Avg/s Base", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));
-            counters.Add(new CounterCreationData("Frames Drawn/s", "Number of frames drawn per second", PerformanceCounterType.RateOfCountsPerSecond32));
-            counters.Add(new CounterCreationData("Gobs", "Number of gobs in current arena", PerformanceCounterType.NumberOfItems32));
-
-            // Delete registered category if it seems outdated.
-            if (PerformanceCounterCategory.Exists(categoryName))
-            {
-                var category = new PerformanceCounterCategory(categoryName).ReadCategory();
-                if (counters.Any(counter => !category.Contains(counter.CounterName)))
-                    try
-                    {
-                        PerformanceCounterCategory.Delete(categoryName);
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        Log.Write("Note: Performance monitoring not available due to lack of user rights. Try 'Run as administrator'");
-                    }
-                    catch (System.ComponentModel.Win32Exception e)
-                    {
-                        Log.Write("Note: Performance monitoring not available, native error " + e);
-                    }
-            }
-
-            // Create the category if it's missing
-            if (!PerformanceCounterCategory.Exists(categoryName))
-                PerformanceCounterCategory.Create(categoryName, "Assault Wing internal performance and activity counters", PerformanceCounterCategoryType.MultiInstance, counters);
-
-            // Initialise our counter instances dynamically with reflection
-            int propertyCount = 0;
-            foreach (var prop in GetType().GetProperties())
-                if (prop.PropertyType == typeof(AWPerformanceCounter))
-                {
-                    ++propertyCount;
-                    var counterData = counters.FirstOrDefault(data => CounterNameToPropertyName(data.CounterName) == prop.Name);
-                    if (counterData == null) throw new Exception("Superfluous performance counter property: AssaultWing." + prop.Name);
-                    var counter = new AWPerformanceCounter
-                    {
-                        Impl = new PerformanceCounter
-                        {
-                            CategoryName = categoryName,
-                            CounterName = counterData.CounterName,
-                            InstanceName = instanceName,
-                            ReadOnly = false,
-                            InstanceLifetime = PerformanceCounterInstanceLifetime.Process,
-                            RawValue = 0
-                        }
-                    };
-                    prop.SetValue(this, counter, null);
-                }
-            if (propertyCount < counters.Count(counter => !counter.CounterName.EndsWith("Base")))
-                throw new Exception("Some performance counters don't have corresponding public properties in class AssaultWing and thus won't have meaningful values");
-        }
-
-        private string CounterNameToPropertyName(string counterName)
-        {
-            return counterName
-                .Replace(" ", "")
-                .Replace("/s", "PerSecond")
-                .Replace("/f", "PerFrame")
-                + "Counter";
-        }
-
         /// <summary>
         /// Freezes <see cref="CanonicalString"/> instances to enable sharing them over a network.
         /// </summary>
@@ -267,7 +149,6 @@ namespace AW2.Core
 
         private void AfterEveryFrame()
         {
-            GobsCreatedPerFrameAvgPerSecondBaseCounter.Increment();
         }
 
         #endregion AssaultWing private methods
@@ -341,21 +222,6 @@ namespace AW2.Core
         public override void Initialize()
         {
             Log.Write("Assault Wing initializing");
-            try
-            {
-                if (CommandLineOptions.PerformanceCounters)
-                    InitializePerformanceCounters();
-            }
-            catch (System.Security.SecurityException)
-            {
-                // User lacks privileges to initialize performance counters.
-                // This may happen on Windows 7 unless you right click on the EXE
-                // and choose "Run as Administrator".
-            }
-            catch (System.ComponentModel.Win32Exception)
-            {
-                // Also this seems to happen on Windows 7 due to lack of user privileges.
-            }
             TargetFPS = 60;
             base.Initialize();
             if (!CanonicalString.IsForLocalUseOnly) FreezeCanonicalStrings();
@@ -389,7 +255,6 @@ namespace AW2.Core
             var secondsSinceLastFramerateCheck = (GameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds;
             if (secondsSinceLastFramerateCheck < 1)
             {
-                FramesDrawnPerSecondCounter.Increment();
                 ++_framesSinceLastCheck;
             }
             else

@@ -221,11 +221,8 @@ namespace AW2.Graphics
                 foreach (var gob in layer.Gobs)
                 {
                     var bounds = gob.DrawBounds;
-                    if (bounds.Radius > 0 && Intersects(bounds, layer.Z))
-                    {
-                        AssaultWingCore.Instance.GobsDrawnPerFrameAvgPerSecondCounter.Increment();
-                        if (gob.IsVisible) gob.Draw(view, projection);
-                    }
+                    if (gob.IsVisible && bounds.Radius > 0 && Intersects(bounds, layer.Z))
+                        gob.Draw(view, projection);
                 }
 
                 // 2D graphics

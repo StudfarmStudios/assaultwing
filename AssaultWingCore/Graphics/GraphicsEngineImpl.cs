@@ -138,7 +138,6 @@ namespace AW2.Graphics
 
         public override void Draw()
         {
-            Game.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             gfx.Clear(Color.Black);
             foreach (var viewport in Game.DataEngine.Viewports) viewport.PrepareForDraw();

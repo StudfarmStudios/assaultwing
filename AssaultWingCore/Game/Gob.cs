@@ -714,7 +714,6 @@ namespace AW2.Game
         public virtual void Activate()
         {
             EnsureHasID();
-            Game.GobsCreatedPerFrameAvgPerSecondCounter.Increment();
             _birthTime = Arena.TotalTime;
             LastNetworkUpdate = Arena.TotalTime;
             IsVisible = true;

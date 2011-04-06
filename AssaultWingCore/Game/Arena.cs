@@ -1180,7 +1180,6 @@ namespace AW2.Game
 
         private void GobAddedHandler(Gob gob)
         {
-            if (IsActive) Game.GobsCounter.Increment();
             Prepare(gob);
             if (gob is AW2.Game.Gobs.Ship) AddGobTrackerToViewports(gob, GobTrackerItem.PLAYER_TEXTURE);
             if (gob is AW2.Game.Gobs.Dock) AddGobTrackerToViewports(gob, GobTrackerItem.DOCK_TEXTURE);
@@ -1197,10 +1196,7 @@ namespace AW2.Game
 
         private void GobRemovedHandler(Gob gob)
         {
-            if (IsActive)
-                Game.GobsCounter.Decrement();
-            if (gob.Layer == Gobs.GameplayLayer)
-                Unregister(gob);
+            if (gob.Layer == Gobs.GameplayLayer) Unregister(gob);
             gob.Dispose();
             if (GobRemoved != null) GobRemoved(gob);
         }

@@ -122,7 +122,6 @@ namespace AW2.Game
             Devices.Clear();
             _lastArenaRadarSilhouetteUpdate = TimeSpan.Zero;
             foreach (var player in Spectators) player.ResetForArena();
-            Game.GobsCounter.SetRawValue(Arena.Gobs.Count);
         }
 
         #endregion arenas

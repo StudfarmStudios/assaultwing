@@ -7,10 +7,12 @@ namespace AW2.Game.BonusActions
     [GameActionType(3)]
     public class SelfDestructBonusAction : GameAction
     {
+        private static readonly CanonicalString EFFECT_NAME = (CanonicalString)"bomber_rage";
+
         public override void RemoveAction()
         {
             Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Player.Weapon2Name);
-            Player.PostprocessEffectNames.Remove((CanonicalString)"bomber_rage");
+            Player.PostprocessEffectNames.Remove(EFFECT_NAME);
         }
 
         public override bool DoAction()
@@ -24,7 +26,7 @@ namespace AW2.Game.BonusActions
         {
             if (Player.Ship == null) return;
             Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, (CanonicalString)"selfdestructship");
-            Player.PostprocessEffectNames.EnsureContains((CanonicalString)"bomber_rage");
+            Player.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
         }
 
         private void SetActionMessage()

@@ -13,8 +13,8 @@ namespace AW2.Game.Gobs.Bonus
         /// This constructor is only for serialisation.
         public RandomBonus()
         {
-            lifetime = 10;
-            deathTime = new TimeSpan(0, 1, 20);
+            _lifetime = 10;
+            _deathTime = new TimeSpan(0, 1, 20);
         }
 
         public RandomBonus(CanonicalString typeName)
@@ -25,13 +25,13 @@ namespace AW2.Game.Gobs.Bonus
         public override void Activate()
         {
             base.Activate();
-            deathTime = Arena.TotalTime + TimeSpan.FromSeconds(lifetime);
+            _deathTime = Arena.TotalTime + TimeSpan.FromSeconds(_lifetime);
         }
 
         public override void Update()
         {
             base.Update();
-            if (deathTime <= Arena.TotalTime)
+            if (_deathTime <= Arena.TotalTime)
                 Die();
         }
 
@@ -65,7 +65,7 @@ namespace AW2.Game.Gobs.Bonus
             base.MakeConsistent(limitationAttribute);
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
-                lifetime = Math.Max(0.5f, lifetime);
+                _lifetime = Math.Max(0.5f, _lifetime);
             }
         }
 

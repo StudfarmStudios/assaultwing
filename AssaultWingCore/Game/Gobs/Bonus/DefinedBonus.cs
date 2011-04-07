@@ -20,9 +20,9 @@ namespace AW2.Game.Gobs.Bonus
 
         protected override void DoBonusAction(Player player)
         {
-            gameAction.Player = player;
-            gameAction.SetDuration(duration);
-            if (!gameAction.DoAction())
+            _gameAction.Player = player;
+            _gameAction.SetDuration(_duration);
+            if (!_gameAction.DoAction())
             {
                 player.Messages.Add(new PlayerMessage("Useless bonus discarded", PlayerMessage.DEFAULT_COLOR));
                 return;
@@ -31,13 +31,13 @@ namespace AW2.Game.Gobs.Bonus
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>
             {
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
-                gob.Message = gameAction.BonusText;
-                gob.IconName = gameAction.BonusIconName;
-                gob.DrawColor = gameAction.Player.PlayerColor;
+                gob.Message = _gameAction.BonusText;
+                gob.IconName = _gameAction.BonusIconName;
+                gob.DrawColor = _gameAction.Player.PlayerColor;
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });
-            player.BonusActions.AddOrReplace(gameAction);
-            player.Messages.Add(new PlayerMessage("You collected " + gameAction.BonusText, player.PlayerColor));
+            player.BonusActions.AddOrReplace(_gameAction);
+            player.Messages.Add(new PlayerMessage("You collected " + _gameAction.BonusText, player.PlayerColor));
         }
     }
 }

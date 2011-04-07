@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AW2.Helpers;
 
 namespace AW2.Game
 {
+    // TODO: Replace PostprocessEffectNameContainer by List<CanonicalString>
     public class PostprocessEffectNameContainer : IEnumerable<CanonicalString>
     {
-        Player _owner;
-        List<CanonicalString> _items;
+        private Player _owner;
+        private List<CanonicalString> _items;
 
         public int Count { get { return _items.Count; } }
 
@@ -20,17 +20,10 @@ namespace AW2.Game
             _items = new List<CanonicalString>();
         }
 
-        public void Add(CanonicalString name)
-        {
-            _items.Add(name);
-            _owner.MustUpdateToClients = true;
-        }
-
         public void EnsureContains(CanonicalString name)
         {
             if (_items.Contains(name)) return;
             _items.Add(name);
-            _owner.MustUpdateToClients = true;
         }
 
         public void Remove(CanonicalString name)
@@ -38,13 +31,6 @@ namespace AW2.Game
             int index = _items.IndexOf(name);
             if (index < 0) return;
             _items.RemoveAt(index);
-            _owner.MustUpdateToClients = true;
-        }
-
-        public void Clear()
-        {
-            _items.Clear();
-            _owner.MustUpdateToClients = true;
         }
 
         public IEnumerator<CanonicalString> GetEnumerator()

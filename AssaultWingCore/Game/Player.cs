@@ -442,9 +442,6 @@ namespace AW2.Game
                         writer.Write((short)Lives);
                         writer.Write((short)_kills);
                         writer.Write((short)_suicides);
-                        writer.Write((byte)PostprocessEffectNames.Count);
-                        foreach (var effectName in PostprocessEffectNames)
-                            writer.Write((CanonicalString)effectName);
                         BonusActions.Serialize(writer, mode);
                     }
                 }
@@ -471,10 +468,6 @@ namespace AW2.Game
                 Lives = reader.ReadInt16();
                 _kills = reader.ReadInt16();
                 _suicides = reader.ReadInt16();
-                int effectNameCount = reader.ReadByte();
-                PostprocessEffectNames.Clear();
-                for (int i = 0; i < effectNameCount; ++i)
-                    PostprocessEffectNames.Add(reader.ReadCanonicalString());
                 BonusActions.Deserialize(reader, mode, framesAgo);
             }
         }

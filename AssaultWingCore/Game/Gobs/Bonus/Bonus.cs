@@ -18,13 +18,13 @@ namespace AW2.Game.Gobs.Bonus
         /// Lifetime of the bonus, in seconds.
         /// </summary>
         [TypeParameter]
-        protected float lifetime;
+        protected float _lifetime;
 
         /// <summary>
         /// Time at which the bonus dies, in game time.
         /// </summary>
         [RuntimeState]
-        protected TimeSpan deathTime;
+        protected TimeSpan _deathTime;
 
         /// <summary>
         /// The duration of the bonus, in seconds.
@@ -32,31 +32,23 @@ namespace AW2.Game.Gobs.Bonus
         /// Bonus that don't have a meaningful duration
         /// leave this field uninterpreted.
         [TypeParameter]
-        protected float duration;
+        protected float _duration;
 
         /// <summary>
         /// What happens when the bonus is collected.
         /// </summary>
         [TypeParameter]
-        protected GameAction gameAction;
-
-        protected string bonusText;
-        protected string bonusIconName;
-        protected Texture2D bonusIcon;
+        protected GameAction _gameAction;
 
         #endregion Bonus fields
 
         /// This constructor is only for serialisation.
         public Bonus()
         {
-            lifetime = 10;
-            deathTime = new TimeSpan(0, 1, 20);
+            _lifetime = 10;
+            _deathTime = new TimeSpan(0, 1, 20);
         }
 
-        /// <summary>
-        /// Creates a new bonus.
-        /// </summary>
-        /// <param name="typeName">Type of the bonus.</param>
         public Bonus(CanonicalString typeName)
             : base(typeName)
         {
@@ -67,13 +59,13 @@ namespace AW2.Game.Gobs.Bonus
         public override void Activate()
         {
             base.Activate();
-            deathTime = Arena.TotalTime + TimeSpan.FromSeconds(lifetime);
+            _deathTime = Arena.TotalTime + TimeSpan.FromSeconds(_lifetime);
         }
 
         public override void Update()
         {
             base.Update();
-            if (deathTime <= Arena.TotalTime)
+            if (_deathTime <= Arena.TotalTime)
                 Die();
         }
 

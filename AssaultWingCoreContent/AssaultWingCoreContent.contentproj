@@ -643,11 +643,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="textures\p_blue_circle.png">
-      <Name>p_blue_circle</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="textures\p_blue_muzzleflame.png">
       <Name>p_blue_muzzleflame</Name>
       <Importer>TextureImporter</Importer>

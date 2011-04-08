@@ -753,11 +753,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="textures\white_ball.png">
-      <Name>white_ball</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="models\amazon_chest_1.X">
       <Name>amazon_chest_1</Name>
       <Importer>XImporter</Importer>

@@ -1519,12 +1519,6 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="gobdefs\RandomBonus_randombonus.xml">
-      <Name>RandomBonus_randombonus</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="gobdefs\Rocket_berserker.xml">
       <Name>Rocket_berserker</Name>
       <Importer>XmlImporter</Importer>

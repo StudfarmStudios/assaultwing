@@ -573,11 +573,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="textures\parallax_gradient.png">
-      <Name>parallax_gradient</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="textures\parallax_icy_backdrop.png">
       <Name>parallax_icy_backdrop</Name>
       <Importer>TextureImporter</Importer>

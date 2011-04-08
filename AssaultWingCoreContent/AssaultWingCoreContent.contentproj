@@ -763,11 +763,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="textures\smoke0021.png">
-      <Name>smoke0021</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="textures\viewport_border_vertical.png">
       <Name>viewport_border_vertical</Name>
       <Importer>TextureImporter</Importer>

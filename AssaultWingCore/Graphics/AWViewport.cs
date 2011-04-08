@@ -1,4 +1,4 @@
-//#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
+#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
 #if !PARALLAX_IN_3D
 #define PARALLAX_WITH_SPRITE_BATCH
 #endif
@@ -358,29 +358,33 @@ namespace AW2.Graphics
         [Conditional("PARALLAX_IN_3D")]
         private void Draw_DrawParallaxIn3D(ArenaLayer layer)
         {
-            if (layer.ParallaxName == "") return;
-
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+            if (layer.ParallaxName != "")
+            {
+                BlendState oldState = gfx.BlendState;
 
-            // Modify renderstate for parallax.
+                // Modify renderstate for parallax.
+                gfx.SamplerStates[0] = SamplerState.LinearWrap;
+                gfx.BlendState = BlendState.AlphaBlend;
+                gfx.DepthStencilState = DepthStencilState.None;
+
+                // Render looping parallax as two huge triangles.
+                _effect.Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                var texCenter = GetScale(layer.Z) * GetLookAtPos() / _effect.Texture.Dimensions();
+                var texCornerOffset = new Vector2(
+                    Viewport.Width / (2f * _effect.Texture.Width) / ZoomRatio,
+                    Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;
+                _vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
+                _vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
+                _vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
+                _vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
+                _effect.CurrentTechnique.Passes[0].Apply();
+                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
+            }
+            // Modify renderstate for 3D graphics.
             gfx.SamplerStates[0] = SamplerState.LinearWrap;
-            gfx.BlendState = BlendState.AlphaBlend;
             gfx.DepthStencilState = DepthStencilState.None;
-
-            // Render looping parallax as two huge triangles.
-            _effect.Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-            var texCenter = GetScale(layer.Z) * GetLookAtPos() / _effect.Texture.Dimensions();
-            var texCornerOffset = new Vector2(
-                Viewport.Width / (2f * _effect.Texture.Width),
-                -Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;
-            _vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
-            _vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
-            _vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
-            _vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
-            _effect.CurrentTechnique.Passes[0].Apply();
-            gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
-
-            gfx.DepthStencilState = DepthStencilState.Default;
+            gfx.BlendState = BlendState.Opaque;
         }
 
         /// <summary>
@@ -410,7 +414,7 @@ namespace AW2.Graphics
             gfx.DepthStencilState = DepthStencilState.Default;
             gfx.BlendState = BlendState.Opaque;
         }
-
+        
         #endregion Methods that are used only conditionally
     }
 

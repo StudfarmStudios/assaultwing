@@ -688,11 +688,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="textures\p_fire.png">
-      <Name>p_fire</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="textures\p_green_box.png">
       <Name>p_green_box</Name>
       <Importer>TextureImporter</Importer>

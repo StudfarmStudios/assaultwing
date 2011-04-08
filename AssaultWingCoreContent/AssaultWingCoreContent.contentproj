@@ -588,11 +588,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="textures\parallax_icy_flakes.png">
-      <Name>parallax_icy_flakes</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="textures\parallax_icy_flakes_2.png">
       <Name>parallax_icy_flakes_2</Name>
       <Importer>TextureImporter</Importer>
@@ -605,26 +600,6 @@
     </Compile>
     <Compile Include="textures\parallax_rock.png">
       <Name>parallax_rock</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\parallax_silhouette_trunks.png">
-      <Name>parallax_silhouette_trunks</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\parallax_trunks.png">
-      <Name>parallax_trunks</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\parallax_white_blobs.png">
-      <Name>parallax_white_blobs</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\parallax_white_dots.png">
-      <Name>parallax_white_dots</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1492,7 +1467,6 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
     <None Include="gobdefs\DefinedBonus_repairsystem.xml">
       <Name>DefinedBonus_repairsystem</Name>
@@ -1571,6 +1545,12 @@
     </None>
     <None Include="gobdefs\PropModel_prop model.xml">
       <Name>PropModel_prop model</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\RandomBonus_randombonus.xml">
+      <Name>RandomBonus_randombonus</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

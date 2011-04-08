@@ -1492,6 +1492,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="gobdefs\DefinedBonus_repairsystem.xml">
       <Name>DefinedBonus_repairsystem</Name>
@@ -1570,12 +1571,6 @@
     </None>
     <None Include="gobdefs\PropModel_prop model.xml">
       <Name>PropModel_prop model</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\RandomBonus_randombonus.xml">
-      <Name>RandomBonus_randombonus</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -4,16 +4,15 @@ using AW2.Core;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
+using Microsoft.Xna.Framework;
 
 namespace AW2.Game.Gobs.Bonus
 {
     /// <summary>
     /// A bonus that can be collected by a player.
     /// </summary>
-    public abstract class Bonus : Gob, IConsistencyCheckable
+    public class Bonus : Gob, IConsistencyCheckable
     {
-        #region Bonus fields
-
         /// <summary>
         /// Lifetime of the bonus, in seconds.
         /// </summary>
@@ -39,8 +38,6 @@ namespace AW2.Game.Gobs.Bonus
         /// </summary>
         [TypeParameter]
         protected GameAction _gameAction;
-
-        #endregion Bonus fields
 
         /// This constructor is only for serialisation.
         public Bonus()
@@ -84,10 +81,26 @@ namespace AW2.Game.Gobs.Bonus
             }
         }
 
-        /// <summary>
-        /// Perform on a player a bonus action (either a player bonus or some other thing such as an explosion).
-        /// </summary>
-        /// <param name="player">The player to receive the bonus action.</param>
-        protected abstract void DoBonusAction(Player player);
+        private void DoBonusAction(Player player)
+        {
+            _gameAction.Player = player;
+            _gameAction.SetDuration(_duration);
+            if (!_gameAction.DoAction())
+            {
+                player.Messages.Add(new PlayerMessage("Useless bonus discarded", PlayerMessage.DEFAULT_COLOR));
+                return;
+            }
+
+            Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>
+            {
+                gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
+                gob.Message = _gameAction.BonusText;
+                gob.IconName = _gameAction.BonusIconName;
+                gob.DrawColor = _gameAction.Player.PlayerColor;
+                Game.DataEngine.Arena.Gobs.Add(gob);
+            });
+            player.BonusActions.AddOrReplace(_gameAction);
+            player.Messages.Add(new PlayerMessage("You collected " + _gameAction.BonusText, player.PlayerColor));
+        }
     }
 }

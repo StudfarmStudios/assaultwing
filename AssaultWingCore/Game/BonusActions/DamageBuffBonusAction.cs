@@ -53,9 +53,9 @@ namespace AW2.Game.BonusActions
                 base.Serialize(writer, mode);
                 if ((mode & SerializationModeFlags.ConstantData) != 0)
                 {
-                      writer.Write(_buffName);
-                writer.Write(_bonusIconName);
-                writer.Write(_damagePerSecond);
+                    writer.Write(_buffName);
+                    writer.Write(_bonusIconName);
+                    writer.Write(_damagePerSecond);
                 }
             }
         }

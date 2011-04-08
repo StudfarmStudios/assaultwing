@@ -1089,24 +1089,6 @@
       <Processor>ModelProcessor</Processor>
       <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
     </Compile>
-    <Compile Include="models\bullet_1.X">
-      <Name>bullet_1</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
-    </Compile>
-    <Compile Include="models\bullet_2.X">
-      <Name>bullet_2</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
-    </Compile>
-    <Compile Include="models\bullet_3.X">
-      <Name>bullet_3</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
-    </Compile>
     <Compile Include="models\chainend.X">
       <Name>chainend</Name>
       <Importer>XImporter</Importer>

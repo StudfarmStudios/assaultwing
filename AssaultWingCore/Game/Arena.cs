@@ -222,8 +222,6 @@ namespace AW2.Game
         /// </summary>
         private const float FREE_POS_CHECK_RADIUS_MIN = 20;
 
-        private const float COLLISION_DAMAGE_MULTIPLIER = 0.0003f;
-
         /// <summary>
         /// Minimum change of gob speed in a collision to cause damage and a sound effect.
         /// </summary>
@@ -901,19 +899,11 @@ namespace AW2.Game
                 if (allowSideEffects)
                 {
                     // Inflict damage to damageable gobs.
-                    if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                    {
-                        if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
-                            movableGob.InflictCollisionDamage(CollisionDamage(movableGob, move1Delta, damageMultiplier * unmovableGob.CollisionDamageToOthersMultiplier),
-                                new DamageInfo(unmovableGob));
-                    }
+                    if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0 && move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                        unmovableGob.PhysicalCollisionInto(movableGob, move1Delta, damageMultiplier);
                     /* TODO: What if the unmovable gob wants to be damaged, too?
-                    if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0)
-                    {
-                        Vector2 move2Delta = Vector2.Zero;
-                        if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
-                            unmovableGob.InflictCollisionDamage(CollisionDamage(unmovableGob, move2Delta, damageMultiplier * movableGob.CollisionDamageToOthersMultiplier));
-                    }
+                    if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0 && move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                        movableGob.PhysicalCollisionInto(unmovableGob, Vector2.Zero, damageMultiplier);
                     */
                     PlayWallCollisionSound(movableGob, move1Delta);
                 }
@@ -973,20 +963,10 @@ namespace AW2.Game
 
                 if (allowSideEffects)
                 {
-                    /*We want to deal damage in physics engine because calculations only happen once per collision!*/
-                    // Inflict damage to damageable gobs.
-                    if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                    {
-                        if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
-                            gob1.InflictCollisionDamage(CollisionDamage(gob1, move1Delta, damageMultiplier * gob2.CollisionDamageToOthersMultiplier),
-                                new DamageInfo(gob2));
-                    }
-                    if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                    {
-                        if (move2after.Length() > MINIMUM_COLLISION_DELTA)
-                            gob2.InflictCollisionDamage(CollisionDamage(gob2, move2after, damageMultiplier * gob1.CollisionDamageToOthersMultiplier),
-                                new DamageInfo(gob1));
-                    }
+                    if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0 && move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                        gob2.PhysicalCollisionInto(gob1, move1Delta, damageMultiplier);
+                    if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0 && move2after.Length() > MINIMUM_COLLISION_DELTA)
+                        gob1.PhysicalCollisionInto(gob2, move2after, damageMultiplier);
                     PlayGobCollisionSound(gob1, gob2, move1Delta, move2after);
                 }
             }
@@ -1008,11 +988,6 @@ namespace AW2.Game
 
             if (!(gob1 is Gobs.Ship) && !(gob2 is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
             Game.SoundEngine.PlaySound("Shipcollision", gob1);
-        }
-
-        private float CollisionDamage(Gob gobToDamage, Vector2 moveDelta, float damageMultiplier)
-        {
-            return moveDelta.Length() * gobToDamage.Mass * COLLISION_DAMAGE_MULTIPLIER * damageMultiplier;
         }
 
         #endregion Collision and moving methods

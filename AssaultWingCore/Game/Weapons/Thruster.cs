@@ -31,6 +31,12 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private float _energyUsagePerAbsorbedDamageUnit;
 
+        [TypeParameter]
+        private CanonicalString _shieldEffectName;
+
+        [TypeParameter]
+        private CanonicalString _ramEffectName;
+
         /// <summary>
         /// Only for serialization.
         /// </summary>
@@ -40,6 +46,8 @@ namespace AW2.Game.Weapons
             _thrustForceFactor = 1;
             _collisionDamageToOthersMultiplier = 5;
             _energyUsagePerAbsorbedDamageUnit = 10;
+            _shieldEffectName = (CanonicalString)"dummypeng";
+            _ramEffectName = (CanonicalString)"dummypeng";
         }
 
         public Thruster(CanonicalString typeName)
@@ -53,6 +61,7 @@ namespace AW2.Game.Weapons
             base.Activate();
             Owner.CollisionDamageToOthersMultiplier *= _collisionDamageToOthersMultiplier;
             Owner.CollisionDamageFilter = FilterDamage;
+            Owner.PhysicalCollidedInto += PhysicalCollisionHandler;
         }
 
         public override FiringResult TryFire(AW2.UI.ControlState triggerState)
@@ -69,6 +78,7 @@ namespace AW2.Game.Weapons
         private float FilterDamage(float damageAmount)
         {
             var requiredCharge = damageAmount * _energyUsagePerAbsorbedDamageUnit;
+            if (damageAmount > 0 && Charge > 0) GobHelper.CreatePengs(new[] { _shieldEffectName }, Owner);
             if (requiredCharge <= Charge)
             {
                 Charge -= requiredCharge;
@@ -79,6 +89,11 @@ namespace AW2.Game.Weapons
                 Charge = 0;
                 return damageAmount - Charge / _energyUsagePerAbsorbedDamageUnit;
             }
+        }
+
+        private void PhysicalCollisionHandler(Gob other)
+        {
+            if (other.IsDamageable) GobHelper.CreatePengs(new[] { _ramEffectName }, other);
         }
     }
 }

@@ -1174,6 +1174,15 @@ namespace AW2.Game
         /// </summary>
         public Func<float, float> CollisionDamageFilter { get; set; }
 
+        /// <summary>
+        /// Called when the gob experiences a physical collision into another gob.
+        /// </summary>
+        public virtual void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)
+        {
+            float collisionDamage = 0.0003f * damageMultiplier * CollisionDamageToOthersMultiplier * moveDelta.Length() * other.Mass;
+            other.InflictCollisionDamage(collisionDamage, new DamageInfo(this));
+        }
+
         public virtual void InflictCollisionDamage(float damageAmount, DamageInfo info)
         {
             if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");

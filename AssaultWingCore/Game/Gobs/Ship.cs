@@ -203,7 +203,6 @@ namespace AW2.Game.Gobs
         }
 
         public float TurnSpeed { get { return _turnSpeed; } }
-
         public float ThrustForce { get { return _thrustForce; } }
 
         /// <summary>
@@ -251,6 +250,8 @@ namespace AW2.Game.Gobs
         {
             get { return base.TextureNames.Union(new CanonicalString[] { ShipInfo.IconEquipName }); }
         }
+
+        public event Action<Gob> PhysicalCollidedInto;
 
         #endregion Ship properties
 
@@ -546,6 +547,12 @@ namespace AW2.Game.Gobs
                 theirArea.Owner.Disable(); // re-enabled in Update()
                 _temporarilyDisabledGobs.Add(theirArea.Owner);
             }
+        }
+
+        public override void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)
+        {
+            base.PhysicalCollisionInto(other, moveDelta, damageMultiplier);
+            if (PhysicalCollidedInto != null) PhysicalCollidedInto(other);
         }
 
         public override void InflictDamage(float damageAmount, DamageInfo cause)

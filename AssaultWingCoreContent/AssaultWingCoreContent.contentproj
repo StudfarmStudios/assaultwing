@@ -1354,6 +1354,11 @@
       <Name>Arena_Lumipesu</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="fonts\ScoreFont.spritefont">
+      <Name>ScoreFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <None Include="gobdefs\ArenaMessage_bonusmessage.xml">
       <Name>ArenaMessage_bonusmessage</Name>
       <Importer>XmlImporter</Importer>

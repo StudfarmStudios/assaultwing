@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Peng">
+  <typeName>venom poisoning</typeName>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <depthLayer2D>0.6</depthLayer2D>
+  <drawMode2D>
+    <type>Additive</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <coordinateSystem>Game</coordinateSystem>
+  <playerRelated>false</playerRelated>
+  <emitter>
+    <emissionFrequency>12</emissionFrequency>
+    <numberToCreate>-1</numberToCreate>
+    <radius>25</radius>
+    <sprayAngle>3.142</sprayAngle>
+    <facingType>Random</facingType>
+    <textureNames>
+      <Item>p_snakehaze</Item>
+    </textureNames>
+    <gobTypeNames>
+    </gobTypeNames>
+    <initialVelocity type="AW2.Game.Pengs.ConstantValue">
+      <value>0</value>
+    </initialVelocity>
+  </emitter>
+  <updater>
+    <areParticlesImmortal>false</areParticlesImmortal>
+    <drag>0.997</drag>
+    <particleAge type="AW2.Game.Pengs.ExpectedValue">
+      <expected>0.4</expected>
+      <variance>0.1</variance>
+    </particleAge>
+    <accelerationInputScale>0</accelerationInputScale>
+    <acceleration type="AW2.Game.Pengs.ConstantValue">
+      <value>-10</value>
+    </acceleration>
+    <rotationSpeedInputScale>0</rotationSpeedInputScale>
+    <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
+      <value>2.6</value>
+    </rotationSpeed>
+    <scaleInputScale>0</scaleInputScale>
+    <scale type="AW2.Game.Pengs.CurveLerp">
+      <min>0.001</min>
+      <max>1000</max>
+      <randomAmplitude>0.1</randomAmplitude>
+      <randomMixer>3</randomMixer>
+      <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
+        <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <Item type="AW2.Game.Pengs.CurveLerpKey">
+            <input>0</input>
+            <curve>
+              <preLoop>Constant</preLoop>
+              <postLoop>Constant</postLoop>
+              <keys>
+                <Item>
+                  <position>0</position>
+                  <internalValue>0.05</internalValue>
+                  <tangentOut>0</tangentOut>
+                  <tangentIn>0</tangentIn>
+                  <continuity>Smooth</continuity>
+                </Item>
+                <Item>
+                  <position>0.7</position>
+                  <internalValue>0.33</internalValue>
+                  <tangentOut>0</tangentOut>
+                  <tangentIn>0</tangentIn>
+                  <continuity>Smooth</continuity>
+                </Item>
+                <Item>
+                  <position>1</position>
+                  <internalValue>0.1</internalValue>
+                  <tangentOut>0</tangentOut>
+                  <tangentIn>0</tangentIn>
+                  <continuity>Smooth</continuity>
+                </Item>
+              </keys>
+            </curve>
+          </Item>
+        </keys>
+      </keys>
+    </scale>
+    <alphaInputScale>0</alphaInputScale>
+    <alpha type="AW2.Game.Pengs.CurveLerp">
+      <min>0</min>
+      <max>1</max>
+      <randomAmplitude>0.05</randomAmplitude>
+      <randomMixer>6</randomMixer>
+      <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
+        <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <Item type="AW2.Game.Pengs.CurveLerpKey">
+            <input>0</input>
+            <curve>
+              <preLoop>Constant</preLoop>
+              <postLoop>Constant</postLoop>
+              <keys>
+                <Item>
+                  <position>0.2</position>
+                  <internalValue>0.0</internalValue>
+                  <tangentOut>0</tangentOut>
+                  <tangentIn>0</tangentIn>
+                  <continuity>Smooth</continuity>
+                </Item>
+                <Item>
+                  <position>0.3</position>
+                  <internalValue>0.3</internalValue>
+                  <tangentOut>0</tangentOut>
+                  <tangentIn>0</tangentIn>
+                  <continuity>Smooth</continuity>
+                </Item>
+                <Item>
+                  <position>0.6</position>
+                  <internalValue>0.73</internalValue>
+                  <tangentOut>0</tangentOut>
+                  <tangentIn>0</tangentIn>
+                  <continuity>Smooth</continuity>
+                </Item>
+                <Item>
+                  <position>1</position>
+                  <internalValue>0.0</internalValue>
+                  <tangentOut>0</tangentOut>
+                  <tangentIn>0</tangentIn>
+                  <continuity>Smooth</continuity>
+                </Item>
+              </keys>
+            </curve>
+          </Item>
+        </keys>
+      </keys>
+    </alpha>
+  </updater>
+  <birthGobTypes/>
+  <deathGobTypes/>
+  <movable>false</movable>
+  <exhaustEngineNames/>
+  <collisionAreas/>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1</scale>
+  <maxDamage>100</maxDamage>
+</GobType>

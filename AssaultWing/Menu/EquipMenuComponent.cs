@@ -34,6 +34,7 @@ namespace AW2.Menu
         private TimeSpan _readyFadeStartTime;
 
         private Texture2D _backgroundTexture;
+        private Texture2D _extraChatBoxTexture;
         private Texture2D _buttonReadyTexture, _buttonReadyHiliteTexture;
 
         public static Curve CursorFade { get; private set; }
@@ -98,6 +99,7 @@ namespace AW2.Menu
         {
             var content = MenuEngine.Game.Content;
             _backgroundTexture = content.Load<Texture2D>("menu_equip_bg");
+            _extraChatBoxTexture = content.Load<Texture2D>("menu_equip_status_display_extra");
             _buttonReadyTexture = content.Load<Texture2D>("menu_equip_btn_ready");
             _buttonReadyHiliteTexture = content.Load<Texture2D>("menu_equip_btn_ready_hilite");
         }
@@ -180,7 +182,20 @@ namespace AW2.Menu
             spriteBatch.Draw(_backgroundTexture, Pos - view, Color.White);
             DrawTabsAndButtons(view, spriteBatch);
             DrawStatusDisplay(view, spriteBatch);
+
+            if (_tab is ChatTab == false && MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
+                DrawExtraChatBox(view, spriteBatch);
+
             _tab.Draw(view, spriteBatch);
+        }
+
+        private void DrawExtraChatBox(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var extraChatBoxPos = Pos - view + new Vector2(540, 540);
+            var textStartPos = extraChatBoxPos + new Vector2(29, 28);
+
+            spriteBatch.Draw(_extraChatBoxTexture, extraChatBoxPos, Color.White);
+            spriteBatch.DrawString(Content.FontSmall, "Welcome to the BattleFront", textStartPos, Color.White);
         }
 
         private void DrawTabsAndButtons(Vector2 view, SpriteBatch spriteBatch)
@@ -213,7 +228,7 @@ namespace AW2.Menu
             {
                 var statusDisplayRowHeight = new Vector2(0, 12);
                 var statusDisplayColumnWidth = new Vector2(75, 0);
-                var statusDisplayTextPos = Pos - view + new Vector2(885, 618);
+                var statusDisplayTextPos = Pos - view + new Vector2(350, 616);
                 var itemPos = statusDisplayTextPos + statusDisplayRowHeight * line;
                 var valuePos = itemPos + statusDisplayColumnWidth;
                 spriteBatch.DrawString(Content.FontSmall, item, itemPos.Round(), itemColor);

@@ -31,5 +31,5 @@
   <fireChargePerSecond>500</fireChargePerSecond>
   <recoilMomentum>0</recoilMomentum>
   <shotCount>1</shotCount>
-  <shotSpacing>1</shotSpacing>
+  <shotSpacing>0.01</shotSpacing>
 </ShipDeviceType>

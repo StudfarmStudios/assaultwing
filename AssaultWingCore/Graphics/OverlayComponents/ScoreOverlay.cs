@@ -13,7 +13,7 @@ namespace AW2.Graphics.OverlayComponents
         private Texture2D _scoreBackgroundTexture;
         private SpriteFont _scoreFont;
         private SpriteFont _textFont;
-        private int scoreLineSpacing = 15;
+        private int scoreLineSpacing = 17;
 
         public override Point Dimensions
         {
@@ -31,9 +31,9 @@ namespace AW2.Graphics.OverlayComponents
             // Draw scoredisplay background
             spriteBatch.Draw(_scoreBackgroundTexture, Vector2.Zero, Color.White);
 
-            var textTopLeft = new Vector2(15, 29);
-            int playerNameWidth = 134;
-            int scoreWidth = 51;
+            var textTopLeft = new Vector2(13, 29);
+            int playerNameWidth = 139;
+            int scoreWidth = 48;
             int scoreEntryWidth = 35;
 
             var standings = AssaultWingCore.Instance.DataEngine.GameplayMode.GetStandings(AssaultWingCore.Instance.DataEngine.Players);
@@ -43,7 +43,7 @@ namespace AW2.Graphics.OverlayComponents
             {
                 var currentStanding = line + 1;
                 var playerNamePos = textTopLeft + new Vector2(0, line * scoreLineSpacing);
-                var scorePos = textTopLeft + new Vector2(playerNameWidth, line * scoreLineSpacing - 4);
+                var scorePos = textTopLeft + new Vector2(playerNameWidth, line * scoreLineSpacing - 3);
                 var killsPos = textTopLeft + new Vector2(playerNameWidth + scoreWidth, line * scoreLineSpacing);
                 var deathsPos = textTopLeft + new Vector2(playerNameWidth + scoreWidth + scoreEntryWidth, line * scoreLineSpacing);
                 var scoreText = entry.Score.ToString();

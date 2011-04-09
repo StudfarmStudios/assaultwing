@@ -34,7 +34,7 @@ namespace AW2.Menu
         private TimeSpan _readyFadeStartTime;
 
         private Texture2D _backgroundTexture;
-        private Texture2D _extraChatBoxTexture;
+        private Texture2D _extraChatBoxTexture, _extraReadyMessageTexture;
         private Texture2D _buttonReadyTexture, _buttonReadyHiliteTexture;
 
         public static Curve CursorFade { get; private set; }
@@ -102,6 +102,7 @@ namespace AW2.Menu
             _extraChatBoxTexture = content.Load<Texture2D>("menu_equip_status_display_extra");
             _buttonReadyTexture = content.Load<Texture2D>("menu_equip_btn_ready");
             _buttonReadyHiliteTexture = content.Load<Texture2D>("menu_equip_btn_ready_hilite");
+            _extraReadyMessageTexture = content.Load<Texture2D>("menu_equip_readytofight");
         }
 
         public override void UnloadContent()
@@ -187,6 +188,15 @@ namespace AW2.Menu
                 DrawExtraChatBox(view, spriteBatch);
 
             _tab.Draw(view, spriteBatch);
+
+            if (_readyPressed && MenuEngine.Game.NetworkMode == NetworkMode.Client)
+                DrawExtraReadyMessage(view, spriteBatch);
+        }
+
+        private void DrawExtraReadyMessage(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var extraReadyMessagePos = Pos - view + new Vector2(844, 103);
+            spriteBatch.Draw(_extraReadyMessageTexture, extraReadyMessagePos, Color.White);            
         }
 
         private void DrawExtraChatBox(Vector2 view, SpriteBatch spriteBatch)

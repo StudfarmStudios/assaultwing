@@ -12,7 +12,7 @@
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
   <mass>80</mass>
-  <modelName>missile</modelName>
+  <modelName>berserker</modelName>
   <scale>0.035</scale>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>

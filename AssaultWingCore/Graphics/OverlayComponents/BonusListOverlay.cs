@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game;
+using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 
@@ -17,18 +18,19 @@ namespace AW2.Graphics.OverlayComponents
     {
         private enum DisplayDirection { Enter, Exit };
 
+        [System.Diagnostics.DebuggerDisplay("BonusOverlay {bonusActionData.TypeName} {bonusEntryDirection} {bonusEntryTimeIn} {bonusEntryPosAdjustment}")]
         private class BonusOverlay
         {
-            public BonusOverlay(GameAction action)
+            public BonusOverlay(BonusAction action)
             {
                 bonusEntryDirection = DisplayDirection.Enter;
                 bonusEntryPosAdjustment = Vector2.Zero;
                 bonusEntryTimeIn = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
-                gameActionData = action;
+                bonusActionData = action;
             }
 
             /// <summary>
-            /// Times, in game time, at which the bonus box started
+            /// Game time at which the bonus box started
             /// sliding in to the player's viewport overlay or out of it.
             /// </summary>
             public TimeSpan bonusEntryTimeIn;
@@ -41,16 +43,8 @@ namespace AW2.Graphics.OverlayComponents
             /// </summary>
             public Vector2 bonusEntryPosAdjustment;
 
-            /// <summary>
-            /// Direction of movement of the overlay
-            /// </summary>
             public DisplayDirection bonusEntryDirection;
-
-            /// <summary>
-            /// GameAction which we are displaying.
-            /// </summary>
-            public GameAction gameActionData;
-
+            public BonusAction bonusActionData;
             public Vector2 displayPosition;
         }
 
@@ -160,27 +154,20 @@ namespace AW2.Graphics.OverlayComponents
         /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
         /// to have been called and <c>End</c> is assumed to be called after this
         /// method returns.</param>
-        private void DrawBonusBox(SpriteBatch spriteBatch, Vector2 bonusPos, GameAction bonusAction)
+        private void DrawBonusBox(SpriteBatch spriteBatch, Vector2 bonusPos, BonusAction bonusAction)
         {
-            // Figure out what to draw for this bonus.
-            string bonusText = bonusAction.BonusText;
-            Texture2D bonusIcon = bonusAction.BonusIcon;
-
             // Draw bonus box background.
             Vector2 backgroundOrigin = new Vector2(0, _bonusBackgroundTexture.Height) / 2;
             spriteBatch.Draw(_bonusBackgroundTexture,
                 bonusPos, null, Color.White, 0, backgroundOrigin, 1, SpriteEffects.None, 0);
 
             // Draw bonus icon.
-            Vector2 iconPos = bonusPos - backgroundOrigin + new Vector2(133, 9);
-            spriteBatch.Draw(bonusIcon,
-                iconPos, null, _player.PlayerColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            var iconPos = bonusPos - backgroundOrigin + new Vector2(133, 9);
+            var icon = _player.Game.Content.Load<Texture2D>(bonusAction.BonusIconName);
+            spriteBatch.Draw(icon, iconPos, null, _player.PlayerColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus duration meter.
-            float startSeconds = (float)bonusAction.BeginTime.TotalSeconds;
-            float endSeconds = (float)bonusAction.EndTime.TotalSeconds;
-            float nowSeconds = (float)AssaultWingCore.Instance.DataEngine.ArenaTotalTime.TotalSeconds;
-            float duration = (endSeconds - nowSeconds) / (endSeconds - startSeconds);
+            var duration = (bonusAction.EndTime - _player.Game.DataEngine.ArenaTotalTime).Divide(bonusAction.Duration);
             int durationHeight = (int)Math.Round(duration * _bonusDurationTexture.Height);
             int durationY = _bonusDurationTexture.Height - durationHeight;
             var durationClip = new Rectangle(0, durationY, _bonusDurationTexture.Width, durationHeight);
@@ -190,6 +177,7 @@ namespace AW2.Graphics.OverlayComponents
 
             // Draw bonus text.
             // Round coordinates for beautiful text.
+            var bonusText = bonusAction.BonusText;
             var textSize = _bonusFont.MeasureString(bonusText);
             var textPos = bonusPos - backgroundOrigin + new Vector2(32, 25.5f - textSize.Y / 2);
             spriteBatch.DrawString(_bonusFont, bonusText, textPos.Round(), Color.White);
@@ -204,7 +192,6 @@ namespace AW2.Graphics.OverlayComponents
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            var data = AssaultWingCore.Instance.DataEngine;
             //Remove expired bonusOverlays from the queue
             for (int i = _displayQueue.Count - 1; i >= 1; i--)
             {
@@ -214,27 +201,27 @@ namespace AW2.Graphics.OverlayComponents
             }
 
             //this dictionary is only used for reduce load from the loop that adds new objects to queue
-            var gameActionsInQueue = new Dictionary<Type, BonusOverlay>();
+            var bonusActionsInQueue = new Dictionary<Type, BonusOverlay>();
             for (int i = 1; i < _displayQueue.Count; i++)
             {
                 BonusOverlay bonusOverlay = _displayQueue[i];
                 //if bonus is exitting it doesn't exist. when the same bonus is activated
                 //when the bonusOverlay is exitting, the will be a new bonusOverlay as a last item it the list
                 if (bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
-                    gameActionsInQueue.Add(bonusOverlay.gameActionData.GetType(), bonusOverlay);
+                    bonusActionsInQueue.Add(bonusOverlay.bonusActionData.GetType(), bonusOverlay);
             }
 
             //Loop bonusActions and add them to displayQueue if they don't exist yet
-            foreach (GameAction action in _player.BonusActions)
+            foreach (BonusAction action in _player.BonusActions)
             {
-                if (!gameActionsInQueue.Keys.Contains(action.GetType()))
+                if (!bonusActionsInQueue.Keys.Contains(action.GetType()))
                 {
                     _displayQueue.Add(new BonusOverlay(action));
                 }
                 else
                 {
-                    BonusOverlay bonusOverlay = gameActionsInQueue[action.GetType()];
-                    bonusOverlay.gameActionData = action;
+                    BonusOverlay bonusOverlay = bonusActionsInQueue[action.GetType()];
+                    bonusOverlay.bonusActionData = action;
                 }
             }
 
@@ -268,7 +255,7 @@ namespace AW2.Graphics.OverlayComponents
                     (curvePos.Y + shift.Y) * scale.Y);
 
                 /*update bonusOverlay when the bonus in player ceases to be*/
-                if (!_player.BonusActions.Contains(bonusOverlay.gameActionData) && bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
+                if (!_player.BonusActions.Contains(bonusOverlay.bonusActionData) && bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
                 {
                     bonusOverlay.bonusEntryPosAdjustment = relativePos;
                     bonusOverlay.bonusEntryTimeIn = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
@@ -289,7 +276,7 @@ namespace AW2.Graphics.OverlayComponents
             {
                 Vector2 leftMiddlePoint = new Vector2(_displayQueue[i].displayPosition.X + bonusBoxAreaTopRight.X,
                     bonusBoxAreaTopRight.Y + (_displayQueue[i].displayPosition.Y + _displayQueue[i - 1].displayPosition.Y) / 2);
-                DrawBonusBox(spriteBatch, leftMiddlePoint, _displayQueue[i].gameActionData);
+                DrawBonusBox(spriteBatch, leftMiddlePoint, _displayQueue[i].bonusActionData);
             }
         }
 

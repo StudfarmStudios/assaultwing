@@ -6,9 +6,7 @@ using AW2.Helpers.Serialization;
 
 namespace AW2.Game.BonusActions
 {
-    [GameActionType(2)]
-    [LimitedSerialization]
-    public class DamageBuffBonusAction : GameAction
+    public class DamageBuffBonusAction : Gobs.BonusAction
     {
         [TypeParameter]
         private string _buffName; // not CanonicalString because this doesn't contain any "well known string" such as a content texture name
@@ -19,10 +17,12 @@ namespace AW2.Game.BonusActions
         [TypeParameter]
         private float _damagePerSecond;
 
+        public override string BonusText { get { return _buffName; } }
+        public override CanonicalString BonusIconName { get { return _bonusIconName; } }
         public Gob Cause { get; set; }
 
         /// <summary>
-        /// This constructor is only for serialization.
+        /// Only for serialization.
         /// </summary>
         public DamageBuffBonusAction()
         {
@@ -31,68 +31,22 @@ namespace AW2.Game.BonusActions
             _damagePerSecond = 500;
         }
 
-        public DamageBuffBonusAction(string buffName, CanonicalString bonusIconName, float damagePerSecond)
+        public DamageBuffBonusAction(CanonicalString typeName)
+            : base(typeName)
         {
-            _buffName = buffName;
-            _bonusIconName = bonusIconName;
-            _damagePerSecond = damagePerSecond;
-        }
-
-        public override bool DoAction()
-        {
-            SetActionMessage();
-            return base.DoAction();
-        }
-
-        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
-#if NETWORK_PROFILING
-            using (new NetworkProfilingScope(this))
-#endif
-            {
-                base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
-                {
-                    writer.Write(_buffName);
-                    writer.Write(_bonusIconName);
-                    writer.Write(_damagePerSecond);
-                }
-            }
-        }
-
-        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
-        {
-            base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
-            {
-                _buffName = reader.ReadString();
-                _bonusIconName = reader.ReadCanonicalString();
-                _damagePerSecond = reader.ReadSingle();
-            }
         }
 
         public override void Update()
         {
-            // HACK: If the ship dies, the player's bonus actions are cleared, which results in a crash
-            // because this method is called while iterating over the player's bonus actions.
-            // Workaround: Call InflictDamage later this frame.
-            float damage = Player.Game.PhysicsEngine.ApplyChange(_damagePerSecond, Player.Game.GameTime.ElapsedGameTime);
-            Player.Game.PostFrameLogicEngine.DoOnce += () =>
+            base.Update();
+            float damage = Game.PhysicsEngine.ApplyChange(_damagePerSecond, Game.GameTime.ElapsedGameTime);
+            if (Owner.Ship != null)
             {
-                if (Player.Ship != null)
-                {
-                    if (damage > 0)
-                        Player.Ship.InflictDamage(damage, new DamageInfo(Cause));
-                    else
-                        Player.Ship.RepairDamage(-damage);
-                }
-            };
-        }
-
-        private void SetActionMessage()
-        {
-            BonusText = _buffName;
-            BonusIconName = _bonusIconName;
+                if (damage > 0)
+                    Owner.Ship.InflictDamage(damage, new DamageInfo(Cause));
+                else
+                    Owner.Ship.RepairDamage(-damage);
+            }
         }
     }
 }

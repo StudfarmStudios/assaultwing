@@ -1,52 +1,65 @@
 ﻿using System;
 using AW2.Core;
-using AW2.Helpers;
 using AW2.Game.GobUtils;
+using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.BonusActions
 {
-    [GameActionType(5)]
-    public class Weapon2UpgradeBonusAction : GameAction
+    public class Weapon2UpgradeBonusAction : Gobs.BonusAction
     {
-        public override bool DoAction()
-        {
-            var success = UpgradeWeapon();
-            SetActionMessage();
-            if (!success) return false;
-            return base.DoAction();
-        }
+        [TypeParameter]
+        private CanonicalString _fixedWeaponName;
+        [TypeParameter]
+        private CanonicalString _effectName;
 
-        public override void RemoveAction()
-        {
-            Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Player.Weapon2Name);
-        }
+        private string _bonusText;
+        private CanonicalString _bonusIconName;
 
-        private bool UpgradeWeapon()
+        public override string BonusText { get { return _bonusText ?? (_bonusText = Owner.Ship.Weapon2Name); } }
+        public override CanonicalString BonusIconName
         {
-            if (Player.Ship == null) return false;
-            var weapon2 = (Weapon)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.Ship.Weapon2Name);
-            if (weapon2.UpgradeNames == null || weapon2.UpgradeNames.Length == 0) return false;
-            var weaponUpgrade = weapon2.UpgradeNames[0];
-            Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, weaponUpgrade);
-            return true;
-        }
-
-        private void SetActionMessage()
-        {
-            if (Player.Ship != null)
+            get
             {
-                BonusText = Player.Ship.Weapon2Name;
-                BonusIconName = Player.Ship.Weapon2.IconName;
+                if (_bonusIconName.IsNull) _bonusIconName = Owner.Ship.Weapon2.IconName;
+                return _bonusIconName;
             }
-            else
-            {
-                // This should happen only when a client receives an update of a remote player
-                // during arena loading, before the player's ship is created. The values don't matter
-                // because the client won't use them for anything.
-                var weapon2 = (Weapon)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.Weapon2Name);
-                BonusText = weapon2.TypeName;
-                BonusIconName = weapon2.IconName;
-            }
+        }
+
+        /// <summary>
+        /// Only for serialization.
+        /// </summary>
+        public Weapon2UpgradeBonusAction()
+        {
+            _fixedWeaponName = (CanonicalString)"";
+            _effectName = (CanonicalString)"";
+        }
+
+        public Weapon2UpgradeBonusAction(CanonicalString typeName)
+            : base(typeName)
+        {
+        }
+
+        public override void Activate()
+        {
+            UpgradeWeapon();
+            base.Activate();
+        }
+
+        public override void Dispose()
+        {
+            if (Owner.Ship != null)
+                Owner.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Owner.Weapon2Name);
+            if (_effectName != "") Owner.PostprocessEffectNames.Remove(_effectName);
+            base.Dispose();
+        }
+
+        private void UpgradeWeapon()
+        {
+            if (Owner.Ship == null) Die();
+            var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName : Owner.Ship.Weapon2.UpgradeNames[0];
+            Owner.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
+            if (_effectName != "") Owner.PostprocessEffectNames.EnsureContains(_effectName);
         }
     }
 }

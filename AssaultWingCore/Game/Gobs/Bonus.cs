@@ -1,12 +1,12 @@
 using System;
-using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace AW2.Game.Gobs.Bonus
+namespace AW2.Game.Gobs
 {
     /// <summary>
     /// A bonus that can be collected by a player.
@@ -17,38 +17,31 @@ namespace AW2.Game.Gobs.Bonus
         /// Lifetime of the bonus, in seconds.
         /// </summary>
         [TypeParameter]
-        protected float _lifetime;
+        private float _lifetime;
 
         /// <summary>
         /// Time at which the bonus dies, in game time.
         /// </summary>
-        [RuntimeState]
-        protected TimeSpan _deathTime;
-
-        /// <summary>
-        /// The duration of the bonus, in seconds.
-        /// </summary>
-        /// Bonus that don't have a meaningful duration
-        /// leave this field uninterpreted.
-        [TypeParameter]
-        protected float _duration;
+        private TimeSpan _deathTime;
 
         /// <summary>
         /// What happens when the bonus is collected.
         /// </summary>
         [TypeParameter]
-        protected GameAction _gameAction;
+        private CanonicalString _bonusActionTypeName;
 
+        /// <summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Bonus()
         {
             _lifetime = 10;
-            _deathTime = new TimeSpan(0, 1, 20);
         }
 
         public Bonus(CanonicalString typeName)
             : base(typeName)
         {
+            _bonusActionTypeName = (CanonicalString)"dummygob";
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -83,24 +76,16 @@ namespace AW2.Game.Gobs.Bonus
 
         private void DoBonusAction(Player player)
         {
-            _gameAction.Player = player;
-            _gameAction.SetDuration(_duration);
-            if (!_gameAction.DoAction())
-            {
-                player.Messages.Add(new PlayerMessage("Useless bonus discarded", PlayerMessage.DEFAULT_COLOR));
-                return;
-            }
-
+            var gameAction = BonusAction.Create<BonusAction>(_bonusActionTypeName, player, gob => { });
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>
             {
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
-                gob.Message = _gameAction.BonusText;
-                gob.IconName = _gameAction.BonusIconName;
-                gob.DrawColor = _gameAction.Player.PlayerColor;
+                gob.Message = gameAction.BonusText;
+                gob.IconName = gameAction.BonusIconName;
+                gob.DrawColor = gameAction.Owner.PlayerColor;
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });
-            player.BonusActions.AddOrReplace(_gameAction);
-            player.Messages.Add(new PlayerMessage("You collected " + _gameAction.BonusText, player.PlayerColor));
+            player.Messages.Add(new PlayerMessage("You collected " + gameAction.BonusText, player.PlayerColor));
         }
     }
 }

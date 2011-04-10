@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.Bonus.Bonus">
+<GobType type="AW2.Game.Gobs.Bonus">
   <typeName>repairsystem</typeName>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
@@ -13,12 +13,7 @@
   <drawMode2D>
     <type>None</type>
   </drawMode2D>
-  <gameAction type="AW2.Game.BonusActions.DamageBuffBonusAction">
-    <buffName>nanobot repair</buffName>
-    <bonusIconName>b_icon_repair</bonusIconName>
-    <damagePerSecond>-10</damagePerSecond>
-  </gameAction>
-  <duration>40</duration>
+  <bonusActionTypeName>nanobot repair bonus action</bonusActionTypeName>
   <layerPreference>Front</layerPreference>
   <movable>true</movable>
   <exhaustEngineNames/>

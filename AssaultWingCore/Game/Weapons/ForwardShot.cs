@@ -85,7 +85,7 @@ namespace AW2.Game.Weapons
             float direction = barrelRotation + Owner.Rotation + _shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             float kickSpeed = _shotSpeed + _shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             Vector2 kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
-            Gob.CreateGob<Gob>(Owner.Game, shotTypeName, shot =>
+            Gob.CreateGob<Gob>(Owner.Game, _shotTypeName, shot =>
             {
                 shot.Owner = Owner.Owner;
                 shot.ResetPos(Owner.GetNamedPosition(boneIndex), Owner.Move + kick,

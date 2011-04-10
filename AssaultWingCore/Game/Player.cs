@@ -208,7 +208,7 @@ namespace AW2.Game
         /// </summary>
         public CanonicalString ExtraDeviceName { get; set; }
 
-        public GameActionCollection BonusActions { get; private set; }
+        public List<BonusAction> BonusActions { get; private set; }
 
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
@@ -331,7 +331,7 @@ namespace AW2.Game
             ExtraDeviceName = extraDeviceName;
             Messages = new ChatContainer();
             PlayerColor = Color.Gray;
-            BonusActions = new GameActionCollection(this);
+            BonusActions = new List<BonusAction>();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
             GobTrackerItems = new List<GobTrackerItem>();
         }
@@ -345,14 +345,6 @@ namespace AW2.Game
             // Assumption: When _deviceUsages is set, also MustUpdateToClients is set,
             // and serialization is done during the same frame.
             _deviceUsages = DeviceUsages.None;
-
-            foreach (var action in BonusActions)
-            {
-                action.Update();
-                if (action.EndTime <= Game.DataEngine.ArenaTotalTime)
-                    BonusActions.RemoveLater(action);
-            }
-            BonusActions.CommitRemoves();
 
             if (Game.NetworkMode != NetworkMode.Client)
             {
@@ -442,7 +434,6 @@ namespace AW2.Game
                         writer.Write((short)Lives);
                         writer.Write((short)_kills);
                         writer.Write((short)_suicides);
-                        BonusActions.Serialize(writer, mode);
                     }
                 }
             }
@@ -468,7 +459,6 @@ namespace AW2.Game
                 Lives = reader.ReadInt16();
                 _kills = reader.ReadInt16();
                 _suicides = reader.ReadInt16();
-                BonusActions.Deserialize(reader, mode, framesAgo);
             }
         }
 

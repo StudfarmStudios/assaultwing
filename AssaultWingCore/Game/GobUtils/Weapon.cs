@@ -54,20 +54,20 @@ namespace AW2.Game.GobUtils
         /// Names of the weapon type upgrades of the weapon.
         /// </summary>
         [TypeParameter]
-        private CanonicalString[] upgradeNames;
+        private CanonicalString[] _upgradeNames;
 
         /// <summary>
         /// What type of gobs the weapon shoots out.
         /// </summary>
         [TypeParameter]
-        protected CanonicalString shotTypeName;
+        protected CanonicalString _shotTypeName;
 
         /// <summary>
         /// Recoil momentum of the weapon, measured in Newton seconds.
         /// Recoil pushes the shooter to the opposite direction.
         /// </summary>
         [TypeParameter]
-        private float recoilMomentum;
+        private float _recoilMomentum;
 
         /// <summary>
         /// Indices of the bones that define the locations of the weapon barrels on the owning ship.
@@ -77,7 +77,7 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Names of the weapon type upgrades of the weapon, in order of upgrades.
         /// </summary>
-        public CanonicalString[] UpgradeNames { get { return upgradeNames; } }
+        public CanonicalString[] UpgradeNames { get { return _upgradeNames; } }
 
         public WeaponInfo WeaponInfo { get { return _weaponInfo; } }
 
@@ -87,9 +87,9 @@ namespace AW2.Game.GobUtils
         public Weapon()
         {
             _weaponInfo = new WeaponInfo();
-            upgradeNames = new CanonicalString[] { (CanonicalString)"dummyweapontype" };
-            shotTypeName = (CanonicalString)"dummygobtype";
-            recoilMomentum = 10000;
+            _upgradeNames = new[] { (CanonicalString)"dummyweapontype" };
+            _shotTypeName = (CanonicalString)"dummygobtype";
+            _recoilMomentum = 10000;
         }
 
         protected Weapon(CanonicalString typeName)
@@ -104,7 +104,7 @@ namespace AW2.Game.GobUtils
         /// </summary>
         protected void ApplyRecoil()
         {
-            var momentum = -recoilMomentum * AWMathHelper.GetUnitVector2(Owner.Rotation);
+            var momentum = -_recoilMomentum * AWMathHelper.GetUnitVector2(Owner.Rotation);
             Owner.Game.PostFrameLogicEngine.DoOnce += () => Owner.Game.PhysicsEngine.ApplyMomentum(Owner, momentum);
         }
 

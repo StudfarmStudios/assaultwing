@@ -4,9 +4,7 @@
   <isRotating>false</isRotating>
   <rotationSpeed>0.0</rotationSpeed>
   <lifetime>1</lifetime>
-  <damageOverTimeBonusIconName>b_icon_venomdrop</damageOverTimeBonusIconName>
-  <clingDamagePerSecond>10</clingDamagePerSecond>
-  <clingTime>9</clingTime>
+  <damageEffectTypeName>venom damage bonus action</damageEffectTypeName>
   <impactDamage>20</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
   <bulletModelNames>
@@ -37,23 +35,23 @@
       <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
-         <area type="AW2.Helpers.Geometric.Circle">
-            <center>
-               <X>0</X>
-               <Y>0</Y>
-            </center>
-            <radius>130</radius>
-            <boundingBox>
-               <min>
-                  <X>0</X>
-                  <Y>0</Y>
-               </min>
-               <max>
-                  <X>0</X>
-                  <Y>0</Y>
-               </max>
-            </boundingBox>
-         </area>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>130</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
     </Item>
   </collisionAreas>
   <maxDamage>100</maxDamage>

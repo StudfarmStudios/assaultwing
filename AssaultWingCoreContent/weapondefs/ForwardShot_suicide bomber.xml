@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.SelfDestruct">
+
+  <deviceInfo>
+    <pictureName>dummytexture</pictureName>
+    <titlePictureName>dummytexture</titlePictureName>
+    <infoText>
+      Blow yourself up! Remember that suicide
+      bombing is a glorious occupation. As long as
+      you manage to take at least one friend
+      as you go, there is no penalty for you.
+    </infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Low</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>dummytexture</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Average</shotSpeed>
+    <recoilMomentum>Average</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>suicide bomber</typeName>
+  <fireSound></fireSound>
+  <fireSoundType>Once</fireSoundType>
+  <upgradeNames>
+  </upgradeNames>
+  <shotTypeName>bomb</shotTypeName>
+  <iconName>b_icon_suicide</iconName>
+  <recoilMomentum>0</recoilMomentum>
+  <loadTime>0.01</loadTime>
+  <fireCharge>100</fireCharge>
+  <fireChargePerSecond>500</fireChargePerSecond>
+  <deathGobTypes>
+    <Item>selfdestruct</Item>
+  </deathGobTypes>
+  <shotCount>1</shotCount>
+  <shotSpacing>0.01</shotSpacing>
+</ShipDeviceType>

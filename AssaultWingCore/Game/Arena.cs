@@ -1158,7 +1158,7 @@ namespace AW2.Game
             Prepare(gob);
             if (gob is AW2.Game.Gobs.Ship) AddGobTrackerToViewports(gob, GobTrackerItem.PLAYER_TEXTURE);
             if (gob is AW2.Game.Gobs.Dock) AddGobTrackerToViewports(gob, GobTrackerItem.DOCK_TEXTURE);
-            if (gob is AW2.Game.Gobs.Bonus.Bonus) AddGobTrackerToViewports(gob, GobTrackerItem.BONUS_TEXTURE);
+            if (gob is AW2.Game.Gobs.Bonus) AddGobTrackerToViewports(gob, GobTrackerItem.BONUS_TEXTURE);
             if (gob is AW2.Game.Gobs.Wall) Game.DataEngine.UpdateArenaRadarSilhouette = true;
             if (GobAdded != null) GobAdded(gob);
         }

@@ -123,7 +123,6 @@
     <Compile Include="Game\Arenas\ArenaInfo.cs" />
     <Compile Include="Game\Arenas\ArenaTypeLoader.cs" />
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
-    <Compile Include="Game\BonusActions\SelfDestructBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
     <Compile Include="Game\ChatContainer.cs" />
@@ -137,7 +136,7 @@
     <Compile Include="Game\Gob.cs" />
     <Compile Include="Game\Arenas\GobCollection.cs" />
     <Compile Include="Game\Gobs\ArenaMessage.cs" />
-    <Compile Include="Game\Gobs\Bonus\Bonus.cs" />
+    <Compile Include="Game\Gobs\Bonus.cs" />
     <Compile Include="Game\Gobs\BounceBullet.cs" />
     <Compile Include="Game\Gobs\Bullet.cs" />
     <Compile Include="Game\Gobs\CollisionTrigger.cs" />
@@ -162,9 +161,7 @@
     <Compile Include="Game\GobUtils\Coroner.cs" />
     <Compile Include="Game\GobUtils\EquipInfo.cs" />
     <Compile Include="Game\GobUtils\FiringOperator.cs" />
-    <Compile Include="Game\GobUtils\GameAction.cs" />
-    <Compile Include="Game\GobUtils\GameActionAttribute.cs" />
-    <Compile Include="Game\GobUtils\GameActionCollection.cs" />
+    <Compile Include="Game\Gobs\BonusAction.cs" />
     <Compile Include="Game\GobUtils\GobHelper.cs" />
     <Compile Include="Game\GobUtils\GobPropertyDescriptor.cs" />
     <Compile Include="Game\GobUtils\RadialFlow.cs" />

@@ -37,7 +37,7 @@ namespace AW2.Core.OverlayComponents
                 line++;
                 var column1Pos = new Vector2(textLeftEdge, textCenter.Y);
                 var column2Pos = column1Pos + new Vector2(250, 0);
-                var scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);
+                var scoreText = string.Format("{0}  K={1}  D={2}", entry.Score, entry.Kills, entry.Deaths);
                 spriteBatch.DrawString(fontSmall, line + ". " + entry.Name, column1Pos.Round(), Color.White);
                 spriteBatch.DrawString(fontSmall, scoreText, column2Pos.Round(), Color.White);
                 textCenter += new Vector2(0, fontSmall.LineSpacing);

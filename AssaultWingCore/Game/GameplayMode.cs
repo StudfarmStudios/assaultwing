@@ -10,14 +10,24 @@ namespace AW2.Game
     /// <summary>
     /// The entry of one player in a score table.
     /// </summary>
-    public struct Standing
+    public class Standing
     {
         public string Name { get; set; }
         public Color PlayerColor { get; set; }
         public int Score { get; set; }
         public int Kills { get; set; }
-        public int Suicides { get; set; }
-        public int SpectatorId { get; set; }
+        public int Deaths { get; set; }
+        public int SpectatorID { get; set; }
+
+        public Standing(string name, Color playerColor, int score, int kills, int deaths, int spectatorID)
+        {
+            Name = name;
+            PlayerColor = playerColor;
+            Score = score;
+            Kills = kills;
+            Deaths = deaths;
+            SpectatorID = spectatorID;
+        }
     }
 
     /// <summary>
@@ -53,37 +63,20 @@ namespace AW2.Game
             }
         }
 
-        /// <summary>
-        /// Calculates the score of a player
-        /// </summary>
         public int CalculateScore(Player player)
         {
-            return player.Kills - player.Suicides;
+            return 2 * player.Kills - player.Deaths;
         }
 
-        /// <summary>
-        /// Returns the standings of players.
-        /// </summary>
         public IEnumerable<Standing> GetStandings(IEnumerable<Player> players)
         {
             return
                 from p in players
                 let score = CalculateScore(p)
                 orderby score descending
-                select new Standing
-                {
-                    Name = p.Name,
-                    PlayerColor = p.PlayerColor,
-                    Score = score,
-                    Kills = p.Kills,
-                    Suicides = p.Suicides,
-                    SpectatorId = p.ID
-                };
+                select new Standing(p.Name, p.PlayerColor, score, p.Kills, p.Deaths, p.ID);
         }
 
-        /// <summary>
-        /// Have players finished playing an arena.
-        /// </summary>
         public bool ArenaFinished(Arena arena, IEnumerable<Player> players)
         {
             if (players.Count() < 2) return false;

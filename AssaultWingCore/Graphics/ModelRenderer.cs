@@ -13,6 +13,17 @@ namespace AW2.Graphics
 
         private static GraphicsDevice GraphicsDevice { get { return AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice; } }
 
+        public static void DrawBorderedText(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 pos, Color baseColor, float alpha, float shadowThickness)
+        {
+            var textColor = Color.Multiply(baseColor, alpha);
+            var shadowColor = Color.Multiply(Color.Black, 0.4f * alpha);
+            spriteBatch.DrawString(font, text, pos + new Vector2(-shadowThickness, -shadowThickness), shadowColor);
+            spriteBatch.DrawString(font, text, pos + new Vector2(shadowThickness, -shadowThickness), shadowColor);
+            spriteBatch.DrawString(font, text, pos + new Vector2(-shadowThickness, shadowThickness), shadowColor);
+            spriteBatch.DrawString(font, text, pos + new Vector2(shadowThickness, shadowThickness), shadowColor);
+            spriteBatch.DrawString(font, text, pos, textColor);
+        }
+
         public static void Draw(Model model, Matrix world, Matrix view, Matrix projection, Matrix[] modelPartTransforms)
         {
             foreach (var mesh in model.Meshes)

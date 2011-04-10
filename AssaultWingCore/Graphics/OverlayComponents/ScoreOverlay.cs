@@ -48,25 +48,16 @@ namespace AW2.Graphics.OverlayComponents
                 var deathsPos = textTopLeft + new Vector2(playerNameWidth + scoreWidth + scoreEntryWidth, line * scoreLineSpacing);
                 var scoreText = entry.Score.ToString();
                 var killsText = entry.Kills.ToString();
-                var deathsText = entry.Suicides.ToString();
-                var rowColor = _player.ID == entry.SpectatorId ? Color.White : entry.PlayerColor;
+                var deathsText = entry.Deaths.ToString();
+                var rowColor = _player.ID == entry.SpectatorID ? Color.White : entry.PlayerColor;
 
-                DrawBorderedText(entry.Name, playerNamePos.Round(), _textFont, spriteBatch, rowColor);
-                DrawBorderedText(scoreText, scorePos.Round(), _scoreFont, spriteBatch, rowColor);
-                DrawBorderedText(killsText, killsPos.Round(), _textFont, spriteBatch, rowColor);
-                DrawBorderedText(deathsText, deathsPos.Round(), _textFont, spriteBatch, rowColor);
+                ModelRenderer.DrawBorderedText(spriteBatch, _textFont, entry.Name, playerNamePos.Round(), rowColor, 0.9f, 1);
+                ModelRenderer.DrawBorderedText(spriteBatch, _scoreFont, scoreText, scorePos.Round(), rowColor, 0.9f, 1);
+                ModelRenderer.DrawBorderedText(spriteBatch, _textFont, killsText, killsPos.Round(), rowColor, 0.9f, 1);
+                ModelRenderer.DrawBorderedText(spriteBatch, _textFont, deathsText, deathsPos.Round(), rowColor, 0.9f, 1);
 
                 ++line;
             }
-        }
-
-        private void DrawBorderedText(string text, Vector2 position, SpriteFont font, SpriteBatch batch, Color color)
-        {
-            batch.DrawString(font, text, position - Vector2.One, Color.Black);
-            batch.DrawString(font, text, position + new Vector2(1, -1), Color.Black);
-            batch.DrawString(font, text, position + new Vector2(-1, +1), Color.Black);
-            batch.DrawString(font, text, position + Vector2.One, Color.Black);
-            batch.DrawString(font, text, position, color);
         }
 
         public override void LoadContent()

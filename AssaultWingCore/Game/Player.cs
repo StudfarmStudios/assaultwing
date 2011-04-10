@@ -84,17 +84,6 @@ namespace AW2.Game
         private TimeSpan _lastRepairPendingNotify;
         private DeviceUsages _deviceUsages;
 
-        /// <summary>
-        /// Number of opposing players' ships this player has killed.
-        /// </summary>
-        private int _kills;
-
-        /// <summary>
-        /// Number of times this player has died for some other reason
-        /// than another player killing him.
-        /// </summary>
-        private int _suicides;
-
         #endregion Fields
 
         #region Player properties
@@ -228,22 +217,10 @@ namespace AW2.Game
             }
         }
 
+        public int Kills { get; private set; }
+        public int Deaths { get; private set; }
+
         #endregion Player properties
-
-        #region Player properties about statistics
-
-        /// <summary>
-        /// Number of opposing players' ships this player has killed.
-        /// </summary>
-        public int Kills { get { return _kills; } set { _kills = value; } }
-
-        /// <summary>
-        /// Number of times this player has died for some other reason
-        /// than another player killing him.
-        /// </summary>
-        public int Suicides { get { return _suicides; } set { _suicides = value; } }
-
-        #endregion Player properties about statistics
 
         #region Events
 
@@ -367,7 +344,7 @@ namespace AW2.Game
         /// </summary>
         public override void InitializeForGameSession()
         {
-            Kills = Suicides = 0;
+            Kills = Deaths = 0;
         }
 
         /// <summary>
@@ -432,8 +409,8 @@ namespace AW2.Game
                     {
                         writer.Write((byte)_deviceUsages);
                         writer.Write((short)Lives);
-                        writer.Write((short)_kills);
-                        writer.Write((short)_suicides);
+                        writer.Write((short)Kills);
+                        writer.Write((short)Deaths);
                     }
                 }
             }
@@ -457,8 +434,8 @@ namespace AW2.Game
                 var deviceUsages = (DeviceUsages)reader.ReadByte();
                 if (Ship != null) ApplyDeviceUsages(deviceUsages);
                 Lives = reader.ReadInt16();
-                _kills = reader.ReadInt16();
-                _suicides = reader.ReadInt16();
+                Kills = reader.ReadInt16();
+                Deaths = reader.ReadInt16();
             }
         }
 
@@ -507,15 +484,15 @@ namespace AW2.Game
             {
                 default: throw new ApplicationException("Unexpected DeathType " + coroner.DeathType);
                 case Coroner.DeathTypeType.Suicide:
-                    _suicides++;
                     break;
                 case Coroner.DeathTypeType.Kill:
-                    coroner.ScoringPlayer._kills++;
+                    coroner.ScoringPlayer.Kills++;
                     coroner.ScoringPlayer.KillsWithoutDying++;
                     if (Game.NetworkMode == NetworkMode.Server)
                         coroner.ScoringPlayer.MustUpdateToClients = true;
                     break;
             }
+            Deaths++;
             Lives--;
             KillsWithoutDying = 0;
         }

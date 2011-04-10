@@ -42,8 +42,8 @@ namespace AW2.Game.BonusActions
 
         public override void Activate()
         {
-            UpgradeWeapon();
             base.Activate();
+            UpgradeWeapon();
         }
 
         public override void Dispose()

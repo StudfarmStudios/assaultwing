@@ -68,6 +68,11 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             ResetTimeout();
+            if (Game.NetworkMode == Core.NetworkMode.Client)
+            {
+                foreach (var ba in Owner.BonusActions.Where(ba => ba != this && ba.GetType() == GetType()).ToArray()) ba.DieOnClient();
+                if (!Owner.BonusActions.Contains(this)) Owner.BonusActions.Add(this);
+            }
         }
 
         public override void Update()

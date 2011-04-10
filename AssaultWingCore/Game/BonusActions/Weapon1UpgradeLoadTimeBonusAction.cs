@@ -28,8 +28,8 @@ namespace AW2.Game.BonusActions
 
         public override void Activate()
         {
-            if (Owner.Ship != null) Owner.Ship.Weapon1.LoadTimeMultiplier *= _loadTimeMultiplier;
             base.Activate();
+            if (Owner.Ship != null) Owner.Ship.Weapon1.LoadTimeMultiplier *= _loadTimeMultiplier;
         }
 
         public override void Dispose()

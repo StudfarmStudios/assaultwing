@@ -122,5 +122,21 @@ namespace AW2.Helpers
                 .ToArray();
             return string.Join(",", bytes);
         }
+
+        public static bool EqualsDeep(this PresentationParameters a, PresentationParameters b)
+        {
+            return b != null
+                && a.BackBufferFormat == b.BackBufferFormat
+                && a.BackBufferHeight == b.BackBufferHeight
+                && a.BackBufferWidth == b.BackBufferWidth
+                && a.Bounds == b.Bounds
+                && a.DepthStencilFormat == b.DepthStencilFormat
+                && a.DeviceWindowHandle == b.DeviceWindowHandle
+                && a.DisplayOrientation == b.DisplayOrientation
+                && a.IsFullScreen == b.IsFullScreen
+                && a.MultiSampleCount == b.MultiSampleCount
+                && a.PresentationInterval == b.PresentationInterval
+                && a.RenderTargetUsage == b.RenderTargetUsage;
+        }
     }
 }

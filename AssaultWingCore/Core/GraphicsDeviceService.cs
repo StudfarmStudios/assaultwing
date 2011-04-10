@@ -26,6 +26,7 @@ namespace AW2.Core
     /// </summary>
     public class GraphicsDeviceService : IGraphicsDeviceService, IDisposable
     {
+        private PresentationParameters _oldParameters;
         private PresentationParameters _parameters;
 
         // IGraphicsDeviceService events.
@@ -104,7 +105,9 @@ namespace AW2.Core
             if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
             try
             {
-                GraphicsDevice.Reset(_parameters);
+                // FIXME !!! if (!_parameters.EqualsDeep(_oldParameters))
+                    GraphicsDevice.Reset(_parameters);
+                _oldParameters = _parameters;
             }
             catch (Exception e)
             {

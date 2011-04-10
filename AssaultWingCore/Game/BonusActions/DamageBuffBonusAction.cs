@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AW2.Core;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
@@ -17,6 +18,11 @@ namespace AW2.Game.BonusActions
         [TypeParameter]
         private float _damagePerSecond;
 
+        [TypeParameter]
+        private CanonicalString _pengTypeName;
+
+        private List<Gobs.Peng> _myPengs;
+
         public override string BonusText { get { return _buffName; } }
         public override CanonicalString BonusIconName { get { return _bonusIconName; } }
         public Gob Cause { get; set; }
@@ -29,11 +35,25 @@ namespace AW2.Game.BonusActions
             _buffName = "dummy damage buff";
             _bonusIconName = (CanonicalString)"dummytexture";
             _damagePerSecond = 500;
+            _pengTypeName = (CanonicalString)"dummypeng";
         }
 
         public DamageBuffBonusAction(CanonicalString typeName)
             : base(typeName)
         {
+        }
+
+        public override void Activate()
+        {
+            base.Activate();
+            if (_pengTypeName != "" && _myPengs == null)
+                _myPengs = GobHelper.CreatePengs(new[] { _pengTypeName }, Owner.Ship);
+        }
+
+        public override void Dispose()
+        {
+            if (_myPengs != null) foreach (var peng in _myPengs) peng.Die();
+            base.Dispose();
         }
 
         public override void Update()

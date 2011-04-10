@@ -2483,8 +2483,8 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="weapondefs\ForwardShot_madgun.xml">
-      <Name>ForwardShot_madgun</Name>
+    <None Include="weapondefs\ForwardShot_trizooka.xml">
+      <Name>ForwardShot_trizooka</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2987,8 +2987,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet_trizooka.xml">
-      <Name>Bullet_trizooka</Name>
+    <None Include="gobdefs\Bullet_trizooka shot.xml">
+      <Name>Bullet_trizooka shot</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

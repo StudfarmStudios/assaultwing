@@ -6,6 +6,7 @@
   </duration>
   <buffName>venom drop</buffName>
   <bonusIconName>b_icon_venomdrop</bonusIconName>
+  <pengTypeName>venom poisoning</pengTypeName>
   <damagePerSecond>10</damagePerSecond>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>

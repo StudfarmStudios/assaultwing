@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Bullet">
-  <typeName>trizooka</typeName>
+  <typeName>trizooka shot</typeName>
   <isRotating>false</isRotating>
   <rotationSpeed>0.0</rotationSpeed>
   <networkUpdatePeriod>

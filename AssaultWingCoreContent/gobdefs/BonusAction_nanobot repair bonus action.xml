@@ -6,6 +6,7 @@
   </duration>
   <buffName>nanobot repair</buffName>
   <bonusIconName>b_icon_repair</bonusIconName>
+  <pengTypeName></pengTypeName>
   <damagePerSecond>-10</damagePerSecond>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>

@@ -19,8 +19,9 @@ namespace AW2.Game.GobUtils
             }
         }
 
-        public static void CreatePengs(IEnumerable<CanonicalString> typeNames, Gob leader)
+        public static List<Peng> CreatePengs(IEnumerable<CanonicalString> typeNames, Gob leader)
         {
+            var result = new List<Peng>();
             foreach (var typeName in typeNames)
             {
                 Gob.CreateGob<Peng>(leader.Game, typeName, peng =>
@@ -28,8 +29,10 @@ namespace AW2.Game.GobUtils
                     peng.ResetPos(leader.Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                     peng.Leader = leader;
                     leader.Arena.Gobs.Add(peng);
+                    result.Add(peng);
                 });
             }
+            return result;
         }
     }
 }

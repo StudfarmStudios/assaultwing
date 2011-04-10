@@ -13,7 +13,7 @@
   <playerRelated>true</playerRelated>
   <emitter>
     <emissionFrequency>1</emissionFrequency>
-    <numberToCreate>-1</numberToCreate>
+    <numberToCreate>1</numberToCreate>
     <radius>0</radius>
     <sprayAngle>0.0</sprayAngle>
     <facingType>Directed</facingType>
@@ -27,7 +27,7 @@
     </initialVelocity>
   </emitter>
   <updater>
-    <areParticlesImmortal>false</areParticlesImmortal>
+    <areParticlesImmortal>true</areParticlesImmortal>
     <drag>0.0</drag>
     <particleAge type="AW2.Game.Pengs.ConstantValue">
       <value>1.2</value>
@@ -45,17 +45,8 @@
       <value>1.2</value>
     </scale>
     <alphaInputScale>0</alphaInputScale>
-    <alpha type="AW2.Game.Pengs.SimpleCurve">
-      <randomAmplitude>0</randomAmplitude>
-      <randomMixer>1</randomMixer>
-      <keys>
-        <Item>0.2</Item>
-        <Item>0.78</Item>
-        <Item>0.78</Item>
-        <Item>0.78</Item>
-        <Item>0.78</Item>
-        <Item>0.2</Item>
-      </keys>
+    <alpha type="AW2.Game.Pengs.ConstantValue">
+      <value>0.78</value>
     </alpha>
   </updater>
   <birthGobTypes/>

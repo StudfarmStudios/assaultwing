@@ -101,7 +101,7 @@ namespace AW2.Core
                     var now = _timer.Elapsed;
                     if (now + Waiter.PRECISION < nextUpdate)
                         Waiter.Instance.Sleep(nextUpdate - now);
-                    else if (now > nextUpdate + TimeSpan.FromSeconds(30))
+                    else if (now > nextUpdate + TimeSpan.FromSeconds(10))
                         nextUpdate = now;
                     else
                     {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.GobUtils;
@@ -13,6 +14,9 @@ namespace AW2.Game.Weapons
     /// </summary>
     public class Cloak : ShipDevice
     {
+        private static readonly TimeSpan ALPHA_FADE_OUT_TIME = TimeSpan.FromSeconds(1.5);
+        private static readonly TimeSpan ALPHA_FADE_IN_TIME = TimeSpan.FromSeconds(0.5);
+
         /// <summary>
         /// Values are between 0 (totally visible) and 1 (totally invisible).
         /// Argument is ship velocity in m/s (i.e. px/s).
@@ -25,6 +29,8 @@ namespace AW2.Game.Weapons
 
         private bool _active;
         private bool _weaponFiredHandlerAdded;
+        private bool _applyAlpha;
+        private TimeSpan _fadeStartTime;
         private SoundInstance _runningSound;
 
         /// <summary>
@@ -84,9 +90,16 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_active)
             {
-                Owner.Alpha = 1 - _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
+                var fadeAlphaMultiplier = MathHelper.Clamp((Owner.Game.DataEngine.ArenaTotalTime - _fadeStartTime).Divide(ALPHA_FADE_OUT_TIME), 0, 1);
+                Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
                 FiringOperator.UseChargeForOneFrame();
                 if (Charge == 0) DeactivateCloak();
+            }
+            else if (_applyAlpha)
+            {
+                var fadeAlphaMultiplier = 1 - MathHelper.Clamp((Owner.Game.DataEngine.ArenaTotalTime - _fadeStartTime).Divide(ALPHA_FADE_IN_TIME), 0, 1);
+                Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
+                if (fadeAlphaMultiplier == 0) _applyAlpha = false;
             }
         }
 
@@ -100,6 +113,8 @@ namespace AW2.Game.Weapons
                 PlayerOwner.Messages.Add(new PlayerMessage("Aktv8td", PlayerMessage.DEFAULT_COLOR));
             FiringOperator.NextFireSkipsLoadAndCharge = true;
             _runningSound.EnsureIsPlaying();
+            _fadeStartTime = Owner.Game.DataEngine.ArenaTotalTime;
+            _applyAlpha = true;
         }
 
         private void DeactivateCloak()
@@ -109,6 +124,7 @@ namespace AW2.Game.Weapons
             Owner.Alpha = 1;
             FiringOperator.NextFireSkipsLoadAndCharge = false;
             _runningSound.Stop();
+            _fadeStartTime = Owner.Game.DataEngine.ArenaTotalTime;
         }
 
         private void WeaponFiredHandler()

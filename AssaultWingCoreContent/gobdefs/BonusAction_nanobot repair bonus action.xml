@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.BonusActions.DamageBuffBonusAction">
+  <typeName>nanobot repair bonus action</typeName>
+  <duration>
+    <ticks>400000000</ticks>
+  </duration>
+  <buffName>nanobot repair</buffName>
+  <bonusIconName>b_icon_repair</bonusIconName>
+  <damagePerSecond>-10</damagePerSecond>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <maxDamage>10</maxDamage>
+  <mass>0</mass>
+  <scale>1</scale>
+  <modelName>dummymodel</modelName>
+  <movable>false</movable>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <deathGobTypes>
+  </deathGobTypes>
+  <birthGobTypes>
+  </birthGobTypes>
+  <exhaustEngineNames>
+  </exhaustEngineNames>
+  <collisionAreas>
+  </collisionAreas>
+</GobType>

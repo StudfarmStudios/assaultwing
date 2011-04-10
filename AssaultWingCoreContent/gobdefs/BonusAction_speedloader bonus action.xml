@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.BonusActions.Weapon1UpgradeLoadTimeBonusAction">
+  <typeName>speedloader bonus action</typeName>
+  <duration>
+    <ticks>600000000</ticks>
+  </duration>
+  <loadTimeMultiplier>0.6</loadTimeMultiplier>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <maxDamage>10</maxDamage>
+  <mass>0</mass>
+  <scale>1</scale>
+  <modelName>dummymodel</modelName>
+  <movable>false</movable>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <deathGobTypes>
+  </deathGobTypes>
+  <birthGobTypes>
+  </birthGobTypes>
+  <exhaustEngineNames>
+  </exhaustEngineNames>
+  <collisionAreas>
+  </collisionAreas>
+</GobType>

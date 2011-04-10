@@ -1684,6 +1684,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\clustermine.X">
+      <Name>clustermine</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\Peng_airstreaks.xml">
       <Name>Peng_airstreaks</Name>
       <Importer>XmlImporter</Importer>
@@ -2984,6 +2989,14 @@
   <ItemGroup>
     <None Include="gobdefs\Bullet_trizooka.xml">
       <Name>Bullet_trizooka</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gobdefs\FloatingBullet_clustermine.xml">
+      <Name>FloatingBullet_clustermine</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

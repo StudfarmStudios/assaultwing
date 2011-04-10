@@ -24,7 +24,7 @@
   <iconName>b_icon_mines</iconName>
   <fireSound>DropMines</fireSound>
   <fireSoundType>Once</fireSoundType>
-  <shotTypeName>mine</shotTypeName>
+  <shotTypeName>clustermine</shotTypeName>
   <shotSpeed>60</shotSpeed>
   <loadTime>6</loadTime>
   <fireCharge>500</fireCharge>

@@ -573,7 +573,8 @@ namespace AW2.Net
             foreach (var conn in GameClientConnections)
             {
                 var clientIsPlayingArena = conn.ConnectionStatus.IsRunningArena;
-                if (!clientIsPlayingArena && serverIsPlayingArena)
+                // Note: Some gobs refer to players, so start arena not until player info has been sent.
+                if (!clientIsPlayingArena && serverIsPlayingArena && conn.ConnectionStatus.HasPlayerSettings)
                     MakeClientStartArena(conn);
                 else if (clientIsPlayingArena && !serverIsPlayingArena)
                     MakeClientStopArena(conn);

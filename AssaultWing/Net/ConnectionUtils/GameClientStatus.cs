@@ -24,6 +24,7 @@
         /// </summary>
         public byte[] ClientKey { get; set; }
 
+        public bool HasPlayerSettings { get; set; }
         public bool IsDropped { get; set; }
     }
 }

@@ -733,15 +733,15 @@ namespace AW2.Core
         {
             if (_lastGameSettingsSent.SecondsAgoRealTime() < 1) return;
             _lastGameSettingsSent = GameTime.TotalRealTime;
-            switch (MenuEngine.Game.NetworkMode)
+            switch (NetworkMode)
             {
                 case NetworkMode.Client:
                     if (NetworkEngine.IsConnectedToGameServer)
-                        MenuEngine.Game.SendPlayerSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
+                        SendPlayerSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
                     break;
                 case NetworkMode.Server:
-                    MenuEngine.Game.SendPlayerSettingsToGameClients(p => true);
-                    SendGameSettingsToRemote(MenuEngine.Game.NetworkEngine.GameClientConnections);
+                    SendPlayerSettingsToGameClients(p => true);
+                    SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
                     break;
             }
         }
@@ -771,6 +771,7 @@ namespace AW2.Core
                 PlayerID = plr.ID,
             };
             SendPlayerSettingsToRemote(sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
+            foreach (var conn in NetworkEngine.GameClientConnections) conn.ConnectionStatus.HasPlayerSettings = true;
         }
 
         private void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest, IEnumerable<Connection> connections)

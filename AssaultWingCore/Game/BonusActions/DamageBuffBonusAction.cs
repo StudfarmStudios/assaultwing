@@ -46,7 +46,7 @@ namespace AW2.Game.BonusActions
         public override void Activate()
         {
             base.Activate();
-            if (_pengTypeName != "" && _myPengs == null)
+            if (_pengTypeName != "" && _myPengs == null && Owner.Ship != null)
                 _myPengs = GobHelper.CreatePengs(new[] { _pengTypeName }, Owner.Ship);
         }
 

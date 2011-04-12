@@ -2,12 +2,12 @@
 <GobType type="AW2.Game.BonusActions.DamageBuffBonusAction">
   <typeName>nanobot repair bonus action</typeName>
   <duration>
-    <ticks>400000000</ticks>
+    <ticks>150000000</ticks>
   </duration>
   <buffName>nanobot repair</buffName>
   <bonusIconName>b_icon_repair</bonusIconName>
   <pengTypeName>nanobot repair</pengTypeName>
-  <damagePerSecond>-10</damagePerSecond>
+  <damagePerSecond>-40</damagePerSecond>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>

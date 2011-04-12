@@ -14,6 +14,9 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             checked
             {
                 // Game settings request structure:

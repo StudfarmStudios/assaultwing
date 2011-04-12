@@ -43,6 +43,16 @@ namespace AW2.Settings
             InGameFullscreen = true;
         }
 
+        public void Validate()
+        {
+            if (GetDisplayModes().Contains(Tuple.Create(_fullscreenWidth, _fullscreenHeight))) return;
+
+            // Find a close match to the requested display mode.
+            var mode = GetDisplayModes().OrderBy(size => Math.Abs(size.Item1 * size.Item2 - _fullscreenWidth * _fullscreenHeight)).First();
+            _fullscreenWidth = mode.Item1;
+            _fullscreenHeight = mode.Item2;
+        }
+
         private static Tuple<int, int> GetDefaultFullscreenResolution()
         {
             return GetDisplayModes()

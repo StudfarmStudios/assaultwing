@@ -38,6 +38,7 @@ namespace AW2.Settings
                 if (settings != null)
                 {
                     settings.Filename = filename;
+                    settings.Validate();
                     return settings;
                 }
                 Log.Write("Errors while reading settings from " + filename);
@@ -69,6 +70,11 @@ namespace AW2.Settings
             Graphics.Reset();
             Controls.Reset();
             System.Reset();
+        }
+
+        public void Validate()
+        {
+            Graphics.Validate();
         }
     }
 }

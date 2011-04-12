@@ -227,14 +227,14 @@ namespace AW2.UI
         {
             // FIXME: Game update delegate is run in the Forms thread only because Keyboard update won't work otherwise. This should be fixed later.
             _runner = new AWGameRunner(_game,
-                () =>
+                draw: () =>
                 {
                     if (_isFullScreen)
                         BeginInvoke((Action)Invalidate);
                     else
                         _gameView.BeginInvoke((Action)_gameView.Invalidate);
                 },
-                gameTime => _gameView.BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
+                update: gameTime => _gameView.BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
         }
 
         private static FormParameters GetFullScreenFormParameters(int width, int height)

@@ -217,32 +217,8 @@ namespace AW2.Graphics
                 Draw_DrawParallaxIn3D(layer);
                 Draw_DrawParallaxWithSpriteBatch(layer);
 
-                // 3D graphics
-                foreach (var gob in layer.Gobs)
-                {
-                    var bounds = gob.DrawBounds;
-                    if (gob.IsVisible && bounds.Radius > 0 && Intersects(bounds, layer.Z))
-                        gob.Draw(view, projection);
-                }
-
-                // 2D graphics
-                DrawMode2D? drawMode = null;
-                var gameToScreenMatrix = GetGameToScreenMatrix(layer.Z);
-                layer.Gobs.ForEachIn2DOrder(gob =>
-                {
-                    if (!gob.IsVisible) return;
-                    if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
-                    {
-                        if (drawMode.HasValue)
-                            drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
-                        drawMode = gob.DrawMode2D;
-                        drawMode.Value.BeginDraw(AssaultWingCore.Instance, _spriteBatch);
-                    }
-                    gob.Draw2D(gameToScreenMatrix, _spriteBatch, layerScale * ZoomRatio);
-                });
-                if (drawMode.HasValue)
-                    drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
-
+                Draw3D(layer, ref view, ref projection);
+                Draw2D(layer, layerScale);
                 if (GobDrawn != null) foreach (var gob in layer.Gobs) GobDrawn(gob);
             }
         }
@@ -314,6 +290,36 @@ namespace AW2.Graphics
             gfx.Viewport = oldViewport;
         }
 
+        private void Draw3D(ArenaLayer layer, ref Matrix view, ref Matrix projection)
+        {
+            foreach (var gob in layer.Gobs)
+            {
+                var bounds = gob.DrawBounds;
+                if (gob.IsVisible && bounds.Radius > 0 && Intersects(bounds, layer.Z))
+                    gob.Draw(view, projection);
+            }
+        }
+
+        private void Draw2D(ArenaLayer layer, float layerScale)
+        {
+            DrawMode2D? drawMode = null;
+            var gameToScreenMatrix = GetGameToScreenMatrix(layer.Z);
+            layer.Gobs.ForEachIn2DOrder(gob =>
+            {
+                if (!gob.IsVisible) return;
+                if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
+                {
+                    if (drawMode.HasValue)
+                        drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
+                    drawMode = gob.DrawMode2D;
+                    drawMode.Value.BeginDraw(AssaultWingCore.Instance, _spriteBatch);
+                }
+                gob.Draw2D(gameToScreenMatrix, _spriteBatch, layerScale * ZoomRatio);
+            });
+            if (drawMode.HasValue)
+                drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
+        }
+
         private void DrawOverlayComponents()
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
@@ -343,7 +349,8 @@ namespace AW2.Graphics
             _effect.LightingEnabled = false;
             _effect.FogEnabled = false;
             _effect.VertexColorEnabled = false;
-            _vertexData = new VertexPositionTexture[] {
+            _vertexData = new[]
+            {
                 new VertexPositionTexture(new Vector3(-1, -1, 1), Vector2.UnitY),
                 new VertexPositionTexture(new Vector3(-1, 1, 1), Vector2.Zero),
                 new VertexPositionTexture(new Vector3(1, -1, 1), Vector2.One),
@@ -383,7 +390,7 @@ namespace AW2.Graphics
             }
             // Modify renderstate for 3D graphics.
             gfx.SamplerStates[0] = SamplerState.LinearWrap;
-            gfx.DepthStencilState = DepthStencilState.None;
+            gfx.DepthStencilState = DepthStencilState.Default;
             gfx.BlendState = BlendState.Opaque;
         }
 

@@ -410,13 +410,6 @@ namespace AW2.Game.Gobs
                     ? mode & ~SerializationModeFlags.VaryingData
                     : mode;
 
-                if ((shipMode & SerializationModeFlags.ConstantData) != 0)
-                {
-                    if (Weapon2 != null) writer.Write(Weapon2.TypeName);
-                    else writer.Write(CanonicalString.Null);
-                    if (ExtraDevice != null) writer.Write(ExtraDevice.TypeName);
-                    else writer.Write(CanonicalString.Null);
-                }
                 if ((shipMode & SerializationModeFlags.VaryingData) != 0)
                 {
                     writer.Write((byte)MathHelper.Clamp(_visualThrustForce * 255, 0, 255));
@@ -459,14 +452,6 @@ namespace AW2.Game.Gobs
                     DrawRotationOffset = 0;
             }
 
-            if ((shipMode & SerializationModeFlags.ConstantData) != 0)
-            {
-                SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
-                var weapon2TypeName = reader.ReadCanonicalString();
-                if (!weapon2TypeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, weapon2TypeName);
-                var extraTypeName = reader.ReadCanonicalString();
-                if (!extraTypeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, extraTypeName);
-            }
             if ((shipMode & SerializationModeFlags.VaryingData) != 0)
             {
                 _visualThrustForce = reader.ReadByte() / 255f;

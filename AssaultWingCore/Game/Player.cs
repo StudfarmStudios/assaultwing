@@ -384,8 +384,12 @@ namespace AW2.Game
         public void SeizeShip(Ship ship)
         {
             if (Ship == ship) return;
-            ship.Death += ShipDeathHandler;
             Ship = ship;
+            ship.Owner = this;
+            ship.Death += ShipDeathHandler;
+            ship.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
+            ship.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
+            ship.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
         }
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
@@ -629,10 +633,6 @@ namespace AW2.Game
             Gob.CreateGob<Ship>(Game, ShipName, newShip =>
             {
                 SeizeShip(newShip);
-                newShip.Owner = this;
-                newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
-                newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
-                newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
                 newShip.Rotation = Gob.DEFAULT_ROTATION; // must initialize rotation for SnakeShip.InitializeTailState()
                 Game.DataEngine.Arena.Gobs.Add(newShip);
                 SpawnPlayer.PositionNewShip(newShip);

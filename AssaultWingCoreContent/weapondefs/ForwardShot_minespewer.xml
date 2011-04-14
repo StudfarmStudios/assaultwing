@@ -36,6 +36,5 @@
   <shotSpeedVariation>0</shotSpeedVariation>
   <recoilMomentum>0</recoilMomentum>
   <muzzleFireEngineNames>
-    <Item>basic muzzle fire</Item>
   </muzzleFireEngineNames>
 </ShipDeviceType>

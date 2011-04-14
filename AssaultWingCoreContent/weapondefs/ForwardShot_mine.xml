@@ -39,6 +39,5 @@ Unloads 5 mines into a random formation</infoText>
   <shotSpeedVariation>150</shotSpeedVariation>
   <recoilMomentum>0</recoilMomentum>
   <muzzleFireEngineNames>
-    <Item>basic muzzle fire</Item>
   </muzzleFireEngineNames>
 </ShipDeviceType>

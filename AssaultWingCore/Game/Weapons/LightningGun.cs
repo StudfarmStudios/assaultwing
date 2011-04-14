@@ -51,10 +51,6 @@ namespace AW2.Game.Weapons
             FireAtTargets(FindTargets(potentialTargets));
         }
 
-        protected override void CreateVisualsImpl()
-        {
-        }
-
         public IEnumerable<Gob> FindTargets(IEnumerable<Gob> potentialTargets)
         {
             Gob current = Owner;

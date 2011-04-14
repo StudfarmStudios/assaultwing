@@ -94,7 +94,7 @@ namespace AW2.Game.Weapons
             Owner.Disable(); // re-enabled in Update()
         }
 
-        protected override void CreateVisualsImpl()
+        protected override void CreateVisuals()
         {
             if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
         }

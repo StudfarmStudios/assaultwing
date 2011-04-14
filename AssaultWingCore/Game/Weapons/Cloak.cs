@@ -88,10 +88,6 @@ namespace AW2.Game.Weapons
                 ActivateCloak();
         }
 
-        protected override void CreateVisualsImpl()
-        {
-        }
-
         public override void Update()
         {
             base.Update();

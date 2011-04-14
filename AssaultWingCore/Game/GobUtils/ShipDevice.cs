@@ -313,14 +313,9 @@ namespace AW2.Game.GobUtils
 
         #region Nonpublic methods
 
-        protected abstract void CreateVisualsImpl();
         protected abstract void ShootImpl();
+        protected virtual void CreateVisuals() { }
         protected virtual bool PermissionToFire() { return true; }
-
-        private void CreateVisuals()
-        {
-            CreateVisualsImpl();
-        }
 
         private void PlayFiringFailedSound()
         {
@@ -329,11 +324,6 @@ namespace AW2.Game.GobUtils
         }
 
         private void PlayFiringSound()
-        {
-            PlayFiringSoundImpl();
-        }
-
-        private void PlayFiringSoundImpl()
         {
             if (_fireSound != "") Owner.Game.SoundEngine.PlaySound(_fireSound, Owner);
         }

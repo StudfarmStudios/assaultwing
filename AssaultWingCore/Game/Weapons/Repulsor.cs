@@ -34,7 +34,7 @@ namespace AW2.Game.Weapons
             _radialFlow.Activate(Owner, Arena.TotalTime);
         }
 
-        protected override void CreateVisualsImpl()
+        protected override void CreateVisuals()
         {
             GobHelper.CreatePengs(_particleEngineNames, Owner);
         }

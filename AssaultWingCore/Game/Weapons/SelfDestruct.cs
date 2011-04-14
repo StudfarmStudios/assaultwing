@@ -33,9 +33,5 @@ namespace AW2.Game.Weapons
                     Arena.Gobs.Add(gob);
                 });
         }
-
-        protected override void CreateVisualsImpl()
-        {
-        }
     }
 }

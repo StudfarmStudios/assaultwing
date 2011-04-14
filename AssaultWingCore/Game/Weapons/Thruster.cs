@@ -73,7 +73,6 @@ namespace AW2.Game.Weapons
         }
 
         protected override void ShootImpl() { }
-        protected override void CreateVisualsImpl() { }
 
         private float FilterDamage(float damageAmount)
         {

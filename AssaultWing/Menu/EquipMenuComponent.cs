@@ -27,6 +27,7 @@ namespace AW2.Menu
         private static Curve g_readyFade;
 
         private EquipMenuTab _tab;
+        private ChatTab _chatTab;
         private List<EquipMenuTab> _tabs;
         private int _tabIndex;
         private bool _readyPressed;
@@ -138,7 +139,7 @@ namespace AW2.Menu
             _tabs = new List<EquipMenuTab>();
             _tabs.Add(new EquipTab(this));
             _tabs.Add(new PlayersTab(this));
-            if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone) _tabs.Add(new ChatTab(this));
+            if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone) _tabs.Add(_chatTab = new ChatTab(this));
             _tabs.Add(new MatchTab(this));
             _tab = _tabs[_tabIndex = 0];
             _readyPressed = false;
@@ -183,29 +184,25 @@ namespace AW2.Menu
             spriteBatch.Draw(_backgroundTexture, Pos - view, Color.White);
             DrawTabsAndButtons(view, spriteBatch);
             DrawStatusDisplay(view, spriteBatch);
-
-            if (_tab is ChatTab == false && MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
-                DrawExtraChatBox(view, spriteBatch);
-
+            DrawExtraChatBox(view, spriteBatch);
             _tab.Draw(view, spriteBatch);
-
-            if (_readyPressed && MenuEngine.Game.NetworkMode == NetworkMode.Client)
-                DrawExtraReadyMessage(view, spriteBatch);
+            DrawExtraReadyMessage(view, spriteBatch);
         }
 
         private void DrawExtraReadyMessage(Vector2 view, SpriteBatch spriteBatch)
         {
+            if (!_readyPressed || MenuEngine.Game.NetworkMode != NetworkMode.Client) return;
             var extraReadyMessagePos = Pos - view + new Vector2(844, 103);
             spriteBatch.Draw(_extraReadyMessageTexture, extraReadyMessagePos, Color.White);            
         }
 
         private void DrawExtraChatBox(Vector2 view, SpriteBatch spriteBatch)
         {
-            var extraChatBoxPos = Pos - view + new Vector2(540, 540);
-            var textStartPos = extraChatBoxPos + new Vector2(29, 28);
-
-            spriteBatch.Draw(_extraChatBoxTexture, extraChatBoxPos, Color.White);
-            spriteBatch.DrawString(Content.FontSmall, "Welcome to the BattleFront", textStartPos, Color.White);
+            if (_chatTab == null || _tab == _chatTab || MenuEngine.Game.NetworkMode == NetworkMode.Standalone) return;
+            var extraChatBoxPos = Pos + new Vector2(540, 540);
+            var textLowerLeftPos = extraChatBoxPos + new Vector2(29, 131);
+            spriteBatch.Draw(_extraChatBoxTexture, extraChatBoxPos - view, Color.White);
+            _chatTab.DrawChatMessages(view, spriteBatch, textLowerLeftPos, 110);
         }
 
         private void DrawTabsAndButtons(Vector2 view, SpriteBatch spriteBatch)

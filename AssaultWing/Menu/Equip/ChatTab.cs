@@ -49,15 +49,15 @@ namespace AW2.Menu.Equip
         {
             DrawLargeStatusBackground(view, spriteBatch);
             DrawPlayerListDisplay(view, spriteBatch);
-            DrawChatMessages(view, spriteBatch);
+            DrawChatMessages(view, spriteBatch, TypingPos, Content.StatusPaneTexture.Height - 70);
             DrawChatTextInputBox(view, spriteBatch);
         }
 
-        private void DrawChatMessages(Vector2 view, SpriteBatch spriteBatch)
+        public void DrawChatMessages(Vector2 view, SpriteBatch spriteBatch, Vector2 lowerLeftCorner, int height)
         {
-            var visibleLines = (Content.StatusPaneTexture.Height - 70) / Font.LineSpacing;
+            var visibleLines = height / Font.LineSpacing;
             var lineDelta = new Vector2(0, Font.LineSpacing);
-            var preTextPos = TypingPos - view - lineDelta;
+            var preTextPos = lowerLeftCorner - view - lineDelta;
             foreach (var item in Messages.Reversed().Take(visibleLines))
             {
                 var preTextSize = Font.MeasureString(item.Message.PreText);

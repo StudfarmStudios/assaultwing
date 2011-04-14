@@ -14,6 +14,8 @@ namespace AW2.Game.Weapons
     /// </summary>
     public class Cloak : ShipDevice
     {
+        private static readonly TimeSpan DEACTIVATION_SAFETY_TIMEOUT_DURATION = TimeSpan.FromSeconds(0.5);
+
         [TypeParameter]
         private TimeSpan _fadeOutDuration;
         [TypeParameter]
@@ -35,6 +37,7 @@ namespace AW2.Game.Weapons
         private bool _weaponFiredHandlerAdded;
         private bool _applyAlpha;
         private TimeSpan _fadeStartTime;
+        private TimeSpan _deactivationSafetyTimeout;
         private SoundInstance _runningSound;
 
         /// <summary>
@@ -77,6 +80,11 @@ namespace AW2.Game.Weapons
             base.Dispose();
         }
 
+        protected override bool PermissionToFire()
+        {
+            return !_active || Owner.Arena.TotalTime > _deactivationSafetyTimeout;
+        }
+
         protected override void ShootImpl()
         {
             if (_active)
@@ -93,7 +101,7 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_active)
             {
-                var fadeAlphaMultiplier = MathHelper.Clamp((Owner.Game.DataEngine.ArenaTotalTime - _fadeStartTime).Divide(_fadeOutDuration), 0, 1);
+                var fadeAlphaMultiplier = MathHelper.Clamp((Owner.Arena.TotalTime - _fadeStartTime).Divide(_fadeOutDuration), 0, 1);
                 Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
                 if (fadeAlphaMultiplier > 0.5f) Owner.IsHidden = true;
                 FiringOperator.UseChargeForOneFrame();
@@ -101,7 +109,7 @@ namespace AW2.Game.Weapons
             }
             else if (_applyAlpha)
             {
-                var fadeAlphaMultiplier = 1 - MathHelper.Clamp((Owner.Game.DataEngine.ArenaTotalTime - _fadeStartTime).Divide(_fadeInDuration), 0, 1);
+                var fadeAlphaMultiplier = 1 - MathHelper.Clamp((Owner.Arena.TotalTime - _fadeStartTime).Divide(_fadeInDuration), 0, 1);
                 Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
                 if (fadeAlphaMultiplier == 0) _applyAlpha = false;
             }
@@ -116,7 +124,8 @@ namespace AW2.Game.Weapons
                 PlayerOwner.Messages.Add(new PlayerMessage("Aktv8td", PlayerMessage.DEFAULT_COLOR));
             FiringOperator.NextFireSkipsLoadAndCharge = true;
             _runningSound.EnsureIsPlaying();
-            _fadeStartTime = Owner.Game.DataEngine.ArenaTotalTime;
+            _fadeStartTime = Owner.Arena.TotalTime;
+            _deactivationSafetyTimeout = Owner.Arena.TotalTime + DEACTIVATION_SAFETY_TIMEOUT_DURATION;
             _applyAlpha = true;
         }
 
@@ -127,7 +136,7 @@ namespace AW2.Game.Weapons
             Owner.Alpha = 1;
             FiringOperator.NextFireSkipsLoadAndCharge = false;
             _runningSound.Stop();
-            _fadeStartTime = Owner.Game.DataEngine.ArenaTotalTime;
+            _fadeStartTime = Owner.Arena.TotalTime;
         }
 
         private void WeaponFiredHandler()

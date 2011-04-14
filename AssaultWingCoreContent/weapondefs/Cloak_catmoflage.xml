@@ -54,7 +54,14 @@
       </Item>
     </keys>
   </cloakStrengthForVelocity>
+  <fadeOutDuration>
+    <ticks>15000000</ticks>
+  </fadeOutDuration>
+  <fadeInDuration>
+    <ticks>5000000</ticks>
+  </fadeInDuration>
   <runningSoundName>purpur</runningSoundName>
+  <breakOutSoundName>angry</breakOutSoundName>
   <fireSound>meow</fireSound>
   <fireSoundType>Once</fireSoundType>
   <iconName>menu_equip_mod_catmoflage</iconName>

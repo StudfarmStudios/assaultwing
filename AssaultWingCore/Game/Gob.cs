@@ -817,7 +817,7 @@ namespace AW2.Game
                 ModelRenderer.Draw(Model, WorldMatrix, view, projection, ModelPartTransforms);
             if (IsHidden && Owner != null && !Owner.IsRemote)
             {
-                var outlineAlpha = Alpha < 0.01f ? 1 : Math.Max(0.05f, 0.3f - Alpha);
+                var outlineAlpha = Alpha < 0.01f ? 1 : Math.Max(0.05f, 0.3f - 2 * Alpha);
                 ModelRenderer.DrawOutlineTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, outlineAlpha);
             }
         }

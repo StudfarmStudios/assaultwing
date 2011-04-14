@@ -14,8 +14,10 @@ namespace AW2.Game.Weapons
     /// </summary>
     public class Cloak : ShipDevice
     {
-        private static readonly TimeSpan ALPHA_FADE_OUT_TIME = TimeSpan.FromSeconds(1.5);
-        private static readonly TimeSpan ALPHA_FADE_IN_TIME = TimeSpan.FromSeconds(0.5);
+        [TypeParameter]
+        private TimeSpan _fadeOutDuration;
+        [TypeParameter]
+        private TimeSpan _fadeInDuration;
 
         /// <summary>
         /// Values are between 0 (totally visible) and 1 (totally invisible).
@@ -26,6 +28,8 @@ namespace AW2.Game.Weapons
 
         [TypeParameter]
         private string _runningSoundName;
+        [TypeParameter]
+        private string _breakOutSoundName;
 
         private bool _active;
         private bool _weaponFiredHandlerAdded;
@@ -38,6 +42,8 @@ namespace AW2.Game.Weapons
         /// </summary>
         public Cloak()
         {
+            _fadeOutDuration = TimeSpan.FromSeconds(1.5);
+            _fadeInDuration = TimeSpan.FromSeconds(0.5);
             _cloakStrengthForVelocity = new Curve();
             _cloakStrengthForVelocity.Keys.Add(new CurveKey(0, 0.99f));
             _cloakStrengthForVelocity.Keys.Add(new CurveKey(100, 0.95f));
@@ -46,6 +52,7 @@ namespace AW2.Game.Weapons
             _cloakStrengthForVelocity.PreLoop = CurveLoopType.Constant;
             _cloakStrengthForVelocity.PostLoop = CurveLoopType.Constant;
             _runningSoundName = "dummysound";
+            _breakOutSoundName = "angry";
         }
 
         public Cloak(CanonicalString typeName)
@@ -90,14 +97,15 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_active)
             {
-                var fadeAlphaMultiplier = MathHelper.Clamp((Owner.Game.DataEngine.ArenaTotalTime - _fadeStartTime).Divide(ALPHA_FADE_OUT_TIME), 0, 1);
+                var fadeAlphaMultiplier = MathHelper.Clamp((Owner.Game.DataEngine.ArenaTotalTime - _fadeStartTime).Divide(_fadeOutDuration), 0, 1);
                 Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
+                if (fadeAlphaMultiplier > 0.5f) Owner.IsHidden = true;
                 FiringOperator.UseChargeForOneFrame();
                 if (Charge == 0) DeactivateCloak();
             }
             else if (_applyAlpha)
             {
-                var fadeAlphaMultiplier = 1 - MathHelper.Clamp((Owner.Game.DataEngine.ArenaTotalTime - _fadeStartTime).Divide(ALPHA_FADE_IN_TIME), 0, 1);
+                var fadeAlphaMultiplier = 1 - MathHelper.Clamp((Owner.Game.DataEngine.ArenaTotalTime - _fadeStartTime).Divide(_fadeInDuration), 0, 1);
                 Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
                 if (fadeAlphaMultiplier == 0) _applyAlpha = false;
             }
@@ -108,7 +116,6 @@ namespace AW2.Game.Weapons
             if (!_weaponFiredHandlerAdded) PlayerOwner.WeaponFired += WeaponFiredHandler;
             _weaponFiredHandlerAdded = true;
             _active = true;
-            Owner.IsHidden = true;
             if (Owner.Game.NetworkMode != Core.NetworkMode.Client)
                 PlayerOwner.Messages.Add(new PlayerMessage("Aktv8td", PlayerMessage.DEFAULT_COLOR));
             FiringOperator.NextFireSkipsLoadAndCharge = true;
@@ -131,7 +138,7 @@ namespace AW2.Game.Weapons
         {
             if (!_active) return;
             DeactivateCloak();
-            Owner.Game.SoundEngine.PlaySound("angry", Owner);
+            Owner.Game.SoundEngine.PlaySound(_breakOutSoundName, Owner);
         }
     }
 }

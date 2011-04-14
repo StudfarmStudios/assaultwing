@@ -27,6 +27,7 @@ of the heavy mass is the great recoil</infoText>
   <iconName>b_icon_bouncegun</iconName>
   <fireSound>Bazooka</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>bomb</shotTypeName>
   <shotSpeed>650</shotSpeed>
   <loadTime>3</loadTime>

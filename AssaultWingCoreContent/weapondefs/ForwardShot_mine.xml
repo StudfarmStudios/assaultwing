@@ -27,6 +27,7 @@ Unloads 5 mines into a random formation</infoText>
   <iconName>b_icon_mines</iconName>
   <fireSound>DropMines</fireSound>
   <fireSoundType>Once</fireSoundType>
+  <fireEffectType>Once</fireEffectType>
   <shotTypeName>mine</shotTypeName>
   <shotSpeed>200</shotSpeed>
   <loadTime>8</loadTime>

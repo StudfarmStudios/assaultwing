@@ -25,6 +25,7 @@
   <iconName>dummytexture</iconName>
   <fireSound>dummysound</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
   <shotCount>6</shotCount>
   <shotSpacing>0</shotSpacing>
   <shotAngleVariation>0.2</shotAngleVariation>

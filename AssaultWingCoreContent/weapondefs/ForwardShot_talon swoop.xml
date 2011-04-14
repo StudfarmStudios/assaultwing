@@ -25,6 +25,7 @@
   <shotSpeed>480</shotSpeed>
   <fireSound>Talon</fireSound>
   <fireSoundType>Once</fireSoundType>
+  <fireEffectType>Once</fireEffectType>
   <shotCount>6</shotCount>
   <shotSpacing>0.02</shotSpacing>
   <shotTypeName>talon</shotTypeName>

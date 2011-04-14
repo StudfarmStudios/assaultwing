@@ -32,6 +32,7 @@
   <shotSpacing>0</shotSpacing>
   <fireSound></fireSound>
   <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
   <shieldEffectName>ramshield</shieldEffectName>
   <ramEffectName>ramdamage</ramEffectName>
 </ShipDeviceType>

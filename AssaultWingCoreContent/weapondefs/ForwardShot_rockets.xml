@@ -30,6 +30,7 @@ eventually run out of juice.</infoText>
   <iconName>b_icon_berserkers</iconName>
   <fireSound>Missile</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>rocket</shotTypeName>
   <shotSpeed>150</shotSpeed>
   <loadTime>4</loadTime>

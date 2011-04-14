@@ -24,6 +24,7 @@
   <iconName>b_icon_berserkers</iconName>
   <fireSound>Missile</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>berserker</shotTypeName>
   <shotSpeed>150</shotSpeed>
   <loadTime>5</loadTime>

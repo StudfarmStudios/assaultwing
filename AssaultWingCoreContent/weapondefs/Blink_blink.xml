@@ -18,6 +18,7 @@ blink inside a wall</infoText>
   <typeName>blink</typeName>
   <fireSound>Blink</fireSound>
   <fireSoundType>Once</fireSoundType>
+  <fireEffectType>Once</fireEffectType>
   <blinkMoveSpeed>1200</blinkMoveSpeed>
   <blinkDistance>500</blinkDistance>
   <iconName>menu_equip_mod_blink</iconName>

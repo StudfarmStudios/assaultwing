@@ -19,15 +19,15 @@ namespace AW2.Game.GobUtils
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
         public enum FiringResult { Success, Failure, Void };
 
-        public enum FiringSoundType
+        public enum FiringEffectPlayType
         {
             /// <summary>
-            /// Play firing sound once at the beginning of the burst.
+            /// Play effect once at the beginning of the burst.
             /// </summary>
             Once,
 
             /// <summary>
-            /// Play firing sound once for every shot but at most once each frame.
+            /// Play effect once for every shot but at most once each frame.
             /// </summary>
             EveryShot
         }
@@ -51,7 +51,13 @@ namespace AW2.Game.GobUtils
         /// How to play the firing sound.
         /// </summary>
         [TypeParameter]
-        private FiringSoundType _fireSoundType;
+        private FiringEffectPlayType _fireSoundType;
+
+        /// <summary>
+        /// How to play the firing visual effect.
+        /// </summary>
+        [TypeParameter]
+        private FiringEffectPlayType _fireEffectType;
 
         /// <summary>
         /// Number of shots to shoot in a series.
@@ -186,7 +192,8 @@ namespace AW2.Game.GobUtils
         {
             _iconName = (CanonicalString)"dummytexture";
             _fireSound = "dummysound";
-            _fireSoundType = FiringSoundType.EveryShot;
+            _fireSoundType = FiringEffectPlayType.EveryShot;
+            _fireEffectType = FiringEffectPlayType.EveryShot;
             _shotCount = 3;
             _shotSpacing = 0.2f;
             _loadTime = 0.5f;
@@ -241,7 +248,8 @@ namespace AW2.Game.GobUtils
             {
                 case FiringResult.Success:
                     FiringOperator.StartFiring();
-                    if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
+                    if (_fireSoundType == FiringEffectPlayType.Once) PlayFiringSound();
+                    if (_fireEffectType == FiringEffectPlayType.Once) CreateVisuals();
                     break;
                 case FiringResult.Failure:
                     PlayFiringFailedSound();
@@ -259,8 +267,8 @@ namespace AW2.Game.GobUtils
             while (FiringOperator.IsItTimeToShoot && !(shootOnceAFrame && shotThisFrame))
             {
                 shotThisFrame = true;
-                if (_fireSoundType == FiringSoundType.EveryShot) PlayFiringSound();
-                CreateVisuals();
+                if (_fireSoundType == FiringEffectPlayType.EveryShot) PlayFiringSound();
+                if (_fireEffectType == FiringEffectPlayType.EveryShot) CreateVisuals();
                 ShootImpl();
                 FiringOperator.ShotFired();
             }

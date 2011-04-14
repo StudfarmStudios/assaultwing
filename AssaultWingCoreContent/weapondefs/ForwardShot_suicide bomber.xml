@@ -25,6 +25,7 @@
   <typeName>suicide bomber</typeName>
   <fireSound></fireSound>
   <fireSoundType>Once</fireSoundType>
+  <fireEffectType>Once</fireEffectType>
   <upgradeNames>
   </upgradeNames>
   <shotTypeName>bomb</shotTypeName>

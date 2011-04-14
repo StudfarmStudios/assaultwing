@@ -24,6 +24,7 @@
   <iconName>b_icon_bouncegun</iconName>
   <fireSound>Bazooka</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>trizooka shot</shotTypeName>
   <shotSpeed>650</shotSpeed>
   <loadTime>3</loadTime>

@@ -22,6 +22,7 @@
   <chainLinkRangeMultiplier>0.8</chainLinkRangeMultiplier>
   <fireSound>LightningWeapon</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
   <upgradeNames>
   </upgradeNames>
   <iconName>dummytexture</iconName>

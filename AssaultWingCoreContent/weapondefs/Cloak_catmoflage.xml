@@ -64,6 +64,7 @@
   <breakOutSoundName>angry</breakOutSoundName>
   <fireSound>meow</fireSound>
   <fireSoundType>Once</fireSoundType>
+  <fireEffectType>Once</fireEffectType>
   <iconName>menu_equip_mod_catmoflage</iconName>
   <loadTime>12</loadTime>
   <fireCharge>0</fireCharge>

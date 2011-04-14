@@ -25,6 +25,7 @@
   <shotSpeed>650</shotSpeed>
   <fireSound>VenomSpray</fireSound>
   <fireSoundType>Once</fireSoundType>
+  <fireEffectType>Once</fireEffectType>
   <shotCount>1</shotCount>
   <shotSpacing>0.01</shotSpacing>
   <shotTypeName>venom drop</shotTypeName>

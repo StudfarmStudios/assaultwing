@@ -740,7 +740,7 @@ namespace AW2.Core
                         SendPlayerSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
                     break;
                 case NetworkMode.Server:
-                    SendPlayerSettingsToGameClients(p => true);
+                    SendPlayerSettingsToGameClients(p => p.ID != Player.UNINITIALIZED_ID);
                     SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
                     break;
             }

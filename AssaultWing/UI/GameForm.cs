@@ -209,11 +209,11 @@ namespace AW2.UI
                 setTitle: text => BeginInvoke((Action)(() => Text = text)),
                 getClientBounds: () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height),
                 getFullScreen: () => _isFullScreen,
-                setWindowed: () => BeginInvoke((Action)(() => SetWindowed())),
-                setFullScreen: (width, height) => BeginInvoke((Action)(() => SetFullScreen(width, height))),
+                setWindowed: () => BeginInvoke((Action)SetWindowed),
+                setFullScreen: (width, height) => BeginInvoke((Action<int, int>)SetFullScreen, width, height),
                 isVerticalSynced: () => _graphicsDeviceService.IsVerticalSynced,
-                enableVerticalSync: _graphicsDeviceService.EnableVerticalSync,
-                disableVerticalSync: _graphicsDeviceService.DisableVerticalSync);
+                enableVerticalSync: () => BeginInvoke((Action)_graphicsDeviceService.EnableVerticalSync),
+                disableVerticalSync: () => BeginInvoke((Action)_graphicsDeviceService.DisableVerticalSync));
             _gameView.Draw += _game.Draw;
             _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }

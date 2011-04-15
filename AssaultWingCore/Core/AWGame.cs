@@ -89,6 +89,7 @@ namespace AW2.Core
         /// </summary>
         public virtual void Draw()
         {
+            GraphicsDeviceService.CheckThread();
             foreach (var component in Components)
                 if (component.Visible) component.Draw();
         }

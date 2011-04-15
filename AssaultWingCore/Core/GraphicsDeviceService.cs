@@ -28,6 +28,7 @@ namespace AW2.Core
     {
         private PresentationParameters _oldParameters;
         private PresentationParameters _parameters;
+        private int _graphicsThreadID;
 
         // IGraphicsDeviceService events.
         public event EventHandler<EventArgs> DeviceCreated;
@@ -37,6 +38,25 @@ namespace AW2.Core
 
         public GraphicsDevice GraphicsDevice { get; private set; }
         public bool IsVerticalSynced { get { return _parameters.PresentationInterval != PresentInterval.Immediate; } }
+
+        /// <summary>
+        /// If we do not have a valid graphics device (for instance if the device
+        /// is lost, or if we are running inside the Form designer), we must use
+        /// regular System.Drawing method to display a status message.
+        /// </summary>
+        public static void PaintUsingSystemDrawing(System.Drawing.Graphics graphics, Font font, RectangleF rectangle, string text)
+        {
+            graphics.Clear(Color.CornflowerBlue);
+            using (var brush = new SolidBrush(Color.Black))
+            {
+                using (var format = new StringFormat())
+                {
+                    format.Alignment = StringAlignment.Center;
+                    format.LineAlignment = StringAlignment.Center;
+                    graphics.DrawString(text, font, brush, rectangle, format);
+                }
+            }
+        }
 
         public GraphicsDeviceService(IntPtr windowHandle)
         {
@@ -63,12 +83,20 @@ namespace AW2.Core
                 }
             }
 
+            _graphicsThreadID = Thread.CurrentThread.ManagedThreadId;
             GraphicsDevice = new GraphicsDevice(useAdapter, GraphicsProfile.Reach, _parameters);
             if (DeviceCreated != null) DeviceCreated(this, EventArgs.Empty);
         }
 
+        public void CheckThread()
+        {
+            if (Thread.CurrentThread.ManagedThreadId != _graphicsThreadID)
+                throw new ApplicationException("Wrong thread for graphics");
+        }
+
         public void Dispose()
         {
+            CheckThread();
             if (DeviceDisposing != null) DeviceDisposing(this, EventArgs.Empty);
             GraphicsDevice.Dispose();
             GraphicsDevice = null;
@@ -100,23 +128,6 @@ namespace AW2.Core
             ResetDevice();
         }
 
-        private Exception ResetDevice()
-        {
-            if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
-            try
-            {
-                // FIXME !!! if (!_parameters.EqualsDeep(_oldParameters))
-                    GraphicsDevice.Reset(_parameters);
-                _oldParameters = _parameters;
-            }
-            catch (Exception e)
-            {
-                return e;
-            }
-            if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
-            return null;
-        }
-
         /// <summary>
         /// Attempts to begin drawing the control. Returns an error message string
         /// if this was not possible, which can happen if the graphics device is
@@ -124,6 +135,7 @@ namespace AW2.Core
         /// </summary>
         public string BeginDraw(Size clientSize, bool isFullscreen)
         {
+            CheckThread();
             var deviceResetError = HandleDeviceReset(clientSize, isFullscreen);
             if (deviceResetError == null)
                 GraphicsDevice.Viewport = new Viewport
@@ -161,13 +173,31 @@ namespace AW2.Core
             }
         }
 
+        private Exception ResetDevice()
+        {
+            CheckThread();
+            if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
+            try
+            {
+                // FIXME !!! if (!_parameters.EqualsDeep(_oldParameters))
+                GraphicsDevice.Reset(_parameters);
+                _oldParameters = _parameters;
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
+            if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
+            return null;
+        }
+
         /// <summary>
         /// Helper used by BeginDraw. This checks the graphics device status,
         /// making sure it is big enough for drawing the current control, and
         /// that the device is not lost. Returns an error string if the device
         /// could not be reset.
         /// </summary>
-        public string HandleDeviceReset(Size clientSize, bool isFullscreen)
+        private string HandleDeviceReset(Size clientSize, bool isFullscreen)
         {
             bool deviceNeedsReset = false;
             switch (GraphicsDevice.GraphicsDeviceStatus)
@@ -196,25 +226,6 @@ namespace AW2.Core
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// If we do not have a valid graphics device (for instance if the device
-        /// is lost, or if we are running inside the Form designer), we must use
-        /// regular System.Drawing method to display a status message.
-        /// </summary>
-        public static void PaintUsingSystemDrawing(System.Drawing.Graphics graphics, Font font, RectangleF rectangle, string text)
-        {
-            graphics.Clear(Color.CornflowerBlue);
-            using (var brush = new SolidBrush(Color.Black))
-            {
-                using (var format = new StringFormat())
-                {
-                    format.Alignment = StringAlignment.Center;
-                    format.LineAlignment = StringAlignment.Center;
-                    graphics.DrawString(text, font, brush, rectangle, format);
-                }
-            }
         }
 
         private Exception EnsureBackBufferSize(int width, int height)

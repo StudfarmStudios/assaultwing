@@ -28,18 +28,26 @@ namespace AW2.Core
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
-            var beginDrawError = DesignMode
-                ? Text + "\n\n" + GetType()
-                : GraphicsDeviceService.BeginDraw(ClientSize, false);
-            if (beginDrawError == null)
+            GraphicsDeviceService.CheckReentrancyBegin();
+            try
             {
-                if (Draw != null) Draw();
-                GraphicsDeviceService.EndDraw(ClientSize, Handle);
+                base.OnPaint(e);
+                var beginDrawError = DesignMode
+                    ? Text + "\n\n" + GetType()
+                    : GraphicsDeviceService.BeginDraw(ClientSize, false);
+                if (beginDrawError == null)
+                {
+                    if (Draw != null) Draw();
+                    GraphicsDeviceService.EndDraw(ClientSize, Handle);
+                }
+                else
+                {
+                    GraphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
+                }
             }
-            else
+            finally
             {
-                GraphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
+                GraphicsDeviceService.CheckReentrancyEnd();
             }
         }
 

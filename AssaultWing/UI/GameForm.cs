@@ -170,16 +170,24 @@ namespace AW2.UI
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
-            if (!_isFullScreen) return;
-            var beginDrawError = _graphicsDeviceService.BeginDraw(ClientSize, true);
-            if (beginDrawError == null)
+            _graphicsDeviceService.CheckReentrancyBegin();
+            try
             {
-                _game.Draw();
-                _graphicsDeviceService.EndDraw(ClientSize, Handle);
+                base.OnPaint(e);
+                if (!_isFullScreen) return;
+                var beginDrawError = _graphicsDeviceService.BeginDraw(ClientSize, true);
+                if (beginDrawError == null)
+                {
+                    _game.Draw();
+                    _graphicsDeviceService.EndDraw(ClientSize, Handle);
+                }
+                else
+                    GraphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
             }
-            else
-                GraphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
+            finally
+            {
+                _graphicsDeviceService.CheckReentrancyEnd();
+            }
         }
 
         protected override void OnPaintBackground(PaintEventArgs pevent)

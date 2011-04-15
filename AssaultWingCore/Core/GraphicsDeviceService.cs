@@ -7,6 +7,7 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,6 +30,7 @@ namespace AW2.Core
         private PresentationParameters _oldParameters;
         private PresentationParameters _parameters;
         private int _graphicsThreadID;
+        private bool _graphicsCodeIsExecuting;
 
         // IGraphicsDeviceService events.
         public event EventHandler<EventArgs> DeviceCreated;
@@ -71,17 +73,12 @@ namespace AW2.Core
                 IsFullScreen = false,
                 PresentationInterval = PresentInterval.Immediate,
             };
-            
-            GraphicsAdapter useAdapter = GraphicsAdapter.DefaultAdapter;
-            foreach (GraphicsAdapter adapter in GraphicsAdapter.Adapters)
-            {
-                if (adapter.Description.Contains("PerfHUD"))
-                {
-                    useAdapter = adapter;
-                    GraphicsAdapter.UseReferenceDevice = true;
-                    break;
-                }
-            }
+
+            var useAdapter = GraphicsAdapter.Adapters.FirstOrDefault(a => a.Description.Contains("PerfHUD"));
+            if (useAdapter != null)
+                GraphicsAdapter.UseReferenceDevice = true;
+            else
+                useAdapter = GraphicsAdapter.DefaultAdapter;
 
             _graphicsThreadID = Thread.CurrentThread.ManagedThreadId;
             GraphicsDevice = new GraphicsDevice(useAdapter, GraphicsProfile.Reach, _parameters);
@@ -94,38 +91,60 @@ namespace AW2.Core
                 throw new ApplicationException("Wrong thread for graphics");
         }
 
+        public void CheckReentrancyBegin()
+        {
+            if (_graphicsCodeIsExecuting) throw new ApplicationException("Reentrant graphics code");
+            _graphicsCodeIsExecuting = true;
+        }
+
+        public void CheckReentrancyEnd()
+        {
+            if (!_graphicsCodeIsExecuting) throw new InvalidOperationException("Reentrancy check end without begin");
+            _graphicsCodeIsExecuting = false;
+        }
+
         public void Dispose()
         {
+            CheckReentrancyBegin();
             CheckThread();
             if (DeviceDisposing != null) DeviceDisposing(this, EventArgs.Empty);
             GraphicsDevice.Dispose();
             GraphicsDevice = null;
+            CheckReentrancyEnd();
         }
 
         public void SetFullScreen(int width, int height)
         {
+            CheckReentrancyBegin();
             _parameters.BackBufferWidth = width;
             _parameters.BackBufferHeight = height;
             _parameters.IsFullScreen = true;
             ResetDevice();
+            CheckReentrancyEnd();
         }
 
         public void SetWindowed()
         {
+            CheckReentrancyBegin();
             _parameters.IsFullScreen = false;
             ResetDevice();
+            CheckReentrancyEnd();
         }
 
         public void EnableVerticalSync()
         {
+            CheckReentrancyBegin();
             _parameters.PresentationInterval = PresentInterval.One;
             ResetDevice();
+            CheckReentrancyEnd();
         }
 
         public void DisableVerticalSync()
         {
+            CheckReentrancyBegin();
             _parameters.PresentationInterval = PresentInterval.Immediate;
             ResetDevice();
+            CheckReentrancyEnd();
         }
 
         /// <summary>

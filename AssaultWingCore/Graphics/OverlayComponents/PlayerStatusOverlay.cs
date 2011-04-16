@@ -188,6 +188,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             var content = AssaultWingCore.Instance.Content;
             _statusDisplayTexture = content.Load<Texture2D>("gui_playerinfo_bg");
             _barShipTexture = content.Load<Texture2D>("gui_playerinfo_bar_ship");

@@ -59,12 +59,14 @@ namespace AW2.Core.GameComponents
 
         public override void LoadContent()
         {
+            Game.GraphicsDeviceService.CheckThread();
             _dialogTexture = Game.Content.Load<Texture2D>("ingame_dialog");
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
         }
 
         public override void UnloadContent()
         {
+            Game.GraphicsDeviceService.CheckThread();
             if (_spriteBatch != null)
             {
                 _spriteBatch.Dispose();
@@ -74,6 +76,7 @@ namespace AW2.Core.GameComponents
 
         public override void Draw()
         {
+            Game.GraphicsDeviceService.CheckThread();
             // Set viewport exactly to the dialog's area.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             var screen = Game.GraphicsDeviceService.GraphicsDevice.Viewport;

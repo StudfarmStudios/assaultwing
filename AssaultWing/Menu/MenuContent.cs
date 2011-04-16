@@ -42,6 +42,7 @@ namespace AW2.Menu
 
         public void LoadContent()
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             var content = AssaultWingCore.Instance.Content;
 
             FontHuge = content.Load<SpriteFont>("MenuFontHuge");

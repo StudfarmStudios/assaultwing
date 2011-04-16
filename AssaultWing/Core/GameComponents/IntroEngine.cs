@@ -44,12 +44,14 @@ namespace AW2.Core.GameComponents
 
         public override void LoadContent()
         {
+            Game.GraphicsDeviceService.CheckThread();
             base.LoadContent();
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
         }
 
         public override void UnloadContent()
         {
+            Game.GraphicsDeviceService.CheckThread();
             if (_spriteBatch != null)
             {
                 _spriteBatch.Dispose();
@@ -76,6 +78,7 @@ namespace AW2.Core.GameComponents
 
         public override void Draw()
         {
+            Game.GraphicsDeviceService.CheckThread();
             Game.GraphicsDeviceService.GraphicsDevice.Clear(Color.Black);
             var videoFrame = _introVideo.GetTexture();
             if (videoFrame != null)

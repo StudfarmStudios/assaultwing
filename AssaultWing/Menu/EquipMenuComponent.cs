@@ -98,17 +98,13 @@ namespace AW2.Menu
 
         public override void LoadContent()
         {
+            MenuEngine.Game.GraphicsDeviceService.CheckThread();
             var content = MenuEngine.Game.Content;
             _backgroundTexture = content.Load<Texture2D>("menu_equip_bg");
             _extraChatBoxTexture = content.Load<Texture2D>("menu_equip_status_display_extra");
             _buttonReadyTexture = content.Load<Texture2D>("menu_equip_btn_ready");
             _buttonReadyHiliteTexture = content.Load<Texture2D>("menu_equip_btn_ready_hilite");
             _extraReadyMessageTexture = content.Load<Texture2D>("menu_equip_readytofight");
-        }
-
-        public override void UnloadContent()
-        {
-            // The textures and fonts we reference will be disposed by GraphicsEngine.
         }
 
         public override void Update()
@@ -181,6 +177,7 @@ namespace AW2.Menu
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
+            MenuEngine.Game.GraphicsDeviceService.CheckThread();
             spriteBatch.Draw(_backgroundTexture, Pos - view, Color.White);
             DrawTabsAndButtons(view, spriteBatch);
             DrawStatusDisplay(view, spriteBatch);

@@ -65,6 +65,7 @@ namespace AW2.Graphics
         /// will call <c>Begin</c> and <c>End</c>.</param>
         public void Draw(SpriteBatch spriteBatch)
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             if (!Visible) return;
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             var oldViewport = gfx.Viewport;

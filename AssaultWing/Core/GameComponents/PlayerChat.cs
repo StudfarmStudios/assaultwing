@@ -35,6 +35,7 @@ namespace AW2.Core.GameComponents
 
         public override void LoadContent()
         {
+            Game.GraphicsDeviceService.CheckThread();
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             _typingFont = Game.Content.Load<SpriteFont>("MenuFontBig");
         }
@@ -56,6 +57,7 @@ namespace AW2.Core.GameComponents
 
         public override void Draw()
         {
+            Game.GraphicsDeviceService.CheckThread();
             if (!IsTyping) return;
             var chatName = ChatPlayer != null ? ChatPlayer.Name : "???";
             var text = string.Format("{0}>{1}<", chatName, _message.Content);

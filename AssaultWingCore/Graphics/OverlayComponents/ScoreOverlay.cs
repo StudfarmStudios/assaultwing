@@ -62,6 +62,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             var content = AssaultWingCore.Instance.Content;
             _scoreBackgroundTexture = content.Load<Texture2D>("gui_playerlist_bg");
             _textFont = content.Load<SpriteFont>("ConsoleFont");

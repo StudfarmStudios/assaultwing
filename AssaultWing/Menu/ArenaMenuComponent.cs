@@ -96,6 +96,7 @@ namespace AW2.Menu
 
         public override void LoadContent()
         {
+            MenuEngine.Game.GraphicsDeviceService.CheckThread();
             var content = MenuEngine.Game.Content;
             _backgroundTexture = content.Load<Texture2D>("menu_levels_bg");
             _cursorTexture = content.Load<Texture2D>("menu_levels_cursor");
@@ -115,6 +116,7 @@ namespace AW2.Menu
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
+            MenuEngine.Game.GraphicsDeviceService.CheckThread();
             spriteBatch.Draw(_backgroundTexture, _pos - view, Color.White);
             if (!Active) return;
 

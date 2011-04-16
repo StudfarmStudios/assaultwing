@@ -173,6 +173,7 @@ namespace AW2.Graphics
 
         public void PrepareForDraw()
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             DoInMyViewport(() =>
             {
                 Draw_InitializeParallaxIn3D();
@@ -182,6 +183,7 @@ namespace AW2.Graphics
 
         public void Draw()
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             DoInMyViewport(() =>
             {
                 _postprocessor.DisplayOnScreen();
@@ -228,6 +230,7 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void LoadContent()
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             AssaultWingCore.Instance.GraphicsDeviceService.CheckReentrancyBegin();
             try
             {
@@ -252,6 +255,7 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void UnloadContent()
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             foreach (var component in _overlayComponents) component.UnloadContent();
             _postprocessor.Dispose();
             _spriteBatch.Dispose();

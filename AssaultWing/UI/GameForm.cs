@@ -233,7 +233,6 @@ namespace AW2.UI
 
         private void InitializeRunner()
         {
-            // FIXME: Game update delegate is run in the Forms thread only because Keyboard update won't work otherwise. This should be fixed later.
             _runner = new AWGameRunner(_game,
                 exceptionHandler: e => BeginInvoke((Action)(() => { throw new ApplicationException("An exception occurred in a background thread", e); })),
                 draw: () =>

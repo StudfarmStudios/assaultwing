@@ -317,6 +317,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             var content = AssaultWingCore.Instance.Content;
             _bonusBackgroundTexture = content.Load<Texture2D>("gui_bonus_bg");
             _bonusDurationTexture = content.Load<Texture2D>("gui_bonus_duration");

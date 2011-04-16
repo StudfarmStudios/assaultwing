@@ -373,6 +373,7 @@ namespace AW2.Game
         /// </summary>
         public void LoadContent()
         {
+            Game.GraphicsDeviceService.CheckThread();
             foreach (var gob in Gobs) gob.LoadContent();
         }
 
@@ -381,6 +382,7 @@ namespace AW2.Game
         /// </summary>
         public void UnloadContent()
         {
+            Game.GraphicsDeviceService.CheckThread();
             foreach (var gob in Gobs) gob.UnloadContent();
         }
 

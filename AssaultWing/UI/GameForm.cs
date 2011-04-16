@@ -234,6 +234,7 @@ namespace AW2.UI
         private void InitializeRunner()
         {
             _runner = new AWGameRunner(_game,
+                invoker: action => Invoke(action),
                 exceptionHandler: e => BeginInvoke((Action)(() => { throw new ApplicationException("An exception occurred in a background thread", e); })),
                 draw: () =>
                 {

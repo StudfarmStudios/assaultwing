@@ -339,6 +339,7 @@ namespace AW2.UI.WPF
             ArenaView.GraphicsDeviceService = _graphicsDeviceService;
             ArenaView.ClientSize = ArenaView.ClientSize; // trigger ArenaView.ClientSizeChanged to react to the initial ArenaView size
             _runner = new AWGameRunner(_game,
+                invoker: action => Dispatcher.Invoke(action),
                 exceptionHandler: e => Dispatcher.BeginInvoke((Action)(() => { throw new ApplicationException("An exception occurred in a background thread", e); })),
                 draw: () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
                 update: gameTime => Dispatcher.BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));

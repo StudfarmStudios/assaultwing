@@ -10,9 +10,10 @@ namespace AW2.Core
     {
         private AWGame _game;
         private Stopwatch _timer;
+        private Action<Action> _invoker;
+        private Action<Exception> _exceptionHandler;
         private Action _draw;
         private Action<AWGameTime> _update;
-        private Action<Exception> _exceptionHandler;
         private bool _paused;
         private bool _pauseDisabled;
         private object _pausedLock;
@@ -22,10 +23,11 @@ namespace AW2.Core
 
         public event Action Initialized;
 
-        public AWGameRunner(AWGame game, Action<Exception> exceptionHandler, Action draw, Action<AWGameTime> update)
+        public AWGameRunner(AWGame game, Action<Action> invoker, Action<Exception> exceptionHandler, Action draw, Action<AWGameTime> update)
         {
             if (game == null || exceptionHandler == null || draw == null || update == null) throw new ArgumentNullException();
             _game = game;
+            _invoker = invoker;
             _exceptionHandler = exceptionHandler;
             _draw = draw;
             _update = update;
@@ -87,9 +89,12 @@ namespace AW2.Core
         {
             try
             {
-                _game.Initialize();
-                _game.LoadContent();
-                _game.BeginRun();
+                _invoker(() =>
+                {
+                    _game.Initialize();
+                    _game.LoadContent();
+                    _game.BeginRun();
+                });
                 var nextUpdate = TimeSpan.Zero;
                 var lastUpdate = TimeSpan.Zero;
                 var totalGameTime = TimeSpan.Zero;

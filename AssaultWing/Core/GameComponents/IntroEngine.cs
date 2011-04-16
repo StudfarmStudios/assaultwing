@@ -55,7 +55,11 @@ namespace AW2.Core.GameComponents
                 _spriteBatch.Dispose();
                 _spriteBatch = null;
             }
-            _introVideo.Dispose();
+            if (_introVideo != null)
+            {
+                _introVideo.Dispose();
+                _introVideo = null;
+            }
             base.UnloadContent();
         }
 

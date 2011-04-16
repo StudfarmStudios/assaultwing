@@ -79,8 +79,8 @@ namespace AW2
         {
             Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
             var caption = g_errorCaptions[RandomHelper.GetRandomInt(g_errorCaptions.Length)];
-            var intro = "Want to help solve the problem by sending this error information" +
-                " and the Assault Wing run log \"" + Log.LogFileName + "\" to the developers?";
+            var intro = "Would you please help solve the problem by sending the developers this error information" +
+                " and the Assault Wing run log \"" + Log.LogFileName + "\"?";
             var report = string.Format("Assault Wing {0}\nCrashed at {1:u}\nHost {2}\n\n{3}",
                 AssaultWing.Instance.Version, DateTime.Now.ToUniversalTime(), Environment.MachineName, e.ToString());
             var result = MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);

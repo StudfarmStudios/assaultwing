@@ -12,6 +12,7 @@ namespace AW2.Core
         private Stopwatch _timer;
         private Action _draw;
         private Action<AWGameTime> _update;
+        private Action<Exception> _exceptionHandler;
         private bool _paused;
         private bool _pauseDisabled;
         private object _pausedLock;
@@ -21,12 +22,14 @@ namespace AW2.Core
 
         public event Action Initialized;
 
-        public AWGameRunner(AWGame game, Action draw, Action<AWGameTime> update)
+        public AWGameRunner(AWGame game, Action<Exception> exceptionHandler, Action draw, Action<AWGameTime> update)
         {
+            if (game == null || exceptionHandler == null || draw == null || update == null) throw new ArgumentNullException();
             _game = game;
-            _timer = new Stopwatch();
+            _exceptionHandler = exceptionHandler;
             _draw = draw;
             _update = update;
+            _timer = new Stopwatch();
             _pausedLock = new object();
             _exitSemaphore = new SemaphoreSlim(1, 1);
         }
@@ -82,40 +85,46 @@ namespace AW2.Core
 
         private void GameUpdateAndDrawLoop()
         {
-            // FIXME: If this method throws an exception, it is not caught by Forms ExceptionHandler Why?
-            _game.Initialize();
-            _game.LoadContent();
-            _game.BeginRun();
-            var nextUpdate = TimeSpan.Zero;
-            var lastUpdate = TimeSpan.Zero;
-            var totalGameTime = TimeSpan.Zero;
-            _timer.Start();
-            if (Initialized != null)
+            try
             {
-                Initialized();
-                Initialized = null;
-            }
-            while (!_exiting)
-            {
-                lock (_timer)
+                _game.Initialize();
+                _game.LoadContent();
+                _game.BeginRun();
+                var nextUpdate = TimeSpan.Zero;
+                var lastUpdate = TimeSpan.Zero;
+                var totalGameTime = TimeSpan.Zero;
+                _timer.Start();
+                if (Initialized != null)
                 {
-                    var now = _timer.Elapsed;
-                    if (now + Waiter.PRECISION < nextUpdate)
-                        Waiter.Instance.Sleep(nextUpdate - now);
-                    else if (now > nextUpdate + TimeSpan.FromSeconds(10))
-                        nextUpdate = now;
-                    else
+                    Initialized();
+                    Initialized = null;
+                }
+                while (!_exiting)
+                {
+                    lock (_timer)
                     {
-                        var updateInterval = _game.TargetElapsedTime;
-                        var nextNextUpdate = nextUpdate + updateInterval;
-                        var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
-                        _update(gameTime);
-                        if (now < nextNextUpdate) _draw();
-                        nextUpdate = nextNextUpdate;
-                        lastUpdate = now;
-                        totalGameTime += updateInterval;
+                        var now = _timer.Elapsed;
+                        if (now + Waiter.PRECISION < nextUpdate)
+                            Waiter.Instance.Sleep(nextUpdate - now);
+                        else if (now > nextUpdate + TimeSpan.FromSeconds(10))
+                            nextUpdate = now;
+                        else
+                        {
+                            var updateInterval = _game.TargetElapsedTime;
+                            var nextNextUpdate = nextUpdate + updateInterval;
+                            var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
+                            _update(gameTime);
+                            if (now < nextNextUpdate) _draw();
+                            nextUpdate = nextNextUpdate;
+                            lastUpdate = now;
+                            totalGameTime += updateInterval;
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                _exceptionHandler(e);
             }
         }
 

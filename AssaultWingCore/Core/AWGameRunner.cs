@@ -82,6 +82,7 @@ namespace AW2.Core
 
         private void GameUpdateAndDrawLoop()
         {
+            // FIXME: If this method throws an exception, it is not caught by Forms ExceptionHandler Why?
             _game.Initialize();
             _game.LoadContent();
             _game.BeginRun();

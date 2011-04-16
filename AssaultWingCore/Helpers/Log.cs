@@ -42,12 +42,8 @@ namespace AW2.Helpers
 
             try
             {
-                // Open a new log file.
-                FileStream file = new FileStream(GetLogFilename(0), FileMode.OpenOrCreate,
-                    FileAccess.Write, FileShare.ReadWrite);
+                var file = new FileStream(GetLogFilename(0), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
                 g_writer = new StreamWriter(file, System.Text.Encoding.UTF8);
-
-                // Enable auto flush (always be up to date when reading!)
                 g_writer.AutoFlush = true;
             }
             catch
@@ -95,6 +91,12 @@ namespace AW2.Helpers
             Write(string.Format("{0}:\n{1}\n{2}\n{1}", message, new string('-', 40), e));
         }
 
+        public static string CloseAndGetContents()
+        {
+            g_writer.Close();
+            return File.ReadAllText(GetLogFilename(0));
+        }
+
         /// <summary>
         /// Returns the filename of the log that has been rotated a number of times.
         /// </summary>
@@ -103,6 +105,8 @@ namespace AW2.Helpers
             var filename = string.Format("{0}{1}{2}", FILE_BASENAME, rotation == 0 ? "" : "." + rotation, FILE_EXTENSION);
             return Path.Combine(LogPath, filename);
         }
+
+        public static string LogFileName { get { return GetLogFilename(0); } }
 
         public static string LogPath
         {

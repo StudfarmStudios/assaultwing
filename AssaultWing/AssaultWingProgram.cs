@@ -79,18 +79,24 @@ namespace AW2
         {
             Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
             var caption = g_errorCaptions[RandomHelper.GetRandomInt(g_errorCaptions.Length)];
-            var intro = "Want to send this automatic error report to the developers to help solve the problem?";
+            var intro = "Want to help solve the problem by sending this error information" +
+                " and the Assault Wing run log \"" + Log.LogFileName + "\" to the developers?";
             var report = string.Format("Assault Wing {0}\nCrashed at {1:u}\nHost {2}\n\n{3}",
                 AssaultWing.Instance.Version, DateTime.Now.ToUniversalTime(), Environment.MachineName, e.ToString());
             var result = MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-            if (result == DialogResult.Yes) SendMail(report);
+            var logHeader = "\n\n*** Assault Wing run log ***\n\n";
+            if (result == DialogResult.Yes) SendMail(report + logHeader + Log.CloseAndGetContents());
         }
 
         private static void SendMail(string text)
         {
-            var udpClient = new UdpClient();
+            var tcpClient = new TcpClient();
+            tcpClient.Connect(AW_BUG_REPORT_SERVER, AW_BUG_REPORT_PORT);
             var data = Encoding.UTF8.GetBytes(text);
-            udpClient.Send(data, data.Length, AW_BUG_REPORT_SERVER, AW_BUG_REPORT_PORT);
+            var tcpStream = tcpClient.GetStream();
+            tcpStream.Write(BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(data.Length)), 0, sizeof(int));
+            tcpStream.Write(data, 0, data.Length);
+            tcpClient.Close();
         }
     }
 #endif

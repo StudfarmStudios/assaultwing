@@ -241,9 +241,9 @@ namespace AW2.UI
                     if (_isFullScreen)
                         BeginInvoke((Action)Invalidate);
                     else
-                        _gameView.BeginInvoke((Action)_gameView.Invalidate);
+                        BeginInvoke((Action)_gameView.Invalidate);
                 },
-                update: gameTime => _gameView.BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
+                update: gameTime => BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
         }
 
         private static FormParameters GetFullScreenFormParameters(int width, int height)
@@ -272,7 +272,7 @@ namespace AW2.UI
 
         private void AddToLogView(string text)
         {
-            _logView.BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
+            BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
         }
     }
 }

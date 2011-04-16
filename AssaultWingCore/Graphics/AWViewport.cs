@@ -228,15 +228,23 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice);
-            Action<ICollection<Effect>> effectContainerUpdater = container =>
+            AssaultWingCore.Instance.GraphicsDeviceService.CheckReentrancyBegin();
+            try
             {
-                container.Clear();
-                foreach (var name in _getPostprocessEffectNames())
-                    container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
-            };
-            _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice, RenderGameWorld, effectContainerUpdater);
-            foreach (var component in _overlayComponents) component.LoadContent();
+                _spriteBatch = new SpriteBatch(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice);
+                Action<ICollection<Effect>> effectContainerUpdater = container =>
+                {
+                    container.Clear();
+                    foreach (var name in _getPostprocessEffectNames())
+                        container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
+                };
+                _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice, RenderGameWorld, effectContainerUpdater);
+                foreach (var component in _overlayComponents) component.LoadContent();
+            }
+            finally
+            {
+                AssaultWingCore.Instance.GraphicsDeviceService.CheckReentrancyEnd();
+            }
         }
 
         /// <summary>

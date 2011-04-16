@@ -30,7 +30,8 @@ namespace AW2.Core
         private PresentationParameters _oldParameters;
         private PresentationParameters _parameters;
         private int _graphicsThreadID;
-        private bool _graphicsCodeIsExecuting;
+        private int _graphicsCodeBlocks;
+        private int _graphicsCodeBlocksThreadID;
 
         // IGraphicsDeviceService events.
         public event EventHandler<EventArgs> DeviceCreated;
@@ -93,14 +94,17 @@ namespace AW2.Core
 
         public void CheckReentrancyBegin()
         {
-            if (_graphicsCodeIsExecuting) throw new ApplicationException("Reentrant graphics code");
-            _graphicsCodeIsExecuting = true;
+            if (_graphicsCodeBlocks > 0 && Thread.CurrentThread.ManagedThreadId != _graphicsCodeBlocksThreadID)
+                throw new ApplicationException("Two threads try to run graphics code");
+            _graphicsCodeBlocks++;
+            _graphicsCodeBlocksThreadID = Thread.CurrentThread.ManagedThreadId;
         }
 
         public void CheckReentrancyEnd()
         {
-            if (!_graphicsCodeIsExecuting) throw new InvalidOperationException("Reentrancy check end without begin");
-            _graphicsCodeIsExecuting = false;
+            if (_graphicsCodeBlocks == 0) throw new InvalidOperationException("Reentrancy check end without begin");
+            _graphicsCodeBlocks--;
+            if (_graphicsCodeBlocks == 0) _graphicsCodeBlocksThreadID = 0;
         }
 
         public void Dispose()
@@ -192,22 +196,27 @@ namespace AW2.Core
             }
         }
 
-        private Exception ResetDevice()
+        /// <summary>
+        /// May throw <see cref="Microsoft.Xna.Framework.Graphics.DeviceLostException"/> in which case
+        /// this reset failed but a future reset may succeed. Other exceptions are not recoverable,
+        /// such as <see cref="System.InvalidOperationException"/>.
+        /// </summary>
+        private void ResetDevice()
         {
-            CheckThread();
-            if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
+            Log.Write("ResetDevice begin..."); // TODO !!! Remove this when GraphicsDevice.Reset problems are solved
             try
             {
+                CheckThread();
+                if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
                 // FIXME !!! if (!_parameters.EqualsDeep(_oldParameters))
                 GraphicsDevice.Reset(_parameters);
                 _oldParameters = _parameters;
+                if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
             }
-            catch (Exception e)
+            finally
             {
-                return e;
+                Log.Write("...ResetDevice end"); // TODO !!! Remove this when GraphicsDevice.Reset problems are solved
             }
-            if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
-            return null;
         }
 
         /// <summary>
@@ -237,21 +246,24 @@ namespace AW2.Core
             }
             if (deviceNeedsReset)
             {
-                var resetException = EnsureBackBufferSize(clientSize.Width, clientSize.Height);
-                if (resetException != null)
+                try
                 {
-                    Log.Write("Note: Graphics device reset failed", resetException);
-                    return "Graphics device reset failed\n\n" + resetException;
+                    EnsureBackBufferSize(clientSize.Width, clientSize.Height);
+                }
+                catch (DeviceLostException resetException)
+                {
+                    Log.Write("Graphics device was lost during reset", resetException);
+                    return "Graphics device was lost during reset\n\n" + resetException;
                 }
             }
             return null;
         }
 
-        private Exception EnsureBackBufferSize(int width, int height)
+        private void EnsureBackBufferSize(int width, int height)
         {
             _parameters.BackBufferWidth = Math.Max(_parameters.BackBufferWidth, width);
             _parameters.BackBufferHeight = Math.Max(_parameters.BackBufferHeight, height);
-            return ResetDevice();
+            ResetDevice();
         }
     }
 }

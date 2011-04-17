@@ -14,8 +14,6 @@ namespace AW2.Game.Weapons
     /// </summary>
     public class Cloak : ShipDevice
     {
-        private static readonly TimeSpan DEACTIVATION_SAFETY_TIMEOUT_DURATION = TimeSpan.FromSeconds(0.5);
-
         [TypeParameter]
         private TimeSpan _fadeOutDuration;
         [TypeParameter]
@@ -125,7 +123,7 @@ namespace AW2.Game.Weapons
             FiringOperator.NextFireSkipsLoadAndCharge = true;
             _runningSound.EnsureIsPlaying();
             _fadeStartTime = Owner.Arena.TotalTime;
-            _deactivationSafetyTimeout = Owner.Arena.TotalTime + DEACTIVATION_SAFETY_TIMEOUT_DURATION;
+            _deactivationSafetyTimeout = Owner.Arena.TotalTime + _fadeOutDuration;
             _applyAlpha = true;
         }
 

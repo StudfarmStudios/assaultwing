@@ -200,8 +200,9 @@ namespace AW2.Core
         /// May throw <see cref="Microsoft.Xna.Framework.Graphics.DeviceLostException"/> in which case
         /// this reset failed but a future reset may succeed. Other exceptions are not recoverable,
         /// such as <see cref="System.InvalidOperationException"/>.
+        /// Returns null on success, or a message on a recoverable error.
         /// </summary>
-        private void ResetDevice()
+        private string ResetDevice()
         {
             Log.Write("ResetDevice begin..."); // TODO !!! Remove this when GraphicsDevice.Reset problems are solved
             try
@@ -212,6 +213,12 @@ namespace AW2.Core
                 GraphicsDevice.Reset(_parameters);
                 _oldParameters = _parameters;
                 if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
+                return null;
+            }
+            catch (DeviceLostException)
+            {
+                Log.Write("Note: Graphics device lost during reset");
+                return "Graphics device lost during reset";
             }
             finally
             {
@@ -244,26 +251,18 @@ namespace AW2.Core
                         : clientSize.Width > pp.BackBufferWidth || clientSize.Height > pp.BackBufferHeight;
                     break;
             }
-            if (deviceNeedsReset)
-            {
-                try
-                {
-                    EnsureBackBufferSize(clientSize.Width, clientSize.Height);
-                }
-                catch (DeviceLostException resetException)
-                {
-                    Log.Write("Graphics device was lost during reset", resetException);
-                    return "Graphics device was lost during reset\n\n" + resetException;
-                }
-            }
+            if (deviceNeedsReset) return EnsureBackBufferSize(clientSize.Width, clientSize.Height);
             return null;
         }
 
-        private void EnsureBackBufferSize(int width, int height)
+        /// <summary>
+        /// Returns null on success, or a message on a recoverable error.
+        /// </summary>
+        private string EnsureBackBufferSize(int width, int height)
         {
             _parameters.BackBufferWidth = Math.Max(_parameters.BackBufferWidth, width);
             _parameters.BackBufferHeight = Math.Max(_parameters.BackBufferHeight, height);
-            ResetDevice();
+            return ResetDevice();
         }
     }
 }

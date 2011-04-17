@@ -16,12 +16,8 @@ namespace AW2.Graphics
     /// </summary>
     public class AWContentManager : ContentManager
     {
-        IDictionary<string, object> loadedContent = new Dictionary<string, object>();
-        List<IDisposable> disposableContent = new List<IDisposable>();
+        private IDictionary<string, object> _loadedContent = new Dictionary<string, object>();
 
-        /// <summary>
-        /// Creates a new content manager for Assault Wing.
-        /// </summary>
         public AWContentManager(IServiceProvider serviceProvider)
             : base(serviceProvider, ".\\")
         { }
@@ -40,9 +36,9 @@ namespace AW2.Graphics
             if (assetName == null) throw new ArgumentNullException("assetName");
             var assetFullName = GetAssetFullName<T>(assetName);
             object item;
-            if (loadedContent.TryGetValue(assetFullName, out item)) return (T)item;
-            item = ReadAsset<T>(assetFullName, disposableItem => disposableContent.Add(disposableItem));
-            loadedContent.Add(assetFullName, item);
+            if (_loadedContent.TryGetValue(assetFullName, out item)) return (T)item;
+            item = ReadAsset<T>(assetFullName, null);
+            _loadedContent.Add(assetFullName, item);
             return (T)item;
         }
 
@@ -61,14 +57,6 @@ namespace AW2.Graphics
                 var match = Regex.Match(filename, @"^.*[\\/]([^\\/]*?)(_0)?\.xnb$", RegexOptions.IgnoreCase);
                 if (match.Groups[2].Length == 0) yield return match.Groups[1].Value;
             }
-        }
-
-        public override void Unload()
-        {
-            base.Unload();
-            foreach (var value in disposableContent) value.Dispose();
-            disposableContent.Clear();
-            loadedContent.Clear();
         }
 
         private static string GetAssetFullName<T>(string assetName)

@@ -30,8 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameForm));
             this._splitContainer = new System.Windows.Forms.SplitContainer();
-            this._gameView = new AW2.Core.GraphicsDeviceControl();
             this._logView = new System.Windows.Forms.TextBox();
+            this._gameView = new AW2.Core.GraphicsDeviceControl();
             ((System.ComponentModel.ISupportInitialize)(this._splitContainer)).BeginInit();
             this._splitContainer.Panel1.SuspendLayout();
             this._splitContainer.Panel2.SuspendLayout();
@@ -59,19 +59,6 @@
             this._splitContainer.SplitterDistance = 328;
             this._splitContainer.TabIndex = 1;
             // 
-            // _gameView
-            // 
-            this._gameView.CausesValidation = false;
-            this._gameView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._gameView.GraphicsDeviceService = null;
-            this._gameView.Location = new System.Drawing.Point(0, 0);
-            this._gameView.Margin = new System.Windows.Forms.Padding(0);
-            this._gameView.Name = "_gameView";
-            this._gameView.Size = new System.Drawing.Size(984, 762);
-            this._gameView.TabIndex = 0;
-            this._gameView.TabStop = false;
-            this._gameView.Text = "game view";
-            // 
             // _logView
             // 
             this._logView.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -84,6 +71,20 @@
             this._logView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this._logView.Size = new System.Drawing.Size(150, 46);
             this._logView.TabIndex = 0;
+            // 
+            // _gameView
+            // 
+            this._gameView.BackColor = System.Drawing.SystemColors.Desktop;
+            this._gameView.CausesValidation = false;
+            this._gameView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._gameView.GraphicsDeviceService = null;
+            this._gameView.Location = new System.Drawing.Point(0, 0);
+            this._gameView.Margin = new System.Windows.Forms.Padding(0);
+            this._gameView.Name = "_gameView";
+            this._gameView.Size = new System.Drawing.Size(984, 762);
+            this._gameView.TabIndex = 0;
+            this._gameView.TabStop = false;
+            this._gameView.Text = "game view";
             // 
             // GameForm
             // 

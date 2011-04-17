@@ -28,7 +28,7 @@ namespace AW2.Core
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            GraphicsDeviceService.CheckReentrancyBegin();
+            if (GraphicsDeviceService != null) GraphicsDeviceService.CheckReentrancyBegin();
             try
             {
                 base.OnPaint(e);
@@ -47,7 +47,7 @@ namespace AW2.Core
             }
             finally
             {
-                GraphicsDeviceService.CheckReentrancyEnd();
+                if (GraphicsDeviceService != null) GraphicsDeviceService.CheckReentrancyEnd();
             }
         }
 

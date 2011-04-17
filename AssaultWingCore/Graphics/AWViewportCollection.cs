@@ -7,7 +7,7 @@ using Viewport = AW2.Graphics.AWViewport;
 
 namespace AW2.Graphics
 {
-    public class AWViewportCollection : IEnumerable<Viewport>
+    public class AWViewportCollection : IEnumerable<Viewport>, IDisposable
     {
         public delegate Viewport ViewportConstructor(int viewportIndex, Rectangle viewportArea);
 
@@ -43,11 +43,7 @@ namespace AW2.Graphics
 
         public void Dispose()
         {
-            foreach (var viewport in _items)
-            {
-                viewport.UnloadContent();
-                viewport.Dispose();
-            }
+            foreach (var viewport in _items) viewport.Dispose();
         }
 
         public IEnumerator<AWViewport> GetEnumerator()
@@ -154,11 +150,6 @@ namespace AW2.Graphics
                 _separators.Add(new ViewportSeparator(true, WindowWidth * i / bestColumns));
             for (int i = 1; i < bestRows; ++i)
                 _separators.Add(new ViewportSeparator(false, WindowHeight * i / bestRows));
-        }
-
-        ~AWViewportCollection()
-        {
-            Dispose();
         }
 
         #endregion Private methods

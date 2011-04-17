@@ -159,7 +159,16 @@ namespace AW2.Game
 
         #region viewports
 
-        public AWViewportCollection Viewports { get; private set; }
+        private AWViewportCollection _viewports;
+        public AWViewportCollection Viewports
+        {
+            get { return _viewports; }
+            private set
+            {
+                if (_viewports != null) _viewports.Dispose();
+                _viewports = value;
+            }
+        }
 
         public void RearrangeViewports()
         {
@@ -175,7 +184,6 @@ namespace AW2.Game
         {
             if (Arena == null) return;
             var localPlayers = Game.DataEngine.Spectators.Where(player => player.NeedsViewport).ToList();
-            if (Viewports != null) Viewports.Dispose();
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, localPlayers.Count(),
                 (index, rectangle) => localPlayers[viewportToPlayerPermutation(index)].CreateViewport(rectangle));
         }

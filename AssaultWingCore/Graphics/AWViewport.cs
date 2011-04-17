@@ -257,8 +257,16 @@ namespace AW2.Graphics
         {
             AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             foreach (var component in _overlayComponents) component.UnloadContent();
-            _postprocessor.Dispose();
-            _spriteBatch.Dispose();
+            if (_postprocessor != null)
+            {
+                _postprocessor.Dispose();
+                _postprocessor = null;
+            }
+            if (_spriteBatch != null)
+            {
+                _spriteBatch.Dispose();
+                _spriteBatch = null;
+            }
         }
 
         /// <summary>

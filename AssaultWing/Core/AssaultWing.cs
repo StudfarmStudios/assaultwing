@@ -217,7 +217,6 @@ namespace AW2.Core
             var arena = Arena.FromFile(this, arenaFilename);
             arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
             arena.IsForPlaying = true;
-            LoadArenaContent(arena);
             // Note: Client starts progressbar when receiving StartGameMessage.
             if (NetworkMode != NetworkMode.Client) MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
             arena.Reset(); // this usually takes several seconds

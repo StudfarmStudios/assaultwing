@@ -162,6 +162,7 @@ namespace AW2.Core
         {
             Log.Write("Starting arena");
             _arenaFinished = false;
+            LoadArenaContent(DataEngine.Arena);
             LogicEngine.Reset();
             PreFrameLogicEngine.Reset();
             PostFrameLogicEngine.Reset();

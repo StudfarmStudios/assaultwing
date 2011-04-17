@@ -10,7 +10,7 @@
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
   <lifetime>45</lifetime>
-  <impactDamage>150</impactDamage>
+  <impactDamage>350</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
   <mass>120</mass>
   <scale>0.047</scale>
@@ -26,13 +26,11 @@
   <movable>true</movable>
   <maxDamage>100</maxDamage>
   <birthGobTypes>
-    <!--<Item>dumb glow</Item> -->
   </birthGobTypes>
   <deathGobTypes>
     <Item>mine explosion</Item>
   </deathGobTypes>
   <exhaustEngineNames>
-    <!--<Item>dumbfirethrust1</Item> -->
   </exhaustEngineNames>
   <collisionAreas>
     <Item>

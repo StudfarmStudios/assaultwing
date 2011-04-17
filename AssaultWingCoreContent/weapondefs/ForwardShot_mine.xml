@@ -30,10 +30,10 @@ Unloads 5 mines into a random formation</infoText>
   <fireEffectType>Once</fireEffectType>
   <shotTypeName>mine</shotTypeName>
   <shotSpeed>200</shotSpeed>
-  <loadTime>8</loadTime>
-  <fireCharge>600</fireCharge>
+  <loadTime>5</loadTime>
+  <fireCharge>500</fireCharge>
   <fireChargePerSecond>600</fireChargePerSecond>
-  <shotCount>5</shotCount>
+  <shotCount>1</shotCount>
   <shotSpacing>0.05</shotSpacing>
   <shotAngleVariation>0.9</shotAngleVariation>
   <shotSpeedVariation>150</shotSpeedVariation>

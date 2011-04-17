@@ -36,7 +36,7 @@ eventually run out of juice.</infoText>
   <loadTime>4</loadTime>
   <fireCharge>400</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
-  <shotCount>3</shotCount>
+  <shotCount>2</shotCount>
   <shotSpacing>0.2</shotSpacing>
   <shotAngleVariation>0.05</shotAngleVariation>
   <shotSpeedVariation>10</shotSpeedVariation>

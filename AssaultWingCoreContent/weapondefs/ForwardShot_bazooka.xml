@@ -30,14 +30,14 @@ of the heavy mass is the great recoil</infoText>
   <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>bomb</shotTypeName>
   <shotSpeed>650</shotSpeed>
-  <loadTime>3</loadTime>
-  <fireCharge>550</fireCharge>
+  <loadTime>0.7</loadTime>
+  <fireCharge>250</fireCharge>
   <fireChargePerSecond>550</fireChargePerSecond>
   <shotCount>1</shotCount>
   <shotSpacing>1</shotSpacing>
   <shotAngleVariation>0</shotAngleVariation>
   <shotSpeedVariation>10</shotSpeedVariation>
-  <recoilMomentum>115000</recoilMomentum>
+  <recoilMomentum>75000</recoilMomentum>
   <muzzleFireEngineNames>
     <Item>blue muzzle flame</Item>
   </muzzleFireEngineNames>

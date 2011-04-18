@@ -25,30 +25,30 @@
     <postLoop>Constant</postLoop>
     <keys>
       <Item>
-        <position>0.0</position>
+        <position>0</position>
         <internalValue>1</internalValue>
         <tangentIn>0</tangentIn>
-        <tangentOut>-0.01</tangentOut>
+        <tangentOut>-0.00999999</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
         <position>150</position>
         <internalValue>0.99</internalValue>
-        <tangentIn>-0.01</tangentIn>
-        <tangentOut>-0.11</tangentOut>
+        <tangentIn>-0.00999999</tangentIn>
+        <tangentOut>-0.59</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
-        <position>270</position>
-        <internalValue>0.88</internalValue>
-        <tangentIn>-0.11</tangentIn>
-        <tangentOut>-0.08</tangentOut>
+        <position>350</position>
+        <internalValue>0.4</internalValue>
+        <tangentIn>-0.59</tangentIn>
+        <tangentOut>-0.196917</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
-        <position>500</position>
-        <internalValue>0.8</internalValue>
-        <tangentIn>-0.08</tangentIn>
+        <position>698.6941</position>
+        <internalValue>0.203083</internalValue>
+        <tangentIn>-0.196917</tangentIn>
         <tangentOut>0</tangentOut>
         <continuity>Smooth</continuity>
       </Item>

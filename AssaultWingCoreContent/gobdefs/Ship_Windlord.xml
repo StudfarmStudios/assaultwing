@@ -30,7 +30,7 @@ with its ship-ripping claws</infoText>
   <thrustForce>125000</thrustForce>
   <thrusterSoundName>engine</thrusterSoundName>
   <maxSpeed>300</maxSpeed>
-  <turnSpeed>2.95</turnSpeed>
+  <turnSpeed>3.47</turnSpeed>
   <rollMax>0.5</rollMax>
   <rollSpeed>3.0</rollSpeed>
   <modelName>windlord</modelName>

@@ -30,7 +30,7 @@ a venom that does damage over time</infoText>
   <thrustForce>145000</thrustForce>
   <thrusterSoundName>engine</thrusterSoundName>
   <maxSpeed>200</maxSpeed>
-  <turnSpeed>3.7</turnSpeed>
+  <turnSpeed>3.96</turnSpeed>
   <rollMax>0.9</rollMax>
   <rollSpeed>2.2</rollSpeed>
   <modelName>snake</modelName>

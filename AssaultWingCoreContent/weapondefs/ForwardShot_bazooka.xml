@@ -30,8 +30,8 @@ of the heavy mass is the great recoil</infoText>
   <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>bomb</shotTypeName>
   <shotSpeed>650</shotSpeed>
-  <loadTime>0.7</loadTime>
-  <fireCharge>250</fireCharge>
+  <loadTime>1.5</loadTime>
+  <fireCharge>350</fireCharge>
   <fireChargePerSecond>550</fireChargePerSecond>
   <shotCount>1</shotCount>
   <shotSpacing>1</shotSpacing>

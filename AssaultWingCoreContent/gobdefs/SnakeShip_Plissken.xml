@@ -21,7 +21,7 @@ a venom that does damage over time</infoText>
   </shipInfo>  
   
   <mass>420</mass>
-  <maxDamage>2100</maxDamage>
+  <maxDamage>2050</maxDamage>
   <weapon1TypeName>venom spray</weapon1TypeName>
   <extraDeviceChargeMax>750</extraDeviceChargeMax>
   <weapon2ChargeMax>1400</weapon2ChargeMax>

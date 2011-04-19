@@ -10,7 +10,6 @@
     <Item>dust fragments</Item>
     <Item>fragments</Item>
     <Item>ship explo shockwave</Item>
-    <!--<Item>shockwave_large</Item> -->
     <Item>ship explo white flash</Item>
     <Item>ship explo center</Item>
     <Item>large fragments</Item>
@@ -67,16 +66,23 @@
     <keys>
       <Item>
         <position>0</position>
-        <internalValue>80</internalValue>
-        <tangentOut>0</tangentOut>
+        <internalValue>150</internalValue>
         <tangentIn>0</tangentIn>
+        <tangentOut>-74.16101</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>40.70653</position>
+        <internalValue>75.83899</internalValue>
+        <tangentIn>-26.54774</tangentIn>
+        <tangentOut>-123.4523</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
         <position>230</position>
         <internalValue>0</internalValue>
-        <tangentOut>-2</tangentOut>
-        <tangentIn>-2</tangentIn>
+        <tangentIn>-75.83899</tangentIn>
+        <tangentOut>0</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
     </keys>

@@ -101,7 +101,6 @@ namespace AW2.Game.Weapons
             {
                 var fadeAlphaMultiplier = MathHelper.Clamp((Owner.Arena.TotalTime - _fadeStartTime).Divide(_fadeOutDuration), 0, 1);
                 Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
-                if (fadeAlphaMultiplier > 0.5f) Owner.IsHidden = true;
                 FiringOperator.UseChargeForOneFrame();
                 if (Charge == 0) DeactivateCloak();
             }
@@ -118,6 +117,7 @@ namespace AW2.Game.Weapons
             if (!_weaponFiredHandlerAdded) PlayerOwner.WeaponFired += WeaponFiredHandler;
             _weaponFiredHandlerAdded = true;
             _active = true;
+            Owner.IsHiding = true;
             if (Owner.Game.NetworkMode != Core.NetworkMode.Client)
                 PlayerOwner.Messages.Add(new PlayerMessage("Aktv8td", PlayerMessage.DEFAULT_COLOR));
             FiringOperator.NextFireSkipsLoadAndCharge = true;
@@ -130,8 +130,7 @@ namespace AW2.Game.Weapons
         private void DeactivateCloak()
         {
             _active = false;
-            Owner.IsHidden = false;
-            Owner.Alpha = 1;
+            Owner.IsHiding = false;
             FiringOperator.NextFireSkipsLoadAndCharge = false;
             _runningSound.Stop();
             _fadeStartTime = Owner.Arena.TotalTime;

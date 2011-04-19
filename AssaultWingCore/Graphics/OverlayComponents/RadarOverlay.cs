@@ -76,7 +76,7 @@ namespace AW2.Graphics.OverlayComponents
                 if (player.Ship == null || player.Ship.Dead) continue;
                 var posInArena = player.Ship.Pos;
                 var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
-                var shipAlpha = player.IsRemote && player.Ship.IsHidden ? player.Ship.Alpha : 1;
+                var shipAlpha = player.IsRemote && player.Ship.IsHiding ? player.Ship.Alpha : 1;
                 var shipColor = Color.Multiply(_player.ID == player.ID ? Color.White : player.PlayerColor, shipAlpha);
                 var shipScale = _player.ID == player.ID ? 0.7f : 0.4f;
                 spriteBatch.Draw(Game.GraphicsEngine.GameContent.ShipOnRadarTexture, posOnRadar, null, shipColor, 0,

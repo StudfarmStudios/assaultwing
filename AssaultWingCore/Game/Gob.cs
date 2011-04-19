@@ -101,6 +101,7 @@ namespace AW2.Game
         /// </summary>
         public const float ROTATION_SMOOTHING_CUTOFF = MathHelper.PiOver2;
 
+        private const float HIDING_ALPHA_LIMIT = 0.01f;
         private const float MIN_GOB_COORDINATE = -Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
         private const float MAX_GOB_COORDINATE = 16000 + Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
         private const float MIN_GOB_DELTA_COORDINATE = byte.MinValue / 8f;
@@ -467,7 +468,12 @@ namespace AW2.Game
         /// <summary>
         /// Is the gob hidden from opposing players.
         /// </summary>
-        public bool IsHidden { get; set; }
+        public bool IsHidden { get { return IsHiding && Alpha < HIDING_ALPHA_LIMIT; } }
+
+        /// <summary>
+        /// Is the gob trying to hide from opposing players.
+        /// </summary>
+        public bool IsHiding { get; set; }
 
         public float AgeInGameSeconds { get { return _birthTime.SecondsAgoGameTime(); } }
 
@@ -815,9 +821,9 @@ namespace AW2.Game
                 ModelRenderer.DrawTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, Alpha);
             else
                 ModelRenderer.Draw(Model, WorldMatrix, view, projection, ModelPartTransforms);
-            if (IsHidden && Owner != null && !Owner.IsRemote)
+            if (IsHiding && Owner != null && !Owner.IsRemote)
             {
-                var outlineAlpha = Alpha < 0.01f ? 1 : Math.Max(0.05f, 0.3f - 2 * Alpha);
+                var outlineAlpha = Alpha < HIDING_ALPHA_LIMIT ? 1 : Math.Max(0, 0.3f - 2 * Alpha);
                 ModelRenderer.DrawOutlineTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, outlineAlpha);
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Helpers;
@@ -56,7 +57,6 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             IsHiding = true;
-            Alpha = 0;
         }
 
         public override void Update()
@@ -65,6 +65,10 @@ namespace AW2.Game.Gobs
             Move *= 0.97f;
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
+            var shortestEnemyDistance = Game.DataEngine.Players
+                .Where(plr => plr != Owner && plr.Ship != null)
+                .Min(plr => Vector2.Distance(Pos, plr.Ship.Pos));
+            Alpha = 1 - MathHelper.Clamp(shortestEnemyDistance / 200, 0, 1);
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)

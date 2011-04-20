@@ -52,6 +52,13 @@ namespace AW2.Game.Gobs
             Gravitating = false;
         }
 
+        public override void Activate()
+        {
+            base.Activate();
+            IsHiding = true;
+            Alpha = 0;
+        }
+
         public override void Update()
         {
             base.Update();

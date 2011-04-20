@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Peng">
   <typeName>junk spray</typeName>
+  <disregardHidingLeader>false</disregardHidingLeader>
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
    </networkUpdatePeriod>

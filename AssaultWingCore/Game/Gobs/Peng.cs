@@ -64,6 +64,12 @@ namespace AW2.Game.Gobs
         private bool _playerRelated;
 
         /// <summary>
+        /// If true, then <see cref="Leader"/> doesn't affect the peng's alpha value.
+        /// </summary>
+        [TypeParameter]
+        private bool _disregardHidingLeader;
+
+        /// <summary>
         /// External input argument of the peng, between 0 and 1.
         /// </summary>
         /// This value can be set by anyone and it may affect the behaviour
@@ -287,7 +293,7 @@ namespace AW2.Game.Gobs
                 _particlePosesTemp[i] = getParticleCenterInGameWorld(_particles[i]);
             Vector2.Transform(_particlePosesTemp, 0, ref gameToScreen, _particlePosesTemp, 0, _particles.Count);
             var pengColor = PlayerRelated && Owner != null ? Owner.PlayerColor : Color.White;
-            if (Leader != null && Leader.IsHiding) pengColor = Color.Multiply(pengColor, Leader.Alpha);
+            if (!_disregardHidingLeader && Leader != null && Leader.IsHiding) pengColor = Color.Multiply(pengColor, Leader.Alpha);
             for (int index = 0; index < _particles.Count; index++)
             {
                 var particle = _particles[index];

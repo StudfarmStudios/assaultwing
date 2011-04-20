@@ -9,8 +9,8 @@
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
-  <lifetime>45</lifetime>
-  <impactDamage>350</impactDamage>
+  <lifetime>35</lifetime>
+  <impactDamage>450</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
   <mass>120</mass>
   <scale>0.047</scale>

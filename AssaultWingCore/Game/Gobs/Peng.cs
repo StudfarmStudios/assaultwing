@@ -58,7 +58,7 @@ namespace AW2.Game.Gobs
         private CoordinateSystem _coordinateSystem;
 
         /// <summary>
-        /// Marks peng to have dependency to Player
+        /// Does the peng relate to a <see cref="Player"/>.
         /// </summary>
         [TypeParameter]
         private bool _playerRelated;
@@ -173,11 +173,6 @@ namespace AW2.Game.Gobs
         public CoordinateSystem ParticleCoordinates { get { return _coordinateSystem; } set { _coordinateSystem = value; } }
 
         /// <summary>
-        /// Marks peng to have dependency to Player
-        /// </summary>
-        public bool PlayerRelated { get { return _playerRelated; } set { _playerRelated = value; } }
-
-        /// <summary>
         /// <c>null</c> or the gob that determines the origin of the peng's coordinate system.
         /// </summary>
         /// Idiom: follow the leader.
@@ -215,6 +210,8 @@ namespace AW2.Game.Gobs
             _emitter = new SprayEmitter();
             _updater = new PhysicalUpdater();
             _coordinateSystem = CoordinateSystem.Game;
+            _playerRelated = false;
+            _disregardHidingLeader = false;
             _particles = new List<Particle>();
 
             // Set better defaults than class Gob does.
@@ -292,7 +289,7 @@ namespace AW2.Game.Gobs
             for (int i = 0; i < _particles.Count; i++)
                 _particlePosesTemp[i] = getParticleCenterInGameWorld(_particles[i]);
             Vector2.Transform(_particlePosesTemp, 0, ref gameToScreen, _particlePosesTemp, 0, _particles.Count);
-            var pengColor = PlayerRelated && Owner != null ? Owner.PlayerColor : Color.White;
+            var pengColor = _playerRelated && Owner != null ? Owner.PlayerColor : Color.White;
             if (!_disregardHidingLeader && Leader != null && Leader.IsHiding) pengColor = Color.Multiply(pengColor, Leader.Alpha);
             for (int index = 0; index < _particles.Count; index++)
             {

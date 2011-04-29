@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
 using Microsoft.Xna.Framework;
@@ -7,8 +8,6 @@ using Microsoft.Xna.Framework.Audio;
 using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
-using System.Globalization;
-using System.Threading;
 
 namespace AW2.Sound
 {
@@ -41,37 +40,19 @@ namespace AW2.Sound
             public SoundEffect[] _effects;
         }
 
-        Dictionary<string, SoundCue> _soundCues = new Dictionary<string, SoundCue>();
-        
-        List<SoundInstanceXNA> _playingInstances = new List<SoundInstanceXNA>(); // One-off sounds
-        List<WeakReference> _createdInstances = new List<WeakReference>(); // Sound instances with owner
-        List<KeyValuePair<int, SoundInstanceXNA>> _finishedInstances = new List<KeyValuePair<int, SoundInstanceXNA>>();
+        private Dictionary<string, SoundCue> _soundCues = new Dictionary<string, SoundCue>();
+        private List<SoundInstanceXNA> _playingInstances = new List<SoundInstanceXNA>(); // One-off sounds
+        private List<WeakReference> _createdInstances = new List<WeakReference>(); // Sound instances with owner
+        private List<KeyValuePair<int, SoundInstanceXNA>> _finishedInstances = new List<KeyValuePair<int, SoundInstanceXNA>>();
         private object _lock = new object();
-
-
-
-        AudioListener _listener = new AudioListener();
-
-        #region Private fields
-        AWMusic _music;
-        Action _volumeFadeAction;
-
-        /*
-        AudioEngine _audioEngine;
-        WaveBank _waveBank;
-        SoundBank _soundBank;
-        AudioCategory _soundEffectCategory;
-        */
-
-        #endregion
+        private AudioListener _listener = new AudioListener();
+        private AWMusic _music;
+        private Action _volumeFadeAction;
 
         public SoundEngineXNA(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
-            
         }
-
-        #region Overridden GameComponent methods
 
         public override void Initialize()
         {
@@ -80,18 +61,14 @@ namespace AW2.Sound
                 Log.Write("Sound engine initialized.");
                 string filePath = Game.Content.RootDirectory + "\\corecontent\\sounds\\sounddefs.xml";
 
-                System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.InstalledUICulture;
-                NumberFormatInfo ni = (System.Globalization.NumberFormatInfo)ci.NumberFormat.Clone();
-                ni.NumberDecimalSeparator = ".";
-
                 var allSounds = new List<string>();
 
                 var document = new XmlDocument();
-                 document.Load(filePath);
+                document.Load(filePath);
                 var soundNodes = document.SelectNodes("group/sound");
                 foreach (XmlNode sound in soundNodes)
                 {
-                    string baseName = sound.Attributes["name"].Value.ToLower();
+                    var baseName = sound.Attributes["name"].Value.ToLower();
 
                     var loopAttribute = sound.Attributes["loop"];
                     bool loop = (loopAttribute != null ? Boolean.Parse(loopAttribute.Value) : false);
@@ -100,35 +77,28 @@ namespace AW2.Sound
                     bool spatial = (spatialAttribute != null ? Boolean.Parse(spatialAttribute.Value) : true);
 
                     var volumeAttribute = sound.Attributes["volume"];
-                    float volume = (volumeAttribute != null ? (float)Double.Parse(volumeAttribute.Value, ni) : 1.0f);
-                    
-                    var distAttribute = sound.Attributes["distancescale"];
-                    float dist = (distAttribute != null ? (float)Double.Parse(distAttribute.Value, ni) : 200.0f);
+                    float volume = (volumeAttribute != null ? (float)Double.Parse(volumeAttribute.Value, CultureInfo.InvariantCulture) : 1.0f);
 
+                    var distAttribute = sound.Attributes["distancescale"];
+                    float dist = (distAttribute != null ? (float)Double.Parse(distAttribute.Value, CultureInfo.InvariantCulture) : 200.0f);
 
                     // Find all variations for a sound
-                    var effects = new List<SoundEffect>();
-                    var manager = Game.Content;
-
-                    for (int i = 1; i <= 99; i++)
-                    {
-                        string name = string.Format("{0}{1:00}", baseName, i);
-                        if (!manager.Exists<SoundEffect>(name)) break;
-
-                        var effect = manager.Load<SoundEffect>(name);
-                        effects.Add(effect);
-                    }
-                    if (effects.Count == 0)
+                    var effects = Enumerable.Range(1, 99)
+                        .Select(i => string.Format("{0}{1:00}", baseName, i))
+                        .TakeWhile(name => Game.Content.Exists<SoundEffect>(name))
+                        .Select(name => Game.Content.Load<SoundEffect>(name))
+                        .ToArray();
+                    if (!effects.Any())
                     {
                         Console.WriteLine("Error loading sound " + baseName + " (missing from project?)");
                     }
-                    var cue = new SoundCue(effects.ToArray(), volume, dist, loop);
+                    var cue = new SoundCue(effects, volume, dist, loop);
                     _soundCues.Add(baseName, cue);
                 }
             }
-            catch (InvalidOperationException e)
+            catch (NoAudioHardwareException e)
             {
-                Log.Write("ERROR: There will be no sound. Sound engine initialization failed. Exception details: " + e.ToString());
+                Log.Write("ERROR: There will be no sound. Sound engine initialization failed. Exception details: " + e);
                 Enabled = false;
             }
         }
@@ -198,13 +168,6 @@ namespace AW2.Sound
             base.Dispose();
         }
 
-        #endregion
-
-        #region Public interface
-
-        /// <summary>
-        /// Starts playing a random track from a tracklist.
-        /// </summary>
         public override void PlayMusic(IList<BackgroundMusic> musics)
         {
             if (!Enabled) return;
@@ -215,9 +178,6 @@ namespace AW2.Sound
             }
         }
 
-        /// <summary>
-        /// Starts playing set track from game music playlist
-        /// </summary>
         public override void PlayMusic(string trackName, float trackVolume)
         {
             if (!Enabled) return;
@@ -228,9 +188,6 @@ namespace AW2.Sound
             _music.EnsureIsPlaying();
         }
 
-        /// <summary>
-        /// Stops music playback immediately.
-        /// </summary>
         public override void StopMusic()
         {
             if (!Enabled) return;
@@ -239,9 +196,6 @@ namespace AW2.Sound
             _volumeFadeAction = null;
         }
 
-        /// <summary>
-        /// Stops music playback with a fadeout.
-        /// </summary>
         public override void StopMusic(TimeSpan fadeoutTime)
         {
             if (!Enabled) return;
@@ -262,23 +216,15 @@ namespace AW2.Sound
         private SoundInstance CreateSoundInternal(string soundName, Gob parentGob)
         {
             if (!Enabled) return null;
-
             soundName = soundName.ToLower();
-
             if (!_soundCues.ContainsKey(soundName))
             {
                 throw new ArgumentException("Sound " + soundName + " does not exist!");
             }
-
-            SoundCue cue = _soundCues[soundName.ToLower()];
-
-            SoundEffect soundEffect = cue.GetEffect();
-            
-
-            SoundEffectInstance instance = soundEffect.CreateInstance();
-
+            var cue = _soundCues[soundName.ToLower()];
+            var soundEffect = cue.GetEffect();
+            var instance = soundEffect.CreateInstance();
             instance.IsLooped = cue._loop;
-            
             return new SoundInstanceXNA(instance, parentGob, cue._volume, cue._distanceScale);
         }
 
@@ -306,8 +252,5 @@ namespace AW2.Sound
                 return instance;
             }
         }
-
-
-        #endregion
     }
 }

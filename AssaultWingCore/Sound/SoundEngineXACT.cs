@@ -39,7 +39,7 @@ namespace AW2.Sound
             }
             catch (InvalidOperationException e)
             {
-                Log.Write("ERROR: There will be no sound. Sound engine initialization failed. Exception details: " + e.ToString());
+                Log.Write("ERROR: There will be no sound. Sound engine initialization failed. Exception details: " + e);
                 Enabled = false;
             }
         }

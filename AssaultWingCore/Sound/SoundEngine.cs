@@ -13,8 +13,6 @@ namespace AW2.Sound
         {
         }
 
-        #region Public interface
-
         /// <summary>
         /// Music volume of current track relative to other tracks, as set by sound engineer, between 0 and 1.
         /// </summary>
@@ -55,14 +53,12 @@ namespace AW2.Sound
         public abstract void StopMusic(TimeSpan fadeoutTime);
         
         /// <summary>
-        /// Start a sound. Return a SoundInstance object to it, or null if sounds are disabled.
+        /// Creates, starts and returns a sound.
         /// </summary>
-     
         public abstract SoundInstance PlaySound(string soundName, Gob parentGob);
         
-        
         /// <summary>
-        /// Create a sound without starting it. Return a SoundInstance object, or null if sounds are disabled.
+        /// Creates and returns a sound without starting it.
         /// </summary>
         public abstract SoundInstance CreateSound(string soundName, Gob parentGob);
         
@@ -75,11 +71,5 @@ namespace AW2.Sound
         {
             return PlaySound(soundName, null);
         }
-
-
-        List<SoundInstance> _createdSounds = new List<SoundInstance>();
-        
-
-        #endregion
     }
 }

@@ -50,7 +50,11 @@ namespace AW2.Net.ConnectionUtils
                     CheckSocketError(args);
                     // Note: UDP reception will stop indefinitely if there is a SocketError.
                     // This should be okay, assuming SocketError signals that the UDP socket is unusable.
-                    if (args.SocketError != SocketError.Success) break;
+                    // However, ConnectionReset is known to happen when the game server closes a client
+                    // connection in a controlled fashion due to an unexpected message header. How a
+                    // connectionless protocol can reveal that the remote host closed its connection may
+                    // be a total mystery, but the error code is real.
+                    if (args.SocketError != SocketError.Success && args.SocketError != SocketError.ConnectionReset) break;
                     var bufferSegment = new ArraySegment<byte>(args.Buffer, 0, args.BytesTransferred);
                     var endPoint = (IPEndPoint)args.RemoteEndPoint;
                     _messageHandler(bufferSegment, endPoint);

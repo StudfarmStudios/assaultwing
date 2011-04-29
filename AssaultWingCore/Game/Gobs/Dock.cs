@@ -88,7 +88,7 @@ namespace AW2.Game.Gobs
             base.Update();
             if (IsSoundIdle) _chargingSound.Stop();
             if (IsEffectIdle) EnsureEffectIdle();
-            if (_dockSound != null) _dockSound.EnsureIsPlaying();
+            _dockSound.EnsureIsPlaying();
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)

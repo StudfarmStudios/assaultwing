@@ -9,7 +9,7 @@ using AW2.Helpers;
 namespace AW2.Sound
 {
     /// <summary>
-    /// Sound engine. Works as an extra abstraction for XACT audio engine.
+    /// Sound engine based on XACT.
     /// </summary>
     public class SoundEngineXACT : SoundEngine
     {
@@ -24,8 +24,6 @@ namespace AW2.Sound
             : base(game, updateOrder)
         {
         }
-
-        #region Overridden GameComponent methods
 
         public override void Initialize()
         {
@@ -67,13 +65,6 @@ namespace AW2.Sound
             base.Dispose();
         }
 
-        #endregion
-
-        #region Public interface
-
-        /// <summary>
-        /// Starts playing a random track from a tracklist.
-        /// </summary>
         public override void PlayMusic(IList<BackgroundMusic> musics)
         {
             if (!Enabled) return;
@@ -84,9 +75,6 @@ namespace AW2.Sound
             }
         }
 
-        /// <summary>
-        /// Starts playing set track from game music playlist
-        /// </summary>
         public override void PlayMusic(string trackName, float trackVolume)
         {
             if (!Enabled) return;
@@ -97,9 +85,6 @@ namespace AW2.Sound
             _music.EnsureIsPlaying();
         }
 
-        /// <summary>
-        /// Stops music playback immediately.
-        /// </summary>
         public override void StopMusic()
         {
             if (!Enabled) return;
@@ -108,9 +93,6 @@ namespace AW2.Sound
             _volumeFadeAction = null;
         }
 
-        /// <summary>
-        /// Stops music playback with a fadeout.
-        /// </summary>
         public override void StopMusic(TimeSpan fadeoutTime)
         {
             if (!Enabled) return;
@@ -125,28 +107,18 @@ namespace AW2.Sound
             };
         }
 
-        /// <summary>
-        /// Returns the named cue or <code>null</code> if sounds are disabled.
-        /// </summary>
         public override SoundInstance CreateSound(string soundName, Gob gob)
         {
-            if (!Enabled) return null;
-            Cue cue = _soundBank.GetCue(soundName);
+            if (!Enabled) return new SoundInstanceDummy();
+            var cue = _soundBank.GetCue(soundName);
             return new SoundInstanceXACT(cue, _soundBank);
         }
 
         public override SoundInstance PlaySound(string soundName, Gob gob)
         {
-            SoundInstance instance = CreateSound(soundName);
-
-            if (instance != null)
-            {
-                instance.Play();
-            }
+            var instance = CreateSound(soundName);
+            instance.Play();
             return instance;
         }
-
-
-        #endregion
     }
 }

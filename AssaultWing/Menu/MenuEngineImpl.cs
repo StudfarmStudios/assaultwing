@@ -234,7 +234,7 @@ namespace AW2.Menu
             if (!_activeComponentSoundPlayedOnce && Vector2.Distance(_view, _viewTarget) < 1)
             {
                 _activeComponentSoundPlayedOnce = true;
-                if (_menuChangeSound != null) _menuChangeSound.Stop();
+                _menuChangeSound.Stop();
                 Game.SoundEngine.PlaySound("MenuChangeEnd");
             }
 

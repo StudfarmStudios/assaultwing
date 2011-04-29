@@ -1,28 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework;
 using AW2.Core;
-using System.Diagnostics;
 
 namespace AW2.Sound
 {
     public class SoundInstanceXNA : SoundInstance
     {
+        private static AudioListener[] DEFAULT_LISTENERS = new[] { new AudioListener() };
+
+        private SoundEffectInstance _instance;
+        private AW2.Game.Gob _gob;
+        private AudioEmitter _emitter;
+        private float _baseVolume;
+        private float _distanceScale;
+
+        public override bool IsFinished { get { return _instance.IsDisposed || _instance.State == SoundState.Stopped; } }
+
         public SoundInstanceXNA(SoundEffectInstance effect)
         {
             _instance = effect;
-        }  
-        
+        }
+
         public SoundInstanceXNA(SoundEffectInstance effect, AW2.Game.Gob gob, float baseVolume, float distanceScale)
         {
             _instance = effect;
             _gob = gob;
             _emitter = new AudioEmitter();
             _baseVolume = baseVolume;
-            
+
             SetVolume(1);
             UpdateSpatial(DEFAULT_LISTENERS);
 
@@ -45,7 +51,7 @@ namespace AW2.Sound
                 _instance.Apply3D(new AudioListener(), _emitter);
             }
             _instance.Play();
-            
+
         }
         public override void Stop()
         {
@@ -61,12 +67,8 @@ namespace AW2.Sound
             _gob = null;
             _emitter = null;
         }
-        public bool IsFinished()
-        {
-            return _instance.IsDisposed || _instance.State == SoundState.Stopped;
-        }
 
-        public void UpdateSpatial(AudioListener[] listeners)
+        public override void UpdateSpatial(AudioListener[] listeners)
         {
             if (_gob != null && !_instance.IsDisposed)
             {
@@ -79,7 +81,7 @@ namespace AW2.Sound
 
             }
         }
-                    
+
         public override void EnsureIsPlaying()
         {
             Trace.Assert(!_instance.IsDisposed);
@@ -88,13 +90,5 @@ namespace AW2.Sound
                 _instance.Play();
             }
         }
-
-        private SoundEffectInstance _instance;   
-        private AW2.Game.Gob _gob;
-        private AudioEmitter _emitter;
-        private float _baseVolume;
-        private float _distanceScale;
-        private static AudioListener[] DEFAULT_LISTENERS = new AudioListener[] { new AudioListener() };
-        
     }
 }

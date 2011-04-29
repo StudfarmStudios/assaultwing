@@ -415,11 +415,7 @@ namespace AW2.Game
 
         private void UninitializeAmbientSounds()
         {
-            foreach (var sound in _ambientSounds)
-            {
-                if (sound != null)
-                    sound.Stop();
-            }
+            foreach (var sound in _ambientSounds) sound.Stop();
             _ambientSounds.Clear();
         }
 
@@ -453,11 +449,7 @@ namespace AW2.Game
                     gob.Layer = layer;
                 }
             }
-            foreach (var sound in _ambientSounds)
-            {
-                if (sound != null)
-                    sound.Play();
-            }
+            foreach (var sound in _ambientSounds) sound.Play();
         }
 
         /// <summary>

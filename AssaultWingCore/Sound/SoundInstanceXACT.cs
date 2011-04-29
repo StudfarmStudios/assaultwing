@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework;
 
 namespace AW2.Sound
 {
     public class SoundInstanceXACT : SoundInstance
     {
+        private Cue _cue;
+        private bool _isDisposed;
+        private string _cueName;
+        private SoundBank _soundBank;
+
+        public override bool IsFinished { get { return _cue == null || !_cue.IsPlaying; } }
+
         public SoundInstanceXACT(Cue cue, SoundBank soundBank)
         {
             _cue = cue;
@@ -27,15 +30,14 @@ namespace AW2.Sound
         }
 
         public override void SetVolume(float v)
-        {            
+        {
         }
-
 
         public override void EnsureIsPlaying()
         {
             if (_isDisposed) throw new InvalidOperationException("The sound is disposed");
 
-            if (IsPlaying) return;
+            if (!IsFinished) return;
 
             if (_cue != null)
             {
@@ -54,11 +56,10 @@ namespace AW2.Sound
             }
             _isDisposed = true;
         }
-        public bool IsPlaying { get { return _cue != null && _cue.IsPlaying; } }
 
-        private Cue _cue;
-        private bool _isDisposed = false;
-        private string _cueName;
-        private SoundBank _soundBank;
+        public override void UpdateSpatial(AudioListener[] listeners)
+        {
+            // TODO
+        }
     };
 }

@@ -12,10 +12,8 @@ using AW2.Helpers;
 namespace AW2.Sound
 {
     /// <summary>
-    /// Sound engine. Works as an extra abstraction for XACT audio engine.
+    /// Sound engine based on XNA's <see cref="SoundEffect"/>.
     /// </summary>
-    /// 
-
     public class SoundEngineXNA : SoundEngine
     {
         public class SoundCue
@@ -41,9 +39,9 @@ namespace AW2.Sound
         }
 
         private Dictionary<string, SoundCue> _soundCues = new Dictionary<string, SoundCue>();
-        private List<SoundInstanceXNA> _playingInstances = new List<SoundInstanceXNA>(); // One-off sounds
+        private List<SoundInstance> _playingInstances = new List<SoundInstance>(); // One-off sounds
         private List<WeakReference> _createdInstances = new List<WeakReference>(); // Sound instances with owner
-        private List<KeyValuePair<int, SoundInstanceXNA>> _finishedInstances = new List<KeyValuePair<int, SoundInstanceXNA>>();
+        private List<Tuple<int, SoundInstance>> _finishedInstances = new List<Tuple<int, SoundInstance>>();
         private object _lock = new object();
         private AudioListener _listener = new AudioListener();
         private AWMusic _music;
@@ -114,18 +112,18 @@ namespace AW2.Sound
 
                 // Remove expired instances
                 int ticks = Environment.TickCount;
-                _finishedInstances.RemoveAll(instance => instance.Key < ticks);
+                _finishedInstances.RemoveAll(instance => instance.Item1 < ticks);
 
                 // Move finished instances to separate list
-                foreach (SoundInstanceXNA instance in _playingInstances)
+                foreach (var instance in _playingInstances)
                 {
-                    if (instance.IsFinished())
+                    if (instance.IsFinished)
                     {
-                        _finishedInstances.Add(new KeyValuePair<int, SoundInstanceXNA>(ticks + RELEASE_DELAY, instance));
+                        _finishedInstances.Add(Tuple.Create(ticks + RELEASE_DELAY, (SoundInstance)instance));
                     }
                 }
 
-                _playingInstances.RemoveAll(instance => instance.IsFinished());
+                _playingInstances.RemoveAll(instance => instance.IsFinished);
                 _createdInstances.RemoveAll(instance => instance.Target == null);
 
                 var listeners =
@@ -146,7 +144,7 @@ namespace AW2.Sound
                     }
                     foreach (var instance in _createdInstances)
                     {
-                        SoundInstanceXNA soundInstance = (SoundInstanceXNA)instance.Target;
+                        var soundInstance = (SoundInstance)instance.Target;
                         if (soundInstance != null)
                         {
                             soundInstance.UpdateSpatial(listenerArray);
@@ -159,7 +157,7 @@ namespace AW2.Sound
         public override void Dispose()
         {
             foreach (var sound in _playingInstances) sound.Dispose();
-            foreach (var sound in _createdInstances.Select(x => x.Target).Where(x => x != null).Cast<SoundInstanceXNA>()) sound.Dispose();
+            foreach (var sound in _createdInstances.Select(x => x.Target).Where(x => x != null).Cast<SoundInstance>()) sound.Dispose();
             if (_music != null)
             {
                 _music.Dispose();
@@ -210,18 +208,15 @@ namespace AW2.Sound
             };
         }
 
-        /// <summary>
-        /// Returns the named cue or <code>null</code> if sounds are disabled.
-        /// </summary>
         private SoundInstance CreateSoundInternal(string soundName, Gob parentGob)
         {
-            if (!Enabled) return null;
+            if (!Enabled) return new SoundInstanceDummy();
             soundName = soundName.ToLower();
             if (!_soundCues.ContainsKey(soundName))
             {
                 throw new ArgumentException("Sound " + soundName + " does not exist!");
             }
-            var cue = _soundCues[soundName.ToLower()];
+            var cue = _soundCues[soundName];
             var soundEffect = cue.GetEffect();
             var instance = soundEffect.CreateInstance();
             instance.IsLooped = cue._loop;
@@ -232,7 +227,7 @@ namespace AW2.Sound
         {
             lock (_lock)
             {
-                SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
+                var instance = CreateSoundInternal(soundName, parentGob);
                 _createdInstances.Add(new WeakReference(instance));
                 return instance;
             }
@@ -242,12 +237,8 @@ namespace AW2.Sound
         {
             lock (_lock)
             {
-                SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
-
-                if (instance != null)
-                {
-                    instance.Play();
-                }
+                var instance = CreateSoundInternal(soundName, parentGob);
+                instance.Play();
                 _playingInstances.Add(instance);
                 return instance;
             }

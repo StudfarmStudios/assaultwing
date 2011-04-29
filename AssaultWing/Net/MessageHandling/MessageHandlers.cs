@@ -13,6 +13,7 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
 using AW2.UI;
 using AW2.Net.Connections;
+using System.Net.Sockets;
 
 namespace AW2.Net.MessageHandling
 {
@@ -247,10 +248,11 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)
         {
+            var net = AssaultWing.Instance.NetworkEngine;
             string clientDiff, serverDiff;
             int diffIndex;
             bool differ = MiscHelper.FirstDifference(mess.CanonicalStrings, CanonicalString.CanonicalForms, out clientDiff, out serverDiff, out diffIndex);
-            var connection = AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
+            var connection = net.GetGameClientConnection(mess.ConnectionID);
             if (differ)
             {
                 var mismatchInfo = string.Format("First mismatch is index: {0}, client: {1}, server: {2}",
@@ -260,11 +262,16 @@ namespace AW2.Net.MessageHandling
                 Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo + extraInfo);
                 var reply = new ConnectionClosingMessage { Info = "of version mismatch (canonical strings)." };
                 connection.Send(reply);
-                AssaultWing.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
+                net.DropClient(mess.ConnectionID, false);
             }
             else
             {
                 connection.ConnectionStatus.ClientKey = mess.GameClientKey;
+                // Send dummy UDP packets to probable UDP end points of the client to increase
+                // probability of our NAT forwarding UDP packets from the client to us.
+                var ping = new PingRequestMessage();
+                for (int port = NetworkEngine.UDP_CONNECTION_PORT_FIRST; port <= NetworkEngine.UDP_CONNECTION_PORT_LAST; port++)
+                    net.UDPSocket.Send(ping.Serialize, new IPEndPoint(net.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address, port));
             }
         }
 

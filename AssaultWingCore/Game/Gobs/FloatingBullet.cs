@@ -65,10 +65,12 @@ namespace AW2.Game.Gobs
             Move *= 0.97f;
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
-            var shortestEnemyDistance = Game.DataEngine.Players
+            Alpha = Game.DataEngine.Players
                 .Where(plr => plr != Owner && plr.Ship != null)
-                .Min(plr => Vector2.Distance(Pos, plr.Ship.Pos));
-            Alpha = 1 - MathHelper.Clamp(shortestEnemyDistance / 200, 0, 1);
+                .Select(plr => Vector2.Distance(Pos, plr.Ship.Pos))
+                .Select(distance => 1 - MathHelper.Clamp(distance / 200, 0, 1))
+                .DefaultIfEmpty(0)
+                .Max();
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)

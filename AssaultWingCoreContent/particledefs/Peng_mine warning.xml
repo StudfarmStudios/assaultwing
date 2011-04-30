@@ -13,7 +13,7 @@
   <coordinateSystem>Peng</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
-    <emissionFrequency>1</emissionFrequency>
+    <emissionFrequency>1.6</emissionFrequency>
     <numberToCreate>-1</numberToCreate>
     <radius>200</radius>
     <sprayAngle>3.14</sprayAngle>

@@ -92,7 +92,6 @@ namespace AW2.Core
                 _invoker(() =>
                 {
                     _game.Initialize();
-                    _game.LoadContent();
                     _game.BeginRun();
                 });
                 var nextUpdate = TimeSpan.Zero;

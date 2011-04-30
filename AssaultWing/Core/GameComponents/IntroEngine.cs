@@ -15,6 +15,7 @@ namespace AW2.Core.GameComponents
         private Control _skipControl;
         private AWVideo _introVideo;
         private SpriteBatch _spriteBatch;
+        private bool _introPlaying;
 
         public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
 
@@ -23,14 +24,18 @@ namespace AW2.Core.GameComponents
         {
         }
 
-        public void BeginIntro()
+        private void BeginIntro()
         {
+            Log.Write("Starting intro");
+            Game.GraphicsDeviceService.CheckThread();
+            _introPlaying = true;
             _introVideo.Play();
         }
 
         private void EndIntro()
         {
             _introVideo.Stop();
+            _introPlaying = false;
             Log.Write("Entering menus");
             Game.ShowMainMenuAndResetGameplay();
         }
@@ -78,6 +83,7 @@ namespace AW2.Core.GameComponents
 
         public override void Draw()
         {
+            if (!_introPlaying) BeginIntro();
             Game.GraphicsDeviceService.CheckThread();
             Game.GraphicsDeviceService.GraphicsDevice.Clear(Color.Black);
             var videoFrame = _introVideo.GetTexture();

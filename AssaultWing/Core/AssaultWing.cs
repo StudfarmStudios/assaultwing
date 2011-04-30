@@ -435,7 +435,6 @@ namespace AW2.Core
                 case GameState.Intro:
                     IntroEngine.Enabled = true;
                     IntroEngine.Visible = true;
-                    IntroEngine.BeginIntro();
                     break;
                 case GameState.Gameplay:
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;

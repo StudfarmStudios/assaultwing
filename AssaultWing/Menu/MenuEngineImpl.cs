@@ -54,6 +54,7 @@ namespace AW2.Menu
         public ProgressBar ProgressBar { get; private set; }
 
         public BackgroundTask ArenaLoadTask { get; private set; }
+        public bool IsReadyToStartArena { get; set; }
         private int ViewportWidth { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width; } }
         private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
         private bool IsHelpTextVisible { get { return Game.MenuEngine.ProgressBar.IsFinished; } }

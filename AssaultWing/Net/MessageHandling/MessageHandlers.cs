@@ -280,6 +280,7 @@ namespace AW2.Net.MessageHandling
             var clientConn = AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
             if (clientConn.ConnectionStatus.IsDropped) return;
             clientConn.ConnectionStatus.IsPlayingArena = mess.IsGameClientPlayingArena;
+            clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)
             {
                 var newPlayer = CreateAndAddNewPlayer(mess);

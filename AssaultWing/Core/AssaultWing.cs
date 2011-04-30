@@ -756,6 +756,7 @@ namespace AW2.Core
             {
                 IsRegisteredToServer = plr.ServerRegistration == Spectator.ServerRegistrationType.Yes,
                 IsGameClientPlayingArena = GameState == Core.GameState.Gameplay,
+                IsGameClientReadyToStartArena = MenuEngine.IsReadyToStartArena,
                 PlayerID = plr.ServerRegistration == Spectator.ServerRegistrationType.Yes ? plr.ID : plr.LocalID,
             };
             SendPlayerSettingsToRemote(sendCriteria, newPlayerSettingsRequest, new[] { NetworkEngine.GameServerConnection });

@@ -20,6 +20,12 @@
         public bool IsPlayingArena { get; set; }
 
         /// <summary>
+        /// Is the game client ready to start the next arena.
+        /// This property is maintained by the game client.
+        /// </summary>
+        public bool IsReadyToStartArena { get; set; }
+
+        /// <summary>
         /// A unique identifier of the client, provided by the client.
         /// </summary>
         public byte[] ClientKey { get; set; }

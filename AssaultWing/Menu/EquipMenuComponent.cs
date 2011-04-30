@@ -30,7 +30,6 @@ namespace AW2.Menu
         private ChatTab _chatTab;
         private List<EquipMenuTab> _tabs;
         private int _tabIndex;
-        private bool _readyPressed;
         private TimeSpan _tabFadeStartTime;
         private TimeSpan _readyFadeStartTime;
 
@@ -118,8 +117,8 @@ namespace AW2.Menu
         private void CheckArenaStart()
         {
             bool okToStart = MenuEngine.Game.NetworkMode == NetworkMode.Client
-                ? MenuEngine.Game.IsClientAllowedToStartArena && _readyPressed && MenuEngine.ProgressBar.IsFinished
-                : _readyPressed;
+                ? MenuEngine.Game.IsClientAllowedToStartArena && MenuEngine.IsReadyToStartArena && MenuEngine.ProgressBar.IsFinished
+                : MenuEngine.IsReadyToStartArena;
             if (!okToStart) return;
             MenuEngine.Deactivate();
             if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
@@ -138,14 +137,14 @@ namespace AW2.Menu
             if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone) _tabs.Add(_chatTab = new ChatTab(this));
             _tabs.Add(new MatchTab(this));
             _tab = _tabs[_tabIndex = 0];
-            _readyPressed = false;
+            MenuEngine.IsReadyToStartArena = false;
         }
 
         private void CheckGeneralControls()
         {
             if (Controls.Tab.Pulse) ChangeTab();
             else if (Controls.Back.Pulse) BackToMainMenu();
-            else if (Controls.StartGame.Pulse) _readyPressed = !_readyPressed;
+            else if (Controls.StartGame.Pulse) MenuEngine.IsReadyToStartArena = !MenuEngine.IsReadyToStartArena;
         }
 
         private void ChangeTab()
@@ -160,7 +159,7 @@ namespace AW2.Menu
         {
             Action backToMainMenuImpl = () =>
             {
-                _readyPressed = false;
+                MenuEngine.IsReadyToStartArena = false;
                 if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
                 MenuEngine.Game.ShowMainMenuAndResetGameplay();
             };
@@ -188,9 +187,9 @@ namespace AW2.Menu
 
         private void DrawExtraReadyMessage(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (!_readyPressed || MenuEngine.Game.NetworkMode != NetworkMode.Client) return;
+            if (!MenuEngine.IsReadyToStartArena || MenuEngine.Game.NetworkMode != NetworkMode.Client) return;
             var extraReadyMessagePos = Pos - view + new Vector2(844, 103);
-            spriteBatch.Draw(_extraReadyMessageTexture, extraReadyMessagePos, Color.White);            
+            spriteBatch.Draw(_extraReadyMessageTexture, extraReadyMessagePos, Color.White);
         }
 
         private void DrawExtraChatBox(Vector2 view, SpriteBatch spriteBatch)
@@ -220,7 +219,7 @@ namespace AW2.Menu
             // Draw ready button
             var readyButtonPos = firstTabPos + new Vector2(419, 0);
             spriteBatch.Draw(_buttonReadyTexture, readyButtonPos, Color.White);
-            var highlightAlpha = _readyPressed
+            var highlightAlpha = MenuEngine.IsReadyToStartArena
                 ? 1f
                 : g_readyFade.Evaluate((float)(MenuEngine.Game.GameTime.TotalRealTime - _readyFadeStartTime).TotalSeconds);
             spriteBatch.Draw(_buttonReadyHiliteTexture, readyButtonPos, Color.Multiply(Color.White, highlightAlpha));
@@ -231,28 +230,28 @@ namespace AW2.Menu
             Action<int, string, string, Color, Color> drawInfo = (line, item, value, itemColor, valueColor) =>
             {
                 var statusDisplayRowHeight = new Vector2(0, 12);
-                var statusDisplayColumnWidth = new Vector2(75, 0);
-                var statusDisplayTextPos = Pos - view + new Vector2(350, 616);
+                var statusDisplayColumnWidth = new Vector2(73, 0);
+                var statusDisplayTextPos = Pos - view + new Vector2(349, 616);
                 var itemPos = statusDisplayTextPos + statusDisplayRowHeight * line;
                 var valuePos = itemPos + statusDisplayColumnWidth;
                 spriteBatch.DrawString(Content.FontSmall, item, itemPos.Round(), itemColor);
                 spriteBatch.DrawString(Content.FontSmall, value, valuePos.Round(), valueColor);
             };
-
-            // Draw common statusdisplay texts for all modes
             drawInfo(0, "Players", MenuEngine.Game.DataEngine.Players.Count().ToString(), Color.White, Color.GreenYellow);
-            drawInfo(4, "Arena", "", Color.White, Color.White);
-            drawInfo(5, MenuEngine.Game.SelectedArenaName, "", Color.GreenYellow, Color.GreenYellow);
-
-            // Draw network game statusdisplay texts
+            drawInfo(1, "Arena", MenuEngine.Game.SelectedArenaName, Color.White, Color.GreenYellow);
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    drawInfo(1, "Status", "server", Color.White, Color.GreenYellow);
-                    break;
+                    {
+                        var clientCount = MenuEngine.Game.NetworkEngine.GameClientConnections.Count(conn => conn.ConnectionStatus.IsReadyToStartArena);
+                        drawInfo(4, string.Format("{0} client{1} ready", clientCount, clientCount == 1 ? "" : "s"),
+                            "", Color.GreenYellow, Color.GreenYellow);
+                        break;
+                    }
                 case NetworkMode.Client:
-                    drawInfo(1, "Status", "connected", Color.White, Color.GreenYellow);
                     drawInfo(2, "Ping", GetPingTextAndColor().Item1, Color.White, GetPingTextAndColor().Item2);
+                    drawInfo(4, MenuEngine.Game.GameState == GameState.GameAndMenu ? "Press F10 to play" : "Waiting for server",
+                        "", Color.GreenYellow, Color.GreenYellow);
                     break;
             }
         }

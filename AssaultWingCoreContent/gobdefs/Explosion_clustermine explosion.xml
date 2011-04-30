@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Explosion">
-  <typeName>mine explosion</typeName>
+  <typeName>clustermine explosion</typeName>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
-  <impactHoleRadius>53</impactHoleRadius>
+  <impactHoleRadius>68</impactHoleRadius>
   <particleEngineNames>
     <Item>fragments</Item>
     <Item>explo shockwave</Item>
@@ -63,23 +63,23 @@
     <keys>
       <Item>
         <position>0</position>
-        <internalValue>65</internalValue>
-        <tangentOut>0</tangentOut>
+        <internalValue>165</internalValue>
         <tangentIn>0</tangentIn>
+        <tangentOut>0</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
-        <position>150</position>
+        <position>250</position>
         <internalValue>0</internalValue>
+        <tangentIn>-165</tangentIn>
         <tangentOut>0</tangentOut>
-        <tangentIn>-65</tangentIn>
         <continuity>Smooth</continuity>
       </Item>
     </keys>
   </inflictDamage>
   <radialFlow>
     <dragMagnitude>0.003</dragMagnitude>
-    <flowTime>0.25</flowTime>
+    <flowTime>0.35</flowTime>
     <flowSpeed>
       <preLoop>Constant</preLoop>
       <postLoop>Constant</postLoop>
@@ -92,7 +92,7 @@
           <continuity>Smooth</continuity>
         </Item>
         <Item>
-          <position>170</position>
+          <position>280</position>
           <internalValue>0</internalValue>
           <tangentOut>0</tangentOut>
           <tangentIn>-2000</tangentIn>
@@ -111,7 +111,7 @@
           <X>0</X>
           <Y>0</Y>
         </center>
-        <radius>170</radius>
+        <radius>250</radius>
         <boundingBox>
           <min>
             <X>0</X>

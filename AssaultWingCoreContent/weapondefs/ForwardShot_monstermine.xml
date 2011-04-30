@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot">
-  
+
   <deviceInfo>
-	<pictureName>dummytexture</pictureName>
-	<titlePictureName>dummytexture</titlePictureName>
-	<infoText>Info</infoText>
-	<reloadSpeed>Average</reloadSpeed>
-	<energyUsage>Average</energyUsage>
-	<usageType>Single</usageType>
+    <pictureName>dummytexture</pictureName>
+    <titlePictureName>dummytexture</titlePictureName>
+    <infoText>Info</infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
     <iconEquipName>dummytexture</iconEquipName>
   </deviceInfo>
 
   <weaponInfo>
-	<singleShotDamage>Average</singleShotDamage>
-	<shotSpeed>Average</shotSpeed>
-	<recoilMomentum>Average</recoilMomentum>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Average</shotSpeed>
+    <recoilMomentum>Average</recoilMomentum>
   </weaponInfo>
-  
-  <typeName>minespewer</typeName>
+
+  <typeName>monstermine</typeName>
   <gunBarrels>Rear</gunBarrels>
   <upgradeNames>
   </upgradeNames>
@@ -30,7 +30,7 @@
   <loadTime>5</loadTime>
   <fireCharge>500</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
-  <shotCount>3</shotCount>
+  <shotCount>1</shotCount>
   <shotSpacing>0.25</shotSpacing>
   <shotAngleVariation>0.1</shotAngleVariation>
   <shotSpeedVariation>0</shotSpeedVariation>

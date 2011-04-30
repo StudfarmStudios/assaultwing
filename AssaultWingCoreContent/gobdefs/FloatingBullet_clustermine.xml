@@ -4,13 +4,13 @@
   <isRotating>true</isRotating>
   <rotationSpeed>0.2</rotationSpeed>
   <hoverThrust>4000</hoverThrust>
-  <attractionForce>50000</attractionForce>
+  <attractionForce>55000</attractionForce>
   <spreadingForce>12000</spreadingForce>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
   <lifetime>35</lifetime>
-  <impactDamage>450</impactDamage>
+  <impactDamage>550</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
   <mass>120</mass>
   <scale>0.047</scale>
@@ -28,7 +28,7 @@
   <birthGobTypes>
   </birthGobTypes>
   <deathGobTypes>
-    <Item>mine explosion</Item>
+    <Item>clustermine explosion</Item>
   </deathGobTypes>
   <exhaustEngineNames>
   </exhaustEngineNames>
@@ -44,7 +44,7 @@
           <X>0</X>
           <Y>0</Y>
         </center>
-        <radius>120</radius>
+        <radius>360</radius>
         <boundingBox>
           <min>
             <X>0</X>

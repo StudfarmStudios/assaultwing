@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot">
-  
+
   <deviceInfo>
-	<pictureName>menu_equip_weaponpicture_mines</pictureName>
-	<titlePictureName>menu_equip_weaponname_mines</titlePictureName>
-	<infoText>This was the first weapon to implement
-NAGS to allow objects to stay in mid-air.
-Unloads 5 mines into a random formation</infoText>
-	<reloadSpeed>Average</reloadSpeed>
-	<energyUsage>Poor</energyUsage>
-	<usageType>Single</usageType>
+    <pictureName>menu_equip_weaponpicture_mines</pictureName>
+    <titlePictureName>menu_equip_weaponname_mines</titlePictureName>
+    <infoText>
+      Mines are equipped with the Catmoflage(tm)
+      cloaking device, rendering them almost
+      unnoticable to unsuspecting foes. Magnedog(tm)
+      proximity homing device helps the mine find
+      its target. Be smart about where you lay
+      these devastating Easter eggs.
+    </infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Poor</energyUsage>
+    <usageType>Single</usageType>
     <iconEquipName>menu_equip_wep2_mines</iconEquipName>
   </deviceInfo>
 
   <weaponInfo>
-	<singleShotDamage>Average</singleShotDamage>
-	<shotSpeed>Poor</shotSpeed>
-	<recoilMomentum>Poor</recoilMomentum>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Poor</shotSpeed>
+    <recoilMomentum>Poor</recoilMomentum>
   </weaponInfo>
-  
+
   <typeName>mines</typeName>
   <gunBarrels>Rear</gunBarrels>
   <upgradeNames>
-     <Item>minespewer</Item>
+    <Item>monstermine</Item>
   </upgradeNames>
   <iconName>b_icon_mines</iconName>
   <fireSound>DropMines</fireSound>

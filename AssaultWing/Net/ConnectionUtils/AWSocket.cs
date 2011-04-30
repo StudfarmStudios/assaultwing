@@ -118,7 +118,7 @@ namespace AW2.Net.ConnectionUtils
 
         protected void CheckSocketError(SocketAsyncEventArgs args)
         {
-            if (args.SocketError == SocketError.Success) return;
+            if (args.SocketError == SocketError.Success || args.SocketError == SocketError.ConnectionReset) return;
             Errors.Do(queue => queue.Enqueue(string.Format("Error in {0}: {1}", args.LastOperation, args.SocketError)));
         }
 

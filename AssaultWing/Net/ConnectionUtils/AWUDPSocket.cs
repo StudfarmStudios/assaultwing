@@ -55,9 +55,12 @@ namespace AW2.Net.ConnectionUtils
                     // connectionless protocol can reveal that the remote host closed its connection may
                     // be a total mystery, but the error code is real.
                     if (args.SocketError != SocketError.Success && args.SocketError != SocketError.ConnectionReset) break;
-                    var bufferSegment = new ArraySegment<byte>(args.Buffer, 0, args.BytesTransferred);
-                    var endPoint = (IPEndPoint)args.RemoteEndPoint;
-                    _messageHandler(bufferSegment, endPoint);
+                    if (args.SocketError == SocketError.Success)
+                    {
+                        var bufferSegment = new ArraySegment<byte>(args.Buffer, 0, args.BytesTransferred);
+                        var endPoint = (IPEndPoint)args.RemoteEndPoint;
+                        _messageHandler(bufferSegment, endPoint);
+                    }
                 }
                 catch (Exception e)
                 {

@@ -26,6 +26,7 @@
   <movable>true</movable>
   <maxDamage>100</maxDamage>
   <birthGobTypes>
+	<Item>mine warning</Item>
   </birthGobTypes>
   <deathGobTypes>
     <Item>clustermine explosion</Item>

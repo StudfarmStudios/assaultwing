@@ -332,6 +332,7 @@ namespace AW2.Menu
         {
             if (_shadowSize != new Point(ViewportWidth, ViewportHeight))
                 InitializeShadow();
+            if (_shadowIndexData.Length == 0) return; // happens if the view is very shallow
             _effect.Projection = Matrix.CreateOrthographicOffCenter(
                 -ViewportWidth / 2, ViewportWidth / 2,
                 -ViewportHeight / 2, ViewportHeight / 2,

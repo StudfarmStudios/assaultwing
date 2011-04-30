@@ -23,6 +23,8 @@
   <movable>true</movable>
   <maxDamage>100</maxDamage>
   <birthGobTypes>
+	<Item>bazooka electric ball</Item>
+	<Item>bazooka electric streaks</Item>
     <Item>trizooka glow</Item>
   </birthGobTypes>
   <deathGobTypes>

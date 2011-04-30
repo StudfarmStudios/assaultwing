@@ -24,6 +24,8 @@
   <maxDamage>100</maxDamage>
   <birthGobTypes>
     <Item>dumb glow</Item>
+	<Item>bazooka electric ball</Item>
+	<Item>bazooka electric streaks</Item>
   </birthGobTypes>
   <deathGobTypes>
     <Item>bomb explosion</Item>

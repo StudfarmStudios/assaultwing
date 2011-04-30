@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core.OverlayComponents;
+using AW2.Helpers;
 
 namespace AW2.Core.GameComponents
 {
@@ -86,7 +87,7 @@ namespace AW2.Core.GameComponents
             newViewport.Y = (screen.Height - _dialogTexture.Height) / 2;
             newViewport.Width = _dialogTexture.Width;
             newViewport.Height = _dialogTexture.Height;
-            gfx.Viewport = newViewport;
+            gfx.Viewport = newViewport.LimitTo(AssaultWingCore.Instance.Window.ClientBounds);
 
             // Draw contents.
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);

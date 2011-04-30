@@ -103,41 +103,11 @@ namespace AW2.Graphics
             newViewport.Y += (int)CustomAlignment.Y;
             newViewport.Width = Math.Min(oldViewport.Width, dimensions.X);
             newViewport.Height = Math.Min(oldViewport.Height, dimensions.Y);
-            newViewport = LimitViewport(newViewport);
-            gfx.Viewport = newViewport;
+            gfx.Viewport = newViewport.LimitTo(AssaultWingCore.Instance.Window.ClientBounds);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             DrawContent(spriteBatch);
             spriteBatch.End();
             gfx.Viewport = oldViewport;
-        }
-
-        private static Viewport LimitViewport(Viewport viewport)
-        {
-            var clientBounds = AssaultWingCore.Instance.Window.ClientBounds;
-            var x_width = LimitViewportAxis(viewport.X, viewport.Width, clientBounds.X, clientBounds.Right);
-            viewport.X = x_width.Item1;
-            viewport.Width = x_width.Item2;
-            var y_height = LimitViewportAxis(viewport.Y, viewport.Height, clientBounds.Y, clientBounds.Bottom);
-            viewport.Y = y_height.Item1;
-            viewport.Height = y_height.Item2;
-            return viewport;
-        }
-
-        private static Tuple<int, int> LimitViewportAxis(int start, int size, int min, int max)
-        {
-            if (start < min)
-            {
-                size -= min - start;
-                start = min;
-            }
-            if (start < max)
-                size = size.Clamp(0, Math.Max(0, max - start));
-            else
-            {
-                start = max;
-                size = 1; // 0 is not allowed by GraphicsDevice.Viewport
-            }
-            return Tuple.Create(start, size);
         }
 
         /// <summary>

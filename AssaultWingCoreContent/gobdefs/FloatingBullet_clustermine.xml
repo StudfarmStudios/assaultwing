@@ -106,5 +106,38 @@
       </area>
     </Item>
   </collisionAreas>
-
+  <enemyDistanceToAlpha>
+    <preLoop>Constant</preLoop>
+    <postLoop>Constant</postLoop>
+    <keys>
+      <Item>
+        <position>30</position>
+        <internalValue>1</internalValue>
+        <tangentIn>0</tangentIn>
+        <tangentOut>-0.8</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>60</position>
+        <internalValue>0.2</internalValue>
+        <tangentIn>-0.4157143</tangentIn>
+        <tangentOut>-0.5542857</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>100</position>
+        <internalValue>0.03</internalValue>
+        <tangentIn>-0.05714286</tangentIn>
+        <tangentOut>-0.03</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>200</position>
+        <internalValue>0</internalValue>
+        <tangentIn>-0.03</tangentIn>
+        <tangentOut>0</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+    </keys>
+  </enemyDistanceToAlpha>
 </GobType>

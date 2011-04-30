@@ -30,6 +30,9 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _spreadingForce;
 
+        [TypeParameter, ShallowCopy]
+        private Curve _enemyDistanceToAlpha;
+
         private Vector2? _hoverAroundPos;
         private Vector2 _thrustForce;
 
@@ -45,6 +48,12 @@ namespace AW2.Game.Gobs
             _hoverThrust = 10000;
             _attractionForce = 50000;
             _spreadingForce = 10000;
+            _enemyDistanceToAlpha = new Curve();
+            _enemyDistanceToAlpha.PreLoop = CurveLoopType.Constant;
+            _enemyDistanceToAlpha.PostLoop = CurveLoopType.Constant;
+            _enemyDistanceToAlpha.Keys.Add(new CurveKey(0, 1));
+            _enemyDistanceToAlpha.Keys.Add(new CurveKey(200, 0));
+            _enemyDistanceToAlpha.ComputeTangents(CurveTangent.Linear);
         }
 
         public FloatingBullet(CanonicalString typeName)
@@ -68,7 +77,7 @@ namespace AW2.Game.Gobs
             Alpha = Game.DataEngine.Players
                 .Where(plr => plr != Owner && plr.Ship != null)
                 .Select(plr => Vector2.Distance(Pos, plr.Ship.Pos))
-                .Select(distance => 1 - MathHelper.Clamp(distance / 200, 0, 1))
+                .Select(_enemyDistanceToAlpha.Evaluate)
                 .DefaultIfEmpty(0)
                 .Max();
         }

@@ -97,7 +97,8 @@ namespace AW2.Game.Gobs
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
                     break;
                 default:
-                    if (!collidedWithFriend)
+                    // Don't explode on any impact with friends or non-stuck impact with weak gobs.
+                    if (!collidedWithFriend && (stuck || theirArea.Owner.MaxDamageLevel > 100))
                         base.Collide(myArea, theirArea, stuck);
                     break;
             }

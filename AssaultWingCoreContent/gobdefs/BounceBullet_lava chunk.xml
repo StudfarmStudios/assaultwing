@@ -7,7 +7,7 @@
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
   <lifetime>25</lifetime>
-  <maxDamage>1200</maxDamage>
+  <maxDamage>100</maxDamage>
   <impactDamage>20</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
   <mass>100</mass>
@@ -45,7 +45,7 @@
           <X>0</X>
           <Y>0</Y>
         </center>
-        <radius>1</radius>
+        <radius>4.5</radius>
         <boundingBox>
           <min>
             <X>0</X>

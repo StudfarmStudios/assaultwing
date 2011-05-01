@@ -2490,8 +2490,8 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="weapondefs\ForwardShot_mine.xml">
-      <Name>ForwardShot_mine</Name>
+    <None Include="weapondefs\ForwardShot_hovermine.xml">
+      <Name>ForwardShot_hovermine</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

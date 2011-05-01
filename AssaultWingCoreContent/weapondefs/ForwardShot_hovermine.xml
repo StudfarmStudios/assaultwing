@@ -25,7 +25,7 @@
     <recoilMomentum>Low</recoilMomentum>
   </weaponInfo>
 
-  <typeName>mines</typeName>
+  <typeName>hovermine</typeName>
   <gunBarrels>Rear</gunBarrels>
   <upgradeNames>
     <Item>monstermine</Item>

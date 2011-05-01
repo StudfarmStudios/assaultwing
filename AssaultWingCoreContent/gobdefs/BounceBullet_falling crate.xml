@@ -3,57 +3,56 @@
   <typeName>falling crate</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>2.0</rotationSpeed>
-   <networkUpdatePeriod>
-      <ticks>10000000</ticks>
-   </networkUpdatePeriod>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
   <lifetime>30</lifetime>
-  <maxDamage>1200</maxDamage>
+  <maxDamage>100</maxDamage>
   <impactDamage>20</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
-  <mass>200</mass>
+  <mass>150</mass>
   <scale>1</scale>
   <bulletModelNames>
-      <Item>junk_falling_crate</Item>
+    <Item>junk_falling_crate</Item>
   </bulletModelNames>
   <modelName>dummymodel</modelName>
   <movable>true</movable>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>None</type>
+    <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <deathGobTypes>
-      <Item>large fragment explo</Item>
+    <Item>large fragment explo</Item>
   </deathGobTypes>
   <birthGobTypes>
-      <!--<Item>large fragment glow</Item>-->
   </birthGobTypes>
   <exhaustEngineNames>
   </exhaustEngineNames>
   <collisionAreas>
-      <Item>
-         <type>PhysicalOtherDamageableMovable</type>
-         <collidesAgainst>None</collidesAgainst>
-         <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
-         <collisionMaterial>Bouncy</collisionMaterial>
-         <name>General</name>
-         <area type="AW2.Helpers.Geometric.Circle">
-            <center>
-               <X>0</X>
-               <Y>0</Y>
-            </center>
-            <radius>8</radius>
-            <boundingBox>
-               <min>
-                  <X>0</X>
-                  <Y>0</Y>
-               </min>
-               <max>
-                  <X>0</X>
-                  <Y>0</Y>
-               </max>
-            </boundingBox>
-         </area>
-      </Item>
+    <Item>
+      <type>PhysicalOtherDamageableMovable</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial>Bouncy</collisionMaterial>
+      <name>General</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>8</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
   </collisionAreas>
 </GobType>

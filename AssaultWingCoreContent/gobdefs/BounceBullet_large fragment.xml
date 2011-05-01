@@ -3,59 +3,59 @@
   <typeName>large fragment</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>5.0</rotationSpeed>
-   <networkUpdatePeriod>
-      <ticks>10000000</ticks>
-   </networkUpdatePeriod>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
   <lifetime>0.33</lifetime>
-  <maxDamage>900</maxDamage>
+  <maxDamage>100</maxDamage>
   <impactDamage>5</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
   <mass>10</mass>
   <scale>0.07</scale>
   <bulletModelNames>
-      <Item>dust_fragment_1</Item>
-      <Item>dust_fragment_2</Item>
-      <Item>dust_fragment_3</Item>
+    <Item>dust_fragment_1</Item>
+    <Item>dust_fragment_2</Item>
+    <Item>dust_fragment_3</Item>
   </bulletModelNames>
   <modelName>dummymodel</modelName>
   <movable>true</movable>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>None</type>
+    <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <deathGobTypes>
-      <Item>large fragment explo</Item>
+    <Item>large fragment explo</Item>
   </deathGobTypes>
   <birthGobTypes>
-      <Item>large fragment glow</Item>
+    <Item>large fragment glow</Item>
   </birthGobTypes>
   <exhaustEngineNames>
   </exhaustEngineNames>
   <collisionAreas>
-      <Item>
-         <type>PhysicalOtherDamageableMovable</type>
-         <collidesAgainst>None</collidesAgainst>
-         <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
-         <collisionMaterial>Bouncy</collisionMaterial>
-         <name>General</name>
-         <area type="AW2.Helpers.Geometric.Circle">
-            <center>
-               <X>0</X>
-               <Y>0</Y>
-            </center>
-            <radius>5</radius>
-            <boundingBox>
-               <min>
-                  <X>0</X>
-                  <Y>0</Y>
-               </min>
-               <max>
-                  <X>0</X>
-                  <Y>0</Y>
-               </max>
-            </boundingBox>
-         </area>
-      </Item>
+    <Item>
+      <type>PhysicalOtherDamageableMovable</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial>Bouncy</collisionMaterial>
+      <name>General</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>71.4</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
   </collisionAreas>
 </GobType>

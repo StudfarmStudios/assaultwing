@@ -7,11 +7,13 @@
   <impactHoleRadius>53</impactHoleRadius>
   <particleEngineNames>
     <Item>fragments</Item>
-    <Item>explo shockwave</Item>
-    <Item>explo white flash</Item>
-    <Item>mine explo center</Item>
+    <Item>fragments</Item>
+    <Item>medium explo shockwave</Item>
+    <Item>medium explo white flash</Item>
+    <Item>medium explo center</Item>
     <Item>large fragments</Item>
-    <Item>explo smoke</Item>
+    <Item>large fragments</Item>
+    <Item>medium explo smoke</Item>
     <Item>explo dots</Item>
   </particleEngineNames>
   <sound>Explosion</sound>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Peng">
-  <typeName>mine explo center</typeName>
+  <typeName>medium explo shockwave</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
    </networkUpdatePeriod>
-  <depthLayer2D>0.18</depthLayer2D>
+  <depthLayer2D>0.13</depthLayer2D>
   <drawMode2D>
       <type>Additive</type>
   </drawMode2D>
@@ -19,7 +19,7 @@
       <sprayAngle>0.0</sprayAngle>
       <facingType>Directed</facingType>
       <textureNames>
-         <Item>p_explo_center</Item>
+         <Item>p_shockwave</Item>
       </textureNames>
       <gobTypeNames>
 <!--      <Item type="&string;">hail</Item>-->
@@ -32,8 +32,8 @@
     <areParticlesImmortal>false</areParticlesImmortal>
       <drag>0.0</drag>
       <particleAge type="AW2.Game.Pengs.ExpectedValue">
-         <expected>1.25</expected>
-         <variance>0.04</variance>
+         <expected>0.61</expected>
+         <variance>0.1</variance>
       </particleAge>
       <accelerationInputScale>0</accelerationInputScale>
     <acceleration type="AW2.Game.Pengs.ConstantValue">
@@ -41,13 +41,13 @@
       </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
-        <value>1.05</value>
+        <value>2.3</value>
       </rotationSpeed>
       <scaleInputScale>0</scaleInputScale>
     <scale type="AW2.Game.Pengs.CurveLerp">
          <min>0.001</min>
          <max>1000</max>
-         <randomAmplitude>0.2</randomAmplitude>
+         <randomAmplitude>0.09</randomAmplitude>
          <randomMixer>3</randomMixer>
          <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
             <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -65,15 +65,15 @@
                            <continuity>Smooth</continuity>
                         </Item>
                         <Item>
-                           <position>0.12</position>
-                           <internalValue>1.95</internalValue>
+                           <position>0.4</position>
+                           <internalValue>0.5</internalValue>
                            <tangentOut>0</tangentOut>
                            <tangentIn>0</tangentIn>
                            <continuity>Smooth</continuity>
                         </Item>
                         <Item>
                            <position>1</position>
-                           <internalValue>0.0</internalValue>
+                           <internalValue>0.7</internalValue>
                            <tangentOut>0</tangentOut>
                            <tangentIn>0</tangentIn>
                            <continuity>Smooth</continuity>
@@ -106,14 +106,7 @@
                            <continuity>Smooth</continuity>
                         </Item>
                         <Item>
-                           <position>0.13</position>
-                           <internalValue>0.68</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                        <Item>
-                           <position>0.23</position>
+                           <position>0.4</position>
                            <internalValue>0.5</internalValue>
                            <tangentOut>0</tangentOut>
                            <tangentIn>0</tangentIn>
@@ -121,7 +114,7 @@
                         </Item>
                         <Item>
                            <position>0.5</position>
-                           <internalValue>0.3</internalValue>
+                           <internalValue>0.2</internalValue>
                            <tangentOut>0</tangentOut>
                            <tangentIn>0</tangentIn>
                            <continuity>Smooth</continuity>

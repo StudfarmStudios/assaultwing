@@ -11,7 +11,7 @@
       crushing weaker opponents for sport.
     </infoText>
     <reloadSpeed>Average</reloadSpeed>
-    <energyUsage>High</energyUsage>
+    <energyUsage>Poor</energyUsage>
     <usageType>Single</usageType>
     <iconEquipName>menu_equip_mod_repulsor</iconEquipName>
   </deviceInfo>

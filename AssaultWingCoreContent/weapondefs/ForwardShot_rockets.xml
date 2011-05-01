@@ -2,26 +2,28 @@
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot">
 
   <deviceInfo>
-	<pictureName>menu_equip_weaponpicture_rockets</pictureName>
-	<titlePictureName>menu_equip_weaponname_rockets</titlePictureName>
-	<infoText>High Explosive Rocket Propelling 
-Emitter System  -HERPES-
+    <pictureName>menu_equip_weaponpicture_rockets</pictureName>
+    <titlePictureName>menu_equip_weaponname_rockets</titlePictureName>
+    <infoText>
+      High Explosive Rocket Propelling
+      Emitter System  -HERPES-
 
-Fires 6 semi-guided rockets in 3 pairs.
-They are petrol powered and will
-eventually run out of juice.</infoText>
-	<reloadSpeed>High</reloadSpeed>
-	<energyUsage>Average</energyUsage>
-	<usageType>Single</usageType>
+      Fires 6 semi-guided rockets in 3 pairs.
+      They are petrol powered and will
+      eventually run out of juice.
+    </infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
     <iconEquipName>menu_equip_wep2_rockets</iconEquipName>
   </deviceInfo>
 
   <weaponInfo>
-	<singleShotDamage>Average</singleShotDamage>
-	<shotSpeed>Average</shotSpeed>
-	<recoilMomentum>Low</recoilMomentum>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Average</shotSpeed>
+    <recoilMomentum>Low</recoilMomentum>
   </weaponInfo>
-  
+
   <typeName>rockets</typeName>
   <gunBarrels>Left, Right</gunBarrels>
   <upgradeNames>

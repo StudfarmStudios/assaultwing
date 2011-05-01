@@ -7,10 +7,11 @@
     <infoText>
       Mines are equipped with the Catmoflage(tm)
       cloaking device, rendering them almost
-      unnoticable to unsuspecting foes. Magnedog(tm)
-      proximity homing device helps the mine find
-      its target. Be smart about where you lay
-      these devastating Easter eggs.
+      unnoticable to unsuspecting foes. The
+      Magnedog(tm) proximity homing device
+      helps the mine find its target. Be smart
+      about where you lay these devastating
+      Easter eggs.
     </infoText>
     <reloadSpeed>Average</reloadSpeed>
     <energyUsage>Poor</energyUsage>
@@ -19,9 +20,9 @@
   </deviceInfo>
 
   <weaponInfo>
-    <singleShotDamage>Average</singleShotDamage>
-    <shotSpeed>Poor</shotSpeed>
-    <recoilMomentum>Poor</recoilMomentum>
+    <singleShotDamage>Great</singleShotDamage>
+    <shotSpeed>Low</shotSpeed>
+    <recoilMomentum>Low</recoilMomentum>
   </weaponInfo>
 
   <typeName>mines</typeName>

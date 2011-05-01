@@ -169,7 +169,7 @@ namespace AW2.Core
 
             DataEngine.GameplayMode = new GameplayMode();
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
-            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "ram & reverse", "blink", "repulsor", "catmoflage" };
+            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage" };
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "mines" };
 
             DataEngine.Spectators.Add(new Player(this, "Newbie",

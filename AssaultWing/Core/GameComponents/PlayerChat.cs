@@ -17,7 +17,7 @@ namespace AW2.Core.GameComponents
     public class PlayerChat : AWGameComponent
     {
         private AssaultWing _game;
-        private Control _chatControl;
+        private Control _chatControl, _escapeControl;
         private EditableText _message;
         private SpriteBatch _spriteBatch;
         private SpriteFont _typingFont;
@@ -31,6 +31,7 @@ namespace AW2.Core.GameComponents
         {
             _game = game;
             _chatControl = new KeyboardKey(Keys.Enter);
+            _escapeControl = new KeyboardKey(Keys.Escape);
         }
 
         public override void LoadContent()
@@ -42,17 +43,21 @@ namespace AW2.Core.GameComponents
 
         public override void Update()
         {
-            if (_chatControl.Pulse)
+            if (_chatControl.Pulse && ChatPlayer != null)
             {
                 if (IsTyping)
                 {
-                    if (ChatPlayer != null) _game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
-                    _message = null;
+                    _game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
+                    StopWritingMessage();
                 }
-                else if (ChatPlayer != null)
-                    _message = new EditableText("", 40, EditableText.Keysets.All);
+                else
+                    StartWritingMessage();
             }
-            if (IsTyping) _message.Update(() => { });
+            if (IsTyping)
+            {
+                _message.Update(() => { });
+                if (_escapeControl.Pulse) StopWritingMessage();
+            }
         }
 
         public override void Draw()
@@ -71,6 +76,18 @@ namespace AW2.Core.GameComponents
             var viewport = Game.Window.ClientBounds;
             var textSize = _typingFont.MeasureString(text);
             return new Vector2(viewport.Width / 2, viewport.Height / 2 + 300 - _typingFont.LineSpacing * 3) - textSize / 2;
+        }
+
+        private void StartWritingMessage()
+        {
+            _game.UIEngine.PushExclusiveControls(new[] { _chatControl, _escapeControl });
+            _message = new EditableText("", 40, EditableText.Keysets.All);
+        }
+
+        private void StopWritingMessage()
+        {
+            _message = null;
+            _game.UIEngine.PopExclusiveControls();
         }
     }
 }

@@ -22,6 +22,8 @@ namespace AW2.Core
         public Action EnableVerticalSync { get; private set; }
         public Action DisableVerticalSync { get; private set; }
 
+        public event Action<char> KeyPress;
+
         public Window(Func<string> getTitle, Action<string> setTitle, Func<Rectangle> getClientBounds,
             Func<bool> getFullScreen, Action setWindowed, Action<int, int> setFullScreen, Func<bool> isVerticalSynced,
             Action enableVerticalSync, Action disableVerticalSync)
@@ -35,6 +37,11 @@ namespace AW2.Core
             IsVerticalSynced = isVerticalSynced;
             EnableVerticalSync = enableVerticalSync;
             DisableVerticalSync = disableVerticalSync;
+        }
+
+        public void OnKeyPress(char keyChar)
+        {
+            if (KeyPress != null) KeyPress(keyChar);
         }
     }
 }

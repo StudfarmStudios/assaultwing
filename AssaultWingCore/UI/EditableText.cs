@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 
@@ -9,152 +10,79 @@ namespace AW2.UI
     /// A short piece of text that is editable by the user. 
     /// Almost like a text field but with no graphical output.
     /// </summary>
-    public class EditableText
+    public class EditableText : IDisposable
     {
-        [Flags]
-        public enum Keysets
-        {
-            None = 0x00,
-            Numbers = 0x01,
-            Letters = 0x02,
-            Space = 0x04,
-            Dot = 0x08,
-            All = Numbers | Letters | Space | Dot,
-            PlayerNameSet = Letters | Space,
-            IPAddressSet = Numbers | Dot,
-        };
+        private static readonly TimeSpan TEMPORARY_ACTIVATION_INTERVAL = TimeSpan.FromSeconds(0.5);
 
-        private static readonly TimeSpan REPEAT_DELAY = TimeSpan.FromSeconds(0.4);
-        private static readonly TimeSpan REPEAT_INTERVAL = TimeSpan.FromSeconds(0.05);
+        private AssaultWingCore _game;
+        private Action _changedCallback;
+        private StringBuilder _content;
+        private TimeSpan _temporaryActivationTimeout;
 
-        /// <summary>
-        /// Last key pressed, or <c>null</c> if
-        /// no key pressed yet or the pressed key has been released.
-        /// </summary>
-        private Keys? _lastPressedKey;
-
-        private TimeSpan _nextKeyRepeat;
-
-        public Keysets AllowedKeysets { get; set; }
         public int MaxLength { get; set; }
-
-        /// <summary>
-        /// Position of the caret in the text field, as a zero-based index from
-        /// the beginning of the text.
-        /// </summary>
-        public int CaretPosition { get; private set; }
 
         /// <summary>
         /// The current text content.
         /// </summary>
-        public string Content { get; private set; }
+        public string Content { get { return _content.ToString(); } }
 
-        private bool TimeToRepeatKey { get { return _nextKeyRepeat != TimeSpan.Zero && _nextKeyRepeat <= AssaultWingCore.Instance.GameTime.TotalRealTime; } }
+        /// <summary>
+        /// Are keypresses handled or not.
+        /// </summary>
+        public bool IsActive { get; set; }
 
-        public EditableText(string content, int maxLength, Keysets allowedKeysets)
+        public EditableText(string content, int maxLength, AssaultWingCore game, Action changedCallback)
         {
             if (maxLength < 0) throw new ArgumentException("Maximum length cannot be negative");
             if (content.Length > maxLength) throw new ArgumentException("Initial content is longer than maximum length");
-            AllowedKeysets = allowedKeysets;
             MaxLength = maxLength;
-            Content = content;
-            CaretPosition = content.Length;
+            _content = new StringBuilder(content, maxLength);
+            _game = game;
+            _changedCallback = changedCallback;
+            game.Window.KeyPress += KeyPressHandler; // FIXME: leaks memory if Dispose() is not called later !!!!!!!!!!
         }
 
         /// <summary>
-        /// Updates the text according to user input.
+        /// Override <see cref="IsActive"/> for a short while and be active.
+        /// Works as if IsActive is set now to true and a bit later back to its actual value.
         /// </summary>
-        /// <param name="changedCallback">Action to perform if 
-        /// the text contents were changed.</param>
-        public void Update(Action changedCallback)
+        public void ActivateTemporarily()
         {
-            var state = Keyboard.GetState();
-
-            // If a key has been pressed, do nothing until it is released.
-            IEnumerable<Keys> pressedKeys = null;
-            if (!_lastPressedKey.HasValue)
-            {
-                _nextKeyRepeat = AssaultWingCore.Instance.GameTime.TotalRealTime + REPEAT_DELAY;
-                pressedKeys = state.GetPressedKeys();
-            }
-            else
-            {
-                if (state.IsKeyUp(_lastPressedKey.Value))
-                    _lastPressedKey = null;
-                else if (TimeToRepeatKey)
-                {
-                    _nextKeyRepeat = AssaultWingCore.Instance.GameTime.TotalRealTime + REPEAT_INTERVAL;
-                    pressedKeys = new Keys[] { _lastPressedKey.Value };
-                }
-            }
-
-            if (pressedKeys != null)
-            {
-                foreach (var key in pressedKeys) InterpretKey(key);
-                changedCallback();
-            }
+            _temporaryActivationTimeout = _game.GameTime.TotalRealTime + TEMPORARY_ACTIVATION_INTERVAL;
         }
 
         public void Clear()
         {
-            Content = "";
-            CaretPosition = 0;
+            _content.Clear();
         }
 
-        private void InterpretKey(Keys key)
+        public void Dispose()
         {
-            switch (key)
+            IsActive = false;
+            _game.Window.KeyPress -= KeyPressHandler;
+        }
+
+        private void InterpretKey(char keyChar)
+        {
+            switch (keyChar)
             {
-                case Keys.Left: --CaretPosition; break;
-                case Keys.Right: ++CaretPosition; break;
-                case Keys.Home: CaretPosition = 0; break;
-                case Keys.End: CaretPosition = Content.Length; break;
-                case Keys.Back:
-                    if (CaretPosition > 0)
-                    {
-                        --CaretPosition;
-                        Content = Content.Remove(CaretPosition, 1);
-                    }
-                    break;
-                case Keys.Delete:
-                    if (CaretPosition < Content.Length)
-                        Content = Content.Remove(CaretPosition, 1);
+                case (char)8: // backspace
+                    if (_content.Length > 0)
+                        _content.Remove(_content.Length - 1, 1);
                     break;
                 default:
-                    InterpretTextInput(key);
+                    // Only append chars that exist in our fonts.
+                    if (_content.Length < MaxLength && keyChar >= 32 && keyChar <= 126)
+                        _content.Append(keyChar);
                     break;
             }
-            CaretPosition = Math.Min(CaretPosition, Content.Length);
-            CaretPosition = Math.Max(CaretPosition, 0);
-            _lastPressedKey = key;
         }
 
-        private void InterpretTextInput(Keys key)
+        private void KeyPressHandler(char keyChar)
         {
-            char? chr = null;
-            if ((AllowedKeysets & Keysets.Numbers) != 0)
-            {
-                if (key >= Keys.D0 && key <= Keys.D9)
-                    chr = (char)('0' + key - Keys.D0);
-            }
-            if ((AllowedKeysets & Keysets.Letters) != 0)
-            {
-                if (key >= Keys.A && key <= Keys.Z)
-                    chr = (char)('a' + key - Keys.A);
-            }
-            if ((AllowedKeysets & Keysets.Space) != 0)
-            {
-                if (key == Keys.Space) chr = ' ';
-            }
-            if ((AllowedKeysets & Keysets.Dot) != 0)
-            {
-                if (key == Keys.OemPeriod) chr = '.';
-            }
-            if (chr.HasValue && Content.Length < MaxLength)
-            {
-                Content = Content.Insert(CaretPosition, chr.Value.ToString());
-                ++CaretPosition;
-            }
+            if (!IsActive && _temporaryActivationTimeout <= _game.GameTime.TotalRealTime) return;
+            InterpretKey(keyChar);
+            _changedCallback();
         }
     }
 }

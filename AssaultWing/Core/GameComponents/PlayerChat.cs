@@ -55,7 +55,6 @@ namespace AW2.Core.GameComponents
             }
             if (IsTyping)
             {
-                _message.Update(() => { });
                 if (_escapeControl.Pulse) StopWritingMessage();
             }
         }
@@ -80,12 +79,14 @@ namespace AW2.Core.GameComponents
 
         private void StartWritingMessage()
         {
+            if (_message != null) throw new InvalidOperationException("Already writing a message");
             _game.UIEngine.PushExclusiveControls(new[] { _chatControl, _escapeControl });
-            _message = new EditableText("", 40, EditableText.Keysets.All);
+            _message = new EditableText("", 40, _game, () => { }) { IsActive = true };
         }
 
         private void StopWritingMessage()
         {
+            _message.Dispose();
             _message = null;
             _game.UIEngine.PopExclusiveControls();
         }

@@ -85,6 +85,7 @@
             // 
             this._logView.BackColor = System.Drawing.Color.Black;
             this._logView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._logView.CausesValidation = false;
             this._logView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._logView.ForeColor = System.Drawing.Color.Chartreuse;
             this._logView.HideSelection = false;
@@ -93,8 +94,9 @@
             this._logView.MaxLength = 0;
             this._logView.Multiline = true;
             this._logView.Name = "_logView";
+            this._logView.ReadOnly = true;
             this._logView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this._logView.Size = new System.Drawing.Size(982, 214);
+            this._logView.Size = new System.Drawing.Size(148, 44);
             this._logView.TabIndex = 0;
             this._logView.TabStop = false;
             // 
@@ -102,7 +104,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.BackColor = System.Drawing.Color.Black;
+            this.CausesValidation = false;
             this.ClientSize = new System.Drawing.Size(984, 762);
             this.Controls.Add(this._splitContainer);
             this.ForeColor = System.Drawing.SystemColors.Control;

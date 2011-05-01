@@ -32,12 +32,13 @@ namespace AW2.Menu.Equip
             : base(menuComponent)
         {
             _sendControl = new KeyboardKey(Keys.Enter);
-            _message = new EditableText("", 40, EditableText.Keysets.All);
+            _message = new EditableText("", 40, MenuEngine.Game, () => { });
+            // FIXME !!! Memory leak: _message will never be garbage collected because it referenced by the Window.KeyPress event
         }
 
         public override void Update()
         {
-            _message.Update(() => { });
+            _message.ActivateTemporarily();
             if (_sendControl.Pulse && ChatPlayer != null)
             {
                 MenuEngine.Game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
@@ -72,7 +73,6 @@ namespace AW2.Menu.Equip
         {
             if (ChatPlayer == null) return;
             var text = string.Format("{0}>{1}<", ChatPlayer.Name, _message.Content);
-            var x = _message.CaretPosition;
             spriteBatch.DrawString(Font, text, (TypingPos - view).Round(), Color.White);
         }
     }

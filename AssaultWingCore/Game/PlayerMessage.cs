@@ -43,7 +43,6 @@ namespace AW2.Game
         {
             if (preText == null || text == null) throw new ArgumentNullException("Null message");
             text = text.Replace("\n", " ");
-            text = text.Capitalize();
             PreText = preText;
             Text = text;
             TextColor = textColor;

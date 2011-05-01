@@ -138,7 +138,6 @@
     <Compile Include="Menu\Main\MainMenuItem.cs" />
     <Compile Include="Menu\Main\MainMenuItemCollection.cs" />
     <Compile Include="Menu\Main\MainMenuItemCollections.cs" />
-    <Compile Include="Menu\Main\MainMenuTextField.cs" />
     <Compile Include="Menu\MenuComponent.cs" />
     <Compile Include="Menu\MenuComponentType.cs" />
     <Compile Include="Menu\MenuContent.cs" />

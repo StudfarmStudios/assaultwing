@@ -135,14 +135,7 @@ namespace AW2.Menu.Equip
                 });
 
                 if (_currentItems[playerI] == EquipMenuItem.Name)
-                {
-                    _playerNames[playerI].Update(() =>
-                    {
-                        player.Name = _playerNames[playerI].Content.CapitalizeWords();
-                        if (playerI == 0) _playerNameChanged = true;
-                        else throw new ApplicationException("Unexpected player index " + playerI);
-                    });
-                }
+                    _playerNames[playerI].ActivateTemporarily();
                 else
                 {
                     int selectionChange = 0;
@@ -173,13 +166,14 @@ namespace AW2.Menu.Equip
             if (MenuPanePlayers.Count() > MAX_MENU_PANES) throw new ApplicationException("Too many players want menu panes");
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
             _equipmentSelectors = new EquipmentSelector[MenuPanePlayers.Count(), aspectCount];
+            if (_playerNames != null) foreach (var name in _playerNames) name.Dispose();
             _playerNames = new EditableText[MenuPanePlayers.Count()];
             foreach (var indexedPlayer in MenuPanePlayers)
             {
                 var player = indexedPlayer.Item1;
                 int playerI = indexedPlayer.Item2;
                 _currentItems[playerI] = EquipMenuItem.Ship;
-                _playerNames[playerI] = new EditableText(player.Name, 20, EditableText.Keysets.PlayerNameSet);
+                _playerNames[playerI] = new EditableText(player.Name, 16, MenuEngine.Game, PlayerNameKeyPressHandler);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, GetShipSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(MenuEngine.Game, player, GetExtraDeviceSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(MenuEngine.Game, player, GetWeapon2SelectorPos(playerI));
@@ -231,7 +225,7 @@ namespace AW2.Menu.Equip
                 // Draw player name textcursor if necessary
                 if (_currentItems[playerI] == EquipMenuItem.Name)
                 {
-                    var partialTextSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content.Substring(0, _playerNames[playerI].CaretPosition));
+                    var partialTextSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content.Substring(0, _playerNames[playerI].Content.Length));
                     var totalTextSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content);
                     var textCursorPos = hiliteTexturePos + new Vector2(partialTextSize.X - totalTextSize.X / 2 + 91, 24);
                     spriteBatch.Draw(Content.ListTextCursorTexture, textCursorPos.Round(), Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
@@ -330,6 +324,12 @@ namespace AW2.Menu.Equip
             var nameChangeInfoPos = MenuComponent.Pos - view + new Vector2(250 + g_nameInfoMove.Evaluate(moveTime), 180);
             var nameChangeInfoTexture = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_player_name_changeinfo");
             spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).Item1.PlayerColor);
+        }
+
+        private void PlayerNameKeyPressHandler()
+        {
+            MenuPanePlayers.First().Item1.Name = _playerNames[0].Content;
+            _playerNameChanged = true;
         }
     }
 }

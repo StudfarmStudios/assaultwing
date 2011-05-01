@@ -26,7 +26,7 @@
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <shotTypeName>clustermine</shotTypeName>
-  <shotSpeed>60</shotSpeed>
+  <shotSpeed>200</shotSpeed>
   <loadTime>5</loadTime>
   <fireCharge>500</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>

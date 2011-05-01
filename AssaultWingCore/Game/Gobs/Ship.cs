@@ -291,7 +291,6 @@ namespace AW2.Game.Gobs
             _birthAlpha.Keys.Add(new CurveKey(2, 1));
             _birthAlpha.ComputeTangents(CurveTangent.Flat);
             _coughEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
-            _temporarilyDisabledGobs = new List<Gob>();
         }
 
         public Ship(CanonicalString typeName)
@@ -361,11 +360,8 @@ namespace AW2.Game.Gobs
         {
             UpdateRoll();
             base.Update();
-
-            // Re-enable temporarily disabled gobs.
-            foreach (Gob gob in _temporarilyDisabledGobs) gob.Enable();
+            foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
             _temporarilyDisabledGobs.Clear();
-
             UpdateThrustInNetworkGame();
             UpdateExhaustEngines();
             UpdateThrusterSound();

@@ -282,7 +282,7 @@ namespace AW2.Game.GobUtils
             if (OwnerHandle == ShipDevice.OwnerHandleType.PrimaryWeapon) return;
             var canFire = FiringOperator.Loaded && FiringOperator.Charged;
             if (canFire && !_previousCanFire)
-                PlayerOwner.Messages.Add(new PlayerMessage(TypeName + " ready to use", PlayerMessage.PLAYER_STATUS_COLOR));
+                PlayerOwner.Messages.Add(new PlayerMessage(TypeName.Value.Capitalize() + " ready to use", PlayerMessage.PLAYER_STATUS_COLOR));
             _previousCanFire = canFire;
         }
 

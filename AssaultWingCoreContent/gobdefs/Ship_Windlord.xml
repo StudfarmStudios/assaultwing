@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Ship">
   <typeName>Windlord</typeName>
-   <networkUpdatePeriod>
-      <ticks>500000</ticks>
-   </networkUpdatePeriod>
-  
+  <networkUpdatePeriod>
+    <ticks>500000</ticks>
+  </networkUpdatePeriod>
+
   <shipInfo>
     <iconEquipName>menu_equip_ship_hyperion</iconEquipName>
-	<pictureName>menu_equip_shippicture_windlord</pictureName>
-	<titlePictureName>menu_equip_shipname_windlord</titlePictureName>
-	<armor>Great</armor>
-	<hull>High</hull>
-	<speed>Great</speed>
-	<steering>Low</steering>
-  	<modEnergy>Average</modEnergy>
-	<specialEnergy>Average</specialEnergy>
-	<infoText>Dangerous ship especially
-when used in close range combat
-with its ship-ripping claws</infoText>
-  </shipInfo>  
-  
+    <pictureName>menu_equip_shippicture_windlord</pictureName>
+    <titlePictureName>menu_equip_shipname_windlord</titlePictureName>
+    <armor>Great</armor>
+    <hull>High</hull>
+    <speed>Great</speed>
+    <steering>Low</steering>
+    <modEnergy>Average</modEnergy>
+    <specialEnergy>Average</specialEnergy>
+    <infoText>
+      Windlord is highly aerodynamic and can
+      reach a high velocity. Acceleration is
+      not so good, so be sure you know where
+      to go. Especially dangerous are Windlord's
+      devastating close range claws that rip
+      smaller ships to shreds.
+    </infoText>
+  </shipInfo>
+
   <mass>500</mass>
   <maxDamage>1750</maxDamage>
   <weapon1TypeName>talon swoop</weapon1TypeName>
@@ -28,7 +33,7 @@ with its ship-ripping claws</infoText>
   <extraDeviceChargeSpeed>47</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>47</weapon2ChargeSpeed>
   <thrustForce>125000</thrustForce>
-  <thrusterSoundName>engine</thrusterSoundName>
+  <thrusterSoundName>windlordEngine</thrusterSoundName>
   <maxSpeed>300</maxSpeed>
   <turnSpeed>3.47</turnSpeed>
   <rollMax>0.5</rollMax>
@@ -37,134 +42,134 @@ with its ship-ripping claws</infoText>
   <scale>0.06</scale>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>Transparent</type>
+    <type>Transparent</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <movable>true</movable>
   <birthGobTypes>
-      <Item>player birth stars</Item>
-      <Item>player birth strokes</Item>
+    <Item>player birth stars</Item>
+    <Item>player birth strokes</Item>
   </birthGobTypes>
   <deathGobTypes>
-      <Item>ship explosion</Item>
+    <Item>ship explosion</Item>
   </deathGobTypes>
   <exhaustEngineNames>
-      <!--<Item>beamer</Item>
+    <!--<Item>beamer</Item>
       <Item>beamer2</Item>
       <Item>enginesmoke</Item> -->
-      <Item>windlord engine 1</Item>
-	  <Item>windlord engine 2</Item>
+    <Item>windlord engine 1</Item>
+    <Item>windlord engine 2</Item>
   </exhaustEngineNames>
   <coughEngineNames>
-      <Item>shipsmoke</Item>
+    <Item>shipsmoke</Item>
   </coughEngineNames>
   <collisionAreas>
-      <Item>
-         <type>PhysicalShip</type>
-         <collidesAgainst>None</collidesAgainst>
-	        <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
-         <collisionMaterial>Regular</collisionMaterial>
-         <name>General</name>
-         <area type="AW2.Helpers.Geometric.Circle">
-            <center>
-               <X>0</X>
-               <Y>0</Y>
-            </center>
-            <radius>350</radius>
-            <boundingBox>
-               <min>
-                  <X>0</X>
-                  <Y>0</Y>
-               </min>
-               <max>
-                  <X>0</X>
-                  <Y>0</Y>
-               </max>
-            </boundingBox>
-         </area>
-      </Item>
+    <Item>
+      <type>PhysicalShip</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>General</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>350</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
   </collisionAreas>
   <birthAlpha>
-      <preLoop>Constant</preLoop>
-      <postLoop>Constant</postLoop>
-      <keys>
-         <Item>
-            <position>0</position>
-            <internalValue>0.2</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>0.2</position>
-            <internalValue>0.8</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>0.4</position>
-            <internalValue>0.2</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>0.6</position>
-            <internalValue>0.8</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>0.8</position>
-            <internalValue>0.2</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>1</position>
-            <internalValue>0.8</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>1.2</position>
-            <internalValue>0.2</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>1.4</position>
-            <internalValue>0.8</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>1.6</position>
-            <internalValue>0.2</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>1.8</position>
-            <internalValue>0.8</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-         <Item>
-            <position>2</position>
-            <internalValue>1</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Step</continuity>
-         </Item>
-      </keys>
+    <preLoop>Constant</preLoop>
+    <postLoop>Constant</postLoop>
+    <keys>
+      <Item>
+        <position>0</position>
+        <internalValue>0.2</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>0.2</position>
+        <internalValue>0.8</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>0.4</position>
+        <internalValue>0.2</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>0.6</position>
+        <internalValue>0.8</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>0.8</position>
+        <internalValue>0.2</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>1</position>
+        <internalValue>0.8</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>1.2</position>
+        <internalValue>0.2</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>1.4</position>
+        <internalValue>0.8</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>1.6</position>
+        <internalValue>0.2</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>1.8</position>
+        <internalValue>0.8</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>2</position>
+        <internalValue>1</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+    </keys>
   </birthAlpha>
 </GobType>

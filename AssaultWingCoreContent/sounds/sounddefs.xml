@@ -17,6 +17,8 @@
   <sound name="engine" loop="true" volume="0.25"/>
   <sound name="lowengine" loop="true" volume="0.25"/>
   <sound name="buggerEngine" loop="true" volume="0.9"/>
+  <sound name="windlordEngine" loop="true" volume="0.95"/>
+  <sound name="plisskenEngine" loop="true" volume="0.5"/>
   <sound name="escPause" volume="0.25"/>
 	<sound name="explosion" volume="0.5"/>
 	<sound name="good" volume="0.5"/>

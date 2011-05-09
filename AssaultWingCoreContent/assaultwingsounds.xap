@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 30081059;
-    Last Modified High = 2485973594;
+    Last Modified Low = 2485973594;
+    Last Modified High = 30081059;
 
     Category
     {
@@ -222,7 +222,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::0e55f167-5c38-40cf-bc43-db3d211010c3;
+            Name = 1::5c8665b3-27ca-4b72-9900-ac6e5a96144a;
             Property = 0;
             Sound = 0;
             Line Color = 4286398414;
@@ -255,7 +255,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::e02a0219-4ae3-4309-9808-411c54f984c2;
+            Name = 1::8a3a7c07-5e66-4123-877c-d3ad333c4b99;
             Property = 0;
             Sound = 0;
             Line Color = 4279846310;
@@ -295,7 +295,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::8cbadc5c-2e9e-4f53-a7bb-6f1d4040ae6c;
+            Name = 1::98a321e4-f71a-4bc6-a384-4ac1c8665e8d;
             Property = 0;
             Sound = 0;
             Line Color = 4286596879;
@@ -323,7 +323,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::776f6c46-f7d5-46ca-9309-bd31590f3820;
+            Name = 1::76497410-8b9a-4d22-a593-4594753072b7;
             Property = 0;
             Sound = 0;
             Line Color = 4289448844;
@@ -373,8 +373,8 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
-    Bank Last Revised Low = 2331674933;
-    Bank Last Revised High = 30143611;
+    Bank Last Revised Low = 2715462112;
+    Bank Last Revised High = 30150262;
 
     Wave
     {
@@ -2215,6 +2215,52 @@ Wave Bank
             Last Modified High = 30143219;
         }
     }
+
+    Wave
+    {
+        Name = plisskenEngine01;
+        File = sounds\plisskenEngine01.wav;
+        Build Settings Last Modified Low = 2522411070;
+        Build Settings Last Modified High = 30150262;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 311296;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1714911423;
+            Last Modified High = 30150056;
+        }
+    }
+
+    Wave
+    {
+        Name = windlordEngine01;
+        File = sounds\windlordEngine01.wav;
+        Build Settings Last Modified Low = 2522421071;
+        Build Settings Last Modified High = 30150262;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 516816;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 585961423;
+            Last Modified High = 30150056;
+        }
+    }
 }
 
 Sound Bank
@@ -4026,7 +4072,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Dock loop;
-                RPC Curve Name = 1::0e55f167-5c38-40cf-bc43-db3d211010c3;
+                RPC Curve Name = 1::5c8665b3-27ca-4b72-9900-ac6e5a96144a;
             }
         }
     }
@@ -4413,7 +4459,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Lightning fadeout;
-                RPC Curve Name = 1::e02a0219-4ae3-4309-9808-411c54f984c2;
+                RPC Curve Name = 1::8a3a7c07-5e66-4123-877c-d3ad333c4b99;
             }
         }
     }
@@ -5036,13 +5082,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::8cbadc5c-2e9e-4f53-a7bb-6f1d4040ae6c;
+                RPC Curve Name = 1::98a321e4-f71a-4bc6-a384-4ac1c8665e8d;
             }
 
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::776f6c46-f7d5-46ca-9309-bd31590f3820;
+                RPC Curve Name = 1::76497410-8b9a-4d22-a593-4594753072b7;
             }
         }
     }
@@ -6012,6 +6058,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
@@ -6033,6 +6080,102 @@ Sound Bank
                     Bank Index = 0;
                     Entry Name = buggerEngine01;
                     Entry Index = 79;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = plisskenEngine01;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = plisskenEngine01;
+                    Entry Index = 80;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = windlordEngine01;
+        Volume = -480;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = windlordEngine01;
+                    Entry Index = 81;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -7096,6 +7239,46 @@ Sound Bank
         {
             Name = buggerEngine01;
             Index = 79;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = plisskenEngine;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = plisskenEngine01;
+            Index = 80;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = windlordEngine;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = windlordEngine01;
+            Index = 81;
             Weight Min = 0;
             Weight Max = 255;
         }

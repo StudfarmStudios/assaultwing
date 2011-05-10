@@ -30,6 +30,8 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _spreadingForce;
 
+        [TypeParameter]
+        private string _hitSound;
         [TypeParameter, ShallowCopy]
         private Curve _enemyDistanceToAlpha;
 
@@ -48,6 +50,7 @@ namespace AW2.Game.Gobs
             _hoverThrust = 10000;
             _attractionForce = 50000;
             _spreadingForce = 10000;
+            _hitSound = "";
             _enemyDistanceToAlpha = new Curve();
             _enemyDistanceToAlpha.PreLoop = CurveLoopType.Constant;
             _enemyDistanceToAlpha.PostLoop = CurveLoopType.Constant;
@@ -99,7 +102,10 @@ namespace AW2.Game.Gobs
                 default:
                     // Don't explode on any impact with friends or non-stuck impact with weak gobs.
                     if (!collidedWithFriend && (stuck || theirArea.Owner.MaxDamageLevel > 100))
+                    {
+                        if (_hitSound != "") Game.SoundEngine.PlaySound(_hitSound, this);
                         base.Collide(myArea, theirArea, stuck);
+                    }
                     break;
             }
         }

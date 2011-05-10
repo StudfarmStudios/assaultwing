@@ -12,7 +12,8 @@
 	<sound name="blink" volume="0.6"/>
 	<sound name="bonusCollection" volume="0.6"/>
 	<sound name="collision" volume="0.2"/>
-	<sound name="dropMines" volume="0.5"/>
+  <sound name="dropMines" volume="0.5"/>
+  <sound name="mineHit" volume="1.0"/>
 	<sound name="dummySound"/>
   <sound name="engine" loop="true" volume="0.25"/>
   <sound name="lowengine" loop="true" volume="0.25"/>

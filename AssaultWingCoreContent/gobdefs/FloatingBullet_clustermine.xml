@@ -6,6 +6,7 @@
   <hoverThrust>4000</hoverThrust>
   <attractionForce>55000</attractionForce>
   <spreadingForce>12000</spreadingForce>
+  <hitSound>mineHit</hitSound>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
@@ -24,9 +25,9 @@
   </bulletModelNames>
   <modelName>dummymodel</modelName>
   <movable>true</movable>
-  <maxDamage>100</maxDamage>
+  <maxDamage>1000</maxDamage>
   <birthGobTypes>
-	<Item>mine warning</Item>
+    <Item>mine warning</Item>
   </birthGobTypes>
   <deathGobTypes>
     <Item>clustermine explosion</Item>

@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 2485973594;
-    Last Modified High = 30081059;
+    Last Modified Low = 30081059;
+    Last Modified High = 2485973594;
 
     Category
     {
@@ -222,7 +222,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::5c8665b3-27ca-4b72-9900-ac6e5a96144a;
+            Name = 1::a93ad52f-f177-4bab-bdff-042864321ae1;
             Property = 0;
             Sound = 0;
             Line Color = 4286398414;
@@ -255,7 +255,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::8a3a7c07-5e66-4123-877c-d3ad333c4b99;
+            Name = 1::407857fc-a8ce-4785-9135-64f0b9cd3e04;
             Property = 0;
             Sound = 0;
             Line Color = 4279846310;
@@ -295,7 +295,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::98a321e4-f71a-4bc6-a384-4ac1c8665e8d;
+            Name = 1::e7ca305f-fe5e-40a1-a0cb-3fa8938cd21f;
             Property = 0;
             Sound = 0;
             Line Color = 4286596879;
@@ -323,7 +323,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::76497410-8b9a-4d22-a593-4594753072b7;
+            Name = 1::cf480e4b-1f74-4dd6-ab28-3de89c6a20f2;
             Property = 0;
             Sound = 0;
             Line Color = 4289448844;
@@ -373,8 +373,8 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
-    Bank Last Revised Low = 2715462112;
-    Bank Last Revised High = 30150262;
+    Bank Last Revised Low = 4250601692;
+    Bank Last Revised High = 30150469;
 
     Wave
     {
@@ -2261,6 +2261,29 @@ Wave Bank
             Last Modified High = 30150056;
         }
     }
+
+    Wave
+    {
+        Name = mineHit01;
+        File = sounds\mineHit01.wav;
+        Build Settings Last Modified Low = 4046688415;
+        Build Settings Last Modified High = 30150469;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 67706;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2162627631;
+            Last Modified High = 30150258;
+        }
+    }
 }
 
 Sound Bank
@@ -4072,7 +4095,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Dock loop;
-                RPC Curve Name = 1::5c8665b3-27ca-4b72-9900-ac6e5a96144a;
+                RPC Curve Name = 1::a93ad52f-f177-4bab-bdff-042864321ae1;
             }
         }
     }
@@ -4459,7 +4482,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Lightning fadeout;
-                RPC Curve Name = 1::8a3a7c07-5e66-4123-877c-d3ad333c4b99;
+                RPC Curve Name = 1::407857fc-a8ce-4785-9135-64f0b9cd3e04;
             }
         }
     }
@@ -5082,13 +5105,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::98a321e4-f71a-4bc6-a384-4ac1c8665e8d;
+                RPC Curve Name = 1::e7ca305f-fe5e-40a1-a0cb-3fa8938cd21f;
             }
 
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::76497410-8b9a-4d22-a593-4594753072b7;
+                RPC Curve Name = 1::cf480e4b-1f74-4dd6-ab28-3de89c6a20f2;
             }
         }
     }
@@ -6176,6 +6199,53 @@ Sound Bank
                     Bank Index = 0;
                     Entry Name = windlordEngine01;
                     Entry Index = 81;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = mineHit01;
+        Volume = -540;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = mineHit01;
+                    Entry Index = 82;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -7279,6 +7349,26 @@ Sound Bank
         {
             Name = windlordEngine01;
             Index = 81;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = mineHit;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = mineHit01;
+            Index = 82;
             Weight Min = 0;
             Weight Max = 255;
         }

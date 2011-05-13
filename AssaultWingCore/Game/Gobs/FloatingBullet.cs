@@ -100,8 +100,7 @@ namespace AW2.Game.Gobs
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
                     break;
                 default:
-                    // Don't explode on any impact with friends or non-stuck impact with weak gobs.
-                    if (!collidedWithFriend && (stuck || theirArea.Owner.MaxDamageLevel > 100))
+                    if (!collidedWithFriend && (theirArea.Owner.MaxDamageLevel > 100 || (stuck && !theirArea.Owner.Movable)))
                     {
                         if (_hitSound != "") Game.SoundEngine.PlaySound(_hitSound, this);
                         base.Collide(myArea, theirArea, stuck);

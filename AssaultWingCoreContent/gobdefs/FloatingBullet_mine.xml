@@ -122,21 +122,28 @@
       <Item>
         <position>60</position>
         <internalValue>0.4</internalValue>
-        <tangentIn>-0.39</tangentIn>
-        <tangentOut>-0.52</tangentOut>
+        <tangentIn>-0.3642857</tangentIn>
+        <tangentOut>-0.4857143</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
         <position>100</position>
-        <internalValue>0.09</internalValue>
-        <tangentIn>-0.06666667</tangentIn>
-        <tangentOut>-0.3333333</tangentOut>
+        <internalValue>0.15</internalValue>
+        <tangentIn>-0.09428572</tangentIn>
+        <tangentOut>-0.2357143</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>200</position>
+        <internalValue>0.07</internalValue>
+        <tangentIn>-0.075</tangentIn>
+        <tangentOut>-0.075</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
         <position>300</position>
         <internalValue>0</internalValue>
-        <tangentIn>-0.09</tangentIn>
+        <tangentIn>-0.07</tangentIn>
         <tangentOut>0</tangentOut>
         <continuity>Smooth</continuity>
       </Item>

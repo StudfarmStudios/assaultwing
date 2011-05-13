@@ -151,22 +151,36 @@ namespace AW2.Menu.Main
             }
         }
 
+        private MainMenuItemCollection GetControlsItems(MenuEngineImpl menuEngine)
+        {
+            var items = new MainMenuItemCollection("Controls Setup");
+            items.Add(GetSetupItemBase(menuEngine, () => "Player 1 controls...",
+                component => component.SetItems(GetPlayerControlsItems(menuEngine, menuEngine.Game.Settings.Controls.Player1))));
+            items.Add(GetSetupItemBase(menuEngine, () => "Player 2 controls...",
+                component => component.SetItems(GetPlayerControlsItems(menuEngine, menuEngine.Game.Settings.Controls.Player2))));
+            items.Add(GetControlsItem(menuEngine, "Chat key", () => menuEngine.Game.Settings.Controls.Chat, ctrl => menuEngine.Game.Settings.Controls.Chat = ctrl));
+            return items;
+        }
+
         private MainMenuItemCollection GetPlayerControlsItems(MenuEngineImpl menuEngine, PlayerControlsSettings controls)
         {
             var items = new MainMenuItemCollection("Controls Setup");
-            Func<string, Func<IControlType>, Action<IControlType>, MainMenuItem> getControlsItem = (name, get, set) =>
-                new MainMenuItem(menuEngine, () => string.Format("{0}    {1}", name, get()),
-                    component => menuEngine.Game.ShowDialog(
-                        new KeypressOverlayDialogData(menuEngine.Game, "Hit key for " + name,
-                            key => set(new KeyControlType(key)))));
-            items.Add(getControlsItem("Thrust", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
-            items.Add(getControlsItem("Left", () => controls.Left, ctrl => controls.Left = ctrl));
-            items.Add(getControlsItem("Right", () => controls.Right, ctrl => controls.Right = ctrl));
-            items.Add(getControlsItem("Down", () => controls.Down, ctrl => controls.Down = ctrl));
-            items.Add(getControlsItem("Fire1", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
-            items.Add(getControlsItem("Fire2", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
-            items.Add(getControlsItem("Extra", () => controls.Extra, ctrl => controls.Extra = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Thrust", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Left", () => controls.Left, ctrl => controls.Left = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Right", () => controls.Right, ctrl => controls.Right = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Down", () => controls.Down, ctrl => controls.Down = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Fire1", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Fire2", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Extra", () => controls.Extra, ctrl => controls.Extra = ctrl));
             return items;
+        }
+
+        private MainMenuItem GetControlsItem(MenuEngineImpl menuEngine, string name, Func<IControlType> get, Action<IControlType> set)
+        {
+            return new MainMenuItem(menuEngine, () => string.Format("{0}    {1}", name, get()),
+                component => menuEngine.Game.ShowDialog(
+                    new KeypressOverlayDialogData(menuEngine.Game, "Hit key for " + name,
+                        key => set(new KeyControlType(key)))));
         }
 
         private MainMenuItemCollection GetAudioItems(MenuEngineImpl menuEngine)
@@ -214,16 +228,6 @@ namespace AW2.Menu.Main
                 new[] { false, true },
                 () => menuEngine.Game.Settings.Graphics.IsVerticalSynced,
                 vsync => menuEngine.Game.Settings.Graphics.IsVerticalSynced = vsync));
-            return items;
-        }
-
-        private MainMenuItemCollection GetControlsItems(MenuEngineImpl menuEngine)
-        {
-            var items = new MainMenuItemCollection("Controls Setup");
-            items.Add(GetSetupItemBase(menuEngine, () => "Player 1 controls...",
-                component => component.SetItems(GetPlayerControlsItems(menuEngine, menuEngine.Game.Settings.Controls.Player1))));
-            items.Add(GetSetupItemBase(menuEngine, () => "Player 2 controls...",
-                component => component.SetItems(GetPlayerControlsItems(menuEngine, menuEngine.Game.Settings.Controls.Player2))));
             return items;
         }
     }

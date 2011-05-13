@@ -52,9 +52,11 @@ namespace AW2.Settings
     {
         private PlayerControlsSettings _player1;
         private PlayerControlsSettings _player2;
+        private IControlType _chat;
 
         public PlayerControlsSettings Player1 { get { return _player1; } }
         public PlayerControlsSettings Player2 { get { return _player2; } }
+        public IControlType Chat { get { return _chat; } set { _chat = value; } }
 
         public ControlsSettings()
         {
@@ -83,6 +85,7 @@ namespace AW2.Settings
                 Fire2 = new KeyControlType(Keys.LeftShift),
                 Extra = new KeyControlType(Keys.X),
             };
+            _chat = new KeyControlType(Keys.Enter);
         }
     }
 }

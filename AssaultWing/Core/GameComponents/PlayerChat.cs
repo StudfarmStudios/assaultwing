@@ -17,7 +17,7 @@ namespace AW2.Core.GameComponents
     public class PlayerChat : AWGameComponent
     {
         private AssaultWing _game;
-        private Control _chatControl, _escapeControl;
+        private Control _chatStartControl, _chatSendControl, _escapeControl;
         private EditableText _message;
         private SpriteBatch _spriteBatch;
         private SpriteFont _typingFont;
@@ -30,7 +30,8 @@ namespace AW2.Core.GameComponents
             : base(game, updateOrder)
         {
             _game = game;
-            _chatControl = new KeyboardKey(Keys.Enter);
+            _chatStartControl = game.Settings.Controls.Chat.GetControl();
+            _chatSendControl = new KeyboardKey(Keys.Enter);
             _escapeControl = new KeyboardKey(Keys.Escape);
         }
 
@@ -43,19 +44,18 @@ namespace AW2.Core.GameComponents
 
         public override void Update()
         {
-            if (_chatControl.Pulse && ChatPlayer != null)
+            if (IsTyping)
             {
-                if (IsTyping)
+                if (_chatSendControl.Pulse && ChatPlayer != null)
                 {
                     _game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
                     StopWritingMessage();
                 }
-                else
-                    StartWritingMessage();
+                else if (_escapeControl.Pulse) StopWritingMessage();
             }
-            if (IsTyping)
+            else
             {
-                if (_escapeControl.Pulse) StopWritingMessage();
+                if (_chatStartControl.Pulse) StartWritingMessage();
             }
         }
 
@@ -80,7 +80,7 @@ namespace AW2.Core.GameComponents
         private void StartWritingMessage()
         {
             if (_message != null) throw new InvalidOperationException("Already writing a message");
-            _game.UIEngine.PushExclusiveControls(new[] { _chatControl, _escapeControl });
+            _game.UIEngine.PushExclusiveControls(new[] { _chatSendControl, _escapeControl });
             _message = new EditableText("", 40, _game, () => { }) { IsActive = true };
         }
 

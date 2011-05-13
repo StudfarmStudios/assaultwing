@@ -34,7 +34,7 @@
   </exhaustEngineNames>
   <collisionAreas>
     <Item>
-      <type>PhysicalOtherDamageableMovable</type>
+      <type>PhysicalShot</type>
       <collidesAgainst>None</collidesAgainst>
       <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
       <collisionMaterial>Bouncy</collisionMaterial>

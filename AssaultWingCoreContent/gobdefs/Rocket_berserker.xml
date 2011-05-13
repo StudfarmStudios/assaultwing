@@ -38,11 +38,22 @@
       <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
-      <area type="AW2.Helpers.Geometric.Point">
-        <location>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
           <X>0</X>
           <Y>0</Y>
-        </location>
+        </center>
+        <radius>129</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
       </area>
     </Item>
   </collisionAreas>

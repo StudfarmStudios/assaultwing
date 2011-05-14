@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
@@ -37,6 +38,7 @@ namespace AW2.Game.Gobs
 
         private Vector2? _hoverAroundPos;
         private Vector2 _thrustForce;
+        private List<Gob> _temporarilyDisabledGobs; // TODO: combine with Ship and move to physics engine
 
         private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(Game.TargetFPS * HOVER_THRUST_INTERVAL); } }
         private bool IsHoverThrusting { get { return HoverThrustCycleFrame < Game.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
@@ -63,6 +65,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             Gravitating = false;
+            _temporarilyDisabledGobs = new List<Gob>();
         }
 
         public override void Activate()
@@ -74,6 +77,8 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
+            foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
+            _temporarilyDisabledGobs.Clear();
             Move *= 0.97f;
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
@@ -100,11 +105,15 @@ namespace AW2.Game.Gobs
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
                     break;
                 default:
-                    if (collidedWithFriend) break;
-                    if (theirArea.Owner.MaxDamageLevel > 100 || (stuck && !theirArea.Owner.Movable))
+                    if (!collidedWithFriend && (theirArea.Owner.MaxDamageLevel > 100 || (stuck && !theirArea.Owner.Movable)))
                     {
                         if (_hitSound != "") Game.SoundEngine.PlaySound(_hitSound, this);
                         base.Collide(myArea, theirArea, stuck);
+                    }
+                    else if (collidedWithFriend && stuck && theirArea.Owner is FloatingBullet)
+                    {
+                        theirArea.Owner.Disable(); // re-enabled in Update()
+                        _temporarilyDisabledGobs.Add(theirArea.Owner);
                     }
                     break;
             }

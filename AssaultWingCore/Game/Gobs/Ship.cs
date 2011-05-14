@@ -141,7 +141,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Gobs that we have temporarily disabled while we move through them.
         /// </summary>
-        private List<Gob> _temporarilyDisabledGobs;
+        private List<Gob> _temporarilyDisabledGobs; // TODO: Move to physics engine
 
         private bool _isBirthFlashing;
 

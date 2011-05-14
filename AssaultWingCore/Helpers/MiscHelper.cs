@@ -139,6 +139,10 @@ namespace AW2.Helpers
                 && a.RenderTargetUsage == b.RenderTargetUsage;
         }
 
+        /// <summary>
+        /// First tries to move the viewport to fit the bounds and then crops the viewport
+        /// if it still doesn't fit in.
+        /// </summary>
         public static Viewport LimitTo(this Viewport viewport, Rectangle clientBounds)
         {
             var x_width = LimitViewportAxis(viewport.X, viewport.Width, clientBounds.X, clientBounds.Right);
@@ -152,18 +156,8 @@ namespace AW2.Helpers
 
         private static Tuple<int, int> LimitViewportAxis(int start, int size, int min, int max)
         {
-            if (start < min)
-            {
-                size -= min - start;
-                start = min;
-            }
-            if (start < max)
-                size = size.Clamp(0, Math.Max(0, max - start));
-            else
-            {
-                start = max;
-                size = 1; // 0 is not allowed by GraphicsDevice.Viewport
-            }
+            start = start.Clamp(min, Math.Max(min, max - size));
+            size = Math.Min(size, max - start + 1);
             return Tuple.Create(start, size);
         }
     }

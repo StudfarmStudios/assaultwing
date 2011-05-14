@@ -77,9 +77,10 @@ namespace AW2.Core.GameComponents
 
         private Vector2 GetTypingPos(string text)
         {
-            var viewport = Game.Window.ClientBounds;
+            var viewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
             var textSize = _typingFont.MeasureString(text);
-            return new Vector2(viewport.Width / 2, viewport.Height / 2 + 300 - _typingFont.LineSpacing * 3) - textSize / 2;
+            var textY = Math.Min(viewport.Height / 2 + 300 - _typingFont.LineSpacing * 3, viewport.Height - textSize.Y);
+            return new Vector2(viewport.Width / 2, textY) - textSize / 2;
         }
 
         private void StartWritingMessage()

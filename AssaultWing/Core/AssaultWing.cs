@@ -153,6 +153,7 @@ namespace AW2.Core
 
         public void ShowEquipMenuWhileKeepingGameRunning()
         {
+            if (GameState == GameState.Menu) return;
             MenuEngine.Activate();
             MenuEngine.ActivateComponent(MenuComponentType.Equip);
             GameState = GameState.GameAndMenu;

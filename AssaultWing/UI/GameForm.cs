@@ -208,6 +208,8 @@ namespace AW2.UI
             _previousWindowedModeParameters = GetCurrentFormParameters();
             _originalIcon = Icon;
             AW2.Helpers.Log.Written += AddToLogView;
+            _logView.KeyPress += (sender, e) => OnKeyPress(e);
+            _splitContainer.KeyPress += (sender, e) => OnKeyPress(e);
         }
 
         private void InitializeGraphicsDeviceService(IntPtr windowHandle)

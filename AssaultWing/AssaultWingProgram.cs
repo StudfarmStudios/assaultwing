@@ -81,7 +81,7 @@ namespace AW2
             var caption = g_errorCaptions[RandomHelper.GetRandomInt(g_errorCaptions.Length)];
             var intro = "Would you please help solve the problem by sending the developers this error information" +
                 " and the Assault Wing run log \"" + Log.LogFileName + "\"?";
-            var report = string.Format("Assault Wing {0}\nCrashed at {1:u}\nHost {2}\n\n{3}",
+            var report = string.Format("Assault Wing {0}\nCrashed on {1:u}\nHost {2}\n\n{3}",
                 AssaultWing.Instance.Version, DateTime.Now.ToUniversalTime(), Environment.MachineName, e.ToString());
             var result = MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
             var logHeader = "\n\n*** Assault Wing run log ***\n\n";

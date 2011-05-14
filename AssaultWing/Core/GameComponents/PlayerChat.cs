@@ -70,6 +70,11 @@ namespace AW2.Core.GameComponents
             _spriteBatch.End();
         }
 
+        protected override void EnabledOrVisibleChanged()
+        {
+            if ((!Enabled || !Visible) && IsTyping) StopWritingMessage();
+        }
+
         private Vector2 GetTypingPos(string text)
         {
             var viewport = Game.Window.ClientBounds;

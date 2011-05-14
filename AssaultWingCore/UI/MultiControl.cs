@@ -32,6 +32,11 @@ namespace AW2.UI
             _controls.Add(control);
         }
 
+        public override string ToString()
+        {
+            return "[" + string.Join("|", _controls.Select(x => x.ToString())) + "]";
+        }
+
         public IEnumerator<Control> GetEnumerator()
         {
             return _controls.GetEnumerator();

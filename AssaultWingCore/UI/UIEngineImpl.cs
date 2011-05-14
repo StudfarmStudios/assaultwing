@@ -67,5 +67,14 @@ namespace AW2.UI
         {
             _exclusiveControls.Pop();
         }
+
+        private string ExclusiveControlStackToString()
+        {
+            if (!_exclusiveControls.Any()) return "  <empty>";
+            var str = new System.Text.StringBuilder();
+            foreach (var controls in _exclusiveControls)
+                str.Append("\n  { " + string.Join(", ", controls.Select(x => x.ToString())) + " }");
+            return str.ToString();
+        }
     }
 }

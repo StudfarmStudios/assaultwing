@@ -20,5 +20,10 @@ namespace AW2.UI
         {
             _key = key;
         }
+
+        public override string ToString()
+        {
+            return _key.ToString();
+        }
     }
 }

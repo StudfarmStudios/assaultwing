@@ -100,7 +100,8 @@ namespace AW2.Game.Gobs
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
                     break;
                 default:
-                    if (!collidedWithFriend && (theirArea.Owner.MaxDamageLevel > 100 || (stuck && !theirArea.Owner.Movable)))
+                    if (collidedWithFriend) break;
+                    if (theirArea.Owner.MaxDamageLevel > 100 || (stuck && !theirArea.Owner.Movable))
                     {
                         if (_hitSound != "") Game.SoundEngine.PlaySound(_hitSound, this);
                         base.Collide(myArea, theirArea, stuck);

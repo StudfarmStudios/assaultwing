@@ -85,7 +85,7 @@
     </Item>
     <Item>
       <type>Force</type>
-      <collidesAgainst>PhysicalShot</collidesAgainst>
+      <collidesAgainst>PhysicalShip</collidesAgainst>
       <cannotOverlap>None</cannotOverlap>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Spread</name>

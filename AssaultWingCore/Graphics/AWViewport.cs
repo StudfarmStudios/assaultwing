@@ -36,16 +36,8 @@ namespace AW2.Graphics
 
         #endregion Fields that are used only when PARALLAX_IN_3D is #defined
 
-        /// <summary>
-        /// Sprite batch to use for drawing sprites.
-        /// </summary>
-        protected SpriteBatch _spriteBatch;
-
-        /// <summary>
-        /// Overlay graphics components to draw in this viewport.
-        /// </summary>
-        protected List<OverlayComponent> _overlayComponents;
-
+        private AssaultWingCore _game;
+        private List<OverlayComponent> _overlayComponents;
         private TexturePostprocessor _postprocessor;
         private Func<IEnumerable<CanonicalString>> _getPostprocessEffectNames;
 
@@ -55,17 +47,19 @@ namespace AW2.Graphics
         public float ZoomRatio { get; set; }
 
         /// <summary>
-        /// The area of the display to draw on.
-        /// </summary>
-        protected Viewport Viewport { get; set; }
-
-        /// <summary>
         /// The area of the viewport on the render target surface.
         /// </summary>
-        public Rectangle OnScreen { get { return new Rectangle(Viewport.Y, Viewport.Y, Viewport.Width, Viewport.Height); } }
+        public Rectangle OnScreen { get { return new Rectangle(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height); } }
 
         public event Func<ArenaLayer, bool> LayerDrawing;
         public event Action<Gob> GobDrawn;
+
+        /// <summary>
+        /// The area of the display to draw on.
+        /// </summary>
+        private Viewport Viewport { get; set; }
+
+        private SpriteBatch SpriteBatch { get { return _game.GraphicsEngine.GameContent.ViewportSpriteBatch; } }
 
         /// <summary>
         /// The matrix for projecting world coordinates to view coordinates.
@@ -91,8 +85,9 @@ namespace AW2.Graphics
         }
 
         /// <param name="onScreen">Where on screen is the viewport located.</param>
-        protected AWViewport(Rectangle onScreen, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
+        protected AWViewport(AssaultWingCore game, Rectangle onScreen, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
         {
+            _game = game;
             _overlayComponents = new List<OverlayComponent>();
             Viewport = new Viewport
             {
@@ -234,7 +229,6 @@ namespace AW2.Graphics
             AssaultWingCore.Instance.GraphicsDeviceService.CheckReentrancyBegin();
             try
             {
-                _spriteBatch = new SpriteBatch(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice);
                 Action<ICollection<Effect>> effectContainerUpdater = container =>
                 {
                     container.Clear();
@@ -261,11 +255,6 @@ namespace AW2.Graphics
             {
                 _postprocessor.Dispose();
                 _postprocessor = null;
-            }
-            if (_spriteBatch != null)
-            {
-                _spriteBatch.Dispose();
-                _spriteBatch = null;
             }
         }
 
@@ -330,21 +319,21 @@ namespace AW2.Graphics
                 if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
                 {
                     if (drawMode.HasValue)
-                        drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
+                        drawMode.Value.EndDraw(AssaultWingCore.Instance, SpriteBatch);
                     drawMode = gob.DrawMode2D;
-                    drawMode.Value.BeginDraw(AssaultWingCore.Instance, _spriteBatch);
+                    drawMode.Value.BeginDraw(AssaultWingCore.Instance, SpriteBatch);
                 }
-                gob.Draw2D(gameToScreenMatrix, _spriteBatch, layerScale * ZoomRatio);
+                gob.Draw2D(gameToScreenMatrix, SpriteBatch, layerScale * ZoomRatio);
             });
             if (drawMode.HasValue)
-                drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
+                drawMode.Value.EndDraw(AssaultWingCore.Instance, SpriteBatch);
         }
 
         private void DrawOverlayComponents()
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             gfx.Viewport = Viewport;
-            foreach (var component in _overlayComponents) component.Draw(_spriteBatch);
+            foreach (var component in _overlayComponents) component.Draw(SpriteBatch);
         }
 
         #region Methods that are used only conditionally
@@ -423,7 +412,7 @@ namespace AW2.Graphics
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             if (layer.ParallaxName != "")
             {
-                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+                SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
                 var tex = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
                 var lookAtPosScaled = GetScale(layer.Z) * GetLookAtPos();
                 float texCenterX = lookAtPosScaled.X.Modulo(tex.Width);
@@ -432,8 +421,8 @@ namespace AW2.Graphics
                 float screenStartY = (Viewport.Height / 2f - texCenterY * ZoomRatio).Modulo(tex.Height * ZoomRatio) - tex.Height * ZoomRatio;
                 for (float posX = screenStartX; posX <= Viewport.Width; posX += tex.Width * ZoomRatio)
                     for (float posY = screenStartY; posY <= Viewport.Height; posY += tex.Height * ZoomRatio)
-                        _spriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, ZoomRatio, SpriteEffects.None, 1);
-                _spriteBatch.End();
+                        SpriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, ZoomRatio, SpriteEffects.None, 1);
+                SpriteBatch.End();
             }
 
             // Modify renderstate for 3D graphics.

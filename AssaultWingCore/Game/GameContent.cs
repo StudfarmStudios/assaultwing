@@ -15,6 +15,7 @@ namespace AW2.Game
         public Texture2D ShipOnRadarTexture { get; private set; }
         public Texture2D DockOnRadarTexture { get; private set; }
         public Effect BasicShaders { get; private set; }
+        public SpriteBatch ViewportSpriteBatch { get; private set; }
 
         public GameContent(AWGame game)
         {
@@ -44,7 +45,8 @@ namespace AW2.Game
             ShipOnRadarTexture = _game.Content.Load<Texture2D>("gui_playerinfo_white_ball");
             DockOnRadarTexture = _game.Content.Load<Texture2D>("p_green_box");
 
-            BasicShaders = AssaultWingCore.Instance.Content.Load<Effect>("basicshaders");
+            BasicShaders = _game.Content.Load<Effect>("basicshaders");
+            ViewportSpriteBatch = new SpriteBatch(gfx);
         }
 
         public void UnloadContent()
@@ -54,6 +56,11 @@ namespace AW2.Game
             {
                 WallSilhouetteEffect.Dispose();
                 WallSilhouetteEffect = null;
+            }
+            if (ViewportSpriteBatch != null)
+            {
+                ViewportSpriteBatch.Dispose();
+                ViewportSpriteBatch = null;
             }
         }
     }

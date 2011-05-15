@@ -30,7 +30,7 @@ namespace AW2.Graphics
         /// <param name="onScreen">Where on screen is the viewport located.</param>
         /// <param name="getPostprocessEffectNames">Provider of names of postprocess effects.</param>
         public PlayerViewport(Player player, Rectangle onScreen, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
-            : base(onScreen, getPostprocessEffectNames)
+            : base(player.Game, onScreen, getPostprocessEffectNames)
         {
             _player = player;
             _shakeSign = -1;

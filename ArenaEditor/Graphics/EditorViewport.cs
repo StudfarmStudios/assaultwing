@@ -15,7 +15,7 @@ namespace AW2.Graphics
         public bool IsCirclingSmallAndInvisibleGobs { get; set; }
 
         public EditorViewport(EditorSpectator spectator, Rectangle onScreen, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
-            : base(onScreen, getPostprocessEffectNames)
+            : base(spectator.Game, onScreen, getPostprocessEffectNames)
         {
             _spectator = spectator;
             GobDrawn += gob =>

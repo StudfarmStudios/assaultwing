@@ -27,7 +27,6 @@ namespace AW2.Core
     /// </summary>
     public class GraphicsDeviceService : IGraphicsDeviceService, IDisposable
     {
-        private PresentationParameters _oldParameters;
         private PresentationParameters _parameters;
         private int _graphicsThreadID;
         private int _graphicsCodeBlocks;
@@ -209,9 +208,19 @@ namespace AW2.Core
             {
                 CheckThread();
                 if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
-                // FIXME !!! if (!_parameters.EqualsDeep(_oldParameters))
-                GraphicsDevice.Reset(_parameters);
-                _oldParameters = _parameters;
+                try
+                {
+                    GraphicsDevice.Reset(_parameters);
+                }
+                catch (InvalidOperationException e)
+                {
+                    Log.Write("!!! GraphicsDevice.Reset threw " + e);
+                    Log.Write("!!! Trying low-level reset...");
+                    Direct3D.Reset(GraphicsDevice, _parameters);
+                    Log.Write("!!! ...low-level reset done, still re-resetting in XNA...");
+                    GraphicsDevice.Reset(_parameters);
+                    Log.Write("!!! ...XNA reset done");
+                }
                 if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
                 return null;
             }

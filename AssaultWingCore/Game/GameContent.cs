@@ -14,6 +14,7 @@ namespace AW2.Game
         public Texture2D RadarDisplayTexture { get; private set; }
         public Texture2D ShipOnRadarTexture { get; private set; }
         public Texture2D DockOnRadarTexture { get; private set; }
+        public Effect BasicShaders { get; private set; }
 
         public GameContent(AWGame game)
         {
@@ -42,6 +43,8 @@ namespace AW2.Game
             RadarDisplayTexture = _game.Content.Load<Texture2D>("gui_radar_bg");
             ShipOnRadarTexture = _game.Content.Load<Texture2D>("gui_playerinfo_white_ball");
             DockOnRadarTexture = _game.Content.Load<Texture2D>("p_green_box");
+
+            BasicShaders = AssaultWingCore.Instance.Content.Load<Effect>("basicshaders");
         }
 
         public void UnloadContent()

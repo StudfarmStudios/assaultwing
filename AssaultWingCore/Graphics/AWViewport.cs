@@ -241,7 +241,7 @@ namespace AW2.Graphics
                     foreach (var name in _getPostprocessEffectNames())
                         container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
                 };
-                _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice, RenderGameWorld, effectContainerUpdater);
+                _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance, RenderGameWorld, effectContainerUpdater);
                 foreach (var component in _overlayComponents) component.LoadContent();
             }
             finally

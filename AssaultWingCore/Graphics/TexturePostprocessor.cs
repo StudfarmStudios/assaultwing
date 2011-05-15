@@ -15,31 +15,32 @@ namespace AW2.Graphics
     /// </summary>
     public class TexturePostprocessor : IDisposable
     {
-        private Effect _basicShaders;
         private AutoRenderTarget2D[] _targets;
         private int _sourceIndex, _targetIndex;
-        private GraphicsDevice _gfx;
+        private AssaultWingCore _game;
         private VertexPositionTexture[] _vertexData;
         private Viewport _oldViewport;
         private List<Effect> _effects;
         private Action _render;
         private Action<ICollection<Effect>> _effectContainerUpdater;
 
-        public TexturePostprocessor(GraphicsDevice gfx, Action render, Action<ICollection<Effect>> effectContainerUpdater)
+        private GraphicsDevice Gfx { get { return _game.GraphicsDeviceService.GraphicsDevice; } }
+        private Effect BasicShaders { get { return _game.GraphicsEngine.GameContent.BasicShaders; } }
+
+        public TexturePostprocessor(AssaultWingCore game, Action render, Action<ICollection<Effect>> effectContainerUpdater)
         {
-            _basicShaders = AssaultWingCore.Instance.Content.Load<Effect>("basicshaders");
-            _gfx = gfx;
+            _game = game;
             _render = render;
             Func<AutoRenderTarget2D.CreationData> getRenderTargetCreationData = () => new AutoRenderTarget2D.CreationData
             {
-                Width = _gfx.Viewport.Width,
-                Height = _gfx.Viewport.Height,
+                Width = Gfx.Viewport.Width,
+                Height = Gfx.Viewport.Height,
                 DepthStencilState = DepthStencilState.Default,
             };
             _targets = new[]
             {
-                new AutoRenderTarget2D(gfx, getRenderTargetCreationData),
-                new AutoRenderTarget2D(gfx, getRenderTargetCreationData)
+                new AutoRenderTarget2D(Gfx, getRenderTargetCreationData),
+                new AutoRenderTarget2D(Gfx, getRenderTargetCreationData)
             };
             _effects = new List<Effect>();
             _effectContainerUpdater = effectContainerUpdater;
@@ -67,15 +68,15 @@ namespace AW2.Graphics
                 _render();
             else
             {
-                PrepareLastPass(_basicShaders);
-                _basicShaders.CurrentTechnique.Passes["PixelAndVertexShaderPass"].Apply();
-                _gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
+                PrepareLastPass(BasicShaders);
+                BasicShaders.CurrentTechnique.Passes["PixelAndVertexShaderPass"].Apply();
+                Gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
             }
         }
 
         private void Process()
         {
-            _basicShaders.CurrentTechnique.Passes["VertexShaderPass"].Apply();
+            BasicShaders.CurrentTechnique.Passes["VertexShaderPass"].Apply();
             for (int effectIndex = 0; effectIndex < _effects.Count; ++effectIndex)
             {
                 var effect = _effects[effectIndex];
@@ -83,17 +84,17 @@ namespace AW2.Graphics
                 {
                     PrepareNextPass(effect);
                     pass.Apply();
-                    _gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
+                    Gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
                 }
             }
-            _gfx.SetRenderTarget(null);
+            Gfx.SetRenderTarget(null);
         }
 
         private void PrepareFirstPass()
         {
             _sourceIndex = -1;
             _targetIndex = 0;
-            _oldViewport = _gfx.Viewport;
+            _oldViewport = Gfx.Viewport;
             _targets[_targetIndex].SetAsRenderTarget();
         }
 
@@ -112,10 +113,10 @@ namespace AW2.Graphics
         {
             _sourceIndex = _targetIndex;
             _targetIndex = -1;
-            _gfx.SetRenderTarget(null);
-            _gfx.DepthStencilState = DepthStencilState.None;
-            _gfx.BlendState = BlendState.Opaque;
-            _gfx.Viewport = _oldViewport;
+            Gfx.SetRenderTarget(null);
+            Gfx.DepthStencilState = DepthStencilState.None;
+            Gfx.BlendState = BlendState.Opaque;
+            Gfx.Viewport = _oldViewport;
             PrepareEffect(effect);
         }
 

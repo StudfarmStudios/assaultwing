@@ -32,7 +32,6 @@
     <InstallUrl>http://koti.welho.com/vvnurmi/aw2/install/</InstallUrl>
     <ProductName>Assault Wing - Galactic Battlefront</ProductName>
     <PublisherName>Studfarm Studios</PublisherName>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>99</ApplicationRevision>

@@ -160,13 +160,6 @@ namespace AW2.UI
                 || (keyCode == Keys.Space && modifiers == Keys.Alt); // prevent window menu from opening
         }
 
-        protected override void OnKeyPress(KeyPressEventArgs e)
-        {
-            _game.Window.OnKeyPress(e.KeyChar);
-            e.Handled = true;
-            base.OnKeyPress(e);
-        }
-
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             FinishGame();
@@ -208,8 +201,8 @@ namespace AW2.UI
             _previousWindowedModeParameters = GetCurrentFormParameters();
             _originalIcon = Icon;
             AW2.Helpers.Log.Written += AddToLogView;
-            _logView.KeyPress += (sender, e) => OnKeyPress(e);
-            _splitContainer.KeyPress += (sender, e) => OnKeyPress(e);
+            _logView.GotFocus += (sender, e) => _gameView.Focus();
+            _splitContainer.GotFocus += (sender, e) => _gameView.Focus();
         }
 
         private void InitializeGraphicsDeviceService(IntPtr windowHandle)

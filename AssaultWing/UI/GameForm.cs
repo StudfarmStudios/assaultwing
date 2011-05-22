@@ -195,14 +195,24 @@ namespace AW2.UI
             // Doing nothing here is supposed to avoid flicker.
         }
 
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            _game.Window.OnKeyPress(e.KeyChar);
+            e.Handled = true;
+            base.OnKeyPress(e);
+        }
+
         private void InitializeGameForm()
         {
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
             _previousWindowedModeParameters = GetCurrentFormParameters();
             _originalIcon = Icon;
             AW2.Helpers.Log.Written += AddToLogView;
+
+            // Keep focus in this form or _gameView which handle key presses.
             _logView.GotFocus += (sender, e) => _gameView.Focus();
             _splitContainer.GotFocus += (sender, e) => _gameView.Focus();
+            _gameView.KeyPress += (sender, e) => OnKeyPress(e);
         }
 
         private void InitializeGraphicsDeviceService(IntPtr windowHandle)

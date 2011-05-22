@@ -133,7 +133,11 @@ namespace AW2.UI
             // subsequent calls to Gob.LoadContent fail for some reason so that the loaded 3D model
             // is empty. (This happens even if the model is returned straight from the cache!) This
             // seems to be a "feature" in XNA itself, as it is reproducible in a pristine XNA project.
-            if (_isFullScreen) SetWindowed();
+            if (_isFullScreen)
+            {
+                _game.Settings.Graphics.InGameFullscreen = false;
+                SetWindowed();
+            }
             base.OnDeactivate(e);
         }
 

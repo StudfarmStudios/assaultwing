@@ -67,8 +67,6 @@ namespace AW2.Core
                 _gameState = value;
                 if (value == GameState.Gameplay || value == GameState.GameplayStopped)
                     ApplyInGameGraphicsSettings();
-                else if (value != GameState.GameAndMenu)
-                    ApplyMenuGraphicsSettings();
                 if (GameStateChanged != null && _gameState != oldState)
                     GameStateChanged(_gameState);
             }
@@ -407,13 +405,6 @@ namespace AW2.Core
             if (MenuEngine.ArenaLoadTask.TaskRunning)
                 MenuEngine.ArenaLoadTask.AbortTask();
             base.OnExiting(sender, args);
-        }
-
-        private void ApplyMenuGraphicsSettings()
-        {
-            if (Window == null) return;
-            Window.EnableVerticalSync();
-            Window.SetWindowed();
         }
 
         private void ApplyInGameGraphicsSettings()

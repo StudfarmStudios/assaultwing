@@ -55,7 +55,11 @@ namespace AW2.Menu.Main
         {
             StartItems = new MainMenuItemCollection("Start Menu");
             StartItems.Add(new MainMenuItem(menuEngine, () => "Play Local",
-                component => component.MenuEngine.ActivateComponent(MenuComponentType.Equip)));
+                component =>
+                {
+                    component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
+                    _menuEngine.Game.InitializePlayers(2);
+                }));
             StartItems.Add(new MainMenuItem(menuEngine, () => "Play at the Battlefront",
                 component =>
                 {
@@ -125,11 +129,9 @@ namespace AW2.Menu.Main
                 component =>
                 {
                     if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
-                    if (!_menuEngine.Game.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, () => true))) return;
+                    if (!_menuEngine.Game.StartServer()) return;
                     component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
-
-                    // HACK: Force one local player
-                    _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
+                    _menuEngine.Game.InitializePlayers(1);
                 }));
             _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
         }

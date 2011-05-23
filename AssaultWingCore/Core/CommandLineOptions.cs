@@ -8,14 +8,14 @@ namespace AW2.Core
     /// </summary>
     public class CommandLineOptions
     {
-        public bool PerformanceCounters { get; set; }
+        public bool DedicatedServer { get; set; }
         public bool SaveTemplates { get; set; }
         public bool DeleteTemplates { get; set; }
         public string ArenaFilename { get; set; }
 
         public CommandLineOptions(string[] commandLineArgs)
         {
-            PerformanceCounters = commandLineArgs.Contains("--performance_counters");
+            DedicatedServer = commandLineArgs.Contains("--dedicated_server");
             SaveTemplates = commandLineArgs.Contains("--save_templates");
             DeleteTemplates = commandLineArgs.Contains("--delete_templates");
             ArenaFilename = GetArgValue(commandLineArgs, "--arena");

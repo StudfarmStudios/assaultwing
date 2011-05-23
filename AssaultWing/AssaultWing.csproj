@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="AssaultWingProgram.cs" />
     <Compile Include="Core\AssaultWing.cs" />
+    <Compile Include="Core\GameComponents\DedicatedServer.cs" />
     <Compile Include="Core\GameComponents\IntroEngine.cs" />
     <Compile Include="Core\GameComponents\OverlayDialog.cs" />
     <Compile Include="Core\GameComponents\PlayerChat.cs" />

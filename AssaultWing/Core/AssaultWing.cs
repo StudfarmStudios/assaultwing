@@ -83,6 +83,7 @@ namespace AW2.Core
         private PlayerChat PlayerChat { get; set; }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
+        public DedicatedServer DedicatedServer { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
@@ -92,12 +93,14 @@ namespace AW2.Core
             MenuEngine = new MenuEngineImpl(this, 10);
             IntroEngine = new IntroEngine(this, 11);
             PlayerChat = new PlayerChat(this, 12);
+            DedicatedServer = new DedicatedServer(this, 13);
             OverlayDialog = new OverlayDialog(this, 20);
             Components.Add(NetworkEngine);
             Components.Add(StartupScreen);
             Components.Add(MenuEngine);
             Components.Add(IntroEngine);
             Components.Add(PlayerChat);
+            Components.Add(DedicatedServer);
             Components.Add(OverlayDialog);
             GameState = GameState.Initializing;
             _escapeControl = new KeyboardKey(Keys.Escape);
@@ -142,7 +145,7 @@ namespace AW2.Core
         public void ShowEquipMenu()
         {
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers()); 
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             DataEngine.ClearGameState();
             MenuEngine.Activate();
             MenuEngine.ActivateComponent(MenuComponentType.Equip);
@@ -163,22 +166,13 @@ namespace AW2.Core
         public override void BeginRun()
         {
             Log.Write("Assault Wing begins to run");
-
             SelectedArenaName = DataEngine.GetTypeTemplates<Arena>().First().Info.Name;
-
             DataEngine.GameplayMode = new GameplayMode();
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
             DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage" };
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine" };
-
-            DataEngine.Spectators.Add(new Player(this, "Newbie",
-                (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"repulsor",
-                PlayerControls.FromSettings(Settings.Controls.Player1)));
-            DataEngine.Spectators.Add(new Player(this, "Lamer",
-                (CanonicalString)"Bugger", (CanonicalString)"hovermine", (CanonicalString)"catmoflage",
-                PlayerControls.FromSettings(Settings.Controls.Player2)));
-
-            GameState = GameState.Intro;
+            InitializePlayers(2);
+            GameState = CommandLineOptions.DedicatedServer ? GameState.InitializingDedicatedServer : GameState.Intro;
             base.BeginRun();
         }
 
@@ -203,23 +197,6 @@ namespace AW2.Core
             // Note: Must create a new Arena instance and not use the existing template
             // because playing an arena will modify it.
             InitializeFromArena(arenaTemplate.Info.FileName);
-        }
-
-        /// <summary>
-        /// Prepares the game data for playing an arena.
-        /// When the playing really should start, call <see cref="StartArena"/>.
-        /// </summary>
-        /// <param name="initializeForPlaying">Should the arena be initialised
-        /// for playing. If not, some initialisations are skipped.</param>
-        private void InitializeFromArena(string arenaFilename)
-        {
-            var arena = Arena.FromFile(this, arenaFilename);
-            arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
-            arena.IsForPlaying = true;
-            // Note: Client starts progressbar when receiving StartGameMessage.
-            if (NetworkMode != NetworkMode.Client) MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
-            arena.Reset(); // this usually takes several seconds
-            DataEngine.Arena = arena;
         }
 
         public void StartArenaButStayInMenu()
@@ -254,20 +231,40 @@ namespace AW2.Core
             SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
         }
 
+        public void InitializePlayers(int count)
+        {
+            DataEngine.Spectators.Clear();
+            var player1 = new Player(this, "Newbie",
+                (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"repulsor",
+                PlayerControls.FromSettings(Settings.Controls.Player1));
+            var player2 = new Player(this, "Lamer",
+                (CanonicalString)"Bugger", (CanonicalString)"hovermine", (CanonicalString)"catmoflage",
+                PlayerControls.FromSettings(Settings.Controls.Player2));
+            switch (count)
+            {
+                case 1:
+                    DataEngine.Spectators.Add(player1);
+                    break;
+                case 2:
+                    DataEngine.Spectators.Add(player1);
+                    DataEngine.Spectators.Add(player2);
+                    break;
+                default: throw new ArgumentOutOfRangeException("count");
+            }
+        }
+
         /// <summary>
         /// Turns this game instance into a game server to whom other game instances
-        /// can connect as game clients.
+        /// can connect as game clients. Returns true on success, false on failure.
         /// </summary>
-        /// <param name="connectionHandler">Handler of connection result.</param>
-        /// <returns>True on success, false on failure</returns>
-        public bool StartServer(Action<Result<Connection>> connectionHandler)
+        public bool StartServer()
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
             try
             {
-                NetworkEngine.StartServer(connectionHandler);
+                NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, () => true));
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerMenuHandlers());
                 return true;
             }
@@ -454,6 +451,12 @@ namespace AW2.Core
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
                     break;
+                case GameState.InitializingDedicatedServer:
+                    DedicatedServer.Enabled = true;
+                    break;
+                case GameState.DedicatedServer:
+                    DedicatedServer.Enabled = true;
+                    throw new NotImplementedException();
                 default:
                     throw new ApplicationException("Cannot change to unexpected game state " + value);
             }
@@ -493,9 +496,32 @@ namespace AW2.Core
                     MenuEngine.Enabled = false;
                     MenuEngine.Visible = false;
                     break;
+                case GameState.InitializingDedicatedServer:
+                    DedicatedServer.Enabled = false;
+                    break;
+                case GameState.DedicatedServer:
+                    DedicatedServer.Enabled = false;
+                    throw new NotImplementedException();
                 default:
                     throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
             }
+        }
+
+        /// <summary>
+        /// Prepares the game data for playing an arena.
+        /// When the playing really should start, call <see cref="StartArena"/>.
+        /// </summary>
+        /// <param name="initializeForPlaying">Should the arena be initialised
+        /// for playing. If not, some initialisations are skipped.</param>
+        private void InitializeFromArena(string arenaFilename)
+        {
+            var arena = Arena.FromFile(this, arenaFilename);
+            arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
+            arena.IsForPlaying = true;
+            // Note: Client starts progressbar when receiving StartGameMessage.
+            if (NetworkMode != NetworkMode.Client) MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
+            arena.Reset(); // this usually takes several seconds
+            DataEngine.Arena = arena;
         }
 
         private void StopGameplay()
@@ -615,29 +641,24 @@ namespace AW2.Core
 
         private void SpectatorAddedHandler(Spectator spectator)
         {
+            if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
             var player = spectator as Player;
-            if (player != null) player.ResetForArena();
-            if (NetworkMode == NetworkMode.Server)
+            if (player == null) return;
+            player.ResetForArena();
+            if (NetworkMode != NetworkMode.Server || !player.IsRemote) return;
+            player.IsAllowedToCreateShip = () => NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
+            player.Messages.NewMessage += message =>
             {
-                UpdateGameServerInfoToManagementServer();
-                if (player != null)
+                try
                 {
-                    player.Messages.NewMessage += message =>
-                    {
-                        if (player.IsRemote)
-                            try
-                            {
-                                var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Message = message };
-                                NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
-                            }
-                            catch (InvalidOperationException)
-                            {
-                                // The connection of the player doesn't exist any more. Just don't send the message then.
-                            }
-                    };
-                    player.IsAllowedToCreateShip = () => NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
+                    var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Message = message };
+                    NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
                 }
-            }
+                catch (InvalidOperationException)
+                {
+                    // The connection of the player doesn't exist any more. Just don't send the message then.
+                }
+            };
         }
 
         private void SpectatorRemovedHandler(Spectator spectator)

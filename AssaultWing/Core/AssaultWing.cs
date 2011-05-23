@@ -98,7 +98,7 @@ namespace AW2.Core
             Components.Add(NetworkEngine);
             Components.Add(StartupScreen);
             Components.Add(MenuEngine);
-            Components.Add(IntroEngine);
+            if (!CommandLineOptions.DedicatedServer) Components.Add(IntroEngine);
             Components.Add(PlayerChat);
             Components.Add(DedicatedServer);
             Components.Add(OverlayDialog);
@@ -172,7 +172,7 @@ namespace AW2.Core
             DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage" };
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine" };
             InitializePlayers(2);
-            GameState = CommandLineOptions.DedicatedServer ? GameState.InitializingDedicatedServer : GameState.Intro;
+            GameState = CommandLineOptions.DedicatedServer ? GameState.DedicatedServer : GameState.Intro;
             base.BeginRun();
         }
 
@@ -233,24 +233,17 @@ namespace AW2.Core
 
         public void InitializePlayers(int count)
         {
-            DataEngine.Spectators.Clear();
-            var player1 = new Player(this, "Newbie",
-                (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"repulsor",
-                PlayerControls.FromSettings(Settings.Controls.Player1));
-            var player2 = new Player(this, "Lamer",
-                (CanonicalString)"Bugger", (CanonicalString)"hovermine", (CanonicalString)"catmoflage",
-                PlayerControls.FromSettings(Settings.Controls.Player2));
-            switch (count)
+            var players = new[]
             {
-                case 1:
-                    DataEngine.Spectators.Add(player1);
-                    break;
-                case 2:
-                    DataEngine.Spectators.Add(player1);
-                    DataEngine.Spectators.Add(player2);
-                    break;
-                default: throw new ArgumentOutOfRangeException("count");
-            }
+                new Player(this, "Newbie",
+                    (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"repulsor",
+                    PlayerControls.FromSettings(Settings.Controls.Player1)),
+                new Player(this, "Lamer",
+                    (CanonicalString)"Bugger", (CanonicalString)"hovermine", (CanonicalString)"catmoflage",
+                    PlayerControls.FromSettings(Settings.Controls.Player2))
+            };
+            DataEngine.Spectators.Clear();
+            foreach (var plr in players.Take(count)) DataEngine.Spectators.Add(plr);
         }
 
         /// <summary>
@@ -433,8 +426,11 @@ namespace AW2.Core
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    GraphicsEngine.Visible = true;
-                    if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
+                    // !!! if (!CommandLineOptions.DedicatedServer)
+                    {
+                        GraphicsEngine.Visible = true;
+                        if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
+                    }
                     break;
                 case GameState.GameplayStopped:
                     GraphicsEngine.Visible = true;
@@ -453,10 +449,10 @@ namespace AW2.Core
                     break;
                 case GameState.InitializingDedicatedServer:
                     DedicatedServer.Enabled = true;
-                    break;
+                    throw new NotImplementedException();
                 case GameState.DedicatedServer:
                     DedicatedServer.Enabled = true;
-                    throw new NotImplementedException();
+                    break;
                 default:
                     throw new ApplicationException("Cannot change to unexpected game state " + value);
             }
@@ -498,10 +494,10 @@ namespace AW2.Core
                     break;
                 case GameState.InitializingDedicatedServer:
                     DedicatedServer.Enabled = false;
-                    break;
+                    throw new NotImplementedException();
                 case GameState.DedicatedServer:
                     DedicatedServer.Enabled = false;
-                    throw new NotImplementedException();
+                    break;
                 default:
                     throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
             }

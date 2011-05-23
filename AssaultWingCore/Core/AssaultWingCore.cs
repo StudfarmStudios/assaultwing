@@ -96,7 +96,7 @@ namespace AW2.Core
 
         private void InitializeGraphics()
         {
-            AllowDialogs = true;
+            AllowDialogs = !CommandLineOptions.DedicatedServer;
         }
 
         private void InitializeComponents()
@@ -127,7 +127,7 @@ namespace AW2.Core
             Components.Add(SoundEngine);
 
             _uiEngine.Enabled = true;
-            SoundEngine.Enabled = true;
+            SoundEngine.Enabled = !CommandLineOptions.DedicatedServer;
         }
 
         /// <summary>

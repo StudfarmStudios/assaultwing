@@ -34,15 +34,5 @@
         /// The game and the menu is active but only the menu is visible.
         /// </summary>
         GameAndMenu,
-
-        /// <summary>
-        /// The game instance is in dedicated server mode and is initialising.
-        /// </summary>
-        InitializingDedicatedServer,
-
-        /// <summary>
-        /// The game instance is in dedicated server mode and is running.
-        /// </summary>
-        DedicatedServer,
     }
 }

@@ -63,6 +63,7 @@ namespace AW2.Menu.Main
             StartItems.Add(new MainMenuItem(menuEngine, () => "Play at the Battlefront",
                 component =>
                 {
+                    _menuEngine.Game.InitializePlayers(1);
                     menuEngine.Game.NetworkEngine.ConnectToManagementServer();
                     RefreshNetworkItems();
                     component.SetItems(NetworkItems);
@@ -131,7 +132,6 @@ namespace AW2.Menu.Main
                     if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
                     if (!_menuEngine.Game.StartServer()) return;
                     component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
-                    _menuEngine.Game.InitializePlayers(1);
                 }));
             _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
         }

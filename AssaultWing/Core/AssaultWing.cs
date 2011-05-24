@@ -111,6 +111,7 @@ namespace AW2.Core
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
+            if (CommandLineOptions.DedicatedServer) DedicatedServer.Enabled = true;
         }
 
         public override void Update(AWGameTime gameTime)
@@ -142,24 +143,6 @@ namespace AW2.Core
             GameState = GameState.Menu;
         }
 
-        public void ShowEquipMenu()
-        {
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            DataEngine.ClearGameState();
-            MenuEngine.Activate();
-            MenuEngine.ActivateComponent(MenuComponentType.Equip);
-            GameState = GameState.Menu;
-        }
-
-        public void ShowEquipMenuWhileKeepingGameRunning()
-        {
-            if (GameState == GameState.Menu) return;
-            MenuEngine.Activate();
-            MenuEngine.ActivateComponent(MenuComponentType.Equip);
-            GameState = GameState.GameAndMenu;
-        }
-
         /// <summary>
         /// Called after all components are initialized but before the first update in the game loop. 
         /// </summary>
@@ -171,8 +154,7 @@ namespace AW2.Core
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
             DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage" };
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine" };
-            InitializePlayers(2);
-            GameState = CommandLineOptions.DedicatedServer ? GameState.DedicatedServer : GameState.Intro;
+            if (!CommandLineOptions.DedicatedServer) GameState = GameState.Intro;
             base.BeginRun();
         }
 
@@ -183,17 +165,16 @@ namespace AW2.Core
         }
 
         /// <summary>
-        /// Prepares a new play session to start from an arena.
-        /// Call <see cref="StartArena"/> after this method returns to start
-        /// playing the arena.
+        /// Prepares a new play session to start from the arena called <see cref="SelectedArenaName"/>.
+        /// Call <see cref="StartArena"/> after this method returns to start playing the arena.
         /// This method usually takes a long time to run. It's therefore a good
         /// idea to make it run in a background thread.
         /// </summary>
-        public void PrepareArena(string arenaName)
+        public void PrepareSelectedArena()
         {
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
-            var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)arenaName);
+            var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)SelectedArenaName);
             // Note: Must create a new Arena instance and not use the existing template
             // because playing an arena will modify it.
             InitializeFromArena(arenaTemplate.Info.FileName);
@@ -386,8 +367,16 @@ namespace AW2.Core
         protected override void FinishArenaImpl()
         {
             IsClientAllowedToStartArena = false;
-            ShowEquipMenu();
-            ShowDialog(new GameOverOverlayDialogData(this));
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+            DataEngine.ClearGameState();
+            if (CommandLineOptions.DedicatedServer)
+                GameState = GameState.Initializing;
+            else
+            {
+                ShowEquipMenu();
+                ShowDialog(new GameOverOverlayDialogData(this));
+            }
         }
 
         protected override void OnExiting(object sender, EventArgs args)
@@ -426,7 +415,7 @@ namespace AW2.Core
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    // !!! if (!CommandLineOptions.DedicatedServer)
+                    if (!CommandLineOptions.DedicatedServer)
                     {
                         GraphicsEngine.Visible = true;
                         if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
@@ -446,12 +435,6 @@ namespace AW2.Core
                 case GameState.Menu:
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
-                    break;
-                case GameState.InitializingDedicatedServer:
-                    DedicatedServer.Enabled = true;
-                    throw new NotImplementedException();
-                case GameState.DedicatedServer:
-                    DedicatedServer.Enabled = true;
                     break;
                 default:
                     throw new ApplicationException("Cannot change to unexpected game state " + value);
@@ -492,12 +475,6 @@ namespace AW2.Core
                     MenuEngine.Enabled = false;
                     MenuEngine.Visible = false;
                     break;
-                case GameState.InitializingDedicatedServer:
-                    DedicatedServer.Enabled = false;
-                    throw new NotImplementedException();
-                case GameState.DedicatedServer:
-                    DedicatedServer.Enabled = false;
-                    break;
                 default:
                     throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
             }
@@ -528,6 +505,21 @@ namespace AW2.Core
                 case GameState.GameAndMenu: GameState = GameState.Menu; break;
             }
             MenuEngine.DeactivateComponentsExceptMainMenu();
+        }
+
+        private void ShowEquipMenu()
+        {
+            MenuEngine.Activate();
+            MenuEngine.ActivateComponent(MenuComponentType.Equip);
+            GameState = GameState.Menu;
+        }
+
+        private void ShowEquipMenuWhileKeepingGameRunning()
+        {
+            if (GameState == GameState.Menu) return;
+            MenuEngine.Activate();
+            MenuEngine.ActivateComponent(MenuComponentType.Equip);
+            GameState = GameState.GameAndMenu;
         }
 
         private void UpdateSpecialKeys()

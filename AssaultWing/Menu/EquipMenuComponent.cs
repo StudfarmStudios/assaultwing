@@ -125,7 +125,7 @@ namespace AW2.Menu
                 MenuEngine.Game.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
             else
                 MenuEngine.ProgressBarAction(
-                    () => MenuEngine.Game.PrepareArena(MenuEngine.Game.SelectedArenaName),
+                    () => MenuEngine.Game.PrepareSelectedArena(),
                     MenuEngine.Game.StartArena);
         }
 

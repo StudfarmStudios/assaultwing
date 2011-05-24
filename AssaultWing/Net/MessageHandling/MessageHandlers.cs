@@ -158,7 +158,7 @@ namespace AW2.Net.MessageHandling
             game.SelectedArenaName = mess.ArenaToPlay;
             game.MenuEngine.ProgressBar.Start(mess.WallCount);
             game.MenuEngine.ProgressBarAction(
-                () => game.PrepareArena(game.SelectedArenaName),
+                () => game.PrepareSelectedArena(),
                 () =>
                 {
                     // The network connection may have been cut during arena loading.

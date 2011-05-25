@@ -59,7 +59,7 @@ namespace AW2.Helpers.Serialization
             MemoryStream ms1 = new MemoryStream();
             MemoryStream ms2 = new MemoryStream();
             NetworkBinaryWriter writer1 = new NetworkBinaryWriter(ms1);
-            NetworkBinaryWriter writer2 = new ProfilingNetworkBinaryWriter(ms1);
+            NetworkBinaryWriter writer2 = new ProfilingNetworkBinaryWriter(ms2);
             
             writer1.Write(new byte[] { 0xca, 0xfe, 0xd0 }, 1, 2);
             writer2.Write(new byte[] { 0xca, 0xfe, 0xd0 }, 1, 2);
@@ -91,7 +91,6 @@ namespace AW2.Helpers.Serialization
             writer1.Write((ulong)0xdead000fcafef00d);
             writer2.Write((ulong)0xdead000fcafef00d);
 
-
             writer1.Write((Half)3.141592);
             writer2.Write((Half)3.141592);
             writer1.Write((float)3.333333);
@@ -99,9 +98,7 @@ namespace AW2.Helpers.Serialization
             byte[] data1 = ms1.ToArray();
             byte[] data2 = ms2.ToArray();
 
-            Assert.IsTrue(data1.SequenceEqual(data2));
-
+            Assert.AreEqual(data1, data2);
         }
-
     }
 }

@@ -159,7 +159,12 @@ namespace AW2.UI
             var modifiers = keyData & Keys.Modifiers;
             if (keyCode == Keys.PageUp) SetFullScreen(_game.Settings.Graphics.FullscreenWidth, _game.Settings.Graphics.FullscreenHeight); // HACK !!!
             if (keyCode == Keys.PageDown) SetWindowed(); // HACK !!!
-            if (keyCode == Keys.F1) _splitContainer.Panel2Collapsed ^= true;
+            if (keyCode == Keys.F1)
+            {
+                _splitContainer.Panel2Collapsed ^= true;
+                _logView.Select(_logView.Text.Length - 1, 0);
+                _logView.ScrollToCaret();
+            }
             return (keyCode >= Keys.F1 && keyCode <= Keys.F24 && modifiers == 0)
                 || (keyCode == Keys.Space && modifiers == Keys.Alt); // prevent window menu from opening
         }

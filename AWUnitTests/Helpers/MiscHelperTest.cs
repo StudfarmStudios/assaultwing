@@ -33,6 +33,22 @@ namespace AW2.Helpers
         }
 
         [Test]
+        public void TestToDurationString()
+        {
+            Assert.Throws<ArgumentException>(() => TimeSpan.FromMinutes(-1).ToDurationString());
+            Assert.AreEqual("0 seconds", TimeSpan.Zero.ToDurationString());
+            Assert.AreEqual("1 second", TimeSpan.FromSeconds(1).ToDurationString());
+            Assert.AreEqual("1 second", TimeSpan.FromSeconds(1.5).ToDurationString());
+            Assert.AreEqual("2 seconds", TimeSpan.FromSeconds(2).ToDurationString());
+            Assert.AreEqual("10 seconds", TimeSpan.FromSeconds(10).ToDurationString());
+            Assert.AreEqual("1 minute", TimeSpan.FromSeconds(60).ToDurationString());
+            Assert.AreEqual("1 minute 1 second", TimeSpan.FromSeconds(61).ToDurationString());
+            Assert.AreEqual("1 hour 2 seconds", new TimeSpan(1, 0, 2).ToDurationString());
+            Assert.AreEqual("2 hours 3 minutes", new TimeSpan(2, 3, 0).ToDurationString());
+            Assert.AreEqual("25 hours 59 minutes 59 seconds", new TimeSpan(25, 59, 59).ToDurationString());
+        }
+
+        [Test]
         public void TestFirstDifference()
         {
             object a, b;

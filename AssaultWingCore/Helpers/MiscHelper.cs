@@ -36,6 +36,22 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns a human-readable, nice string representation of the TimeSpan as a duration.
+        /// </summary>
+        public static string ToDurationString(this TimeSpan timeSpan)
+        {
+            if (timeSpan < TimeSpan.Zero) throw new ArgumentException("Only non-negative TimeSpans are supported", "timeSpan");
+            if (timeSpan == TimeSpan.Zero) return "0 seconds";
+            var str = new StringBuilder();
+            int hours = (int)timeSpan.TotalHours;
+            if (hours >= 1) str.Append(hours + (hours > 1 ? " hours " : " hour "));
+            if (timeSpan.Minutes > 0) str.Append(timeSpan.Minutes + (timeSpan.Minutes > 1 ? " minutes " : " minute "));
+            if (timeSpan.Seconds > 0) str.Append(timeSpan.Seconds + (timeSpan.Seconds > 1 ? " seconds " : " second "));
+            str.Remove(str.Length - 1, 1); // remove trailing space
+            return str.ToString();
+        }
+
+        /// <summary>
         /// Compares two sequences element by element for the first non-equal pair.
         /// </summary>
         /// <param name="a">First sequence</param>

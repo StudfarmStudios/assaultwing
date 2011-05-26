@@ -9,6 +9,7 @@ namespace AW2.Net.Messages
     [MessageType(0x21, false)]
     public class StartGameMessage : Message
     {
+        public byte ArenaID { get; set; }
         public string ArenaToPlay { get; set; }
         public int WallCount { get; set; }
 
@@ -19,8 +20,10 @@ namespace AW2.Net.Messages
 #endif
             {
                 // Start game (request) message structure:
+                // byte: arena identifier
                 // variable-length string: name of arena to play
                 // int: number of wall objects in the arena
+                writer.Write((byte)ArenaID);
                 writer.Write((string)ArenaToPlay);
                 writer.Write((int)WallCount);
             }
@@ -28,6 +31,7 @@ namespace AW2.Net.Messages
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
+            ArenaID = reader.ReadByte();
             ArenaToPlay = reader.ReadString();
             WallCount = reader.ReadInt32();
         }

@@ -23,6 +23,7 @@ namespace AW2.Net.Messages
         /// </summary>
         private List<int> _layerIndices = new List<int>();
 
+        public byte ArenaID { get; set; }
         public int GobCount { get { return _gobTypeNames.Count; } }
 
         public void AddGob(Gob gob)
@@ -52,6 +53,7 @@ namespace AW2.Net.Messages
                 checked
                 {
                     // Gob creation (request) message structure:
+                    // byte: arena identifier
                     // short: number of gobs to create, N
                     // N bytes: arena layer indices
                     // N ints: canonical forms of gob type names
@@ -59,6 +61,7 @@ namespace AW2.Net.Messages
                     // K bytes: serialised data of all gobs
                     var writeBytes = StreamedData;
                     if (_gobTypeNames.Count != _layerIndices.Count) throw new MessageException("_gobTypeNames.Count != _layerIndices.Count");
+                    writer.Write((byte)ArenaID);
                     writer.Write((short)_gobTypeNames.Count);
                     foreach (byte layerIndex in _layerIndices) writer.Write((byte)layerIndex);
                     foreach (var typeName in _gobTypeNames) writer.Write((CanonicalString)typeName);
@@ -71,6 +74,7 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
+            ArenaID = reader.ReadByte();
             int gobCount = reader.ReadInt16();
             _layerIndices = new List<int>(gobCount);
             _gobTypeNames = new List<CanonicalString>(gobCount);

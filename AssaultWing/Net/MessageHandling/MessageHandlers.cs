@@ -50,12 +50,12 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new MessageHandler<GameSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleGameSettingsRequest);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerMessageMessageOnClient);
+            yield return new MessageHandler<ArenaFinishMessage>(MessageHandlerBase.SourceType.Server, HandleArenaFinishMessage);
         }
 
         public static IEnumerable<MessageHandlerBase> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
             var networkEngine = AssaultWing.Instance.NetworkEngine;
-            yield return new MessageHandler<ArenaFinishMessage>(MessageHandlerBase.SourceType.Server, HandleArenaFinishMessage);
             yield return new MessageHandler<PlayerUpdateMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, handleGobCreationMessage) { OneMessageAtATime = true };
@@ -158,7 +158,7 @@ namespace AW2.Net.MessageHandling
             game.SelectedArenaName = mess.ArenaToPlay;
             game.MenuEngine.ProgressBar.Start(mess.WallCount);
             game.MenuEngine.ProgressBarAction(
-                () => game.PrepareSelectedArena(),
+                () => game.PrepareSelectedArena(mess.ArenaID),
                 () =>
                 {
                     // The network connection may have been cut during arena loading.

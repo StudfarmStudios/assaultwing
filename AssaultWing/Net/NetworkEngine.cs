@@ -586,11 +586,12 @@ namespace AW2.Net
             var arenaName = _game.SelectedArenaName;
             var startGameMessage = new StartGameMessage
             {
+                ArenaID = Game.DataEngine.Arena.ID,
                 ArenaToPlay = arenaName,
                 WallCount = Game.DataEngine.Arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count()
             };
             conn.Send(startGameMessage);
-            var gobCreationMessage = new GobCreationMessage();
+            var gobCreationMessage = new GobCreationMessage { ArenaID = Game.DataEngine.Arena.ID };
             foreach (var gob in Game.DataEngine.Arena.Gobs.Where(g => g.IsRelevant))
             {
                 gobCreationMessage.AddGob(gob);
@@ -599,7 +600,7 @@ namespace AW2.Net
                 if (gobCreationMessage.GobCount == 2)
                 {
                     conn.Send(gobCreationMessage);
-                    gobCreationMessage = new GobCreationMessage();
+                    gobCreationMessage = new GobCreationMessage { ArenaID = Game.DataEngine.Arena.ID };
                 }
             }
             if (gobCreationMessage.GobCount > 0) conn.Send(gobCreationMessage);

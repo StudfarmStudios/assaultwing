@@ -256,6 +256,7 @@ namespace AW2.Game
             }
         }
 
+        public byte ID { get; set; }
         public ArenaInfo Info { get { return _info; } set { _info = value; } }
 
         /// <summary>

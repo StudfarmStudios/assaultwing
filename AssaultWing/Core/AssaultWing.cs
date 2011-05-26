@@ -26,6 +26,7 @@ namespace AW2.Core
         private Control _escapeControl;
         private List<Gob> _addedGobs;
         private TimeSpan _lastGameSettingsSent;
+        private byte _nextArenaID;
 
         // HACK: Debug keys
         private Control _frameStepControl;
@@ -138,6 +139,7 @@ namespace AW2.Core
         public void ShowMainMenuAndResetGameplay()
         {
             CutNetworkConnections();
+            EnsureArenaLoadingStopped();
             DataEngine.ClearGameState();
             MenuEngine.Activate();
             GameState = GameState.Menu;
@@ -170,14 +172,14 @@ namespace AW2.Core
         /// This method usually takes a long time to run. It's therefore a good
         /// idea to make it run in a background thread.
         /// </summary>
-        public void PrepareSelectedArena()
+        public void PrepareSelectedArena(byte? arenaIDOnClient = null)
         {
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
             var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)SelectedArenaName);
             // Note: Must create a new Arena instance and not use the existing template
             // because playing an arena will modify it.
-            InitializeFromArena(arenaTemplate.Info.FileName);
+            InitializeFromArena(arenaTemplate.Info.FileName, arenaIDOnClient.HasValue ? arenaIDOnClient.Value : _nextArenaID++);
         }
 
         public void StartArenaButStayInMenu()
@@ -340,6 +342,7 @@ namespace AW2.Core
 
         public void HandleGobCreationMessage(GobCreationMessage message, int framesAgo)
         {
+            if (message.ArenaID != DataEngine.Arena.ID) return;
             message.ReadGobs(framesAgo,
                 (typeName, layerIndex) =>
                 {
@@ -369,6 +372,7 @@ namespace AW2.Core
             IsClientAllowedToStartArena = false;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+            EnsureArenaLoadingStopped();
             DataEngine.ClearGameState();
             if (CommandLineOptions.DedicatedServer)
                 GameState = GameState.Initializing;
@@ -381,9 +385,14 @@ namespace AW2.Core
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            if (MenuEngine.ArenaLoadTask.TaskRunning)
-                MenuEngine.ArenaLoadTask.AbortTask();
+            EnsureArenaLoadingStopped();
             base.OnExiting(sender, args);
+        }
+
+        private void EnsureArenaLoadingStopped()
+        {
+            if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
+            MenuEngine.ProgressBar.SkipRemainingSubtasks();
         }
 
         private void ApplyInGameGraphicsSettings()
@@ -484,11 +493,10 @@ namespace AW2.Core
         /// Prepares the game data for playing an arena.
         /// When the playing really should start, call <see cref="StartArena"/>.
         /// </summary>
-        /// <param name="initializeForPlaying">Should the arena be initialised
-        /// for playing. If not, some initialisations are skipped.</param>
-        private void InitializeFromArena(string arenaFilename)
+        private void InitializeFromArena(string arenaFilename, byte arenaID)
         {
             var arena = Arena.FromFile(this, arenaFilename);
+            arena.ID = arenaID;
             arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
             arena.IsForPlaying = true;
             // Note: Client starts progressbar when receiving StartGameMessage.
@@ -607,7 +615,7 @@ namespace AW2.Core
             if (MenuEngine.ArenaLoadTask.TaskRunning) return; // wait for arena load completion
             if (NetworkMode == NetworkMode.Server && _addedGobs.Any())
             {
-                var message = new GobCreationMessage();
+                var message = new GobCreationMessage { ArenaID = DataEngine.Arena.ID };
                 foreach (var gob in _addedGobs) message.AddGob(gob);
                 _addedGobs.Clear();
                 NetworkEngine.SendToGameClients(message);

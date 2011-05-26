@@ -61,6 +61,14 @@ namespace AW2.Core.OverlayComponents
             }
         }
 
+        public void SkipRemainingSubtasks()
+        {
+            lock (_lock)
+            {
+                IsFinished = true;
+            }
+        }
+
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             var barTexture = AssaultWing.Instance.MenuEngine.MenuContent.ProgressBarBarTexture;

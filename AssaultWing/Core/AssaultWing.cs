@@ -84,7 +84,6 @@ namespace AW2.Core
         private PlayerChat PlayerChat { get; set; }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
-        public DedicatedServer DedicatedServer { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
@@ -94,14 +93,12 @@ namespace AW2.Core
             MenuEngine = new MenuEngineImpl(this, 10);
             IntroEngine = new IntroEngine(this, 11);
             PlayerChat = new PlayerChat(this, 12);
-            DedicatedServer = new DedicatedServer(this, 13);
             OverlayDialog = new OverlayDialog(this, 20);
             Components.Add(NetworkEngine);
             Components.Add(StartupScreen);
             Components.Add(MenuEngine);
             if (!CommandLineOptions.DedicatedServer) Components.Add(IntroEngine);
             Components.Add(PlayerChat);
-            Components.Add(DedicatedServer);
             Components.Add(OverlayDialog);
             GameState = GameState.Initializing;
             _escapeControl = new KeyboardKey(Keys.Escape);
@@ -112,7 +109,12 @@ namespace AW2.Core
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
-            if (CommandLineOptions.DedicatedServer) DedicatedServer.Enabled = true;
+            if (CommandLineOptions.DedicatedServer)
+            {
+                var dedicatedServer = new DedicatedServer(this, 13);
+                Components.Add(dedicatedServer);
+                dedicatedServer.Enabled = true;
+            }
         }
 
         public override void Update(AWGameTime gameTime)

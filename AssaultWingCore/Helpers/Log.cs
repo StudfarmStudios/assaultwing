@@ -9,11 +9,14 @@ namespace AW2.Helpers
     /// </summary>
     public static class Log
     {
-        private static object g_lock = new object();
-        private static StreamWriter g_writer = null;
         private const string FILE_BASENAME = "Log";
         private const string FILE_EXTENSION = ".txt";
-        private const int ROTATE_COUNT = 5;
+        private const string LOG_DATETIME_FORMAT = "yyyyMMddTHHmmss";
+        private static readonly TimeSpan LOG_LIFETIME = TimeSpan.FromDays(10);
+
+        private static object g_lock = new object();
+        private static StreamWriter g_writer = null;
+        private static DateTime g_logOpenDateTime = DateTime.Now;
 
         /// <summary>
         /// Triggered when something has been written to the log.
@@ -25,35 +28,9 @@ namespace AW2.Helpers
         /// </summary>
         static Log()
         {
-            try
-            {
-                // Rotate old logs.
-                if (File.Exists(GetLogFilename(ROTATE_COUNT)))
-                    File.Delete(GetLogFilename(ROTATE_COUNT));
-                for (int rotation = ROTATE_COUNT - 1; rotation >= 0; --rotation)
-                    if (File.Exists(GetLogFilename(rotation)))
-                        File.Move(GetLogFilename(rotation), GetLogFilename(rotation + 1));
-            }
-            catch
-            {
-                // Ignore any file exceptions, if file is not
-                // createable (e.g. on a CD-Rom) it doesn't matter.
-            }
-
-            try
-            {
-                var file = new FileStream(GetLogFilename(0), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
-                g_writer = new StreamWriter(file, System.Text.Encoding.UTF8);
-                g_writer.AutoFlush = true;
-            }
-            catch
-            {
-                // Ignore any file exceptions, if file is not
-                // createable (e.g. on a CD-Rom) it doesn't matter.
-            }
-
-            // Add some info about this session.
+            OpenNewLog();
             Write("Log opened. The date and time is " + DateTime.Now.ToString("o"));
+            DeleteOldLogs();
         }
 
         public static void Write(string format, params object[] args)
@@ -94,19 +71,17 @@ namespace AW2.Helpers
         public static string CloseAndGetContents()
         {
             g_writer.Close();
-            return File.ReadAllText(GetLogFilename(0));
+            return File.ReadAllText(LogFileName);
         }
 
-        /// <summary>
-        /// Returns the filename of the log that has been rotated a number of times.
-        /// </summary>
-        private static string GetLogFilename(int rotation)
+        public static string LogFileName
         {
-            var filename = string.Format("{0}{1}{2}", FILE_BASENAME, rotation == 0 ? "" : "." + rotation, FILE_EXTENSION);
-            return Path.Combine(LogPath, filename);
+            get
+            {
+                var filename = string.Format("{0}{1:" + LOG_DATETIME_FORMAT + "}{2}", FILE_BASENAME, g_logOpenDateTime, FILE_EXTENSION);
+                return Path.Combine(LogPath, filename);
+            }
         }
-
-        public static string LogFileName { get { return GetLogFilename(0); } }
 
         public static string LogPath
         {
@@ -136,6 +111,40 @@ namespace AW2.Helpers
         private static string ExeDirectory
         {
             get { return Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location); }
+        }
+
+        private static void DeleteOldLogs()
+        {
+            try
+            {
+                foreach (var oldLog in Directory.EnumerateFiles(LogPath, FILE_BASENAME + "*" + FILE_EXTENSION))
+                {
+                    var baseName = Path.GetFileNameWithoutExtension(oldLog);
+                    var logDateStr = baseName.Substring(FILE_BASENAME.Length, baseName.Length - FILE_BASENAME.Length);
+                    var logDate = DateTime.ParseExact(logDateStr, LOG_DATETIME_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                    if (g_logOpenDateTime - logDate <= LOG_LIFETIME) continue;
+                    File.Delete(oldLog);
+                    Write("Deleted old log file \"{0}\"", oldLog);
+                }
+            }
+            catch
+            {
+                // Failed to delete old logs. Not too serious.
+            }
+        }
+
+        private static void OpenNewLog()
+        {
+            try
+            {
+                var file = new FileStream(LogFileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+                g_writer = new StreamWriter(file, System.Text.Encoding.UTF8);
+                g_writer.AutoFlush = true;
+            }
+            catch
+            {
+                // Failed to open log. Not too serious.
+            }
         }
     }
 }

@@ -151,7 +151,6 @@
     <Compile Include="Game\Gobs\Dock.cs" />
     <Compile Include="Game\Gobs\Explosion.cs" />
     <Compile Include="Game\Gobs\FloatingBullet.cs" />
-    <Compile Include="Game\Gobs\Gravity.cs" />
     <Compile Include="Game\Gobs\Lightning.cs" />
     <Compile Include="Game\Gobs\MovingWall.cs" />
     <Compile Include="Game\Gobs\Peng.cs" />

@@ -1481,12 +1481,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
-    <None Include="gobdefs\Gravity_uniform gravity.xml">
-      <Name>Gravity_uniform gravity</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="gobdefs\Lightning_lightning.xml">
       <Name>Lightning_lightning</Name>
       <Importer>XmlImporter</Importer>

@@ -4720,19 +4720,6 @@
           <rotation>0</rotation>
           <typeName>dock</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Gravity">
-          <force>
-            <X>0</X>
-            <Y>-30</Y>
-          </force>
-          <staticID>0</staticID>
-          <pos>
-            <X>0</X>
-            <Y>0</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>uniform gravity</typeName>
-        </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>junk_squarewall_1</wallModelName>
           <destructible>false</destructible>
@@ -5232,6 +5219,10 @@ cleaning their mess away.</infoText>
     </Item>
   </backgroundMusic>
   <binFilename>Arena_Junk.bin</binFilename>
+  <gravity>
+    <X>0</X>
+    <Y>-30</Y>
+  </gravity>
   <lighting>
     <light0DiffuseColor>
       <X>1</X>

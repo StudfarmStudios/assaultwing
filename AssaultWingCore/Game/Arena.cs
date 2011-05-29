@@ -157,10 +157,13 @@ namespace AW2.Game
         [TypeParameter]
         private string _binFilename;
 
-        #endregion General fields
-
         [TypeParameter]
         private LightingSettings _lighting;
+
+        [TypeParameter]
+        private Vector2 _gravity;
+
+        #endregion General fields
 
         #region Collision related fields
 
@@ -354,6 +357,7 @@ namespace AW2.Game
             Gobs = new GobCollection(_layers);
             Bin = new ArenaBin();
             _backgroundMusic = new List<BackgroundMusic>();
+            _gravity = new Vector2(0, -30);
             _lighting = new LightingSettings();
         }
 
@@ -489,18 +493,19 @@ namespace AW2.Game
 
             var colliders = new List<CollisionArea>();
             int attempts = 0;
-            while (moveTime > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
+            var moveTimeLeft = moveTime;
+            while (moveTimeLeft > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
             {
                 var oldMove = gob.Move;
                 var gobFrameMove = gob.Move * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
                 int moveChunkCount = (int)Math.Ceiling(gobFrameMove.Length() / MOVE_LENGTH_MAXIMUM);
                 if (moveChunkCount == 0) moveChunkCount = 1;
-                var chunkMoveTime = moveTime.Divide(moveChunkCount);
+                var chunkMoveTime = moveTimeLeft.Divide(moveChunkCount);
                 for (int chunk = 0; chunk < moveChunkCount; ++chunk)
                 {
                     var currentChunkMoveTime = chunkMoveTime;
                     colliders.AddRange(TryMove(gob, ref currentChunkMoveTime, allowSideEffects));
-                    moveTime -= chunkMoveTime - currentChunkMoveTime;
+                    moveTimeLeft -= chunkMoveTime - currentChunkMoveTime;
                     if (currentChunkMoveTime > TimeSpan.Zero) break; // stop iterating chunks if the gob collided
                 }
                 ++attempts;
@@ -510,6 +515,7 @@ namespace AW2.Game
                 if (gob.Move == oldMove)
                     break;
             }
+            if (gob.Gravitating) gob.Move += _gravity * (float)moveTime.TotalSeconds;
             if (allowSideEffects)
                 foreach (var collider in colliders.Distinct())
                 {

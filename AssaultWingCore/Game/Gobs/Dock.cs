@@ -73,6 +73,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             Movable = false;
+            Gravitating = false;
         }
 
         public override void Activate()

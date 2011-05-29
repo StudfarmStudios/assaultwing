@@ -14,8 +14,8 @@ namespace AW2.Game.Gobs
     {
         /// <summary>
         /// The name of the 3D model to draw the prop with.
+        /// This field overrides the type parameter <see cref="Gob._modelName"/>.
         /// </summary>
-        /// Note: This field overrides the type parameter Gob.modelName.
         [RuntimeState]
         private CanonicalString _propModelName;
 
@@ -36,6 +36,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             ModelName = _propModelName;
+            Gravitating = false;
         }
 
         protected override void SetRuntimeState(Gob runtimeState)

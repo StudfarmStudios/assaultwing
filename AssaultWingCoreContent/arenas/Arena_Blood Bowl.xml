@@ -3437,19 +3437,6 @@
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Gravity">
-          <force>
-            <X>0</X>
-            <Y>-30</Y>
-          </force>
-          <staticID>0</staticID>
-          <pos>
-            <X>0</X>
-            <Y>0</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>uniform gravity</typeName>
-        </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_volcano</wallModelName>
           <destructible>false</destructible>
@@ -5035,6 +5022,10 @@ this place.</infoText>
     </Item>
   </backgroundMusic>
   <binFilename>Arena_Blood Bowl.bin</binFilename>
+  <gravity>
+    <X>0</X>
+    <Y>-30</Y>
+  </gravity>
   <lighting>
     <light0DiffuseColor>
       <X>1</X>

@@ -36,7 +36,7 @@ namespace AW2.Net.ConnectionUtils
         /// <summary>
         /// What needs to be added to the current remote frame number to get the current local frame number.
         /// </summary>
-        public int RemoteFrameNumberOffset { get { return PingTime.Divide(2).Frames(); } }
+        public int RemoteFrameNumberOffset { get { return AWMathHelper.AverageWithoutExtremes(_remoteFrameNumberOffsets); } }
 
         /// <summary>
         /// If true, ping time won't be updated. The old results will remain unchanged.
@@ -48,6 +48,12 @@ namespace AW2.Net.ConnectionUtils
             BaseConnection = baseConnection;
             _pingTimes = new TimeSpan[PING_AVERAGED_COUNT];
             _remoteFrameNumberOffsets = new int[PING_AVERAGED_COUNT];
+        }
+
+        public void AdjustRemoteFrameNumberOffset(int localFrameNumberShift)
+        {
+            for (int i = 0; i < PING_AVERAGED_COUNT; i++)
+                _remoteFrameNumberOffsets[i] -= localFrameNumberShift;
         }
 
         /// <summary>

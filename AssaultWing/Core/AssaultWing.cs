@@ -26,6 +26,7 @@ namespace AW2.Core
         private Control _escapeControl;
         private List<Gob> _addedGobs;
         private TimeSpan _lastGameSettingsSent;
+        private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
 
         // HACK: Debug keys
@@ -608,8 +609,12 @@ namespace AW2.Core
         {
             if (NetworkMode != NetworkMode.Client) return;
             if (!NetworkEngine.IsConnectedToGameServer) return;
+            if (_lastFrameNumberSynchronization + TimeSpan.FromSeconds(1) > GameTime.TotalRealTime) return;
+            _lastFrameNumberSynchronization = GameTime.TotalRealTime;
             if (GameState != GameState.Gameplay && GameState != GameState.GameAndMenu) return;
-            DataEngine.Arena.FrameNumber -= NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
+            var remoteFrameNumberOffset = NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
+            DataEngine.Arena.FrameNumber -= remoteFrameNumberOffset;
+            NetworkEngine.GameServerConnection.PingInfo.AdjustRemoteFrameNumberOffset(remoteFrameNumberOffset);
         }
 
         private void SendGobCreationMessage()

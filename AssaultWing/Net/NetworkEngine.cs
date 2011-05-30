@@ -341,7 +341,7 @@ namespace AW2.Net
         {
             if (connection.ID != message.ConnectionID) throw new ArgumentException("Wrong connection");
             var localFrameCountOnReceive = Game.DataEngine.ArenaFrameCount;
-            var localFrameCountOnSend = message.FrameNumber + connection.PingInfo.RemoteFrameNumberOffset;
+            var localFrameCountOnSend = message.FrameNumber + connection.PingInfo.PingTime.Divide(2).Frames();
             return localFrameCountOnReceive - localFrameCountOnSend;
         }
 

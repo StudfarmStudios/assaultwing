@@ -720,6 +720,7 @@ namespace AW2.Core
                 gob.LastNetworkUpdate = now;
                 gobMessage.AddGob(gob.ID, gob);
             }
+            gobMessage.CollisionEvents = DataEngine.Arena.GetCollisionEvents();
             NetworkEngine.SendToGameClients(gobMessage);
         }
 

@@ -71,6 +71,63 @@ namespace AW2.Game
     {
         #region Type definitions
 
+        [Flags]
+        public enum CollisionSoundTypes
+        {
+            None = 0x00,
+            WallCollision = 0x01,
+            ShipCollision = 0x02,
+        };
+
+        public struct CollisionEvent
+        {
+            public int Gob1ID { get; private set; }
+            public int Gob2ID { get; private set; }
+            public int Area1ID { get; private set; }
+            public int Area2ID { get; private set; }
+            public bool Stuck { get; private set; }
+            public bool CollideBothWays { get; private set; }
+            public CollisionSoundTypes Sound { get; private set; }
+
+            public CollisionEvent(int gob1ID, int gob2ID, int area1ID, int area2ID, bool stuck, bool collideBothWays, CollisionSoundTypes sound)
+                : this()
+            {
+                Gob1ID = gob1ID;
+                Gob2ID = gob2ID;
+                Area1ID = area1ID;
+                Area2ID = area2ID;
+                Stuck = stuck;
+                CollideBothWays = collideBothWays;
+                Sound = sound;
+            }
+
+            public CollisionEvent(CollisionArea area1, CollisionArea area2, bool stuck, bool collideBothWays, CollisionSoundTypes sound)
+                : this()
+            {
+                var gob1 = area1.Owner;
+                var gob2 = area2.Owner;
+                Gob1ID = gob1.ID;
+                Gob2ID = gob2.ID;
+                // Note: Walls are the only gobs to have over 4 collision areas; there can be hundreds of them.
+                // To fit collision area IDs into as few bits as possible, walls will always collide with
+                // their first collision area. This should not have a visible effect on game clients.
+                Area1ID = gob1 is Gobs.Wall ? 0 : gob1.GetCollisionAreaID(area1);
+                Area2ID = gob2 is Gobs.Wall ? 0 : gob2.GetCollisionAreaID(area2);
+                Stuck = stuck;
+                CollideBothWays = collideBothWays;
+                Sound = sound;
+            }
+        }
+
+        [Flags]
+        public enum CollisionSideEffectType
+        {
+            None = 0x00,
+            Reversible = 0x01,
+            Irreversible = 0x02,
+            All = Reversible | Irreversible,
+        }
+
         /// <summary>
         /// Ways of being outside arena boundaries.
         /// </summary>
@@ -229,6 +286,7 @@ namespace AW2.Game
         /// Minimum change of gob speed in a collision to cause damage and a sound effect.
         /// </summary>
         private const float MINIMUM_COLLISION_DELTA = 20;
+        private const float MOVABLE_MOVABLE_COLLISION_SOUND_TRESHOLD = 40;
 
         /// <summary>
         /// Excess area to cover by the spatial index of wall triangles,
@@ -244,6 +302,7 @@ namespace AW2.Game
         private static readonly float[] COLLISION_AREA_CELL_SIZE;
 
         private List<SoundInstance> _ambientSounds = new List<SoundInstance>();
+        private List<CollisionEvent> _collisionEvents = new List<CollisionEvent>();
 
         #endregion Collision related fields
 
@@ -398,7 +457,7 @@ namespace AW2.Game
         {
             UninitializeAmbientSounds();
             UnloadContent();
-            
+
             foreach (var gob in Gobs) gob.Dispose();
             Gobs.Clear();
             for (int i = 0; i < _collisionAreas.Length; ++i)
@@ -415,7 +474,7 @@ namespace AW2.Game
             InitializeCollisionAreas();
             InitializeGobs();
             InitializeAmbientSounds();
-            
+
         }
 
         private void UninitializeAmbientSounds()
@@ -435,7 +494,7 @@ namespace AW2.Game
             // HACK! (Add sound property on objects or sound source gob)
 
             var goldObjectId = new CanonicalString("amazon_chest_1");
-            var shovelObjectId  = new CanonicalString("amazon_shovel_1");
+            var shovelObjectId = new CanonicalString("amazon_shovel_1");
             foreach (var layer in _layers)
             {
                 foreach (var gob in layer.Gobs)
@@ -462,38 +521,33 @@ namespace AW2.Game
         /// maintain overlap consistency as specified in <b>CollisionArea.CannotOverlap</b>
         /// of the moving gob's physical collision area.
         /// </summary>
-        public void Move(Gob gob, int frameCount, bool allowSideEffects)
+        public void Move(Gob gob, int frameCount, bool allowIrreversibleSideEffects)
         {
-            Move(gob, Game.TargetElapsedTime.Multiply(frameCount), allowSideEffects);
+            Move(gob, Game.TargetElapsedTime.Multiply(frameCount), allowIrreversibleSideEffects);
         }
 
         /// <summary>
         /// As <see cref="Move(Gob, int, bool)"/> but time delta is specified in game time.
         /// </summary>
-        public void Move(Gob gob, TimeSpan moveTime, bool allowSideEffects)
+        public void Move(Gob gob, TimeSpan moveTime, bool allowIrreversibleSideEffects)
         {
             if (!gob.Movable) return;
             if (gob.Disabled) return;
             var gobPhysical = gob.PhysicalArea;
             if (gobPhysical != null) Unregister(gobPhysical);
 
-            if (allowSideEffects)
+            // If the gob is stuck, let it resolve the situation.
+            if (gobPhysical != null)
             {
-                // If the gob is stuck, let it resolve the situation.
-                if (gobPhysical != null)
-                    foreach (var area2 in GetOverlappers(gobPhysical, gobPhysical.CannotOverlap))
-                    {
-                        gob.Collide(gobPhysical, area2, true);
-                        area2.Owner.Collide(area2, gobPhysical, true);
-                        // No need for a physical collision -- the gobs are stuck.
-                        if (gob.Dead) break;
-                    }
+                var stuckOverlappers = GetOverlappers(gobPhysical, gobPhysical.CannotOverlap);
+                PerformCollisions(gob, gobPhysical, true, allowIrreversibleSideEffects, stuckOverlappers, CollisionSoundTypes.None);
                 if (gob.Dead) return;
             }
 
             var colliders = new List<CollisionArea>();
             int attempts = 0;
             var moveTimeLeft = moveTime;
+            var soundsToPlay = CollisionSoundTypes.None;
             while (moveTimeLeft > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
             {
                 var oldMove = gob.Move;
@@ -504,7 +558,9 @@ namespace AW2.Game
                 for (int chunk = 0; chunk < moveChunkCount; ++chunk)
                 {
                     var currentChunkMoveTime = chunkMoveTime;
-                    colliders.AddRange(TryMove(gob, ref currentChunkMoveTime, allowSideEffects));
+                    var moveResult = TryMove(gob, ref currentChunkMoveTime, allowIrreversibleSideEffects);
+                    colliders.AddRange(moveResult.Item1);
+                    soundsToPlay |= moveResult.Item2;
                     moveTimeLeft -= chunkMoveTime - currentChunkMoveTime;
                     if (currentChunkMoveTime > TimeSpan.Zero) break; // stop iterating chunks if the gob collided
                 }
@@ -515,31 +571,63 @@ namespace AW2.Game
                 if (gob.Move == oldMove)
                     break;
             }
+            PlayCollisionSounds(gob, soundsToPlay);
             if (gob.Gravitating) gob.Move += _gravity * (float)moveTime.TotalSeconds;
-            if (allowSideEffects)
-                foreach (var collider in colliders.Distinct())
-                {
-                    gob.Collide(gobPhysical, collider, false);
-                    collider.Owner.Collide(collider, gobPhysical, false);
-                }
+            PerformCollisions(gob, gobPhysical, false, allowIrreversibleSideEffects, colliders, soundsToPlay);
             if (gobPhysical != null) Register(gobPhysical);
-            ArenaBoundaryActions(gob, allowSideEffects);
+            ArenaBoundaryActions(gob, allowIrreversibleSideEffects);
+        }
+
+        private void PlayCollisionSounds(Gob gob, CollisionSoundTypes soundsToPlay)
+        {
+            if (Game.NetworkMode == NetworkMode.Client) return;
+            if ((soundsToPlay & Arena.CollisionSoundTypes.WallCollision) != 0)
+                Game.SoundEngine.PlaySound("Collision", gob);
+            if ((soundsToPlay & Arena.CollisionSoundTypes.ShipCollision) != 0)
+                Game.SoundEngine.PlaySound("Shipcollision", gob);
+        }
+
+        private void PerformCollisions(Gob gob, CollisionArea gobPhysical, bool stuck, bool allowIrreversibleSideEffects, IEnumerable<CollisionArea> colliders, CollisionSoundTypes soundsToPlay)
+        {
+            var sideEffectTypes = allowIrreversibleSideEffects ? CollisionSideEffectType.All : CollisionSideEffectType.Reversible;
+            foreach (var collider in colliders.Distinct())
+            {
+                _collisionEvents.Add(new CollisionEvent(gobPhysical, collider, stuck: stuck, collideBothWays: true, sound: soundsToPlay));
+                gob.Collide(gobPhysical, collider, stuck, sideEffectTypes);
+                collider.Owner.Collide(collider, gobPhysical, stuck, sideEffectTypes);
+                if (gob.Dead) break;
+            }
         }
 
         /// <summary>
         /// Performs nonphysical collisions. Must be called every frame
         /// after all gob movement is done.
         /// </summary>
-        public void PerformNonphysicalCollisions()
+        public void PerformNonphysicalCollisions(bool allowIrreversibleSideEffects)
         {
+            var stuck = false;
+            var sideEffectTypes = allowIrreversibleSideEffects ? CollisionSideEffectType.All : CollisionSideEffectType.Reversible;
             for (int bitIndex = 0; bitIndex < _collisionAreas.Length; ++bitIndex)
             {
                 var container = _collisionAreas[bitIndex];
                 if (container != null && _collisionAreaMayCollide[bitIndex])
                     foreach (var area in container.GetElements())
-                        foreach (var area2 in GetOverlappers(area, area.CollidesAgainst))
-                            area.Owner.Collide(area, area2, false);
+                        foreach (var collider in GetOverlappers(area, area.CollidesAgainst))
+                        {
+                            _collisionEvents.Add(new CollisionEvent(area, collider, stuck: false, collideBothWays: false, sound: CollisionSoundTypes.None));
+                            area.Owner.Collide(area, collider, stuck, sideEffectTypes);
+                        }
             }
+        }
+
+        public List<CollisionEvent> GetCollisionEvents()
+        {
+            return _collisionEvents;
+        }
+
+        public void ResetCollisionEvents()
+        {
+            _collisionEvents.Clear();
         }
 
         /// <summary>
@@ -565,7 +653,7 @@ namespace AW2.Game
         /// <summary>
         /// Registers a gob for collisions.
         /// </summary>
-        public void Register(Gob gob) // TODO !!! This method should be private
+        private void Register(Gob gob)
         {
             foreach (CollisionArea area in gob.CollisionAreas)
             {
@@ -579,7 +667,7 @@ namespace AW2.Game
         /// <summary>
         /// Removes a previously registered gob from having collisions.
         /// </summary>
-        public void Unregister(Gob gob) // TODO !!! This method should be private
+        private void Unregister(Gob gob)
         {
             foreach (CollisionArea area in gob.CollisionAreas)
                 Unregister(area);
@@ -735,7 +823,7 @@ namespace AW2.Game
         /// <param name="moveTime">Remaining duration of the move</param>
         /// <param name="allowSideEffects">Should effects other than changing the gob's
         /// position and movement be allowed.</param>
-        private IEnumerable<CollisionArea> TryMove(Gob gob, ref TimeSpan moveTime, bool allowSideEffects)
+        private Tuple<List<CollisionArea>, CollisionSoundTypes> TryMove(Gob gob, ref TimeSpan moveTime, bool allowSideEffects)
         {
             var colliders = new List<CollisionArea>();
             var oldPos = gob.Pos;
@@ -772,6 +860,7 @@ namespace AW2.Game
                 moveTry = TimeSpan.FromTicks((moveGood.Ticks + moveBad.Ticks) / 2);
             }
 
+            var soundsToPlay = CollisionSoundTypes.None;
             if (badFound)
             {
                 gob.Pos = LerpGobPos(oldPos, oldMove, moveBad);
@@ -779,7 +868,7 @@ namespace AW2.Game
                 {
                     var physicalColliders = GetPhysicalColliders(gobPhysical);
                     colliders.AddRange(physicalColliders);
-                    foreach (var collider in colliders) PerformCollision(gobPhysical, collider, allowSideEffects);
+                    foreach (var collider in colliders) soundsToPlay |= PerformCollision(gobPhysical, collider, allowSideEffects);
                 }
                 ArenaBoundaryActions(gob, allowSideEffects);
             }
@@ -787,7 +876,7 @@ namespace AW2.Game
             // Return to last non-colliding position.
             gob.Pos = LerpGobPos(oldPos, oldMove, moveGood);
             moveTime -= moveGood;
-            return colliders;
+            return Tuple.Create(colliders, soundsToPlay);
         }
 
         private static Vector2 LerpGobPos(Vector2 startPos, Vector2 move, TimeSpan moveTime)
@@ -837,14 +926,14 @@ namespace AW2.Game
         /// <param name="area2">The overlapping collision area of the other gob.</param>
         /// <param name="allowSideEffects">Should effects other than changing the gob's
         /// position and movement be allowed.</param>
-        public void PerformCollision(CollisionArea area1, CollisionArea area2, bool allowSideEffects)
+        private CollisionSoundTypes PerformCollision(CollisionArea area1, CollisionArea area2, bool allowSideEffects)
         {
             // At least one area must be from a movable gob, lest there be no collision.
             bool area1Movable = (area1.Type & CollisionAreaType.PhysicalMovable) != 0;
             bool area2Movable = (area2.Type & CollisionAreaType.PhysicalMovable) != 0;
-            if (!area1Movable) PerformCollisionMovableUnmovable(area2, area1, allowSideEffects);
-            else if (!area2Movable) PerformCollisionMovableUnmovable(area1, area2, allowSideEffects);
-            else PerformCollisionMovableMovable(area1, area2, allowSideEffects);
+            if (!area1Movable) return PerformCollisionMovableUnmovable(area2, area1, allowSideEffects);
+            else if (!area2Movable) return PerformCollisionMovableUnmovable(area1, area2, allowSideEffects);
+            else return PerformCollisionMovableMovable(area1, area2, allowSideEffects);
         }
 
         /// <summary>
@@ -854,7 +943,7 @@ namespace AW2.Game
         /// <param name="unmovableArea">The overlapping collision area of the unmovable gob.</param>
         /// <param name="allowSideEffects">Should effects other than changing the movable gob's
         /// position and movement be allowed.</param>
-        private void PerformCollisionMovableUnmovable(CollisionArea movableArea, CollisionArea unmovableArea, bool allowSideEffects)
+        private CollisionSoundTypes PerformCollisionMovableUnmovable(CollisionArea movableArea, CollisionArea unmovableArea, bool allowSideEffects)
         {
             Gob movableGob = movableArea.Owner;
             Gob unmovableGob = unmovableArea.Owner;
@@ -897,18 +986,19 @@ namespace AW2.Game
                 movableGob.Move = xUnit * move1after.X + yUnit * move1after.Y;
                 Vector2 move1Delta = move1 - move1after;
 
-                if (allowSideEffects)
+                if (allowSideEffects && move1Delta.LengthSquared() >= MINIMUM_COLLISION_DELTA * MINIMUM_COLLISION_DELTA)
                 {
                     // Inflict damage to damageable gobs.
-                    if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0 && move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                    if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                         unmovableGob.PhysicalCollisionInto(movableGob, move1Delta, damageMultiplier);
                     /* TODO: What if the unmovable gob wants to be damaged, too?
-                    if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0 && move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                    if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0)
                         movableGob.PhysicalCollisionInto(unmovableGob, Vector2.Zero, damageMultiplier);
                     */
-                    PlayWallCollisionSound(movableGob, move1Delta);
+                    if (movableGob is Gobs.Ship) return CollisionSoundTypes.WallCollision;
                 }
             }
+            return CollisionSoundTypes.None;
         }
 
         /// <summary>
@@ -918,7 +1008,7 @@ namespace AW2.Game
         /// <param name="movableArea2">The overlapping collision area of the other movable gob.</param>
         /// <param name="allowSideEffects">Should effects other than changing the first movable gob's
         /// position and movement be allowed.</param>
-        private void PerformCollisionMovableMovable(CollisionArea movableArea1, CollisionArea movableArea2, bool allowSideEffects)
+        private CollisionSoundTypes PerformCollisionMovableMovable(CollisionArea movableArea1, CollisionArea movableArea2, bool allowSideEffects)
         {
             Gob gob1 = movableArea1.Owner;
             Gob gob2 = movableArea2.Owner;
@@ -962,33 +1052,18 @@ namespace AW2.Game
                 Vector2 move1Delta = move1 - move1after;
                 // move2Delta = move2after because collision is calculated from the 2nd gob's point of view (2nd gob is still)
 
-                if (allowSideEffects)
+                if (allowSideEffects &&
+                    (move1Delta.LengthSquared() >= MOVABLE_MOVABLE_COLLISION_SOUND_TRESHOLD * MOVABLE_MOVABLE_COLLISION_SOUND_TRESHOLD ||
+                    move2after.LengthSquared() >= MOVABLE_MOVABLE_COLLISION_SOUND_TRESHOLD * MOVABLE_MOVABLE_COLLISION_SOUND_TRESHOLD))
                 {
-                    if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0 && move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                    if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0)
                         gob2.PhysicalCollisionInto(gob1, move1Delta, damageMultiplier);
-                    if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0 && move2after.Length() > MINIMUM_COLLISION_DELTA)
+                    if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
                         gob1.PhysicalCollisionInto(gob2, move2after, damageMultiplier);
-                    PlayGobCollisionSound(gob1, gob2, move1Delta, move2after);
+                    if (gob1 is Gobs.Ship || gob2 is Gobs.Ship) return CollisionSoundTypes.ShipCollision;
                 }
             }
-        }
-
-        private void PlayWallCollisionSound(Gob gob, Vector2 moveDelta)
-        {
-            // Be silent on mild collisions.
-            if (moveDelta.Length() < MINIMUM_COLLISION_DELTA) return;
-
-            if (!(gob is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
-            Game.SoundEngine.PlaySound("Collision", gob);
-        }
-
-        private void PlayGobCollisionSound(Gob gob1, Gob gob2, Vector2 move1Delta, Vector2 move2Delta)
-        {
-            // Be silent on mild collisions.
-            if (move1Delta.Length() < MINIMUM_COLLISION_DELTA && move2Delta.Length() < MINIMUM_COLLISION_DELTA) return;
-
-            if (!(gob1 is Gobs.Ship) && !(gob2 is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
-            Game.SoundEngine.PlaySound("Shipcollision", gob1);
+            return CollisionSoundTypes.None;
         }
 
         #endregion Collision and moving methods

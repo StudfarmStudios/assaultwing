@@ -114,12 +114,18 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
-            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
-            Arena.MakeHole(Pos, _impactHoleRadius);
-            Die();
+            if ((sideEffectTypes & Arena.CollisionSideEffectType.Reversible) != 0)
+            {
+                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                    theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
+            }
+            if ((sideEffectTypes & Arena.CollisionSideEffectType.Irreversible) != 0)
+            {
+                Arena.MakeHole(Pos, _impactHoleRadius);
+                Die();
+            }
         }
     }
 }

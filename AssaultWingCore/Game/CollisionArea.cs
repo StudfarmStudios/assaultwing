@@ -230,6 +230,12 @@ namespace AW2.Game
             _collisionData = null;
         }
 
+        public void Disable()
+        {
+            _collidesAgainst = CollisionAreaType.None;
+            _cannotOverlap = CollisionAreaType.None;
+        }
+
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING

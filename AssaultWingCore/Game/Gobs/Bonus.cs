@@ -61,22 +61,25 @@ namespace AW2.Game.Gobs
 
         #endregion Methods related to gobs' functionality in the game world
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
             // We assume we have only one receptor area and that's the one for
             // bonus collection. That means that the other gob is a ship.
             if (myArea.Type == CollisionAreaType.Receptor)
             {
-                if (Game.NetworkMode != NetworkMode.Client)
+                if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0)
+                {
                     DoBonusAction(theirArea.Owner.Owner);
-                Game.SoundEngine.PlaySound("BonusCollection", this);
-                Die();
+                    Game.SoundEngine.PlaySound("BonusCollection", this);
+                    Die();
+                }
             }
         }
 
         private void DoBonusAction(Player player)
         {
             var gameAction = BonusAction.Create<BonusAction>(_bonusActionTypeName, player, gob => { });
+            if (gameAction == null) return;
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>
             {
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);

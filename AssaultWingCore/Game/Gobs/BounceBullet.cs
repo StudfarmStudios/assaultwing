@@ -35,15 +35,17 @@ namespace AW2.Game.Gobs
             if (_deathBySlownessCounter > 3) Die();
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
-            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+            var collidedWithPhysical = (theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0;
+            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
             {
-                theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
-                Die();
+                if (collidedWithPhysical) theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
             }
-            else if (stuck)
-                Die();
+            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0)
+            {
+                if (collidedWithPhysical || stuck) Die();
+            }
         }
     }
 }

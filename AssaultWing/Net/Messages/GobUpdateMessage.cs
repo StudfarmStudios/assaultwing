@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AW2.Game;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
@@ -14,6 +15,7 @@ namespace AW2.Net.Messages
         private List<int> _gobIds = new List<int>();
 
         public override MessageSendType SendType { get { return MessageSendType.UDP; } }
+        public List<Arena.CollisionEvent> CollisionEvents { get; set; }
 
         public void AddGob(int gobId, INetworkSerializable gob)
         {
@@ -50,6 +52,16 @@ namespace AW2.Net.Messages
             {
                 base.SerializeBody(writer);
                 // Gob update (request) message structure:
+                // byte: number of collision events, N
+                // repeat N times:
+                //   short: gob 1 ID
+                //   short: gob 2 ID
+                //   byte: mixed data
+                //     bits 0..1: area 1 ID
+                //     bits 2..3: area 2 ID
+                //     bits 4..5: physical collision sound effects to play (Arena.CollisionSoundTypes)
+                //     bit 6: collision while stuck
+                //     bit 7: collide both ways (if not, then only gob 1 to gob 2)
                 // byte: number of gobs to update, K
                 // K shorts: identifiers of the gobs
                 // ushort: total byte count of gob data
@@ -61,12 +73,24 @@ namespace AW2.Net.Messages
 #endif
                     checked
                     {
+                        writer.Write((byte)CollisionEvents.Count);
+                        foreach (var collisionEvent in CollisionEvents)
+                        {
+                            writer.Write((short)collisionEvent.Gob1ID);
+                            writer.Write((short)collisionEvent.Gob2ID);
+                            if (collisionEvent.Area1ID > 0x03 || collisionEvent.Area2ID > 0x03)
+                                throw new ApplicationException("Too large collision area identifier: " + collisionEvent.Area1ID + " or " + collisionEvent.Area2ID);
+                            var mixedData = (byte)(collisionEvent.Area1ID & 0x03);
+                            mixedData |= (byte)((collisionEvent.Area2ID & 0x03) << 2);
+                            mixedData |= (byte)(((byte)collisionEvent.Sound & 0x03) << 4);
+                            if (collisionEvent.Stuck) mixedData |= 0x40;
+                            if (collisionEvent.CollideBothWays) mixedData |= 0x80;
+                            writer.Write((byte)mixedData);
+                        }
                         writer.Write((byte)_gobIds.Count);
                         foreach (var gobId in _gobIds)
                             writer.Write((short)gobId);
                         writer.Write((ushort)writeBytes.Length);
-
-                        //System.Diagnostics.Trace.Assert((ProfilingNetworkBinaryWriter.Peek().totalBytes - 6) % 4 == 0);
                     }
 
                 writer.Write(writeBytes, 0, writeBytes.Length);
@@ -76,9 +100,23 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            int gobCount = reader.ReadByte();
+            var collisionEventCount = reader.ReadByte();
+            CollisionEvents = new List<Arena.CollisionEvent>(collisionEventCount);
+            for (int i = 0; i < collisionEventCount; i++)
+            {
+                var gob1ID = reader.ReadInt16();
+                var gob2ID = reader.ReadInt16();
+                var mixedData = reader.ReadByte();
+                var area1ID = mixedData & 0x03;
+                var area2ID = (mixedData >> 2) & 0x03;
+                var soundsToPlay = (Arena.CollisionSoundTypes)((mixedData >> 4) & 0x03);
+                var stuck = (mixedData & 0x40) != 0;
+                var collideBothWays = (mixedData & 0x80) != 0;
+                CollisionEvents.Add(new Arena.CollisionEvent(gob1ID, gob2ID, area1ID, area2ID, stuck, collideBothWays, soundsToPlay));
+            }
+            var gobCount = reader.ReadByte();
             _gobIds.Clear();
-            for (int i = 0; i < gobCount; ++i)
+            for (int i = 0; i < gobCount; i++)
                 _gobIds.Add(reader.ReadInt16());
             var totalByteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(totalByteCount);

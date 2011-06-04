@@ -521,14 +521,17 @@ namespace AW2.Game.Gobs
 
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
-            if (stuck)
+            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
             {
-                // Set the other gob as disabled while we move, then enable it after we finish moving.
-                // This works with the assumption that there are at least two moving iterations.
-                theirArea.Owner.Disable(); // re-enabled in Update()
-                _temporarilyDisabledGobs.Add(theirArea.Owner);
+                if (stuck)
+                {
+                    // Set the other gob as disabled while we move, then enable it after we finish moving.
+                    // This works with the assumption that there are at least two moving iterations.
+                    theirArea.Owner.Disable(); // re-enabled in Update()
+                    _temporarilyDisabledGobs.Add(theirArea.Owner);
+                }
             }
         }
 

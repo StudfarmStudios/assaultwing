@@ -42,7 +42,6 @@ namespace AW2.Game.Gobs
         private string _sound;
 
         private TimeSpan? _damageTime;
-        private bool _collisionAreaRemoved;
 
         public override bool Cold { get { return false; } }
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
@@ -80,23 +79,22 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (!_collisionAreaRemoved)
-            {
-                RemoveCollisionAreas(area => true);
-                _collisionAreaRemoved = true;
-            }
             if (_radialFlow.IsFinished(Arena.TotalTime)) Die();
             _radialFlow.Update();
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
             if (!_damageTime.HasValue || _damageTime.Value == Game.GameTime.TotalGameTime)
             {
-                _damageTime = Game.GameTime.TotalGameTime;
-                float distance = theirArea.Area.DistanceTo(Pos);
-                float damage = _inflictDamage.Evaluate(distance);
-                theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
+                if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
+                {
+                    _damageTime = Game.GameTime.TotalGameTime;
+                    float distance = theirArea.Area.DistanceTo(Pos);
+                    float damage = _inflictDamage.Evaluate(distance);
+                    theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
+                    myArea.Disable();
+                }
             }
         }
     }

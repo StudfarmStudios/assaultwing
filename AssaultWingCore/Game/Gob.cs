@@ -508,6 +508,9 @@ namespace AW2.Game
         /// The collision areas of the gob. Note: To remove some collision areas
         /// during gameplay, call <see cref="RemoveCollisionAreas"/>.
         /// </summary>
+        /// <remarks>
+        /// Collision areas are set to null by Wall. It is faster than to remove elements from a large array.
+        /// </remarks>
         public IEnumerable<CollisionArea> CollisionAreas { get { return _collisionAreas.Where(area => area != null); } }
 
         /// <summary>
@@ -750,7 +753,7 @@ namespace AW2.Game
         /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
-            Arena.Move(this, Game.TargetElapsedTime, true);
+            Arena.Move(this, Game.TargetElapsedTime, allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
             DrawPosOffset *= 0.95f; // reduces the offset to less than 5 % in 60 updates
             DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
         }
@@ -969,7 +972,7 @@ namespace AW2.Game
         {
             _pos = oldPos;
             Move = oldMove;
-            if (Arena != null) Arena.Move(this, frameCount, false);
+            if (Arena != null) Arena.Move(this, frameCount, allowIrreversibleSideEffects: false);
         }
 
         #endregion Methods related to serialisation
@@ -1018,6 +1021,17 @@ namespace AW2.Game
                 let name = bone.Name
                 where name != null && name.StartsWith(namePrefix)
                 select Tuple.Create(name, bone.Index);
+        }
+
+        public int GetCollisionAreaID(CollisionArea area)
+        {
+            return Array.IndexOf(_collisionAreas, area);
+        }
+
+        public CollisionArea GetCollisionArea(int areaID)
+        {
+            if (areaID < 0 || areaID >= _collisionAreas.Length) return null;
+            return _collisionAreas[areaID];
         }
 
         /// <summary>
@@ -1141,18 +1155,8 @@ namespace AW2.Game
         /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
         /// to backtrack out of the overlap. It is then up to this gob and the other gob 
         /// to resolve the overlap.</param>
-        public virtual void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public virtual void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
-        }
-
-        protected void RemoveCollisionAreas(Predicate<CollisionArea> wantToRemove)
-        {
-            Game.PostFrameLogicEngine.DoOnce += () =>
-            {
-                Arena.Unregister(this);
-                _collisionAreas = Array.FindAll(_collisionAreas, area => !wantToRemove(area));
-                Arena.Register(this);
-            };
         }
 
         #endregion Collision methods
@@ -1369,16 +1373,10 @@ namespace AW2.Game
         {
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
-                // Rearrange our collision areas to have a physical area be first, 
-                // if there is such.
-                for (int i = 0; i < _collisionAreas.Length; ++i)
-                    if ((_collisionAreas[i].Type & CollisionAreaType.Physical) != 0)
-                    {
-                        var swap = _collisionAreas[i];
-                        _collisionAreas[i] = _collisionAreas[0];
-                        _collisionAreas[0] = swap;
-                        break;
-                    }
+                // Rearrange our collision areas to have a physical area be first, if there is such,
+                // and all other collision areas to be sorted in increasing order by name.
+                // Order is important because game server and game clients communicate in indices.
+                _collisionAreas = _collisionAreas.OrderBy(area => (area.Type & CollisionAreaType.Physical) != 0 ? "" : area.Name).ToArray();
 
                 // Make physical attributes sensible.
                 _mass = Math.Max(0.001f, _mass); // strictly positive mass

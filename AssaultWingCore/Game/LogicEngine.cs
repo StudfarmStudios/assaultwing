@@ -71,7 +71,7 @@ namespace AW2.Game
             foreach (var device in data.Devices) device.Update();
             foreach (var player in data.Spectators) player.Update();
 
-            Game.DataEngine.Arena.PerformNonphysicalCollisions();
+            Game.DataEngine.Arena.PerformNonphysicalCollisions(allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
             KillGobsOnClient();
 
             // Check for arena end. Network games end when the game server presses Esc.

@@ -90,27 +90,29 @@ namespace AW2.Game.Gobs
                 .Max();
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
+            var reversibleEffects = (sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0;
+            var irreversibleEffects = (sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0;
             var collidedWithFriend = theirArea.Owner.Owner == Owner;
             var collidedWithNeutral = theirArea.Owner.Owner == null || theirArea.Owner.IsHidden;
             switch (myArea.Name)
             {
                 case "Magnet":
-                    if (!collidedWithNeutral && !collidedWithFriend)
+                    if (reversibleEffects && !collidedWithNeutral && !collidedWithFriend)
                         MoveTowards(theirArea.Owner.Pos, _attractionForce);
                     break;
                 case "Spread":
-                    if (collidedWithFriend && theirArea.Owner is FloatingBullet)
+                    if (reversibleEffects && collidedWithFriend && theirArea.Owner is FloatingBullet)
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
                     break;
                 default:
                     if (!collidedWithFriend && (theirArea.Owner.MaxDamageLevel > 100 || (stuck && !theirArea.Owner.Movable)))
                     {
-                        if (_hitSound != "") Game.SoundEngine.PlaySound(_hitSound, this);
-                        base.Collide(myArea, theirArea, stuck);
+                        if (irreversibleEffects && _hitSound != "") Game.SoundEngine.PlaySound(_hitSound, this);
+                        base.Collide(myArea, theirArea, stuck, sideEffectTypes);
                     }
-                    else if (collidedWithFriend && stuck && theirArea.Owner is FloatingBullet)
+                    else if (reversibleEffects && collidedWithFriend && stuck && theirArea.Owner is FloatingBullet)
                     {
                         theirArea.Owner.Disable(); // re-enabled in Update()
                         _temporarilyDisabledGobs.Add(theirArea.Owner);

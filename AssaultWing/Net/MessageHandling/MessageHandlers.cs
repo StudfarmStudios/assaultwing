@@ -312,6 +312,24 @@ namespace AW2.Net.MessageHandling
         private static void HandleGobUpdateMessage(GobUpdateMessage mess, int framesAgo)
         {
             var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            foreach (var collisionEvent in mess.CollisionEvents)
+            {
+                var gob1 = arena.Gobs.FirstOrDefault(gob => gob.ID == collisionEvent.Gob1ID);
+                var gob2 = arena.Gobs.FirstOrDefault(gob => gob.ID == collisionEvent.Gob2ID);
+                if (gob1 == null || gob2 == null) continue;
+                var area1 = gob1.GetCollisionArea(collisionEvent.Area1ID);
+                var area2 = gob2.GetCollisionArea(collisionEvent.Area2ID);
+                if (area1 != null && area2 != null)
+                {
+                    gob1.Collide(area1, area2, collisionEvent.Stuck, Arena.CollisionSideEffectType.Irreversible);
+                    if (collisionEvent.CollideBothWays)
+                        gob2.Collide(area2, area1, collisionEvent.Stuck, Arena.CollisionSideEffectType.Irreversible);
+                }
+                if ((collisionEvent.Sound & Arena.CollisionSoundTypes.WallCollision) != 0)
+                    arena.Game.SoundEngine.PlaySound("Collision", gob1);
+                if ((collisionEvent.Sound & Arena.CollisionSoundTypes.ShipCollision) != 0)
+                    arena.Game.SoundEngine.PlaySound("Shipcollision", gob1);
+            }
             mess.ReadGobs(gobId =>
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);

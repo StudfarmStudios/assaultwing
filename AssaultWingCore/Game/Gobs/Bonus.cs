@@ -78,6 +78,7 @@ namespace AW2.Game.Gobs
 
         private void DoBonusAction(Player player)
         {
+            if (Game.NetworkMode == NetworkMode.Client) return;
             var gameAction = BonusAction.Create<BonusAction>(_bonusActionTypeName, player, gob => { });
             if (gameAction == null) return;
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>

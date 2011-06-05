@@ -167,19 +167,18 @@ namespace AW2.Menu.Main
         private MainMenuItemCollection GetPlayerControlsItems(MenuEngineImpl menuEngine, PlayerControlsSettings controls)
         {
             var items = new MainMenuItemCollection("Controls Setup");
-            items.Add(GetControlsItem(menuEngine, "Thrust", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Thrust/Up", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
             items.Add(GetControlsItem(menuEngine, "Left", () => controls.Left, ctrl => controls.Left = ctrl));
             items.Add(GetControlsItem(menuEngine, "Right", () => controls.Right, ctrl => controls.Right = ctrl));
-            items.Add(GetControlsItem(menuEngine, "Down", () => controls.Down, ctrl => controls.Down = ctrl));
-            items.Add(GetControlsItem(menuEngine, "Fire1", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
-            items.Add(GetControlsItem(menuEngine, "Fire2", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
-            items.Add(GetControlsItem(menuEngine, "Extra", () => controls.Extra, ctrl => controls.Extra = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Ship modification", () => controls.Extra, ctrl => controls.Down = controls.Extra = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Primary weapon", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
+            items.Add(GetControlsItem(menuEngine, "Extra weapon", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
             return items;
         }
 
         private MainMenuItem GetControlsItem(MenuEngineImpl menuEngine, string name, Func<IControlType> get, Action<IControlType> set)
         {
-            return new MainMenuItem(menuEngine, () => string.Format("{0}    {1}", name, get()),
+            return new MainMenuItem(menuEngine, () => string.Format("{0}\t15{1}", name, get()),
                 component => menuEngine.Game.ShowDialog(
                     new KeypressOverlayDialogData(menuEngine.Game, "Hit key for " + name,
                         key => set(new KeyControlType(key)))));

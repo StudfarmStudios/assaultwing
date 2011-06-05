@@ -129,6 +129,13 @@ namespace AW2.Helpers
             }
         }
 
+        public static int ParseIntWithGarbage(string str, int startIndex, out int endIndexExclusive)
+        {
+            endIndexExclusive = startIndex;
+            while (endIndexExclusive < str.Length && char.IsDigit(str, endIndexExclusive)) endIndexExclusive++;
+            return int.Parse(str.Substring(startIndex, endIndexExclusive - startIndex));
+        }
+
         public static string BytesToString(ArraySegment<byte> buffer)
         {
             var bytes = buffer.Array

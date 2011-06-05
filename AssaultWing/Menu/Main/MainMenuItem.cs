@@ -52,7 +52,25 @@ namespace AW2.Menu.Main
 
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 origin)
         {
-            Draw(spriteBatch, origin, Name());
+            var rawName = Name();
+            int parseIndex = 0;
+            int textStartIndex = 0;
+            var textPos = origin;
+            while (parseIndex < rawName.Length)
+            {
+                var tabIndex = rawName.IndexOf('\t', parseIndex);
+                int textLength = (tabIndex == -1 ? rawName.Length : tabIndex) - textStartIndex;
+                Draw(spriteBatch, textPos, rawName.Substring(textStartIndex, textLength));
+                if (tabIndex == -1)
+                    parseIndex = rawName.Length;
+                else
+                {
+                    parseIndex = tabIndex + 1;
+                    int enCount = MiscHelper.ParseIntWithGarbage(rawName, parseIndex, out parseIndex);
+                    textStartIndex = parseIndex;
+                    textPos = origin + new Vector2(_menuEngine.MenuContent.FontBigEnWidth * enCount, 0);
+                }
+            }
         }
 
         public virtual void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin)

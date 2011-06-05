@@ -56,10 +56,14 @@ namespace AW2.Game.BonusActions
 
         private void UpgradeWeapon()
         {
-            if (Owner.Ship == null) Die();
-            var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName : Owner.Ship.Weapon2.UpgradeNames[0];
-            Owner.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
-            if (_effectName != "") Owner.PostprocessEffectNames.EnsureContains(_effectName);
+            if (Owner.Ship == null)
+                Die();
+            else
+            {
+                var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName : Owner.Ship.Weapon2.UpgradeNames[0];
+                Owner.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
+                if (_effectName != "") Owner.PostprocessEffectNames.EnsureContains(_effectName);
+            }
         }
     }
 }

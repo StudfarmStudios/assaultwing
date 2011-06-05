@@ -75,10 +75,10 @@ namespace AW2.Core.GameComponents
             if (_nextEventType == EventType.ARENA_FINISH && _arenaTimeoutMessages.Any() && Now + _arenaTimeoutMessages[0] >= _nextEvent)
             {
                 var text = "Arena will be closed in " + _arenaTimeoutMessages[0].ToDurationString();
-                var message = new PlayerMessageMessage { Message = new PlayerMessage(text, PlayerMessage.DEFAULT_COLOR), };
                 foreach (var plr in Game.DataEngine.Players)
                 {
                     if (!plr.IsRemote) continue;
+                    var message = new PlayerMessageMessage { Message = new PlayerMessage(text, PlayerMessage.DEFAULT_COLOR), };
                     message.PlayerID = plr.ID;
                     Game.NetworkEngine.GetGameClientConnection(plr.ConnectionID).Send(message);
                 }

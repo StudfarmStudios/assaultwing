@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.IO;
 
 namespace AW2.Helpers
@@ -37,7 +38,7 @@ namespace AW2.Helpers
         {
             Write(string.Format(format, args));
         }
-        
+
         public static void Write(string message)
         {
 #if DEBUG
@@ -115,16 +116,37 @@ namespace AW2.Helpers
 
         private static void DeleteOldLogs()
         {
+            Func<string, DateTime> tryParseDateTime = dateStr =>
+            {
+                try
+                {
+                    return DateTime.ParseExact(dateStr, LOG_DATETIME_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    return DateTime.MinValue;
+                }
+            };
             try
             {
-                foreach (var oldLog in Directory.EnumerateFiles(LogPath, FILE_BASENAME + "*" + FILE_EXTENSION))
+                var logsRaw = (
+                    from log in Directory.GetFiles(LogPath, FILE_BASENAME + "*" + FILE_EXTENSION)
+                    let baseName = Path.GetFileNameWithoutExtension(log)
+                    let logDateStr = baseName.Substring(FILE_BASENAME.Length, baseName.Length - FILE_BASENAME.Length)
+                    let logDate = tryParseDateTime(logDateStr)
+                    where logDate != DateTime.MinValue
+                    select new { log, logDate }
+                    ).ToArray();
+                var logs =
+                    from log in logsRaw
+                    orderby log.logDate descending
+                    select new { FileName = log.log, DateTime = log.logDate };
+                if (!logs.Any()) return;
+                var logsToDelete = logs.Skip(10).Union(logs.SkipWhile(log => log.DateTime > g_logOpenDateTime - LOG_LIFETIME));
+                foreach (var log in logsToDelete)
                 {
-                    var baseName = Path.GetFileNameWithoutExtension(oldLog);
-                    var logDateStr = baseName.Substring(FILE_BASENAME.Length, baseName.Length - FILE_BASENAME.Length);
-                    var logDate = DateTime.ParseExact(logDateStr, LOG_DATETIME_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
-                    if (g_logOpenDateTime - logDate <= LOG_LIFETIME) continue;
-                    File.Delete(oldLog);
-                    Write("Deleted old log file \"{0}\"", oldLog);
+                    File.Delete(log.FileName);
+                    Write("Deleted old log file \"{0}\"", log.FileName);
                 }
             }
             catch

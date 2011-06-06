@@ -126,17 +126,23 @@ namespace AW2.Game.Gobs
                 SetExhaustEffectsEnabled(false);
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
+            var result = Arena.CollisionSideEffectType.None;
             if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
             {
                 if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                {
                     theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
+                    result |= Arena.CollisionSideEffectType.Reversible;
+                }
             }
             if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0)
             {
                 Die();
+                result |= Arena.CollisionSideEffectType.Irreversible;
             }
+            return result;
         }
 
         public override void Dispose()

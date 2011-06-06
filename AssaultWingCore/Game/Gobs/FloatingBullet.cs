@@ -90,8 +90,9 @@ namespace AW2.Game.Gobs
                 .Max();
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
+            var result = Arena.CollisionSideEffectType.None;
             var reversibleEffects = (sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0;
             var irreversibleEffects = (sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0;
             var collidedWithFriend = theirArea.Owner.Owner == Owner;
@@ -100,25 +101,37 @@ namespace AW2.Game.Gobs
             {
                 case "Magnet":
                     if (reversibleEffects && !collidedWithNeutral && !collidedWithFriend)
+                    {
                         MoveTowards(theirArea.Owner.Pos, _attractionForce);
+                        result |= Arena.CollisionSideEffectType.Reversible;
+                    }
                     break;
                 case "Spread":
                     if (reversibleEffects && collidedWithFriend && theirArea.Owner is FloatingBullet)
+                    {
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
+                        result |= Arena.CollisionSideEffectType.Reversible;
+                    }
                     break;
                 default:
                     if (!collidedWithFriend && (theirArea.Owner.MaxDamageLevel > 100 || (stuck && !theirArea.Owner.Movable)))
                     {
-                        if (irreversibleEffects && _hitSound != "") Game.SoundEngine.PlaySound(_hitSound, this);
-                        base.Collide(myArea, theirArea, stuck, sideEffectTypes);
+                        if (irreversibleEffects && _hitSound != "")
+                        {
+                            Game.SoundEngine.PlaySound(_hitSound, this);
+                            result |= Arena.CollisionSideEffectType.Irreversible;
+                        }
+                        result |= base.Collide(myArea, theirArea, stuck, sideEffectTypes);
                     }
                     else if (reversibleEffects && collidedWithFriend && stuck && theirArea.Owner is FloatingBullet)
                     {
                         theirArea.Owner.Disable(); // re-enabled in Update()
                         _temporarilyDisabledGobs.Add(theirArea.Owner);
+                        result |= Arena.CollisionSideEffectType.Reversible;
                     }
                     break;
             }
+            return result;
         }
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

@@ -92,8 +92,9 @@ namespace AW2.Game.Gobs
             _dockSound.EnsureIsPlaying();
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
+            var result = Arena.CollisionSideEffectType.None;
             // We assume we have only one Receptor collision area which handles docking.
             // Then 'theirArea.Owner' must be damageable.
             if (myArea.Name == "Dock")
@@ -106,14 +107,19 @@ namespace AW2.Game.Gobs
                     {
                         EnsureEffectActive();
                         if (canRepair) RepairShip(ship);
+                        result |= Arena.CollisionSideEffectType.Reversible;
                     }
                     if ((sideEffectTypes & Arena.CollisionSideEffectType.Irreversible) != 0)
                     {
                         if (!canRepair && ship.Owner != null)
+                        {
                             ship.Owner.NotifyRepairPending();
+                            result |= Arena.CollisionSideEffectType.Irreversible;
+                        }
                     }
                 }
             }
+            return result;
         }
 
         public override void Dispose()

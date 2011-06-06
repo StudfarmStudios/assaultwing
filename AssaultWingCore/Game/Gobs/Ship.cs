@@ -521,7 +521,7 @@ namespace AW2.Game.Gobs
 
         }
 
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
             if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
             {
@@ -531,8 +531,10 @@ namespace AW2.Game.Gobs
                     // This works with the assumption that there are at least two moving iterations.
                     theirArea.Owner.Disable(); // re-enabled in Update()
                     _temporarilyDisabledGobs.Add(theirArea.Owner);
+                    return Arena.CollisionSideEffectType.Reversible;
                 }
             }
+            return Arena.CollisionSideEffectType.None;
         }
 
         public override void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)

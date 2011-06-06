@@ -592,9 +592,10 @@ namespace AW2.Game
             var sideEffectTypes = allowIrreversibleSideEffects ? CollisionSideEffectType.All : CollisionSideEffectType.Reversible;
             foreach (var collider in colliders.Distinct())
             {
-                _collisionEvents.Add(new CollisionEvent(gobPhysical, collider, stuck: stuck, collideBothWays: true, sound: soundsToPlay));
-                gob.Collide(gobPhysical, collider, stuck, sideEffectTypes);
-                collider.Owner.Collide(collider, gobPhysical, stuck, sideEffectTypes);
+                var sideEffects = gob.Collide(gobPhysical, collider, stuck, sideEffectTypes);
+                sideEffects |= collider.Owner.Collide(collider, gobPhysical, stuck, sideEffectTypes);
+                if ((sideEffects & CollisionSideEffectType.Irreversible) != 0)
+                    _collisionEvents.Add(new CollisionEvent(gobPhysical, collider, stuck: stuck, collideBothWays: true, sound: soundsToPlay));
                 if (gob.Dead) break;
             }
         }
@@ -614,8 +615,9 @@ namespace AW2.Game
                     foreach (var area in container.GetElements())
                         foreach (var collider in GetOverlappers(area, area.CollidesAgainst))
                         {
-                            _collisionEvents.Add(new CollisionEvent(area, collider, stuck: false, collideBothWays: false, sound: CollisionSoundTypes.None));
-                            area.Owner.Collide(area, collider, stuck, sideEffectTypes);
+                            var sideEffects = area.Owner.Collide(area, collider, stuck, sideEffectTypes);
+                            if ((sideEffects & CollisionSideEffectType.Irreversible) != 0)
+                                _collisionEvents.Add(new CollisionEvent(area, collider, stuck: false, collideBothWays: false, sound: CollisionSoundTypes.None));
                         }
             }
         }

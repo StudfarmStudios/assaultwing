@@ -1145,7 +1145,8 @@ namespace AW2.Game
 
         /// <summary>
         /// Performs collision operations for the case when one of this gob's collision areas
-        /// is overlapping one of another gob's collision areas.
+        /// is overlapping one of another gob's collision areas. Returns the kinds of side
+        /// effects that were performed.
         /// </summary>
         /// Called only when <b>theirArea.Type</b> matches either <b>myArea.CollidesAgainst</b> or
         /// <b>myArea.CannotOverlap</b>.
@@ -1155,8 +1156,9 @@ namespace AW2.Game
         /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
         /// to backtrack out of the overlap. It is then up to this gob and the other gob 
         /// to resolve the overlap.</param>
-        public virtual void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public virtual Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
+            return Arena.CollisionSideEffectType.None;
         }
 
         #endregion Collision methods

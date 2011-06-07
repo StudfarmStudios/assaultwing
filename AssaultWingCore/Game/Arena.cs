@@ -280,7 +280,7 @@ namespace AW2.Game
         /// <summary>
         /// Radius in meters to check when determining if a position is free for a gob.
         /// </summary>
-        private const float FREE_POS_CHECK_RADIUS_MIN = 20;
+        private const float FREE_POS_CHECK_RADIUS_MIN = 15;
 
         /// <summary>
         /// Minimum change of gob speed in a collision to cause damage and a sound effect.
@@ -749,7 +749,7 @@ namespace AW2.Game
 
             var boundingDimensions = gob.PhysicalArea.Area.BoundingBox.Dimensions;
             float checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN,
-                2 * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
+                1.2f * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
             float checkRadiusGobCoords = checkRadiusMeters / gob.Scale; // in gob coordinates
             var wallCheckArea = new CollisionArea("", new Circle(Vector2.Zero, checkRadiusGobCoords), gob,
                 gob.PhysicalArea.Type, gob.PhysicalArea.CollidesAgainst, gob.PhysicalArea.CannotOverlap, CollisionMaterialType.Regular);

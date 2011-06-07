@@ -18,16 +18,26 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
+        /// <summary>
+        /// It is valid to combine only one of Weapon1*, one of Weapon2* and one of ExtraDevice*
+        /// into one value of DeviceUsages.
+        /// </summary>
         [Flags]
         private enum DeviceUsages
         {
             None = 0x00,
             Weapon1Success = 0x01,
             Weapon1Failure = 0x02,
+            Weapon1NotReady = 0x02 | 0x01,
+            Weapon1Mask = 0x02 | 0x01,
             Weapon2Success = 0x04,
             Weapon2Failure = 0x08,
+            Weapon2NotReady = 0x08 | 0x04,
+            Weapon2Mask = 0x08 | 0x04,
             ExtraDeviceSuccess = 0x10,
             ExtraDeviceFailure = 0x20,
+            ExtraDeviceNotReady = 0x20 | 0x10,
+            ExtraDeviceMask = 0x20 | 0x10,
         }
 
         /// <summary>
@@ -397,7 +407,6 @@ namespace AW2.Game
             using (new NetworkProfilingScope(this))
 #endif
             {
-
                 checked
                 {
                     base.Serialize(writer, mode);
@@ -448,24 +457,35 @@ namespace AW2.Game
 
         private void ApplyDeviceUsages(DeviceUsages deviceUsages)
         {
-            if ((deviceUsages & DeviceUsages.Weapon1Success) != 0)
+            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Success)
             {
                 Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Success);
                 if (WeaponFired != null) WeaponFired();
             }
-            if ((deviceUsages & DeviceUsages.Weapon1Failure) != 0) Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
-            if ((deviceUsages & DeviceUsages.Weapon2Success) != 0)
+            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Failure)
+                Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1NotReady)
+                Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.NotReady);
+
+            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Success)
             {
                 Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Success);
                 if (WeaponFired != null) WeaponFired();
             }
-            if ((deviceUsages & DeviceUsages.Weapon2Failure) != 0) Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
-            if ((deviceUsages & DeviceUsages.ExtraDeviceSuccess) != 0)
+            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Failure)
+                Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2NotReady)
+                Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.NotReady);
+
+            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceSuccess)
             {
                 Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Success);
                 // Note: Not raising WeaponFired because as of 2011-03-27, only Cloak hooks the event and it wants to know only of Weapon1 and Weapon2.
             }
-            if ((deviceUsages & DeviceUsages.ExtraDeviceFailure) != 0) Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceFailure
+                ) Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceNotReady)
+                Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.NotReady);
         }
 
         private void ShipDeathHandler(Coroner coroner)
@@ -584,6 +604,9 @@ namespace AW2.Game
                 case ShipDevice.FiringResult.Failure:
                     _deviceUsages |= DeviceUsages.Weapon1Failure;
                     break;
+                case ShipDevice.FiringResult.NotReady:
+                    _deviceUsages |= DeviceUsages.Weapon1NotReady;
+                    break;
             }
             MustUpdateToClients = true;
         }
@@ -602,6 +625,9 @@ namespace AW2.Game
                 case ShipDevice.FiringResult.Failure:
                     _deviceUsages |= DeviceUsages.Weapon2Failure;
                     break;
+                case ShipDevice.FiringResult.NotReady:
+                    _deviceUsages |= DeviceUsages.Weapon2NotReady;
+                    break;
             }
             MustUpdateToClients = true;
         }
@@ -618,6 +644,9 @@ namespace AW2.Game
                     break;
                 case ShipDevice.FiringResult.Failure:
                     _deviceUsages |= DeviceUsages.ExtraDeviceFailure;
+                    break;
+                case ShipDevice.FiringResult.NotReady:
+                    _deviceUsages |= DeviceUsages.ExtraDeviceNotReady;
                     break;
             }
             MustUpdateToClients = true;

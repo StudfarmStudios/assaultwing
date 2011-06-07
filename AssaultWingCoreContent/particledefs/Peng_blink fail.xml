@@ -91,7 +91,6 @@
   </updater>
   <birthGobTypes/>
   <deathGobTypes>
-	<Item>blink fail target</Item>
   </deathGobTypes>
   <movable>false</movable>
   <exhaustEngineNames/>

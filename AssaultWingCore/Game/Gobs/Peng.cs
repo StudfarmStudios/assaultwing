@@ -199,6 +199,7 @@ namespace AW2.Game.Gobs
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
 
         public SprayEmitter Emitter { get { return _emitter; } }
+        public bool IsMovable { get; set; }
 
         #endregion Peng properties
 
@@ -255,7 +256,7 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _updater.Activate();
-            Movable = false; // Peng stays put or moves with its leader
+            Movable = IsMovable; // By default, Peng stays put or moves with its leader
         }
 
         public override void LoadContent()

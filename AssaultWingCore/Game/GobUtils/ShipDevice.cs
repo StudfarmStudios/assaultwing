@@ -17,7 +17,7 @@ namespace AW2.Game.GobUtils
     public abstract class ShipDevice : Clonable, INetworkSerializable
     {
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
-        public enum FiringResult { Success, Failure, Void };
+        public enum FiringResult { Success, Failure, NotReady, Void };
 
         public enum FiringEffectPlayType
         {
@@ -236,7 +236,8 @@ namespace AW2.Game.GobUtils
         public virtual FiringResult TryFire(AW2.UI.ControlState triggerState)
         {
             var result = Owner.Disabled || !triggerState.Pulse ? FiringResult.Void
-                : !FiringOperator.Loaded || !FiringOperator.Charged || !PermissionToFire() ? FiringResult.Failure
+                : !FiringOperator.Loaded || !FiringOperator.Charged ? FiringResult.NotReady
+                : !PermissionToFire() ? FiringResult.Failure
                 : FiringResult.Success;
             ExecuteFiring(result);
             return result;
@@ -252,6 +253,10 @@ namespace AW2.Game.GobUtils
                     if (_fireEffectType == FiringEffectPlayType.Once) CreateVisuals();
                     break;
                 case FiringResult.Failure:
+                    PlayFiringFailedSound();
+                    ShowFiringFailedEffect();
+                    break;
+                case FiringResult.NotReady:
                     PlayFiringFailedSound();
                     break;
                 case FiringResult.Void:
@@ -324,6 +329,7 @@ namespace AW2.Game.GobUtils
         protected abstract void ShootImpl();
         protected virtual void CreateVisuals() { }
         protected virtual bool PermissionToFire() { return true; }
+        protected virtual void ShowFiringFailedEffect() { }
 
         private void PlayFiringFailedSound()
         {

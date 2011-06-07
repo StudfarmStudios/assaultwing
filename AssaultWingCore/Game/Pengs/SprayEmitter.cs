@@ -135,6 +135,9 @@ namespace AW2.Game.Pengs
         /// </summary>
         public bool Paused { get { return _pausedCount > 0; } }
 
+        public int NumberToCreate { set { _numberToCreate = value; } }
+        public float EmissionFrequency { get { return _emissionFrequency; } }
+
         /// <summary>
         /// <c>true</c> if emitting has finished for good, <c>false</c> otherwise.
         /// </summary>

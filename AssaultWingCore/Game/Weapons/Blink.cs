@@ -99,6 +99,26 @@ namespace AW2.Game.Weapons
             if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
         }
 
+        protected override void ShowFiringFailedEffect()
+        {
+            if (Owner == null) return;
+            Gob.CreateGob<Gobs.Peng>(Owner.Game, (CanonicalString)"blink fail", peng =>
+            {
+                var pengMoveSpeed = 2 * _blinkMoveSpeed;
+                var pengMove = pengMoveSpeed * Vector2.Normalize(GetBlinkTarget() - Owner.Pos);
+                peng.ResetPos(Owner.Pos, pengMove, Owner.Rotation);
+                var flyTime = _blinkDistance / pengMoveSpeed;
+                peng.Emitter.NumberToCreate = (int)Math.Round(flyTime * peng.Emitter.EmissionFrequency);
+                peng.IsMovable = true;
+                Owner.Arena.Gobs.Add(peng);
+            });
+            Gob.CreateGob<Gobs.Peng>(Owner.Game, (CanonicalString)"blink fail target", peng =>
+            {
+                peng.ResetPos(GetBlinkTarget(), Vector2.Zero, Owner.Rotation);
+                Owner.Arena.Gobs.Add(peng);
+            });
+        }
+
         private Vector2 GetBlinkTarget()
         {
             return GetBlinkTarget(Owner.Pos, AWMathHelper.GetUnitVector2(Owner.Rotation));

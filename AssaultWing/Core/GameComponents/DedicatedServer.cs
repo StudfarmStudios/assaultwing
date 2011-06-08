@@ -6,25 +6,13 @@ using AW2.Game.Arenas;
 using AW2.Helpers;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
+using AW2.Settings;
 
 namespace AW2.Core.GameComponents
 {
     public class DedicatedServer : AWGameComponent
     {
         private enum EventType { ARENA_FINISH, ARENA_INIT };
-
-        private static readonly TimeSpan ARENA_TIMEOUT = TimeSpan.FromMinutes(15);
-        private static readonly TimeSpan ARENA_FINISH_COOLDOWN = TimeSpan.FromSeconds(5);
-        private static readonly TimeSpan[] ARENA_TIMEOUT_MESSAGES = new[]
-        {
-            TimeSpan.FromHours(1),
-            TimeSpan.FromMinutes(30),
-            TimeSpan.FromMinutes(20),
-            TimeSpan.FromMinutes(10),
-            TimeSpan.FromMinutes(5),
-            TimeSpan.FromMinutes(1),
-            TimeSpan.FromSeconds(10),
-        };
 
         private bool _initialized;
         private List<ArenaInfo> _arenaInfos;
@@ -35,6 +23,7 @@ namespace AW2.Core.GameComponents
 
         public new AssaultWing Game { get; private set; }
 
+        private NetSettings Settings { get { return Game.Settings.Net; } }
         private TimeSpan Now { get { return Game.GameTime.TotalRealTime; } }
 
         public DedicatedServer(AssaultWing game, int updateOrder)
@@ -65,7 +54,12 @@ namespace AW2.Core.GameComponents
             else
             {
                 Game.InitializePlayers(0);
-                _arenaInfos = Game.DataEngine.GetTypeTemplates<Arena>().Select(a => a.Info).ToList();
+                _arenaInfos = (
+                    from arena in Game.DataEngine.GetTypeTemplates<Arena>()
+                    let info = arena.Info
+                    where !Settings.DedicatedServerArenaNames.Any() || Settings.DedicatedServerArenaNames.Contains(info.Name)
+                    select info
+                    ).ToList();
                 Game.SelectedArenaName = ChooseArenaName();
             }
         }
@@ -92,17 +86,22 @@ namespace AW2.Core.GameComponents
             switch (_nextEventType)
             {
                 case EventType.ARENA_FINISH:
-                    _nextEvent = Now + ARENA_FINISH_COOLDOWN;
+                    _nextEvent = Now + Settings.DedicatedServerArenaFinishCooldown;
                     _nextEventType = EventType.ARENA_INIT;
                     Game.FinishArena();
                     Game.SelectedArenaName = ChooseArenaName();
                     break;
                 case EventType.ARENA_INIT:
-                    _nextEvent = Now + ARENA_TIMEOUT;
+                    _nextEvent = Now + Settings.DedicatedServerArenaTimeout;
                     _nextEventType = EventType.ARENA_FINISH;
                     Game.PrepareSelectedArena();
                     Game.StartArena();
-                    _arenaTimeoutMessages = ARENA_TIMEOUT_MESSAGES.Where(t => t < ARENA_TIMEOUT).OrderByDescending(t => t.Ticks).ToList();
+                    _arenaTimeoutMessages = (
+                        from time in Settings.DedicatedServerArenaTimeoutMessages
+                        where time < Settings.DedicatedServerArenaTimeout
+                        orderby time.Ticks descending
+                        select time
+                        ).ToList();
                     break;
                 default: throw new ApplicationException("Invalid event type " + _nextEventType);
             }

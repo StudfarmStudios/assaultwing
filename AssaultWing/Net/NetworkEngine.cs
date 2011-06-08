@@ -470,7 +470,7 @@ namespace AW2.Net
         {
             var message = new RegisterGameServerMessage
             {
-                GameServerName = Environment.MachineName,
+                GameServerName = Game.Settings.Net.GameServerName,
                 MaxClients = 16,
                 TCPPort = TCP_CONNECTION_PORT,
                 LocalEndPoint = new AWEndPoint(UDPSocket.PrivateLocalEndPoint, TCP_CONNECTION_PORT)

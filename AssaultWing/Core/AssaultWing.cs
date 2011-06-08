@@ -620,6 +620,7 @@ namespace AW2.Core
         private void SendGobCreationMessage()
         {
             if (MenuEngine.ArenaLoadTask.TaskRunning) return; // wait for arena load completion
+            if (DataEngine.Arena == null) return; // happens if gobs are created on the frame the arena ends
             if (NetworkMode == NetworkMode.Server && _addedGobs.Any())
             {
                 var message = new GobCreationMessage { ArenaID = DataEngine.Arena.ID };

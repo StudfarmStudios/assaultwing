@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Game;
 using AW2.Helpers;
 using AW2.UI;
 
@@ -11,9 +14,17 @@ namespace AW2.Core.OverlayComponents
     /// </summary>
     public class GameOverOverlayDialogData : OverlayDialogData
     {
+        private Standing[] _standings;
+
         public GameOverOverlayDialogData(AssaultWing game)
             : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { }))
         {
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (_standings == null) _standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Players).ToArray();
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
@@ -29,10 +40,8 @@ namespace AW2.Core.OverlayComponents
             spriteBatch.DrawString(fontHuge, titleText, titlePos.Round(), Color.White);
             textCenter += new Vector2(0, 2 * fontHuge.LineSpacing);
 
-            var data = AssaultWingCore.Instance.DataEngine;
-            var standings = data.GameplayMode.GetStandings(data.Players);
             int line = 0;
-            foreach (var entry in standings)
+            foreach (var entry in _standings)
             {
                 line++;
                 var column1Pos = new Vector2(textLeftEdge, textCenter.Y);

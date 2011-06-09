@@ -10,6 +10,11 @@ namespace AW2.Net.Connections
     /// </summary>
     public class ManagementServerConnection : Connection
     {
+        private static readonly TimeSpan PING_TIMEOUT = TimeSpan.FromSeconds(60);
+        private TimeSpan _lastPingReceived;
+
+        public bool HasReceivedPingsRecently { get { return _lastPingReceived + PING_TIMEOUT > Game.GameTime.TotalRealTime; } }
+
         /// <summary>
         /// Creates a new connection to a management server that works solely on UDP.
         /// </summary>
@@ -18,6 +23,12 @@ namespace AW2.Net.Connections
         {
             Name = "Management Server Connection " + ID;
             RemoteUDPEndPoint = managementServerEndPoint;
+            OnPingReceived();
+        }
+
+        public void OnPingReceived()
+        {
+            _lastPingReceived = Game.GameTime.TotalRealTime;
         }
 
         public override void Send(Message message)
@@ -29,7 +40,7 @@ namespace AW2.Net.Connections
 
         public override void UpdatePingInfo()
         {
-            // Not updating ping
+            // Not updating the ping info that measures lag.
         }
     }
 }

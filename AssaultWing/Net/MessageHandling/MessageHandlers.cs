@@ -114,8 +114,9 @@ namespace AW2.Net.MessageHandling
 
         private static void HandlePingMessage(PingMessage mess)
         {
-            var pong = new PongMessage();
-            AssaultWing.Instance.NetworkEngine.ManagementServerConnection.Send(pong);
+            var net = AssaultWing.Instance.NetworkEngine;
+            net.ManagementServerConnection.Send(new PongMessage());
+            net.ManagementServerConnection.OnPingReceived();
         }
 
         private static void HandlePlayerSettingsRequestOnClient(PlayerSettingsRequest mess)

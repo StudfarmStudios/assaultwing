@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using AW2.Core;
+using AW2.Core.OverlayComponents;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Connections;
@@ -72,7 +73,8 @@ namespace AW2.Net
         /// Network connection to the management server, 
         /// or <c>null</c> if no such live connection exists.
         /// </summary>
-        private Connection _managementServerConnection;
+        private ManagementServerConnection _managementServerConnection;
+        private bool _managementServerConnectionLossReported;
 
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
@@ -138,7 +140,7 @@ namespace AW2.Net
         /// </summary>
         public Connection GameServerConnection { get; set; }
 
-        public Connection ManagementServerConnection
+        public ManagementServerConnection ManagementServerConnection
         {
             get
             {
@@ -185,6 +187,7 @@ namespace AW2.Net
                 var managementServerEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.ManagementServerAddress);
                 if (managementServerEndPoint.Port == 0)
                     managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
+                _managementServerConnectionLossReported = false;
                 _managementServerConnection = new ManagementServerConnection(_game, managementServerEndPoint);
             }
             catch (ArgumentException e)
@@ -378,8 +381,16 @@ namespace AW2.Net
             foreach (var handler in MessageHandlers.ToList()) // enumerate over a copy to allow adding MessageHandlers during enumeration
                 if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();
-            if (Game.NetworkMode == NetworkMode.Server) HandleConnectionHandshakingOnServer();
-            if (Game.NetworkMode == NetworkMode.Client) HandleConnectionHandshakingOnClient();
+            switch (Game.NetworkMode)
+            {
+                case NetworkMode.Server:
+                    CheckManagementServerConnection();
+                    HandleConnectionHandshakingOnServer();
+                    break;
+                case NetworkMode.Client:
+                    HandleConnectionHandshakingOnClient();
+                    break;
+            }
             HandleErrors();
             RemoveClosedConnections();
             PurgeUnhandledMessages();
@@ -621,6 +632,17 @@ namespace AW2.Net
         private void RemoveDisposedMessageHandlers()
         {
             MessageHandlers = MessageHandlers.Except(MessageHandlers.Where(handler => handler.Disposed)).ToList();
+        }
+
+        private void CheckManagementServerConnection()
+        {
+            if (ManagementServerConnection.HasReceivedPingsRecently) return;
+            if (_managementServerConnectionLossReported) return;
+            _managementServerConnectionLossReported = true;
+            var message = "Connection to management server lost.\nNo more clients can join the game.\nTry restarting the game server.";
+            Log.Write(message.Replace('\n', ' '));
+            _game.ShowDialog(new CustomOverlayDialogData(_game, message,
+                new UI.TriggeredCallback(UI.TriggeredCallback.PROCEED_CONTROL, () => { })));
         }
 
         private void HandleConnectionHandshakingOnServer()

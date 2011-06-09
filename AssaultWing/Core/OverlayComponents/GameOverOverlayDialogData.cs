@@ -32,16 +32,26 @@ namespace AW2.Core.OverlayComponents
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             var fontHuge = Game.MenuEngine.MenuContent.FontHuge;
             var fontSmall = Game.MenuEngine.MenuContent.FontSmall;
-            var textLeftEdge = 100f; // left edge of left-aligned text
             var textCenter = new Vector2(gfx.Viewport.Width / 2, 50); // text line top center
             var titleText = "Game Over";
             var titleSize = fontHuge.MeasureString(titleText);
             var titlePos = textCenter - new Vector2(titleSize.X / 2, 0);
             spriteBatch.DrawString(fontHuge, titleText, titlePos.Round(), Color.White);
             textCenter += new Vector2(0, 2 * fontHuge.LineSpacing);
+            textCenter = DrawStandings(spriteBatch, textCenter);
+            textCenter += new Vector2(0, 2 * fontSmall.LineSpacing);
+            var infoText = "Press Enter";
+            var infoSize = fontSmall.MeasureString(infoText);
+            var infoPos = textCenter - new Vector2(infoSize.X / 2, 0);
+            spriteBatch.DrawString(fontSmall, infoText, infoPos.Round(), Color.White);
+        }
 
+        private Vector2 DrawStandings(SpriteBatch spriteBatch, Vector2 textCenter)
+        {
+            var fontSmall = Game.MenuEngine.MenuContent.FontSmall;
+            var textLeftEdge = 100f; // left edge of left-aligned text
             int line = 0;
-            foreach (var entry in _standings)
+            foreach (var entry in _standings ?? new Standing[0])
             {
                 line++;
                 var column1Pos = new Vector2(textLeftEdge, textCenter.Y);
@@ -51,12 +61,7 @@ namespace AW2.Core.OverlayComponents
                 spriteBatch.DrawString(fontSmall, scoreText, column2Pos.Round(), Color.White);
                 textCenter += new Vector2(0, fontSmall.LineSpacing);
             }
-
-            textCenter += new Vector2(0, 2 * fontSmall.LineSpacing);
-            var infoText = "Press Enter";
-            var infoSize = fontSmall.MeasureString(infoText);
-            var infoPos = textCenter - new Vector2(infoSize.X / 2, 0);
-            spriteBatch.DrawString(fontSmall, infoText, infoPos.Round(), Color.White);
+            return textCenter;
         }
     }
 }

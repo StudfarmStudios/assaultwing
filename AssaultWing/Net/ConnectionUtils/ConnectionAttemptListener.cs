@@ -9,6 +9,7 @@ using AW2.Helpers;
 using AW2.Net.Connections;
 using AW2.Net.Messages;
 using AW2.Net.MessageHandling;
+using AW2.Core.OverlayComponents;
 
 namespace AW2.Net.ConnectionUtils
 {
@@ -61,8 +62,14 @@ namespace AW2.Net.ConnectionUtils
                 }
                 else
                 {
-                    Log.Write("UPnP not supported, make sure that TCP port " + tcpPort
-                        + " and UDP port " + udpPort + " are forwarded to your computer in your local network");
+                    var message = "Your network device doesn't support UPnP.\n"
+                        + "In order for clients to join your game, make\n"
+                        + "sure that TCP port "+tcpPort+" and UDP port\n"
+                        + udpPort + " are forwarded to your computer\n"
+                        + "in your local network.";
+                    Log.Write(message.Replace('\n', ' '));
+                    _game.ShowDialog(new CustomOverlayDialogData(_game, message,
+                        new UI.TriggeredCallback(UI.TriggeredCallback.PROCEED_CONTROL, () => { })));
                 }
                 ListenOneConnection(_game);
             }

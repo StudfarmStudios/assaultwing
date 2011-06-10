@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -12,7 +13,9 @@ namespace AW2.Core.OverlayComponents
     /// <seealso cref="OverlayDialog"/>
     public abstract class OverlayDialogData : OverlayComponent
     {
+        private static readonly TimeSpan ACTION_WARMUP_TIME = TimeSpan.FromSeconds(0.1);
         private TriggeredCallback[] _actions;
+        private TimeSpan _firstUpdate;
 
         public AssaultWing Game { get; private set; }
 
@@ -28,6 +31,8 @@ namespace AW2.Core.OverlayComponents
         /// </summary>
         protected TriggeredCallback[] Actions { set { _actions = value; } }
 
+        private bool IsCheckingActions { get { return _firstUpdate != TimeSpan.Zero && _firstUpdate + ACTION_WARMUP_TIME < Game.GameTime.TotalRealTime; } }
+
         public OverlayDialogData(AssaultWing game, params TriggeredCallback[] actions)
             : base(null, HorizontalAlignment.Stretch, VerticalAlignment.Stretch)
         {
@@ -40,7 +45,8 @@ namespace AW2.Core.OverlayComponents
         /// </summary>
         public virtual void Update()
         {
-            if (_actions.Any(action => action.Update())) Hide();
+            if (_firstUpdate == TimeSpan.Zero) _firstUpdate = Game.GameTime.TotalRealTime;
+            if (IsCheckingActions && _actions.Any(action => action.Update())) Hide();
         }
 
         public void Hide()

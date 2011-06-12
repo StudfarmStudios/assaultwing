@@ -1,67 +1,117 @@
 ﻿using System;
+using System.Dynamic;
+using System.Reflection;
+using System.IO;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Helpers;
 
 namespace AW2.Core
 {
     public static class Direct3D
     {
+        private static Assembly g_mdxAssembly;
+
+        private class MDXPresentParameters : DynamicObject
+        {
+            public object WrappedValue { get; private set; }
+
+            public MDXPresentParameters(object wrappedPresentParameters)
+            {
+                WrappedValue = wrappedPresentParameters;
+            }
+
+            public override bool TrySetMember(SetMemberBinder binder, object value)
+            {
+                var memberType = GetMDXType("PresentParameters").GetProperty(binder.Name);
+                memberType.SetValue(WrappedValue, value, null);
+                return true;
+            }
+        }
+
+        static Direct3D()
+        {
+            try
+            {
+                g_mdxAssembly = Assembly.Load("Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+            }
+            catch (FileNotFoundException)
+            {
+                // Managed DirectX not found. Situation is okay so far. We will throw an exception
+                // if an actual attempt is made to use Managed DirectX.
+            }
+        }
+
         public static unsafe void Reset(GraphicsDevice graphicsDevice, PresentationParameters parameters)
         {
             var fi = typeof(GraphicsDevice).GetField("pComPtr", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var ptr = fi.GetValue(graphicsDevice);
             var pComPtr = new IntPtr(System.Reflection.Pointer.Unbox(ptr));
-            var dev = new Microsoft.DirectX.Direct3D.Device(pComPtr);
-            var dxParameters = new Microsoft.DirectX.Direct3D.PresentParameters
-            {
-                AutoDepthStencilFormat = parameters.DepthStencilFormat.ToD3D(),
-                BackBufferCount = 1,
-                BackBufferFormat = parameters.BackBufferFormat.ToD3D(),
-                BackBufferHeight = parameters.BackBufferHeight,
-                BackBufferWidth = parameters.BackBufferWidth,
-                DeviceWindow = null,
-                DeviceWindowHandle = parameters.DeviceWindowHandle,
-                EnableAutoDepthStencil = false, // !!! ???
-                ForceNoMultiThreadedFlag = false, // !!! ???
-                FullScreenRefreshRateInHz = 0, // !!! should be 0 for windowed mode; in fullscreen mode take value from DisplayModeCollection
-                MultiSample = Microsoft.DirectX.Direct3D.MultiSampleType.None,
-                MultiSampleQuality = 0,
-                PresentationInterval = parameters.PresentationInterval.ToD3D(),
-                PresentFlag = Microsoft.DirectX.Direct3D.PresentFlag.None, // !!! ???
-                SwapEffect = Microsoft.DirectX.Direct3D.SwapEffect.Flip, // !!! ??? see _parameters.RenderTargetUsage
-                Windowed = !parameters.IsFullScreen,
-            };
-            dev.Reset(new[] { dxParameters });
+            if (g_mdxAssembly == null) throw new ApplicationException("GraphicsDevice.Reset failed. Please install Managed DirectX from the Assault Wing web site.");
+            var mdxDeviceType = g_mdxAssembly.GetType("Microsoft.DirectX.Direct3D.Device");
+            var mdxPresentParametersType = g_mdxAssembly.GetType("Microsoft.DirectX.Direct3D.PresentParameters");
+            var dev = Activator.CreateInstance(mdxDeviceType, pComPtr);
+            dynamic dxParameters = new MDXPresentParameters(Activator.CreateInstance(mdxPresentParametersType));
+            dxParameters.AutoDepthStencilFormat = parameters.DepthStencilFormat.ToD3D();
+            dxParameters.BackBufferCount = 1;
+            dxParameters.BackBufferFormat = parameters.BackBufferFormat.ToD3D();
+            dxParameters.BackBufferHeight = parameters.BackBufferHeight;
+            dxParameters.BackBufferWidth = parameters.BackBufferWidth;
+            dxParameters.DeviceWindow = null;
+            dxParameters.DeviceWindowHandle = parameters.DeviceWindowHandle;
+            dxParameters.EnableAutoDepthStencil = false; // ???
+            dxParameters.ForceNoMultiThreadedFlag = false; // ???
+            dxParameters.FullScreenRefreshRateInHz = 0; // ??? should be 0 for windowed mode; in fullscreen mode take value from DisplayModeCollection
+            dxParameters.MultiSample = GetMDXEnumValue("MultiSampleType", "None");
+            dxParameters.MultiSampleQuality = 0;
+            dxParameters.PresentationInterval = parameters.PresentationInterval.ToD3D();
+            dxParameters.PresentFlag = GetMDXEnumValue("PresentFlag", "None"); // ???
+            dxParameters.SwapEffect = GetMDXEnumValue("SwapEffect", "Flip"); // ??? see _parameters.RenderTargetUsage
+            dxParameters.Windowed = !parameters.IsFullScreen;
+            var resetMethod = mdxDeviceType.GetMethod("Reset");
+            var mdxPresentParametersArray = Array.CreateInstance(mdxPresentParametersType, 1);
+            mdxPresentParametersArray.SetValue(((MDXPresentParameters)dxParameters).WrappedValue, 0);
+            resetMethod.Invoke(dev, new[] { mdxPresentParametersArray });
         }
 
-        public static Microsoft.DirectX.Direct3D.DepthFormat ToD3D(this DepthFormat depthFormat)
+        private static Type GetMDXType(string typeName)
+        {
+            return g_mdxAssembly.GetType("Microsoft.DirectX.Direct3D." + typeName);
+        }
+
+        private static object GetMDXEnumValue(string enumTypeName, string valueName)
+        {
+            return GetMDXType(enumTypeName).GetField(valueName).GetValue(null);
+        }
+
+        private static dynamic ToD3D(this DepthFormat depthFormat)
         {
             switch (depthFormat)
             {
-                case DepthFormat.None: return Microsoft.DirectX.Direct3D.DepthFormat.Unknown;
-                case DepthFormat.Depth16: return Microsoft.DirectX.Direct3D.DepthFormat.D16;
-                case DepthFormat.Depth24: return Microsoft.DirectX.Direct3D.DepthFormat.D24X8;
-                case DepthFormat.Depth24Stencil8: return Microsoft.DirectX.Direct3D.DepthFormat.D24S8;
+                case DepthFormat.None: return GetMDXEnumValue("DepthFormat", "Unknown");
+                case DepthFormat.Depth16: return GetMDXEnumValue("DepthFormat", "D16");
+                case DepthFormat.Depth24: return GetMDXEnumValue("DepthFormat", "D24X8");
+                case DepthFormat.Depth24Stencil8: return GetMDXEnumValue("DepthFormat", "D24S8");
                 default: throw new ArgumentException(depthFormat.ToString(), "depthFormat");
             }
         }
 
-        public static Microsoft.DirectX.Direct3D.Format ToD3D(this SurfaceFormat surfaceFormat)
+        private static dynamic ToD3D(this SurfaceFormat surfaceFormat)
         {
             switch (surfaceFormat)
             {
-                case SurfaceFormat.Color: return Microsoft.DirectX.Direct3D.Format.A8R8G8B8;
+                case SurfaceFormat.Color: return GetMDXEnumValue("Format", "A8R8G8B8");
                 default: throw new ArgumentException(surfaceFormat.ToString(), "surfaceFormat");
             }
         }
 
-        public static Microsoft.DirectX.Direct3D.PresentInterval ToD3D(this PresentInterval presentInterval)
+        private static dynamic ToD3D(this PresentInterval presentInterval)
         {
             switch (presentInterval)
             {
-                case PresentInterval.Default: return Microsoft.DirectX.Direct3D.PresentInterval.Default;
-                case PresentInterval.Immediate: return Microsoft.DirectX.Direct3D.PresentInterval.Immediate;
-                case PresentInterval.One: return Microsoft.DirectX.Direct3D.PresentInterval.One;
-                case PresentInterval.Two: return Microsoft.DirectX.Direct3D.PresentInterval.Two;
+                case PresentInterval.Default: return GetMDXEnumValue("PresentInterval", "Default");
+                case PresentInterval.Immediate: return GetMDXEnumValue("PresentInterval", "Immediate");
+                case PresentInterval.One: return GetMDXEnumValue("PresentInterval", "One");
+                case PresentInterval.Two: return GetMDXEnumValue("PresentInterval", "Two");
                 default: throw new ArgumentException(presentInterval.ToString(), "presentInterval");
             }
         }

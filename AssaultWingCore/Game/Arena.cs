@@ -592,9 +592,10 @@ namespace AW2.Game
             var sideEffectTypes = allowIrreversibleSideEffects ? CollisionSideEffectType.All : CollisionSideEffectType.Reversible;
             foreach (var collider in colliders.Distinct())
             {
-                var sideEffects = gob.Collide(gobPhysical, collider, stuck, sideEffectTypes);
+                var sideEffects = soundsToPlay == CollisionSoundTypes.None ? CollisionSideEffectType.None : CollisionSideEffectType.Irreversible;
+                sideEffects |= gob.Collide(gobPhysical, collider, stuck, sideEffectTypes);
                 sideEffects |= collider.Owner.Collide(collider, gobPhysical, stuck, sideEffectTypes);
-                if ((sideEffects & CollisionSideEffectType.Irreversible) != 0)
+                if (sideEffects.HasFlag(CollisionSideEffectType.Irreversible))
                     _collisionEvents.Add(new CollisionEvent(gobPhysical, collider, stuck: stuck, collideBothWays: true, sound: soundsToPlay));
                 if (gob.Dead) break;
             }

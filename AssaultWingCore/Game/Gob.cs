@@ -319,6 +319,7 @@ namespace AW2.Game
             }
         }
         public bool IsVisible { get; set; }
+        public Player VisibilityLimitedTo { get; set; }
         public float CollisionDamageToOthersMultiplier { get; set; }
 
         /// <summary>

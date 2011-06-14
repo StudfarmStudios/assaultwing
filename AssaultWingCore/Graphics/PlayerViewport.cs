@@ -63,5 +63,10 @@ namespace AW2.Graphics
         {
             return _player.LookAtPos;
         }
+
+        protected override bool IsBlockedFromView(Gob gob)
+        {
+            return gob.VisibilityLimitedTo != null && gob.VisibilityLimitedTo != _player;
+        }
     }
 }

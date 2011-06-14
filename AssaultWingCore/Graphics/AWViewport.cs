@@ -205,7 +205,7 @@ namespace AW2.Graphics
             {
                 Matrix translationMatrix = Matrix.CreateTranslation(0, 0, -1024 * layerIndex--);
                 var view = Matrix.Multiply(ViewMatrix, translationMatrix);
-                if (LayerDrawing != null && !LayerDrawing(layer)) continue;               
+                if (LayerDrawing != null && !LayerDrawing(layer)) continue;
                 float layerScale = GetScale(layer.Z);
                 var projection = GetProjectionMatrix(layer.Z);
 
@@ -268,6 +268,7 @@ namespace AW2.Graphics
         }
 
         protected abstract Vector2 GetLookAtPos();
+        protected virtual bool IsBlockedFromView(Gob gob) { return false; }
 
         /// <summary>
         /// Returns the visual scaling factor at a depth in game coordinates.
@@ -303,9 +304,10 @@ namespace AW2.Graphics
         {
             foreach (var gob in layer.Gobs)
             {
+                if (!gob.IsVisible || IsBlockedFromView(gob)) continue;
                 var bounds = gob.DrawBounds;
-                if (gob.IsVisible && bounds.Radius > 0 && Intersects(bounds, layer.Z))
-                    gob.Draw(view, projection);
+                if (bounds.Radius <= 0 || !Intersects(bounds, layer.Z)) continue;
+                gob.Draw(view, projection);
             }
         }
 
@@ -315,7 +317,7 @@ namespace AW2.Graphics
             var gameToScreenMatrix = GetGameToScreenMatrix(layer.Z);
             layer.Gobs.ForEachIn2DOrder(gob =>
             {
-                if (!gob.IsVisible) return;
+                if (!gob.IsVisible || IsBlockedFromView(gob)) return;
                 if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
                 {
                     if (drawMode.HasValue)
@@ -430,7 +432,7 @@ namespace AW2.Graphics
             gfx.DepthStencilState = DepthStencilState.Default;
             gfx.BlendState = BlendState.Opaque;
         }
-        
+
         #endregion Methods that are used only conditionally
     }
 

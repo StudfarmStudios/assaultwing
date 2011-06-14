@@ -110,11 +110,13 @@ namespace AW2.Game.Weapons
                 var flyTime = _blinkDistance / pengMoveSpeed;
                 peng.Emitter.NumberToCreate = (int)Math.Round(flyTime * peng.Emitter.EmissionFrequency);
                 peng.IsMovable = true;
+                peng.VisibilityLimitedTo = PlayerOwner;
                 Owner.Arena.Gobs.Add(peng);
             });
             Gob.CreateGob<Gobs.Peng>(Owner.Game, (CanonicalString)"blink fail target", peng =>
             {
                 peng.ResetPos(GetBlinkTarget(), Vector2.Zero, Owner.Rotation);
+                peng.VisibilityLimitedTo = PlayerOwner;
                 Owner.Arena.Gobs.Add(peng);
             });
         }

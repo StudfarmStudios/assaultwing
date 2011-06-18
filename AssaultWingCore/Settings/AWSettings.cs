@@ -27,7 +27,7 @@ namespace AW2.Settings
 
         private string Filename { get; set; }
 
-        private static string GetSettingsFilename(string directory) { return Path.Combine(directory, "AssaultWing.config"); }
+        private static string GetSettingsFilename(string directory) { return Path.Combine(directory, "AssaultWing_config.xml"); }
 
         public static AWSettings FromFile(string directory)
         {

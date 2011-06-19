@@ -16,7 +16,15 @@ namespace AW2.Game.BonusActions
         private string _bonusText;
         private CanonicalString _bonusIconName;
 
-        public override string BonusText { get { return _bonusText ?? (_bonusText = Owner.Ship.Weapon2Name); } }
+        public override string BonusText
+        {
+            get
+            {
+                if (Owner.Ship != null) _bonusText = _bonusText ?? Owner.Ship.Weapon2Name;
+                return _bonusText;
+            }
+        }
+
         public override CanonicalString BonusIconName
         {
             get

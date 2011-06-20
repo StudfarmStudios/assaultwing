@@ -20,7 +20,8 @@ namespace AW2.Game.BonusActions
         {
             get
             {
-                if (Owner.Ship != null) _bonusText = _bonusText ?? Owner.Ship.Weapon2Name;
+                if (string.IsNullOrEmpty(_bonusText))
+                    _bonusText = Owner.Ship == null ? "" : Owner.Ship.Weapon2Name;
                 return _bonusText;
             }
         }

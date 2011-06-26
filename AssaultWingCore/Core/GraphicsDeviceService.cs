@@ -203,7 +203,6 @@ namespace AW2.Core
         /// </summary>
         private string ResetDevice()
         {
-            Log.Write("ResetDevice begin..."); // TODO !!! Remove this when GraphicsDevice.Reset problems are solved
             try
             {
                 CheckThread();
@@ -212,14 +211,14 @@ namespace AW2.Core
                 {
                     GraphicsDevice.Reset(_parameters);
                 }
-                catch (InvalidOperationException e)
+                catch (InvalidOperationException)
                 {
-                    Log.Write("!!! GraphicsDevice.Reset threw " + e);
-                    Log.Write("!!! Trying low-level reset...");
+                    // GraphicsDevice.Reset() seems to only call GraphicsDeviceResetEx().
+                    // This sometimes results in InvalidOperationException. DirectX debug runtime
+                    // says that only GraphicsDeviceReset() can be called. We call it using
+                    // Managed DirectX because XNA doesn't offer such a possibility.
                     Direct3D.Reset(GraphicsDevice, _parameters);
-                    Log.Write("!!! ...low-level reset done, still re-resetting in XNA...");
                     GraphicsDevice.Reset(_parameters);
-                    Log.Write("!!! ...XNA reset done");
                 }
                 if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
                 return null;
@@ -228,10 +227,6 @@ namespace AW2.Core
             {
                 Log.Write("Note: Graphics device lost during reset");
                 return "Graphics device lost during reset";
-            }
-            finally
-            {
-                Log.Write("...ResetDevice end"); // TODO !!! Remove this when GraphicsDevice.Reset problems are solved
             }
         }
 

@@ -64,9 +64,6 @@ namespace AW2.Game
             : base(game, updateOrder)
         {
             Spectators = new IndexedItemCollection<Spectator>();
-            Spectators.Added += SpectatorAdded;
-            Spectators.Removed += SpectatorRemoved;
-
             Devices = new IndexedItemCollection<ShipDevice>();
             Devices.Added += device =>
             {

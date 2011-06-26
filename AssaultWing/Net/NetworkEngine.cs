@@ -391,6 +391,7 @@ namespace AW2.Net
                     HandleConnectionHandshakingOnClient();
                     break;
             }
+            CloseSilentConnections();
             HandleErrors();
             RemoveClosedConnections();
             PurgeUnhandledMessages();
@@ -443,6 +444,17 @@ namespace AW2.Net
                     }
                 }
             });
+        }
+
+        private void CloseSilentConnections()
+        {
+            foreach (var conn in AllConnections)
+                if (conn.PingInfo.IsMissingReplies)
+                {
+                    Log.Write("Closing {0} because of not replying to pings", conn.Name);
+                    conn.Dispose();
+                    if (conn is GameServerConnection) _game.StopClient("Game server not responding.");
+                }
         }
 
         private void HandleErrors()

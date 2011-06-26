@@ -26,7 +26,7 @@ namespace AW2.Net.Connections
 
         protected override void DisposeImpl(bool error)
         {
-            if (error) Game.NetworkEngine.DropClient(ID, error);
+            Game.NetworkEngine.DropClient(ID, error);
             base.DisposeImpl(error);
         }
     }

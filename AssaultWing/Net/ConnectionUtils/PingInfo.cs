@@ -15,9 +15,14 @@ namespace AW2.Net.ConnectionUtils
         private const int PING_AVERAGED_COUNT = 4;
 
         /// <summary>
-        /// Time at which the next ping request should be sent, in real time.
+        /// Time at which the next ping request should be sent, in game time.
         /// </summary>
         private TimeSpan _nextPingSend;
+
+        /// <summary>
+        /// Time at which the last ping reply was received, in real time.
+        /// </summary>
+        private TimeSpan _lastPongReceive;
 
         private TimeSpan[] _pingTimes;
         private int[] _remoteFrameNumberOffsets;
@@ -38,10 +43,15 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public int RemoteFrameNumberOffset { get { return AWMathHelper.AverageWithoutExtremes(_remoteFrameNumberOffsets); } }
 
+        public bool IsMissingReplies { get { return _lastPongReceive != TimeSpan.Zero && _lastPongReceive + PING_INTERVAL.Multiply(5) < NowRealTime; } }
+
         /// <summary>
         /// If true, ping time won't be updated. The old results will remain unchanged.
         /// </summary>
         public bool IsMeasuringFreezed { get; set; }
+
+        private TimeSpan NowGameTime { get { return AssaultWingCore.Instance.GameTime.TotalGameTime; } }
+        private TimeSpan NowRealTime { get { return AssaultWingCore.Instance.GameTime.TotalRealTime; } }
 
         public PingInfo(Connection baseConnection)
         {
@@ -61,7 +71,7 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public void Update()
         {
-            var now = AssaultWingCore.Instance.GameTime.TotalGameTime;
+            var now = NowGameTime;
             SendPing(now);
             ReceivePingAndSendPong();
             ReceivePong(now);
@@ -87,6 +97,7 @@ namespace AW2.Net.ConnectionUtils
         {
             var pongReceive = BaseConnection.TryDequeueMessage<PingReplyMessage>();
             if (pongReceive == null || IsMeasuringFreezed) return;
+            _lastPongReceive = NowRealTime;
             var pingTime = now - pongReceive.Timestamp;
             _pingTimes[_nextIndex] = pingTime;
             var pongDelay = pingTime.Divide(2);

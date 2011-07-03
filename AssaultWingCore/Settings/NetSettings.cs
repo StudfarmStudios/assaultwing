@@ -25,7 +25,7 @@ namespace AW2.Settings
 
         public void Reset()
         {
-            _managementServerAddress = "vs1164254.server4you.net";
+            _managementServerAddress = "assaultwing.com";
             _gameServerName = Environment.MachineName;
             _dedicatedServerArenaTimeout = TimeSpan.FromMinutes(15);
             _dedicatedServerArenaFinishCooldown = TimeSpan.FromSeconds(5);

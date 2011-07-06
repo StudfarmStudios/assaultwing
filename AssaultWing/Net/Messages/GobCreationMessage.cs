@@ -38,6 +38,7 @@ namespace AW2.Net.Messages
             for (int i = 0; i < _gobTypeNames.Count; ++i)
             {
                 var gob = createGob(_gobTypeNames[i], _layerIndices[i]);
+                if (gob == null) continue;
                 Read(gob, SerializationModeFlags.All, framesAgo);
                 initGob(gob);
             }

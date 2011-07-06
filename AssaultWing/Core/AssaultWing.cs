@@ -349,6 +349,7 @@ namespace AW2.Core
             message.ReadGobs(framesAgo,
                 (typeName, layerIndex) =>
                 {
+                    if (layerIndex < 0 || layerIndex >= DataEngine.Arena.Layers.Count) return null;
                     var gob = (Gob)Clonable.Instantiate(typeName);
                     gob.Game = this;
                     gob.Layer = DataEngine.Arena.Layers[layerIndex];

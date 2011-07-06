@@ -8,6 +8,8 @@ namespace AW2.Game.BonusActions
 {
     public class Weapon2UpgradeBonusAction : Gobs.BonusAction
     {
+        private static readonly CanonicalString DUMMY_ICON_NAME = (CanonicalString)"dummytexture";
+
         [TypeParameter]
         private CanonicalString _fixedWeaponName;
         [TypeParameter]
@@ -30,7 +32,8 @@ namespace AW2.Game.BonusActions
         {
             get
             {
-                if (_bonusIconName.IsNull) _bonusIconName = Owner.Ship.Weapon2.IconName;
+                if (_bonusIconName.IsNull || _bonusIconName.Equals(DUMMY_ICON_NAME))
+                    _bonusIconName = Owner.Ship == null ? DUMMY_ICON_NAME : Owner.Ship.Weapon2.IconName;
                 return _bonusIconName;
             }
         }

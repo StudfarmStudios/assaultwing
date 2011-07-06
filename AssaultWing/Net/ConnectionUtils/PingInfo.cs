@@ -20,9 +20,9 @@ namespace AW2.Net.ConnectionUtils
         private TimeSpan _nextPingSend;
 
         /// <summary>
-        /// Time at which the last ping reply was received, in real time.
+        /// Time before which a ping reply should be received, in real time.
         /// </summary>
-        private TimeSpan _lastPongReceive;
+        private TimeSpan _pongOkayUntil;
 
         private TimeSpan[] _pingTimes;
         private int[] _remoteFrameNumberOffsets;
@@ -43,12 +43,7 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public int RemoteFrameNumberOffset { get { return AWMathHelper.AverageWithoutExtremes(_remoteFrameNumberOffsets); } }
 
-        public bool IsMissingReplies { get { return _lastPongReceive != TimeSpan.Zero && _lastPongReceive + PING_INTERVAL.Multiply(5) < NowRealTime; } }
-
-        /// <summary>
-        /// If true, ping time won't be updated. The old results will remain unchanged.
-        /// </summary>
-        public bool IsMeasuringFreezed { get; set; }
+        public bool IsMissingReplies { get { return _pongOkayUntil != TimeSpan.Zero && _pongOkayUntil < NowRealTime; } }
 
         private TimeSpan NowGameTime { get { return AssaultWingCore.Instance.GameTime.TotalGameTime; } }
         private TimeSpan NowRealTime { get { return AssaultWingCore.Instance.GameTime.TotalRealTime; } }
@@ -66,6 +61,11 @@ namespace AW2.Net.ConnectionUtils
                 _remoteFrameNumberOffsets[i] -= localFrameNumberShift;
         }
 
+        public void AllowLatePingsForAWhile()
+        {
+            _pongOkayUntil = AWMathHelper.Max(_pongOkayUntil, NowRealTime + PING_INTERVAL.Multiply(30));
+        }
+
         /// <summary>
         /// Calling this method every frame keeps ping information up to date.
         /// </summary>
@@ -79,7 +79,7 @@ namespace AW2.Net.ConnectionUtils
 
         private void SendPing(TimeSpan now)
         {
-            if (now < _nextPingSend || IsMeasuringFreezed) return;
+            if (now < _nextPingSend) return;
             _nextPingSend = now + PING_INTERVAL;
             var pingSend = new PingRequestMessage { Timestamp = now };
             BaseConnection.Send(pingSend);
@@ -96,8 +96,8 @@ namespace AW2.Net.ConnectionUtils
         private void ReceivePong(TimeSpan now)
         {
             var pongReceive = BaseConnection.TryDequeueMessage<PingReplyMessage>();
-            if (pongReceive == null || IsMeasuringFreezed) return;
-            _lastPongReceive = NowRealTime;
+            if (pongReceive == null) return;
+            _pongOkayUntil = AWMathHelper.Max(_pongOkayUntil, NowRealTime + PING_INTERVAL.Multiply(5));
             var pingTime = now - pongReceive.Timestamp;
             _pingTimes[_nextIndex] = pingTime;
             var pongDelay = pingTime.Divide(2);

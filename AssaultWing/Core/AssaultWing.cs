@@ -505,6 +505,7 @@ namespace AW2.Core
             arena.IsForPlaying = true;
             // Note: Client starts progressbar when receiving StartGameMessage.
             if (NetworkMode != NetworkMode.Client) MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
+            foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
             arena.Reset(); // this usually takes several seconds
             DataEngine.Arena = arena;
         }

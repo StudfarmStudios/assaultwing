@@ -542,6 +542,11 @@ namespace AW2.Helpers
             return time.Ticks / (float)divisor.Ticks;
         }
 
+        public static TimeSpan Max(TimeSpan time1, TimeSpan time2)
+        {
+            return new TimeSpan(Math.Max(time1.Ticks, time2.Ticks));
+        }
+
         /// <summary>
         /// Returns the integral number of Assault Wing update frames this TimeSpan spans.
         /// </summary>

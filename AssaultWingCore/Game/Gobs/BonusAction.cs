@@ -11,6 +11,8 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         protected TimeSpan _duration;
 
+        private bool _timeoutReset;
+
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
         public virtual string BonusText { get { return TypeName; } }
         public abstract CanonicalString BonusIconName { get; }
@@ -87,12 +89,36 @@ namespace AW2.Game.Gobs
             base.Dispose();
         }
 
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            {
+                writer.Write((bool)_timeoutReset);
+                _timeoutReset = false;
+            }
+        }
+
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
+        {
+            base.Deserialize(reader, mode, framesAgo);
+            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            {
+                if (reader.ReadBoolean()) ResetTimeout();
+            }
+        }
+
         public void ResetTimeout()
         {
             // Arena may be null if this method is called by another BonusAction of the same type
             // on the same frame this instance was created. In that case, ResetTimeout will be
             // called again the next frame from Activate().
             if (Arena != null) EndTime = Arena.TotalTime + Duration;
+            if (Game.NetworkMode == Core.NetworkMode.Server)
+            {
+                _timeoutReset = true;
+                ForcedNetworkUpdate = true;
+            }
         }
     }
 }

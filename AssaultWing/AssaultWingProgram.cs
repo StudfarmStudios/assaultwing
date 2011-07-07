@@ -14,7 +14,7 @@ namespace AW2
 #if WINDOWS || XBOX
     public class AssaultWingProgram : IDisposable
     {
-        private const string AW_BUG_REPORT_SERVER = "vs1164254.server4you.net";
+        private const string AW_BUG_REPORT_SERVER = "assaultwing.com";
         private const int AW_BUG_REPORT_PORT = 'A' * 256 + 'W' - 1;
 
         private GameForm _form;

@@ -162,6 +162,11 @@ namespace AW2.Helpers
                 && a.RenderTargetUsage == b.RenderTargetUsage;
         }
 
+        public static bool IsCompatibleWith(this Version v1, Version v2)
+        {
+            return v1.Equals(v2);
+        }
+
         /// <summary>
         /// First tries to move the viewport to fit the bounds and then crops the viewport
         /// if it still doesn't fit in.

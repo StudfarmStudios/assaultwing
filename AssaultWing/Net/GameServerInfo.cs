@@ -15,5 +15,7 @@ namespace AW2.Net
         /// Identifier given by the management server.
         /// </summary>
         public int ManagementID { get; set; }
+
+        public Version AWVersion { get; set; }
     }
 }

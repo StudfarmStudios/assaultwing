@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using AW2.Helpers;
 
 namespace AW2.Net.ManagementMessages
 {
@@ -17,18 +19,28 @@ namespace AW2.Net.ManagementMessages
             GameServers = tokenizedLines
                 .Skip(1)
                 .Select(line => GetGameServerInfo(line))
+                .Where(info => info != null)
                 .ToList();
         }
 
         private static GameServerInfo GetGameServerInfo(Dictionary<string, string> line)
         {
-            return new GameServerInfo
+            try
             {
-                Name = line["name"],
-                ManagementID = int.Parse(line["id"]),
-                CurrentPlayers = int.Parse(line["currentclients"]),
-                MaxPlayers = int.Parse(line["maxclients"])
-            };
+                return new GameServerInfo
+                {
+                    Name = line["name"],
+                    CurrentPlayers = int.Parse(line["currentclients"]),
+                    MaxPlayers = int.Parse(line["maxclients"]),
+                    ManagementID = int.Parse(line["id"]),
+                    AWVersion = Version.Parse(line["awversion"]),
+                };
+            }
+            catch (Exception e)
+            {
+                Log.Write("Warning: Skipping invalid game server info", e);
+                return null;
+            }
         }
     }
 }

@@ -18,6 +18,7 @@ namespace AW2.Menu.Main
     public class MainMenuItemCollections
     {
         private const string NO_SERVERS_FOUND = "No servers found";
+        private const string INCOMPATIBLE_SERVERS_FOUND = "Some incompatible servers";
 
         private MenuEngineImpl _menuEngine;
         private TimeSpan _lastNetworkItemsUpdate;
@@ -141,15 +142,24 @@ namespace AW2.Menu.Main
             foreach (var server in mess.GameServers)
             {
                 if (NetworkItems[0].Name() == NO_SERVERS_FOUND) NetworkItems.RemoveAt(0);
-                var menuItemText = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers);
-                var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
-                NetworkItems.Insert(0, new MainMenuItem(_menuEngine,
-                    () => menuItemText,
-                    component =>
-                    {
-                        if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
-                        _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
-                    }));
+                if (server.AWVersion.IsCompatibleWith(_menuEngine.Game.Version))
+                {
+                    var menuItemText = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers);
+                    var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
+                    NetworkItems.Insert(0, new MainMenuItem(_menuEngine,
+                        () => menuItemText,
+                        component =>
+                        {
+                            if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
+                            _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
+                        }));
+                }
+                else
+                {
+                    var index = Math.Max(0, NetworkItems.Count - 1);
+                    if (NetworkItems[index].Name() != INCOMPATIBLE_SERVERS_FOUND)
+                        NetworkItems.Insert(index, new MainMenuItem(_menuEngine, () => INCOMPATIBLE_SERVERS_FOUND, component => {}));
+                }
             }
         }
 

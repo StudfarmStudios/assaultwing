@@ -16,6 +16,7 @@ namespace AW2.Game
         public Texture2D DockOnRadarTexture { get; private set; }
         public Effect BasicShaders { get; private set; }
         public SpriteBatch ViewportSpriteBatch { get; private set; }
+        public SpriteBatch RadarSilhouetteSpriteBatch { get; private set; }
 
         public GameContent(AWGame game)
         {
@@ -47,6 +48,7 @@ namespace AW2.Game
 
             BasicShaders = _game.Content.Load<Effect>("basicshaders");
             ViewportSpriteBatch = new SpriteBatch(gfx);
+            RadarSilhouetteSpriteBatch = new SpriteBatch(gfx);
         }
 
         public void UnloadContent()
@@ -61,6 +63,11 @@ namespace AW2.Game
             {
                 ViewportSpriteBatch.Dispose();
                 ViewportSpriteBatch = null;
+            }
+            if (RadarSilhouetteSpriteBatch != null)
+            {
+                RadarSilhouetteSpriteBatch.Dispose();
+                RadarSilhouetteSpriteBatch = null;
             }
         }
     }

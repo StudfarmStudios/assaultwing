@@ -15,7 +15,6 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
-using System.IO;
 
 namespace AW2.Core
 {
@@ -29,7 +28,8 @@ namespace AW2.Core
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
 
-        // HACK: Debug keys
+
+        // Debug keys, used only #if DEBUG
         private Control _frameStepControl;
         private Control _frameRunControl;
         private bool _frameStep;

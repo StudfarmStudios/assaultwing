@@ -157,8 +157,10 @@ namespace AW2.UI
             if (msg.Msg != WM_KEYDOWN && msg.Msg != WM_SYSKEYDOWN) throw new ArgumentException("Unexpected value " + msg.Msg);
             var keyCode = keyData & Keys.KeyCode;
             var modifiers = keyData & Keys.Modifiers;
-            if (keyCode == Keys.PageUp) SetFullScreen(_game.Settings.Graphics.FullscreenWidth, _game.Settings.Graphics.FullscreenHeight); // HACK !!!
-            if (keyCode == Keys.PageDown) SetWindowed(); // HACK !!!
+#if DEBUG
+            if (keyCode == Keys.PageUp) SetFullScreen(_game.Settings.Graphics.FullscreenWidth, _game.Settings.Graphics.FullscreenHeight);
+            if (keyCode == Keys.PageDown) SetWindowed();
+#endif
             if (keyCode == Keys.F1)
             {
                 _splitContainer.Panel2Collapsed ^= true;

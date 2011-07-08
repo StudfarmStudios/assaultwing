@@ -1,8 +1,3 @@
-#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
-#if !PARALLAX_IN_3D
-#define PARALLAX_WITH_SPRITE_BATCH
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,8 +17,6 @@ namespace AW2.Graphics
     /// <c>LoadContent</c> must be called before a viewport is used.
     public abstract class AWViewport : IDisposable
     {
-        #region Fields that are used only when PARALLAX_IN_3D is #defined
-
         /// <summary>
         /// Effect for drawing parallaxes as 3D primitives.
         /// </summary>
@@ -33,8 +26,6 @@ namespace AW2.Graphics
         /// Vertex data scratch buffer for drawing parallaxes as 3D primitives.
         /// </summary>
         private VertexPositionTexture[] _vertexData;
-
-        #endregion Fields that are used only when PARALLAX_IN_3D is #defined
 
         private AssaultWingCore _game;
         private List<OverlayComponent> _overlayComponents;
@@ -208,12 +199,7 @@ namespace AW2.Graphics
                 if (LayerDrawing != null && !LayerDrawing(layer)) continue;
                 float layerScale = GetScale(layer.Z);
                 var projection = GetProjectionMatrix(layer.Z);
-
-                // Note: These methods have ConditionalAttribute.
-                // Only one of them will be executed at runtime.
                 Draw_DrawParallaxIn3D(layer);
-                Draw_DrawParallaxWithSpriteBatch(layer);
-
                 Draw3D(layer, ref view, ref projection);
                 Draw2D(layer, layerScale);
                 if (GobDrawn != null) foreach (var gob in layer.Gobs) GobDrawn(gob);
@@ -338,16 +324,10 @@ namespace AW2.Graphics
             foreach (var component in _overlayComponents) component.Draw(SpriteBatch);
         }
 
-        #region Methods that are used only conditionally
-
         /// <summary>
-        /// This method is a temporary hack. It initialises parallax drawing
-        /// in 3D. If a final decision is made to do parallax drawing in 3D,
-        /// the contents of this method must be moved to appropriate places in
-        /// LoadContent and UnloadContent. If a final decision is made to do parallax
-        /// drawing in 2D with SpriteBatch, this method should be removed.
+        /// TODO: Move the contents of this method to appropriate places in
+        /// LoadContent and UnloadContent.
         /// </summary>
-        [Conditional("PARALLAX_IN_3D")]
         private void Draw_InitializeParallaxIn3D()
         {
             if (_effect != null) return;
@@ -369,11 +349,6 @@ namespace AW2.Graphics
             };
         }
 
-        /// <summary>
-        /// HACK: Alternative implementation, parallax drawing in 3D by two triangles.
-        /// Perhaps less time lost in RenderState changes.
-        /// </summary>
-        [Conditional("PARALLAX_IN_3D")]
         private void Draw_DrawParallaxIn3D(ArenaLayer layer)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
@@ -404,36 +379,6 @@ namespace AW2.Graphics
             gfx.DepthStencilState = DepthStencilState.Default;
             gfx.BlendState = BlendState.Opaque;
         }
-
-        /// <summary>
-        /// HACK: The old way of drawing parallaxes, with several calls to SpriteBatch.Draw.
-        /// </summary>
-        [Conditional("PARALLAX_WITH_SPRITE_BATCH")]
-        private void Draw_DrawParallaxWithSpriteBatch(ArenaLayer layer)
-        {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            if (layer.ParallaxName != "")
-            {
-                SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                var tex = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                var lookAtPosScaled = GetScale(layer.Z) * GetLookAtPos();
-                float texCenterX = lookAtPosScaled.X.Modulo(tex.Width);
-                float texCenterY = (-lookAtPosScaled.Y).Modulo(tex.Height);
-                float screenStartX = (Viewport.Width / 2f - texCenterX * ZoomRatio).Modulo(tex.Width * ZoomRatio) - tex.Width * ZoomRatio;
-                float screenStartY = (Viewport.Height / 2f - texCenterY * ZoomRatio).Modulo(tex.Height * ZoomRatio) - tex.Height * ZoomRatio;
-                for (float posX = screenStartX; posX <= Viewport.Width; posX += tex.Width * ZoomRatio)
-                    for (float posY = screenStartY; posY <= Viewport.Height; posY += tex.Height * ZoomRatio)
-                        SpriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, ZoomRatio, SpriteEffects.None, 1);
-                SpriteBatch.End();
-            }
-
-            // Modify renderstate for 3D graphics.
-            gfx.SamplerStates[0] = SamplerState.LinearWrap;
-            gfx.DepthStencilState = DepthStencilState.Default;
-            gfx.BlendState = BlendState.Opaque;
-        }
-
-        #endregion Methods that are used only conditionally
     }
 
     /// <summary>

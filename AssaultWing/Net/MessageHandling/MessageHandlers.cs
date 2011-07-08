@@ -377,10 +377,6 @@ namespace AW2.Net.MessageHandling
             {
                 net.GameServerConnection = result.Value;
                 ActivateHandlers(GetClientMenuHandlers());
-
-                // HACK: Force one local player.
-                AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
-
                 var joinRequest = new GameServerHandshakeRequestTCP
                 {
                     CanonicalStrings = CanonicalString.CanonicalForms,

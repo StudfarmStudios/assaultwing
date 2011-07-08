@@ -6,7 +6,7 @@ namespace AW2.Net.Connections
 {
     /// <summary>
     /// A network connection to a management server.
-    /// Note!!! Management server uses a different protocol than other Assault Wing connections.
+    /// Note: Management server uses a different protocol than other Assault Wing connections.
     /// </summary>
     public class ManagementServerConnection : Connection
     {

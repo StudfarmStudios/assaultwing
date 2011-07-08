@@ -39,7 +39,7 @@ namespace AW2.UI
             _content = new StringBuilder(content, maxLength);
             _game = game;
             _changedCallback = changedCallback;
-            game.Window.KeyPress += KeyPressHandler; // FIXME: leaks memory if Dispose() is not called later !!!!!!!!!!
+            game.Window.KeyPress += KeyPressHandler; // FIXME !!! leaks memory if Dispose() is not called later
         }
 
         /// <summary>

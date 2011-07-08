@@ -269,13 +269,10 @@ namespace AW2.Game
             gfx.Clear(ClearOptions.Target, Color.Transparent, 0, 0);
 
             // Draw the arena's walls.
-            // TODO: Reuse one SpriteBatch instance. Creating a new one is slow.
-            var spriteBatch = new SpriteBatch(gfx);
-            spriteBatch.Begin();
+            Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch.Begin();
             foreach (var wall in Arena.Gobs.GameplayLayer.Gobs.OfType<Wall>())
-                wall.DrawSilhouette(view, projection, spriteBatch);
-            spriteBatch.End();
-            spriteBatch.Dispose();
+                wall.DrawSilhouette(view, projection, Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch);
+            Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch.End();
 
             // Restore render target so what we can extract drawn pixels.
             // Create a copy of the texture in local memory so that a graphics device

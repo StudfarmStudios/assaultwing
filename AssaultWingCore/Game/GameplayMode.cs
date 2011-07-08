@@ -57,9 +57,7 @@ namespace AW2.Game
         {
             get
             {
-                return AssaultWingCore.Instance.NetworkMode == NetworkMode.Standalone
-                    ? 3 // standalone games have three lives
-                    : -1; // network games have infinite lives
+                return -1; // infinite lives
             }
         }
 

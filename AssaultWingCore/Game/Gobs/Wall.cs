@@ -76,7 +76,7 @@ namespace AW2.Game.Gobs
             get
             {
                 return Arena.IsForPlaying
-                    ? _drawBounds
+                    ? DrawBoundsInGobCoordinates
                     : base.DrawBounds;
             }
         }
@@ -123,7 +123,6 @@ namespace AW2.Game.Gobs
 #if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
                 RemoveVerySmallTrianglesFromCollisionAreas();
 #endif
-                _drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
             Game.ProgressBarSubtaskCompleted();
         }
@@ -181,28 +180,28 @@ namespace AW2.Game.Gobs
         #endregion Methods related to gobs' functionality in the game world
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {            
+        {
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
             {
-            // HACK to reduce network traffic
-            var reducedMode = (mode & SerializationModeFlags.ConstantData) != 0
-                ? SerializationModeFlags.All
-                : SerializationModeFlags.None;
-            base.Serialize(writer, reducedMode);
-            checked
-            {
-                if (mode != SerializationModeFlags.None)
+                // HACK to reduce network traffic
+                var reducedMode = (mode & SerializationModeFlags.ConstantData) != 0
+                    ? SerializationModeFlags.All
+                    : SerializationModeFlags.None;
+                base.Serialize(writer, reducedMode);
+                checked
                 {
-                    var indices = (mode & SerializationModeFlags.ConstantData) != 0
-                        ? _removedTriangleIndicesOfAllTime
-                        : _removedTriangleIndicesToSerialize;
-                    writer.Write((short)indices.Count());
-                    foreach (short index in indices) writer.Write((short)index);
-                    if ((mode & SerializationModeFlags.VaryingData) != 0) _removedTriangleIndicesToSerialize.Clear();
+                    if (mode != SerializationModeFlags.None)
+                    {
+                        var indices = (mode & SerializationModeFlags.ConstantData) != 0
+                            ? _removedTriangleIndicesOfAllTime
+                            : _removedTriangleIndicesToSerialize;
+                        writer.Write((short)indices.Count());
+                        foreach (short index in indices) writer.Write((short)index);
+                        if ((mode & SerializationModeFlags.VaryingData) != 0) _removedTriangleIndicesToSerialize.Clear();
+                    }
                 }
-            }
             }
         }
 
@@ -258,6 +257,11 @@ namespace AW2.Game.Gobs
         }
 
         #region Protected methods
+
+        protected override BoundingSphere CreateDrawBounds()
+        {
+            return BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
+        }
 
         /// <summary>
         /// Sets the wall's 3D model. To be called before the wall is Activate()d.

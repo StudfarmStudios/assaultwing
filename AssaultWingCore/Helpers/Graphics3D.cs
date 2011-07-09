@@ -60,13 +60,15 @@ namespace AW2.Helpers
 
         /// <summary>
         /// Extracts vertex and triangle information out of a 3D model.
+        /// Note: Call this method only from under a Draw() method. Otherwise the returned
+        /// data may be wrong. This will happen at least if GetModelData is called when
+        /// the game is in fullscreen mode but doesn't have focus.
         /// </summary>
         /// The triangle data is stored as a triangle list.
         /// <param name="model">The 3D model.</param>
         /// <param name="vertexData">Where to store the vertex data.</param>
         /// <param name="indexData">Where to store the triangle data.</param>
-        public static void GetModelData(Model model, out VertexPositionNormalTexture[] vertexData,
-            out short[] indexData)
+        public static void GetModelData(Model model, out VertexPositionNormalTexture[] vertexData, out short[] indexData)
         {
             var vertices = new List<VertexPositionNormalTexture>();
             var indices = new List<short>();

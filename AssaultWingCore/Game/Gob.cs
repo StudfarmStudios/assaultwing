@@ -219,7 +219,7 @@ namespace AW2.Game
         /// <summary>
         /// Bounding volume of the visuals of the gob, in gob coordinates.
         /// </summary>
-        protected BoundingSphere _drawBounds;
+        private BoundingSphere _drawBounds;
 
         #endregion Fields for all gobs
 
@@ -360,7 +360,16 @@ namespace AW2.Game
         {
             get
             {
-                return new BoundingSphere(_drawBounds.Center.RotateZ(DrawRotation + DrawRotationOffset) + new Vector3(Pos + DrawPosOffset, 0), _drawBounds.Radius);
+                return new BoundingSphere(DrawBoundsInGobCoordinates.Center.RotateZ(DrawRotation + DrawRotationOffset) + new Vector3(Pos + DrawPosOffset, 0), DrawBoundsInGobCoordinates.Radius);
+            }
+        }
+
+        protected BoundingSphere DrawBoundsInGobCoordinates
+        {
+            get
+            {
+                if (_drawBounds.Radius == -1) _drawBounds = CreateDrawBounds();
+                return _drawBounds;
             }
         }
 
@@ -716,11 +725,10 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
         /// DataEngine will call this method to make the gob do necessary 
         /// initialisations to make it fully functional on addition to 
         /// an ongoing play of the game.
+        /// </summary>
         public virtual void Activate()
         {
             EnsureHasID();
@@ -735,16 +743,10 @@ namespace AW2.Game
                 CreateModelBirthGobs();
                 CreateExhaustEngines();
             }
-
             foreach (var mesh in Model.Meshes)
                 foreach (BasicEffect be in mesh.Effects)
                     Arena.PrepareEffect(be);
-
-            // Create draw bounding volume
-            VertexPositionNormalTexture[] vertexData;
-            short[] indexData;
-            Graphics3D.GetModelData(Model, out vertexData, out indexData);
-            _drawBounds = BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position * _scale));
+            _drawBounds.Radius = -1;
         }
 
         /// <summary>
@@ -1122,6 +1124,14 @@ namespace AW2.Game
         protected virtual void CopyAbsoluteBoneTransformsTo(Model model, Matrix[] transforms)
         {
             model.CopyAbsoluteBoneTransformsTo(transforms);
+        }
+
+        protected virtual BoundingSphere CreateDrawBounds()
+        {
+            VertexPositionNormalTexture[] vertexData;
+            short[] indexData;
+            Graphics3D.GetModelData(Model, out vertexData, out indexData);
+            return BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position * _scale));
         }
 
         #endregion Gob miscellaneous protected methods

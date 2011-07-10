@@ -47,7 +47,8 @@ namespace AW2.Graphics.OverlayComponents
             if (Gob.IsHidden) return;
 
             var gameToScreenTransform = getGameToScreenTransform(Gob.Layer.Z);
-            var gobPosOnScreen = Vector2.Transform(Gob.Pos, gameToScreenTransform);
+            var gobDrawPos = Gob.Pos + Gob.DrawPosOffset;
+            var gobPosOnScreen = Vector2.Transform(gobDrawPos, gameToScreenTransform);
             var origGobPosOnScreen = gobPosOnScreen;
             var trackerPosOnScreen = Vector2.Transform(trackerPos, gameToScreenTransform);
             float rotation = 0f;
@@ -56,12 +57,12 @@ namespace AW2.Graphics.OverlayComponents
             if (ScaleByDistance)
             {
                 var farDistance = 4000;
-                var distance = Vector2.Distance(Gob.Pos, trackerPos);
+                var distance = Vector2.Distance(gobDrawPos, trackerPos);
                 scale = MathHelper.Max(0, (farDistance - distance) / farDistance);
             }
             if (RotateTowardsTarget)
             {
-                rotation = -AW2.Helpers.AWMathHelper.Angle(Gob.Pos - trackerPos);
+                rotation = -AW2.Helpers.AWMathHelper.Angle(gobDrawPos - trackerPos);
             }
             if (StickToBorders)
             {

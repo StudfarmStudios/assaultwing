@@ -25,7 +25,7 @@ namespace AW2.Graphics.OverlayComponents
 
         private Vector2 GetTrackerPos(Gob trackerGob, Player trackerPlayer)
         {
-            if (trackerGob != null) return trackerGob.Pos;
+            if (trackerGob != null) return trackerGob.Pos + trackerGob.DrawPosOffset;
             if (trackerPlayer != null) return trackerPlayer.LookAtPos;
             throw new ApplicationException("Null tracker");
         }

@@ -164,7 +164,13 @@ namespace AW2.Helpers
 
         public static bool IsCompatibleWith(this Version v1, Version v2)
         {
-            return v1.Equals(v2);
+            if (!v1.IsPublished() || !v2.IsPublished()) return true;
+            return v1.Major == v2.Major && v1.Minor == v2.Minor;
+        }
+
+        public static bool IsPublished(this Version v)
+        {
+            return v.Major != 0;
         }
 
         /// <summary>

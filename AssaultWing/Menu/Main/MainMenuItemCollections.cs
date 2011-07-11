@@ -188,7 +188,7 @@ namespace AW2.Menu.Main
 
         private MainMenuItem GetControlsItem(MenuEngineImpl menuEngine, string name, Func<IControlType> get, Action<IControlType> set)
         {
-            return new MainMenuItem(menuEngine, () => string.Format("{0}\t15{1}", name, get()),
+            return new MainMenuItem(menuEngine, () => string.Format("{0}\t\xf{1}", name, get()),
                 component => menuEngine.Game.ShowDialog(
                     new KeypressOverlayDialogData(menuEngine.Game, "Hit key for " + name,
                         key => set(new KeyControlType(key)))));
@@ -198,20 +198,21 @@ namespace AW2.Menu.Main
         {
             var items = new MainMenuItemCollection("Audio Setup");
             Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => GetSetupItem(menuEngine,
-                () => string.Format("{0} {1:0} %", name, get() * 100),
+                () => string.Format("{0}\t\xf{1:0} %", name, get() * 100),
                 Enumerable.Range(0, 21).Select(x => x * 0.05f),
                 get, set);
             items.Add(getVolumeSetupItem("Music volume",
                 () => menuEngine.Game.Settings.Sound.MusicVolume,
                 volume => menuEngine.Game.Settings.Sound.MusicVolume = volume));
-            items.Add(getVolumeSetupItem("Sound effect volume",
+            items.Add(getVolumeSetupItem("Sound volume",
                 () => menuEngine.Game.Settings.Sound.SoundVolume,
                 volume => menuEngine.Game.Settings.Sound.SoundVolume = volume));
             items.Add(GetSetupItem(menuEngine,
-                () => string.Format("Audio engine (needs restart) {0}", menuEngine.Game.Settings.Sound.AudioEngineType.ToString()),
+                () => string.Format("Audio engine\t\xf{0}", menuEngine.Game.Settings.Sound.AudioEngineType.ToString()),
                 Enum.GetValues(typeof(SoundSettings.EngineType)).Cast<SoundSettings.EngineType>(),
                 () => menuEngine.Game.Settings.Sound.AudioEngineType,
                 audioEngine => menuEngine.Game.Settings.Sound.AudioEngineType = audioEngine));
+            items.Add(new MainMenuItem(menuEngine, () => "Restart to change engine.", component => { }));
             return items;
         }
 
@@ -221,12 +222,12 @@ namespace AW2.Menu.Main
             Func<int> curWidth = () => menuEngine.Game.Settings.Graphics.FullscreenWidth;
             Func<int> curHeight = () => menuEngine.Game.Settings.Graphics.FullscreenHeight;
             items.Add(GetSetupItem(menuEngine,
-                () => string.Format("In-game mode {0}", menuEngine.Game.Settings.Graphics.InGameFullscreen ? "Fullscreen" : "Windowed"),
+                () => string.Format("Fullscreen\t\xc{0}", menuEngine.Game.Settings.Graphics.InGameFullscreen ? "Enabled" : "Disabled"),
                 new[] { false, true },
                 () => menuEngine.Game.Settings.Graphics.InGameFullscreen,
                 inGameFullscreen => menuEngine.Game.Settings.Graphics.InGameFullscreen = inGameFullscreen));
             items.Add(GetSetupItem(menuEngine,
-                () => string.Format("Fullscreen resolution {0}x{1}", curWidth(), curHeight()),
+                () => string.Format("Resolution\t\xc{0}x{1}", curWidth(), curHeight()),
                 GraphicsSettings.GetDisplayModes(),
                 () => Tuple.Create(curWidth(), curHeight()),
                 size =>
@@ -235,7 +236,7 @@ namespace AW2.Menu.Main
                     menuEngine.Game.Settings.Graphics.FullscreenHeight = size.Item2;
                 }));
             items.Add(GetSetupItem(menuEngine,
-                () => string.Format("Vertical sync {0}", menuEngine.Game.Settings.Graphics.IsVerticalSynced ? "Enabled" : "Disabled"),
+                () => string.Format("Vertical sync\t\xc{0}", menuEngine.Game.Settings.Graphics.IsVerticalSynced ? "Enabled" : "Disabled"),
                 new[] { false, true },
                 () => menuEngine.Game.Settings.Graphics.IsVerticalSynced,
                 vsync => menuEngine.Game.Settings.Graphics.IsVerticalSynced = vsync));

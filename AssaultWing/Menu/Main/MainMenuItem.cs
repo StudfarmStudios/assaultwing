@@ -66,8 +66,8 @@ namespace AW2.Menu.Main
                 else
                 {
                     parseIndex = tabIndex + 1;
-                    int enCount = MiscHelper.ParseIntWithGarbage(rawName, parseIndex, out parseIndex);
-                    textStartIndex = parseIndex;
+                    int enCount = rawName[parseIndex];
+                    textStartIndex = parseIndex + 1;
                     textPos = origin + new Vector2(_menuEngine.MenuContent.FontBigEnWidth * enCount, 0);
                 }
             }

@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
+using AW2.Helpers;
 using AW2.Menu.Main;
 using AW2.UI;
-using AW2.Helpers;
 
 namespace AW2.Menu
 {
@@ -17,13 +17,9 @@ namespace AW2.Menu
     public class MainMenuComponent : MenuComponent
     {
         private MainMenuItemCollections _itemCollections;
-        private MainMenuItemCollection _currentItems { get { return _currentItemsStack.Peek(); } } // TODO !!! rename
-        private Stack<MainMenuItemCollection> _currentItemsStack;
-
-        /// <summary>
-        /// Index of the currently active menu item.
-        /// </summary>
-        private int _currentItem = 0;
+        private Stack<Tuple<MainMenuItemCollection, int>> _currentItemsHistory;
+        private MainMenuItemCollection _currentItems;
+        private int _currentItem;
 
         private Control _controlUp, _controlDown, _controlSelect, _controlSelectLeft, _controlBack;
         private TriggeredCallbackCollection _commonCallbacks;
@@ -61,13 +57,14 @@ namespace AW2.Menu
         {
             _itemCollections = new MainMenuItemCollections(menuEngine);
             _pos = new Vector2(0, 698);
-            _currentItemsStack = new Stack<MainMenuItemCollection>();
-           ResetItems();
+            _currentItemsHistory = new Stack<Tuple<MainMenuItemCollection, int>>();
+            ResetItems();
         }
 
         public void SetItems(MainMenuItemCollection items)
         {
-            _currentItemsStack.Push(items);
+            _currentItemsHistory.Push(Tuple.Create(_currentItems, _currentItem));
+            _currentItems = items;
             _currentItem = 0;
         }
 
@@ -90,7 +87,7 @@ namespace AW2.Menu
 
         private void ResetItems()
         {
-            _currentItemsStack.Clear();
+            _currentItemsHistory.Clear();
             SetItems(_itemCollections.StartItems);
         }
 
@@ -114,8 +111,13 @@ namespace AW2.Menu
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectLeft, () => CurrentItem.ActionLeft(this)));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
-                if (_currentItemsStack.Count > 1) _currentItemsStack.Pop();
-                if (_currentItemsStack.Count == 1)
+                if (_currentItemsHistory.Count > 1)
+                {
+                    var old = _currentItemsHistory.Pop();
+                    _currentItems = old.Item1;
+                    _currentItem = old.Item2;
+                }
+                if (_currentItemsHistory.Count == 1)
                 {
                     MenuEngine.Game.CutNetworkConnections();
                     ApplyGraphicsSettings();

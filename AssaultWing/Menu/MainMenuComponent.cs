@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +17,8 @@ namespace AW2.Menu
     public class MainMenuComponent : MenuComponent
     {
         private MainMenuItemCollections _itemCollections;
-        private MainMenuItemCollection _currentItems;
+        private MainMenuItemCollection _currentItems { get { return _currentItemsStack.Peek(); } } // TODO !!! rename
+        private Stack<MainMenuItemCollection> _currentItemsStack;
 
         /// <summary>
         /// Index of the currently active menu item.
@@ -38,7 +40,7 @@ namespace AW2.Menu
                     InitializeControls();
                     InitializeControlCallbacks();
 
-                    SetItems(_itemCollections.StartItems);
+                    ResetItems();
                 }
             }
         }
@@ -59,12 +61,13 @@ namespace AW2.Menu
         {
             _itemCollections = new MainMenuItemCollections(menuEngine);
             _pos = new Vector2(0, 698);
-            SetItems(_itemCollections.StartItems);
+            _currentItemsStack = new Stack<MainMenuItemCollection>();
+           ResetItems();
         }
 
         public void SetItems(MainMenuItemCollection items)
         {
-            _currentItems = items;
+            _currentItemsStack.Push(items);
             _currentItem = 0;
         }
 
@@ -83,6 +86,12 @@ namespace AW2.Menu
             CurrentItem.DrawHighlight(spriteBatch, _pos - view);
             for (int i = 0; i < _currentItems.Count; ++i)
                 _currentItems[i].Draw(spriteBatch, _pos - view);
+        }
+
+        private void ResetItems()
+        {
+            _currentItemsStack.Clear();
+            SetItems(_itemCollections.StartItems);
         }
 
         private void InitializeControlCallbacks()
@@ -105,10 +114,13 @@ namespace AW2.Menu
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectLeft, () => CurrentItem.ActionLeft(this)));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
-                MenuEngine.Game.CutNetworkConnections();
-                ApplyGraphicsSettings();
-                ApplyPlayerControlsSettings();
-                _currentItems = _itemCollections.StartItems;
+                if (_currentItemsStack.Count > 1) _currentItemsStack.Pop();
+                if (_currentItemsStack.Count == 1)
+                {
+                    MenuEngine.Game.CutNetworkConnections();
+                    ApplyGraphicsSettings();
+                    ApplyPlayerControlsSettings();
+                }
             }));
         }
 

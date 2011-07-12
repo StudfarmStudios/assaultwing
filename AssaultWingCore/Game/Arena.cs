@@ -1079,12 +1079,13 @@ namespace AW2.Game
         private OutOfArenaBounds IsOutOfArenaBounds(Gob gob)
         {
             var result = OutOfArenaBounds.None;
+            var tolerance = Game.NetworkMode == NetworkMode.Server ? 1 : 0; // gob pos over the network is low-precision, so some tolerance is needed
 
             // The arena boundary.
-            if (gob.Pos.X < 0) result |= OutOfArenaBounds.Left;
-            if (gob.Pos.Y < 0) result |= OutOfArenaBounds.Bottom;
-            if (gob.Pos.X > Dimensions.X) result |= OutOfArenaBounds.Right;
-            if (gob.Pos.Y > Dimensions.Y) result |= OutOfArenaBounds.Top;
+            if (gob.Pos.X < 0 + tolerance) result |= OutOfArenaBounds.Left;
+            if (gob.Pos.Y < 0 + tolerance) result |= OutOfArenaBounds.Bottom;
+            if (gob.Pos.X > Dimensions.X - tolerance) result |= OutOfArenaBounds.Right;
+            if (gob.Pos.Y > Dimensions.Y - tolerance) result |= OutOfArenaBounds.Top;
 
             // The outer arena boundary.
             if (gob.Pos.X < -ARENA_OUTER_BOUNDARY_THICKNESS) result |= OutOfArenaBounds.OuterLeft;

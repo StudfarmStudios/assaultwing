@@ -54,9 +54,9 @@ namespace AW2.UI
         {
             _commandLineArgs = args;
             InitializeComponent();
-            InitializeGameForm();
             InitializeGraphicsDeviceService(Handle);
             InitializeGame(_commandLineArgs);
+            InitializeGameForm();
             InitializeGameView();
             InitializeRunner();
         }
@@ -210,6 +210,8 @@ namespace AW2.UI
             _logView.GotFocus += (sender, e) => _gameView.Focus();
             _splitContainer.GotFocus += (sender, e) => _gameView.Focus();
             _gameView.KeyPress += (sender, e) => OnKeyPress(e);
+
+            if (_game.CommandLineOptions.DedicatedServer) _splitContainer.Panel1Collapsed = true;
         }
 
         private void InitializeGraphicsDeviceService(IntPtr windowHandle)

@@ -116,6 +116,7 @@ namespace AW2.Menu
                     var old = _currentItemsHistory.Pop();
                     _currentItems = old.Item1;
                     _currentItem = old.Item2;
+                    MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }
                 if (_currentItemsHistory.Count == 1)
                 {

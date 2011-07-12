@@ -97,7 +97,7 @@ namespace AW2.Net.ConnectionUtils
         {
             var pongReceive = BaseConnection.TryDequeueMessage<PingReplyMessage>();
             if (pongReceive == null) return;
-            _pongOkayUntil = AWMathHelper.Max(_pongOkayUntil, NowRealTime + PING_INTERVAL.Multiply(5));
+            _pongOkayUntil = AWMathHelper.Max(_pongOkayUntil, NowRealTime + PING_INTERVAL.Multiply(10));
             var pingTime = now - pongReceive.Timestamp;
             _pingTimes[_nextIndex] = pingTime;
             var pongDelay = pingTime.Divide(2);

@@ -149,9 +149,12 @@ namespace AW2.UI
 #endif
             if (keyCode == Keys.F1)
             {
-                _splitContainer.Panel2Collapsed ^= true;
-                _logView.Select(_logView.Text.Length - 1, 0);
-                _logView.ScrollToCaret();
+                if (!_splitContainer.Panel1Collapsed)
+                {
+                    _splitContainer.Panel2Collapsed ^= true;
+                    _logView.Select(_logView.Text.Length - 1, 0);
+                    _logView.ScrollToCaret();
+                }
             }
             return (keyCode >= Keys.F1 && keyCode <= Keys.F24 && modifiers == 0)
                 || (keyCode == Keys.Space && modifiers == Keys.Alt); // prevent window menu from opening

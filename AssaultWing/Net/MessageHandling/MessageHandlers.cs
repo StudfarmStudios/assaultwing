@@ -156,6 +156,7 @@ namespace AW2.Net.MessageHandling
         {
             var game = AssaultWing.Instance;
             if (game.IsLoadingArena) return;
+            game.ShowEquipMenu();
             game.SelectedArenaName = mess.ArenaToPlay;
             game.MenuEngine.ProgressBar.Start(mess.WallCount);
             game.MenuEngine.ProgressBarAction(

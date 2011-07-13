@@ -203,8 +203,6 @@ namespace AW2.Menu
 
         /// <summary>
         /// Performs an action asynchronously, visualising progress with the progress bar.
-        /// After calling this method, call <c>ProgressBar.SetSubtaskCount(int)</c> with 
-        /// a suitable value.
         /// </summary>
         /// This method is provided as a helpful service for menu components.
         /// <param name="asyncAction">The action to perform asynchronously.</param>

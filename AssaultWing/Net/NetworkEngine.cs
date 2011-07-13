@@ -593,7 +593,7 @@ namespace AW2.Net
         private void HandleClientState()
         {
             if (Game.NetworkMode != NetworkMode.Server) return;
-            var serverIsPlayingArena = Game.DataEngine.Arena != null;
+            var serverIsPlayingArena = Game.DataEngine.Arena != null && Game.LogicEngine.Enabled;
             foreach (var conn in GameClientConnections)
             {
                 var clientIsPlayingArena = conn.ConnectionStatus.IsRunningArena;

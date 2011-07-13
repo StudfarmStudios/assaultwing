@@ -27,7 +27,7 @@ namespace AW2.Core
         private TimeSpan _lastGameSettingsSent;
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
-
+        private bool _clearGameDataWhenEnteringMenus;
 
         // Debug keys, used only #if DEBUG
         private Control _frameStepControl;
@@ -145,6 +145,18 @@ namespace AW2.Core
             EnsureArenaLoadingStopped();
             DataEngine.ClearGameState();
             MenuEngine.Activate();
+            GameState = GameState.Menu;
+        }
+
+        public void ShowEquipMenu()
+        {
+            if (_clearGameDataWhenEnteringMenus)
+            {
+                _clearGameDataWhenEnteringMenus = false;
+                DataEngine.ClearGameState();
+            }
+            MenuEngine.Activate();
+            MenuEngine.ActivateComponent(MenuComponentType.Equip);
             GameState = GameState.Menu;
         }
 
@@ -377,12 +389,15 @@ namespace AW2.Core
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             EnsureArenaLoadingStopped();
-            DataEngine.ClearGameState();
             if (CommandLineOptions.DedicatedServer)
+            {
+                DataEngine.ClearGameState();
                 GameState = GameState.Initializing;
+            }
             else
             {
-                ShowEquipMenu();
+                StopGameplay();
+                _clearGameDataWhenEnteringMenus = true;
                 ShowDialog(new GameOverOverlayDialogData(this));
             }
         }
@@ -518,13 +533,6 @@ namespace AW2.Core
                 case GameState.GameAndMenu: GameState = GameState.Menu; break;
             }
             MenuEngine.DeactivateComponentsExceptMainMenu();
-        }
-
-        private void ShowEquipMenu()
-        {
-            MenuEngine.Activate();
-            MenuEngine.ActivateComponent(MenuComponentType.Equip);
-            GameState = GameState.Menu;
         }
 
         private void ShowEquipMenuWhileKeepingGameRunning()

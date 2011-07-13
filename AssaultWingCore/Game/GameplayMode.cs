@@ -12,17 +12,19 @@ namespace AW2.Game
     /// </summary>
     public class Standing
     {
-        public string Name { get; set; }
-        public Color PlayerColor { get; set; }
-        public int Score { get; set; }
-        public int Kills { get; set; }
-        public int Deaths { get; set; }
-        public int SpectatorID { get; set; }
+        public string Name { get; private set; }
+        public Color PlayerColor { get; private set; }
+        public bool IsRemote { get; private set; }
+        public int Score { get; private set; }
+        public int Kills { get; private set; }
+        public int Deaths { get; private set; }
+        public int SpectatorID { get; private set; }
 
-        public Standing(string name, Color playerColor, int score, int kills, int deaths, int spectatorID)
+        public Standing(string name, Color playerColor, bool isRemote, int score, int kills, int deaths, int spectatorID)
         {
             Name = name;
             PlayerColor = playerColor;
+            IsRemote = isRemote;
             Score = score;
             Kills = kills;
             Deaths = deaths;
@@ -71,8 +73,8 @@ namespace AW2.Game
             return
                 from p in players
                 let score = CalculateScore(p)
-                orderby score descending
-                select new Standing(p.Name, p.PlayerColor, score, p.Kills, p.Deaths, p.ID);
+                orderby score descending, p.Kills descending, p.Name
+                select new Standing(p.Name, p.PlayerColor, p.IsRemote, score, p.Kills, p.Deaths, p.ID);
         }
 
         public bool ArenaFinished(Arena arena, IEnumerable<Player> players)

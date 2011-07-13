@@ -35,6 +35,20 @@ namespace AW2.Helpers
             return result.ToString();
         }
 
+        public static string ToOrdinalString(this int value)
+        {
+            if (value < 0 || value >= 100) throw new ArgumentOutOfRangeException();
+            var unitDigit = value % 10;
+            var tensDigit = value / 10;
+            var suffix =
+                tensDigit == 1 ? "th" :
+                unitDigit == 1 ? "st" :
+                unitDigit == 2 ? "nd" :
+                unitDigit == 3 ? "rd" :
+                "th";
+            return value + suffix;
+        }
+
         /// <summary>
         /// Returns a human-readable, nice string representation of the TimeSpan as a duration.
         /// </summary>

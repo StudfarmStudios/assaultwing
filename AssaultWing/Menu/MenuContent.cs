@@ -10,6 +10,7 @@ namespace AW2.Menu
         public SpriteFont FontBig { get; private set; }
         public float FontBigEnWidth { get; private set; }
         public SpriteFont FontSmall { get; private set; }
+        public float FontSmallEnWidth { get; private set; }
         public Texture2D MainCursor { get; private set; }
         public Texture2D MainBackground { get; private set; }
         public Texture2D MainHighlight { get; private set; }
@@ -50,6 +51,7 @@ namespace AW2.Menu
             FontBig = content.Load<SpriteFont>("MenuFontBig");
             FontBigEnWidth = FontBig.MeasureString("N").X;
             FontSmall = content.Load<SpriteFont>("MenuFontSmall");
+            FontSmallEnWidth = FontSmall.MeasureString("N").X;
             MainCursor = content.Load<Texture2D>("menu_main_cursor");
             MainBackground = content.Load<Texture2D>("menu_main_bg");
             MainHighlight = content.Load<Texture2D>("menu_main_hilite");

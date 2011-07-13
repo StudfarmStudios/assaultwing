@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Graphics;
 using AW2.Helpers;
 
 namespace AW2.Menu.Main
@@ -11,7 +12,7 @@ namespace AW2.Menu.Main
     /// </summary>
     public class MainMenuItem
     {
-        protected MenuEngineImpl _menuEngine;
+        private MenuEngineImpl _menuEngine;
 
         /// <summary>
         /// Index of the menu item in a menu item collection. Set by the menu item collection.
@@ -33,7 +34,7 @@ namespace AW2.Menu.Main
         /// </summary>
         public Action<MainMenuComponent> ActionLeft { get; private set; }
 
-        protected SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
+        private SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
 
         public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action<MainMenuComponent> action)
             : this(menuEngine, getName, action, component => { })
@@ -48,44 +49,26 @@ namespace AW2.Menu.Main
             ActionLeft = actionLeft;
         }
 
-        public virtual void Update() { }
+        public void Update() { }
 
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 origin)
+        public void Draw(SpriteBatch spriteBatch, Vector2 origin)
         {
-            var rawName = Name();
-            int parseIndex = 0;
-            int textStartIndex = 0;
-            var textPos = origin;
-            while (parseIndex < rawName.Length)
-            {
-                var tabIndex = rawName.IndexOf('\t', parseIndex);
-                int textLength = (tabIndex == -1 ? rawName.Length : tabIndex) - textStartIndex;
-                Draw(spriteBatch, textPos, rawName.Substring(textStartIndex, textLength));
-                if (tabIndex == -1)
-                    parseIndex = rawName.Length;
-                else
-                {
-                    parseIndex = tabIndex + 1;
-                    int enCount = rawName[parseIndex];
-                    textStartIndex = parseIndex + 1;
-                    textPos = origin + new Vector2(_menuEngine.MenuContent.FontBigEnWidth * enCount, 0);
-                }
-            }
+            GraphicsEngineImpl.DrawFormattedText(origin, _menuEngine.MenuContent.FontBigEnWidth, Name(), (textPos, text) => Draw(spriteBatch, textPos, text));
         }
 
-        public virtual void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin)
+        public void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin)
         {
             DrawHighlight(spriteBatch, origin, Vector2.Zero);
         }
 
-        protected void Draw(SpriteBatch spriteBatch, Vector2 origin, string text)
+        private void Draw(SpriteBatch spriteBatch, Vector2 origin, string text)
         {
             var highlightToTextDelta = new Vector2(34, 1);
             var pos = GetHighlightPos(origin) + highlightToTextDelta;
             spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, text, pos.Round(), Color.White);
         }
 
-        protected void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta)
+        private void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta)
         {
             var highlightPos = GetHighlightPos(origin);
             var cursorPos = highlightPos + cursorDelta;

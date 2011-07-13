@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
+using AW2.Graphics;
 using AW2.Helpers;
 using AW2.UI;
 
@@ -16,52 +17,80 @@ namespace AW2.Core.OverlayComponents
     {
         private Standing[] _standings;
 
+        private SpriteFont FontHuge { get { return Game.MenuEngine.MenuContent.FontHuge; } }
+        private SpriteFont FontSmall { get { return Game.MenuEngine.MenuContent.FontSmall; } }
+
+        private Standing[] Standings
+        {
+            get
+            {
+                if (_standings == null) _standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Players).ToArray();
+                return _standings;
+            }
+        }
+
         public GameOverOverlayDialogData(AssaultWing game)
             : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { }))
         {
         }
 
-        public override void Update()
-        {
-            base.Update();
-            if (_standings == null) _standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Players).ToArray();
-        }
-
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            var fontHuge = Game.MenuEngine.MenuContent.FontHuge;
-            var fontSmall = Game.MenuEngine.MenuContent.FontSmall;
-            var textCenter = new Vector2(gfx.Viewport.Width / 2, 50); // text line top center
-            var titleText = "Game Over";
-            var titleSize = fontHuge.MeasureString(titleText);
+            var textCenter = new Vector2(gfx.Viewport.Width / 2, 45); // text line top center
+            var titleText = "Arena Standings";
+            var titleSize = FontHuge.MeasureString(titleText);
             var titlePos = textCenter - new Vector2(titleSize.X / 2, 0);
-            spriteBatch.DrawString(fontHuge, titleText, titlePos.Round(), Color.White);
-            textCenter += new Vector2(0, 2 * fontHuge.LineSpacing);
-            textCenter = DrawStandings(spriteBatch, textCenter);
-            textCenter += new Vector2(0, 2 * fontSmall.LineSpacing);
+            spriteBatch.DrawString(FontHuge, titleText, titlePos.Round(), Color.White);
+            AdvanceLine(ref textCenter, FontHuge);
+            AdvanceLine(ref textCenter, FontSmall);
+            DrawStandings(spriteBatch, ref textCenter);
+            AdvanceLine(ref textCenter, FontSmall);
             var infoText = "Press Enter";
-            var infoSize = fontSmall.MeasureString(infoText);
+            var infoSize = FontSmall.MeasureString(infoText);
             var infoPos = textCenter - new Vector2(infoSize.X / 2, 0);
-            spriteBatch.DrawString(fontSmall, infoText, infoPos.Round(), Color.White);
+            spriteBatch.DrawString(FontSmall, infoText, infoPos.Round(), Color.White);
         }
 
-        private Vector2 DrawStandings(SpriteBatch spriteBatch, Vector2 textCenter)
+        private Vector2 DrawStandings(SpriteBatch spriteBatch, ref Vector2 textCenter)
         {
-            var fontSmall = Game.MenuEngine.MenuContent.FontSmall;
-            var textLeftEdge = 100f; // left edge of left-aligned text
+            var enWidth = Game.MenuEngine.MenuContent.FontSmallEnWidth;
+            var textLeftX = 50f;
+            GraphicsEngineImpl.DrawFormattedText(new Vector2(textLeftX, textCenter.Y), enWidth,
+                GetScoreCells("Score", "Kills", "Deaths"),
+                (textPos, text) => spriteBatch.DrawString(FontSmall, text, textPos, Color.White));
+            AdvanceLine(ref textCenter, FontSmall);
+            var allPlayersAreLocal = Standings.All(entry => !entry.IsRemote);
             int line = 0;
-            foreach (var entry in _standings ?? new Standing[0])
+            foreach (var entry in Standings)
             {
                 line++;
-                var column1Pos = new Vector2(textLeftEdge, textCenter.Y);
-                var column2Pos = column1Pos + new Vector2(250, 0);
-                var scoreText = string.Format("{0}  K={1}  D={2}", entry.Score, entry.Kills, entry.Deaths);
-                spriteBatch.DrawString(fontSmall, line + ". " + entry.Name, column1Pos.Round(), Color.White);
-                spriteBatch.DrawString(fontSmall, scoreText, column2Pos.Round(), Color.White);
-                textCenter += new Vector2(0, fontSmall.LineSpacing);
+                var column1Pos = new Vector2(textLeftX, textCenter.Y);
+                var textColor =
+                    allPlayersAreLocal ? entry.PlayerColor
+                    : entry.IsRemote ? entry.PlayerColor
+                    : Color.White;
+                GraphicsEngineImpl.DrawFormattedText(column1Pos, enWidth,
+                    string.Format("{0}\t\x5{1}{2}", line.ToOrdinalString(), entry.Name, GetScoreCells(entry.Score, entry.Kills, entry.Deaths)),
+                    (textPos, text) => spriteBatch.DrawString(FontSmall, text, textPos, textColor));
+                AdvanceLine(ref textCenter, FontSmall);
             }
             return textCenter;
+        }
+
+        private void AdvanceLine(ref Vector2 textPos, SpriteFont font)
+        {
+            textPos += new Vector2(0, font.LineSpacing);
+        }
+
+        private string GetScoreCells(object scoreText, object killsText, object deathsText)
+        {
+            return string.Format("\t\x16{0}\t\x1c{1}\t\x22{2}", scoreText, killsText, deathsText);
+        }
+
+        private Player GetPlayerOrNull(Standing entry)
+        {
+            return Game.DataEngine.Players.FirstOrDefault(plr => plr.ID == entry.SpectatorID);
         }
     }
 }

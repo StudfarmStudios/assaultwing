@@ -173,7 +173,7 @@ namespace AW2.Menu.Equip
                 var player = indexedPlayer.Item1;
                 int playerI = indexedPlayer.Item2;
                 _currentItems[playerI] = EquipMenuItem.Ship;
-                _playerNames[playerI] = new EditableText(player.Name, 16, MenuEngine.Game, PlayerNameKeyPressHandler);
+                _playerNames[playerI] = new EditableText(player.Name, 12, MenuEngine.Game, PlayerNameKeyPressHandler);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, GetShipSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(MenuEngine.Game, player, GetExtraDeviceSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(MenuEngine.Game, player, GetWeapon2SelectorPos(playerI));

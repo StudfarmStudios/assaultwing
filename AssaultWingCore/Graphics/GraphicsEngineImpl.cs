@@ -48,6 +48,32 @@ namespace AW2.Graphics
             GameContent = new GameContent(game);
         }
 
+        /// <summary>
+        /// Draws text with formatting commands. E.g. "\t\xa" resets X coordinate to 10 N widths from the origin.
+        /// </summary>
+        public static void DrawFormattedText(Vector2 origin, float enWidth, string text, Action<Vector2, string> draw)
+        {
+            var rawName = text;
+            int parseIndex = 0;
+            int textStartIndex = 0;
+            var textPos = origin;
+            while (parseIndex < rawName.Length)
+            {
+                var tabIndex = rawName.IndexOf('\t', parseIndex);
+                int textLength = (tabIndex == -1 ? rawName.Length : tabIndex) - textStartIndex;
+                draw(textPos.Round(), rawName.Substring(textStartIndex, textLength));
+                if (tabIndex == -1)
+                    parseIndex = rawName.Length;
+                else
+                {
+                    parseIndex = tabIndex + 1;
+                    int enCount = rawName[parseIndex];
+                    textStartIndex = parseIndex + 1;
+                    textPos = origin + new Vector2(enWidth * enCount, 0);
+                }
+            }
+        }
+
         public override void LoadContent()
         {
             Log.Write("Graphics engine loading graphics content.");

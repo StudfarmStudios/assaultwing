@@ -11,5 +11,10 @@ namespace AW2.Net
             : base(message)
         {
         }
+
+        public NetworkException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 }

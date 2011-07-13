@@ -28,9 +28,17 @@ namespace AW2.Net.MessageHandling
             T message = null;
             while ((message = connection.TryDequeueMessage<T>()) != null)
             {
-                var framesAgo = _networkEngine.GetMessageAge(message, connection);
-                _action(message, framesAgo);
-                if (OneMessageAtATime) break;
+                try
+                {
+                    var framesAgo = _networkEngine.GetMessageAge(message, connection);
+                    _action(message, framesAgo);
+                    if (OneMessageAtATime) break;
+                }
+                catch (System.IO.EndOfStreamException e)
+                {
+                    var errorText = "Error while handling message " + message + " with read buffer " + message.ReadBufferToString();
+                    throw new NetworkException(errorText, e);
+                }
             }
         }
     }

@@ -93,7 +93,8 @@ namespace AW2.Net
                 DataMode = DataModeType.DataSetByWrite;
                 return _writeBytes;
             }
-            set {
+            set
+            {
                 switch (DataMode)
                 {
                     case DataModeType.Uninitialized:
@@ -167,6 +168,11 @@ namespace AW2.Net
         {
             SetDataModeToRead();
             _reader.ReadBytes(byteCount);
+        }
+
+        public string ReadBufferToString()
+        {
+            return AW2.Helpers.MiscHelper.BytesToString(new ArraySegment<byte>(_readBuffer.GetBuffer(), 0, (int)_readBuffer.Length));
         }
 
         private void SetDataModeToRead()

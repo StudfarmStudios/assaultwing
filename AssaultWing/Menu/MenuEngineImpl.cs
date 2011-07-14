@@ -155,7 +155,6 @@ namespace AW2.Menu
         public void Activate()
         {
             ActivateComponent(MenuComponentType.Main);
-            Game.SoundEngine.PlayMusic("menu music", 1);
         }
 
         public void Deactivate()

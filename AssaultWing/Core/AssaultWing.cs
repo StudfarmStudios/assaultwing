@@ -226,7 +226,6 @@ namespace AW2.Core
                 PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
             }
             GameState = GameState.Gameplay;
-            SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
         }
 
         public void InitializePlayers(int count)
@@ -463,6 +462,7 @@ namespace AW2.Core
                 case GameState.Menu:
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
+                    SoundEngine.PlayMusic("menu music", 1);
                     break;
                 default:
                     throw new ApplicationException("Cannot change to unexpected game state " + value);

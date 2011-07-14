@@ -5213,10 +5213,8 @@ cleaning their mess away.</infoText>
     <flightEasiness>Hard</flightEasiness>
   </info>
   <backgroundMusic>
-    <Item type="AW2.Sound.BackgroundMusic">
-      <fileName>jyri_1</fileName>
-      <volume>1</volume>
-    </Item>
+    <fileName>jyri_1</fileName>
+    <volume>1</volume>
   </backgroundMusic>
   <binFilename>Arena_Junk.bin</binFilename>
   <gravity>

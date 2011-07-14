@@ -205,11 +205,8 @@ namespace AW2.Game
         [TypeParameter]
         private ArenaInfo _info;
 
-        /// <summary>
-        /// Tunes to play in the background while playing this arena.
-        /// </summary>
         [TypeParameter]
-        private List<BackgroundMusic> _backgroundMusic;
+        private BackgroundMusic _backgroundMusic;
 
         [TypeParameter]
         private string _binFilename;
@@ -374,10 +371,7 @@ namespace AW2.Game
             }
         }
 
-        /// <summary>
-        /// The bgmusics the arena contains when it is activated.
-        /// </summary>
-        public List<BackgroundMusic> BackgroundMusic { get { return _backgroundMusic; } }
+        public BackgroundMusic BackgroundMusic { get { return _backgroundMusic; } }
 
         public bool IsActive { get { return this == Game.DataEngine.Arena; } }
 
@@ -415,7 +409,6 @@ namespace AW2.Game
             _layers.Add(new ArenaLayer());
             Gobs = new GobCollection(_layers);
             Bin = new ArenaBin();
-            _backgroundMusic = new List<BackgroundMusic>();
             _gravity = new Vector2(0, -30);
             _lighting = new LightingSettings();
         }

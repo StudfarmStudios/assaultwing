@@ -6582,10 +6582,8 @@ intense battles in open spaces</infoText>
     <flightEasiness>Average</flightEasiness>
   </info>
   <backgroundMusic>
-    <Item type="AW2.Sound.BackgroundMusic">
-      <fileName>toikka_1</fileName>
-      <volume>1</volume>
-    </Item>
+    <fileName>toikka_1</fileName>
+    <volume>1</volume>
   </backgroundMusic>
   <binFilename>Arena_Amazonas.bin</binFilename>
   <gravity>

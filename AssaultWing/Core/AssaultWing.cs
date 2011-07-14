@@ -226,7 +226,7 @@ namespace AW2.Core
                 PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
             }
             GameState = GameState.Gameplay;
-            SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
+            SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
         }
 
         public void InitializePlayers(int count)

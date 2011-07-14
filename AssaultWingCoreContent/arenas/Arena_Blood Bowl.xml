@@ -5012,14 +5012,8 @@ this place.</infoText>
     <flightEasiness>Average</flightEasiness>
   </info>
   <backgroundMusic>
-    <Item type="AW2.Sound.BackgroundMusic">
-      <fileName>BG_Amazon</fileName>
-      <volume>0.4</volume>
-    </Item>
-    <Item type="AW2.Sound.BackgroundMusic">
-      <fileName>BG_Dark</fileName>
-      <volume>0.4</volume>
-    </Item>
+    <fileName>BG_Dark</fileName>
+    <volume>0.4</volume>
   </backgroundMusic>
   <binFilename>Arena_Blood Bowl.bin</binFilename>
   <gravity>

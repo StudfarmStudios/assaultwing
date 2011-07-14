@@ -15,13 +15,13 @@ namespace AW2.Sound
     public class AWMusic
     {
         private AWContentManager _content;
-        private string _musicName;
         private SoundEffect _musicTrack;
         private SoundEffectInstance _musicInstance;
         private bool _isDisposed;
 
         public bool IsPlaying { get; private set; }
         public float Volume { get { return MusicInstance.Volume; } set { MusicInstance.Volume = value; } }
+        public string TrackName { get; private set; }
 
         private bool MusicInstanceAlive { get { return _musicInstance != null && !_musicInstance.IsDisposed; } }
         private bool MusicTrackAlive { get { return _musicTrack != null && !_musicTrack.IsDisposed; } }
@@ -46,15 +46,15 @@ namespace AW2.Sound
         {
             get
             {
-                if (!MusicTrackAlive) _musicTrack = _content.Load<SoundEffect>(_musicName);
+                if (!MusicTrackAlive) _musicTrack = _content.Load<SoundEffect>(TrackName);
                 return _musicTrack;
             }
         }
 
-        public AWMusic(AWContentManager content, string musicName)
+        public AWMusic(AWContentManager content, string trackName)
         {
             _content = content;
-            _musicName = musicName;
+            TrackName = trackName;
         }
 
         public void EnsureIsPlaying()

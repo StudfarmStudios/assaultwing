@@ -33,12 +33,7 @@ namespace AW2.Sound
         }
 
         /// <summary>
-        /// Starts playing a random track from a tracklist.
-        /// </summary>
-        public abstract void PlayMusic(IList<BackgroundMusic> musics);
-        
-        /// <summary>
-        /// Starts playing set track from game music playlist
+        /// Starts playing a music track with the given volume, between 0 and 1.
         /// </summary>
         public abstract void PlayMusic(string trackName, float trackVolume);
         

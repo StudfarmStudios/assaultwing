@@ -166,24 +166,18 @@ namespace AW2.Sound
             base.Dispose();
         }
 
-        public override void PlayMusic(IList<BackgroundMusic> musics)
-        {
-            if (!Enabled) return;
-            if (musics.Count > 0)
-            {
-                BackgroundMusic track = musics[RandomHelper.GetRandomInt(musics.Count)];
-                PlayMusic(track.FileName, track.Volume);
-            }
-        }
-
         public override void PlayMusic(string trackName, float trackVolume)
         {
             if (!Enabled) return;
-            StopMusic();
+            var changeTrack = _music == null || _music.TrackName != trackName;
+            if (changeTrack) StopMusic();
             RelativeMusicVolume = trackVolume;
             InternalMusicVolume = 1;
-            _music = new AWMusic(Game.Content, trackName) { Volume = ActualMusicVolume };
-            _music.EnsureIsPlaying();
+            if (changeTrack)
+            {
+                _music = new AWMusic(Game.Content, trackName) { Volume = ActualMusicVolume };
+                _music.EnsureIsPlaying();
+            }
         }
 
         public override void StopMusic()

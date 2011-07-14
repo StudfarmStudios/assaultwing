@@ -30,7 +30,7 @@ namespace AW2.Core.OverlayComponents
         }
 
         public GameOverOverlayDialogData(AssaultWing game)
-            : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowEquipMenu))
+            : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { if (game.GameState == GameState.GameplayStopped) game.ShowEquipMenu(); }))
         {
         }
 

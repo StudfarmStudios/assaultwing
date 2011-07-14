@@ -411,6 +411,7 @@ namespace AW2.Game
             Bin = new ArenaBin();
             _gravity = new Vector2(0, -30);
             _lighting = new LightingSettings();
+            _backgroundMusic = new BackgroundMusic();
         }
 
         #region Public methods

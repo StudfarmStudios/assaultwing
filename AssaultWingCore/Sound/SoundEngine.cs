@@ -41,12 +41,7 @@ namespace AW2.Sound
         /// Stops music playback immediately.
         /// </summary>
         public abstract void StopMusic();
-        
-        /// <summary>
-        /// Stops music playback with a fadeout.
-        /// </summary>
-        public abstract void StopMusic(TimeSpan fadeoutTime);
-        
+
         /// <summary>
         /// Creates, starts and returns a sound.
         /// </summary>

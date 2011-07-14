@@ -159,7 +159,6 @@ namespace AW2.Menu
 
         public void Deactivate()
         {
-            Game.SoundEngine.StopMusic(TimeSpan.FromSeconds(2));
             _components[(int)_activeComponent].Active = false;
         }
 

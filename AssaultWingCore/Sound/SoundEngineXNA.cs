@@ -45,7 +45,6 @@ namespace AW2.Sound
         private object _lock = new object();
         private AudioListener _listener = new AudioListener();
         private AWMusic _music;
-        private Action _volumeFadeAction;
 
         public SoundEngineXNA(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
@@ -107,7 +106,6 @@ namespace AW2.Sound
         {
             lock (_lock)
             {
-                if (_volumeFadeAction != null) _volumeFadeAction();
                 if (_music != null) _music.Volume = ActualMusicVolume;
 
                 // Remove expired instances
@@ -185,21 +183,6 @@ namespace AW2.Sound
             if (!Enabled) return;
             if (_music == null) return;
             _music.EnsureIsStopped();
-            _volumeFadeAction = null;
-        }
-
-        public override void StopMusic(TimeSpan fadeoutTime)
-        {
-            if (!Enabled) return;
-            if (_music == null || !_music.IsPlaying) return;
-            var now = Game.GameTime.TotalRealTime;
-            float fadeoutSeconds = (float)fadeoutTime.TotalSeconds;
-            _volumeFadeAction = () =>
-            {
-                float volume = MathHelper.Clamp(1 - now.SecondsAgoRealTime() / fadeoutSeconds, 0, 1);
-                InternalMusicVolume = volume;
-                if (volume == 0) StopMusic();
-            };
         }
 
         private SoundInstance CreateSoundInternal(string soundName, Gob parentGob)

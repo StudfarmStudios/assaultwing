@@ -446,6 +446,7 @@ namespace AW2.Core
                     {
                         GraphicsEngine.Visible = true;
                         if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
+                        SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
                     }
                     break;
                 case GameState.GameplayStopped:
@@ -458,6 +459,7 @@ namespace AW2.Core
                     PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
+                    SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
                     break;
                 case GameState.Menu:
                     MenuEngine.Enabled = true;

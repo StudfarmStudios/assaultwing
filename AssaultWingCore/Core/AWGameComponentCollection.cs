@@ -2,17 +2,23 @@
 
 namespace AW2.Core
 {
-    public class AWGameComponentCollection : IEnumerable<AWGameComponent>
+    public class AWGameComponentCollection : IEnumerable<AWGameComponentCollection.Item>
     {
-        private List<AWGameComponent> _components = new List<AWGameComponent>();
+        public class Item
+        {
+            public AWGameComponent Component;
+            public bool LoadContentCalled;
+        }
+
+        private List<Item> _components = new List<Item>();
 
         public void Add(AWGameComponent component)
         {
-            _components.Add(component);
-            _components.Sort((a, b) => a.UpdateOrder.CompareTo(b.UpdateOrder));
+            _components.Add(new Item { Component = component });
+            _components.Sort((a, b) => a.Component.UpdateOrder.CompareTo(b.Component.UpdateOrder));
         }
 
-        public IEnumerator<AWGameComponent> GetEnumerator()
+        public IEnumerator<Item> GetEnumerator()
         {
             return _components.GetEnumerator();
         }

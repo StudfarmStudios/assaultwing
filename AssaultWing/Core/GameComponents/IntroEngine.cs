@@ -44,7 +44,6 @@ namespace AW2.Core.GameComponents
         {
             base.Initialize();
             _skipControl = new KeyboardKey(Microsoft.Xna.Framework.Input.Keys.Escape);
-            _introVideo = new AWVideo(Game.Content.Load<Video>("aw_intro"), Game.Settings.Sound.SoundVolume);
         }
 
         public override void LoadContent()
@@ -52,6 +51,7 @@ namespace AW2.Core.GameComponents
             Game.GraphicsDeviceService.CheckThread();
             base.LoadContent();
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
+            _introVideo = new AWVideo(Game.Content.Load<Video>("aw_intro"), Game.Settings.Sound.SoundVolume);
         }
 
         public override void UnloadContent()
@@ -61,11 +61,6 @@ namespace AW2.Core.GameComponents
             {
                 _spriteBatch.Dispose();
                 _spriteBatch = null;
-            }
-            if (_introVideo != null)
-            {
-                _introVideo.Dispose();
-                _introVideo = null;
             }
             base.UnloadContent();
         }
@@ -78,7 +73,7 @@ namespace AW2.Core.GameComponents
 
         public override void Update()
         {
-            if (_skipControl.Pulse || _introVideo.IsFinished) EndIntro();
+            if (_skipControl.Pulse || (_introVideo != null && _introVideo.IsFinished)) EndIntro();
         }
 
         public override void Draw()

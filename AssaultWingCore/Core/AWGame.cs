@@ -33,40 +33,27 @@ namespace AW2.Core
 
         public void Dispose()
         {
-            foreach (var component in Components) component.Dispose();
+            foreach (var item in Components) item.Component.Dispose();
         }
 
-        /// <summary>
-        /// Called after the Game and GraphicsDevice are created, but before LoadContent.
-        /// </summary>
         public virtual void Initialize()
         {
             Content = new AWContentManager(Services);
-            foreach (var component in Components)
+            foreach (var item in Components)
             {
-                Log.Write("Initializing " + component.GetType().Name);
-                component.Initialize();
+                Log.Write("Initializing " + item.Component.GetType().Name);
+                item.Component.Initialize();
             }
         }
 
         /// <summary>
-        /// Called when unmanaged content is to be loaded such as after graphics device reset.
-        /// </summary>
-        public virtual void LoadContent()
-        {
-            GraphicsDeviceService.CheckThread();
-            foreach (var component in Components) component.LoadContent();
-        }
-
-        /// <summary>
-        /// Called when unmanaged content is to be disposed such as before graphics device reset.
-        /// It is very important to dispose all disposable graphics content here. Failure to do so
-        /// may cause unexpected exceptions at graphics device reset.
+        /// Called when unmanaged content is to be disposed such as at shutdown.
         /// </summary>
         public virtual void UnloadContent()
         {
             GraphicsDeviceService.CheckThread();
-            foreach (var component in Components) component.UnloadContent();
+            foreach (var item in Components) item.Component.UnloadContent();
+            Content.Unload();
         }
 
         /// <summary>
@@ -74,7 +61,6 @@ namespace AW2.Core
         /// </summary>
         public virtual void BeginRun()
         {
-            foreach (var component in Components) component.LoadContent();
         }
 
         /// <summary>
@@ -82,8 +68,8 @@ namespace AW2.Core
         /// </summary>
         public virtual void Update(AWGameTime gameTime)
         {
-            foreach (var component in Components)
-                if (component.Enabled) component.Update();
+            foreach (var item in Components)
+                if (item.Component.Enabled) item.Component.Update();
         }
 
         /// <summary>
@@ -92,8 +78,16 @@ namespace AW2.Core
         public virtual void Draw()
         {
             GraphicsDeviceService.CheckThread();
-            foreach (var component in Components)
-                if (component.Visible) component.Draw();
+            foreach (var item in Components)
+                if (item.Component.Visible)
+                {
+                    if (!item.LoadContentCalled)
+                    {
+                        item.Component.LoadContent();
+                        item.LoadContentCalled = true;
+                    }
+                    item.Component.Draw();
+                }
         }
 
         /// <summary>

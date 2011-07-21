@@ -415,7 +415,7 @@ namespace AW2.Core
 
         private void ApplyInGameGraphicsSettings()
         {
-            if (Window == null) return;
+            if (Window == null || CommandLineOptions.DedicatedServer) return;
             if (Settings.Graphics.IsVerticalSynced)
                 Window.EnableVerticalSync();
             else

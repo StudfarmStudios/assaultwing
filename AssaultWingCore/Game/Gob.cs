@@ -240,15 +240,11 @@ namespace AW2.Game
 
         #endregion Fields for gobs with thrusters
 
-        #region Fields for collisions
-
         /// <summary>
         /// Collision primitives, translated according to the gob's location.
         /// </summary>
         [TypeParameter]
         protected CollisionArea[] _collisionAreas;
-
-        #endregion Fields for collisions
 
         #region Fields for damage
 
@@ -817,7 +813,6 @@ namespace AW2.Game
             else if (ID < 0)
                 g_unusedIrrelevantIDs.Enqueue(ID);
         }
-
         public virtual void Draw(Matrix view, Matrix projection)
         {
             float bleachFactor = GetBleach();
@@ -1088,6 +1083,7 @@ namespace AW2.Game
                     {
                         gob.Leader = this;
                         gob.LeaderBone = boneIndex.Item2;
+                        if (!_exhaustEffectsEnabled) gob.Emitter.Pause();
                         Arena.Gobs.Add(gob);
                         exhaustBoneIList.Add(boneIndex.Item2);
                         exhaustEngineList.Add(gob);

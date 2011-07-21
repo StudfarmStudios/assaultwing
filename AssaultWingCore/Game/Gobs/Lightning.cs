@@ -32,7 +32,6 @@ namespace AW2.Game.Gobs
         private static readonly VertexPositionTexture ZERO_VERTEX = new VertexPositionTexture(Vector3.Zero, Vector2.Zero);
         private static readonly VertexPositionTexture[] EMPTY_MESH = new[] { ZERO_VERTEX, ZERO_VERTEX, ZERO_VERTEX };
         private Texture2D _texture;
-        private VertexPositionTexture[] _vertexData;
 
         private bool _damageDealt;
 
@@ -131,14 +130,12 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _vertexData = CreateMesh();
             _damageDealt = false;
         }
 
         public override void Update()
         {
             base.Update();
-            _vertexData = CreateMesh();
             if (!_damageDealt)
             {
                 var target = Target.GetValue();
@@ -159,10 +156,11 @@ namespace AW2.Game.Gobs
             effect.View = view;
             effect.Alpha = Alpha;
             effect.Texture = _texture;
+            var vertexData = CreateMesh();
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, _vertexData.Length - 2);
+                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vertexData, 0, vertexData.Length - 2);
             }
         }
 

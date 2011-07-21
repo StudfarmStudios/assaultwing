@@ -88,7 +88,6 @@ namespace AW2.Game.Gobs
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
             Vector2 backgroundPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
-
             float finalScale = _scaleCurve.Evaluate(AgeInGameSeconds) * scale;
             Vector2 origin = new Vector2(_iconBackground.Width, _iconBackground.Height) / 2;
             Vector2 iconPos = backgroundPos + new Vector2(-origin.X + 6, -_icon.Height / 2 - 1) * finalScale;

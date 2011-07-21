@@ -499,17 +499,14 @@ namespace AW2.Game.Gobs
 
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-            var screenPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
-
             // Draw player name
-            if (Owner != null && Owner.IsRemote)
-            {
-                var playerNameSize = playerNameFont.MeasureString(Owner.Name);
-                var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
-                var nameAlpha = (IsHiding ? Alpha : 1) * 0.8f;
-                var nameColor = Color.Multiply(Owner.PlayerColor, nameAlpha);
-                spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
-            }
+            if (Owner == null || !Owner.IsRemote) return;
+            var screenPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
+            var playerNameSize = playerNameFont.MeasureString(Owner.Name);
+            var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
+            var nameAlpha = (IsHiding ? Alpha : 1) * 0.8f;
+            var nameColor = Color.Multiply(Owner.PlayerColor, nameAlpha);
+            spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
         }
 
         public override void LoadContent()

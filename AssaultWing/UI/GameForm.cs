@@ -54,8 +54,7 @@ namespace AW2.UI
         {
             _commandLineArgs = args;
             InitializeComponent();
-            InitializeGraphicsDeviceService(Handle);
-            InitializeGame(_commandLineArgs);
+            InitializeGame(Handle, _commandLineArgs);
             InitializeGameForm();
             InitializeGameView();
             InitializeRunner();
@@ -217,14 +216,11 @@ namespace AW2.UI
             if (_game.CommandLineOptions.DedicatedServer) _splitContainer.Panel1Collapsed = true;
         }
 
-        private void InitializeGraphicsDeviceService(IntPtr windowHandle)
+        private void InitializeGame(IntPtr windowHandle, string[] args)
         {
-            _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
-        }
-
-        private void InitializeGame(string[] args)
-        {
-            _game = new AssaultWing(_graphicsDeviceService, new CommandLineOptions(args));
+            var commandLineOptions = new CommandLineOptions(args);
+            _graphicsDeviceService = new GraphicsDeviceService(windowHandle, useReferenceDevice: commandLineOptions.DedicatedServer);
+            _game = new AssaultWing(_graphicsDeviceService, commandLineOptions);
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(
                 getTitle: () => Text,

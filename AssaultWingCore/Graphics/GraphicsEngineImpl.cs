@@ -78,6 +78,7 @@ namespace AW2.Graphics
         {
             Log.Write("Graphics engine loading graphics content.");
             Game.GraphicsDeviceService.CheckThread();
+            Game.Content.LoadAllGraphicsContent();
             var data = Game.DataEngine;
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             GameContent.LoadContent();

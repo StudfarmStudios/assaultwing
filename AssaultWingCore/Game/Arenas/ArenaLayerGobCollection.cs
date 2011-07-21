@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AW2.Helpers.Collections;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Arenas
@@ -9,9 +10,24 @@ namespace AW2.Game.Arenas
     /// A collection of gobs in an arena layer.
     /// </summary>
     [SerializedType(typeof(List<Gob>))]
-    public class ArenaLayerGobCollection : IList<Gob>
+    public class ArenaLayerGobCollection : IList<Gob>, IObservableCollection<object, Gob>
     {
-        IList<Gob> gobs = new List<Gob>();
+        /// <summary>
+        /// Number of simultaneous iterations over the collection.
+        /// </summary>
+        private int _isEnumerating;
+
+        /// <summary>
+        /// Gobs that were scheduled for removal while enumeration was in progress.
+        /// </summary>
+        private List<Gob> _removedGobs = new List<Gob>();
+
+        /// <summary>
+        /// Gobs that were scheduled for addition while enumeration was in progress.
+        /// </summary>
+        private List<Gob> _addedGobs = new List<Gob>();
+
+        private IList<Gob> gobs = new List<Gob>();
 
         /// <summary>
         /// Gobs in the arena layer, sorted in 2D draw order from back to front,
@@ -19,7 +35,7 @@ namespace AW2.Game.Arenas
         /// </summary>
         /// 2D draw order is alphabetic order primarily by decreasing <c>Gob.LayerDepth2D</c>
         /// and secondarily by natural order of <c>Gob.DrawMode2D</c>.
-        IList<Gob> gobsSort2D = new List<Gob>();
+        private IList<Gob> gobsSort2D = new List<Gob>();
 
         /// <summary>
         /// Explicit conversion to <c>IList&lt;Gob&gt;</c>.
@@ -56,9 +72,14 @@ namespace AW2.Game.Arenas
         /// <param name="condition">The condition by which to remove items.</param>
         public void Remove(Predicate<Gob> condition)
         {
-            for (int index = gobs.Count - 1; index >= 0; --index)
-                if (condition(gobs[index]))
-                    RemoveAt(index);
+            if (_isEnumerating > 0)
+                _removedGobs.AddRange(gobs.Where(new Func<Gob, bool>(condition)));
+            else
+            {
+                for (int index = gobs.Count - 1; index >= 0; --index)
+                    if (condition(gobs[index]))
+                        RemoveAt(index);
+            }
         }
 
         #region IList<Gob> Members
@@ -110,10 +131,16 @@ namespace AW2.Game.Arenas
         /// <summary>
         /// Adds an item to the collection.
         /// </summary>
-        public void Add(Gob item)
+        public void Add(Gob gob)
         {
-            gobs.Add(item);
-            InsertTo2DOrder(item);
+            if (_isEnumerating > 0)
+                _addedGobs.Add(gob);
+            else
+            {
+                gobs.Add(gob);
+                InsertTo2DOrder(gob);
+                if (Added != null) Added(gob);
+            }
         }
 
         /// <summary>
@@ -121,8 +148,13 @@ namespace AW2.Game.Arenas
         /// </summary>
         public void Clear()
         {
-            gobs.Clear();
-            gobsSort2D.Clear();
+            if (_isEnumerating > 0)
+                _removedGobs.AddRange(gobs);
+            else
+            {
+                gobs.Clear();
+                gobsSort2D.Clear();
+            }
         }
 
         /// <summary>
@@ -154,11 +186,23 @@ namespace AW2.Game.Arenas
         /// <summary>
         /// Removes the first occurrence of a specific element from the collection.
         /// </summary>
-        public bool Remove(Gob item)
+        public bool Remove(Gob gob)
         {
-            bool success = gobs.Remove(item);
-            if (success) gobsSort2D.Remove(item);
-            return success;
+            if (_isEnumerating > 0)
+            {
+                _removedGobs.Add(gob);
+                return gobs.Contains(gob);
+            }
+            else
+            {
+                bool success = gobs.Remove(gob);
+                if (success)
+                {
+                    gobsSort2D.Remove(gob);
+                    if (Removed != null) Removed(gob);
+                }
+                return success;
+            }
         }
 
         #endregion
@@ -170,7 +214,25 @@ namespace AW2.Game.Arenas
         /// </summary>
         public IEnumerator<Gob> GetEnumerator()
         {
-            return gobs.GetEnumerator();
+            try
+            {
+                ++_isEnumerating;
+                foreach (var gob in gobs)
+                    yield return gob;
+            }
+            finally
+            {
+                --_isEnumerating;
+                if (_isEnumerating == 0 && (_addedGobs.Any() || _removedGobs.Any()))
+                {
+                    var oldAddedGobs = _addedGobs;
+                    var oldRemovedGobs = _removedGobs;
+                    _addedGobs = new List<Gob>();
+                    _removedGobs = new List<Gob>();
+                    foreach (var gob in oldAddedGobs) Add(gob);
+                    foreach (var gob in oldRemovedGobs) Remove(gob);
+                }
+            }
         }
 
         #endregion
@@ -183,6 +245,23 @@ namespace AW2.Game.Arenas
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return ((System.Collections.IEnumerable)gobs).GetEnumerator();
+        }
+
+        #endregion
+
+        #region IObservableCollection<object, Gob> Members
+
+        public event Action<Gob> Added;
+        public event Action<Gob> Removed;
+        public event Action<IEnumerable<Gob>> Cleared
+        {
+            add { throw new NotImplementedException("ArenaLayerGobCollection.Cleared event is not in use"); }
+            remove { throw new NotImplementedException("ArenaLayerGobCollection.Cleared event is not in use"); }
+        }
+        public event Func<object, Gob> NotFound
+        {
+            add { throw new NotImplementedException("ArenaLayerGobCollection.NotFound event is not in use"); }
+            remove { throw new NotImplementedException("ArenaLayerGobCollection.NotFound event is not in use"); }
         }
 
         #endregion

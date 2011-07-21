@@ -14,29 +14,14 @@ namespace AW2.Game.Arenas
     public class GobCollection : IEnumerable<Gob>, IObservableCollection<object, Gob>
     {
         /// <summary>
-        /// Number of simultaneous iterations over the collection.
-        /// </summary>
-        private int _isEnumerating;
-
-        /// <summary>
-        /// Gobs that were scheduled for removal while enumeration was in progress.
-        /// </summary>
-        private List<Gob> _removedGobs = new List<Gob>();
-
-        /// <summary>
-        /// Gobs that were scheduled for addition while enumeration was in progress.
-        /// </summary>
-        private List<Gob> _addedGobs = new List<Gob>();
-
-        /// <summary>
         /// The arena layers that contain the gobs.
         /// </summary>
-        private IList<ArenaLayer> ArenaLayers { get; set; }
+        private IList<ArenaLayer> _arenaLayers;
 
         /// <summary>
         /// The arena layer where the gameplay takes place.
         /// </summary>
-        /// <seealso cref="ArenaLayers"/>
+        /// <seealso cref="_arenaLayers"/>
         public ArenaLayer GameplayLayer { get; set; }
 
         /// <summary>
@@ -50,8 +35,8 @@ namespace AW2.Game.Arenas
         /// </summary>
         public GobCollection(IList<ArenaLayer> arenaLayers)
         {
-            if (arenaLayers == null) throw new ArgumentNullException("Initialised gob collection with null arena layers");
-            ArenaLayers = arenaLayers;
+            if (arenaLayers == null) throw new ArgumentNullException();
+            _arenaLayers = arenaLayers;
         }
 
         /// <summary>
@@ -60,11 +45,7 @@ namespace AW2.Game.Arenas
         /// <param name="condition">The condition by which to remove items.</param>
         public void Remove(Predicate<Gob> condition)
         {
-            foreach (var layer in ArenaLayers)
-                if (_isEnumerating > 0)
-                    _removedGobs.AddRange(layer.Gobs.Where(new Func<Gob, bool>(condition)));
-                else
-                    layer.Gobs.Remove(condition);
+            foreach (var layer in _arenaLayers) layer.Gobs.Remove(condition);
         }
 
         /// <summary>
@@ -77,39 +58,37 @@ namespace AW2.Game.Arenas
         {
             if (gob.Layer == null) return false;
             if (Removing != null && !Removing(gob) && !force) return false;
-            if (_isEnumerating > 0)
-            {
-                _removedGobs.Add(gob);
-                return gob.Layer.Gobs.Contains(gob);
-            }
-            else
-            {
-                bool success = gob.Layer.Gobs.Remove(gob);
-                if (success && Removed != null) Removed(gob);
-                return success;
-            }
+            return gob.Layer.Gobs.Remove(gob);
         }
 
         /// <summary>
         /// Called before a single item is removed from the collection.
-        /// The the event returns <c>false</c> the removal will not proceed
+        /// If the event returns <c>false</c> the removal will not proceed
         /// and the item will stay in the collection.
         /// </summary>
         public event Predicate<Gob> Removing;
 
         #region IObservableCollection<object, Gob> Members
 
-        public event Action<Gob> Added;
-        public event Action<Gob> Removed;
+        public event Action<Gob> Added
+        {
+            add { foreach (var layer in _arenaLayers) layer.Gobs.Added += value; }
+            remove { foreach (var layer in _arenaLayers) layer.Gobs.Added -= value; }
+        }
+        public event Action<Gob> Removed
+        {
+            add { foreach (var layer in _arenaLayers) layer.Gobs.Removed += value; }
+            remove { foreach (var layer in _arenaLayers) layer.Gobs.Removed -= value; }
+        }
         public event Action<IEnumerable<Gob>> Cleared
         {
-            add { throw new NotImplementedException("GobCollection.Cleared event is not in use"); }
-            remove { throw new NotImplementedException("GobCollection.Cleared event is not in use"); }
+            add { foreach (var layer in _arenaLayers) layer.Gobs.Cleared += value; }
+            remove { foreach (var layer in _arenaLayers) layer.Gobs.Cleared -= value; }
         }
         public event Func<object, Gob> NotFound
         {
-            add { throw new NotImplementedException("GobCollection.NotFound event is not in use"); }
-            remove { throw new NotImplementedException("GobCollection.NotFound event is not in use"); }
+            add { foreach (var layer in _arenaLayers) layer.Gobs.NotFound += value; }
+            remove { foreach (var layer in _arenaLayers) layer.Gobs.NotFound -= value; }
         }
 
         #endregion
@@ -125,13 +104,7 @@ namespace AW2.Game.Arenas
                 gob.Layer = gob.LayerPreference == Gob.LayerPreferenceType.Front
                     ? GameplayLayer
                     : GameplayBackLayer;
-            if (_isEnumerating > 0)
-                _addedGobs.Add(gob);
-            else
-            {
-                gob.Layer.Gobs.Add(gob);
-                if (Added != null) Added(gob);
-            }
+            gob.Layer.Gobs.Add(gob);
         }
 
         /// <summary>
@@ -139,11 +112,7 @@ namespace AW2.Game.Arenas
         /// </summary>
         public void Clear()
         {
-            foreach (var layer in ArenaLayers)
-                if (_isEnumerating > 0)
-                    _removedGobs.AddRange(layer.Gobs);
-                else
-                    layer.Gobs.Clear();
+            foreach (var layer in _arenaLayers) layer.Gobs.Clear();
         }
 
         /// <summary>
@@ -159,7 +128,7 @@ namespace AW2.Game.Arenas
         /// </summary>
         public void CopyTo(Gob[] array, int arrayIndex)
         {
-            foreach (var layer in ArenaLayers)
+            foreach (var layer in _arenaLayers)
             {
                 layer.Gobs.CopyTo(array, arrayIndex);
                 arrayIndex += layer.Gobs.Count;
@@ -169,7 +138,7 @@ namespace AW2.Game.Arenas
         /// <summary>
         /// The number of elements contained in the collection.
         /// </summary>
-        public int Count { get { return ArenaLayers.Sum(layer => layer.Gobs.Count); } }
+        public int Count { get { return _arenaLayers.Sum(layer => layer.Gobs.Count); } }
 
         /// <summary>
         /// Is the collection read-only.
@@ -193,26 +162,9 @@ namespace AW2.Game.Arenas
         /// </summary>
         public IEnumerator<Gob> GetEnumerator()
         {
-            try
-            {
-                ++_isEnumerating;
-                foreach (var layer in ArenaLayers)
-                    foreach (var gob in layer.Gobs)
-                        yield return gob;
-            }
-            finally
-            {
-                --_isEnumerating;
-                if (_isEnumerating == 0)
-                {
-                    var oldAddedGobs = _addedGobs;
-                    var oldRemovedGobs = _removedGobs;
-                    _addedGobs = new List<Gob>();
-                    _removedGobs = new List<Gob>();
-                    foreach (var gob in oldAddedGobs) Add(gob);
-                    foreach (var gob in oldRemovedGobs) Remove(gob, true);
-                }
-            }
+            foreach (var layer in _arenaLayers)
+                foreach (var gob in layer.Gobs)
+                    yield return gob;
         }
 
         #endregion

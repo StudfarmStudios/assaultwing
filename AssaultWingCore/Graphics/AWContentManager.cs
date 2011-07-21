@@ -50,13 +50,31 @@ namespace AW2.Graphics
         {
             foreach (var filename in Directory.GetFiles(RootDirectory, "*.xnb", SearchOption.AllDirectories))
             {
-                // We skip texture names that are part of 3D models.
-                // Note: This works only if texture asset names never end in "_0".
-                // The foolproof way to do the skipping is to skip the asset names
-                // mentioned inside other asset files.
-                var match = Regex.Match(filename, @"^.*[\\/]([^\\/]*?)(_0)?\.xnb$", RegexOptions.IgnoreCase);
-                if (match.Groups[2].Length == 0) yield return match.Groups[1].Value;
+                // Skip texture names that are part of 3D models.
+                if (!IsModelTextureFilename(filename)) yield return Path.GetFileNameWithoutExtension(filename);
             }
+        }
+
+        public void LoadAllGraphicsContent()
+        {
+            foreach (var filename in Directory.GetFiles(Paths.MODELS, "*.xnb"))
+            {
+                if (!IsModelTextureFilename(filename))
+                    Load<Model>(Path.GetFileNameWithoutExtension(filename));
+            }
+            foreach (var filename in Directory.GetFiles(Paths.TEXTURES, "*.xnb"))
+                Load<Texture2D>(Path.GetFileNameWithoutExtension(filename));
+            foreach (var filename in Directory.GetFiles(Paths.FONTS, "*.xnb"))
+                Load<SpriteFont>(Path.GetFileNameWithoutExtension(filename));
+        }
+
+        private bool IsModelTextureFilename(string filename)
+        {
+            // Note: This works only if texture asset names never end in "_0".
+            // The foolproof way to do the skipping is to skip the asset names
+            // mentioned inside other asset files.
+            var match = Regex.Match(filename, @"^.*[\\/][^\\/]*?(_0)?\.xnb$", RegexOptions.IgnoreCase);
+            return match.Groups[1].Length != 0;
         }
 
         private static string GetAssetFullName<T>(string assetName)

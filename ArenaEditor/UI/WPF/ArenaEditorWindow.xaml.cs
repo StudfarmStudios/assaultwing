@@ -287,7 +287,7 @@ namespace AW2.UI.WPF
         private void InitializeGraphicsDeviceService()
         {
             var windowHandle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-            _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
+            _graphicsDeviceService = new GraphicsDeviceService(windowHandle, false);
         }
 
         private void InitializeGame(string[] args)

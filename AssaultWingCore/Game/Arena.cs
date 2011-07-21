@@ -427,15 +427,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Loads graphical content required by the arena.
-        /// </summary>
-        public void LoadContent()
-        {
-            Game.GraphicsDeviceService.CheckThread();
-            foreach (var gob in Gobs) gob.LoadContent();
-        }
-
-        /// <summary>
         /// Unloads graphical content required by the arena.
         /// </summary>
         public void UnloadContent()
@@ -627,6 +618,51 @@ namespace AW2.Game
             _collisionEvents.Clear();
         }
 
+        private bool IsRegistered(CollisionArea area)
+        {
+            return area.CollisionData != null;
+        }
+
+        /// <summary>
+        /// Registers a collision area for collisions.
+        /// </summary>
+        private void Register(CollisionArea area)
+        {
+            if (IsRegistered(area)) throw new InvalidOperationException("Collision area is already registered");
+            int bitIndex = AWMathHelper.LogTwo((int)area.Type);
+            area.CollisionData = _collisionAreas[bitIndex].Add(area, area.Area.BoundingBox);
+            if (area.CollidesAgainst != CollisionAreaType.None)
+                _collisionAreaMayCollide[bitIndex] = true;
+        }
+
+        /// <summary>
+        /// Removes a previously registered collision area from having collisions.
+        /// </summary>
+        public void Unregister(CollisionArea area)
+        {
+            SpatialGridElement<CollisionArea> element = (SpatialGridElement<CollisionArea>)area.CollisionData;
+            if (element == null) return;
+            _collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Remove(element);
+            area.CollisionData = null;
+        }
+
+        /// <summary>
+        /// Registers a gob for collisions.
+        /// </summary>
+        private void Register(Gob gob)
+        {
+            foreach (var area in gob.CollisionAreas) Register(area);
+        }
+
+        /// <summary>
+        /// Removes a previously registered gob from having collisions.
+        /// </summary>
+        private void Unregister(Gob gob)
+        {
+            if (gob.CollisionAreas == null) return;
+            foreach (var area in gob.CollisionAreas) Unregister(area);
+        }
+
         /// <summary>
         /// Prepares a gob for a game session.
         /// </summary>
@@ -645,40 +681,6 @@ namespace AW2.Game
                     gob.ClearCollisionAreas();
                 }
             }
-        }
-
-        /// <summary>
-        /// Registers a gob for collisions.
-        /// </summary>
-        private void Register(Gob gob)
-        {
-            foreach (CollisionArea area in gob.CollisionAreas)
-            {
-                Register(area);
-                int bitIndex = AWMathHelper.LogTwo((int)area.Type);
-                if (area.CollidesAgainst != CollisionAreaType.None)
-                    _collisionAreaMayCollide[bitIndex] = true;
-            }
-        }
-
-        /// <summary>
-        /// Removes a previously registered gob from having collisions.
-        /// </summary>
-        private void Unregister(Gob gob)
-        {
-            foreach (CollisionArea area in gob.CollisionAreas)
-                Unregister(area);
-        }
-
-        /// <summary>
-        /// Removes a previously registered collision area from having collisions.
-        /// </summary>
-        public void Unregister(CollisionArea area)
-        {
-            SpatialGridElement<CollisionArea> element = (SpatialGridElement<CollisionArea>)area.CollisionData;
-            if (element == null) return;
-            _collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Remove(element);
-            area.CollisionData = null;
         }
 
         public IEnumerable<Gob> GetOverlappingGobs(CollisionArea area, CollisionAreaType types)
@@ -779,16 +781,6 @@ namespace AW2.Game
         #region Collision and moving methods
 
         /// <summary>
-        /// Registers a collision area for collisions.
-        /// </summary>
-        private void Register(CollisionArea area)
-        {
-            if (area.CollisionData != null) throw new InvalidOperationException("Collision area is already registered");
-            int bitIndex = AWMathHelper.LogTwo((int)area.Type);
-            area.CollisionData = _collisionAreas[bitIndex].Add(area, area.Area.BoundingBox);
-        }
-
-        /// <summary>
         /// Registers a gob's physical collision areas for collisions.
         /// </summary>
         /// <seealso cref="Register(Gob)"/>
@@ -797,18 +789,6 @@ namespace AW2.Game
             foreach (var area in gob.CollisionAreas)
                 if ((area.Type & CollisionAreaType.Physical) != 0)
                     Register(area);
-        }
-
-        /// <summary>
-        /// Removes a previously registered gob's physical collision areas
-        /// from the register.
-        /// </summary>
-        /// <seealso cref="Unregister(Gob)"/>
-        private void UnregisterPhysical(Gob gob)
-        {
-            foreach (var area in gob.CollisionAreas)
-                if ((area.Type & CollisionAreaType.Physical) != 0)
-                    Unregister(area);
         }
 
         /// <summary>

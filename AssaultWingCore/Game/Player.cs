@@ -44,7 +44,7 @@ namespace AW2.Game
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.
         /// </summary>
-        private const float MOURNING_DELAY = 3;
+        private static readonly TimeSpan MOURNING_DELAY = TimeSpan.FromSeconds(3);
 
         /// <summary>
         /// Function that maps relative shake damage to radians that the player's
@@ -349,27 +349,22 @@ namespace AW2.Game
             return new AW2.Graphics.PlayerViewport(this, onScreen, () => PostprocessEffectNames);
         }
 
-        /// <summary>
-        /// Initialises the player for a game session, that is, for the first arena.
-        /// </summary>
         public override void InitializeForGameSession()
         {
             Kills = Deaths = 0;
         }
 
-        /// <summary>
-        /// Resets the player's internal state for a new arena.
-        /// </summary>
         public override void ResetForArena()
         {
             base.ResetForArena();
-            _shipSpawnTime = TimeSpan.Zero;
+            _shipSpawnTime = MOURNING_DELAY;
             _shakeUpdateTime = TimeSpan.Zero;
             _relativeShakeDamage = 0;
             KillsWithoutDying = 0;
             Lives = Game.DataEngine.GameplayMode.StartLives;
             BonusActions.Clear();
             Ship = null;
+            if (Game.DataEngine.Arena != null) _lastLookAtPos = Game.DataEngine.Arena.Dimensions / 2;
         }
 
         public override void Dispose()
@@ -494,7 +489,7 @@ namespace AW2.Game
             {
                 Die_HandleCounters(coroner);
                 Die_SendMessages(coroner);
-                _shipSpawnTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
+                _shipSpawnTime = Game.DataEngine.ArenaTotalTime + MOURNING_DELAY;
                 MustUpdateToClients = true;
             }
             BonusActions.Clear();

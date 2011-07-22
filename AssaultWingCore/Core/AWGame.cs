@@ -33,7 +33,7 @@ namespace AW2.Core
 
         public void Dispose()
         {
-            foreach (var item in Components) item.Component.Dispose();
+            foreach (var item in Components) item.Dispose();
         }
 
         public virtual void Initialize()
@@ -41,8 +41,8 @@ namespace AW2.Core
             Content = new AWContentManager(Services);
             foreach (var item in Components)
             {
-                Log.Write("Initializing " + item.Component.GetType().Name);
-                item.Component.Initialize();
+                Log.Write("Initializing " + item.GetType().Name);
+                item.Initialize();
             }
         }
 
@@ -52,7 +52,7 @@ namespace AW2.Core
         public virtual void UnloadContent()
         {
             GraphicsDeviceService.CheckThread();
-            foreach (var item in Components) item.Component.UnloadContent();
+            foreach (var item in Components) item.UnloadContent();
             Content.Unload();
         }
 
@@ -61,6 +61,7 @@ namespace AW2.Core
         /// </summary>
         public virtual void BeginRun()
         {
+            foreach (var component in Components) component.LoadContent();
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace AW2.Core
         public virtual void Update(AWGameTime gameTime)
         {
             foreach (var item in Components)
-                if (item.Component.Enabled) item.Component.Update();
+                if (item.Enabled) item.Update();
         }
 
         /// <summary>
@@ -79,15 +80,8 @@ namespace AW2.Core
         {
             GraphicsDeviceService.CheckThread();
             foreach (var item in Components)
-                if (item.Component.Visible)
-                {
-                    if (!item.LoadContentCalled)
-                    {
-                        item.Component.LoadContent();
-                        item.LoadContentCalled = true;
-                    }
-                    item.Component.Draw();
-                }
+                if (item.Visible)
+                    item.Draw();
         }
 
         /// <summary>

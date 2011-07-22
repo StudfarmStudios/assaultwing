@@ -83,7 +83,7 @@ namespace AW2.Core
         private IntroEngine IntroEngine { get; set; }
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
-        public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.Select(it => it.Component).First(c => c is UIEngineImpl); } }
+        public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)

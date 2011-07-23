@@ -79,7 +79,20 @@ namespace AW2.Core
             if (profilingAdapter != null || useReferenceDevice) GraphicsAdapter.UseReferenceDevice = true;
 
             _graphicsThreadID = Thread.CurrentThread.ManagedThreadId;
-            GraphicsDevice = new GraphicsDevice(useAdapter, GraphicsProfile.Reach, _parameters);
+            if (!useAdapter.IsProfileSupported(GraphicsProfile.Reach))
+                GraphicsAdapter.UseReferenceDevice = !GraphicsAdapter.UseReferenceDevice;
+            if (!useAdapter.IsProfileSupported(GraphicsProfile.Reach))
+                throw new NotSupportedException("No suitable graphics adapter found");
+            try
+            {
+                GraphicsDevice = new GraphicsDevice(useAdapter, GraphicsProfile.Reach, _parameters);
+            }
+            catch (InvalidOperationException)
+            {
+                // With VMware, GraphicsDevice.ctor may throw InvalidOperationException when using reference device.
+                GraphicsAdapter.UseReferenceDevice = false;
+                GraphicsDevice = new GraphicsDevice(useAdapter, GraphicsProfile.Reach, _parameters);
+            }
             if (DeviceCreated != null) DeviceCreated(this, EventArgs.Empty);
         }
 

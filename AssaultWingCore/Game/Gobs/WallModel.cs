@@ -140,7 +140,7 @@ namespace AW2.Game.Gobs
                     textureCoordinate: vertex.TextureCoordinate));
             var effect = Game.CommandLineOptions.DedicatedServer ? null : GetEffect(Game.Content.Load<Model>(wallModelName));
             var texture = effect == null ? null : effect.Texture;
-            Set3DModel(vertices.ToArray(), data.Item2, texture, effect);
+            Set3DModel(vertices.ToArray(), (short[])data.Item2.Clone(), texture, effect);
         }
 
         private static BasicEffect GetEffect(Model model)

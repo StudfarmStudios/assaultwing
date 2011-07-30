@@ -68,7 +68,7 @@ namespace AW2.Core.GameComponents
         {
             if (_nextEventType == EventType.ARENA_FINISH && _arenaTimeoutMessages.Any() && Now + _arenaTimeoutMessages[0] >= _nextEvent)
             {
-                var text = "Arena will be closed in " + _arenaTimeoutMessages[0].ToDurationString();
+                var text = "Arena will change in " + _arenaTimeoutMessages[0].ToDurationString();
                 foreach (var plr in Game.DataEngine.Players)
                 {
                     if (!plr.IsRemote) continue;

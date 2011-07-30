@@ -60,7 +60,7 @@ namespace AW2.Core
             }
         }
 
-        public GraphicsDeviceService(IntPtr windowHandle, bool useReferenceDevice)
+        public GraphicsDeviceService(IntPtr windowHandle)
         {
             var screenBounds = System.Windows.Forms.Screen.FromHandle(windowHandle).Bounds;
             _parameters = new PresentationParameters
@@ -76,7 +76,7 @@ namespace AW2.Core
 
             var profilingAdapter = GraphicsAdapter.Adapters.FirstOrDefault(a => a.Description.Contains("PerfHUD"));
             var useAdapter = profilingAdapter ?? GraphicsAdapter.DefaultAdapter;
-            if (profilingAdapter != null || useReferenceDevice) GraphicsAdapter.UseReferenceDevice = true;
+            if (profilingAdapter != null) GraphicsAdapter.UseReferenceDevice = true;
 
             _graphicsThreadID = Thread.CurrentThread.ManagedThreadId;
             if (!useAdapter.IsProfileSupported(GraphicsProfile.Reach))

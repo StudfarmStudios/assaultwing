@@ -219,7 +219,7 @@ namespace AW2.UI
         private void InitializeGame(IntPtr windowHandle, string[] args)
         {
             var commandLineOptions = new CommandLineOptions(args);
-            _graphicsDeviceService = new GraphicsDeviceService(windowHandle, useReferenceDevice: commandLineOptions.DedicatedServer);
+            _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
             _game = new AssaultWing(_graphicsDeviceService, commandLineOptions);
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(

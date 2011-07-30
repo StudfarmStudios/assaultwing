@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
@@ -77,7 +78,8 @@ namespace AW2.Menu.Main
                     component.SetItems(SetupItems);
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
-
+            StartItems.Add(new MainMenuItem(menuEngine, () => "Visit web site",
+                component => Process.Start(new ProcessStartInfo("http://www.assaultwing.com"))));
             StartItems.Add(new MainMenuItem(menuEngine, () => "Quit",
                 component =>
                 {

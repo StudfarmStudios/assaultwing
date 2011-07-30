@@ -5004,8 +5004,10 @@
     </dimensions>
     <docks>2</docks>
     <previewName>preview_arena_bloodbowl</previewName>
-    <infoText>Many Great Warriors died
-this place.</infoText>
+    <infoText>Scars and heat of many battles
+can be found here. Watch out
+for the lava-fragments that 
+have killed many.</infoText>
     <idealPlayers>4-7</idealPlayers>
     <size>Small</size>
     <bonusAmount>Average</bonusAmount>

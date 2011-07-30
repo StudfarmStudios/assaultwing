@@ -18,6 +18,8 @@ namespace AW2.Graphics
     {
         private IDictionary<string, object> _loadedContent = new Dictionary<string, object>();
 
+        public Dictionary<string, Tuple<VertexPositionNormalTexture[], short[]>> ModelCache { get; private set; }
+
         public AWContentManager(IServiceProvider serviceProvider)
             : base(serviceProvider, ".\\")
         { }
@@ -57,15 +59,29 @@ namespace AW2.Graphics
 
         public void LoadAllGraphicsContent()
         {
+            ModelCache = new Dictionary<string, Tuple<VertexPositionNormalTexture[], short[]>>();
             foreach (var filename in Directory.GetFiles(Paths.MODELS, "*.xnb"))
-            {
                 if (!IsModelTextureFilename(filename))
-                    Load<Model>(Path.GetFileNameWithoutExtension(filename));
-            }
+                {
+                    var model = Load<Model>(Path.GetFileNameWithoutExtension(filename));
+                    CacheModelData(Path.GetFileNameWithoutExtension(filename), model);
+                }
             foreach (var filename in Directory.GetFiles(Paths.TEXTURES, "*.xnb"))
                 Load<Texture2D>(Path.GetFileNameWithoutExtension(filename));
             foreach (var filename in Directory.GetFiles(Paths.FONTS, "*.xnb"))
                 Load<SpriteFont>(Path.GetFileNameWithoutExtension(filename));
+        }
+        
+        private void CacheModelData(string modelName, Model model)
+        {
+            // HACK: Cache 3D model data. During arena startup, the game server uses the wall
+            // model data to create collision areas for the wall. If the GraphicsDevice is in a bad
+            // state at that moment, the model data is crippled and that results in crippled gameplay
+            // where most walls are not collidable.
+            VertexPositionNormalTexture[] vertexData;
+            short[] indexData;
+            Graphics3D.GetModelData(model, out vertexData, out indexData);
+            ModelCache[modelName] = Tuple.Create(vertexData, indexData);
         }
 
         private bool IsModelTextureFilename(string filename)
@@ -79,37 +95,28 @@ namespace AW2.Graphics
 
         private static string GetAssetFullName<T>(string assetName)
         {
-            string assetFullName;
-            if (assetName.Contains(@"\"))
-                assetFullName = assetName;
-            else
-            {
-                string assetPath = null;
-                var type = typeof(T);
-                if (typeof(Texture).IsAssignableFrom(type)) assetPath = Paths.TEXTURES;
-                else if (type == typeof(Model)) assetPath = Paths.MODELS;
-                else if (type == typeof(SpriteFont)) assetPath = Paths.FONTS;
-                else if (type == typeof(Effect)) assetPath = Paths.SHADERS;
-                else if (type == typeof(Song) || type == typeof(SoundEffect))
-                {
-                    // Hack!
-                    // Everything which ends with 2 digits + extension is a sound
-                    char[] chars = assetName.ToCharArray(assetName.Length - 2, 2);
+            return assetName.Contains(@"\")
+                ? assetName
+                : Path.Combine(GetAssetPath(assetName, typeof(T)), assetName);
+        }
 
-                    if (Char.IsNumber(chars[0]) && Char.IsNumber(chars[1]))
-                    {
-                        assetPath = Paths.SOUNDS;
-                    }
-                    else
-                    {
-                        assetPath = Paths.MUSIC;
-                    }
-                }
-                else if (type == typeof(Video)) assetPath = Paths.VIDEO;
-                else throw new ArgumentException("Cannot load content of unexpected type " + type.Name);
-                assetFullName = Path.Combine(assetPath, assetName);
+        private static string GetAssetPath(string assetName, Type type)
+        {
+            if (typeof(Texture).IsAssignableFrom(type)) return Paths.TEXTURES;
+            else if (type == typeof(Model)) return Paths.MODELS;
+            else if (type == typeof(SpriteFont)) return Paths.FONTS;
+            else if (type == typeof(Effect)) return Paths.SHADERS;
+            else if (type == typeof(Song) || type == typeof(SoundEffect))
+            {
+                // Hack!
+                // Everything which ends with 2 digits + extension is a sound
+                var chars = assetName.ToCharArray(assetName.Length - 2, 2);
+                if (Char.IsNumber(chars[0]) && Char.IsNumber(chars[1]))
+                    return Paths.SOUNDS;
+                return Paths.MUSIC;
             }
-            return assetFullName;
+            else if (type == typeof(Video)) return Paths.VIDEO;
+            throw new ArgumentException("Cannot load content of unexpected type " + type.Name);
         }
     }
 }

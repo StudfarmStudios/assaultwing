@@ -130,18 +130,17 @@ namespace AW2.Game.Gobs
         private void Set3DModel()
         {
             // Recover wall data from its 3D model.
-            var model = Game.Content.Load<Model>(wallModelName);
-            VertexPositionNormalTexture[] vertexData;
-            short[] indexData;
-            Graphics3D.GetModelData(model, out vertexData, out indexData);
+            var data = Game.Content.ModelCache[wallModelName];
             var worldMatrix = AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
-            for (int i = 0; i < vertexData.Length; ++i)
-            {
-                vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);
-                vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
-            }
-            var effect = GetEffect(model);
-            Set3DModel(vertexData, indexData, effect.Texture, effect);
+            var vertices = new List<VertexPositionNormalTexture>();
+            foreach (var vertex in data.Item1)
+                vertices.Add(new VertexPositionNormalTexture(
+                    position: Vector3.Transform(vertex.Position, worldMatrix),
+                    normal: Vector3.TransformNormal(vertex.Normal, worldMatrix),
+                    textureCoordinate: vertex.TextureCoordinate));
+            var effect = Game.CommandLineOptions.DedicatedServer ? null : GetEffect(Game.Content.Load<Model>(wallModelName));
+            var texture = effect == null ? null : effect.Texture;
+            Set3DModel(vertices.ToArray(), data.Item2, texture, effect);
         }
 
         private static BasicEffect GetEffect(Model model)

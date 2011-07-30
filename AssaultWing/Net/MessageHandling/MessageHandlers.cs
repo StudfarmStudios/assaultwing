@@ -97,6 +97,7 @@ namespace AW2.Net.MessageHandling
         private static void HandleJoinGameServerReply(JoinGameServerReply mess)
         {
             var game = AssaultWing.Instance;
+            if (game.NetworkMode == NetworkMode.Client) return;
             if (mess.Success)
             {
                 DeactivateHandlers(GetStandaloneMenuHandlers(null));

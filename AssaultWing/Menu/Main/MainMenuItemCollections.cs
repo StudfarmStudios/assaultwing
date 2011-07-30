@@ -78,7 +78,7 @@ namespace AW2.Menu.Main
                     component.SetItems(SetupItems);
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
-            StartItems.Add(new MainMenuItem(menuEngine, () => "Visit web site",
+            StartItems.Add(new MainMenuItem(menuEngine, () => "Visit Web Site",
                 component => Process.Start(new ProcessStartInfo("http://www.assaultwing.com"))));
             StartItems.Add(new MainMenuItem(menuEngine, () => "Quit",
                 component =>
@@ -146,7 +146,8 @@ namespace AW2.Menu.Main
                 if (NetworkItems[0].Name() == NO_SERVERS_FOUND) NetworkItems.RemoveAt(0);
                 if (server.AWVersion.IsCompatibleWith(_menuEngine.Game.Version))
                 {
-                    var menuItemText = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers);
+                    var shortServerName = server.Name.Substring(0, Math.Min(12, server.Name.Length));
+                    var menuItemText = string.Format("Join {0}\t\x10[{1}/{2}]", shortServerName, server.CurrentPlayers, server.MaxPlayers);
                     var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
                     NetworkItems.Insert(0, new MainMenuItem(_menuEngine,
                         () => menuItemText,

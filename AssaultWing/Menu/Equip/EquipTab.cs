@@ -175,7 +175,7 @@ namespace AW2.Menu.Equip
                 var settings =
                     playerI == 0 ? MenuEngine.Game.Settings.Players.Player1 :
                     playerI == 1 ? MenuEngine.Game.Settings.Players.Player2 :
-                    null;
+                    new AW2.Settings.PlayerSettingsItem();
                 _currentItems[playerI] = EquipMenuItem.Ship;
                 _playerNames[playerI] = new EditableText(player.Name, AW2.Settings.PlayerSettings.PLAYER_NAME_MAX_LENGTH, MenuEngine.Game, PlayerNameKeyPressHandler);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, settings, GetShipSelectorPos(playerI));

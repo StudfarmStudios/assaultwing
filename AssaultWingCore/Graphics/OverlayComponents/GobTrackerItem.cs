@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game;
+using AW2.Helpers.Geometric;
 
 namespace AW2.Graphics.OverlayComponents
 {
@@ -68,11 +69,12 @@ namespace AW2.Graphics.OverlayComponents
             {
                 var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
                 var max = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height);
-                gobPosOnScreen = AW2.Helpers.Geometric.Geometry.CropLineSegment(trackerPosOnScreen, gobPosOnScreen, Vector2.Zero, max);
+                if (Geometry.IsPointInsideRectangle(trackerPosOnScreen, Vector2.Zero, max))
+                    gobPosOnScreen = Geometry.CropLineSegment(trackerPosOnScreen, gobPosOnScreen, Vector2.Zero, max);
             }
             if ((gobPosOnScreen != origGobPosOnScreen && StickToBorders) || (gobPosOnScreen == origGobPosOnScreen && ShowWhileTargetOnScreen))
             {
-                Texture2D texture = AssaultWingCore.Instance.Content.Load<Texture2D>(Texture);
+                var texture = AssaultWingCore.Instance.Content.Load<Texture2D>(Texture);
                 spriteBatch.Draw(texture, gobPosOnScreen, null, DrawColor, rotation, new Vector2(texture.Width, texture.Height) / 2, scale, SpriteEffects.None, 0);
             }
         }

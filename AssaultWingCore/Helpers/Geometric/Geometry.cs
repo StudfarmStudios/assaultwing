@@ -620,8 +620,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public static Vector2 CropLineSegment(Vector2 start, Vector2 end, Vector2 min, Vector2 max)
         {
-            if (min.X > max.X || min.Y > max.Y) throw new ArgumentException("Min must not be greater than max");
-            if (start.X <= min.X || start.X >= max.X || start.Y <= min.Y || start.Y >= max.Y) throw new ArgumentException("Start must be inside the rectangle");
+            if (!IsPointInsideRectangle(start, min, max)) throw new ArgumentException("Start must be inside the rectangle");
             var p11 = min;
             var p21 = new Vector2(max.X, min.Y);
             var p22 = max;
@@ -637,6 +636,16 @@ namespace AW2.Helpers.Geometric
         #endregion Intersection methods
 
         #region Location and distance query methods
+
+        /// <summary>
+        /// Returns true if <paramref name="p"/> is strictly inside the axis-aligned rectangle
+        /// defined by <paramref name="min"/> and <paramref name="max"/>.
+        /// </summary>
+        public static bool IsPointInsideRectangle(Vector2 p, Vector2 min, Vector2 max)
+        {
+            if (min.X > max.X || min.Y > max.Y) throw new ArgumentException("Min must not be greater than max");
+            return p.X > min.X && p.X < max.X && p.Y > min.Y && p.Y < max.Y;
+        }
 
         /// <summary>
         /// Returns the distance between two geometric primitives.

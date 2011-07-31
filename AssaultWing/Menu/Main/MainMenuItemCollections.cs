@@ -79,7 +79,7 @@ namespace AW2.Menu.Main
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
             StartItems.Add(new MainMenuItem(menuEngine, () => "Visit Web Site",
-                component => Process.Start(new ProcessStartInfo("http://www.assaultwing.com"))));
+                component => Process.Start("http://www.assaultwing.com")));
             StartItems.Add(new MainMenuItem(menuEngine, () => "Quit",
                 component =>
                 {
@@ -129,6 +129,7 @@ namespace AW2.Menu.Main
             _lastNetworkItemsUpdate = _menuEngine.Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
             NetworkItems.Add(new MainMenuItem(_menuEngine, () => NO_SERVERS_FOUND, component => { }));
+            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Find More in Forums", component => Process.Start("http://www.assaultwing.com/letsplay.php")));
             NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Create a server",
                 component =>
                 {

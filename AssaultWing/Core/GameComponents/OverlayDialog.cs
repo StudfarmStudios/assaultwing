@@ -28,6 +28,8 @@ namespace AW2.Core.GameComponents
 
         public void Show(OverlayDialogData dialogData)
         {
+            if (dialogData is GameOverOverlayDialogData)
+                while (_data.Any() && _data.Peek() is GameOverOverlayDialogData) _data.Dequeue();
             _data.Enqueue(dialogData);
             if (!Enabled)
             {

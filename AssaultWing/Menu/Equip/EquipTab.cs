@@ -172,11 +172,15 @@ namespace AW2.Menu.Equip
             {
                 var player = indexedPlayer.Item1;
                 int playerI = indexedPlayer.Item2;
+                var settings =
+                    playerI == 0 ? MenuEngine.Game.Settings.Players.Player1 :
+                    playerI == 1 ? MenuEngine.Game.Settings.Players.Player2 :
+                    null;
                 _currentItems[playerI] = EquipMenuItem.Ship;
-                _playerNames[playerI] = new EditableText(player.Name, 12, MenuEngine.Game, PlayerNameKeyPressHandler);
-                _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, GetShipSelectorPos(playerI));
-                _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(MenuEngine.Game, player, GetExtraDeviceSelectorPos(playerI));
-                _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(MenuEngine.Game, player, GetWeapon2SelectorPos(playerI));
+                _playerNames[playerI] = new EditableText(player.Name, AW2.Settings.PlayerSettings.PLAYER_NAME_MAX_LENGTH, MenuEngine.Game, PlayerNameKeyPressHandler);
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, settings, GetShipSelectorPos(playerI));
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(MenuEngine.Game, player, settings, GetExtraDeviceSelectorPos(playerI));
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(MenuEngine.Game, player, settings, GetWeapon2SelectorPos(playerI));
             }
         }
 
@@ -328,7 +332,7 @@ namespace AW2.Menu.Equip
 
         private void PlayerNameKeyPressHandler()
         {
-            MenuPanePlayers.First().Item1.Name = _playerNames[0].Content;
+            MenuPanePlayers.First().Item1.Name = MenuEngine.Game.Settings.Players.Player1.Name = _playerNames[0].Content;
             _playerNameChanged = true;
         }
     }

@@ -101,6 +101,15 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns true if the string has been registered previously.
+        /// </summary>
+        public static bool IsRegistered(string value)
+        {
+            if (value == null) return true;
+            return g_canonicalFormsIndices.ContainsKey(value);
+        }
+
+        /// <summary>
         /// Chooses a canonical form for a string.
         /// </summary>
         public static void Register(string value)

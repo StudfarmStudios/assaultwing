@@ -232,13 +232,18 @@ namespace AW2.Core
 
         public void InitializePlayers(int count)
         {
+            Settings.Players.Validate(this);
             var players = new[]
             {
-                new Player(this, "Newbie",
-                    (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"repulsor",
+                new Player(this, Settings.Players.Player1.Name,
+                    (CanonicalString)Settings.Players.Player1.ShipName,
+                    (CanonicalString)Settings.Players.Player1.Weapon2Name,
+                    (CanonicalString)Settings.Players.Player1.ExtraDeviceName,
                     PlayerControls.FromSettings(Settings.Controls.Player1)),
-                new Player(this, "Lamer",
-                    (CanonicalString)"Bugger", (CanonicalString)"hovermine", (CanonicalString)"catmoflage",
+                new Player(this, Settings.Players.Player2.Name,
+                    (CanonicalString)Settings.Players.Player2.ShipName,
+                    (CanonicalString)Settings.Players.Player2.Weapon2Name,
+                    (CanonicalString)Settings.Players.Player2.ExtraDeviceName,
                     PlayerControls.FromSettings(Settings.Controls.Player2))
             };
             DataEngine.Spectators.Clear();

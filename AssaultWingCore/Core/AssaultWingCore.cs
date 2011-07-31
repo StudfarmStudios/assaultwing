@@ -83,7 +83,7 @@ namespace AW2.Core
             CommandLineOptions = args;
 
             Log.Write("Loading settings from " + SettingsDirectory);
-            Settings = AWSettings.FromFile(SettingsDirectory);
+            Settings = AWSettings.FromFile(this, SettingsDirectory);
             InitializeGraphics();
 
             NetworkMode = NetworkMode.Standalone;

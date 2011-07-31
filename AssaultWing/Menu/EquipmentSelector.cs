@@ -7,6 +7,7 @@ using AW2.Game;
 using AW2.Helpers;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
+using AW2.Settings;
 
 namespace AW2.Menu
 {
@@ -26,6 +27,8 @@ namespace AW2.Menu
         /// Position of the selector's top left corner in menu system coordinates.
         /// </summary>
         protected Vector2 Pos { get; private set; }
+        protected PlayerSettingsItem Settings { get; private set; }
+        protected AssaultWingCore Game { get; private set; }
 
         /// <summary>
         /// Index of the currently selected value in the list of possible values.
@@ -56,10 +59,12 @@ namespace AW2.Menu
         /// </summary>
         /// <param name="player">The player.</param>
         /// <param name="pos">Top left corner of the selector in menu system coordinates</param>
-        protected EquipmentSelector(Player player, Vector2 pos)
+        protected EquipmentSelector(AssaultWingCore game, Player player, PlayerSettingsItem settings, Vector2 pos)
         {
             Values = new List<string>();
+            Game = game;
             Player = player;
+            Settings = settings;
             Pos = pos;
         }
 
@@ -74,76 +79,70 @@ namespace AW2.Menu
 
     public class ShipSelector : EquipmentSelector
     {
-        private AssaultWingCore _game;
-
-        public ShipSelector(AssaultWingCore game, Player player, Vector2 pos)
-            : base(player, pos)
+        public ShipSelector(AssaultWingCore game, Player player, PlayerSettingsItem settings, Vector2 pos)
+            : base(game, player, settings, pos)
         {
-            _game = game;
             Values = game.DataEngine.GameplayMode.ShipTypes;
             CurrentValue = Values.IndexOf(player.ShipName);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            var ship = (Ship)_game.DataEngine.GetTypeTemplate(Player.ShipName);
-            var shipTexture = _game.Content.Load<Texture2D>(ship.ShipInfo.IconEquipName);
+            var ship = (Ship)Game.DataEngine.GetTypeTemplate(Player.ShipName);
+            var shipTexture = Game.Content.Load<Texture2D>(ship.ShipInfo.IconEquipName);
             spriteBatch.Draw(shipTexture, Pos - view, Color.White);
         }
 
         protected override void SetValue(string value)
         {
             Player.ShipName = (CanonicalString)value;
+            Settings.ShipName = value;
         }
     }
 
     public class ExtraDeviceSelector : EquipmentSelector
     {
-        private AssaultWingCore _game;
-
-        public ExtraDeviceSelector(AssaultWingCore game, Player player, Vector2 pos)
-            : base(player, pos)
+        public ExtraDeviceSelector(AssaultWingCore game, Player player, PlayerSettingsItem settings, Vector2 pos)
+            : base(game, player, settings, pos)
         {
-            _game = game;
             Values = game.DataEngine.GameplayMode.ExtraDeviceTypes;
             CurrentValue = Values.IndexOf(player.ExtraDeviceName);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            var extraDevice = (ShipDevice)_game.DataEngine.GetTypeTemplate(Player.ExtraDeviceName);
-            var extraDeviceTexture = _game.Content.Load<Texture2D>(extraDevice.DeviceInfo.IconEquipName);
+            var extraDevice = (ShipDevice)Game.DataEngine.GetTypeTemplate(Player.ExtraDeviceName);
+            var extraDeviceTexture = Game.Content.Load<Texture2D>(extraDevice.DeviceInfo.IconEquipName);
             spriteBatch.Draw(extraDeviceTexture, Pos - view, Color.White);
         }
 
         protected override void SetValue(string value)
         {
             Player.ExtraDeviceName = (CanonicalString)value;
+            Settings.ExtraDeviceName = value;
         }
     }
 
     public class Weapon2Selector : EquipmentSelector
     {
-        private AssaultWingCore _game;
-
-        public Weapon2Selector(AssaultWingCore game, Player player, Vector2 pos)
-            : base(player, pos)
+        public Weapon2Selector(AssaultWingCore game, Player player, PlayerSettingsItem settings, Vector2 pos)
+            : base(game, player, settings, pos)
         {
-            _game = game;
             Values = game.DataEngine.GameplayMode.Weapon2Types;
             CurrentValue = Values.IndexOf(player.Weapon2Name);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            var weapon2 = (Weapon)_game.DataEngine.GetTypeTemplate(Player.Weapon2Name);
-            var weapon2Texture = _game.Content.Load<Texture2D>(weapon2.DeviceInfo.IconEquipName);
+            var weapon2 = (Weapon)Game.DataEngine.GetTypeTemplate(Player.Weapon2Name);
+            var weapon2Texture = Game.Content.Load<Texture2D>(weapon2.DeviceInfo.IconEquipName);
             spriteBatch.Draw(weapon2Texture, Pos - view, Color.White);
         }
 
         protected override void SetValue(string value)
         {
             Player.Weapon2Name = (CanonicalString)value;
+            Settings.Weapon2Name = value;
         }
     }
 }

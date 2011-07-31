@@ -82,7 +82,7 @@ namespace AW2.Net.MessageHandling
             else if (allowNewConnection())
             {
                 AssaultWing.Instance.NetworkEngine.GameClientConnections.Add((GameClientConnection)result.Value);
-                Log.Write("Server obtained connection from " + result.Value.RemoteTCPEndPoint);
+                Log.Write("Server obtained {0} from {1}", result.Value.Name, result.Value.RemoteTCPEndPoint);
             }
             else
             {

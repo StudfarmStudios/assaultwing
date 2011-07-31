@@ -122,7 +122,7 @@ namespace AW2.Menu
                 {
                     MenuEngine.Game.CutNetworkConnections();
                     ApplyGraphicsSettings();
-                    ApplyPlayerControlsSettings();
+                    ApplyControlsSettings();
                 }
             }));
         }
@@ -140,11 +140,12 @@ namespace AW2.Menu
             if (!gfxSetup.IsVerticalSynced && window.IsVerticalSynced()) window.DisableVerticalSync();
         }
 
-        private void ApplyPlayerControlsSettings()
+        private void ApplyControlsSettings()
         {
             var players = MenuEngine.Game.DataEngine.Players;
             var controls = new[] { MenuEngine.Game.Settings.Controls.Player1, MenuEngine.Game.Settings.Controls.Player2 };
             players.Zip(controls, (plr, ctrls) => plr.Controls = PlayerControls.FromSettings(ctrls)).ToArray();
+            MenuEngine.Game.ChatStartControl = MenuEngine.Game.Settings.Controls.Chat.GetControl();
         }
 
         /// <summary>

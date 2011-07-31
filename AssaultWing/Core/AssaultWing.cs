@@ -75,6 +75,7 @@ namespace AW2.Core
         }
         public bool IsClientAllowedToStartArena { get; set; }
         public bool IsLoadingArena { get { return MenuEngine.ArenaLoadTask.TaskRunning; } }
+        public Control ChatStartControl { get; set; }
 
         public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
@@ -102,6 +103,7 @@ namespace AW2.Core
             Components.Add(PlayerChat);
             Components.Add(OverlayDialog);
             GameState = GameState.Initializing;
+            ChatStartControl = Settings.Controls.Chat.GetControl();
             _escapeControl = new KeyboardKey(Keys.Escape);
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);

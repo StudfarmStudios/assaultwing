@@ -17,7 +17,7 @@ namespace AW2.Core.GameComponents
     public class PlayerChat : AWGameComponent
     {
         private AssaultWing _game;
-        private Control _chatStartControl, _chatSendControl, _escapeControl;
+        private Control _chatSendControl, _escapeControl;
         private EditableText _message;
         private SpriteBatch _spriteBatch;
         private SpriteFont _typingFont;
@@ -30,7 +30,6 @@ namespace AW2.Core.GameComponents
             : base(game, updateOrder)
         {
             _game = game;
-            _chatStartControl = game.Settings.Controls.Chat.GetControl();
             _chatSendControl = new KeyboardKey(Keys.Enter);
             _escapeControl = new KeyboardKey(Keys.Escape);
         }
@@ -55,7 +54,7 @@ namespace AW2.Core.GameComponents
             }
             else
             {
-                if (_chatStartControl.Pulse) StartWritingMessage();
+                if (_game.ChatStartControl.Pulse) StartWritingMessage();
             }
         }
 

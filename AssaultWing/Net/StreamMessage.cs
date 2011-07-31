@@ -172,7 +172,7 @@ namespace AW2.Net
 
         public string ReadBufferToString()
         {
-            return AW2.Helpers.MiscHelper.BytesToString(new ArraySegment<byte>(_readBuffer.GetBuffer(), 0, (int)_readBuffer.Length));
+            return AW2.Helpers.MiscHelper.BytesToString(new ArraySegment<byte>(_readBuffer.ToArray()));
         }
 
         private void SetDataModeToRead()

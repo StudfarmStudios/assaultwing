@@ -191,8 +191,6 @@ namespace AW2.Core
         /// </summary>
         public void PrepareSelectedArena(byte? arenaIDOnClient = null)
         {
-            foreach (var player in DataEngine.Spectators)
-                player.InitializeForGameSession();
             var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)SelectedArenaName);
             // Note: Must create a new Arena instance and not use the existing template
             // because playing an arena will modify it.
@@ -214,6 +212,7 @@ namespace AW2.Core
 
         public override void StartArena()
         {
+            foreach (var player in DataEngine.Spectators) player.InitializeForGameSession();
             Log.Write("Saving settings to file");
             Settings.ToFile();
             if (NetworkMode == NetworkMode.Server)

@@ -51,36 +51,36 @@ namespace AW2.Menu.Main
 
         public void Update() { }
 
-        public void Draw(SpriteBatch spriteBatch, Vector2 origin)
+        public void Draw(SpriteBatch spriteBatch, Vector2 origin, int visibleIndex)
         {
-            GraphicsEngineImpl.DrawFormattedText(origin, _menuEngine.MenuContent.FontBigEnWidth, Name(), (textPos, text) => Draw(spriteBatch, textPos, text));
+            GraphicsEngineImpl.DrawFormattedText(origin, _menuEngine.MenuContent.FontBigEnWidth, Name(), (textPos, text) => Draw(spriteBatch, textPos, visibleIndex, text));
         }
 
-        public void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin)
+        public void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, int visibleIndex)
         {
-            DrawHighlight(spriteBatch, origin, Vector2.Zero);
+            DrawHighlight(spriteBatch, origin, Vector2.Zero, visibleIndex);
         }
 
-        private void Draw(SpriteBatch spriteBatch, Vector2 origin, string text)
+        private void Draw(SpriteBatch spriteBatch, Vector2 origin, int visibleIndex, string text)
         {
             var highlightToTextDelta = new Vector2(34, 1);
-            var pos = GetHighlightPos(origin) + highlightToTextDelta;
+            var pos = GetHighlightPos(origin, visibleIndex) + highlightToTextDelta;
             spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, text, pos.Round(), Color.White);
         }
 
-        private void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta)
+        private void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta, int visibleIndex)
         {
-            var highlightPos = GetHighlightPos(origin);
+            var highlightPos = GetHighlightPos(origin, visibleIndex);
             var cursorPos = highlightPos + cursorDelta;
             spriteBatch.Draw(_menuEngine.MenuContent.MainCursor, cursorPos, Color.Multiply(Color.White, _menuEngine.GetCursorFade()));
             spriteBatch.Draw(_menuEngine.MenuContent.MainHighlight, highlightPos, Color.White);
         }
 
-        private Vector2 GetHighlightPos(Vector2 origin)
+        private Vector2 GetHighlightPos(Vector2 origin, int visibleIndex)
         {
             var highlightDelta = new Vector2(551, 354);
             var lineDelta = new Vector2(0, Font.LineSpacing);
-            return origin + highlightDelta + ItemIndex * lineDelta;
+            return origin + highlightDelta + visibleIndex * lineDelta;
         }
     }
 }

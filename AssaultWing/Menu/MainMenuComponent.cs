@@ -16,10 +16,13 @@ namespace AW2.Menu
     /// </summary>
     public class MainMenuComponent : MenuComponent
     {
+        private const int MENU_ITEM_COUNT = 6; // number of items that fit in the menu at once
+
         private MainMenuItemCollections _itemCollections;
         private Stack<Tuple<MainMenuItemCollection, int>> _currentItemsHistory;
         private MainMenuItemCollection _currentItems;
         private int _currentItem;
+        private int _topmostItem;
 
         private Control _controlUp, _controlDown, _controlSelect, _controlSelectLeft, _controlBack;
         private TriggeredCallbackCollection _commonCallbacks;
@@ -75,14 +78,15 @@ namespace AW2.Menu
             _commonCallbacks.Update();
             foreach (var menuItem in _currentItems) menuItem.Update();
             _currentItems.Update();
+            _topmostItem = _topmostItem.Clamp(_currentItem - MENU_ITEM_COUNT + 1, _currentItem);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
-            CurrentItem.DrawHighlight(spriteBatch, _pos - view);
-            for (int i = 0; i < _currentItems.Count; ++i)
-                _currentItems[i].Draw(spriteBatch, _pos - view);
+            CurrentItem.DrawHighlight(spriteBatch, _pos - view, _currentItem - _topmostItem);
+            for (int i = _topmostItem; i < _currentItems.Count && i < _topmostItem + MENU_ITEM_COUNT; ++i)
+                _currentItems[i].Draw(spriteBatch, _pos - view, i - _topmostItem);
         }
 
         private void ResetItems()

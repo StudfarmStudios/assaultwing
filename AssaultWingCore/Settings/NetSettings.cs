@@ -6,6 +6,7 @@ namespace AW2.Settings
     {
         private string _managementServerAddress;
         private string _gameServerName;
+        private int _gameServerMaxPlayers;
         private TimeSpan _dedicatedServerArenaTimeout;
         private TimeSpan _dedicatedServerArenaFinishCooldown;
         private string[] _dedicatedServerArenaNames;
@@ -13,6 +14,7 @@ namespace AW2.Settings
 
         public string ManagementServerAddress { get { return _managementServerAddress; } set { _managementServerAddress = value; } }
         public string GameServerName { get { return _gameServerName; } set { _gameServerName = value; } }
+        public int GameServerMaxPlayers { get { return _gameServerMaxPlayers; } set { _gameServerMaxPlayers = value; } }
         public TimeSpan DedicatedServerArenaTimeout { get { return _dedicatedServerArenaTimeout; } set { _dedicatedServerArenaTimeout = value; } }
         public TimeSpan DedicatedServerArenaFinishCooldown { get { return _dedicatedServerArenaFinishCooldown; } set { _dedicatedServerArenaFinishCooldown = value; } }
         public string[] DedicatedServerArenaNames { get { return _dedicatedServerArenaNames; } set { _dedicatedServerArenaNames = value; } }
@@ -27,6 +29,7 @@ namespace AW2.Settings
         {
             _managementServerAddress = "assaultwing.com";
             _gameServerName = Environment.MachineName;
+            _gameServerMaxPlayers = 16;
             _dedicatedServerArenaTimeout = TimeSpan.FromMinutes(15);
             _dedicatedServerArenaFinishCooldown = TimeSpan.FromSeconds(5);
             _dedicatedServerArenaNames = new string[0];

@@ -260,7 +260,8 @@ namespace AW2.Core
             NetworkMode = NetworkMode.Server;
             try
             {
-                NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, () => true));
+                NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result,
+                    allowNewConnection: () => DataEngine.Players.Count() < Settings.Net.GameServerMaxPlayers));
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerMenuHandlers());
                 return true;
             }

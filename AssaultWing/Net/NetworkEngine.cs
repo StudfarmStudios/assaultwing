@@ -59,7 +59,6 @@ namespace AW2.Net
 
         #region Fields
 
-        public const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
         public const int UDP_CONNECTION_PORT_FIRST = 'A' * 256 + 'W';
         public const int UDP_CONNECTION_PORT_LAST = UDP_CONNECTION_PORT_FIRST + 9;
         private const int MANAGEMENT_SERVER_PORT_DEFAULT = 'A' * 256 + 'W';
@@ -206,7 +205,7 @@ namespace AW2.Net
             Log.Write("Starting game server");
             _startServerConnectionHandler = connectionHandler;
             _connectionAttemptListener = new ConnectionAttemptListener(_game);
-            _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT, UDPSocket.PrivateLocalEndPoint.Port);
+            _connectionAttemptListener.StartListening(Game.Settings.Net.GameServerPort, UDPSocket.PrivateLocalEndPoint.Port);
             RegisterServerToManagementServer();
             _game.UpdateGameServerInfoToManagementServer();
         }
@@ -495,8 +494,8 @@ namespace AW2.Net
             {
                 GameServerName = Game.Settings.Net.GameServerName,
                 MaxClients = Game.Settings.Net.GameServerMaxPlayers,
-                TCPPort = TCP_CONNECTION_PORT,
-                LocalEndPoint = new AWEndPoint(UDPSocket.PrivateLocalEndPoint, TCP_CONNECTION_PORT),
+                TCPPort = Game.Settings.Net.GameServerPort,
+                LocalEndPoint = new AWEndPoint(UDPSocket.PrivateLocalEndPoint, Game.Settings.Net.GameServerPort),
                 AWVersion = Game.Version,
             };
             ManagementServerConnection.Send(message);

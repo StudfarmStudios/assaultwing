@@ -15,6 +15,7 @@ namespace AW2.Menu.Equip
         private MatchTabItem _tabItem;
 
         public override Texture2D TabTexture { get { return Content.TabMatchTexture; } }
+        private bool IsArenaSelectable { get { return MenuEngine.Game.NetworkMode != NetworkMode.Client; } }
 
         public MatchTab(EquipMenuComponent menuComponent)
             : base(menuComponent)
@@ -31,13 +32,10 @@ namespace AW2.Menu.Equip
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
-            if (Controls.Activate.Pulse && MenuEngine.Game.NetworkMode != NetworkMode.Client)
+            if (Controls.Activate.Pulse && IsArenaSelectable && _tabItem == MatchTabItem.Arena)
             {
-                if (_tabItem == MatchTabItem.Arena)
-                {
-                    MenuComponent.IsTemporarilyInactive = true;
-                    MenuEngine.ActivateComponent(MenuComponentType.Arena);
-                }
+                MenuComponent.IsTemporarilyInactive = true;
+                MenuEngine.ActivateComponent(MenuComponentType.Arena);
             }
         }
 
@@ -96,18 +94,15 @@ namespace AW2.Menu.Equip
                 spriteBatch.DrawString(Content.FontSmall, value, valuePos.Round(), Color.GreenYellow);
             };
             drawInfoLine(0, "Enemy", "Everyone");
-            drawInfoLine(1, "Players", "max 16");
-            drawInfoLine(2, "Time limit", "none");
-            drawInfoLine(3, "Life limit", "none");
-            drawInfoLine(4, "Score limit", "none");
-            drawInfoLine(5, "Arena count", "1");
-            drawInfoLine(6, "Arenas", "Selectable <" + MenuEngine.Game.SelectedArenaName + ">");
+            drawInfoLine(1, "Players", "Max 16");
+            drawInfoLine(2, "Time limit", "None");
+            drawInfoLine(3, "Life limit", "None");
+            drawInfoLine(4, "Score limit", "None");
+            drawInfoLine(5, "Arena count", "Unlimited");
+            var arenaChoice = IsArenaSelectable ? "Selectable" : "Random";
+            drawInfoLine(6, "Arena", arenaChoice + " <" + MenuEngine.Game.SelectedArenaName + ">");
 
-            var explanation = 
-@"If you want to change these gametype
-settings, please create a pilot in
-Assault Wing website which will allow
-you to create your own gametype settings'.";
+            var explanation = "Currently gametype settings cannot be changed.";
             var explanationPos = firstInfoLinePos + new Vector2(0, 192);
             spriteBatch.DrawString(Content.FontSmall, explanation, explanationPos.Round(), new Color(218, 159, 33));
         }
@@ -128,16 +123,9 @@ you to create your own gametype settings'.";
             currentPos += new Vector2(0, 50);
             spriteBatch.DrawString(Content.FontSmall, "Current arena:", currentPos.Round(), Color.White);
             spriteBatch.DrawString(Content.FontSmall, arenaName, (currentPos + new Vector2(Content.FontSmall.MeasureString("Current arena:  ").X, 0)).Round(), Color.GreenYellow);
-            spriteBatch.DrawString(Content.FontSmall, "Arena list", (currentPos + infoWidth + new Vector2(10, 0)).Round(), Color.White);
-            currentPos += lineHeight;
-            var arenaListText =
-@"Gametype settings don't
-contain a list of arenas
-so the game host can
-change the arena.";
-            spriteBatch.DrawString(Content.FontSmall, arenaListText, (currentPos + infoWidth + new Vector2(10, 0)).Round(), new Color(218, 159, 33));
-            spriteBatch.Draw(previewTexture, currentPos, null, Color.White, 0,
-                new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
+            if (IsArenaSelectable) spriteBatch.DrawString(Content.FontSmall, "Press Enter to change.", (currentPos + infoWidth + new Vector2(10, 0)).Round(), new Color(218, 159, 33));
+            currentPos += new Vector2(0, Content.FontSmall.LineSpacing);
+            spriteBatch.Draw(previewTexture, currentPos, null, Color.White, 0, new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
         }
     }
 }

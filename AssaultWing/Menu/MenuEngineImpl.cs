@@ -29,7 +29,7 @@ namespace AW2.Menu
         /// </summary>
         private static Curve g_cursorFade;
 
-        private MenuComponentType _activeComponent;
+        private MenuComponentType _activeComponentType;
         private MenuComponent[] _components;
         private bool _activeComponentActivatedOnce, _activeComponentSoundPlayedOnce;
         private Action _arenaLoadTaskFinishAction;
@@ -50,7 +50,6 @@ namespace AW2.Menu
 
         public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
         public MenuContent MenuContent { get; private set; }
-        public string HelpText { get; set; }
         public ProgressBar ProgressBar { get; private set; }
 
         public BackgroundTask ArenaLoadTask { get; private set; }
@@ -58,6 +57,7 @@ namespace AW2.Menu
         private int ViewportWidth { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width; } }
         private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
         private bool IsHelpTextVisible { get { return Game.MenuEngine.ProgressBar.IsFinished; } }
+        private MenuComponent ActiveComponent { get { return _components[(int)_activeComponentType]; } }
 
         static MenuEngineImpl()
         {
@@ -75,7 +75,6 @@ namespace AW2.Menu
             MenuContent = new MenuContent();
             _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
             // Items in _components are created in Initialize() when other resources are ready.
-            HelpText = "Enter to proceed, Esc to return to previous";
             ArenaLoadTask = new BackgroundTask();
             ProgressBar = new ProgressBar
             {
@@ -159,7 +158,7 @@ namespace AW2.Menu
 
         public void Deactivate()
         {
-            _components[(int)_activeComponent].Active = false;
+            ActiveComponent.Active = false;
         }
 
         /// <summary>
@@ -169,9 +168,9 @@ namespace AW2.Menu
         /// <param name="component">The menu component to activate and move menu view to.</param>
         public void ActivateComponent(MenuComponentType component)
         {
-            _components[(int)_activeComponent].Active = false;
-            _activeComponent = component;
-            var newComponent = _components[(int)_activeComponent];
+            ActiveComponent.Active = false;
+            _activeComponentType = component;
+            var newComponent = ActiveComponent;
 
             // Make menu view scroll to the new component's position.
             _viewTarget = newComponent.Center;
@@ -226,7 +225,7 @@ namespace AW2.Menu
             if (!_activeComponentActivatedOnce && Vector2.Distance(_view, _viewTarget) < 200)
             {
                 _activeComponentActivatedOnce = true;
-                _components[(int)_activeComponent].Active = true;
+                ActiveComponent.Active = true;
             }
             if (!_activeComponentSoundPlayedOnce && Vector2.Distance(_view, _viewTarget) < 1)
             {
@@ -353,9 +352,9 @@ namespace AW2.Menu
             if (IsHelpTextVisible)
             {
                 var helpTextPos = new Vector2(
-                    (int)(((float)ViewportWidth - MenuContent.FontSmall.MeasureString(HelpText).X) / 2),
+                    (int)(((float)ViewportWidth - MenuContent.FontSmall.MeasureString(ActiveComponent.HelpText).X) / 2),
                     ViewportHeight - MenuContent.FontSmall.LineSpacing);
-                _spriteBatch.DrawString(MenuContent.FontSmall, HelpText, helpTextPos.Round(), Color.White);
+                _spriteBatch.DrawString(MenuContent.FontSmall, ActiveComponent.HelpText, helpTextPos.Round(), Color.White);
             }
             var copyrightText = "Studfarm Studios";
             var copyrightTextPos = new Vector2(

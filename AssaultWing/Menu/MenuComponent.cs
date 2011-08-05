@@ -29,6 +29,8 @@ namespace AW2.Menu
         /// </summary>
         public abstract Vector2 Center { get; }
 
+        public abstract string HelpText { get; }
+
         /// <summary>
         /// Creates a new menu component for a menu system.
         /// </summary>

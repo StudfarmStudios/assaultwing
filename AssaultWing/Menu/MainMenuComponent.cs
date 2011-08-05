@@ -45,6 +45,7 @@ namespace AW2.Menu
         }
 
         public override Vector2 Center { get { return _pos + new Vector2(700, 455); } }
+        public override string HelpText { get { return "Arrows move, Enter proceeds, Esc cancels"; } }
 
         private MainMenuItem CurrentItem
         {

@@ -70,12 +70,8 @@ namespace AW2.Menu
             }
         }
 
-        /// <summary>
-        /// The center of the menu component in menu system coordinates.
-        /// </summary>
-        /// This is a good place to center the menu view to when the menu component
-        /// is to be seen well on the screen.
         public override Vector2 Center { get { return _pos + new Vector2(560, 475); } }
+        public override string HelpText { get { return "Arrows select, Enter selects, Esc backs out"; } }
 
         /// <summary>
         /// Creates an arena selection menu component for a menu system.

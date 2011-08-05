@@ -55,12 +55,8 @@ namespace AW2.Menu
             }
         }
 
-        /// <summary>
-        /// The center of the menu component in menu system coordinates.
-        /// </summary>
-        /// This is a good place to center the menu view to when the menu component
-        /// is to be seen well on the screen.
         public override Vector2 Center { get { return Pos + new Vector2(750, 420); } }
+        public override string HelpText { get { return "Player keys select, Tab changes tab, F10 starts game, Esc exits"; } }
 
         static EquipMenuComponent()
         {

@@ -168,7 +168,9 @@ namespace AW2.Core
         public override void BeginRun()
         {
             Log.Write("Assault Wing begins to run");
-            SelectedArenaName = DataEngine.GetTypeTemplates<Arena>().First().Info.Name;
+            var arenas = DataEngine.GetTypeTemplates<Arena>();
+            if (!arenas.Any()) throw new ApplicationException("No arenas found");
+            SelectedArenaName = arenas.First().Info.Name;
             DataEngine.GameplayMode = new GameplayMode();
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
             DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage" };

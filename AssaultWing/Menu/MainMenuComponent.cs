@@ -19,10 +19,9 @@ namespace AW2.Menu
         private const int MENU_ITEM_COUNT = 6; // number of items that fit in the menu at once
 
         private MainMenuItemCollections _itemCollections;
-        private Stack<Tuple<MainMenuItemCollection, int>> _currentItemsHistory;
+        private Stack<Tuple<MainMenuItemCollection, int, int>> _currentItemsHistory; // items, currentIndex, topmostIndex
         private MainMenuItemCollection _currentItems;
-        private int _currentItem;
-        private int _topmostItem;
+        private ScrollableList _currentItem;
 
         private Control _controlUp, _controlDown, _controlSelect, _controlSelectLeft, _controlBack;
         private TriggeredCallbackCollection _commonCallbacks;
@@ -47,29 +46,23 @@ namespace AW2.Menu
         public override Vector2 Center { get { return _pos + new Vector2(700, 455); } }
         public override string HelpText { get { return "Arrows move, Enter proceeds, Esc cancels"; } }
 
-        private MainMenuItem CurrentItem
-        {
-            get
-            {
-                _currentItem = _currentItem.Clamp(0, _currentItems.Count - 1);
-                return _currentItems[_currentItem];
-            }
-        }
+        private MainMenuItem CurrentItem { get { return _currentItems[_currentItem.CurrentIndex]; } }
 
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
             _itemCollections = new MainMenuItemCollections(menuEngine);
             _pos = new Vector2(0, 698);
-            _currentItemsHistory = new Stack<Tuple<MainMenuItemCollection, int>>();
+            _currentItemsHistory = new Stack<Tuple<MainMenuItemCollection, int, int>>();
+            _currentItem = new ScrollableList(MENU_ITEM_COUNT, () => _currentItems.Count);
             ResetItems();
         }
 
         public void SetItems(MainMenuItemCollection items)
         {
-            _currentItemsHistory.Push(Tuple.Create(_currentItems, _currentItem));
+            _currentItemsHistory.Push(Tuple.Create(_currentItems, _currentItem.CurrentIndex, _currentItem.TopmostIndex));
             _currentItems = items;
-            _currentItem = 0;
+            _currentItem.CurrentIndex = 0;
         }
 
         public override void Update()
@@ -79,15 +72,16 @@ namespace AW2.Menu
             _commonCallbacks.Update();
             foreach (var menuItem in _currentItems) menuItem.Update();
             _currentItems.Update();
-            _topmostItem = _topmostItem.Clamp(_currentItem - MENU_ITEM_COUNT + 1, _currentItem);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
-            CurrentItem.DrawHighlight(spriteBatch, _pos - view, _currentItem - _topmostItem);
-            for (int i = _topmostItem; i < _currentItems.Count && i < _topmostItem + MENU_ITEM_COUNT; ++i)
-                _currentItems[i].Draw(spriteBatch, _pos - view, i - _topmostItem);
+            _currentItem.ForEachVisible((realIndex, visibleIndex, isSelected) =>
+            {
+                if (isSelected) _currentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);
+                _currentItems[realIndex].Draw(spriteBatch, _pos - view, visibleIndex);
+            });
         }
 
         private void ResetItems()
@@ -104,12 +98,12 @@ namespace AW2.Menu
             };
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlUp, () =>
             {
-                if (_currentItem > 0) --_currentItem;
+                _currentItem.CurrentIndex--;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
             {
-                if (_currentItem < _currentItems.Count - 1) ++_currentItem;
+                _currentItem.CurrentIndex++;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () => CurrentItem.Action(this)));
@@ -120,7 +114,8 @@ namespace AW2.Menu
                 {
                     var old = _currentItemsHistory.Pop();
                     _currentItems = old.Item1;
-                    _currentItem = old.Item2;
+                    _currentItem.CurrentIndex = old.Item2;
+                    _currentItem.TopmostIndex = old.Item3;
                     MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }
                 if (_currentItemsHistory.Count == 1)

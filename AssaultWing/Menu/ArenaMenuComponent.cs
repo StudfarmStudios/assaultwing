@@ -35,15 +35,7 @@ namespace AW2.Menu
         /// </summary>
         private TimeSpan _cursorFadeStartTime;
 
-        /// <summary>
-        /// Index of currently highlighted arena in the arena name list.
-        /// </summary>
-        private int _currentArena;
-
-        /// <summary>
-        /// Index of first arena in the arena name list that is visible on screen.
-        /// </summary>
-        private int _arenaListStart;
+        private ScrollableList _currentArena;
 
         private List<ArenaInfo> ArenaInfos { get; set; }
         private Vector2 ArenaPreviewPos { get { return _pos + new Vector2(430, 232); } }
@@ -87,7 +79,7 @@ namespace AW2.Menu
             _cursorFade.Keys.Add(new CurveKey(1, 1, 0, 0, CurveContinuity.Step));
             _cursorFade.PreLoop = CurveLoopType.Cycle;
             _cursorFade.PostLoop = CurveLoopType.Cycle;
-            _currentArena = -1;
+            _currentArena = new ScrollableList(MENU_ITEM_COUNT, () => ArenaInfos.Count);
         }
 
         public override void LoadContent()
@@ -104,10 +96,7 @@ namespace AW2.Menu
         public override void Update()
         {
             if (!Active) return;
-            var oldCurrentArena = _currentArena;
             _controlCallbacks.Update();
-            _currentArena = _currentArena.Clamp(0, ArenaInfos.Count - 1);
-            _arenaListStart = _arenaListStart.Clamp(_currentArena - MENU_ITEM_COUNT + 1, _currentArena);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
@@ -115,37 +104,40 @@ namespace AW2.Menu
             MenuEngine.Game.GraphicsDeviceService.CheckThread();
             spriteBatch.Draw(_backgroundTexture, _pos - view, Color.White);
             if (!Active) return;
+            DrawArenaList(view, spriteBatch);
+            DrawCurrentArenaInfo(view, spriteBatch);
+        }
 
-            // Draw arena list.
+        private void DrawArenaList(Vector2 view, SpriteBatch spriteBatch)
+        {
             var lineDeltaPos = new Vector2(0, 40);
             var firstArenaNamePos = _pos - view + new Vector2(147, 237);
             var firstArenaTagPos = _pos - view + new Vector2(283, 235);
-            for (int i = 0; i < MENU_ITEM_COUNT && _arenaListStart + i < ArenaInfos.Count; ++i)
+            _currentArena.ForEachVisible((realIndex, visibleIndex, isSelected) =>
             {
-                int arenaI = _arenaListStart + i;
-                var arenaNamePos = firstArenaNamePos + i * lineDeltaPos;
-                spriteBatch.DrawString(Content.FontSmall, ArenaInfos[arenaI].Name, arenaNamePos.Round(), Color.White);
-                var arenaTagPos = firstArenaTagPos + i * lineDeltaPos;
-                if (arenaI == _currentArena) spriteBatch.Draw(_tagTexture, arenaTagPos.Round(), Color.White);
-            }
+                var arenaNamePos = firstArenaNamePos + visibleIndex * lineDeltaPos;
+                spriteBatch.DrawString(Content.FontSmall, ArenaInfos[realIndex].Name, arenaNamePos.Round(), Color.White);
+                if (isSelected)
+                {
+                    var arenaTagPos = firstArenaTagPos + visibleIndex * lineDeltaPos;
+                    spriteBatch.Draw(_tagTexture, arenaTagPos.Round(), Color.White);
 
-            // Draw condolences.
-            if (ArenaInfos.Count == 0)
-            {
-                var condolencesPos = _pos - view + new Vector2(540, 297);
-                spriteBatch.DrawString(Content.FontBig, "No arenas, can't play, sorry!", condolencesPos.Round(), Color.White);
-            }
+                    // Draw cursor and highlight.
+                    var highlightPos = _pos - view + new Vector2(124, 223) + visibleIndex * lineDeltaPos;
+                    var cursorPos = highlightPos + new Vector2(2, 1);
+                    var info = ArenaInfos[realIndex];
+                    spriteBatch.Draw(_highlightTexture, highlightPos, Color.White);
+                    spriteBatch.Draw(_cursorTexture, cursorPos, Color.Multiply(Color.White, _cursorFade.Evaluate((float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds)));
+                }
+            });
+        }
 
-            // Draw cursor and highlight.
-            var highlightPos = _pos - view + new Vector2(124, 223) + (_currentArena - _arenaListStart) * lineDeltaPos;
-            var cursorPos = highlightPos + new Vector2(2, 1);
+        private void DrawCurrentArenaInfo(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var info = ArenaInfos[_currentArena.CurrentIndex];
             var infoBoxColumnWidth = new Vector2(220, 0);
-            var info = ArenaInfos[_currentArena];
             var previewName = MenuEngine.Game.Content.Exists<Texture2D>(info.PreviewName) ? info.PreviewName : "no_preview";
             var previewTexture = MenuEngine.Game.Content.Load<Texture2D>(previewName);
-            spriteBatch.Draw(_highlightTexture, highlightPos, Color.White);
-            spriteBatch.Draw(_cursorTexture, cursorPos, Color.Multiply(Color.White, _cursorFade.Evaluate((float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds)));
-
             spriteBatch.Draw(previewTexture, ArenaPreviewPos - view, Color.White);
             spriteBatch.Draw(_infoBackgroundTexture, InfoBoxPos - view, Color.White);
             spriteBatch.DrawString(Content.FontBig, info.Name, (InfoBoxHeaderPos - view).Round(), Color.White);
@@ -161,7 +153,6 @@ namespace AW2.Menu
             drawInfoLine("Bonus Amount", info.BonusAmount.ToString(), 2, ArenaInfo.GetColorForBonusAmount(info.BonusAmount));
             drawInfoLine("Docks", info.Docks, 3, Color.YellowGreen);
             drawInfoLine("Flight Easiness", info.FlightEasiness.ToString(), 4, ArenaInfo.GetColorForFlightEasiness(info.FlightEasiness));
-
             spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoBoxLinePos(0) - view + infoBoxColumnWidth + new Vector2(16, 0)).Round(), new Color(218, 159, 33));
         }
 
@@ -179,7 +170,7 @@ namespace AW2.Menu
 
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlDone, () =>
             {
-                if (_currentArena >= 0 && _currentArena < ArenaInfos.Count)
+                if (_currentArena.IsCurrentValidIndex)
                 {
                     SelectCurrentArena();
                     MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
@@ -189,20 +180,20 @@ namespace AW2.Menu
 
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlUp, () =>
             {
-                --_currentArena;
+                _currentArena.CurrentIndex--;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
 
             }));
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
             {
-                ++_currentArena;
+                _currentArena.CurrentIndex++;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
         }
 
         private void SelectCurrentArena()
         {
-            MenuEngine.Game.SelectedArenaName = ArenaInfos[_currentArena].Name;
+            MenuEngine.Game.SelectedArenaName = ArenaInfos[_currentArena.CurrentIndex].Name;
         }
 
         /// <summary>

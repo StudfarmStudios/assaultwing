@@ -142,6 +142,7 @@
     <Compile Include="Menu\MenuComponentType.cs" />
     <Compile Include="Menu\MenuContent.cs" />
     <Compile Include="Menu\MenuEngineImpl.cs" />
+    <Compile Include="Menu\ScrollableList.cs" />
     <Compile Include="Net\ConnectionUtils\GameClientStatus.cs" />
     <Compile Include="Net\MessageHandling\MessageHandlers.cs" />
     <Compile Include="Net\AWEndPoint.cs" />

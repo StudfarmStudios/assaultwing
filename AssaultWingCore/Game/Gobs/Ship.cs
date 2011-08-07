@@ -373,9 +373,12 @@ namespace AW2.Game.Gobs
 
         public override void Dispose()
         {
-            Game.DataEngine.Devices.Remove(Weapon1);
-            Game.DataEngine.Devices.Remove(Weapon2);
-            Game.DataEngine.Devices.Remove(ExtraDevice);
+            Game.PostFrameLogicEngine.DoOnce += () =>
+            {
+                Game.DataEngine.Devices.Remove(Weapon1);
+                Game.DataEngine.Devices.Remove(Weapon2);
+                Game.DataEngine.Devices.Remove(ExtraDevice);
+            };
             _thrusterSound.Dispose();
             _thrusterTurnSound.Dispose();
             base.Dispose();

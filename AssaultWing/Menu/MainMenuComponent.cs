@@ -54,7 +54,7 @@ namespace AW2.Menu
             _itemCollections = new MainMenuItemCollections(menuEngine);
             _pos = new Vector2(0, 698);
             _currentItemsHistory = new Stack<Tuple<MainMenuItemCollection, int, int>>();
-            _currentItem = new ScrollableList(MENU_ITEM_COUNT, () => _currentItems.Count);
+            _currentItem = new ScrollableList(MENU_ITEM_COUNT, () => _currentItems == null ? 0 : _currentItems.Count);
             ResetItems();
         }
 

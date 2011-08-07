@@ -23,13 +23,13 @@ namespace AW2.Menu.Equip
         {
             if (Controls.ListDown.Pulse)
             {
-                ++PlayerListCursorIndex;
+                PlayerList.CurrentIndex++;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
             if (Controls.ListUp.Pulse)
             {
-                --PlayerListCursorIndex;
+                PlayerList.CurrentIndex--;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
@@ -38,10 +38,9 @@ namespace AW2.Menu.Equip
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             DrawLargeStatusBackground(view, spriteBatch);
-            DrawPlayerListDisplay(view, spriteBatch);
-            DrawPlayerListCursor(view, spriteBatch);
+            DrawPlayerListDisplay(view, spriteBatch, drawCursor: true);
             if (MenuEngine.Game.DataEngine.Players.Any())
-                DrawPlayerInfoDisplay(view, spriteBatch, MenuEngine.Game.DataEngine.Players.ElementAt(PlayerListCursorIndex));
+                DrawPlayerInfoDisplay(view, spriteBatch, MenuEngine.Game.DataEngine.Players.ElementAt(PlayerList.CurrentIndex));
         }
 
         private void DrawPlayerInfoDisplay(Vector2 view, SpriteBatch spriteBatch, Player player)

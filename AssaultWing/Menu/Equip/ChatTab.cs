@@ -49,7 +49,7 @@ namespace AW2.Menu.Equip
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             DrawLargeStatusBackground(view, spriteBatch);
-            DrawPlayerListDisplay(view, spriteBatch);
+            DrawPlayerListDisplay(view, spriteBatch, drawCursor: false);
             DrawChatMessages(view, spriteBatch, TypingPos, Content.StatusPaneTexture.Height - 70);
             DrawChatTextInputBox(view, spriteBatch);
         }

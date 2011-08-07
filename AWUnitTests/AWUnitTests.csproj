@@ -59,6 +59,7 @@
     <Compile Include="Helpers\Serialization\NetworkBinaryReaderTest.cs" />
     <Compile Include="Helpers\Serialization\NetworkBinaryWriterTest.cs" />
     <Compile Include="Helpers\SpatialGridTest.cs" />
+    <Compile Include="Menu\ScrollableListTest.cs" />
     <Compile Include="Net\Messages\PingTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

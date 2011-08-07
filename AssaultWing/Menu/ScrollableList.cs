@@ -12,11 +12,11 @@ namespace AW2.Menu
         private int _visibleCount;
         private Func<int> _getTotalCount;
 
-        public int CurrentIndex { get { return _index; } set { _index = value; Update(); } }
-        public int TopmostIndex { get { return _topmostIndex; } set { _topmostIndex = value; Update(); } }
-        public bool IsScrollableUp { get { return _topmostIndex > 0; } }
-        public bool IsScrollableDown { get { return _topmostIndex + _visibleCount < _getTotalCount(); } }
-        public bool IsCurrentValidIndex { get { return _index >= 0 && _index < _getTotalCount(); } }
+        public int CurrentIndex { get { Update(); return _index; } set { _index = value; } }
+        public int TopmostIndex { get { Update(); return _topmostIndex; } set { _topmostIndex = value; } }
+        public bool IsScrollableUp { get { Update(); return _topmostIndex > 0; } }
+        public bool IsScrollableDown { get { Update(); return _topmostIndex + _visibleCount < _getTotalCount(); } }
+        public bool IsCurrentValidIndex { get { Update(); return _index >= 0 && _index < _getTotalCount(); } }
 
         public ScrollableList(int visibleCount, Func<int> getTotalCount)
         {
@@ -27,6 +27,7 @@ namespace AW2.Menu
 
         public void ForEachVisible(ListItemAction action)
         {
+            Update();
             for (int visibleIndex = 0; visibleIndex < _visibleCount && _topmostIndex + visibleIndex < _getTotalCount(); visibleIndex++)
             {
                 int realIndex = _topmostIndex + visibleIndex;
@@ -36,8 +37,9 @@ namespace AW2.Menu
 
         private void Update()
         {
-            _index = _index.Clamp(0, _getTotalCount() - 1);
-            _topmostIndex = _topmostIndex.Clamp(_index - _visibleCount + 1, _index + _visibleCount - 1);
+            _index = _getTotalCount() == 0 ? 0 : _index.Clamp(0, _getTotalCount() - 1);
+            _topmostIndex = _topmostIndex.Clamp(_index - _visibleCount + 1, _index);
+            _topmostIndex = Math.Min(_topmostIndex, Math.Max(0, _getTotalCount() - _visibleCount));
         }
     }
 }

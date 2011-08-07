@@ -14,7 +14,7 @@ namespace AW2.Game.GobUtils
     /// </summary>
     /// <seealso cref="Weapon"/>
     [LimitedSerialization]
-    public abstract class ShipDevice : Clonable, INetworkSerializable
+    public abstract class ShipDevice : Clonable
     {
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
         public enum FiringResult { Success, Failure, NotReady, Void };
@@ -295,32 +295,6 @@ namespace AW2.Game.GobUtils
         /// Releases all resources allocated by the device.
         /// </summary>
         public virtual void Dispose() { }
-
-        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
-#if NETWORK_PROFILING
-            using (new NetworkProfilingScope(this))
-#endif
-            {
-
-                checked
-                {
-                    if ((mode & SerializationModeFlags.VaryingData) != 0)
-                    {
-                        writer.Write((byte)(byte.MaxValue * Charge / ChargeMax));
-                    }
-                }
-            }
-        }
-
-        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
-        {
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-                var data = reader.ReadByte();
-                _charge = data * ChargeMax / byte.MaxValue;
-            }
-        }
 
         #endregion Public methods
 

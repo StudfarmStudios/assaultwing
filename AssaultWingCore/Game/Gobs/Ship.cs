@@ -406,14 +406,19 @@ namespace AW2.Game.Gobs
                     ? mode & ~SerializationModeFlags.VaryingData
                     : mode;
 
-                if ((shipMode & SerializationModeFlags.VaryingData) != 0)
+                if (shipMode.HasFlag(SerializationModeFlags.VaryingData))
                 {
                     writer.Write((byte)MathHelper.Clamp(_visualThrustForce * 255, 0, 255));
                     _visualThrustForceSerializedThisFrame = true;
+                    Action<ShipDevice> serializeDevice = device =>
+                    {
+                        var chargeData = device == null ? 0 : byte.MaxValue * device.Charge / device.ChargeMax;
+                        writer.Write((byte)chargeData);
+                    };
+                    serializeDevice(Weapon1);
+                    serializeDevice(Weapon2);
+                    serializeDevice(ExtraDevice);
                 }
-                Weapon1.Serialize(writer, shipMode);
-                Weapon2.Serialize(writer, shipMode);
-                ExtraDevice.Serialize(writer, shipMode);
             }
         }
 
@@ -448,13 +453,18 @@ namespace AW2.Game.Gobs
                     DrawRotationOffset = 0;
             }
 
-            if ((shipMode & SerializationModeFlags.VaryingData) != 0)
+            if (shipMode.HasFlag(SerializationModeFlags.VaryingData))
             {
                 _visualThrustForce = reader.ReadByte() / 255f;
+                Action<ShipDevice> deserializeDevice = device =>
+                {
+                    var data = reader.ReadByte();
+                    if (device != null) device.Charge = data * device.ChargeMax / byte.MaxValue;
+                };
+                deserializeDevice(Weapon1);
+                deserializeDevice(Weapon2);
+                deserializeDevice(ExtraDevice);
             }
-            Weapon1.Deserialize(reader, shipMode, framesAgo);
-            Weapon2.Deserialize(reader, shipMode, framesAgo);
-            ExtraDevice.Deserialize(reader, shipMode, framesAgo);
         }
 
         #endregion Methods related to serialisation

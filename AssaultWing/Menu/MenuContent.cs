@@ -32,6 +32,8 @@ namespace AW2.Menu
         public Texture2D ProgressBarBarTexture { get; private set; }
         public Texture2D ProgressBarFlowTexture { get; private set; }
 
+        public Texture2D SmallStatusPaneTexture { get; private set; }
+
         #region Equip tab
 
         public Texture2D StatusPaneTexture { get; private set; }
@@ -73,6 +75,7 @@ namespace AW2.Menu
             ScrollDownTexture = content.Load<Texture2D>("menu_scrollarrow_down");
 
             StatusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
+            SmallStatusPaneTexture = content.Load<Texture2D>("menu_equip_small_status_display");
             PlayerPaneTexture = content.Load<Texture2D>("menu_equip_player_bg");
             PlayerNameBackgroundTexture = content.Load<Texture2D>("menu_equip_player_name_bg");
             PlayerNameBorderTexture = content.Load<Texture2D>("menu_equip_player_name_border");

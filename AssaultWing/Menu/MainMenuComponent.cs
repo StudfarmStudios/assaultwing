@@ -82,10 +82,24 @@ namespace AW2.Menu
                 if (isSelected) _currentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);
                 _currentItems[realIndex].Draw(spriteBatch, _pos - view, visibleIndex);
             });
+
+            if (_currentItems == _itemCollections.NetworkItems)
+                DrawScheduledBattleDisplay(view, spriteBatch);
+
             var scrollUpPos = _pos - view + new Vector2(653, 260);
             var scrollDownPos = _pos - view + new Vector2(653, 580);
             if (_currentItem.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);
             if (_currentItem.IsScrollableDown) spriteBatch.Draw(Content.ScrollDownTexture, scrollDownPos, Color.White);
+        }
+
+        private void DrawScheduledBattleDisplay(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var backgroundPos = _pos - view + new Vector2(440, 600);
+            var textStartPos = (backgroundPos + new Vector2(50, 48)).Round();
+            spriteBatch.Draw(MenuEngine.MenuContent.SmallStatusPaneTexture, backgroundPos, Color.White);
+            spriteBatch.DrawString(Content.FontBig, "Next Scheduled Game in:", textStartPos, Color.White);
+            spriteBatch.DrawString(Content.FontBig, "1d 13h 15min", textStartPos + new Vector2(270, 0), Color.YellowGreen);
+            spriteBatch.DrawString(Content.FontSmall, "Everybody's Welcome to Join!\n\nYou can find all our Scheduled Games by selecting\n\"Find more in Forums\" in this menu.", textStartPos + new Vector2(0, 27), Color.White);
         }
 
         private void ResetItems()

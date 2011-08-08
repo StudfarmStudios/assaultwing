@@ -25,6 +25,9 @@ namespace AW2.Menu
         public Texture2D TabChatTexture { get; private set; }
         public Texture2D TabHilite { get; private set; }
 
+        public Texture2D ScrollUpTexture { get; private set; }
+        public Texture2D ScrollDownTexture { get; private set; }
+
         public Texture2D ProgressBarBackgroundTexture { get; private set; }
         public Texture2D ProgressBarBarTexture { get; private set; }
         public Texture2D ProgressBarFlowTexture { get; private set; }
@@ -65,6 +68,9 @@ namespace AW2.Menu
             TabMatchTexture = content.Load<Texture2D>("menu_equip_tab_gamesettings");
             TabChatTexture = content.Load<Texture2D>("menu_equip_tab_chat");
             TabHilite = content.Load<Texture2D>("menu_equip_tab_hilite");
+
+            ScrollUpTexture = content.Load<Texture2D>("menu_scrollarrow_up");
+            ScrollDownTexture = content.Load<Texture2D>("menu_scrollarrow_down");
 
             StatusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
             PlayerPaneTexture = content.Load<Texture2D>("menu_equip_player_bg");

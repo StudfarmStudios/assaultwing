@@ -13,7 +13,8 @@ namespace AW2.Menu.Equip
     public class PlayersTab : EquipMenuTab
     {
         public override Texture2D TabTexture { get { return Content.TabPlayersTexture; } }
-        public override string HelpText { get { return "Arrows select, Tab changes tab, F10 starts game, Esc exits"; } }
+        public override string HelpText { get { return "Arrows select, Tab changes tab, F10 starts game, Esc exits"; } }
+
         public PlayersTab(EquipMenuComponent menuComponent)
             : base(menuComponent)
         {

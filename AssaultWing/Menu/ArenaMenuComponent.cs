@@ -113,6 +113,8 @@ namespace AW2.Menu
             var lineDeltaPos = new Vector2(0, 40);
             var firstArenaNamePos = _pos - view + new Vector2(147, 237);
             var firstArenaTagPos = _pos - view + new Vector2(283, 235);
+            var scrollUpPos = _pos - view + new Vector2(172, 199);
+            var scrollDownPos = _pos - view + new Vector2(172, 555);
             _currentArena.ForEachVisible((realIndex, visibleIndex, isSelected) =>
             {
                 var arenaNamePos = firstArenaNamePos + visibleIndex * lineDeltaPos;
@@ -130,6 +132,8 @@ namespace AW2.Menu
                     spriteBatch.Draw(_cursorTexture, cursorPos, Color.Multiply(Color.White, _cursorFade.Evaluate((float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds)));
                 }
             });
+            if (_currentArena.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);
+            if (_currentArena.IsScrollableDown) spriteBatch.Draw(Content.ScrollDownTexture, scrollDownPos, Color.White);
         }
 
         private void DrawCurrentArenaInfo(Vector2 view, SpriteBatch spriteBatch)

@@ -46,6 +46,8 @@ namespace AW2.Menu.Equip
         protected void DrawPlayerListDisplay(Vector2 view, SpriteBatch spriteBatch, bool drawCursor)
         {
             var currentPlayerPos = GetPlayerListPos(view);
+            var scrollUpPos = currentPlayerPos + new Vector2(29, -37);
+            var scrollDownPos = currentPlayerPos + new Vector2(29, 336);
             spriteBatch.Draw(Content.PlayerNameBackground, LeftPanePos - view, Color.White);
             var playersArray = MenuEngine.Game.DataEngine.Players.ToArray();
             PlayerList.ForEachVisible((realIndex, visibleInidex, isSelected) =>
@@ -61,6 +63,8 @@ namespace AW2.Menu.Equip
                     spriteBatch.Draw(Content.ListHiliteTexture, cursorPos, Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
                 }
             });
+            if (PlayerList.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);
+            if (PlayerList.IsScrollableDown) spriteBatch.Draw(Content.ScrollDownTexture, scrollDownPos, Color.White);
         }
     }
 }

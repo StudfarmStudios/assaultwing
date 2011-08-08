@@ -82,6 +82,10 @@ namespace AW2.Menu
                 if (isSelected) _currentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);
                 _currentItems[realIndex].Draw(spriteBatch, _pos - view, visibleIndex);
             });
+            var scrollUpPos = _pos - view + new Vector2(653, 260);
+            var scrollDownPos = _pos - view + new Vector2(653, 580);
+            if (_currentItem.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);
+            if (_currentItem.IsScrollableDown) spriteBatch.Draw(Content.ScrollDownTexture, scrollDownPos, Color.White);
         }
 
         private void ResetItems()

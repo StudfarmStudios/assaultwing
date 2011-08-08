@@ -15,6 +15,7 @@ namespace AW2.Menu.Equip
         private EditableText _message;
 
         public override Texture2D TabTexture { get { return Content.TabChatTexture; } }
+        public override string HelpText { get { return "Enter sends message, Tab changes tab, F10 starts game, Esc exits"; } }
         public ChatContainer Messages
         {
             get

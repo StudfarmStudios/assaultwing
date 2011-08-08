@@ -56,7 +56,7 @@ namespace AW2.Menu
         }
 
         public override Vector2 Center { get { return Pos + new Vector2(750, 420); } }
-        public override string HelpText { get { return "Player keys select, Tab changes tab, F10 starts game, Esc exits"; } }
+        public override string HelpText { get { return _tab.HelpText; } }
 
         static EquipMenuComponent()
         {

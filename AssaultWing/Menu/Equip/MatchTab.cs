@@ -15,6 +15,8 @@ namespace AW2.Menu.Equip
         private MatchTabItem _tabItem;
 
         public override Texture2D TabTexture { get { return Content.TabMatchTexture; } }
+        public override string HelpText { get { return "Arrows/Enter select, Tab changes tab, F10 starts game, Esc exits"; } }
+
         private bool IsArenaSelectable { get { return MenuEngine.Game.NetworkMode != NetworkMode.Client; } }
 
         public MatchTab(EquipMenuComponent menuComponent)

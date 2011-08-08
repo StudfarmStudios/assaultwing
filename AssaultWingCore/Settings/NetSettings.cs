@@ -5,6 +5,7 @@ namespace AW2.Settings
     public class NetSettings
     {
         private string _managementServerAddress;
+        private string _dataServerAddress;
         private string _gameServerName;
         private int _gameServerPort;
         private int _gameServerMaxPlayers;
@@ -14,6 +15,7 @@ namespace AW2.Settings
         private TimeSpan[] _dedicatedServerArenaTimeoutMessages;
 
         public string ManagementServerAddress { get { return _managementServerAddress; } set { _managementServerAddress = value; } }
+        public string DataServerAddress { get { return _dataServerAddress; } set { _dataServerAddress = value; } }
         public string GameServerName { get { return _gameServerName; } set { _gameServerName = value; } }
         public int GameServerPort { get { return _gameServerPort; } set { _gameServerPort = value; } }
         public int GameServerMaxPlayers { get { return _gameServerMaxPlayers; } set { _gameServerMaxPlayers = value; } }
@@ -30,6 +32,7 @@ namespace AW2.Settings
         public void Reset()
         {
             _managementServerAddress = "assaultwing.com";
+            _dataServerAddress = "http://www.assaultwing.com";
             _gameServerName = Environment.MachineName;
             _gameServerPort = 'A' * 256 + 'W';
             _gameServerMaxPlayers = 16;

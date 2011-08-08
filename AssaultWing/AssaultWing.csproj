@@ -34,8 +34,8 @@
     <PublisherName>Studfarm Studios</PublisherName>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>122</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -202,6 +202,7 @@
     <Compile Include="Net\NetworkException.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\StreamMessage.cs" />
+    <Compile Include="Core\GameComponents\WebData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\GameForm.cs">
       <SubType>Form</SubType>

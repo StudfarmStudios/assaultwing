@@ -65,8 +65,9 @@ namespace AW2.Menu.Main
             StartItems.Add(new MainMenuItem(menuEngine, () => "Play at the Battlefront",
                 component =>
                 {
-                    _menuEngine.Game.InitializePlayers(1);
+                    menuEngine.Game.InitializePlayers(1);
                     menuEngine.Game.NetworkEngine.ConnectToManagementServer();
+                    menuEngine.Game.WebData.RequestData();
                     RefreshNetworkItems();
                     component.SetItems(NetworkItems);
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");

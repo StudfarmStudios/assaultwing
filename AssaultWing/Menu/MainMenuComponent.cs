@@ -95,11 +95,26 @@ namespace AW2.Menu
         private void DrawScheduledBattleDisplay(Vector2 view, SpriteBatch spriteBatch)
         {
             var backgroundPos = _pos - view + new Vector2(440, 600);
-            var textStartPos = (backgroundPos + new Vector2(50, 48)).Round();
+            var textStartPos = (backgroundPos + new Vector2(50, 43)).Round();
             spriteBatch.Draw(MenuEngine.MenuContent.SmallStatusPaneTexture, backgroundPos, Color.White);
             spriteBatch.DrawString(Content.FontBig, "Next Scheduled Game in:", textStartPos, Color.White);
-            spriteBatch.DrawString(Content.FontBig, "1d 13h 15min", textStartPos + new Vector2(270, 0), Color.YellowGreen);
-            spriteBatch.DrawString(Content.FontSmall, "Everybody's Welcome to Join!\n\nYou can find all our Scheduled Games by selecting\n\"Find more in Forums\" in this menu.", textStartPos + new Vector2(0, 27), Color.White);
+            spriteBatch.DrawString(Content.FontSmall, "Everybody's Welcome to Join!\n\nYou can find all our Scheduled Games by selecting\n\"Find more in Forums\" in this menu.  (and you are of\ncourse free to play whenever you want)", textStartPos + new Vector2(0, 27), Color.White);
+            var currentTime = DateTime.Now;
+            var nextGame = AssaultWing.Instance.WebData.NextScheduledGame;
+
+            if (nextGame != null)
+            {
+                var timeLeft = nextGame - currentTime;
+                String text = null;
+
+                if (nextGame <= currentTime)
+                    text = "Now! Join in!";
+                else
+                    text = timeLeft.Value.Days.ToString() + "d " + timeLeft.Value.Hours.ToString() + "h " + timeLeft.Value.Minutes.ToString() + "min";
+                
+                if (text != null)
+                    spriteBatch.DrawString(Content.FontBig, text, textStartPos + new Vector2(260, 6), Color.YellowGreen);
+            }
         }
 
         private void ResetItems()

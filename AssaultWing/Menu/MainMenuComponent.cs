@@ -100,21 +100,12 @@ namespace AW2.Menu
             spriteBatch.DrawString(Content.FontBig, "Next Scheduled Game in:", textStartPos, Color.White);
             spriteBatch.DrawString(Content.FontSmall, "Everybody's Welcome to Join!\n\nYou can find all our Scheduled Games by selecting\n\"Find more in Forums\" in this menu.  (and you are of\ncourse free to play whenever you want)", textStartPos + new Vector2(0, 27), Color.White);
             var currentTime = DateTime.Now;
-            var nextGame = AssaultWing.Instance.WebData.NextScheduledGame;
-
-            if (nextGame != null)
-            {
-                var timeLeft = nextGame - currentTime;
-                String text = null;
-
-                if (nextGame <= currentTime)
-                    text = "Now! Join in!";
-                else
-                    text = timeLeft.Value.Days.ToString() + "d " + timeLeft.Value.Hours.ToString() + "h " + timeLeft.Value.Minutes.ToString() + "min";
-                
-                if (text != null)
-                    spriteBatch.DrawString(Content.FontBig, text, textStartPos + new Vector2(260, 6), Color.YellowGreen);
-            }
+            var nextGame = MenuEngine.Game.WebData.NextScheduledGame;
+            var text =
+                !nextGame.HasValue || nextGame + TimeSpan.FromHours(2) <= currentTime ? "Not yet scheduled"
+                : nextGame <= currentTime ? "Now! Join in!"
+                : (nextGame.Value - currentTime).ToDurationString("d", "h", "min", null, usePlurals: false);
+            spriteBatch.DrawString(Content.FontBig, text, textStartPos + new Vector2(260, 6), Color.YellowGreen);
         }
 
         private void ResetItems()

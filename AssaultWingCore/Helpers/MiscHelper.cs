@@ -51,17 +51,27 @@ namespace AW2.Helpers
 
         /// <summary>
         /// Returns a human-readable, nice string representation of the TimeSpan as a duration.
+        /// String parameters specify the names of the corresponding units. A null string means
+        /// to completely omit that element from the string. All units with zero values are
+        /// omitted from the string.
         /// </summary>
-        public static string ToDurationString(this TimeSpan timeSpan)
+        /// <param name="usePlurals">If true, append 's' to unit names if the correponding value is not 1.</param>
+        public static string ToDurationString(this TimeSpan timeSpan, string day, string hour, string minute, string second, bool usePlurals)
         {
             if (timeSpan < TimeSpan.Zero) throw new ArgumentException("Only non-negative TimeSpans are supported", "timeSpan");
-            if (timeSpan == TimeSpan.Zero) return "0 seconds";
             var str = new StringBuilder();
-            int hours = (int)timeSpan.TotalHours;
-            if (hours >= 1) str.Append(hours + (hours > 1 ? " hours " : " hour "));
-            if (timeSpan.Minutes > 0) str.Append(timeSpan.Minutes + (timeSpan.Minutes > 1 ? " minutes " : " minute "));
-            if (timeSpan.Seconds > 0) str.Append(timeSpan.Seconds + (timeSpan.Seconds > 1 ? " seconds " : " second "));
-            str.Remove(str.Length - 1, 1); // remove trailing space
+            Func<double, string, int> append = (value, unit) =>
+            {
+                var intValue = unit == null ? 0 : (int)value;
+                if (intValue > 0) str.Append(intValue).Append(' ').Append(unit).Append(usePlurals && intValue > 1 ? "s " : " ");
+                return intValue;
+            };
+            var remainingTimeSpan = timeSpan;
+            remainingTimeSpan -= TimeSpan.FromDays(append(remainingTimeSpan.TotalDays, day));
+            remainingTimeSpan -= TimeSpan.FromHours(append(remainingTimeSpan.TotalHours, hour));
+            remainingTimeSpan -= TimeSpan.FromMinutes(append(remainingTimeSpan.TotalMinutes, minute));
+            remainingTimeSpan -= TimeSpan.FromSeconds(append(remainingTimeSpan.TotalSeconds, second));
+            if (str.Length > 0) str.Remove(str.Length - 1, 1); // remove trailing space
             return str.ToString();
         }
 

@@ -66,7 +66,7 @@
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <iconName>menu_equip_mod_catmoflage</iconName>
-  <loadTime>12</loadTime>
+  <loadTime>11.2</loadTime>
   <fireCharge>0</fireCharge>
   <fireChargePerSecond>85</fireChargePerSecond>
   <shotCount>1</shotCount>

@@ -94,9 +94,9 @@
   <upgradeNames>
   </upgradeNames>
   <iconName>dummytexture</iconName>
-  <loadTime>6</loadTime>
-  <fireCharge>500</fireCharge>
-  <fireChargePerSecond>500</fireChargePerSecond>
+  <loadTime>5</loadTime>
+  <fireCharge>350</fireCharge>
+  <fireChargePerSecond>350</fireChargePerSecond>
   <recoilMomentum>0</recoilMomentum>
   <shotTypeName>dummygob</shotTypeName>
   <shotCount>1</shotCount>

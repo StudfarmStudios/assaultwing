@@ -87,7 +87,7 @@ namespace AW2.Net.Messages
 
         public override string ToString()
         {
-            return base.ToString() + " [" + _gobTypeNames.Count + " gobs, " + StreamedData.Length + " bytes]";
+            return base.ToString() + " [" + _gobTypeNames.Count + " gobs on " + _layerIndices.Count + " layers]";
         }
     }
 }

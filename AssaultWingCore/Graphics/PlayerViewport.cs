@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using AW2.Game;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
+using AW2.Core;
 
 namespace AW2.Graphics
 {
@@ -42,7 +43,11 @@ namespace AW2.Graphics
             AddOverlayComponent(new ScoreOverlay(this));
             GobTracker = new GobTrackerOverlay(this);
             AddOverlayComponent(GobTracker);
-            AddOverlayComponent(new ChatLogOverlay(this));
+            
+            /*
+            var chatLogOverlay = new ChatLogOverlay(this);
+            AddOverlayComponent(chatLogOverlay);
+            */
         }
 
         public Player Player { get { return _player; } }

@@ -22,22 +22,33 @@ namespace AW2.Graphics.OverlayComponents
 
         private SpriteFont _textFont;
        
-        private static Curve g_scrollArrowBlinkCurve;
-        
+        private static Curve g_scrollArrowBlinkCurve;        
         private TimeSpan _scrollArrowGlowStartTime;
         private Player _player;
+       // private Control _chatSendControl, _escapeControl;
+        private Boolean _isTyping = false;
+
+       // public IEnumerable<Control> ExclusiveControls { get { return new[] { _chatSendControl, _escapeControl }; } }
 
         public override Point Dimensions
         {
-            get { return new Point(_chatBackgroundTexture.Width, _chatBackgroundTexture.Height); }
+            //get { _isTyping ? return Point(_chatBackgroundTexture.Width, _chatBackgroundTexture.Height : return new Point(0, 0)); }
+            get
+            {
+                if (!_isTyping)
+                    return new Point(_chatBackgroundTexture.Width, 100);
+                else
+                    return new Point(_chatBackgroundTexture.Width, _chatBackgroundTexture.Height);
+            }
         }
 
         public ChatLogOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Right, VerticalAlignment.Bottom)
         {
             _player = viewport.Player;
-            
             _scrollArrowGlowStartTime = _player.Game.GameTime.TotalRealTime;
+            //_chatSendControl = new KeyboardKey(Keys.Enter);
+            //_escapeControl = new KeyboardKey(Keys.Escape);
         }
 
         static ChatLogOverlay()
@@ -49,24 +60,61 @@ namespace AW2.Graphics.OverlayComponents
             g_scrollArrowBlinkCurve.PreLoop = CurveLoopType.Cycle;
             g_scrollArrowBlinkCurve.PostLoop = CurveLoopType.Cycle;
         }
+        /*
+        public IEnumerable<Control> GetExclusiveKeys ()
+        {
+            IEnumerable<Control> keys = new[] { _chatSendControl, _escapeControl };
+            return keys;
+        }*/
+
+        //public IE
+        /*
+        public override void Update()
+        {
+
+        }*/
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
+            /*
+            Player _chatPlayer = null;
+
+            if (_player != null)
+                _chatPlayer = _player.Game.DataEngine.Players.First(plr => !plr.IsRemote);
+
+            if (_isTyping)
+            {
+                if (_chatSendControl.Pulse && _chatPlayer != null) _isTyping = false;
+                else if (_escapeControl.Pulse) _isTyping = false;
+            }
+            else
+            {
+                if (_player != null && _chatSendControl.Pulse) _isTyping = true;
+            }*/
+
             _textFont.LineSpacing = 15;
 
-            spriteBatch.Draw(_chatBackgroundTexture, Vector2.Zero, Color.White);
-            
-            Vector2 typeLinePos = new Vector2((_chatBackgroundTexture.Width - _typeLineBackgroundTexture.Width) / 2, _chatBackgroundTexture.Height - _typeLineBackgroundTexture.Height - 2);
-            spriteBatch.Draw(_typeLineBackgroundTexture, typeLinePos.Round(), Color.White);
+            Color backgroundColor = Color.White;
 
-            Vector2 scrollPos = new Vector2(_chatBackgroundTexture.Width - 20, 0);
-            Color arrowGlowColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_scrollArrowBlinkCurve.Evaluate((float)(_player.Game.GameTime.TotalRealTime - _scrollArrowGlowStartTime).TotalSeconds)));
-            spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 1), arrowGlowColor);
-            spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, typeLinePos.Y - 31), arrowGlowColor);
-            spriteBatch.Draw(_scrollArrowUpTexture, scrollPos + new Vector2(0, 13), Color.White);
-            spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, typeLinePos.Y - 17), Color.White);
-            spriteBatch.Draw(_scrollTrackTexture, scrollPos + new Vector2(0, 24), Color.White);
-            spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, 100), Color.White);
+            if (!_isTyping)
+                backgroundColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, 0.7f));
+
+            spriteBatch.Draw(_chatBackgroundTexture, Vector2.Zero, backgroundColor);
+
+            if (_isTyping)
+            {
+                Vector2 typeLinePos = new Vector2((_chatBackgroundTexture.Width - _typeLineBackgroundTexture.Width) / 2, _chatBackgroundTexture.Height - _typeLineBackgroundTexture.Height - 2);
+                spriteBatch.Draw(_typeLineBackgroundTexture, typeLinePos.Round(), Color.White);
+
+                Vector2 scrollPos = new Vector2(_chatBackgroundTexture.Width - 20, 0);
+                Color arrowGlowColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_scrollArrowBlinkCurve.Evaluate((float)(_player.Game.GameTime.TotalRealTime - _scrollArrowGlowStartTime).TotalSeconds)));
+                spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 1), arrowGlowColor);
+                spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, typeLinePos.Y - 31), arrowGlowColor);
+                spriteBatch.Draw(_scrollArrowUpTexture, scrollPos + new Vector2(0, 13), Color.White);
+                spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, typeLinePos.Y - 17), Color.White);
+                spriteBatch.Draw(_scrollTrackTexture, scrollPos + new Vector2(0, 24), Color.White);
+                spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, 100), Color.White);
+            }
             
             var messageY = 7;
 

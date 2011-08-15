@@ -26,7 +26,7 @@ namespace AW2.Menu.Equip
         }
 
         private Player ChatPlayer { get { return MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => !plr.IsRemote); } }
-        private SpriteFont Font { get { return Content.FontSmall; } }
+        private SpriteFont Font { get { return Content.FontChat; } }
         private Vector2 TypingPos { get { return StatusPanePos + new Vector2(30, Content.StatusPaneTexture.Height - 44); } }
 
         public ChatTab(EquipMenuComponent menuComponent)
@@ -57,6 +57,7 @@ namespace AW2.Menu.Equip
 
         public void DrawChatMessages(Vector2 view, SpriteBatch spriteBatch, Vector2 lowerLeftCorner, int height)
         {
+            Font.LineSpacing = 15;
             var visibleLines = height / Font.LineSpacing;
             var lineDelta = new Vector2(0, Font.LineSpacing);
             var preTextPos = lowerLeftCorner - view - lineDelta;
@@ -64,6 +65,10 @@ namespace AW2.Menu.Equip
             {
                 var preTextSize = Font.MeasureString(item.Message.PreText);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);
+
+                if (preTextSize.X > 2)
+                    textPos += new Vector2(4, 0);
+
                 spriteBatch.DrawString(Font, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR);
                 spriteBatch.DrawString(Font, item.Message.Text, textPos.Round(), item.Message.TextColor);
                 preTextPos -= lineDelta;

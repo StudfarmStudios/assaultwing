@@ -18,6 +18,7 @@ namespace AW2.Graphics.OverlayComponents
         private Texture2D _scrollArrowDownTexture;
         private Texture2D _scrollArrowGlowTexture;
         private Texture2D _scrollTrackTexture;
+        private Texture2D _scrollMarkerTexture;
 
         private SpriteFont _textFont;
        
@@ -58,7 +59,6 @@ namespace AW2.Graphics.OverlayComponents
             
             Vector2 typeLinePos = new Vector2((_chatBackgroundTexture.Width - _typeLineBackgroundTexture.Width) / 2, _chatBackgroundTexture.Height - _typeLineBackgroundTexture.Height - 2);
             spriteBatch.Draw(_typeLineBackgroundTexture, typeLinePos.Round(), Color.White);
-            //spriteBatch.DrawString(_textFont, "Hello! I'm writing someth", typeLinePos.Round() + new Vector2(3, 3), Color.White);
 
             Vector2 scrollPos = new Vector2(_chatBackgroundTexture.Width - 20, 0);
             Color arrowGlowColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_scrollArrowBlinkCurve.Evaluate((float)(_player.Game.GameTime.TotalRealTime - _scrollArrowGlowStartTime).TotalSeconds)));
@@ -67,6 +67,7 @@ namespace AW2.Graphics.OverlayComponents
             spriteBatch.Draw(_scrollArrowUpTexture, scrollPos + new Vector2(0, 13), Color.White);
             spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, typeLinePos.Y - 17), Color.White);
             spriteBatch.Draw(_scrollTrackTexture, scrollPos + new Vector2(0, 24), Color.White);
+            spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, 100), Color.White);
 
         }
 
@@ -82,6 +83,7 @@ namespace AW2.Graphics.OverlayComponents
             _scrollArrowDownTexture = content.Load<Texture2D>("gui_chat_scroll_arrow_down");
             _scrollTrackTexture = content.Load<Texture2D>("gui_chat_scroll_track");
             _scrollArrowGlowTexture = content.Load<Texture2D>("gui_chat_scroll_arrow_glow");
+            _scrollMarkerTexture = content.Load<Texture2D>("gui_chat_scroll_marker");
 
             _textFont = content.Load<SpriteFont>("ChatFont");
         }

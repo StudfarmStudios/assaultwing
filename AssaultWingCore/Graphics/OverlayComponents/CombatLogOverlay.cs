@@ -12,7 +12,7 @@ namespace AW2.Graphics.OverlayComponents
     /// Overlay graphics component displaying a box with a player's chat and gameplay messages.
     /// The messages are stored in <c>DataEngine</c> from where this component reads them.
     /// </summary>
-    public class ChatBoxOverlay : OverlayComponent
+    public class CombatLogOverlay : OverlayComponent
     {
         private const float SHADOW_THICKNESS = 2;
         private const int VISIBLE_LINES = 5;
@@ -29,7 +29,7 @@ namespace AW2.Graphics.OverlayComponents
             }
         }
 
-        static ChatBoxOverlay()
+        static CombatLogOverlay()
         {
             g_messageFadeoutCurve = new Curve();
             g_messageFadeoutCurve.Keys.Add(new CurveKey(0, 1));
@@ -39,7 +39,7 @@ namespace AW2.Graphics.OverlayComponents
         }
 
         /// <param name="player">The player whose chat messages to display.</param>
-        public ChatBoxOverlay(PlayerViewport viewport)
+        public CombatLogOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
             CustomAlignment = new Vector2(0, 300);

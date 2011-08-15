@@ -26,19 +26,32 @@ namespace AW2.Core.GameComponents
         private bool IsTyping { get { return _message != null; } }
         private Player ChatPlayer { get { return Game.DataEngine.Players.First(plr => !plr.IsRemote); } }
 
+        private static Curve g_cursorBlinkCurve;
+        private TimeSpan _cursorBlinkStartTime;
+        private Texture2D _typeLineCursorTexture;
+
         public PlayerChat(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
         {
+            g_cursorBlinkCurve = new Curve();
+            g_cursorBlinkCurve.Keys.Add(new CurveKey(0, 1));
+            g_cursorBlinkCurve.Keys.Add(new CurveKey(0.5f, 0));
+            g_cursorBlinkCurve.Keys.Add(new CurveKey(1, 1));
+            g_cursorBlinkCurve.PreLoop = CurveLoopType.Cycle;
+            g_cursorBlinkCurve.PostLoop = CurveLoopType.Cycle;
+
             _game = game;
             _chatSendControl = new KeyboardKey(Keys.Enter);
             _escapeControl = new KeyboardKey(Keys.Escape);
+            _cursorBlinkStartTime = _game.GameTime.TotalRealTime;
         }
 
         public override void LoadContent()
         {
             Game.GraphicsDeviceService.CheckThread();
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
-            _typingFont = Game.Content.Load<SpriteFont>("MenuFontBig");
+            _typingFont = Game.Content.Load<SpriteFont>("ChatFont");
+            _typeLineCursorTexture = Game.Content.Load<Texture2D>("gui_chat_typeline_cursor");
         }
 
         public override void Update()
@@ -63,9 +76,13 @@ namespace AW2.Core.GameComponents
             Game.GraphicsDeviceService.CheckThread();
             if (!IsTyping) return;
             var chatName = ChatPlayer != null ? ChatPlayer.Name : "???";
-            var text = string.Format("{0}>{1}<", chatName, _message.Content);
+            var text = string.Format("{0}>{1}", chatName, _message.Content);
+
+            Color cursorColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_cursorBlinkCurve.Evaluate((float)(_game.GameTime.TotalRealTime - _cursorBlinkStartTime).TotalSeconds)));
+
             _spriteBatch.Begin();
             _spriteBatch.DrawString(_typingFont, text, GetTypingPos(text).Round(), TypingColor);
+            _spriteBatch.Draw(_typeLineCursorTexture, GetTypingPos(text).Round() + new Vector2(_typingFont.MeasureString(text).X + 2, -2), cursorColor);
             _spriteBatch.End();
         }
 
@@ -78,8 +95,11 @@ namespace AW2.Core.GameComponents
         {
             var viewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
             var textSize = _typingFont.MeasureString(text);
-            var textY = Math.Min(viewport.Height / 2 + 300 - _typingFont.LineSpacing * 3, viewport.Height - textSize.Y);
-            return new Vector2(viewport.Width / 2, textY) - textSize / 2;
+            //var textY = Math.Min(viewport.Height / 2 + 300 - _typingFont.LineSpacing * 3, viewport.Height - textSize.Y);
+            var textY = viewport.Height - 20;
+            var textX = viewport.Width - 470;
+           // return new Vector2(viewport.Width / 2, textY) - textSize / 2;
+            return new Vector2(textX, textY);
         }
 
         private void StartWritingMessage()

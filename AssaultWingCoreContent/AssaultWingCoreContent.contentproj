@@ -1359,6 +1359,11 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
+    <Compile Include="fonts\ChatFont.spritefont">
+      <Name>ChatFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <None Include="gobdefs\ArenaMessage_bonusmessage.xml">
       <Name>ArenaMessage_bonusmessage</Name>
       <Importer>XmlImporter</Importer>
@@ -3158,6 +3163,55 @@
   <ItemGroup>
     <Compile Include="textures\menu_equip_small_status_display.png">
       <Name>menu_equip_small_status_display</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\gui_chat_bg.png">
+      <Name>gui_chat_bg</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\gui_chat_typeline_bg.png">
+      <Name>gui_chat_typeline_bg</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\gui_chat_typeline_cursor.png">
+      <Name>gui_chat_typeline_cursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\gui_chat_scroll_arrow_up.png">
+      <Name>gui_chat_scroll_arrow_up</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\gui_chat_scroll_arrow_down.png">
+      <Name>gui_chat_scroll_arrow_down</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\gui_chat_scroll_track.png">
+      <Name>gui_chat_scroll_track</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\gui_chat_scroll_arrow_glow.png">
+      <Name>gui_chat_scroll_arrow_glow</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

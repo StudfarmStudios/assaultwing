@@ -35,13 +35,14 @@ namespace AW2.Graphics
             _player = player;
             _shakeSign = -1;
             AddOverlayComponent(new MiniStatusOverlay(this));
-            AddOverlayComponent(new ChatBoxOverlay(this));
+            AddOverlayComponent(new CombatLogOverlay(this));
             AddOverlayComponent(new RadarOverlay(this));
             AddOverlayComponent(new BonusListOverlay(this));
             AddOverlayComponent(new PlayerStatusOverlay(this));
             AddOverlayComponent(new ScoreOverlay(this));
             GobTracker = new GobTrackerOverlay(this);
             AddOverlayComponent(GobTracker);
+            AddOverlayComponent(new ChatLogOverlay(this));
         }
 
         public Player Player { get { return _player; } }

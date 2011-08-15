@@ -55,7 +55,6 @@ namespace AW2.Graphics.OverlayComponents
             _textFont.LineSpacing = 15;
 
             spriteBatch.Draw(_chatBackgroundTexture, Vector2.Zero, Color.White);
-            spriteBatch.DrawString(_textFont, "16 Lines of text\nKokeillaanpa vähän kirjottaa tällä\njotkut kirjaimet VoI oLLa RuMia", Vector2.Zero + new Vector2(11, 7), Color.White);
             
             Vector2 typeLinePos = new Vector2((_chatBackgroundTexture.Width - _typeLineBackgroundTexture.Width) / 2, _chatBackgroundTexture.Height - _typeLineBackgroundTexture.Height - 2);
             spriteBatch.Draw(_typeLineBackgroundTexture, typeLinePos.Round(), Color.White);
@@ -68,6 +67,23 @@ namespace AW2.Graphics.OverlayComponents
             spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, typeLinePos.Y - 17), Color.White);
             spriteBatch.Draw(_scrollTrackTexture, scrollPos + new Vector2(0, 24), Color.White);
             spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, 100), Color.White);
+            
+            var messageY = 7;
+
+            foreach (var item in _player.Messages.Reversed().Take(16).Reverse())
+            {
+                var preTextSize = _textFont.MeasureString(item.Message.PreText);
+                var textSize = _textFont.MeasureString(item.Message.Text);
+                var preTextPos = new Vector2(11, messageY);
+                var textPos = preTextPos + new Vector2(preTextSize.X, 0);
+
+                if (preTextSize.X > 2)
+                    textPos += new Vector2(4, 0);
+
+                spriteBatch.DrawString(_textFont, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR);
+                spriteBatch.DrawString(_textFont, item.Message.Text, textPos.Round(), item.Message.TextColor);
+                messageY += _textFont.LineSpacing;
+            }
 
         }
 

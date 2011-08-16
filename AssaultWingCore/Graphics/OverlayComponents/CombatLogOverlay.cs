@@ -70,7 +70,7 @@ namespace AW2.Graphics.OverlayComponents
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             var messageY = SHADOW_THICKNESS;
-            foreach (var item in _player.Messages.Reversed().Take(VISIBLE_LINES))
+            foreach (var item in _player.Messages.ReversedCombatLog().Take(VISIBLE_LINES))
             {
                 float alpha = GetMessageAlpha(item);
                 if (alpha == 0) continue;
@@ -84,7 +84,7 @@ namespace AW2.Graphics.OverlayComponents
             }
         }
 
-        private float GetMessageAlpha(ChatContainer.Item item)
+        private float GetMessageAlpha(MessageContainer.Item item)
         {
             return g_messageFadeoutCurve.Evaluate(item.EntryRealTime.SecondsAgoRealTime());
         }

@@ -54,7 +54,6 @@ namespace AW2.Game
             using (new NetworkProfilingScope(this))
 #endif
             {
-
                 writer.Write((string)PreText);
                 writer.Write((string)Text);
                 writer.Write((Color)TextColor);

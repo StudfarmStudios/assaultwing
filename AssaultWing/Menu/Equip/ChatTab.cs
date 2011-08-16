@@ -20,11 +20,11 @@ namespace AW2.Menu.Equip
 
         public override Texture2D TabTexture { get { return Content.TabChatTexture; } }
         public override string HelpText { get { return "Enter sends message, Tab changes tab, F10 starts game, Esc exits"; } }
-        public ChatContainer Messages
+        public MessageContainer Messages
         {
             get
             {
-                if (ChatPlayer == null) return new ChatContainer();
+                if (ChatPlayer == null) return new MessageContainer();
                 return ChatPlayer.Messages;
             }
         }
@@ -74,7 +74,7 @@ namespace AW2.Menu.Equip
             var visibleLines = height / Font.LineSpacing;
             var lineDelta = new Vector2(0, Font.LineSpacing);
             var preTextPos = lowerLeftCorner - view - lineDelta;
-            foreach (var item in Messages.Reversed().Take(visibleLines))
+            foreach (var item in Messages.ReversedChat().Take(visibleLines))
             {
                 var preTextSize = Font.MeasureString(item.Message.PreText);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);

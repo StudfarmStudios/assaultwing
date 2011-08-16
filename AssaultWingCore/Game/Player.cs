@@ -212,7 +212,7 @@ namespace AW2.Game
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
         /// </summary>
-        public ChatContainer Messages { get; private set; }
+        public MessageContainer Messages { get; private set; }
 
         public PostprocessEffectNameContainer PostprocessEffectNames { get; private set; }
 
@@ -316,7 +316,7 @@ namespace AW2.Game
             ShipName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
-            Messages = new ChatContainer();
+            Messages = new MessageContainer();
             PlayerColor = Color.Gray;
             BonusActions = new List<BonusAction>();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);

@@ -214,7 +214,6 @@
     <Compile Include="Graphics\OverlayComponent.cs" />
     <Compile Include="Graphics\OverlayComponents\BonusListOverlay.cs" />
     <Compile Include="Graphics\OverlayComponents\CombatLogOverlay.cs" />
-    <Compile Include="Graphics\OverlayComponents\ChatLogOverlay.cs" />
     <Compile Include="Graphics\OverlayComponents\GobTrackerItem.cs" />
     <Compile Include="Graphics\OverlayComponents\GobTrackerOverlay.cs" />
     <Compile Include="Graphics\OverlayComponents\MiniStatusOverlay.cs" />

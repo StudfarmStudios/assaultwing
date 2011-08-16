@@ -33,8 +33,8 @@ namespace AW2.Graphics.OverlayComponents
         {
             g_messageFadeoutCurve = new Curve();
             g_messageFadeoutCurve.Keys.Add(new CurveKey(0, 1));
-            g_messageFadeoutCurve.Keys.Add(new CurveKey(2, 1));
-            g_messageFadeoutCurve.Keys.Add(new CurveKey(4, 0));
+            g_messageFadeoutCurve.Keys.Add(new CurveKey(3.5f, 1));
+            g_messageFadeoutCurve.Keys.Add(new CurveKey(5.2f, 0));
             g_messageFadeoutCurve.ComputeTangents(CurveTangent.Linear);
         }
 

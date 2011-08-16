@@ -93,14 +93,14 @@ namespace AW2.Core.GameComponents
         {
             if (IsTyping)
             {
-                if (_chatSendControl.Pulse && ChatPlayer != null)
+                if (_scrollUpControl.Force > 0) ScrollUp();
+                if (_scrollDownControl.Force > 0) ScrollDown();
+                if (_escapeControl.Pulse) StopWritingMessage();
+                else if (_chatSendControl.Pulse && ChatPlayer != null)
                 {
                     _game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
                     StopWritingMessage();
                 }
-                else if (_escapeControl.Pulse) StopWritingMessage();
-                else if (_scrollUpControl.Pulse) ScrollUp();
-                else if (_scrollDownControl.Pulse) ScrollDown();
             }
             else
             {

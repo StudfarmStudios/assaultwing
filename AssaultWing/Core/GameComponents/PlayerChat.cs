@@ -17,7 +17,7 @@ namespace AW2.Core.GameComponents
     public class PlayerChat : AWGameComponent
     {
         private AssaultWing _game;
-        private Control _chatSendControl, _escapeControl;
+        private Control _chatSendControl, _escapeControl, _scrollUpControl, _scrollDownControl;
         private EditableText _message;
         private SpriteBatch _spriteBatch;
         private SpriteFont _typingFont;
@@ -35,6 +35,10 @@ namespace AW2.Core.GameComponents
 
         private TimeSpan _scrollArrowGlowStartTime;
         private TimeSpan _cursorBlinkStartTime;
+
+        private int _scrollPosition = 0;
+        private int _linesWhenTyping = 16;
+        private int _linesWhenClosed = 6;
 
         public PlayerChat(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
@@ -56,6 +60,8 @@ namespace AW2.Core.GameComponents
             _game = game;
             _chatSendControl = new KeyboardKey(Keys.Enter);
             _escapeControl = new KeyboardKey(Keys.Escape);
+            _scrollUpControl = new KeyboardKey(Keys.Up);
+            _scrollDownControl = new KeyboardKey(Keys.Down);
             _cursorBlinkStartTime = _game.GameTime.TotalRealTime;
             _scrollArrowGlowStartTime = _game.GameTime.TotalRealTime;
         }
@@ -87,6 +93,8 @@ namespace AW2.Core.GameComponents
                     StopWritingMessage();
                 }
                 else if (_escapeControl.Pulse) StopWritingMessage();
+                else if (_scrollUpControl.Pulse) ScrollUp();
+                else if (_scrollDownControl.Pulse) ScrollDown();
             }
             else
             {
@@ -136,9 +144,9 @@ namespace AW2.Core.GameComponents
             }
 
             var messageY = 7;
-            var messageLines = IsTyping ? 16 : 6;
+            var messageLines = IsTyping ? _linesWhenTyping : _linesWhenClosed;
 
-            foreach (var item in ChatPlayer.Messages.Reversed().Take(messageLines).Reverse())
+            foreach (var item in ChatPlayer.Messages.Reversed().Skip(_scrollPosition).Take(messageLines).Reverse())
             {
                 var preTextSize = _typingFont.MeasureString(item.Message.PreText);
                 var textSize = _typingFont.MeasureString(item.Message.Text);
@@ -172,7 +180,7 @@ namespace AW2.Core.GameComponents
         private void StartWritingMessage()
         {
             if (_message != null) throw new InvalidOperationException("Already writing a message");
-            IEnumerable<Control> exclusiveControls = new[] { _chatSendControl, _escapeControl };
+            IEnumerable<Control> exclusiveControls = new[] { _chatSendControl, _escapeControl, _scrollUpControl, _scrollDownControl };
             _game.UIEngine.PushExclusiveControls(exclusiveControls);
             _message = new EditableText("", 40, _game, () => { }) { IsActive = true };
         }
@@ -181,7 +189,20 @@ namespace AW2.Core.GameComponents
         {
             _message.Dispose();
             _message = null;
+            _scrollPosition = 0;
             _game.UIEngine.PopExclusiveControls();
+        }
+
+        private void ScrollUp()
+        {
+            if (_scrollPosition < ChatPlayer.Messages.Count() - _linesWhenTyping)
+                _scrollPosition++;
+        }
+
+        private void ScrollDown()
+        {
+            if (_scrollPosition > 0)
+                _scrollPosition--;
         }
     }
 }

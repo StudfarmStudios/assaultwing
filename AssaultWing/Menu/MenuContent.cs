@@ -34,6 +34,7 @@ namespace AW2.Menu
         public Texture2D ProgressBarFlowTexture { get; private set; }
 
         public Texture2D SmallStatusPaneTexture { get; private set; }
+        public Texture2D TypingCursor { get; private set; }
 
         #region Equip tab
 
@@ -89,6 +90,8 @@ namespace AW2.Menu
             ProgressBarBackgroundTexture = content.Load<Texture2D>("menu_progressbar_bg");
             ProgressBarBarTexture = content.Load<Texture2D>("menu_progressbar_fill");
             ProgressBarFlowTexture = content.Load<Texture2D>("menu_progressbar_advancer");
+
+            TypingCursor = content.Load<Texture2D>("gui_chat_typeline_cursor");
         }
     }
 }

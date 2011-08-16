@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.UI;
+using AW2.Graphics;
 
 namespace AW2.Menu.Equip
 {
@@ -13,6 +14,9 @@ namespace AW2.Menu.Equip
     {
         private Control _sendControl;
         private EditableText _message;
+
+        private static Curve g_cursorBlinkCurve;
+        private TimeSpan _cursorBlinkStartTime;
 
         public override Texture2D TabTexture { get { return Content.TabChatTexture; } }
         public override string HelpText { get { return "Enter sends message, Tab changes tab, F10 starts game, Esc exits"; } }
@@ -35,6 +39,15 @@ namespace AW2.Menu.Equip
             _sendControl = new KeyboardKey(Keys.Enter);
             _message = new EditableText("", 40, MenuEngine.Game, () => { });
             // FIXME !!! Memory leak: _message will never be garbage collected because it referenced by the Window.KeyPress event
+
+            g_cursorBlinkCurve = new Curve();
+            g_cursorBlinkCurve.Keys.Add(new CurveKey(0, 1));
+            g_cursorBlinkCurve.Keys.Add(new CurveKey(0.5f, 0));
+            g_cursorBlinkCurve.Keys.Add(new CurveKey(1, 1));
+            g_cursorBlinkCurve.PreLoop = CurveLoopType.Cycle;
+            g_cursorBlinkCurve.PostLoop = CurveLoopType.Cycle;
+
+            _cursorBlinkStartTime = MenuEngine.Game.GameTime.TotalRealTime;
         }
 
         public override void Update()
@@ -69,8 +82,8 @@ namespace AW2.Menu.Equip
                 if (preTextSize.X > 2)
                     textPos += new Vector2(4, 0);
 
-                spriteBatch.DrawString(Font, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR);
-                spriteBatch.DrawString(Font, item.Message.Text, textPos.Round(), item.Message.TextColor);
+                ModelRenderer.DrawBorderedText(spriteBatch, Font, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR, 1, 1);
+                ModelRenderer.DrawBorderedText(spriteBatch, Font, item.Message.Text, textPos.Round(), item.Message.TextColor, 1, 1);
                 preTextPos -= lineDelta;
             }
         }
@@ -78,8 +91,10 @@ namespace AW2.Menu.Equip
         private void DrawChatTextInputBox(Vector2 view, SpriteBatch spriteBatch)
         {
             if (ChatPlayer == null) return;
-            var text = string.Format("{0}>{1}<", ChatPlayer.Name, _message.Content);
-            spriteBatch.DrawString(Font, text, (TypingPos - view).Round(), Color.White);
+            var text = string.Format("{0}>{1}", ChatPlayer.Name, _message.Content);
+            ModelRenderer.DrawBorderedText(spriteBatch, Font, text, (TypingPos - view).Round(), Color.White, 1, 1);
+            Color cursorColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_cursorBlinkCurve.Evaluate((float)(MenuEngine.Game.GameTime.TotalRealTime - _cursorBlinkStartTime).TotalSeconds)));
+            spriteBatch.Draw(Content.TypingCursor, (TypingPos - view).Round() + new Vector2(Font.MeasureString(text).X + 2, -2), cursorColor);
         }
     }
 }

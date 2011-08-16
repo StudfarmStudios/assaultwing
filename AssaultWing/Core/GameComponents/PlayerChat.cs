@@ -29,9 +29,8 @@ namespace AW2.Core.GameComponents
         private static Curve g_cursorBlinkCurve;
         private static Curve g_scrollArrowBlinkCurve;
         
-        private Texture2D _typeLineCursorTexture;
         private Texture2D _chatBackgroundTexture;
-        private Texture2D _typeLineBackgroundTexture;
+        private Texture2D _typeLineBackgroundTexture, _typeLineCursorTexture;
         private Texture2D _scrollArrowUpTexture, _scrollArrowDownTexture, _scrollArrowGlowTexture, _scrollTrackTexture, _scrollMarkerTexture;
 
         private TimeSpan _scrollArrowGlowStartTime;
@@ -67,8 +66,8 @@ namespace AW2.Core.GameComponents
 
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             _typingFont = Game.Content.Load<SpriteFont>("ChatFont");
-            _typeLineCursorTexture = Game.Content.Load<Texture2D>("gui_chat_typeline_cursor");
             _chatBackgroundTexture = Game.Content.Load<Texture2D>("gui_chat_bg");
+            _typeLineCursorTexture = Game.Content.Load<Texture2D>("gui_chat_typeline_cursor");
             _typeLineBackgroundTexture = Game.Content.Load<Texture2D>("gui_chat_typeline_bg");
 
             _scrollArrowUpTexture = Game.Content.Load<Texture2D>("gui_chat_scroll_arrow_up");

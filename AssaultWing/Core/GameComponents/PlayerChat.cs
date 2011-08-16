@@ -39,6 +39,8 @@ namespace AW2.Core.GameComponents
         private int _scrollPosition = 0;
         private int _linesWhenTyping = 16;
         private int _linesWhenClosed = 6;
+        private int _minScrollMarkerPosition = 25;
+        private int _maxScrollMarkerPosition = 208;
 
         public PlayerChat(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
@@ -127,13 +129,28 @@ namespace AW2.Core.GameComponents
                 Vector2 typeLinePos = chatBoxPos + new Vector2((_chatBackgroundTexture.Width - _typeLineBackgroundTexture.Width) / 2, _chatBackgroundTexture.Height - _typeLineBackgroundTexture.Height - 2);
                 Vector2 scrollPos = chatBoxPos + new Vector2(_chatBackgroundTexture.Width - 20, 0);
                 Color arrowGlowColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_scrollArrowBlinkCurve.Evaluate((float)(_game.GameTime.TotalRealTime - _scrollArrowGlowStartTime).TotalSeconds)));
+                Color arrowUpColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, 0.2f));
+                Color arrowDownColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, 0.2f));
+
+                if (CanScrollUp())
+                {
+                    arrowUpColor = Color.White;
+                    _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 1), arrowGlowColor);
+                }
+                _spriteBatch.Draw(_scrollArrowUpTexture, scrollPos + new Vector2(0, 13), arrowUpColor);
+
+                if (CanScrollDown())
+                {
+                    arrowDownColor = Color.White;
+                    _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 216), arrowGlowColor);
+                }
+                _spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, 230), arrowDownColor);
+
                 _spriteBatch.Draw(_typeLineBackgroundTexture, typeLinePos.Round(), Color.White);
-                _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 1), arrowGlowColor);
-                _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 216), arrowGlowColor);
-                _spriteBatch.Draw(_scrollArrowUpTexture, scrollPos + new Vector2(0, 13), Color.White);
-                _spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, 230), Color.White);
                 _spriteBatch.Draw(_scrollTrackTexture, scrollPos + new Vector2(0, 24), Color.White);
-                _spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, 100), Color.White);
+
+                if (IsScrollable())
+                    _spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, GetScrollMarkerYPosition()), Color.White);
 
                 // Draw typeline text
                 var chatName = ChatPlayer != null ? ChatPlayer.Name : "???";
@@ -193,16 +210,53 @@ namespace AW2.Core.GameComponents
             _game.UIEngine.PopExclusiveControls();
         }
 
-        private void ScrollUp()
+        private bool CanScrollUp()
         {
             if (_scrollPosition < ChatPlayer.Messages.Count() - _linesWhenTyping)
+                return true;
+
+            return false;
+        }
+
+        private bool CanScrollDown()
+        {
+            if (_scrollPosition > 0)
+                return true;
+
+            return false;
+        }
+
+        private void ScrollUp()
+        {
+            if (CanScrollUp())
                 _scrollPosition++;
         }
 
         private void ScrollDown()
         {
-            if (_scrollPosition > 0)
+            if (CanScrollDown())
                 _scrollPosition--;
+        }
+
+        private int GetScrollMarkerYPosition()
+        {
+            if (!IsScrollable()) return _maxScrollMarkerPosition;
+                
+            float scrollLength = _maxScrollMarkerPosition - _minScrollMarkerPosition;
+            float totalLines = ChatPlayer.Messages.Count() - _linesWhenTyping;
+            float lineToPixelRatio = scrollLength / totalLines;
+            float scrollAmountInPixels = _scrollPosition * lineToPixelRatio;
+            int markerYPosition = (int)Math.Round(_maxScrollMarkerPosition - scrollAmountInPixels);
+
+            return markerYPosition;
+        }
+
+        private bool IsScrollable()
+        {
+            if (ChatPlayer.Messages.Count() > _linesWhenTyping)
+                return true;
+
+            return false;
         }
     }
 }

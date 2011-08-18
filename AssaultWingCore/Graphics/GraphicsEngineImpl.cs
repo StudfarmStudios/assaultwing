@@ -76,6 +76,7 @@ namespace AW2.Graphics
 
         public override void LoadContent()
         {
+            if (Game.CommandLineOptions.DedicatedServer) return;
             Log.Write("Graphics engine loading graphics content.");
             Game.GraphicsDeviceService.CheckThread();
             Game.Content.LoadAllGraphicsContent();

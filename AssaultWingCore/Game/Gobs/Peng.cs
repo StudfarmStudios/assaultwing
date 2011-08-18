@@ -109,11 +109,6 @@ namespace AW2.Game.Gobs
 
         public override bool IsRelevant { get { return false; } }
 
-        public override IEnumerable<CanonicalString> TextureNames
-        {
-            get { return base.TextureNames.Union(_emitter.TextureNames); }
-        }
-
         public override Vector2 Pos
         {
             get
@@ -259,18 +254,6 @@ namespace AW2.Game.Gobs
             Movable = IsMovable; // By default, Peng stays put or moves with its leader
         }
 
-        public override void LoadContent()
-        {
-            base.LoadContent();
-            _emitter.LoadContent();
-        }
-
-        public override void UnloadContent()
-        {
-            base.UnloadContent();
-            _emitter.UnloadContent();
-        }
-
         public override void Update()
         {
             base.Update();
@@ -302,7 +285,7 @@ namespace AW2.Game.Gobs
                 // particle's position in its lifespan.
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.LayerDepth, 0, 1);
 
-                var texture = _emitter.Textures[particle.TextureIndex];
+                var texture = particle.Texture;
                 var color = Color.Multiply(pengColor, particle.Alpha);
                 spriteBatch.Draw(texture, screenCenter, null, color, drawRotation,
                     new Vector2(texture.Width, texture.Height) / 2, particle.Scale * scale,

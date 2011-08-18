@@ -8,6 +8,7 @@ using AW2.Core;
 using AW2.Game.Arenas;
 using AW2.Game.GobUtils;
 using AW2.Graphics;
+using AW2.Graphics.Content;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -373,6 +374,7 @@ namespace AW2.Game
         /// The 3D model of the gob.
         /// </summary>
         protected Model Model { get; private set; }
+        private ModelGeometry ModelSkeleton { get; set; }
 
         /// <summary>
         /// Names of all 3D models that this gob type will ever use.
@@ -496,15 +498,15 @@ namespace AW2.Game
         {
             get
             {
-                if (_modelPartTransforms == null || _modelPartTransforms.Length != Model.Bones.Count)
+                if (_modelPartTransforms == null || _modelPartTransforms.Length != ModelSkeleton.Bones.Length)
                 {
-                    _modelPartTransforms = new Matrix[Model.Bones.Count];
+                    _modelPartTransforms = new Matrix[ModelSkeleton.Bones.Length];
                     _modelPartTransformsUpdated = new TimeSpan(-1);
                 }
                 if (_modelPartTransformsUpdated < Arena.TotalTime)
                 {
                     _modelPartTransformsUpdated = Arena.TotalTime;
-                    CopyAbsoluteBoneTransformsTo(Model, _modelPartTransforms);
+                    CopyAbsoluteBoneTransformsTo(ModelSkeleton, _modelPartTransforms);
                 }
                 return _modelPartTransforms;
             }
@@ -710,7 +712,9 @@ namespace AW2.Game
         /// </summary>
         public virtual void LoadContent()
         {
-            Model = Game.Content.Load<Model>(ModelName);
+            ModelSkeleton = Game.Content.Load<ModelGeometry>(ModelName);
+            if (!Game.CommandLineOptions.DedicatedServer)
+                Model = Game.Content.Load<Model>(ModelName);
         }
 
         /// <summary>
@@ -739,9 +743,12 @@ namespace AW2.Game
                 CreateModelBirthGobs();
                 CreateExhaustEngines();
             }
-            foreach (var mesh in Model.Meshes)
-                foreach (BasicEffect be in mesh.Effects)
-                    Arena.PrepareEffect(be);
+            if (!Game.CommandLineOptions.DedicatedServer)
+            {
+                foreach (var mesh in Model.Meshes)
+                    foreach (BasicEffect be in mesh.Effects)
+                        Arena.PrepareEffect(be);
+            }
             _drawBounds.Radius = -1;
         }
 
@@ -1015,7 +1022,7 @@ namespace AW2.Game
         public IEnumerable<Tuple<string, int>> GetNamedPositions(string namePrefix)
         {
             return
-                from bone in Model.Bones
+                from bone in ModelSkeleton.Bones
                 let name = bone.Name
                 where name != null && name.StartsWith(namePrefix)
                 select Tuple.Create(name, bone.Index);
@@ -1117,9 +1124,9 @@ namespace AW2.Game
         /// <summary>
         /// Copies a transform of each bone in a model relative to all parent bones of the bone into a given array.
         /// </summary>
-        protected virtual void CopyAbsoluteBoneTransformsTo(Model model, Matrix[] transforms)
+        protected virtual void CopyAbsoluteBoneTransformsTo(ModelGeometry skeleton, Matrix[] transforms)
         {
-            model.CopyAbsoluteBoneTransformsTo(transforms);
+            skeleton.CopyAbsoluteBoneTransformsTo(transforms);
         }
 
         protected virtual BoundingSphere CreateDrawBounds()

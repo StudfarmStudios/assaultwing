@@ -9,14 +9,15 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using AW2.Helpers;
 
-namespace AW2.Graphics
+namespace AW2.Graphics.Content
 {
     /// <summary>
     /// Content manager specifically for Assault Wing.
     /// </summary>
     public class AWContentManager : ContentManager
     {
-        private IDictionary<string, object> _loadedContent = new Dictionary<string, object>();
+        private Dictionary<string, object> _loadedContent = new Dictionary<string, object>();
+        private Dictionary<string, object> _loadedModelSkeletons = new Dictionary<string, object>();
 
         public Dictionary<string, Tuple<VertexPositionNormalTexture[], short[]>> ModelCache { get; private set; }
 
@@ -26,21 +27,31 @@ namespace AW2.Graphics
 
         public bool Exists<T>(string assetName)
         {
-            return File.Exists(GetAssetFullName<T>(assetName) + ".xnb");
+            return File.Exists(GetAssetFilename<T>(assetName));
         }
 
         /// <summary>
         /// Loads an asset that has been processed by the Content Pipeline.
-        /// </summary>
         /// Repeated calls to load the same asset will return the same object instance.
+        /// </summary>
         public override T Load<T>(string assetName)
         {
             if (assetName == null) throw new ArgumentNullException("assetName");
-            var assetFullName = GetAssetFullName<T>(assetName);
             object item;
-            if (_loadedContent.TryGetValue(assetFullName, out item)) return (T)item;
-            item = ReadAsset<T>(assetFullName, null);
-            _loadedContent.Add(assetFullName, item);
+            if (typeof(T) == typeof(ModelGeometry))
+            {
+                var assetFilename = GetAssetFilename<T>(assetName);
+                if (_loadedModelSkeletons.TryGetValue(assetFilename, out item)) return (T)item;
+                item = XNBReader.Read<T>(assetFilename);
+                _loadedModelSkeletons.Add(assetFilename, item);
+            }
+            else
+            {
+                var assetFullName = GetAssetFullName<T>(assetName);
+                if (_loadedContent.TryGetValue(assetFullName, out item)) return (T)item;
+                item = ReadAsset<T>(assetFullName, null);
+                _loadedContent.Add(assetFullName, item);
+            }
             return (T)item;
         }
 
@@ -71,7 +82,12 @@ namespace AW2.Graphics
             foreach (var filename in Directory.GetFiles(Paths.FONTS, "*.xnb"))
                 Load<SpriteFont>(Path.GetFileNameWithoutExtension(filename));
         }
-        
+
+        private static string GetAssetFilename<T>(string assetName)
+        {
+            return Path.ChangeExtension(GetAssetFullName<T>(assetName), ".xnb");
+        }
+
         private void CacheModelData(string modelName, Model model)
         {
             // HACK: Cache 3D model data. During arena startup, the game server uses the wall
@@ -103,7 +119,7 @@ namespace AW2.Graphics
         private static string GetAssetPath(string assetName, Type type)
         {
             if (typeof(Texture).IsAssignableFrom(type)) return Paths.TEXTURES;
-            else if (type == typeof(Model)) return Paths.MODELS;
+            else if (type == typeof(Model) || type == typeof(ModelGeometry)) return Paths.MODELS;
             else if (type == typeof(SpriteFont)) return Paths.FONTS;
             else if (type == typeof(Effect)) return Paths.SHADERS;
             else if (type == typeof(Song) || type == typeof(SoundEffect))

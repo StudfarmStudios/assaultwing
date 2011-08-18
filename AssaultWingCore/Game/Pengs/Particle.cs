@@ -17,10 +17,9 @@ namespace AW2.Game.Pengs
     public class Particle
     {
         /// <summary>
-        /// Index of the texture to draw the particle with, as listed in
-        /// <see cref="SprayEmitter.Textures"/>.
+        /// The texture to draw the particle with.
         /// </summary>
-        public int TextureIndex;
+        public Texture2D Texture;
 
         /// <summary>
         /// Position of the particle in an unspecified coordinate system.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Graphics.Content;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -129,18 +130,25 @@ namespace AW2.Game.Gobs
         /// </summary>
         private void Set3DModel()
         {
-            // Recover wall data from its 3D model.
-            var data = Game.Content.ModelCache[wallModelName];
-            var worldMatrix = AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
-            var vertices = new List<VertexPositionNormalTexture>();
-            foreach (var vertex in data.Item1)
-                vertices.Add(new VertexPositionNormalTexture(
+            var data = Game.Content.Load<ModelGeometry>(wallModelName);
+            if (data.Meshes.Length != 1) throw new ApplicationException("WallModel only supports one Mesh");
+            var mesh = data.Meshes[0];
+            if (mesh.MeshParts.Length != 1) throw new ApplicationException("WallModel only supports one MeshPart");
+            var worldMatrix = Matrix.Identity;
+            for (var bone = mesh.ParentBone; bone != null; bone = bone.Parent) worldMatrix *= bone.Transform;
+            worldMatrix *= AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
+            var meshPart = mesh.MeshParts[0];
+            var vertices = meshPart.VertexBuffer.Vertices
+                .Select(vertex => new VertexPositionNormalTexture(
                     position: Vector3.Transform(vertex.Position, worldMatrix),
                     normal: Vector3.TransformNormal(vertex.Normal, worldMatrix),
-                    textureCoordinate: vertex.TextureCoordinate));
+                    textureCoordinate: vertex.TextureCoordinate))
+                .ToArray();
             var effect = Game.CommandLineOptions.DedicatedServer ? null : GetEffect(Game.Content.Load<Model>(wallModelName));
             var texture = effect == null ? null : effect.Texture;
-            Set3DModel(vertices.ToArray(), (short[])data.Item2.Clone(), texture, effect);
+            var indices = new short[meshPart.PrimitiveCount * 3];
+            Array.Copy(meshPart.IndexBuffer.Indices, meshPart.StartIndex, indices, 0, indices.Length);
+            Set3DModel(vertices, indices, texture, effect);
         }
 
         private static BasicEffect GetEffect(Model model)

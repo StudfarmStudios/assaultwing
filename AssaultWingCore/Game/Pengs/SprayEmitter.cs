@@ -55,9 +55,6 @@ namespace AW2.Game.Pengs
         [ExcludeFromDeepCopy]
         private Peng _peng;
 
-        [ExcludeFromDeepCopy]
-        private Texture2D[] _textures;
-
         /// <summary>
         /// Radius of emission circle.
         /// </summary>
@@ -116,11 +113,6 @@ namespace AW2.Game.Pengs
         public CanonicalString[] TextureNames { get { return _textureNames; } }
 
         /// <summary>
-        /// Textures in the same order as in <see cref="_textureNames"/>.
-        /// </summary>
-        public Texture2D[] Textures { get { return _textures; } private set { _textures = value; } }
-
-        /// <summary>
         /// Names of types of gobs to emit.
         /// </summary>
         public CanonicalString[] GobTypeNames { get { return _gobTypeNames; } }
@@ -159,17 +151,6 @@ namespace AW2.Game.Pengs
             _emissionFrequency = 10;
             _numberToCreate = -1;
             _nextBirth = new TimeSpan(-1);
-        }
-
-        public void LoadContent()
-        {
-            Textures = new Texture2D[TextureNames.Length];
-            for (int i = 0; i < TextureNames.Length; ++i)
-                Textures[i] = Peng.Game.Content.Load<Texture2D>(TextureNames[i]);
-        }
-
-        public void UnloadContent()
-        {
         }
 
         public void Pause()
@@ -342,7 +323,7 @@ namespace AW2.Game.Pengs
                         DirectionVector = Vector2.UnitX.Rotate(directionAngle),
                         Rotation = rotation,
                         Scale = 1,
-                        TextureIndex = emitType,
+                        Texture = Peng.Game.Content.Load<Texture2D>(TextureNames[emitType]),
                     };
                     particles.Add(particle);
                 }

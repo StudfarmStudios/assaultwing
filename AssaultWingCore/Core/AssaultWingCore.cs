@@ -8,6 +8,7 @@ using AW2.Core;
 using AW2.Core.GameComponents;
 using AW2.Game;
 using AW2.Graphics;
+using AW2.Graphics.Content;
 using AW2.Helpers;
 using AW2.Settings;
 using AW2.Sound;
@@ -103,10 +104,11 @@ namespace AW2.Core
         {
             DataEngine = new DataEngine(this, 0);
             PhysicsEngine = new PhysicsEngine(this, 0);
-            _uiEngine = new UIEngineImpl(this, 1);
             PreFrameLogicEngine = new PreFrameLogicEngine(this, 2);
             LogicEngine = new LogicEngine(this, 3);
             PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
+            _uiEngine = new UIEngineImpl(this, 1);
+            // TODO: Create a dummy SoundEngine for dedicated server
             switch (Settings.Sound.AudioEngineType)
             {
                 case SoundSettings.EngineType.XNA:
@@ -117,17 +119,20 @@ namespace AW2.Core
                     break;
                 default: throw new ApplicationException("Unknown audio engine " + Settings.Sound.AudioEngineType);
             }
-            GraphicsEngine = new GraphicsEngineImpl(this, 6);
 
             Components.Add(PreFrameLogicEngine);
             Components.Add(LogicEngine);
             Components.Add(PostFrameLogicEngine);
-            Components.Add(GraphicsEngine);
-            Components.Add(_uiEngine);
             Components.Add(SoundEngine);
-
-            _uiEngine.Enabled = true;
+            Components.Add(_uiEngine);
             SoundEngine.Enabled = !CommandLineOptions.DedicatedServer;
+            _uiEngine.Enabled = true;
+
+            if (!CommandLineOptions.DedicatedServer)
+            {
+                GraphicsEngine = new GraphicsEngineImpl(this, 6);
+                Components.Add(GraphicsEngine);
+            }
         }
 
         /// <summary>
@@ -206,7 +211,7 @@ namespace AW2.Core
         /// </summary>
         public void LoadArenaContent(Arena arena)
         {
-            GraphicsEngine.LoadArenaContent(arena);
+            if (GraphicsEngine != null) GraphicsEngine.LoadArenaContent(arena);
         }
 
         public virtual void ProgressBarSubtaskCompleted() { }

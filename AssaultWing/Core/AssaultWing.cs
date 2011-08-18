@@ -74,7 +74,7 @@ namespace AW2.Core
             }
         }
         public bool IsClientAllowedToStartArena { get; set; }
-        public bool IsLoadingArena { get { return MenuEngine.ArenaLoadTask.TaskRunning; } }
+        public bool IsLoadingArena { get { return !CommandLineOptions.DedicatedServer && MenuEngine.ArenaLoadTask.TaskRunning; } }
         public Control ChatStartControl { get; set; }
 
         public event Action<GameState> GameStateChanged;
@@ -93,17 +93,9 @@ namespace AW2.Core
         {
             StartupScreen = new StartupScreen(this, -1);
             NetworkEngine = new NetworkEngine(this, 0);
-            MenuEngine = new MenuEngineImpl(this, 10);
-            IntroEngine = new IntroEngine(this, 11);
-            PlayerChat = new PlayerChat(this, 12);
-            OverlayDialog = new OverlayDialog(this, 20);
             WebData = new WebData(this, 21);
-            Components.Add(NetworkEngine);
             Components.Add(StartupScreen);
-            Components.Add(MenuEngine);
-            if (!CommandLineOptions.DedicatedServer) Components.Add(IntroEngine);
-            Components.Add(PlayerChat);
-            Components.Add(OverlayDialog);
+            Components.Add(NetworkEngine);
             Components.Add(WebData);
             GameState = GameState.Initializing;
             ChatStartControl = Settings.Controls.Chat.GetControl();
@@ -120,6 +112,17 @@ namespace AW2.Core
                 var dedicatedServer = new DedicatedServer(this, 13);
                 Components.Add(dedicatedServer);
                 dedicatedServer.Enabled = true;
+            }
+            else
+            {
+                MenuEngine = new MenuEngineImpl(this, 10);
+                IntroEngine = new IntroEngine(this, 11);
+                PlayerChat = new PlayerChat(this, 12);
+                OverlayDialog = new OverlayDialog(this, 20);
+                Components.Add(MenuEngine);
+                Components.Add(IntroEngine);
+                Components.Add(PlayerChat);
+                Components.Add(OverlayDialog);
             }
         }
 
@@ -212,7 +215,7 @@ namespace AW2.Core
 
         public override void ProgressBarSubtaskCompleted()
         {
-            MenuEngine.ProgressBar.SubtaskCompleted();
+            if (MenuEngine != null) MenuEngine.ProgressBar.SubtaskCompleted();
         }
 
         public override void StartArena()
@@ -421,7 +424,8 @@ namespace AW2.Core
 
         private void EnsureArenaLoadingStopped()
         {
-            if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
+            if (CommandLineOptions.DedicatedServer) return;
+            if (IsLoadingArena) MenuEngine.ArenaLoadTask.AbortTask();
             MenuEngine.ProgressBar.SkipRemainingSubtasks();
         }
 
@@ -499,12 +503,18 @@ namespace AW2.Core
                     LogicEngine.Enabled = false;
                     PreFrameLogicEngine.Enabled = false;
                     PostFrameLogicEngine.Enabled = false;
-                    GraphicsEngine.Visible = false;
-                    PlayerChat.Enabled = PlayerChat.Visible = false;
+                    if (!CommandLineOptions.DedicatedServer)
+                    {
+                        GraphicsEngine.Visible = false;
+                        PlayerChat.Enabled = PlayerChat.Visible = false;
+                    }
                     break;
                 case GameState.GameplayStopped:
-                    GraphicsEngine.Visible = false;
-                    PlayerChat.Visible = false;
+                    if (!CommandLineOptions.DedicatedServer)
+                    {
+                        GraphicsEngine.Visible = false;
+                        PlayerChat.Visible = false;
+                    }
                     break;
                 case GameState.GameAndMenu:
                     LogicEngine.Enabled = false;
@@ -533,7 +543,8 @@ namespace AW2.Core
             arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
             arena.IsForPlaying = true;
             // Note: Client starts progressbar when receiving StartGameMessage.
-            if (NetworkMode != NetworkMode.Client) MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
+            if (NetworkMode != NetworkMode.Client && !CommandLineOptions.DedicatedServer)
+                MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
             foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
             arena.Reset(); // this usually takes several seconds
             DataEngine.Arena = arena;
@@ -611,7 +622,7 @@ namespace AW2.Core
             }
 
             // Cheat codes during dialog.
-            if (OverlayDialog.Enabled && (GameState == GameState.Gameplay || GameState == GameState.GameplayStopped))
+            if (OverlayDialog != null && OverlayDialog.Enabled && (GameState == GameState.Gameplay || GameState == GameState.GameplayStopped))
             {
                 var keys = Keyboard.GetState();
                 if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
@@ -624,7 +635,7 @@ namespace AW2.Core
                 if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
                 {
                     // E + A = end arena
-                    if (!MenuEngine.ArenaLoadTask.TaskRunning) FinishArena();
+                    if (!IsLoadingArena) FinishArena();
                 }
             }
         }
@@ -643,7 +654,7 @@ namespace AW2.Core
 
         private void SendGobCreationMessage()
         {
-            if (MenuEngine.ArenaLoadTask.TaskRunning) return; // wait for arena load completion
+            if (IsLoadingArena) return; // wait for arena load completion
             if (DataEngine.Arena == null) return; // happens if gobs are created on the frame the arena ends
             if (NetworkMode == NetworkMode.Server && _addedGobs.Any())
             {
@@ -793,7 +804,7 @@ namespace AW2.Core
 
         private void SendGameSettingsToRemote(IEnumerable<Connection> connections)
         {
-            var mess = new GameSettingsRequest { ArenaToPlay = MenuEngine.Game.SelectedArenaName };
+            var mess = new GameSettingsRequest { ArenaToPlay = SelectedArenaName };
             foreach (var conn in connections) conn.Send(mess);
         }
 
@@ -822,7 +833,7 @@ namespace AW2.Core
 
         private void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest, IEnumerable<Connection> connections)
         {
-            foreach (var player in MenuEngine.Game.DataEngine.Players.Where(sendCriteria))
+            foreach (var player in DataEngine.Players.Where(sendCriteria))
             {
                 var mess = newPlayerSettingsRequest(player);
                 mess.Write(player, SerializationModeFlags.ConstantData);

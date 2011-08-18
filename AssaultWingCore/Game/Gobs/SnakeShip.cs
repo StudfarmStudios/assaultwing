@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
+using AW2.Graphics.Content;
 
 namespace AW2.Game.Gobs
 {
@@ -88,12 +89,12 @@ namespace AW2.Game.Gobs
                 _tailAmplitudes[i] = MathHelper.Min(MAX_TAIL_AMPLITUDE, _tailAmplitudes[i] + 0.03f);
         }
 
-        protected override void CopyAbsoluteBoneTransformsTo(Model model, Matrix[] transforms)
+        protected override void CopyAbsoluteBoneTransformsTo(ModelGeometry skeleton, Matrix[] transforms)
         {
             if (transforms == null) throw new ArgumentNullException("Null transformation matrix array");
-            if (transforms.Length < model.Bones.Count) throw new ArgumentException("Too short transformation matrix array");
+            if (transforms.Length < skeleton.Bones.Length) throw new ArgumentException("Too short transformation matrix array");
 
-            float[] tailTurnDeltas = new float[model.Bones.Count];
+            float[] tailTurnDeltas = new float[skeleton.Bones.Length];
             float prevTailTurn = Rotation + DrawRotationOffset;
             foreach (int i in _tailIndices)
             {
@@ -101,7 +102,7 @@ namespace AW2.Game.Gobs
                 prevTailTurn = _tailTurns[i].Current;
             }
 
-            foreach (var bone in model.Bones)
+            foreach (var bone in skeleton.Bones)
             {
                 if (bone.Parent == null)
                     transforms[bone.Index] = bone.Transform;

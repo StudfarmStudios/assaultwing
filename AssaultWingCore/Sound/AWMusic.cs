@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
-using AW2.Graphics;
+using AW2.Graphics.Content;
 
 namespace AW2.Sound
 {

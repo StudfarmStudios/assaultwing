@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Graphics;
+using AW2.Graphics.Content;
 using AW2.Helpers;
 
 namespace AW2.Core

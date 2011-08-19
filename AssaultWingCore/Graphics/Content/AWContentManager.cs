@@ -18,12 +18,15 @@ namespace AW2.Graphics.Content
     {
         private Dictionary<string, object> _loadedContent = new Dictionary<string, object>();
         private Dictionary<string, object> _loadedModelSkeletons = new Dictionary<string, object>();
+        private bool _ignoreGraphicsContent;
 
         public Dictionary<string, Tuple<VertexPositionNormalTexture[], short[]>> ModelCache { get; private set; }
 
         public AWContentManager(IServiceProvider serviceProvider)
             : base(serviceProvider, ".\\")
-        { }
+        {
+            _ignoreGraphicsContent = serviceProvider.GetService(typeof(IGraphicsDeviceService)) == null;
+        }
 
         public bool Exists<T>(string assetName)
         {
@@ -47,6 +50,7 @@ namespace AW2.Graphics.Content
             }
             else
             {
+                if (_ignoreGraphicsContent) return default(T);
                 var assetFullName = GetAssetFullName<T>(assetName);
                 if (_loadedContent.TryGetValue(assetFullName, out item)) return (T)item;
                 item = ReadAsset<T>(assetFullName, null);

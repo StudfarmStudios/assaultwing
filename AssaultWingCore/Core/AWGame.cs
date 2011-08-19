@@ -26,7 +26,7 @@ namespace AW2.Core
         {
             GraphicsDeviceService = graphicsDeviceService;
             Services = new GameServiceContainer();
-            Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
+            if (graphicsDeviceService != null) Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
             Components = new AWGameComponentCollection();
             TargetFPS = 60;
         }

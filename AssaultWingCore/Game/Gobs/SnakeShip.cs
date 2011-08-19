@@ -126,15 +126,15 @@ namespace AW2.Game.Gobs
 
         private void InitializeTailState()
         {
-            var model = Game.Content.Load<Model>(ModelName);
+            var model = Game.Content.Load<ModelGeometry>(ModelName);
             _tailIndices = model.Bones
                 .Where(bone => bone.Name != null && bone.Name.StartsWith("Tail"))
                 .OrderBy(bone => bone.Name)
                 .Select(bone => bone.Index);
-            _tailPhases = new float[model.Bones.Count];
-            _tailAmplitudes = new float[model.Bones.Count];
-            _tailTurns = new InterpolatingValue[model.Bones.Count];
-            for (int i = 0; i < model.Bones.Count; ++i)
+            _tailPhases = new float[model.Bones.Length];
+            _tailAmplitudes = new float[model.Bones.Length];
+            _tailTurns = new InterpolatingValue[model.Bones.Length];
+            for (int i = 0; i < model.Bones.Length; i++)
             {
                 _tailPhases[i] = -1;
                 _tailAmplitudes[i] = 0;

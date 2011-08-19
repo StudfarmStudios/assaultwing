@@ -169,7 +169,7 @@ namespace AW2.UI
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            _graphicsDeviceService.CheckReentrancyBegin();
+            // !!! _graphicsDeviceService.CheckReentrancyBegin();
             try
             {
                 base.OnPaint(e);
@@ -185,7 +185,7 @@ namespace AW2.UI
             }
             finally
             {
-                _graphicsDeviceService.CheckReentrancyEnd();
+                // !!! _graphicsDeviceService.CheckReentrancyEnd();
             }
         }
 
@@ -219,7 +219,7 @@ namespace AW2.UI
         private void InitializeGame(IntPtr windowHandle, string[] args)
         {
             var commandLineOptions = new CommandLineOptions(args);
-            _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
+            if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
             _game = new AssaultWing(_graphicsDeviceService, commandLineOptions);
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(

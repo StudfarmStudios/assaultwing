@@ -431,7 +431,6 @@ namespace AW2.Game
         /// </summary>
         public void UnloadContent()
         {
-            Game.GraphicsDeviceService.CheckThread();
             foreach (var gob in Gobs) gob.UnloadContent();
         }
 

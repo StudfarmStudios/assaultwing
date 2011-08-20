@@ -78,7 +78,6 @@ namespace AW2.Graphics
         {
             if (Game.CommandLineOptions.DedicatedServer) return;
             Log.Write("Graphics engine loading graphics content.");
-            Game.GraphicsDeviceService.CheckThread();
             Game.Content.LoadAllGraphicsContent();
             var data = Game.DataEngine;
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
@@ -125,7 +124,6 @@ namespace AW2.Graphics
         public void LoadArenaContent(Arena arenaTemplate)
         {
             // NOTE !!! This method has very little to do with GraphicsEngineImpl. Refactor into Arena.LoadContent() !!!
-            Game.GraphicsDeviceService.CheckThread();
             var data = Game.DataEngine;
 
             foreach (var gob in arenaTemplate.Gobs)
@@ -147,7 +145,6 @@ namespace AW2.Graphics
         public override void UnloadContent()
         {
             Log.Write("Graphics engine unloading graphics content.");
-            Game.GraphicsDeviceService.CheckThread();
             var data = Game.DataEngine;
             GameContent.UnloadContent();
 
@@ -169,7 +166,6 @@ namespace AW2.Graphics
 
         public override void Draw()
         {
-            Game.GraphicsDeviceService.CheckThread();
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             gfx.Clear(Color.Black);
             foreach (var viewport in Game.DataEngine.Viewports) viewport.PrepareForDraw();

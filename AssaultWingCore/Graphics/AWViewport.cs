@@ -159,7 +159,6 @@ namespace AW2.Graphics
 
         public void PrepareForDraw()
         {
-            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             DoInMyViewport(() =>
             {
                 Draw_InitializeParallaxIn3D();
@@ -169,7 +168,6 @@ namespace AW2.Graphics
 
         public void Draw()
         {
-            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             DoInMyViewport(() =>
             {
                 _postprocessor.DisplayOnScreen();
@@ -211,23 +209,14 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void LoadContent()
         {
-            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
-            AssaultWingCore.Instance.GraphicsDeviceService.CheckReentrancyBegin();
-            try
+            Action<ICollection<Effect>> effectContainerUpdater = container =>
             {
-                Action<ICollection<Effect>> effectContainerUpdater = container =>
-                {
-                    container.Clear();
-                    foreach (var name in _getPostprocessEffectNames())
-                        container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
-                };
-                _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance, RenderGameWorld, effectContainerUpdater);
-                foreach (var component in _overlayComponents) component.LoadContent();
-            }
-            finally
-            {
-                AssaultWingCore.Instance.GraphicsDeviceService.CheckReentrancyEnd();
-            }
+                container.Clear();
+                foreach (var name in _getPostprocessEffectNames())
+                    container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
+            };
+            _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance, RenderGameWorld, effectContainerUpdater);
+            foreach (var component in _overlayComponents) component.LoadContent();
         }
 
         /// <summary>
@@ -235,7 +224,6 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void UnloadContent()
         {
-            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             foreach (var component in _overlayComponents) component.UnloadContent();
             if (_postprocessor != null)
             {

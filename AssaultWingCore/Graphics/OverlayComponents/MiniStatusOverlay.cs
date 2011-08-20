@@ -36,7 +36,6 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             var content = AssaultWingCore.Instance.Content;
             _barFillTexture = content.Load<Texture2D>("mini_hpbar_fill");
             _barBackgroundTexture = content.Load<Texture2D>("mini_hpbar_bg");

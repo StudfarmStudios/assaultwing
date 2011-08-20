@@ -97,7 +97,6 @@ namespace AW2.Menu
 
         public override void LoadContent()
         {
-            Game.GraphicsDeviceService.CheckThread();
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             _effect = new BasicEffect(gfx);
@@ -120,7 +119,6 @@ namespace AW2.Menu
 
         public override void UnloadContent()
         {
-            Game.GraphicsDeviceService.CheckThread();
             if (_spriteBatch != null)
             {
                 _spriteBatch.Dispose();
@@ -239,7 +237,6 @@ namespace AW2.Menu
 
         public override void Draw()
         {
-            Game.GraphicsDeviceService.CheckThread();
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             DrawBackground();
             DrawMenuComponents();

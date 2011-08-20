@@ -74,8 +74,6 @@ namespace AW2.Core.GameComponents
 
         public override void LoadContent()
         {
-            Game.GraphicsDeviceService.CheckThread();
-
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             _typingFont = Game.Content.Load<SpriteFont>("ChatFont");
             _chatBackgroundTexture = Game.Content.Load<Texture2D>("gui_chat_bg");
@@ -110,8 +108,6 @@ namespace AW2.Core.GameComponents
 
         public override void Draw()
         {
-            Game.GraphicsDeviceService.CheckThread();
-
             var viewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
             var chatBoxPos = new Vector2(viewport.Width - _chatBackgroundTexture.Width, viewport.Height - _chatBackgroundTexture.Height);
             

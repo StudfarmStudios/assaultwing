@@ -25,7 +25,6 @@ namespace AW2.Game
 
         public void LoadContent()
         {
-            _game.GraphicsDeviceService.CheckThread();
             var gfx = _game.GraphicsDeviceService.GraphicsDevice;
 
             WallSilhouetteEffect = new BasicEffect(gfx);
@@ -53,7 +52,6 @@ namespace AW2.Game
 
         public void UnloadContent()
         {
-            _game.GraphicsDeviceService.CheckThread();
             if (WallSilhouetteEffect != null)
             {
                 WallSilhouetteEffect.Dispose();

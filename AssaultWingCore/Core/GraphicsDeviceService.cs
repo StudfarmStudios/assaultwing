@@ -28,9 +28,6 @@ namespace AW2.Core
     public class GraphicsDeviceService : IGraphicsDeviceService, IDisposable
     {
         private PresentationParameters _parameters;
-        private int _graphicsThreadID;
-        private int _graphicsCodeBlocks;
-        private int _graphicsCodeBlocksThreadID;
 
         // IGraphicsDeviceService events.
         public event EventHandler<EventArgs> DeviceCreated;
@@ -78,7 +75,6 @@ namespace AW2.Core
             var useAdapter = profilingAdapter ?? GraphicsAdapter.DefaultAdapter;
             if (profilingAdapter != null) GraphicsAdapter.UseReferenceDevice = true;
 
-            _graphicsThreadID = Thread.CurrentThread.ManagedThreadId;
             if (!useAdapter.IsProfileSupported(GraphicsProfile.Reach))
                 GraphicsAdapter.UseReferenceDevice = !GraphicsAdapter.UseReferenceDevice;
             if (!useAdapter.IsProfileSupported(GraphicsProfile.Reach))
@@ -96,69 +92,37 @@ namespace AW2.Core
             if (DeviceCreated != null) DeviceCreated(this, EventArgs.Empty);
         }
 
-        public void CheckThread()
-        {
-            if (Thread.CurrentThread.ManagedThreadId != _graphicsThreadID)
-                throw new ApplicationException("Wrong thread for graphics");
-        }
-
-        public void CheckReentrancyBegin()
-        {
-            if (_graphicsCodeBlocks > 0 && Thread.CurrentThread.ManagedThreadId != _graphicsCodeBlocksThreadID)
-                throw new ApplicationException("Two threads try to run graphics code");
-            _graphicsCodeBlocks++;
-            _graphicsCodeBlocksThreadID = Thread.CurrentThread.ManagedThreadId;
-        }
-
-        public void CheckReentrancyEnd()
-        {
-            if (_graphicsCodeBlocks == 0) throw new InvalidOperationException("Reentrancy check end without begin");
-            _graphicsCodeBlocks--;
-            if (_graphicsCodeBlocks == 0) _graphicsCodeBlocksThreadID = 0;
-        }
-
         public void Dispose()
         {
-            CheckReentrancyBegin();
-            CheckThread();
             if (DeviceDisposing != null) DeviceDisposing(this, EventArgs.Empty);
             GraphicsDevice.Dispose();
             GraphicsDevice = null;
-            CheckReentrancyEnd();
         }
 
         public void SetFullScreen(int width, int height)
         {
-            CheckReentrancyBegin();
             _parameters.BackBufferWidth = width;
             _parameters.BackBufferHeight = height;
             _parameters.IsFullScreen = true;
             ResetDevice();
-            CheckReentrancyEnd();
         }
 
         public void SetWindowed()
         {
-            CheckReentrancyBegin();
             _parameters.IsFullScreen = false;
             ResetDevice();
-            CheckReentrancyEnd();
         }
 
         public void EnableVerticalSync()
         {
-            CheckReentrancyBegin();
             _parameters.PresentationInterval = PresentInterval.One;
             ResetDevice();
-            CheckReentrancyEnd();
         }
 
         public void DisableVerticalSync()
         {
-            CheckReentrancyBegin();
             _parameters.PresentationInterval = PresentInterval.Immediate;
             ResetDevice();
-            CheckReentrancyEnd();
         }
 
         /// <summary>
@@ -168,7 +132,6 @@ namespace AW2.Core
         /// </summary>
         public string BeginDraw(Size clientSize, bool isFullscreen)
         {
-            CheckThread();
             var deviceResetError = HandleDeviceReset(clientSize, isFullscreen);
             if (deviceResetError == null)
                 GraphicsDevice.Viewport = new Viewport
@@ -216,7 +179,6 @@ namespace AW2.Core
         {
             try
             {
-                CheckThread();
                 if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
                 try
                 {

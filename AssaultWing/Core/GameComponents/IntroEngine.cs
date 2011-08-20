@@ -27,7 +27,6 @@ namespace AW2.Core.GameComponents
         private void BeginIntro()
         {
             Log.Write("Starting intro");
-            Game.GraphicsDeviceService.CheckThread();
             _introPlaying = true;
             _introVideo.Play();
         }
@@ -48,7 +47,6 @@ namespace AW2.Core.GameComponents
 
         public override void LoadContent()
         {
-            Game.GraphicsDeviceService.CheckThread();
             base.LoadContent();
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             _introVideo = new AWVideo(Game.Content.Load<Video>("aw_intro"), Game.Settings.Sound.SoundVolume);
@@ -56,7 +54,6 @@ namespace AW2.Core.GameComponents
 
         public override void UnloadContent()
         {
-            Game.GraphicsDeviceService.CheckThread();
             if (_spriteBatch != null)
             {
                 _spriteBatch.Dispose();
@@ -79,7 +76,6 @@ namespace AW2.Core.GameComponents
         public override void Draw()
         {
             if (!_introPlaying) BeginIntro();
-            Game.GraphicsDeviceService.CheckThread();
             Game.GraphicsDeviceService.GraphicsDevice.Clear(Color.Black);
             var videoFrame = _introVideo.GetTexture();
             if (videoFrame != null)

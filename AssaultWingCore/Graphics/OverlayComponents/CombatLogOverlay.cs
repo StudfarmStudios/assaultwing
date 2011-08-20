@@ -57,7 +57,6 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            AssaultWingCore.Instance.GraphicsDeviceService.CheckThread();
             _chatBoxFont = AssaultWingCore.Instance.Content.Load<SpriteFont>("MenuFontBig");
         }
 

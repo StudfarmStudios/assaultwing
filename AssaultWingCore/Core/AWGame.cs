@@ -51,7 +51,6 @@ namespace AW2.Core
         /// </summary>
         public virtual void UnloadContent()
         {
-            GraphicsDeviceService.CheckThread();
             foreach (var item in Components) item.UnloadContent();
             Content.Unload();
         }
@@ -78,7 +77,6 @@ namespace AW2.Core
         /// </summary>
         public virtual void Draw()
         {
-            GraphicsDeviceService.CheckThread();
             foreach (var item in Components)
                 if (item.Visible)
                     item.Draw();

@@ -33,6 +33,11 @@ namespace AW2.Game
             _items.RemoveAt(index);
         }
 
+        public void Clear()
+        {
+            _items.Clear();
+        }
+
         public IEnumerator<CanonicalString> GetEnumerator()
         {
             return _items.GetEnumerator();

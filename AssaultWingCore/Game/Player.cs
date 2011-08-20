@@ -363,6 +363,7 @@ namespace AW2.Game
             KillsWithoutDying = 0;
             Lives = Game.DataEngine.GameplayMode.StartLives;
             BonusActions.Clear();
+            PostprocessEffectNames.Clear();
             Ship = null;
             if (Game.DataEngine.Arena != null) _lastLookAtPos = Game.DataEngine.Arena.Dimensions / 2;
         }

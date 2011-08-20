@@ -5,9 +5,6 @@ using System.Windows.Forms;
 using AW2.Core;
 using AW2.Helpers;
 using AW2.UI;
-using System.Linq;
-using System.IO;
-using AW2.Helpers.Serialization;
 
 namespace AW2
 {
@@ -30,10 +27,18 @@ namespace AW2
 
         [STAThread]
         public static void Main(string[] args)
-        {            
-            using (Instance = new AssaultWingProgram(args))
+        {
+            AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
+            try
             {
-                Instance.Run();
+                using (Instance = new AssaultWingProgram(args))
+                {
+                    Instance.Run();
+                }
+            }
+            finally
+            {
+                AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
             }
         }
 

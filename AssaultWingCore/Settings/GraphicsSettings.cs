@@ -19,14 +19,17 @@ namespace AW2.Settings
 
         public static IEnumerable<Tuple<int, int>> GetDisplayModes()
         {
-            var goodAspectRatio = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.AspectRatio;
+            var currentMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            var goodAspectRatio = currentMode.AspectRatio;
             // Note: XNA Reach profile limits texture sizes to 2048x2048. This limits maximum screen size
             // because some display effects require creating a texture that covers the screen.
-            return GraphicsAdapter.DefaultAdapter.SupportedDisplayModes[SurfaceFormat.Color]
+            var modes = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes[SurfaceFormat.Color]
                 .Where(mode => mode.Height >= 600 && mode.Height <= 2048
                     && mode.Width >= 1024 && mode.Width <= 2048
                     && Math.Abs(goodAspectRatio - mode.AspectRatio) < 0.1)
                 .Select(mode => Tuple.Create(mode.Width, mode.Height));
+            if (modes.Any()) return modes;
+            return new[] { Tuple.Create(currentMode.Width, currentMode.Height) };
         }
 
         public GraphicsSettings()

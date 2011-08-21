@@ -14,7 +14,7 @@ namespace AW2.Graphics.Content
     {
         public static T Read<T>(string filename)
         {
-            using (var reader = new BinaryReader(new FileStream(filename, FileMode.Open)))
+            using (var reader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
                 CheckVersion(reader);
                 var typeReaders = ReadTypeReaders(reader);

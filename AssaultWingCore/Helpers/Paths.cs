@@ -38,7 +38,7 @@ namespace AW2.Helpers
         /// <summary>
         /// Path to 3D models.
         /// </summary>
-        public static readonly string MODELS = @"CoreContent\models";
+        public static readonly string MODELS = @"Content\models";
 
         /// <summary>
         /// Path to music.

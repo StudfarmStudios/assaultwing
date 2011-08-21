@@ -52,7 +52,7 @@
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>false</XnaCompressContent>
+    <XnaCompressContent>False</XnaCompressContent>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
@@ -65,7 +65,7 @@
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>true</XnaCompressContent>
+    <XnaCompressContent>False</XnaCompressContent>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>

@@ -42,6 +42,7 @@ namespace AW2.UI
         private int _isChangingFullScreen;
         private FormParameters _previousWindowedModeParameters;
         private Icon _originalIcon;
+        private bool _isCursorHidden;
 
         public Rectangle ClientBoundsMin
         {
@@ -169,24 +170,16 @@ namespace AW2.UI
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            // !!! _graphicsDeviceService.CheckReentrancyBegin();
-            try
+            base.OnPaint(e);
+            if (!_isFullScreen) return;
+            var beginDrawError = _graphicsDeviceService.BeginDraw(ClientSize, true);
+            if (beginDrawError == null)
             {
-                base.OnPaint(e);
-                if (!_isFullScreen) return;
-                var beginDrawError = _graphicsDeviceService.BeginDraw(ClientSize, true);
-                if (beginDrawError == null)
-                {
-                    _game.Draw();
-                    _graphicsDeviceService.EndDraw(ClientSize, Handle);
-                }
-                else
-                    GraphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
+                _game.Draw();
+                _graphicsDeviceService.EndDraw(ClientSize, Handle);
             }
-            finally
-            {
-                // !!! _graphicsDeviceService.CheckReentrancyEnd();
-            }
+            else
+                GraphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
         }
 
         protected override void OnPaintBackground(PaintEventArgs pevent)
@@ -222,16 +215,20 @@ namespace AW2.UI
             if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
             _game = new AssaultWing(_graphicsDeviceService, commandLineOptions);
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
-            _game.Window = new Window(
-                getTitle: () => Text,
-                setTitle: text => BeginInvoke((Action)(() => Text = text)),
-                getClientBounds: () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height),
-                getFullScreen: () => _isFullScreen,
-                setWindowed: () => BeginInvoke((Action)SetWindowed),
-                setFullScreen: (width, height) => BeginInvoke((Action<int, int>)SetFullScreen, width, height),
-                isVerticalSynced: () => _graphicsDeviceService.IsVerticalSynced,
-                enableVerticalSync: () => BeginInvoke((Action)_graphicsDeviceService.EnableVerticalSync),
-                disableVerticalSync: () => BeginInvoke((Action)_graphicsDeviceService.DisableVerticalSync));
+            _game.Window = new Window(new Window.WindowImpl
+            {
+                GetTitle = () => Text,
+                SetTitle = text => BeginInvoke((Action)(() => Text = text)),
+                GetClientBounds = () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height),
+                GetFullScreen = () => _isFullScreen,
+                SetWindowed = () => BeginInvoke((Action)SetWindowed),
+                SetFullScreen = (width, height) => BeginInvoke((Action<int, int>)SetFullScreen, width, height),
+                IsVerticalSynced = () => _graphicsDeviceService.IsVerticalSynced,
+                EnableVerticalSync = () => BeginInvoke((Action)_graphicsDeviceService.EnableVerticalSync),
+                DisableVerticalSync = () => BeginInvoke((Action)_graphicsDeviceService.DisableVerticalSync),
+                EnsureCursorHidden = () => BeginInvoke((Action)EnsureCursorHidden),
+                EnsureCursorShown = () => BeginInvoke((Action)EnsureCursorShown),
+            });
             _gameView.Draw += _game.Draw;
             _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }
@@ -283,6 +280,18 @@ namespace AW2.UI
         private void AddToLogView(string text)
         {
             BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
+        }
+
+        private void EnsureCursorHidden()
+        {
+            if (!_isCursorHidden) Cursor.Hide();
+            _isCursorHidden = true;
+        }
+
+        private void EnsureCursorShown()
+        {
+            if (_isCursorHidden) Cursor.Show();
+            _isCursorHidden = false;
         }
     }
 }

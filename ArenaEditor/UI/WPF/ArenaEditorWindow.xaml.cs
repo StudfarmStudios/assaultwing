@@ -293,16 +293,20 @@ namespace AW2.UI.WPF
         private void InitializeGame(string[] args)
         {
             _game = new AssaultWingCore(_graphicsDeviceService, new CommandLineOptions(args));
-            _game.Window = new Core.Window(
-                getTitle: () => Title,
-                setTitle: text => Dispatcher.Invoke((Action)(() => Title = text)),
-                getClientBounds: () => new Rectangle(ArenaView.Bounds.X, ArenaView.Bounds.Y, ArenaView.Bounds.Width, ArenaView.Bounds.Height),
-                getFullScreen: () => false,
-                setWindowed: () => { },
-                setFullScreen: (width, height) => { },
-                isVerticalSynced: () => false,
-                enableVerticalSync: () => { },
-                disableVerticalSync: () => { });
+            _game.Window = new Core.Window(new Core.Window.WindowImpl
+            {
+                GetTitle = () => Title,
+                SetTitle = text => Dispatcher.Invoke((Action)(() => Title = text)),
+                GetClientBounds = () => new Rectangle(ArenaView.Bounds.X, ArenaView.Bounds.Y, ArenaView.Bounds.Width, ArenaView.Bounds.Height),
+                GetFullScreen = () => false,
+                SetWindowed = () => { },
+                SetFullScreen = (width, height) => { },
+                IsVerticalSynced = () => false,
+                EnableVerticalSync = () => { },
+                DisableVerticalSync = () => { },
+                EnsureCursorHidden = () => { },
+                EnsureCursorShown = () => { },
+            });
             AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
             _game.SoundEngine.Enabled = false;
             _game.AllowDialogs = false;

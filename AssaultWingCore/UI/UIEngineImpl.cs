@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
@@ -10,52 +11,31 @@ namespace AW2.UI
     /// </summary>
     public class UIEngineImpl : AWGameComponent
     {
-        /// <summary>
-        /// The state of input controls in the previous frame.
-        /// </summary>
-        private InputState _oldState;
+        private static readonly TimeSpan MOUSE_HIDE_DELAY = TimeSpan.FromSeconds(3);
 
-        /// <summary>
-        /// True iff mouse input is eaten by the game.
-        /// </summary>
-        private bool _eatMouse;
-
+        private InputState _oldState, _newState;
         private Stack<IEnumerable<Control>> _exclusiveControls;
+        private TimeSpan _lastMouseActivity; // in real time
 
         /// <summary>
         /// If mouse input is being consumed for the purposes of using the mouse
         /// for game controls. Such consumption prevents other programs from using
         /// the mouse in any practical manner. Defaults to <b>false</b>.
         /// </summary>
-        public bool MouseControlsEnabled { get { return _eatMouse; } set { _eatMouse = value; } }
+        public bool MouseControlsEnabled { get; set; }
 
         public UIEngineImpl(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
-            _oldState = InputState.GetState();
-            _eatMouse = false;
             _exclusiveControls = new Stack<IEnumerable<Control>>();
+            UpdateInputState(); // to avoid null _oldState on first Update()
         }
 
         public override void Update()
         {
-            if (_eatMouse)
-            {
-                // Reset mouse cursor to the middle of the game window.
-                var viewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
-                Mouse.SetPosition(viewport.Width / 2, viewport.Height / 2);
-            }
-
-            var newState = InputState.GetState();
-            if (_exclusiveControls.Any())
-            {
-                Control.SetGlobalState(InputState.EMPTY, InputState.EMPTY);
-                foreach (var control in _exclusiveControls.Peek())
-                    control.SetLocalState(_oldState, newState);
-            }
-            else
-                Control.SetGlobalState(_oldState, newState);
-            _oldState = newState;
+            UpdateInputState();
+            UpdateMouse();
+            UpdateControls();
         }
 
         public void PushExclusiveControls(IEnumerable<Control> controls)
@@ -68,13 +48,41 @@ namespace AW2.UI
             _exclusiveControls.Pop();
         }
 
-        private string ExclusiveControlStackToString()
+        private void UpdateInputState()
         {
-            if (!_exclusiveControls.Any()) return "  <empty>";
-            var str = new System.Text.StringBuilder();
-            foreach (var controls in _exclusiveControls)
-                str.Append("\n  { " + string.Join(", ", controls.Select(x => x.ToString())) + " }");
-            return str.ToString();
+            _oldState = _newState;
+            _newState = InputState.GetState();
+        }
+
+        private void UpdateMouse()
+        {
+            if (MouseControlsEnabled)
+            {
+                // Reset mouse cursor to the middle of the game window.
+                var viewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
+                Mouse.SetPosition(viewport.Width / 2, viewport.Height / 2);
+            }
+            else
+            {
+                // Keep mouse cursor hidden if it hasn't moved for some time.
+                if (_oldState.Mouse != _newState.Mouse) _lastMouseActivity = Game.GameTime.TotalRealTime;
+                if (_lastMouseActivity + MOUSE_HIDE_DELAY < Game.GameTime.TotalRealTime)
+                    Game.Window.Impl.EnsureCursorHidden();
+                else
+                    Game.Window.Impl.EnsureCursorShown();
+            }
+        }
+
+        private void UpdateControls()
+        {
+            if (_exclusiveControls.Any())
+            {
+                Control.SetGlobalState(InputState.EMPTY, InputState.EMPTY);
+                foreach (var control in _exclusiveControls.Peek())
+                    control.SetLocalState(_oldState, _newState);
+            }
+            else
+                Control.SetGlobalState(_oldState, _newState);
         }
     }
 }

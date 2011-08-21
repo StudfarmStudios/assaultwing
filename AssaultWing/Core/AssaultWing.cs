@@ -433,13 +433,13 @@ namespace AW2.Core
         {
             if (Window == null || CommandLineOptions.DedicatedServer) return;
             if (Settings.Graphics.IsVerticalSynced)
-                Window.EnableVerticalSync();
+                Window.Impl.EnableVerticalSync();
             else
-                Window.DisableVerticalSync();
+                Window.Impl.DisableVerticalSync();
             if (Settings.Graphics.InGameFullscreen)
-                Window.SetFullScreen(Settings.Graphics.FullscreenWidth, Settings.Graphics.FullscreenHeight);
+                Window.Impl.SetFullScreen(Settings.Graphics.FullscreenWidth, Settings.Graphics.FullscreenHeight);
             else
-                Window.SetWindowed();
+                Window.Impl.SetWindowed();
         }
 
         private void EnableGameState(GameState value)

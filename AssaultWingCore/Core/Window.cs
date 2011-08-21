@@ -8,35 +8,28 @@ namespace AW2.Core
     /// </summary>
     public class Window
     {
-        private Func<string> _getTitle;
-        private Action<string> _setTitle;
-        private Func<Rectangle> _getClientBounds;
-        private Func<bool> _getFullScreen;
+        public struct WindowImpl
+        {
+            public Func<string> GetTitle;
+            public Action<string> SetTitle;
+            public Func<Rectangle> GetClientBounds;
+            public Func<bool> GetFullScreen;
+            public Action SetWindowed;
+            public Action<int, int> SetFullScreen;
+            public Func<bool> IsVerticalSynced;
+            public Action EnableVerticalSync;
+            public Action DisableVerticalSync;
+            public Action EnsureCursorHidden;
+            public Action EnsureCursorShown;
+        }
 
-        public string Title { get { return _getTitle(); } set { _setTitle(value); } }
-        public Rectangle ClientBounds { get { return _getClientBounds(); } }
-        public bool IsFullScreen { get { return _getFullScreen(); } }
-        public Action SetWindowed { get; private set; }
-        public Action<int, int> SetFullScreen { get; private set; }
-        public Func<bool> IsVerticalSynced { get; private set; }
-        public Action EnableVerticalSync { get; private set; }
-        public Action DisableVerticalSync { get; private set; }
+        public WindowImpl Impl { get; private set; }
 
         public event Action<char> KeyPress;
 
-        public Window(Func<string> getTitle, Action<string> setTitle, Func<Rectangle> getClientBounds,
-            Func<bool> getFullScreen, Action setWindowed, Action<int, int> setFullScreen, Func<bool> isVerticalSynced,
-            Action enableVerticalSync, Action disableVerticalSync)
+        public Window(WindowImpl impl)
         {
-            _getTitle = getTitle;
-            _setTitle = setTitle;
-            _getClientBounds = getClientBounds;
-            _getFullScreen = getFullScreen;
-            SetWindowed = setWindowed;
-            SetFullScreen = setFullScreen;
-            IsVerticalSynced = isVerticalSynced;
-            EnableVerticalSync = enableVerticalSync;
-            DisableVerticalSync = disableVerticalSync;
+            Impl = impl;
         }
 
         public void OnKeyPress(char keyChar)

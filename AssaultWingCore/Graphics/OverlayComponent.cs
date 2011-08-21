@@ -102,7 +102,7 @@ namespace AW2.Graphics
             newViewport.Y += (int)CustomAlignment.Y;
             newViewport.Width = Math.Min(oldViewport.Width, dimensions.X);
             newViewport.Height = Math.Min(oldViewport.Height, dimensions.Y);
-            gfx.Viewport = newViewport.LimitTo(AssaultWingCore.Instance.Window.ClientBounds);
+            gfx.Viewport = newViewport.LimitTo(AssaultWingCore.Instance.Window.Impl.GetClientBounds());
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             DrawContent(spriteBatch);
             spriteBatch.End();

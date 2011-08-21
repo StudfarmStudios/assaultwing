@@ -86,7 +86,7 @@ namespace AW2.Core.GameComponents
             newViewport.Y = (screen.Height - _dialogTexture.Height) / 2;
             newViewport.Width = _dialogTexture.Width;
             newViewport.Height = _dialogTexture.Height;
-            gfx.Viewport = newViewport.LimitTo(AssaultWingCore.Instance.Window.ClientBounds);
+            gfx.Viewport = newViewport.LimitTo(AssaultWingCore.Instance.Window.Impl.GetClientBounds());
 
             // Draw contents.
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);

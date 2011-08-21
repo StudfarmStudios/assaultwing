@@ -155,13 +155,14 @@ namespace AW2.Menu
         {
             var window = MenuEngine.Game.Window;
             var gfxSetup = MenuEngine.Game.Settings.Graphics;
-            if (window.IsFullScreen &&
-                !(window.ClientBounds.Width == gfxSetup.FullscreenWidth && window.ClientBounds.Height == gfxSetup.FullscreenHeight))
+            var clientBounds = window.Impl.GetClientBounds();
+            if (window.Impl.GetFullScreen() &&
+                !(clientBounds.Width == gfxSetup.FullscreenWidth && clientBounds.Height == gfxSetup.FullscreenHeight))
             {
-                window.SetFullScreen(gfxSetup.FullscreenWidth, gfxSetup.FullscreenHeight);
+                window.Impl.SetFullScreen(gfxSetup.FullscreenWidth, gfxSetup.FullscreenHeight);
             }
-            if (gfxSetup.IsVerticalSynced && !window.IsVerticalSynced()) window.EnableVerticalSync();
-            if (!gfxSetup.IsVerticalSynced && window.IsVerticalSynced()) window.DisableVerticalSync();
+            if (gfxSetup.IsVerticalSynced && !window.Impl.IsVerticalSynced()) window.Impl.EnableVerticalSync();
+            if (!gfxSetup.IsVerticalSynced && window.Impl.IsVerticalSynced()) window.Impl.DisableVerticalSync();
         }
 
         private void ApplyControlsSettings()

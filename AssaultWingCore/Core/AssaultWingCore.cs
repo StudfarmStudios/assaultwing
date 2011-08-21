@@ -269,7 +269,7 @@ namespace AW2.Core
                 _lastFramerateCheck = secondsSinceLastFramerateCheck < 2
                     ? _lastFramerateCheck + TimeSpan.FromSeconds(1)
                     : GameTime.TotalRealTime;
-                Window.Title = GetStatusText();
+                Window.Impl.SetTitle(GetStatusText());
             }
             base.Draw();
         }

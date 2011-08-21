@@ -17,6 +17,7 @@ namespace AW2.Game.Gobs
         private static readonly TimeSpan DOCK_EFFECT_STOP_DELAY = TimeSpan.FromSeconds(0.1);
         public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);
         public static readonly TimeSpan PACIFIST_TIME_REQUIRED = TimeSpan.FromSeconds(5);
+        public static readonly TimeSpan REPAIR_PENDING_NOTIFY_MIN = TimeSpan.FromSeconds(1);
 
         /// <summary>
         /// Speed of repairing damageable gobs, measured in repaired damage/second.
@@ -111,7 +112,7 @@ namespace AW2.Game.Gobs
                     }
                     if ((sideEffectTypes & Arena.CollisionSideEffectType.Irreversible) != 0)
                     {
-                        if (!canRepair && ship.Owner != null)
+                        if (ShouldNotifyPlayerAboutRepairPending(ship))
                         {
                             ship.Owner.NotifyRepairPending();
                             result |= Arena.CollisionSideEffectType.Irreversible;
@@ -188,8 +189,21 @@ namespace AW2.Game.Gobs
 
         private bool CanRepair(Ship ship)
         {
-            return Game.DataEngine.ArenaTotalTime - ship.LastDamageTakenTime > UNDAMAGED_TIME_REQUIRED
-                && Game.DataEngine.ArenaTotalTime - ship.LastWeaponFiredTime > PACIFIST_TIME_REQUIRED;
+            return TimeUntilRepairStarts(ship) == TimeSpan.Zero;
+        }
+
+        private bool ShouldNotifyPlayerAboutRepairPending(Ship ship)
+        {
+            return ship.Owner != null && Game.NetworkMode != Core.NetworkMode.Client
+                && TimeUntilRepairStarts(ship) >= REPAIR_PENDING_NOTIFY_MIN;
+        }
+
+        private TimeSpan TimeUntilRepairStarts(Ship ship)
+        {
+            var now = Game.DataEngine.ArenaTotalTime;
+            return AWMathHelper.Max(TimeSpan.Zero, AWMathHelper.Max(
+                ship.LastDamageTakenTime + UNDAMAGED_TIME_REQUIRED - now,
+                ship.LastWeaponFiredTime + PACIFIST_TIME_REQUIRED - now));
         }
 
         private bool IsFullyRepaired(Ship ship)

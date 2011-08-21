@@ -59,7 +59,7 @@ namespace AW2.Menu.Main
             StartItems.Add(new MainMenuItem(menuEngine, () => "Play Local",
                 component =>
                 {
-                    component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
+                    component.MenuEngine.Activate(MenuComponentType.Equip);
                     _menuEngine.Game.InitializePlayers(2);
                 }));
             StartItems.Add(new MainMenuItem(menuEngine, () => "Play at the Battlefront",
@@ -136,7 +136,7 @@ namespace AW2.Menu.Main
                 {
                     if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
                     if (!_menuEngine.Game.StartServer()) return;
-                    component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
+                    component.MenuEngine.Activate(MenuComponentType.Equip);
                 }));
             _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
         }

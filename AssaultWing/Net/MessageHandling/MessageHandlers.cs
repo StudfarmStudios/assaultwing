@@ -385,7 +385,7 @@ namespace AW2.Net.MessageHandling
                     GameClientKey = net.GetAssaultWingInstanceKey(),
                 };
                 net.GameServerConnection.Send(joinRequest);
-                AssaultWing.Instance.MenuEngine.ActivateComponent(AW2.Menu.MenuComponentType.Equip);
+                AssaultWing.Instance.MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
             }
         }
     }

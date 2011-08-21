@@ -73,8 +73,6 @@ namespace AW2.Menu
             : base(game, updateOrder)
         {
             MenuContent = new MenuContent();
-            _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
-            // Items in _components are created in Initialize() when other resources are ready.
             ArenaLoadTask = new BackgroundTask();
             ProgressBar = new ProgressBar
             {
@@ -142,6 +140,8 @@ namespace AW2.Menu
 
         public override void Initialize()
         {
+            _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
+            _components[(int)MenuComponentType.Dummy] = new DummyMenuComponent(this);
             _components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
             _components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
             _components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
@@ -149,23 +149,14 @@ namespace AW2.Menu
             base.Initialize();
         }
 
-        public void Activate()
-        {
-            ActivateComponent(MenuComponentType.Main);
-        }
-
-        public void Deactivate()
-        {
-            ActiveComponent.Active = false;
-        }
-
         /// <summary>
         /// Activates a menu component after deactivating the previously active menu component
         /// and moving the menu view to the new component.
         /// </summary>
         /// <param name="component">The menu component to activate and move menu view to.</param>
-        public void ActivateComponent(MenuComponentType component)
+        public void Activate(MenuComponentType component)
         {
+            if (component == _activeComponentType && ActiveComponent.Active) return;
             ActiveComponent.Active = false;
             _activeComponentType = component;
             var newComponent = ActiveComponent;
@@ -184,6 +175,11 @@ namespace AW2.Menu
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
             _activeComponentSoundPlayedOnce = _activeComponentActivatedOnce = false;
+        }
+
+        public void Deactivate()
+        {
+            ActiveComponent.Active = false;
         }
 
         /// <summary>

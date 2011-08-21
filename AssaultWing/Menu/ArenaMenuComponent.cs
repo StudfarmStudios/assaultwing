@@ -167,7 +167,7 @@ namespace AW2.Menu
             };
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
-                MenuEngine.ActivateComponent(MenuComponentType.Equip);
+                MenuEngine.Activate(MenuComponentType.Equip);
             }));
 
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlDone, () =>
@@ -176,7 +176,7 @@ namespace AW2.Menu
                 {
                     SelectCurrentArena();
                     MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-                    MenuEngine.ActivateComponent(MenuComponentType.Equip);
+                    MenuEngine.Activate(MenuComponentType.Equip);
                 }
             }));
 

@@ -37,7 +37,7 @@ namespace AW2.Menu.Equip
             if (Controls.Activate.Pulse && IsArenaSelectable && _tabItem == MatchTabItem.Arena)
             {
                 MenuComponent.IsTemporarilyInactive = true;
-                MenuEngine.ActivateComponent(MenuComponentType.Arena);
+                MenuEngine.Activate(MenuComponentType.Arena);
             }
         }
 

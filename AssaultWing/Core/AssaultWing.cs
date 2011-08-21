@@ -152,7 +152,7 @@ namespace AW2.Core
             CutNetworkConnections();
             EnsureArenaLoadingStopped();
             DataEngine.ClearGameState();
-            MenuEngine.Activate();
+            MenuEngine.Activate(MenuComponentType.Main);
             GameState = GameState.Menu;
         }
 
@@ -163,8 +163,7 @@ namespace AW2.Core
                 _clearGameDataWhenEnteringMenus = false;
                 DataEngine.ClearGameState();
             }
-            MenuEngine.Activate();
-            MenuEngine.ActivateComponent(MenuComponentType.Equip);
+            MenuEngine.Activate(MenuComponentType.Equip);
             GameState = GameState.Menu;
         }
 
@@ -557,14 +556,12 @@ namespace AW2.Core
                 case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
                 case GameState.GameAndMenu: GameState = GameState.Menu; break;
             }
-            MenuEngine.DeactivateComponentsExceptMainMenu();
         }
 
         private void ShowEquipMenuWhileKeepingGameRunning()
         {
             if (GameState == GameState.Menu) return;
-            MenuEngine.Activate();
-            MenuEngine.ActivateComponent(MenuComponentType.Equip);
+            MenuEngine.Activate(MenuComponentType.Equip);
             GameState = GameState.GameAndMenu;
         }
 

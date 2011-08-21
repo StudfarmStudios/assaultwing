@@ -126,6 +126,7 @@
     <Compile Include="Core\OverlayComponents\OverlayDialogData.cs" />
     <Compile Include="Core\OverlayComponents\ProgressBar.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
+    <Compile Include="Menu\DummyMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\Equip\ChatTab.cs" />

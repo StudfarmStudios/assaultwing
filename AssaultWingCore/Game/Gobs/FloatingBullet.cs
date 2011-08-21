@@ -83,7 +83,7 @@ namespace AW2.Game.Gobs
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
             Alpha = Game.DataEngine.Players
-                .Where(plr => plr != Owner && plr.Ship != null)
+                .Where(plr => plr != Owner && plr.Ship != null && !plr.Ship.IsHidden)
                 .Select(plr => Vector2.Distance(Pos, plr.Ship.Pos))
                 .Select(_enemyDistanceToAlpha.Evaluate)
                 .DefaultIfEmpty(0)

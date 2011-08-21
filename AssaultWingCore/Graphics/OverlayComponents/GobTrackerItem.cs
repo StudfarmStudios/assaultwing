@@ -25,9 +25,11 @@ namespace AW2.Graphics.OverlayComponents
         {
             get
             {
-                if (TrackerGob != null && TrackerGob.Owner != null) return TrackerGob.Owner.PlayerColor;
-                if (Gob.Owner != null) return Gob.Owner.PlayerColor;
-                return Color.White;
+                var color =
+                    TrackerGob != null && TrackerGob.Owner != null ? TrackerGob.Owner.PlayerColor :
+                    Gob.Owner != null ? Gob.Owner.PlayerColor :
+                    Color.White;
+                return Color.Multiply(color, Gob.Alpha);
             }
         }
 

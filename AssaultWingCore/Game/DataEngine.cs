@@ -52,6 +52,7 @@ namespace AW2.Game
         }
 
         public IEnumerable<Player> Players { get { return Spectators.OfType<Player>(); } }
+        // TODO: Maybe Arena is a more natural place for Devices, alongside Gobs?
         public IndexedItemCollection<ShipDevice> Devices { get; private set; }
         public Arena Arena { get; set; }
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
@@ -214,6 +215,7 @@ namespace AW2.Game
             Arena = null;
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
             foreach (var player in Spectators) player.ResetForArena();
+            Devices.Clear();
         }
 
         /// <summary>

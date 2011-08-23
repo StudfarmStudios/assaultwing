@@ -100,7 +100,9 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void Clear()
         {
+            var copy = _items.ToArray();
             _items.Clear();
+            if (Removed != null) foreach (var item in copy) Removed(item);
         }
 
         /// <summary>

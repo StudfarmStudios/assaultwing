@@ -21,14 +21,14 @@ namespace AW2.Settings
     {
         public const int PLAYER_NAME_MAX_LENGTH = 12;
 
-        private static readonly PlayerSettingsItem PLAYER1DEFAULT = new PlayerSettingsItem
+        public static readonly PlayerSettingsItem PLAYER1DEFAULT = new PlayerSettingsItem
         {
             Name = "Newbie",
             ShipName = "Plissken",
             Weapon2Name = "bazooka",
             ExtraDeviceName = "repulsor",
         };
-        private static readonly PlayerSettingsItem PLAYER2DEFAULT = new PlayerSettingsItem
+        public static readonly PlayerSettingsItem PLAYER2DEFAULT = new PlayerSettingsItem
         {
             Name = "Lamer",
             ShipName = "Bugger",

@@ -43,7 +43,8 @@ namespace AW2.Menu.Equip
         private EditableText[] _playerNames;
 
         public override Texture2D TabTexture { get { return Content.TabEquipmentTexture; } }
-        public override string HelpText { get { return "Player keys select, Tab changes tab, F10 starts game, Esc exits"; } }
+        public override string HelpText { get { return "Player keys select, Tab changes tab, F10 starts game, Esc exits"; } }
+
         private IEnumerable<Tuple<Player, int>> MenuPanePlayers
         {
             get
@@ -323,7 +324,9 @@ namespace AW2.Menu.Equip
 
         private void DrawNameChangeInfo(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (_playerNameChanged || !MenuPanePlayers.Any() || MenuEngine.Game.NetworkMode == NetworkMode.Standalone) return;
+            if (!MenuPanePlayers.Any() || MenuEngine.Game.NetworkMode == NetworkMode.Standalone) return;
+            if (!_playerNameChanged && MenuPanePlayers.First().Item1.Name != AW2.Settings.PlayerSettings.PLAYER1DEFAULT.Name) _playerNameChanged = true;
+            if (_playerNameChanged) return;
             var moveTime = (float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds;
             var nameChangeInfoPos = MenuComponent.Pos - view + new Vector2(250 + g_nameInfoMove.Evaluate(moveTime), 180);
             var nameChangeInfoTexture = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_player_name_changeinfo");
@@ -333,7 +336,6 @@ namespace AW2.Menu.Equip
         private void PlayerNameKeyPressHandler()
         {
             MenuPanePlayers.First().Item1.Name = MenuEngine.Game.Settings.Players.Player1.Name = _playerNames[0].Content;
-            _playerNameChanged = true;
         }
     }
 }

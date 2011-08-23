@@ -24,7 +24,7 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            Owner.InflictDamage(Owner.MaxDamageLevel - Owner.DamageLevel + 1, new DamageInfo(Owner));
+            Owner.InflictDamage(Owner.MaxDamageLevel - Owner.DamageLevel + 1, new DamageInfo(Owner, ignoreLastDamager: true));
             foreach (var gobType in deathGobTypes)
                 Gob.CreateGob<Gob>(Owner.Game, gobType, gob =>
                 {

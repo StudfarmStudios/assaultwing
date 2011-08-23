@@ -119,7 +119,7 @@ namespace AW2.Game.GobUtils
             };
             if (info.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
                 markAsKill(info.PlayerCause);
-            else if (info.Target.LastDamagerTimeout >= info.Time && info.Target.LastDamager != null)
+            else if (!info.IgnoreLastDamager && info.Target.LastDamagerTimeout >= info.Time && info.Target.LastDamager != null)
                 markAsKill(info.Target.LastDamager);
             else
                 markAsSuicide();

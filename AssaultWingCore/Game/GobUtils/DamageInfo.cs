@@ -10,15 +10,27 @@ namespace AW2.Game.GobUtils
         public static DamageInfo Unspecified { get; private set; }
 
         public Gob Cause { get; private set; }
+        public bool IgnoreLastDamager { get; private set; }
 
         static DamageInfo()
         {
             Unspecified = new DamageInfo();
         }
 
+        public DamageInfo(DamageInfo info)
+            : this(info.Cause, info.IgnoreLastDamager)
+        {
+        }
+
         public DamageInfo(Gob cause)
         {
             Cause = cause;
+        }
+
+        public DamageInfo(Gob cause, bool ignoreLastDamager)
+            : this(cause)
+        {
+            IgnoreLastDamager = ignoreLastDamager;
         }
 
         private DamageInfo() { }
@@ -49,7 +61,7 @@ namespace AW2.Game.GobUtils
         public Player PlayerCause { get { return Cause.Owner; } }
 
         public BoundDamageInfo(DamageInfo info, Gob target, TimeSpan time)
-            : base(info.Cause)
+            : base(info)
         {
             if (target == null) throw new ArgumentNullException("target");
             Target = target;

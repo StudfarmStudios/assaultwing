@@ -161,9 +161,8 @@ namespace AW2.Menu.Main
                 }
                 else
                 {
-                    var index = Math.Max(0, NetworkItems.Count - 1);
-                    if (NetworkItems[index].Name() != INCOMPATIBLE_SERVERS_FOUND)
-                        NetworkItems.Insert(index, new MainMenuItem(_menuEngine, () => INCOMPATIBLE_SERVERS_FOUND, component => {}));
+                    if (!NetworkItems.Any(item => item.Name() == INCOMPATIBLE_SERVERS_FOUND))
+                        NetworkItems.Insert(Math.Max(0, NetworkItems.Count - 2), new MainMenuItem(_menuEngine, () => INCOMPATIBLE_SERVERS_FOUND, component => { }));
                 }
             }
         }

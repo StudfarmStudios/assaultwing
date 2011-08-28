@@ -83,6 +83,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
@@ -115,6 +116,7 @@
     </Compile>
     <Compile Include="Core\GraphicsDeviceService.cs" />
     <Compile Include="Core\NetworkMode.cs" />
+    <Compile Include="Core\PostInstall.cs" />
     <Compile Include="Core\Waiter.cs" />
     <Compile Include="Core\Window.cs" />
     <Compile Include="Game\ActionGob.cs" />

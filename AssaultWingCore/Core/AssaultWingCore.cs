@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -44,8 +46,24 @@ namespace AW2.Core
         /// </summary>
         public static AssaultWingCore Instance { get; set; }
 
-        public virtual Version Version { get { return new Version(); } }
-        public virtual string SettingsDirectory { get { return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); } }
+        public virtual Version Version
+        {
+            get
+            {
+                return ApplicationDeployment.IsNetworkDeployed
+                    ? ApplicationDeployment.CurrentDeployment.CurrentVersion
+                    : new Version();
+            }
+        }
+        public static string SettingsDirectory
+        {
+            get
+            {
+                return ApplicationDeployment.IsNetworkDeployed
+                    ? ApplicationDeployment.CurrentDeployment.DataDirectory
+                    : System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            }
+        }
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; private set; }
         public CommandLineOptions CommandLineOptions { get; private set; }
@@ -73,6 +91,20 @@ namespace AW2.Core
         public bool AllowDialogs { get; set; }
 
         public Window Window { get; set; }
+
+        private static readonly TimeSpan ARGUMENT_FILE_AGE_MAX = TimeSpan.FromSeconds(15);
+        public static string ArgumentPath { get { return Path.Combine(SettingsDirectory, "arguments.txt"); } }
+        public static string GetArgumentText()
+        {
+            if (!File.Exists(ArgumentPath)) return "";
+            var argumentAge = DateTime.Now - File.GetLastWriteTime(ArgumentPath);
+            if (argumentAge < ARGUMENT_FILE_AGE_MAX)
+            {
+                Log.Write("Reading argument file {0} because it's less than {1} old", ArgumentPath, MiscHelper.ToDurationString(ARGUMENT_FILE_AGE_MAX, "day", "hour", "minute", "second", usePlurals: true));
+                return File.ReadAllText(ArgumentPath);
+            }
+            return "";
+        }
 
         #endregion AssaultWing properties
 

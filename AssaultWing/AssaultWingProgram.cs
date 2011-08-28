@@ -28,10 +28,11 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
+            PostInstall.CreateDedicatedServerShortcut();
             AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
             try
             {
-                using (Instance = new AssaultWingProgram(args))
+                using (Instance = new AssaultWingProgram())
                 {
                     Instance.Run();
                 }
@@ -42,14 +43,14 @@ namespace AW2
             }
         }
 
-        public AssaultWingProgram(string[] args)
+        public AssaultWingProgram()
         {
             Log.Write("Assault Wing started");
             Application.ThreadException += ThreadExceptionHandler;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            _form = new GameForm(args);
+            _form = new GameForm();
         }
 
         public void Run()

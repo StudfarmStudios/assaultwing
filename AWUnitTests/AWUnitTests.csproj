@@ -42,6 +42,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\CommandLineOptionsTest.cs" />
     <Compile Include="Game\GobTest.cs" />
     <Compile Include="Game\GobUtils\CoronerTest.cs" />
     <Compile Include="Game\GobUtils\DamageInfoTest.cs" />

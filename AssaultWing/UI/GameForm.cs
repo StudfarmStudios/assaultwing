@@ -36,7 +36,6 @@ namespace AW2.UI
         private AssaultWing _game;
         private AWGameRunner _runner;
         private GraphicsDeviceService _graphicsDeviceService;
-        private string[] _commandLineArgs;
 
         private bool _isFullScreen;
         private int _isChangingFullScreen;
@@ -51,11 +50,10 @@ namespace AW2.UI
         }
         public GraphicsDeviceControl GameView { get { return _gameView; } }
 
-        public GameForm(string[] args)
+        public GameForm()
         {
-            _commandLineArgs = args;
             InitializeComponent();
-            InitializeGame(Handle, _commandLineArgs);
+            InitializeGame(Handle);
             InitializeGameForm();
             InitializeGameView();
             InitializeRunner();
@@ -209,9 +207,9 @@ namespace AW2.UI
             if (_game.CommandLineOptions.DedicatedServer) _splitContainer.Panel1Collapsed = true;
         }
 
-        private void InitializeGame(IntPtr windowHandle, string[] args)
+        private void InitializeGame(IntPtr windowHandle)
         {
-            var commandLineOptions = new CommandLineOptions(args);
+            var commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), AssaultWingCore.GetArgumentText());
             if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
             _game = new AssaultWing(_graphicsDeviceService, commandLineOptions);
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance

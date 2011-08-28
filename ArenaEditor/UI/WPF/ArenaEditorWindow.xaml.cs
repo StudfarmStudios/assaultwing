@@ -79,7 +79,7 @@ namespace AW2.UI.WPF
             {
                 // GraphicsDeviceService needs a window handle which is only available after the window is visible
                 InitializeGraphicsDeviceService();
-                InitializeGame(args);
+                InitializeGame(args, AssaultWingCore.GetArgumentText());
                 InitializeArenaView();
             };
             Closed += (sender, eventArgs) => _runner.Exit();
@@ -290,9 +290,9 @@ namespace AW2.UI.WPF
             _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
         }
 
-        private void InitializeGame(string[] args)
+        private void InitializeGame(string[] args, string argumentText)
         {
-            _game = new AssaultWingCore(_graphicsDeviceService, new CommandLineOptions(args));
+            _game = new AssaultWingCore(_graphicsDeviceService, new CommandLineOptions(args, argumentText));
             _game.Window = new Core.Window(new Core.Window.WindowImpl
             {
                 GetTitle = () => Title,

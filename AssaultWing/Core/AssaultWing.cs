@@ -547,7 +547,7 @@ namespace AW2.Core
 
         private void UpdateSpecialKeys()
         {
-            if (GameState == GameState.Gameplay && _escapeControl.Pulse && !OverlayDialog.Enabled)
+            if (OverlayDialog != null && GameState == GameState.Gameplay && _escapeControl.Pulse && !OverlayDialog.Enabled)
             {
                 OverlayDialogData dialogData;
                 switch (NetworkMode)

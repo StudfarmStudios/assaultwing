@@ -719,8 +719,8 @@ namespace AW2.Game.Gobs
         private void UpdateCharges()
         {
             float elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-            ExtraDevice.Charge += _extraDeviceChargeSpeed * elapsedSeconds;
-            Weapon2.Charge += _weapon2ChargeSpeed * elapsedSeconds;
+            if (ExtraDevice != null) ExtraDevice.Charge += _extraDeviceChargeSpeed * elapsedSeconds;
+            if (Weapon2 != null) Weapon2.Charge += _weapon2ChargeSpeed * elapsedSeconds;
         }
 
         private void UpdateFlashing()

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -27,14 +28,27 @@ namespace AW2.Core.GameComponents
         private void BeginIntro()
         {
             Log.Write("Starting intro");
-            _introPlaying = true;
-            _introVideo.Play();
+            try
+            {
+                _introVideo.Play();
+                _introPlaying = true;
+            }
+            catch (InvalidOperationException)
+            {
+                // Several people have got System.InvalidOperationException: An unexpected error has occurred
+                // thrown from Microsoft.Xna.Framework.Media.VideoPlayer.Resume() of XNA 4.0. Cause unknown.
+                Log.Write("Error starting the intro video. Skipping.");
+                EndIntro();
+            }
         }
 
         private void EndIntro()
         {
-            _introVideo.Stop();
-            _introPlaying = false;
+            if (_introPlaying)
+            {
+                _introVideo.Stop();
+                _introPlaying = false;
+            }
             Log.Write("Entering menus");
             Game.ShowMainMenuAndResetGameplay();
         }

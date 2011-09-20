@@ -14,7 +14,7 @@ namespace AW2.Core.OverlayComponents
         {
             Keys.F1, Keys.F2, Keys.F3, Keys.F4, Keys.F5, Keys.F6,
             Keys.F7, Keys.F8, Keys.F9, Keys.F10, Keys.F11, Keys.F12,
-            Keys.Escape, Keys.PageUp, Keys.PageDown,
+            Keys.Escape,
         };
 
         private List<Keys> _keysDownSinceEntry;

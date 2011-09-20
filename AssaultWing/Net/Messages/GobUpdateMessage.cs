@@ -36,11 +36,23 @@ namespace AW2.Net.Messages
         /// <param name="framesAgo">How long time ago was the message current.</param>
         public void ReadGobs(Func<int, INetworkSerializable> gobFinder, int framesAgo)
         {
-            for (int i = 0; i < _gobIds.Count; ++i)
+            var gobTypes = new System.Text.StringBuilder(); // debugging a rare EndOfStreamException
+            try
             {
-                var gob = gobFinder(_gobIds[i]);
-                if (gob == null) break;
-                Read(gob, SerializationModeFlags.VaryingData, framesAgo);
+                for (int i = 0; i < _gobIds.Count; ++i)
+                {
+                    var gob = gobFinder(_gobIds[i]);
+                    if (gob == null) break;
+                    gobTypes.Append(gob.GetType().Name);
+                    if (gob is Gob) gobTypes.AppendFormat(" [{0}]", ((Gob)gob).TypeName);
+                    gobTypes.Append(", ");
+                    Read(gob, SerializationModeFlags.VaryingData, framesAgo);
+                }
+            }
+            catch (Exception)
+            {
+                AW2.Helpers.Log.Write("Exception during GobUpdateMessage.ReadGobs. Gob types were " + gobTypes);
+                throw;
             }
         }
 

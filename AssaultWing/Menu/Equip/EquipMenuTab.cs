@@ -19,6 +19,7 @@ namespace AW2.Menu.Equip
         public Vector2 LeftPanePos { get { return MenuComponent.Pos + LEFT_PANE_POS; } }
         public abstract Texture2D TabTexture { get; }
         public abstract string HelpText { get; }
+        protected string BasicHelpText { get { return "Tab changes tab, F10 enters game, Esc exits"; } }
 
         protected Vector2 StatusPanePos { get { return MenuComponent.Pos + new Vector2(537, 160); } }
         protected ScrollableList PlayerList { get; set; }

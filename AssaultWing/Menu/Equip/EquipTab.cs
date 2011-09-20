@@ -43,7 +43,7 @@ namespace AW2.Menu.Equip
         private EditableText[] _playerNames;
 
         public override Texture2D TabTexture { get { return Content.TabEquipmentTexture; } }
-        public override string HelpText { get { return "Player keys select, Tab changes tab, F10 starts game, Esc exits"; } }
+        public override string HelpText { get { return "Player keys select, " + BasicHelpText; } }
 
         private IEnumerable<Tuple<Player, int>> MenuPanePlayers
         {

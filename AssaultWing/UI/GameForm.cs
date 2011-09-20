@@ -141,7 +141,7 @@ namespace AW2.UI
             if (msg.Msg != WM_KEYDOWN && msg.Msg != WM_SYSKEYDOWN) throw new ArgumentException("Unexpected value " + msg.Msg);
             var keyCode = keyData & Keys.KeyCode;
             var modifiers = keyData & Keys.Modifiers;
-            if (keyCode == Keys.F1)
+            if (keyCode == Keys.F5)
             {
                 if (!_splitContainer.Panel1Collapsed)
                 {

@@ -15,8 +15,9 @@ namespace AW2.Game
     /// </summary>
     public class LogicEngine : AWGameComponent
     {
+        private Control _helpControl;
 #if DEBUG
-        private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
+        private Control _showOnlyPlayer1Control, _showOnlyPlayer2Control, _showEverybodyControl;
         private int _unfoundGobsToDeleteOnClientReportLimit = 10;
 #endif
 
@@ -26,10 +27,11 @@ namespace AW2.Game
             : base(game, updateOrder)
         {
             GobsToKillOnClient = new List<int>();
+            _helpControl = new KeyboardKey(Keys.F1);
 #if DEBUG
-            showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
-            showOnlyPlayer2Control = new KeyboardKey(Keys.F12);
-            showEverybodyControl = new KeyboardKey(Keys.F9);
+            _showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
+            _showOnlyPlayer2Control = new KeyboardKey(Keys.F12);
+            _showEverybodyControl = new KeyboardKey(Keys.F9);
 #endif
         }
 
@@ -108,12 +110,13 @@ namespace AW2.Game
         /// </summary>
         private void UpdateControls()
         {
+            if (_helpControl.Pulse) Game.ShowPlayerHelp();
 #if DEBUG
-            if (showEverybodyControl.Pulse)
+            if (_showEverybodyControl.Pulse)
                 Game.ShowOnlyPlayer(-1);
-            if (showOnlyPlayer1Control.Pulse)
+            if (_showOnlyPlayer1Control.Pulse)
                 Game.ShowOnlyPlayer(0);
-            if (showOnlyPlayer2Control.Pulse && Game.DataEngine.Spectators.Count > 1)
+            if (_showOnlyPlayer2Control.Pulse && Game.DataEngine.Spectators.Count > 1)
                 Game.ShowOnlyPlayer(1);
 #endif
         }

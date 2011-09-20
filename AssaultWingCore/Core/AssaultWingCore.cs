@@ -178,6 +178,16 @@ namespace AW2.Core
             CanonicalString.DisableRegistering();
         }
 
+        private string[] GetHelpMessages(Player player)
+        {
+            return new[]
+            {
+                string.Format("Moving: {0}, {1}, {2}", player.Controls.Thrust, player.Controls.Left, player.Controls.Right),
+                string.Format("Firing: {0}, {1}, {2}", player.Controls.Fire1, player.Controls.Fire2, player.Controls.Extra),
+                string.Format("Chat: {0}; Equip ship: Esc; Quick help: F1", Settings.Controls.Chat),
+            };
+        }
+
         private void BeforeEveryFrame()
         {
             DataEngine.Arena.TotalTime += GameTime.ElapsedGameTime;
@@ -208,6 +218,7 @@ namespace AW2.Core
             PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
             DataEngine.StartArena();
             DataEngine.RearrangeViewports();
+            ShowPlayerHelp();
             Log.Write("...started arena " + DataEngine.Arena.Info.Name);
         }
 
@@ -222,6 +233,13 @@ namespace AW2.Core
 #if NETWORK_PROFILING
             AW2.Helpers.Serialization.ProfilingNetworkBinaryWriter.DumpStats();
 #endif
+        }
+
+        public void ShowPlayerHelp()
+        {
+            foreach (var player in DataEngine.Players.Where(plr => !plr.IsRemote))
+                foreach (var mess in GetHelpMessages(player))
+                    player.Messages.Add(new PlayerMessage("Help>", mess, PlayerMessage.DEFAULT_COLOR));
         }
 
         /// <summary>

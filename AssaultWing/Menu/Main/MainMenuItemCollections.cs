@@ -79,8 +79,8 @@ namespace AW2.Menu.Main
                     component.SetItems(SetupItems);
                     _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
-            StartItems.Add(new MainMenuItem(_menuEngine, () => "Visit Web Site",
-                component => _menuEngine.Game.OpenURL("http://www.assaultwing.com")));
+            StartItems.Add(new MainMenuItem(_menuEngine, () => "Read Instructions Online",
+                component => _menuEngine.Game.OpenURL("http://www.assaultwing.com/quickinstructions")));
             StartItems.Add(new MainMenuItem(_menuEngine, () => "Quit",
                 component =>
                 {

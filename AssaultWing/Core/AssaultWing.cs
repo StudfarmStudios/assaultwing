@@ -116,6 +116,22 @@ namespace AW2.Core
             SendGameSettings();
         }
 
+        /// <summary>
+        /// Opens a URL (usually in the default web browser). Exceptions are caught and the user is notified.
+        /// </summary>
+        public void OpenURL(string url)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception)
+            {
+                ShowDialog(new CustomOverlayDialogData(this, "Couldn't open browser.\nPlease open this URL manually:\n" + url,
+                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })));
+            }
+        }
+
         public void ShowDialog(OverlayDialogData dialogData)
         {
             if (!AllowDialogs) return;

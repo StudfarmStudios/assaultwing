@@ -42,7 +42,7 @@ namespace AW2.Menu.Main
         public MainMenuItemCollections(MenuEngineImpl menuEngine)
         {
             _menuEngine = menuEngine;
-            InitializeStartItems(menuEngine);
+            InitializeStartItems();
             NetworkItems = new MainMenuItemCollection("Play at the Battlefront");
             NetworkItems.Update = () =>
             {
@@ -53,39 +53,39 @@ namespace AW2.Menu.Main
             RefreshSetupItems(menuEngine);
         }
 
-        private void InitializeStartItems(MenuEngineImpl menuEngine)
+        private void InitializeStartItems()
         {
             StartItems = new MainMenuItemCollection("Start Menu");
-            StartItems.Add(new MainMenuItem(menuEngine, () => "Play Local",
+            StartItems.Add(new MainMenuItem(_menuEngine, () => "Play Local",
                 component =>
                 {
                     component.MenuEngine.Activate(MenuComponentType.Equip);
                     _menuEngine.Game.InitializePlayers(2);
                 }));
-            StartItems.Add(new MainMenuItem(menuEngine, () => "Play at the Battlefront",
+            StartItems.Add(new MainMenuItem(_menuEngine, () => "Play at the Battlefront",
                 component =>
                 {
-                    menuEngine.Game.InitializePlayers(1);
-                    menuEngine.Game.NetworkEngine.ConnectToManagementServer();
-                    menuEngine.Game.WebData.RequestData();
+                    _menuEngine.Game.InitializePlayers(1);
+                    _menuEngine.Game.NetworkEngine.ConnectToManagementServer();
+                    _menuEngine.Game.WebData.RequestData();
                     RefreshNetworkItems();
                     component.SetItems(NetworkItems);
-                    menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                     MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
                 }));
-            StartItems.Add(new MainMenuItem(menuEngine, () => "Setup",
+            StartItems.Add(new MainMenuItem(_menuEngine, () => "Setup",
                 component =>
                 {
                     component.SetItems(SetupItems);
-                    menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
-            StartItems.Add(new MainMenuItem(menuEngine, () => "Visit Web Site",
-                component => Process.Start("http://www.assaultwing.com")));
-            StartItems.Add(new MainMenuItem(menuEngine, () => "Quit",
+            StartItems.Add(new MainMenuItem(_menuEngine, () => "Visit Web Site",
+                component => _menuEngine.Game.OpenURL("http://www.assaultwing.com")));
+            StartItems.Add(new MainMenuItem(_menuEngine, () => "Quit",
                 component =>
                 {
                     AssaultWingProgram.Instance.Exit();
-                    menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
         }
 
@@ -130,7 +130,7 @@ namespace AW2.Menu.Main
             _lastNetworkItemsUpdate = _menuEngine.Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
             NetworkItems.Add(new MainMenuItem(_menuEngine, () => NO_SERVERS_FOUND, component => { }));
-            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Find More in Forums", component => Process.Start("http://www.assaultwing.com/letsplay.php")));
+            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Find More in Forums", component => _menuEngine.Game.OpenURL("http://www.assaultwing.com/letsplay")));
             NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Create a server",
                 component =>
                 {

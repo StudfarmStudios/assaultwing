@@ -20,7 +20,7 @@ namespace AW2.Graphics
         {
             _videoPlayer = new VideoPlayer{ Volume = volume };
             _videoPlayer.Play(video);
-            _videoPlayer.Pause();
+            _videoPlayer.Stop();
         }
 
         public void Play()

@@ -20,9 +20,13 @@ namespace AW2.Menu.Main
     {
         private const string NO_SERVERS_FOUND = "No servers found";
         private const string INCOMPATIBLE_SERVERS_FOUND = "Some incompatible servers";
+        private static readonly TimeSpan GAME_SERVER_LIST_REPLY_TIMEOUT = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan GAME_SERVER_LIST_REQUEST_INTERVAL = TimeSpan.FromSeconds(15); // must be larger than GAME_SERVER_LIST_REPLY_TIMEOUT
 
-        private MenuEngineImpl _menuEngine;
+        private MainMenuComponent _menuComponent;
+        private MenuEngineImpl MenuEngine { get { return _menuComponent.MenuEngine; } }
         private TimeSpan _lastNetworkItemsUpdate;
+        private TimeSpan? _gameServerListReplyDeadline;
 
         /// <summary>
         /// The very first menu when the game starts.
@@ -39,53 +43,53 @@ namespace AW2.Menu.Main
         /// </summary>
         public MainMenuItemCollection SetupItems { get; private set; }
 
-        public MainMenuItemCollections(MenuEngineImpl menuEngine)
+        public MainMenuItemCollections(MainMenuComponent menuComponent)
         {
-            _menuEngine = menuEngine;
+            _menuComponent = menuComponent;
             InitializeStartItems();
             NetworkItems = new MainMenuItemCollection("Play at the Battlefront");
             NetworkItems.Update = () =>
             {
-                if (_lastNetworkItemsUpdate.SecondsAgoRealTime() < 15) return;
+                CheckGameServerListReplyTimeout();
                 RefreshNetworkItems();
             };
             SetupItems = new MainMenuItemCollection("General Setup");
-            RefreshSetupItems(menuEngine);
+            RefreshSetupItems(MenuEngine);
         }
 
         private void InitializeStartItems()
         {
             StartItems = new MainMenuItemCollection("Start Menu");
-            StartItems.Add(new MainMenuItem(_menuEngine, () => "Play Local",
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local",
                 component =>
                 {
                     component.MenuEngine.Activate(MenuComponentType.Equip);
-                    _menuEngine.Game.InitializePlayers(2);
+                    MenuEngine.Game.InitializePlayers(2);
                 }));
-            StartItems.Add(new MainMenuItem(_menuEngine, () => "Play at the Battlefront",
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront",
                 component =>
                 {
-                    _menuEngine.Game.InitializePlayers(1);
+                    MenuEngine.Game.InitializePlayers(1);
                     if (!TryConnectToManagementServer()) return;
-                    _menuEngine.Game.WebData.RequestData();
-                    RefreshNetworkItems();
+                    MenuEngine.Game.WebData.RequestData();
+                    RefreshNetworkItems(force: true);
                     component.SetItems(NetworkItems);
-                    _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                     MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
                 }));
-            StartItems.Add(new MainMenuItem(_menuEngine, () => "Setup",
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Setup",
                 component =>
                 {
                     component.SetItems(SetupItems);
-                    _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
-            StartItems.Add(new MainMenuItem(_menuEngine, () => "Read Instructions Online",
-                component => _menuEngine.Game.OpenURL("http://www.assaultwing.com/quickinstructions")));
-            StartItems.Add(new MainMenuItem(_menuEngine, () => "Quit",
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
+                component => MenuEngine.Game.OpenURL("http://www.assaultwing.com/quickinstructions")));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Quit",
                 component =>
                 {
                     AssaultWingProgram.Instance.Exit();
-                    _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
         }
 
@@ -96,14 +100,14 @@ namespace AW2.Menu.Main
         {
             try
             {
-                _menuEngine.Game.NetworkEngine.ConnectToManagementServer();
+                MenuEngine.Game.NetworkEngine.ConnectToManagementServer();
                 return true;
             }
             catch (ArgumentException e)
             {
                 var infoText = e.Message.Replace(" '", "\n'"); // TODO: Generic line wrapping in the dialog
-                _menuEngine.Game.ShowInfoDialog(infoText);
-                _menuEngine.Game.ShowMainMenuAndResetGameplay();
+                MenuEngine.Game.ShowInfoDialog(infoText);
+                MenuEngine.Game.ShowMainMenuAndResetGameplay();
                 return false;
             }
         }
@@ -112,7 +116,7 @@ namespace AW2.Menu.Main
         {
             SetupItems.Clear();
             SetupItems.Add(GetSetupItemBase(menuEngine, () => "Reset all settings to defaults",
-                component => _menuEngine.Game.ShowDialog(new CustomOverlayDialogData(_menuEngine.Game,
+                component => MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine.Game,
                     "Are you sure to reset all settings\nto their defaults? (Yes/No)",
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, menuEngine.Game.Settings.Reset),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })))));
@@ -144,44 +148,65 @@ namespace AW2.Menu.Main
             return GetSetupItemBase(menuEngine, getName, component => chooseNext(items), component => chooseNext(items.Reverse()));
         }
 
-        private void RefreshNetworkItems()
+        private void RefreshNetworkItems(bool force = false)
         {
-            _lastNetworkItemsUpdate = _menuEngine.Game.GameTime.TotalRealTime;
+            if (!force && _lastNetworkItemsUpdate + GAME_SERVER_LIST_REQUEST_INTERVAL > MenuEngine.Game.GameTime.TotalRealTime) return;
+            _lastNetworkItemsUpdate = MenuEngine.Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
-            NetworkItems.Add(new MainMenuItem(_menuEngine, () => NO_SERVERS_FOUND, component => { }));
-            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Find More in Forums", component => _menuEngine.Game.OpenURL("http://www.assaultwing.com/letsplay")));
-            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Create a Server",
+            NetworkItems.Add(new MainMenuItem(MenuEngine, () => NO_SERVERS_FOUND, component => { }));
+            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Find More in Forums", component => MenuEngine.Game.OpenURL("http://www.assaultwing.com/letsplay")));
+            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Create a Server",
                 component =>
                 {
-                    if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
-                    if (!_menuEngine.Game.StartServer()) return;
+                    if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
+                    if (!MenuEngine.Game.StartServer()) return;
                     component.MenuEngine.Activate(MenuComponentType.Equip);
                 }));
-            _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
+            RequestGameServerList();
+        }
+
+        private void RequestGameServerList()
+        {
+            MenuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
+            _gameServerListReplyDeadline = MenuEngine.Game.GameTime.TotalRealTime + GAME_SERVER_LIST_REPLY_TIMEOUT;
+        }
+
+        private void CheckGameServerListReplyTimeout()
+        {
+            if (!_gameServerListReplyDeadline.HasValue) return;
+            if (MenuEngine.Game.GameTime.TotalRealTime <= _gameServerListReplyDeadline.Value) return;
+            MenuEngine.Game.ShowInfoDialog(
+@"No reply from management server.
+Cannot refresh game server list.
+Either your firewall blocks the
+traffic or the server is down.");
+            _menuComponent.SetItems(StartItems);
+            _gameServerListReplyDeadline = null;
         }
 
         private void HandleGameServerListReply(GameServerListReply mess)
         {
+            _gameServerListReplyDeadline = null;
             foreach (var server in mess.GameServers)
             {
                 if (NetworkItems[0].Name() == NO_SERVERS_FOUND) NetworkItems.RemoveAt(0);
-                if (server.AWVersion.IsCompatibleWith(_menuEngine.Game.Version))
+                if (server.AWVersion.IsCompatibleWith(MenuEngine.Game.Version))
                 {
                     var shortServerName = server.Name.Substring(0, Math.Min(12, server.Name.Length));
                     var menuItemText = string.Format("Join {0}\t\x10[{1}/{2}]", shortServerName, server.CurrentPlayers, server.MaxPlayers);
                     var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
-                    NetworkItems.Insert(0, new MainMenuItem(_menuEngine,
+                    NetworkItems.Insert(0, new MainMenuItem(MenuEngine,
                         () => menuItemText,
                         component =>
                         {
-                            if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
-                            _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
+                            if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
+                            MenuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
                         }));
                 }
                 else
                 {
                     if (!NetworkItems.Any(item => item.Name() == INCOMPATIBLE_SERVERS_FOUND))
-                        NetworkItems.Insert(Math.Max(0, NetworkItems.Count - 2), new MainMenuItem(_menuEngine, () => INCOMPATIBLE_SERVERS_FOUND, component => { }));
+                        NetworkItems.Insert(Math.Max(0, NetworkItems.Count - 2), new MainMenuItem(MenuEngine, () => INCOMPATIBLE_SERVERS_FOUND, component => { }));
                 }
             }
         }

@@ -239,20 +239,28 @@ namespace AW2.Net.Connections
             if (IsDisposed) return;
             if (Errors == null) return;
             bool errorsFound = false;
-            Errors.Do(queue =>
-            {
-                while (queue.Count > 0)
-                {
-                    errorsFound = true;
-                    var e = queue.Dequeue();
-                    AW2.Helpers.Log.Write("Error occurred with " + Name + ": " + e);
-                }
-            });
+            errorsFound |= HandleErrorQueue(_tcpSocket.Errors, "Error occurred with TCP socket of ");
+            errorsFound |= HandleErrorQueue(Errors,"Error occurred with ");
             if (errorsFound)
             {
                 AW2.Helpers.Log.Write("Closing " + Name + " due to errors");
                 Dispose(true);
             }
+        }
+
+        private bool HandleErrorQueue(ThreadSafeWrapper<Queue<string>> errors, string errorMessagePrefix)
+        {
+            var errorsFound = false;
+            errors.Do(queue =>
+            {
+                while (queue.Count > 0)
+                {
+                    errorsFound = true;
+                    var e = queue.Dequeue();
+                    Log.Write(errorMessagePrefix + Name + ": " + e);
+                }
+            });
+            return errorsFound;
         }
 
         private void HandleMessageBuffer(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint)

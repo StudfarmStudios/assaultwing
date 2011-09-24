@@ -64,12 +64,11 @@ namespace AW2.Net.ConnectionUtils
                 {
                     var message = "Your network device doesn't support UPnP.\n"
                         + "In order for clients to join your game, make\n"
-                        + "sure that TCP port "+tcpPort+" and UDP port\n"
+                        + "sure that TCP port " + tcpPort + " and UDP port\n"
                         + udpPort + " are forwarded to your computer\n"
                         + "in your local network.";
                     Log.Write(message.Replace('\n', ' '));
-                    _game.ShowDialog(new CustomOverlayDialogData(_game, message,
-                        new UI.TriggeredCallback(UI.TriggeredCallback.PROCEED_CONTROL, () => { })));
+                    _game.ShowInfoDialog(message);
                 }
                 ListenOneConnection(_game);
             }

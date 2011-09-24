@@ -646,8 +646,7 @@ namespace AW2.Net
             _managementServerConnectionLossReported = true;
             var message = "Connection to management server lost.\nNo more clients can join the game.\nTry restarting the game server.";
             Log.Write(message.Replace('\n', ' '));
-            _game.ShowDialog(new CustomOverlayDialogData(_game, message,
-                new UI.TriggeredCallback(UI.TriggeredCallback.PROCEED_CONTROL, () => { })));
+            _game.ShowInfoDialog(message); // TODO: Proper line wrapping in dialogs
         }
 
         private void HandleConnectionHandshakingOnServer()

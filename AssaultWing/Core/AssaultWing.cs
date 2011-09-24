@@ -127,8 +127,7 @@ namespace AW2.Core
             }
             catch (Exception)
             {
-                ShowDialog(new CustomOverlayDialogData(this, "Couldn't open browser.\nPlease open this URL manually:\n" + url,
-                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })));
+                ShowInfoDialog("Couldn't open browser.\nPlease open this URL manually:\n" + url);
             }
         }
 

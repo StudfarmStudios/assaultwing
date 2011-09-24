@@ -107,9 +107,7 @@ namespace AW2.Net.MessageHandling
             else
             {
                 Log.Write("Couldn't connect to server: " + mess.FailMessage);
-                var dialogData = new CustomOverlayDialogData(game, "Couldn't connect to server:\n" + mess.FailMessage,
-                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMainMenuAndResetGameplay));
-                game.ShowDialog(dialogData);
+                game.ShowInfoDialog("Couldn't connect to server:\n" + mess.FailMessage); // TODO: Proper line wrapping in dialogs
             }
         }
 

@@ -131,7 +131,7 @@ namespace AW2.Menu.Main
             NetworkItems.Clear();
             NetworkItems.Add(new MainMenuItem(_menuEngine, () => NO_SERVERS_FOUND, component => { }));
             NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Find More in Forums", component => _menuEngine.Game.OpenURL("http://www.assaultwing.com/letsplay")));
-            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Create a server",
+            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Create a Server",
                 component =>
                 {
                     if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;

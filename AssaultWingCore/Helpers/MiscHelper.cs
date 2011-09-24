@@ -147,7 +147,9 @@ namespace AW2.Helpers
             catch (Exception e)
             {
                 if (e is FormatException || e is OverflowException || e is ArgumentOutOfRangeException)
-                    throw new ArgumentException("Invalid IP end point string: " + text, e);
+                    throw new ArgumentException("Invalid IP end point '" + text + "'", e);
+                else if (e is System.Net.Sockets.SocketException)
+                    throw new ArgumentException("Couldn't resolve IP end point '" + text + "'", e);
                 else
                     throw;
             }

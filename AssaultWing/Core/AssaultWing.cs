@@ -138,6 +138,17 @@ namespace AW2.Core
             OverlayDialog.Show(dialogData);
         }
 
+        /// <summary>
+        /// Like calling <see cref="ShowDialog"/> with <see cref="TriggeredCallback.PROCEED_CONTROL"/> that
+        /// doesn't do anything.
+        /// </summary>
+        /// <param name="text"></param>
+        public void ShowInfoDialog(string text)
+        {
+            ShowDialog(new CustomOverlayDialogData(this, text,
+                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })));
+        }
+
         public void HideDialog()
         {
             OverlayDialog.Dismiss();

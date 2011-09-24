@@ -177,22 +177,15 @@ namespace AW2.Net
 
         /// <summary>
         /// Finds a management server and initialises <see cref="ManagementServerConnection"/>.
-        /// May use DNS and take some time to finish.
+        /// May use DNS and take some time to finish. May throw <see cref="ArgumentException"/>.
         /// </summary>
         public void ConnectToManagementServer()
         {
-            try
-            {
-                var managementServerEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.ManagementServerAddress);
-                if (managementServerEndPoint.Port == 0)
-                    managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
-                _managementServerConnectionLossReported = false;
-                _managementServerConnection = new ManagementServerConnection(_game, managementServerEndPoint);
-            }
-            catch (ArgumentException e)
-            {
-                throw new ArgumentException("ERROR: Invalid IP address for management server: " + Game.Settings.Net.ManagementServerAddress, e);
-            }
+            var managementServerEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.ManagementServerAddress);
+            if (managementServerEndPoint.Port == 0)
+                managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
+            _managementServerConnectionLossReported = false;
+            _managementServerConnection = new ManagementServerConnection(_game, managementServerEndPoint);
         }
 
         /// <summary>

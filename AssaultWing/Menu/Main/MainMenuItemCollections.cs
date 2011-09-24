@@ -66,7 +66,7 @@ namespace AW2.Menu.Main
                 component =>
                 {
                     _menuEngine.Game.InitializePlayers(1);
-                    _menuEngine.Game.NetworkEngine.ConnectToManagementServer();
+                    if (!TryConnectToManagementServer()) return;
                     _menuEngine.Game.WebData.RequestData();
                     RefreshNetworkItems();
                     component.SetItems(NetworkItems);
@@ -87,6 +87,25 @@ namespace AW2.Menu.Main
                     AssaultWingProgram.Instance.Exit();
                     _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
+        }
+
+        /// <summary>
+        /// Returns true on success.
+        /// </summary>
+        private bool TryConnectToManagementServer()
+        {
+            try
+            {
+                _menuEngine.Game.NetworkEngine.ConnectToManagementServer();
+                return true;
+            }
+            catch (ArgumentException e)
+            {
+                var infoText = e.Message.Replace(" '", "\n'"); // TODO: Generic line wrapping in the dialog
+                _menuEngine.Game.ShowInfoDialog(infoText);
+                _menuEngine.Game.ShowMainMenuAndResetGameplay();
+                return false;
+            }
         }
 
         private void RefreshSetupItems(MenuEngineImpl menuEngine)

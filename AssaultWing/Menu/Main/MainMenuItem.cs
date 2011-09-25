@@ -27,21 +27,21 @@ namespace AW2.Menu.Main
         /// <summary>
         /// Action to perform on triggering the menu item or pressing Right on the menu item.
         /// </summary>
-        public Action<MainMenuComponent> Action { get; private set; }
+        public Action Action { get; private set; }
 
         /// <summary>
         /// Action to perform on pressing Left on the menu item.
         /// </summary>
-        public Action<MainMenuComponent> ActionLeft { get; private set; }
+        public Action ActionLeft { get; private set; }
 
         private SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
 
-        public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action<MainMenuComponent> action)
-            : this(menuEngine, getName, action, component => { })
+        public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action action)
+            : this(menuEngine, getName, action, () => { })
         {
         }
 
-        public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action<MainMenuComponent> action, Action<MainMenuComponent> actionLeft)
+        public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action action, Action actionLeft)
         {
             _menuEngine = menuEngine;
             Name = getName;

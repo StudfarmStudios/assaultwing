@@ -130,8 +130,8 @@ namespace AW2.Menu
                 _currentItem.CurrentIndex++;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () => CurrentItem.Action(this)));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectLeft, () => CurrentItem.ActionLeft(this)));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () => CurrentItem.Action()));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectLeft, () => CurrentItem.ActionLeft()));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
                 if (_currentItemsHistory.Count > 1)

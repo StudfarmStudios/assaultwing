@@ -14,9 +14,12 @@ namespace AW2.Game
         public Texture2D RadarDisplayTexture { get; private set; }
         public Texture2D ShipOnRadarTexture { get; private set; }
         public Texture2D DockOnRadarTexture { get; private set; }
+        public Texture2D ScoreBackgroundTexture { get; private set; }
         public Effect BasicShaders { get; private set; }
         public SpriteBatch ViewportSpriteBatch { get; private set; }
         public SpriteBatch RadarSilhouetteSpriteBatch { get; private set; }
+        public SpriteFont ScoreFont { get; private set; }
+        public SpriteFont ConsoleFont { get; private set; }
 
         public GameContent(AWGame game)
         {
@@ -44,10 +47,14 @@ namespace AW2.Game
             RadarDisplayTexture = _game.Content.Load<Texture2D>("gui_radar_bg");
             ShipOnRadarTexture = _game.Content.Load<Texture2D>("gui_playerinfo_white_ball");
             DockOnRadarTexture = _game.Content.Load<Texture2D>("p_green_box");
+            ScoreBackgroundTexture = _game.Content.Load<Texture2D>("gui_playerlist_bg");
 
             BasicShaders = _game.Content.Load<Effect>("basicshaders");
             ViewportSpriteBatch = new SpriteBatch(gfx);
             RadarSilhouetteSpriteBatch = new SpriteBatch(gfx);
+
+            ScoreFont = _game.Content.Load<SpriteFont>("ScoreFont");
+            ConsoleFont = _game.Content.Load<SpriteFont>("ConsoleFont");
         }
 
         public void UnloadContent()

@@ -25,6 +25,8 @@ namespace AW2.Graphics
         /// </summary>
         private float _shakeSign;
 
+        public static List<Func<PlayerViewport, OverlayComponent>> CustomOverlayCreators = new List<Func<PlayerViewport, OverlayComponent>>();
+
         public GobTrackerOverlay GobTracker { get { return _gobTrackerOverlay; } set { _gobTrackerOverlay = value; } }
 
         /// <param name="player">Which player the viewport will follow.</param>
@@ -43,6 +45,7 @@ namespace AW2.Graphics
             AddOverlayComponent(new ScoreOverlay(this));
             GobTracker = new GobTrackerOverlay(this);
             AddOverlayComponent(GobTracker);
+            foreach (var customOverlayCreator in CustomOverlayCreators) AddOverlayComponent(customOverlayCreator(this));
         }
 
         public Player Player { get { return _player; } }

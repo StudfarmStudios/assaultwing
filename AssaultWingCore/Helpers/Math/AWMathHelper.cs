@@ -592,6 +592,11 @@ namespace AW2.Helpers
             return new Vector2(-value.Y, value.X);
         }
 
+        public static Vector2 ToVector2(this Point p)
+        {
+            return new Vector2(p.X, p.Y);
+        }
+
         private static void Swap(ref Point point1, ref Point point2)
         {
             var swap = point1;

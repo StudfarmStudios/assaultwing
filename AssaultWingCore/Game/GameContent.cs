@@ -16,6 +16,7 @@ namespace AW2.Game
         public Texture2D DockOnRadarTexture { get; private set; }
         public Texture2D ScoreBackgroundTexture { get; private set; }
         public Effect BasicShaders { get; private set; }
+        public SpriteBatch OverlaySpriteBatch { get { return ViewportSpriteBatch; } }
         public SpriteBatch ViewportSpriteBatch { get; private set; }
         public SpriteBatch RadarSilhouetteSpriteBatch { get; private set; }
         public SpriteFont ScoreFont { get; private set; }

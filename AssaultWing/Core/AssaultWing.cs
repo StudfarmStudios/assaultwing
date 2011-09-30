@@ -104,6 +104,7 @@ namespace AW2.Core
                 Components.Add(PlayerChat);
                 Components.Add(OverlayDialog);
             }
+            AW2.Graphics.PlayerViewport.CustomOverlayCreators.Add(viewport => new SystemStatusOverlay(viewport));
         }
 
         public override void Update(AWGameTime gameTime)

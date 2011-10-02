@@ -87,48 +87,57 @@ namespace AW2.Core
 
         private void GameUpdateAndDrawLoop()
         {
+#if !DEBUG
             try
             {
-                _invoker(() =>
-                {
-                    _game.Initialize();
-                    _game.BeginRun();
-                });
-                var nextUpdate = TimeSpan.Zero;
-                var lastUpdate = TimeSpan.Zero;
-                var totalGameTime = TimeSpan.Zero;
-                _timer.Start();
-                if (Initialized != null)
-                {
-                    Initialized();
-                    Initialized = null;
-                }
-                while (!_exiting)
-                {
-                    lock (_timer)
-                    {
-                        var now = _timer.Elapsed;
-                        if (now + Waiter.PRECISION < nextUpdate)
-                            Waiter.Instance.Sleep(nextUpdate - now);
-                        else if (now > nextUpdate + TimeSpan.FromSeconds(10))
-                            nextUpdate = now;
-                        else
-                        {
-                            var updateInterval = _game.TargetElapsedTime;
-                            var nextNextUpdate = nextUpdate + updateInterval;
-                            var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
-                            _update(gameTime);
-                            if (now < nextNextUpdate) _draw();
-                            nextUpdate = nextNextUpdate;
-                            lastUpdate = now;
-                            totalGameTime += updateInterval;
-                        }
-                    }
-                }
+#endif
+                GameUpdateAndDrawLoopImpl();
+#if !DEBUG
             }
             catch (Exception e)
             {
                 _exceptionHandler(e);
+            }
+#endif
+        }
+
+        private void GameUpdateAndDrawLoopImpl()
+        {
+            _invoker(() =>
+            {
+                _game.Initialize();
+                _game.BeginRun();
+            });
+            var nextUpdate = TimeSpan.Zero;
+            var lastUpdate = TimeSpan.Zero;
+            var totalGameTime = TimeSpan.Zero;
+            _timer.Start();
+            if (Initialized != null)
+            {
+                Initialized();
+                Initialized = null;
+            }
+            while (!_exiting)
+            {
+                lock (_timer)
+                {
+                    var now = _timer.Elapsed;
+                    if (now + Waiter.PRECISION < nextUpdate)
+                        Waiter.Instance.Sleep(nextUpdate - now);
+                    else if (now > nextUpdate + TimeSpan.FromSeconds(10))
+                        nextUpdate = now;
+                    else
+                    {
+                        var updateInterval = _game.TargetElapsedTime;
+                        var nextNextUpdate = nextUpdate + updateInterval;
+                        var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
+                        _update(gameTime);
+                        if (now < nextNextUpdate) _draw();
+                        nextUpdate = nextNextUpdate;
+                        lastUpdate = now;
+                        totalGameTime += updateInterval;
+                    }
+                }
             }
         }
 

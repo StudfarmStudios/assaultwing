@@ -102,6 +102,7 @@ namespace AW2.Game.Pengs
 
         private int _numberCreated;
         private int _pausedCount;
+        private bool _forceFinish;
 
         #endregion SprayEmitter fields
 
@@ -127,13 +128,16 @@ namespace AW2.Game.Pengs
         /// </summary>
         public bool Paused { get { return _pausedCount > 0; } }
 
+        /// <summary>
+        /// Number of particles to create, or negative for no limit.
+        /// </summary>
         public int NumberToCreate { set { _numberToCreate = value; } }
         public float EmissionFrequency { get { return _emissionFrequency; } }
 
         /// <summary>
         /// <c>true</c> if emitting has finished for good, <c>false</c> otherwise.
         /// </summary>
-        public bool Finished { get { return _numberToCreate > 0 && _numberCreated >= _numberToCreate; } }
+        public bool Finished { get { return _forceFinish || (_numberToCreate > 0 && _numberCreated >= _numberToCreate); } }
 
         #endregion Properties
 
@@ -166,6 +170,16 @@ namespace AW2.Game.Pengs
             if (_nextBirth < Peng.Arena.TotalTime)
                 _nextBirth = Peng.Arena.TotalTime;
             _pausedCount--;
+        }
+
+        public void Reset()
+        {
+            _numberCreated = 0;
+        }
+
+        public void Finish()
+        {
+            _forceFinish = true;
         }
 
         /// <summary>
@@ -213,11 +227,6 @@ namespace AW2.Game.Pengs
                     Gob.CreateGob<Gob>(Peng.Game, _gobTypeNames[emitType - _textureNames.Length], emittedThingInit);
             }
             return particles;
-        }
-
-        public void Reset()
-        {
-            _numberCreated = 0;
         }
 
         #region IConsistencyCheckable Members

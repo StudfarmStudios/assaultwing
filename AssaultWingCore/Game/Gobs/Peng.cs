@@ -69,6 +69,9 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private bool _disregardHidingLeader;
 
+        [TypeParameter]
+        private bool _dieImmediatelyWithLeader;
+
         /// <summary>
         /// External input argument of the peng, between 0 and 1.
         /// </summary>
@@ -208,6 +211,7 @@ namespace AW2.Game.Gobs
             _coordinateSystem = CoordinateSystem.Game;
             _playerRelated = false;
             _disregardHidingLeader = false;
+            _dieImmediatelyWithLeader = false;
             _particles = new List<Particle>();
 
             // Set better defaults than class Gob does.
@@ -260,6 +264,7 @@ namespace AW2.Game.Gobs
             UpdateOldDrawPos();
             CreateParticles();
             UpdateAndKillParticles();
+            CheckLeaderDeath();
             CheckDeath();
         }
 
@@ -317,18 +322,20 @@ namespace AW2.Game.Gobs
             _particles.RemoveRange(write, _particles.Count - write);
         }
 
+        private void CheckLeaderDeath()
+        {
+            if (Leader == null) return;
+            if (!Leader.Dead && !Leader.IsDisposed) return;
+            _emitter.Finish();
+            if (_dieImmediatelyWithLeader || _updater.AreParticlesImmortal)
+                Die();
+            else
+                DetachFromLeader();
+        }
+
         private void CheckDeath()
         {
-            // Die by our leader.
-            if (Leader != null && (Leader.Dead || Leader.IsDisposed))
-            {
-                Die();
-                Leader = null;
-            }
-
-            // Die if we're finished.
-            if (_particles.Count == 0 && _emitter.Finished)
-                Die();
+            if (_particles.Count == 0 && _emitter.Finished) Die();
         }
 
         /// <summary>
@@ -374,6 +381,18 @@ namespace AW2.Game.Gobs
                     }
                 default: throw new ApplicationException("Unknown CoordinateSystem: " + _coordinateSystem);
             }
+        }
+
+        private void DetachFromLeader()
+        {
+            if (Leader == null) return;
+            var posWithLeader = Pos;
+            var moveWithLeader = Move;
+            var rotationWithLeader = Rotation;
+            Leader = null;
+            Pos = posWithLeader;
+            Move = moveWithLeader;
+            Rotation = rotationWithLeader;
         }
 
         #endregion Private methods

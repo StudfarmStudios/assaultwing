@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.Peng">
   <typeName>large fragments</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
+  <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>

@@ -1309,7 +1309,7 @@ namespace AW2.Game
 
         public void SelfDestruct(CanonicalString[] deathGobTypes)
         {
-            this._deathGobTypes = deathGobTypes;
+            _deathGobTypes = deathGobTypes;
         }
 
         /// <param name="forceRemove">Force removal of the dead gob. Useful for clients.</param>

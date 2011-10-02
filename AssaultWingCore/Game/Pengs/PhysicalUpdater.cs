@@ -97,6 +97,8 @@ namespace AW2.Game.Pengs
         private float _dragMultiplier;
         private float _elapsedSeconds;
 
+        public bool AreParticlesImmortal { get { return _areParticlesImmortal; } }
+
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>

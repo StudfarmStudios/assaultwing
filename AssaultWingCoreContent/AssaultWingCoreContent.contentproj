@@ -1053,6 +1053,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="particledefs\Peng_bonus collect flash.xml">
       <Name>Peng_bonus collect flash</Name>
@@ -1066,8 +1067,8 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="particledefs\Peng_bouncegun_engine.xml">
-      <Name>Peng_bouncegun_engine</Name>
+    <None Include="particledefs\Peng_dumbfirethrust1.xml">
+      <Name>Peng_dumbfirethrust1</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1325,14 +1326,14 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="particledefs\Peng_snake slimeglow.xml">
-      <Name>Peng_snake slimeglow</Name>
+    <None Include="particledefs\Peng_slimeglow.xml">
+      <Name>Peng_slimeglow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="particledefs\Peng_snake slimetrail.xml">
-      <Name>Peng_snake slimetrail</Name>
+    <None Include="particledefs\Peng_slimetrail.xml">
+      <Name>Peng_slimetrail</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

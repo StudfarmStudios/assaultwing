@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.Peng">
   <typeName>slimetrail</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
+  <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
    </networkUpdatePeriod>
@@ -22,7 +23,6 @@
          <Item>p_snakehaze</Item>
       </textureNames>
       <gobTypeNames>
-<!--      <Item type="&string;">hail</Item>-->
     </gobTypeNames>
       <initialVelocity type="AW2.Game.Pengs.ConstantValue">
         <value>106</value>

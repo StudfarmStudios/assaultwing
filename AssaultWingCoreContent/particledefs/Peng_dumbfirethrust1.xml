@@ -1,52 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Peng">
-  <typeName>slimeglow</typeName>
+  <typeName>dumbfirethrust1</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
+  <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
-  <depthLayer2D>0.6</depthLayer2D>
+  <depthLayer2D>0.40</depthLayer2D>
   <drawMode2D>
     <type>Additive</type>
   </drawMode2D>
-  <layerPreference>Back</layerPreference>
-  <coordinateSystem>FixedToPeng</coordinateSystem>
+  <layerPreference>Front</layerPreference>
+  <coordinateSystem>Game</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
-    <emissionFrequency>9</emissionFrequency>
+    <emissionFrequency>100</emissionFrequency>
     <numberToCreate>-1</numberToCreate>
-    <radius>5</radius>
-    <sprayAngle>3.142</sprayAngle>
+    <radius>1</radius>
+    <sprayAngle>0.0</sprayAngle>
     <facingType>Random</facingType>
     <textureNames>
-      <Item>p_snakehaze</Item>
+      <Item>p_yellowblueball</Item>
     </textureNames>
     <gobTypeNames>
     </gobTypeNames>
     <initialVelocity type="AW2.Game.Pengs.ConstantValue">
-      <value>0</value>
+      <value>85</value>
     </initialVelocity>
   </emitter>
   <updater>
     <areParticlesImmortal>false</areParticlesImmortal>
     <drag>0.0</drag>
     <particleAge type="AW2.Game.Pengs.ExpectedValue">
-      <expected>1</expected>
+      <expected>0.39</expected>
       <variance>0.1</variance>
     </particleAge>
     <accelerationInputScale>0</accelerationInputScale>
     <acceleration type="AW2.Game.Pengs.ConstantValue">
-      <value>-10</value>
+      <value>0</value>
     </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
-      <value>0.6</value>
+      <value>0.1</value>
     </rotationSpeed>
     <scaleInputScale>0</scaleInputScale>
     <scale type="AW2.Game.Pengs.CurveLerp">
       <min>0.001</min>
       <max>1000</max>
-      <randomAmplitude>0.1</randomAmplitude>
+      <randomAmplitude>0.05</randomAmplitude>
       <randomMixer>3</randomMixer>
       <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
         <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -58,21 +59,14 @@
               <keys>
                 <Item>
                   <position>0</position>
-                  <internalValue>0.05</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.7</position>
-                  <internalValue>0.33</internalValue>
+                  <internalValue>0.18</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>
                 </Item>
                 <Item>
                   <position>1</position>
-                  <internalValue>0.1</internalValue>
+                  <internalValue>0.01</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>
@@ -87,8 +81,8 @@
     <alpha type="AW2.Game.Pengs.CurveLerp">
       <min>0</min>
       <max>1</max>
-      <randomAmplitude>0.05</randomAmplitude>
-      <randomMixer>6</randomMixer>
+      <randomAmplitude>0.1</randomAmplitude>
+      <randomMixer>4</randomMixer>
       <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
         <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <Item type="AW2.Game.Pengs.CurveLerpKey">
@@ -98,22 +92,15 @@
               <postLoop>Constant</postLoop>
               <keys>
                 <Item>
-                  <position>0.2</position>
-                  <internalValue>0.0</internalValue>
+                  <position>0</position>
+                  <internalValue>0.8</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>
                 </Item>
                 <Item>
-                  <position>0.3</position>
-                  <internalValue>0.2</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.6</position>
-                  <internalValue>0.43</internalValue>
+                  <position>0.7</position>
+                  <internalValue>0.4</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>

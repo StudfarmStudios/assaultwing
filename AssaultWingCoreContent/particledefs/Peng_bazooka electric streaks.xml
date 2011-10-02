@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.Peng">
   <typeName>bazooka electric streaks</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
+  <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
@@ -40,7 +41,7 @@
       <value>0</value>
     </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
-	<rotationSpeed type="AW2.Game.Pengs.ExpectedValue">
+    <rotationSpeed type="AW2.Game.Pengs.ExpectedValue">
       <expected>0</expected>
       <variance>2.5</variance>
     </rotationSpeed>

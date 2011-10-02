@@ -42,6 +42,7 @@ namespace AW2.UI
         private FormParameters _previousWindowedModeParameters;
         private Icon _originalIcon;
         private bool _isCursorHidden;
+        private bool _isCursorForcedVisible;
 
         public Rectangle ClientBoundsMin
         {
@@ -117,6 +118,25 @@ namespace AW2.UI
             {
                 _isChangingFullScreen = 0;
             }
+        }
+
+        public void EnsureCursorHidden()
+        {
+            if (_isCursorForcedVisible) return;
+            if (!_isCursorHidden) Cursor.Hide();
+            _isCursorHidden = true;
+        }
+
+        public void EnsureCursorShown()
+        {
+            if (_isCursorHidden) Cursor.Show();
+            _isCursorHidden = false;
+        }
+
+        public void ForceCursorShown()
+        {
+            _isCursorForcedVisible = true;
+            EnsureCursorShown();
         }
 
         protected override void OnCreateControl()
@@ -274,18 +294,6 @@ namespace AW2.UI
         private void AddToLogView(string text)
         {
             BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
-        }
-
-        private void EnsureCursorHidden()
-        {
-            if (!_isCursorHidden) Cursor.Hide();
-            _isCursorHidden = true;
-        }
-
-        private void EnsureCursorShown()
-        {
-            if (_isCursorHidden) Cursor.Show();
-            _isCursorHidden = false;
         }
     }
 }

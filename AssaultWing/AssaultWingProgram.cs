@@ -75,6 +75,7 @@ namespace AW2
 
         private void ThreadExceptionHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
+            _form.ForceCursorShown();
             _form.FinishGame();
             _form.SetWindowed();
             ReportException(e.Exception);

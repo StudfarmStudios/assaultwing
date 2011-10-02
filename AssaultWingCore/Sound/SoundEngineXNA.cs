@@ -55,14 +55,11 @@ namespace AW2.Sound
         {
             try
             {
-                Log.Write("Sound engine initialized.");
                 string filePath = Game.Content.RootDirectory + "\\corecontent\\sounds\\sounddefs.xml";
-
-                var allSounds = new List<string>();
-
                 var document = new XmlDocument();
                 document.Load(filePath);
                 var soundNodes = document.SelectNodes("group/sound");
+                var errors = false;
                 foreach (XmlNode sound in soundNodes)
                 {
                     var baseName = sound.Attributes["name"].Value.ToLower();
@@ -87,11 +84,14 @@ namespace AW2.Sound
                         .ToArray();
                     if (!effects.Any())
                     {
-                        Console.WriteLine("Error loading sound " + baseName + " (missing from project?)");
+                        errors = true;
+                        Log.Write("Error loading sound " + baseName);
                     }
                     var cue = new SoundCue(effects, volume, dist, loop);
                     _soundCues.Add(baseName, cue);
                 }
+                if (errors) throw new ApplicationException("Couldn't load some sounds");
+                Log.Write("Sound engine initialized.");
             }
             catch (NoAudioHardwareException e)
             {

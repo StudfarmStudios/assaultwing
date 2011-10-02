@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -13,6 +14,19 @@ namespace AW2.Helpers
     /// </summary>
     public static class MiscHelper
     {
+        private static bool? _isNetworkDeployed;
+
+        public static bool IsNetworkDeployed
+        {
+            get
+            {
+                // Only check ApplicationDeployment.IsNetworkDeployed once because it may cause
+                // a first-chance exception which is nasty for debugging.
+                if (!_isNetworkDeployed.HasValue) _isNetworkDeployed = ApplicationDeployment.IsNetworkDeployed;
+                return _isNetworkDeployed.Value;
+            }
+        }
+
         /// <summary>
         /// Returns the string starting with a capital letter.
         /// </summary>

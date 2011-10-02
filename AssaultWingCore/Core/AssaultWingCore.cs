@@ -50,7 +50,7 @@ namespace AW2.Core
         {
             get
             {
-                return ApplicationDeployment.IsNetworkDeployed
+                return MiscHelper.IsNetworkDeployed
                     ? ApplicationDeployment.CurrentDeployment.CurrentVersion
                     : new Version();
             }
@@ -59,7 +59,7 @@ namespace AW2.Core
         {
             get
             {
-                return ApplicationDeployment.IsNetworkDeployed
+                return MiscHelper.IsNetworkDeployed
                     ? ApplicationDeployment.CurrentDeployment.DataDirectory
                     : System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }

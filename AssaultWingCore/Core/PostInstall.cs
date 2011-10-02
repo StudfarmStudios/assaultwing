@@ -13,7 +13,7 @@ namespace AW2.Core
     {
         public static void CreateDedicatedServerShortcut()
         {
-            if (!ApplicationDeployment.IsNetworkDeployed || !ApplicationDeployment.CurrentDeployment.IsFirstRun) return;
+            if (!MiscHelper.IsNetworkDeployed || !ApplicationDeployment.CurrentDeployment.IsFirstRun) return;
             Log.Write("Creating a shortcut for dedicated server in Start Menu");
             var programs = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
             var publisherAndProduct = GetPublisherAndProduct();

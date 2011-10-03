@@ -24,6 +24,7 @@ namespace AW2.Core
         }
 
         public WindowImpl Impl { get; private set; }
+        public bool ForceDisableKeypresses { get; set; }
 
         public event Action<char> KeyPress;
 
@@ -34,7 +35,7 @@ namespace AW2.Core
 
         public void OnKeyPress(char keyChar)
         {
-            if (KeyPress != null) KeyPress(keyChar);
+            if (KeyPress != null && !ForceDisableKeypresses) KeyPress(keyChar);
         }
     }
 }

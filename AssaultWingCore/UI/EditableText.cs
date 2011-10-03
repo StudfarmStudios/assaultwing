@@ -12,8 +12,6 @@ namespace AW2.UI
     /// </summary>
     public class EditableText : IDisposable
     {
-        private static readonly TimeSpan TEMPORARY_ACTIVATION_INTERVAL = TimeSpan.FromSeconds(0.5);
-
         private AssaultWingCore _game;
         private Action _changedCallback;
         private StringBuilder _content;
@@ -30,6 +28,8 @@ namespace AW2.UI
         /// Are keypresses handled or not.
         /// </summary>
         public bool IsActive { get; set; }
+
+        private TimeSpan TemporaryActivationInterval { get { return _game.TargetElapsedTime + TimeSpan.FromMilliseconds(1); } }
 
         public EditableText(string content, int maxLength, AssaultWingCore game, Action changedCallback)
         {
@@ -48,7 +48,7 @@ namespace AW2.UI
         /// </summary>
         public void ActivateTemporarily()
         {
-            _temporaryActivationTimeout = _game.GameTime.TotalRealTime + TEMPORARY_ACTIVATION_INTERVAL;
+            _temporaryActivationTimeout = _game.GameTime.TotalRealTime + TemporaryActivationInterval;
         }
 
         public void Clear()

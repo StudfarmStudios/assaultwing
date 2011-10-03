@@ -178,6 +178,7 @@ namespace AW2.Menu.Equip
                     playerI == 1 ? MenuEngine.Game.Settings.Players.Player2 :
                     new AW2.Settings.PlayerSettingsItem();
                 _currentItems[playerI] = EquipMenuItem.Ship;
+                // FIXME !!! Memory leak: _playerNames[playerI] will never be garbage collected because it referenced by the Window.KeyPress event. It should be Dispose()d.
                 _playerNames[playerI] = new EditableText(player.Name, AW2.Settings.PlayerSettings.PLAYER_NAME_MAX_LENGTH, MenuEngine.Game, PlayerNameKeyPressHandler);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, settings, GetShipSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(MenuEngine.Game, player, settings, GetExtraDeviceSelectorPos(playerI));

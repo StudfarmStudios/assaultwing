@@ -9,6 +9,18 @@ namespace AW2.UI
 {
     public partial class GameForm : Form
     {
+        // Constants from windows.h
+        private const int WM_KEYDOWN = 0x100;
+        private const int WM_CHAR = 0x102;
+        private const int WM_SYSKEYDOWN = 0x104;
+        /*
+        private const int WM_KEYUP = 0x101;
+        private const int WM_DEADCHAR = 0x103;
+        private const int WM_SYSKEYUP = 0x105;
+        private const int WM_SYSCHAR = 0x106;
+        private const int WM_SYSDEADCHAR = 0x107;
+        */
+
         private struct FormParameters
         {
             public FormWindowState WindowState { get; private set; }
@@ -147,17 +159,6 @@ namespace AW2.UI
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            // Constants from windows.h
-            const int WM_KEYDOWN = 0x100;
-            const int WM_SYSKEYDOWN = 0x104;
-            /*
-            const int WM_KEYUP = 0x101;
-            const int WM_CHAR = 0x102;
-            const int WM_DEADCHAR = 0x103;
-            const int WM_SYSKEYUP = 0x105;
-            const int WM_SYSCHAR = 0x106;
-            const int WM_SYSDEADCHAR = 0x107;
-            */
             if (msg.Msg != WM_KEYDOWN && msg.Msg != WM_SYSKEYDOWN) throw new ArgumentException("Unexpected value " + msg.Msg);
             var keyCode = keyData & Keys.KeyCode;
             var modifiers = keyData & Keys.Modifiers;
@@ -172,6 +173,16 @@ namespace AW2.UI
             }
             return (keyCode >= Keys.F1 && keyCode <= Keys.F24 && modifiers == 0)
                 || (keyCode == Keys.Space && modifiers == Keys.Alt); // prevent window menu from opening
+        }
+
+        protected override void WndProc(ref Message msg)
+        {
+            if (msg.Msg == WM_CHAR)
+            {
+                var chr = char.ConvertFromUtf32((int)msg.WParam)[0];
+                _game.Window.OnKeyPress(chr);
+            }
+            base.WndProc(ref msg);
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -199,13 +210,6 @@ namespace AW2.UI
         protected override void OnPaintBackground(PaintEventArgs pevent)
         {
             // Doing nothing here is supposed to avoid flicker.
-        }
-
-        protected override void OnKeyPress(KeyPressEventArgs e)
-        {
-            _game.Window.OnKeyPress(e.KeyChar);
-            e.Handled = true;
-            base.OnKeyPress(e);
         }
 
         private void InitializeGameForm()

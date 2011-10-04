@@ -305,6 +305,7 @@
     <Compile Include="Sound\SoundInstanceDummy.cs" />
     <Compile Include="Sound\SoundInstanceXACT.cs" />
     <Compile Include="Sound\SoundInstanceXNA.cs" />
+    <Compile Include="UI\CharacterSet.cs" />
     <Compile Include="UI\Control.cs" />
     <Compile Include="UI\ControlState.cs" />
     <Compile Include="UI\EditableText.cs" />

@@ -179,7 +179,7 @@ namespace AW2.Menu.Equip
                     new AW2.Settings.PlayerSettingsItem();
                 _currentItems[playerI] = EquipMenuItem.Ship;
                 // FIXME !!! Memory leak: _playerNames[playerI] will never be garbage collected because it referenced by the Window.KeyPress event. It should be Dispose()d.
-                _playerNames[playerI] = new EditableText(player.Name, AW2.Settings.PlayerSettings.PLAYER_NAME_MAX_LENGTH, MenuEngine.Game, PlayerNameKeyPressHandler);
+                _playerNames[playerI] = new EditableText(player.Name, AW2.Settings.PlayerSettings.PLAYER_NAME_MAX_LENGTH, new CharacterSet(Content.FontSmall.Characters), MenuEngine.Game, PlayerNameKeyPressHandler);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, settings, GetShipSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(MenuEngine.Game, player, settings, GetExtraDeviceSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(MenuEngine.Game, player, settings, GetWeapon2SelectorPos(playerI));
@@ -231,9 +231,8 @@ namespace AW2.Menu.Equip
                 // Draw player name textcursor if necessary
                 if (_currentItems[playerI] == EquipMenuItem.Name)
                 {
-                    var partialTextSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content.Substring(0, _playerNames[playerI].Content.Length));
-                    var totalTextSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content);
-                    var textCursorPos = hiliteTexturePos + new Vector2(partialTextSize.X - totalTextSize.X / 2 + 91, 24);
+                    var textSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content);
+                    var textCursorPos = hiliteTexturePos + new Vector2(textSize.X / 2 + 91, 24);
                     spriteBatch.Draw(Content.ListTextCursorTexture, textCursorPos.Round(), Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
                 }
 

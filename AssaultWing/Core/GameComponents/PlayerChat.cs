@@ -199,7 +199,7 @@ namespace AW2.Core.GameComponents
             if (_message != null) throw new InvalidOperationException("Already writing a message");
             IEnumerable<Control> exclusiveControls = new[] { _chatSendControl, _escapeControl, _scrollUpControl, _scrollDownControl };
             _game.UIEngine.PushExclusiveControls(exclusiveControls);
-            _message = new EditableText("", 40, _game, () => { }) { IsActive = true };
+            _message = new EditableText("", 40, new CharacterSet(_typingFont.Characters), _game, () => { }) { IsActive = true };
         }
 
         private void StopWritingMessage()

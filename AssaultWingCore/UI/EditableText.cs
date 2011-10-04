@@ -16,6 +16,7 @@ namespace AW2.UI
         private Action _changedCallback;
         private StringBuilder _content;
         private TimeSpan _temporaryActivationTimeout;
+        private CharacterSet _allowedChars;
 
         public int MaxLength { get; set; }
 
@@ -31,11 +32,12 @@ namespace AW2.UI
 
         private TimeSpan TemporaryActivationInterval { get { return _game.TargetElapsedTime + TimeSpan.FromMilliseconds(1); } }
 
-        public EditableText(string content, int maxLength, AssaultWingCore game, Action changedCallback)
+        public EditableText(string content, int maxLength, CharacterSet allowedChars, AssaultWingCore game, Action changedCallback)
         {
             if (maxLength < 0) throw new ArgumentException("Maximum length cannot be negative");
             if (content.Length > maxLength) throw new ArgumentException("Initial content is longer than maximum length");
             MaxLength = maxLength;
+            _allowedChars = allowedChars;
             _content = new StringBuilder(content, maxLength);
             _game = game;
             _changedCallback = changedCallback;
@@ -66,13 +68,12 @@ namespace AW2.UI
         {
             switch (keyChar)
             {
-                case (char)8: // backspace
+                case (char)Keys.Back:
                     if (_content.Length > 0)
                         _content.Remove(_content.Length - 1, 1);
                     break;
                 default:
-                    // Only append chars that exist in our fonts.
-                    if (_content.Length < MaxLength && keyChar >= 32 && keyChar <= 126)
+                    if (_content.Length < MaxLength && !char.IsControl(keyChar) && _allowedChars.Contains(keyChar))
                         _content.Append(keyChar);
                     break;
             }

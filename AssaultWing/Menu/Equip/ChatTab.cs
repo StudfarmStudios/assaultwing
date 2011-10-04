@@ -37,7 +37,7 @@ namespace AW2.Menu.Equip
             : base(menuComponent)
         {
             _sendControl = new KeyboardKey(Keys.Enter);
-            _message = new EditableText("", 40, MenuEngine.Game, () => { });
+            _message = new EditableText("", 40, new CharacterSet(Content.FontChat.Characters), MenuEngine.Game, () => { });
             // FIXME !!! Memory leak: _message will never be garbage collected because it referenced by the Window.KeyPress event
 
             g_cursorBlinkCurve = new Curve();

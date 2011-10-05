@@ -19,6 +19,11 @@ namespace AW2.UI
         private const int WM_SYSKEYUP = 0x105;
         private const int WM_SYSCHAR = 0x106;
         private const int WM_SYSDEADCHAR = 0x107;
+        private const int WM_CUT = 0x300;
+        private const int WM_COPY = 0x301;
+        private const int WM_PASTE = 0x302;
+        private const int WM_CLEAR = 0x303;
+        private const int WM_UNDO = 0x304;
         */
 
         private struct FormParameters
@@ -177,12 +182,17 @@ namespace AW2.UI
 
         protected override void WndProc(ref Message msg)
         {
+            WndProcImpl(msg);
+            base.WndProc(ref msg);
+        }
+
+        private void WndProcImpl(Message msg)
+        {
             if (msg.Msg == WM_CHAR)
             {
                 var chr = char.ConvertFromUtf32((int)msg.WParam)[0];
                 _game.Window.OnKeyPress(chr);
             }
-            base.WndProc(ref msg);
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -219,10 +229,14 @@ namespace AW2.UI
             _originalIcon = Icon;
             AW2.Helpers.Log.Written += AddToLogView;
 
-            // Keep focus in this form or _gameView which handle key presses.
-            _logView.GotFocus += (sender, e) => _gameView.Focus();
-            _splitContainer.GotFocus += (sender, e) => _gameView.Focus();
-            _gameView.KeyPress += (sender, e) => OnKeyPress(e);
+            // Text entry is handled by WndProcImpl() which is called at a keypress
+            // only if this GameForm or _gameView has focus. Initially, this GameForm has
+            // focus and we cannot set it to any other control in this method. Later, if
+            // some other control has got the focus, it is no longer possible to focus
+            // this GameForm. Also, clicking on _gameView doesn't automatically focus it,
+            // so we set focus then explicitly. Note that clicking on other controls does
+            // set focus to them.
+            _gameView.Click += (sender, e) => _gameView.Focus();
 
             if (_game.CommandLineOptions.DedicatedServer) _splitContainer.Panel1Collapsed = true;
         }
@@ -248,6 +262,7 @@ namespace AW2.UI
                 EnsureCursorShown = () => BeginInvoke((Action)EnsureCursorShown),
             });
             _gameView.Draw += _game.Draw;
+            _gameView.ExternalWndProc += WndProcImpl;
             _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }
 

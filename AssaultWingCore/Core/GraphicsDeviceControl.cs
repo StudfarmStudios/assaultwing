@@ -24,7 +24,15 @@ namespace AW2.Core
         /// </summary>
         public GraphicsDeviceService GraphicsDeviceService { get; set; }
 
+        public event Action<Message> ExternalWndProc;
+
         public event Action Draw;
+
+        protected override void WndProc(ref Message m)
+        {
+            if (ExternalWndProc != null) ExternalWndProc(m);
+            base.WndProc(ref m);
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {

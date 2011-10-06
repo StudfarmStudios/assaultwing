@@ -5,7 +5,6 @@ using AW2.Game;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 
-
 namespace AW2.Graphics
 {
     /// <summary>
@@ -13,12 +12,9 @@ namespace AW2.Graphics
     /// </summary>
     public class PlayerViewport : AWViewport
     {
-        /// <summary>
-        /// The player to follow.
-        /// </summary>
         private Player _player;
-
         private GobTrackerOverlay _gobTrackerOverlay;
+        private PIDController _lookAtController;
 
         /// <summary>
         /// Last used sign of player's shake angle. Either 1 or -1.
@@ -37,6 +33,12 @@ namespace AW2.Graphics
         {
             _player = player;
             _shakeSign = -1;
+            _lookAtController = new PIDController(() => _player.LookAtPos, () => LookAtPos)
+            {
+                ProportionalGain = 0.11f,
+                IntegralGain = 0.0002f,
+                DerivativeGain = 0.0f,
+            };
             AddOverlayComponent(new MiniStatusOverlay(this));
             AddOverlayComponent(new CombatLogOverlay(this));
             AddOverlayComponent(new RadarOverlay(this));
@@ -50,6 +52,13 @@ namespace AW2.Graphics
 
         public Player Player { get { return _player; } }
 
+        public override void Update()
+        {
+            base.Update();
+            _lookAtController.Compute();
+            LookAtPos += _lookAtController.Output;
+        }
+
         protected override Matrix ViewMatrix
         {
             get
@@ -58,14 +67,9 @@ namespace AW2.Graphics
                 _shakeSign = -_shakeSign;
 
                 float viewShake = _shakeSign * _player.Shake;
-                return Matrix.CreateLookAt(new Vector3(GetLookAtPos(), 1000), new Vector3(GetLookAtPos(), 0),
+                return Matrix.CreateLookAt(new Vector3(LookAtPos, 1000), new Vector3(LookAtPos, 0),
                     new Vector3(AWMathHelper.GetUnitVector2(MathHelper.PiOver2 + viewShake), 0));
             }
-        }
-
-        protected override Vector2 GetLookAtPos()
-        {
-            return _player.LookAtPos;
         }
 
         protected override bool IsBlockedFromView(Gob gob)

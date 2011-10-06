@@ -466,12 +466,14 @@ namespace AW2.Core
                     PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     if (!CommandLineOptions.DedicatedServer)
                     {
+                        GraphicsEngine.Enabled = true;
                         GraphicsEngine.Visible = true;
                         if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
                         SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
                     }
                     break;
                 case GameState.GameplayStopped:
+                    GraphicsEngine.Enabled = true;
                     GraphicsEngine.Visible = true;
                     if (NetworkMode != NetworkMode.Standalone) PlayerChat.Visible = true;
                     break;
@@ -511,6 +513,7 @@ namespace AW2.Core
                     PostFrameLogicEngine.Enabled = false;
                     if (!CommandLineOptions.DedicatedServer)
                     {
+                        GraphicsEngine.Enabled = false;
                         GraphicsEngine.Visible = false;
                         PlayerChat.Enabled = PlayerChat.Visible = false;
                     }
@@ -518,6 +521,7 @@ namespace AW2.Core
                 case GameState.GameplayStopped:
                     if (!CommandLineOptions.DedicatedServer)
                     {
+                        GraphicsEngine.Enabled = false;
                         GraphicsEngine.Visible = false;
                         PlayerChat.Visible = false;
                     }

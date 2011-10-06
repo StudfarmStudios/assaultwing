@@ -10,7 +10,8 @@ namespace AW2.Graphics.OverlayComponents
     /// </summary>
     public class GobTrackerOverlay : OverlayComponent
     {
-        private Player _player;
+        private PlayerViewport _viewport;
+        private Player Player { get { return _viewport.Player; } }
 
         /// <summary>
         /// Dimensions are meaningless because our alignments are Stretch.
@@ -20,29 +21,28 @@ namespace AW2.Graphics.OverlayComponents
         public GobTrackerOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Stretch, VerticalAlignment.Stretch)
         {
-            _player = viewport.Player;
+            _viewport = viewport;
         }
 
-        private Vector2 GetTrackerPos(Gob trackerGob, Player trackerPlayer)
+        private Vector2 GetTrackerPos(Gob trackerGob)
         {
             if (trackerGob != null) return trackerGob.Pos + trackerGob.DrawPosOffset;
-            if (trackerPlayer != null) return trackerPlayer.LookAtPos;
-            throw new ApplicationException("Null tracker");
+            return _viewport.LookAtPos;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             RemoveOutdatedItems();
-            foreach (var gobTracker in _player.GobTrackerItems)
+            foreach (var gobTracker in Player.GobTrackerItems)
             {
-                var trackerPos = GetTrackerPos(gobTracker.TrackerGob, _player);
+                var trackerPos = GetTrackerPos(gobTracker.TrackerGob);
                 gobTracker.Draw(spriteBatch, trackerPos, z => Viewport.GetGameToScreenMatrix(z));
             }
         }
 
         private void RemoveOutdatedItems()
         {
-            _player.GobTrackerItems.RemoveAll(IsItemOutdated);
+            Player.GobTrackerItems.RemoveAll(IsItemOutdated);
         }
 
         private bool IsItemOutdated(GobTrackerItem item)

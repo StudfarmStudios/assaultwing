@@ -27,10 +27,11 @@ namespace AW2.Graphics
         /// </summary>
         private VertexPositionTexture[] _vertexData;
 
-        private AssaultWingCore _game;
         private List<OverlayComponent> _overlayComponents;
         private TexturePostprocessor _postprocessor;
         private Func<IEnumerable<CanonicalString>> _getPostprocessEffectNames;
+
+        public AssaultWingCore Game { get; private set; }
 
         /// <summary>
         /// Ratio of screen pixels to game world meters. Default value is 1.
@@ -42,15 +43,18 @@ namespace AW2.Graphics
         /// </summary>
         public Rectangle OnScreen { get { return new Rectangle(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height); } }
 
+        public Vector2 LookAtPos { get; protected set; }
         public event Func<ArenaLayer, bool> LayerDrawing;
         public event Action<Gob> GobDrawn;
+
+        protected virtual bool IsBlockedFromView(Gob gob) { return false; }
 
         /// <summary>
         /// The area of the display to draw on.
         /// </summary>
         private Viewport Viewport { get; set; }
 
-        private SpriteBatch SpriteBatch { get { return _game.GraphicsEngine.GameContent.ViewportSpriteBatch; } }
+        private SpriteBatch SpriteBatch { get { return Game.GraphicsEngine.GameContent.ViewportSpriteBatch; } }
 
         /// <summary>
         /// The matrix for projecting world coordinates to view coordinates.
@@ -71,14 +75,14 @@ namespace AW2.Graphics
         {
             get
             {
-                return Matrix.CreateLookAt(new Vector3(GetLookAtPos(), 1000), new Vector3(GetLookAtPos(), 0), Vector3.Up);
+                return Matrix.CreateLookAt(new Vector3(LookAtPos, 1000), new Vector3(LookAtPos, 0), Vector3.Up);
             }
         }
 
         /// <param name="onScreen">Where on screen is the viewport located.</param>
         protected AWViewport(AssaultWingCore game, Rectangle onScreen, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
         {
-            _game = game;
+            Game = game;
             _overlayComponents = new List<OverlayComponent>();
             Viewport = new Viewport
             {
@@ -175,6 +179,8 @@ namespace AW2.Graphics
             });
         }
 
+        public virtual void Update() { }
+
         public Matrix GetGameToScreenMatrix(float z)
         {
             return ViewMatrix * GetProjectionMatrix(z)
@@ -241,9 +247,6 @@ namespace AW2.Graphics
             foreach (var component in _overlayComponents) component.Dispose();
         }
 
-        protected abstract Vector2 GetLookAtPos();
-        protected virtual bool IsBlockedFromView(Gob gob) { return false; }
-
         /// <summary>
         /// Returns the visual scaling factor at a depth in game coordinates.
         /// </summary>
@@ -259,10 +262,9 @@ namespace AW2.Graphics
         /// </summary>
         private void GetWorldAreaMinAndMax(float z, out Vector2 min, out Vector2 max)
         {
-            var lookAtPos = GetLookAtPos();
             var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
-            min = lookAtPos - halfDiagonal;
-            max = lookAtPos + halfDiagonal;
+            min = LookAtPos - halfDiagonal;
+            max = LookAtPos + halfDiagonal;
         }
 
         private void DoInMyViewport(Action action)
@@ -351,7 +353,7 @@ namespace AW2.Graphics
 
                 // Render looping parallax as two huge triangles.
                 _effect.Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                var texCenter = GetScale(layer.Z) * GetLookAtPos() / _effect.Texture.Dimensions();
+                var texCenter = GetScale(layer.Z) * LookAtPos / _effect.Texture.Dimensions();
                 var texCornerOffset = new Vector2(
                     Viewport.Width / (2f * _effect.Texture.Width) / ZoomRatio,
                     Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;

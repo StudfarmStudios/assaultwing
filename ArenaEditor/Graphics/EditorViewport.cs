@@ -26,9 +26,10 @@ namespace AW2.Graphics
             };
         }
 
-        protected override Vector2 GetLookAtPos()
+        public override void Update()
         {
-            return _spectator.LookAtPos;
+            base.Update();
+            LookAtPos = _spectator.LookAtPos;
         }
 
         private void CircleGob(Gob gob)

@@ -164,6 +164,11 @@ namespace AW2.Graphics
             base.UnloadContent();
         }
 
+        public override void Update()
+        {
+            foreach (var viewport in Game.DataEngine.Viewports) viewport.Update();
+        }
+
         public override void Draw()
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;

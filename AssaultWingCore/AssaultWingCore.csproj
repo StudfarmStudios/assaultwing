@@ -260,6 +260,7 @@
     <Compile Include="Helpers\Math\Half.cs" />
     <Compile Include="Helpers\Math\InterpolatingValue.cs" />
     <Compile Include="Helpers\Math\MovementCurve.cs" />
+    <Compile Include="Helpers\Math\PIDController.cs"/>
     <Compile Include="Helpers\MiscHelper.cs" />
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Helpers\PriorityQueue.cs" />

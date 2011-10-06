@@ -30,7 +30,6 @@ namespace AW2.Graphics.OverlayComponents
         public MiniStatusOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
-            CustomAlignment = new Vector2(0, 40);
             _player = viewport.Player;
         }
 
@@ -45,6 +44,10 @@ namespace AW2.Graphics.OverlayComponents
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             if (_player.Ship == null) return;
+            // Note: Screen Y axis points down and game Y axis points up.
+            // Note: Setting CustomAlignment here means that the value will be applied not until
+            // the next draw. This is good enough.
+            CustomAlignment = new Vector2(0, 40) + (_player.Ship.Pos + _player.Ship.DrawPosOffset - Viewport.LookAtPos).MirrorY();
 
             // Calculate alpha level based on changes in player's ship damage.
             float relativeHealth = 1 - _player.Ship.DamageLevel / _player.Ship.MaxDamageLevel;

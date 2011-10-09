@@ -30,6 +30,7 @@ namespace AW2.Graphics
         private List<OverlayComponent> _overlayComponents;
         private TexturePostprocessor _postprocessor;
         private Func<IEnumerable<CanonicalString>> _getPostprocessEffectNames;
+        private Vector2 _previousLookAt;
 
         public AssaultWingCore Game { get; private set; }
 
@@ -43,7 +44,8 @@ namespace AW2.Graphics
         /// </summary>
         public Rectangle OnScreen { get { return new Rectangle(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height); } }
 
-        public Vector2 LookAtPos { get; protected set; }
+        public Vector2 CurrentLookAt { get; protected set; }
+        public Vector2 Move { get { return Game.TargetFPS * (CurrentLookAt - _previousLookAt); } }
         public event Func<ArenaLayer, bool> LayerDrawing;
         public event Action<Gob> GobDrawn;
 
@@ -75,7 +77,7 @@ namespace AW2.Graphics
         {
             get
             {
-                return Matrix.CreateLookAt(new Vector3(LookAtPos, 1000), new Vector3(LookAtPos, 0), Vector3.Up);
+                return Matrix.CreateLookAt(new Vector3(CurrentLookAt, 1000), new Vector3(CurrentLookAt, 0), Vector3.Up);
             }
         }
 
@@ -179,7 +181,12 @@ namespace AW2.Graphics
             });
         }
 
-        public virtual void Update() { }
+        public virtual void Update()
+        {
+            _previousLookAt = CurrentLookAt;
+        }
+
+        public abstract void Reset(Vector2 lookAtPos);
 
         public Matrix GetGameToScreenMatrix(float z)
         {
@@ -263,8 +270,8 @@ namespace AW2.Graphics
         private void GetWorldAreaMinAndMax(float z, out Vector2 min, out Vector2 max)
         {
             var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
-            min = LookAtPos - halfDiagonal;
-            max = LookAtPos + halfDiagonal;
+            min = CurrentLookAt - halfDiagonal;
+            max = CurrentLookAt + halfDiagonal;
         }
 
         private void DoInMyViewport(Action action)
@@ -353,7 +360,7 @@ namespace AW2.Graphics
 
                 // Render looping parallax as two huge triangles.
                 _effect.Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                var texCenter = GetScale(layer.Z) * LookAtPos / _effect.Texture.Dimensions();
+                var texCenter = GetScale(layer.Z) * CurrentLookAt / _effect.Texture.Dimensions();
                 var texCornerOffset = new Vector2(
                     Viewport.Width / (2f * _effect.Texture.Width) / ZoomRatio,
                     Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;

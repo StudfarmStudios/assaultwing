@@ -90,7 +90,6 @@ namespace AW2.Game
         /// </summary>
         private TimeSpan _shakeUpdateTime;
 
-        private Vector2 _lastLookAtPos;
         private TimeSpan _lastRepairPendingNotify;
         private DeviceUsages _deviceUsages;
 
@@ -122,15 +121,6 @@ namespace AW2.Game
         /// The ship the player is controlling in the game arena.
         /// </summary>
         public Ship Ship { get; set; }
-
-        public Vector2 LookAtPos
-        {
-            get
-            {
-                if (Ship != null) _lastLookAtPos = Ship.Pos + Ship.DrawPosOffset;
-                return _lastLookAtPos;
-            }
-        }
 
         /// <summary>
         /// If positive, how many reincarnations the player has left.
@@ -365,7 +355,6 @@ namespace AW2.Game
             BonusActions.Clear();
             PostprocessEffectNames.Clear();
             Ship = null;
-            if (Game.DataEngine.Arena != null) _lastLookAtPos = Game.DataEngine.Arena.Dimensions / 2;
         }
 
         public override void Dispose()

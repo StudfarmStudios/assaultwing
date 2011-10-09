@@ -27,7 +27,7 @@ namespace AW2.Graphics.OverlayComponents
         private Vector2 GetTrackerPos(Gob trackerGob)
         {
             if (trackerGob != null) return trackerGob.Pos + trackerGob.DrawPosOffset;
-            return _viewport.LookAtPos;
+            return _viewport.CurrentLookAt;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)

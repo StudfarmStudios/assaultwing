@@ -72,8 +72,8 @@ namespace AW2.Sound
         {
             if (_gob != null && !_instance.IsDisposed)
             {
-                _emitter.Position = new Vector3(_gob.Pos.X, _gob.Pos.Y, 0);
-                _emitter.Velocity = new Vector3(_gob.Move.X, _gob.Move.Y, 0);
+                _emitter.Position = new Vector3(_gob.Pos, 0);
+                _emitter.Velocity = new Vector3(_gob.Move, 0);
 
                 SoundEffect.DistanceScale = _distanceScale;
                 SoundEffect.DopplerScale = 0.05f;

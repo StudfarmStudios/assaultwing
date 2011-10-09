@@ -38,6 +38,8 @@ namespace AW2.Sound
             public SoundEffect[] _effects;
         }
 
+        private const float MAX_LISTENER_SPEED = 350; // to avoid extreme Doppler effect on fast moving viewports
+
         private Dictionary<string, SoundCue> _soundCues = new Dictionary<string, SoundCue>();
         private List<SoundInstance> _playingInstances = new List<SoundInstance>(); // One-off sounds
         private List<WeakReference> _createdInstances = new List<WeakReference>(); // Sound instances with owner
@@ -125,15 +127,13 @@ namespace AW2.Sound
                 _createdInstances.RemoveAll(instance => instance.Target == null);
 
                 var listeners =
-                    from player in Game.DataEngine.Players
-                    where !player.IsRemote
-                    let move = player.Ship != null ? player.Ship.Move : Vector2.Zero
+                    from viewport in Game.DataEngine.Viewports
                     select new AudioListener
                     {
-                        Position = new Vector3(player.LookAtPos, 0),
-                        Velocity = new Vector3(move, 0),
+                        Position = new Vector3(viewport.CurrentLookAt, 0),
+                        Velocity = new Vector3(viewport.Move.Clamp(0, MAX_LISTENER_SPEED), 0),
                     };
-                if (listeners.Count() > 0)
+                if (listeners.Any())
                 {
                     var listenerArray = listeners.ToArray();
                     foreach (var instance in _playingInstances)

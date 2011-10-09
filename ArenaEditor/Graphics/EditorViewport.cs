@@ -29,7 +29,12 @@ namespace AW2.Graphics
         public override void Update()
         {
             base.Update();
-            LookAtPos = _spectator.LookAtPos;
+            CurrentLookAt = _spectator.LookAtPos;
+        }
+
+        public override void Reset(Vector2 lookAtPos)
+        {
+            _spectator.LookAtPos = lookAtPos;
         }
 
         private void CircleGob(Gob gob)

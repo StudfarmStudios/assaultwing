@@ -183,7 +183,12 @@ namespace AW2.Game
             if (Arena == null) return;
             var localPlayers = Game.DataEngine.Spectators.Where(player => player.NeedsViewport).ToList();
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, localPlayers.Count(),
-                (index, rectangle) => localPlayers[viewportToPlayerPermutation(index)].CreateViewport(rectangle));
+                (index, rectangle) =>
+                {
+                    var viewport = localPlayers[viewportToPlayerPermutation(index)].CreateViewport(rectangle);
+                    viewport.Reset(Arena.Dimensions / 2);
+                    return viewport;
+                });
         }
 
         /// <summary>

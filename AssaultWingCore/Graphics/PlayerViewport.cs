@@ -15,6 +15,7 @@ namespace AW2.Graphics
         private Player _player;
         private GobTrackerOverlay _gobTrackerOverlay;
         private PIDController _lookAtController;
+        private Vector2 _lastLookAtTarget;
 
         /// <summary>
         /// Last used sign of player's shake angle. Either 1 or -1.
@@ -25,6 +26,15 @@ namespace AW2.Graphics
 
         public GobTrackerOverlay GobTracker { get { return _gobTrackerOverlay; } set { _gobTrackerOverlay = value; } }
 
+        private Vector2 LookAtTarget
+        {
+            get
+            {
+                if (_player.Ship != null) _lastLookAtTarget = _player.Ship.Pos + _player.Ship.DrawPosOffset;
+                return _lastLookAtTarget;
+            }
+        }
+
         /// <param name="player">Which player the viewport will follow.</param>
         /// <param name="onScreen">Where on screen is the viewport located.</param>
         /// <param name="getPostprocessEffectNames">Provider of names of postprocess effects.</param>
@@ -33,7 +43,7 @@ namespace AW2.Graphics
         {
             _player = player;
             _shakeSign = -1;
-            _lookAtController = new PIDController(() => _player.LookAtPos, () => LookAtPos)
+            _lookAtController = new PIDController(() => LookAtTarget, () => CurrentLookAt)
             {
                 ProportionalGain = 0.11f,
                 IntegralGain = 0.0002f,
@@ -56,7 +66,14 @@ namespace AW2.Graphics
         {
             base.Update();
             _lookAtController.Compute();
-            LookAtPos += _lookAtController.Output;
+            CurrentLookAt += _lookAtController.Output;
+        }
+
+        public override void Reset(Vector2 lookAtPos)
+        {
+            CurrentLookAt = lookAtPos;
+            _lastLookAtTarget = lookAtPos;
+            _lookAtController.Reset();
         }
 
         protected override Matrix ViewMatrix
@@ -67,7 +84,7 @@ namespace AW2.Graphics
                 _shakeSign = -_shakeSign;
 
                 float viewShake = _shakeSign * _player.Shake;
-                return Matrix.CreateLookAt(new Vector3(LookAtPos, 1000), new Vector3(LookAtPos, 0),
+                return Matrix.CreateLookAt(new Vector3(CurrentLookAt, 1000), new Vector3(CurrentLookAt, 0),
                     new Vector3(AWMathHelper.GetUnitVector2(MathHelper.PiOver2 + viewShake), 0));
             }
         }

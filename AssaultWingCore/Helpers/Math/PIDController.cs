@@ -45,5 +45,15 @@ namespace AW2.Helpers
                 IntegralGain * _errorIntegral +
                 DerivativeGain * _errorDelta;
         }
+
+        /// <summary>
+        /// Resets the internal state to zero. To be used when <see cref="Current"/>
+        /// is reset to <see cref="Target"/> by external means.
+        /// </summary>
+        public void Reset()
+        {
+            _previousError = _errorDelta = _errorIntegral = Vector2.Zero;
+            Output = Vector2.Zero;
+        }
     }
 }

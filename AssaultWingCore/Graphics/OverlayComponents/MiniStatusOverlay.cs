@@ -47,7 +47,7 @@ namespace AW2.Graphics.OverlayComponents
             // Note: Screen Y axis points down and game Y axis points up.
             // Note: Setting CustomAlignment here means that the value will be applied not until
             // the next draw. This is good enough.
-            CustomAlignment = new Vector2(0, 40) + (_player.Ship.Pos + _player.Ship.DrawPosOffset - Viewport.LookAtPos).MirrorY();
+            CustomAlignment = new Vector2(0, 40) + (_player.Ship.Pos + _player.Ship.DrawPosOffset - Viewport.CurrentLookAt).MirrorY();
 
             // Calculate alpha level based on changes in player's ship damage.
             float relativeHealth = 1 - _player.Ship.DamageLevel / _player.Ship.MaxDamageLevel;

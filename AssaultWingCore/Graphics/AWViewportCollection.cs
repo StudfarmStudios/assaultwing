@@ -37,8 +37,7 @@ namespace AW2.Graphics
             _viewportConstructor = viewportConstructor;
             _items = new List<AWViewport>();
             _separators = new List<ViewportSeparator>();
-            if (viewports == 0) return;
-            CreateAll(viewports, viewportConstructor);
+            CreateAll();
         }
 
         public void Dispose()
@@ -48,7 +47,7 @@ namespace AW2.Graphics
 
         public IEnumerator<AWViewport> GetEnumerator()
         {
-            if (_lastGraphicsDeviceViewportSize != CurrentGraphicsDeviceViewportSize) CreateAll(_viewportCount, _viewportConstructor);
+            if (_lastGraphicsDeviceViewportSize != CurrentGraphicsDeviceViewportSize) CreateAll();
             return _items.GetEnumerator();
         }
 
@@ -61,13 +60,21 @@ namespace AW2.Graphics
 
         #region Private methods
 
-        private void CreateAll(int viewports, ViewportConstructor viewportConstructor)
+        private void CreateAll()
         {
             _lastGraphicsDeviceViewportSize = CurrentGraphicsDeviceViewportSize;
+            RemoveAllViewports();
+            if (_viewportCount == 0) return;
             int rows, columns;
-            FindOptimalArrangement(viewports, out rows, out columns);
-            CreateViewports(viewports, viewportConstructor, rows, columns);
+            FindOptimalArrangement(_viewportCount, WindowWidth, WindowHeight, out rows, out columns);
+            CreateViewports(_viewportCount, _viewportConstructor, rows, columns);
             CreateViewportSeparators(rows, columns);
+        }
+
+        private void RemoveAllViewports()
+        {
+            foreach (var item in _items) item.Dispose();
+            _items.Clear();
         }
 
         /// <summary>
@@ -79,7 +86,7 @@ namespace AW2.Graphics
         /// An optimal arrangement of viewports preferably has this condition:
         /// - each viewport is as wide as tall.
         /// </summary>
-        private void FindOptimalArrangement(int viewports, out int bestRows, out int bestColumns)
+        private static void FindOptimalArrangement(int viewports, int windowWidth, int windowHeight, out int bestRows, out int bestColumns)
         {
             float bestAspectRatio = Single.MaxValue;
             bestRows = 1;
@@ -88,8 +95,8 @@ namespace AW2.Graphics
                 // Only check out grids with cells as many as viewports.
                 if (viewports % rows != 0) continue;
                 int columns = viewports / rows;
-                int viewportWidth = WindowWidth / columns;
-                int viewportHeight = WindowHeight / rows;
+                int viewportWidth = windowWidth / columns;
+                int viewportHeight = windowHeight / rows;
                 float aspectRatio = (float)viewportHeight / (float)viewportWidth;
                 if (CompareAspectRatios(aspectRatio, bestAspectRatio) < 0)
                 {
@@ -126,8 +133,6 @@ namespace AW2.Graphics
 
         private void CreateViewports(int viewports, ViewportConstructor viewportConstructor, int bestRows, int bestColumns)
         {
-            foreach (var item in _items) item.Dispose();
-            _items.Clear();
             for (int viewportI = 0; viewportI < viewports; ++viewportI)
             {
                 int viewportX = viewportI % bestColumns;

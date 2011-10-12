@@ -15,6 +15,7 @@ namespace AW2.Graphics
         private Player _player;
         private GobTrackerOverlay _gobTrackerOverlay;
         private PIDController _lookAtController;
+        private Vector2 _lookAtSpeed;
         private Vector2 _lastLookAtTarget;
 
         /// <summary>
@@ -45,9 +46,9 @@ namespace AW2.Graphics
             _shakeSign = -1;
             _lookAtController = new PIDController(() => LookAtTarget, () => CurrentLookAt)
             {
-                ProportionalGain = 0.11f,
-                IntegralGain = 0.0002f,
-                DerivativeGain = 0.0f,
+                ProportionalGain = 2,
+                IntegralGain = 0,
+                DerivativeGain = 0,
             };
             AddOverlayComponent(new MiniStatusOverlay(this));
             AddOverlayComponent(new CombatLogOverlay(this));
@@ -66,7 +67,11 @@ namespace AW2.Graphics
         {
             base.Update();
             _lookAtController.Compute();
-            CurrentLookAt += _lookAtController.Output;
+            var VIEW_MASS = 0.1f;
+            var VIEW_DRAG = 0.7f;
+            var lookAtAcceleration = (_lookAtController.Output - VIEW_DRAG * _lookAtSpeed) / VIEW_MASS;
+            _lookAtSpeed += lookAtAcceleration / Game.TargetFPS;
+            CurrentLookAt += _lookAtSpeed / Game.TargetFPS;
         }
 
         public override void Reset(Vector2 lookAtPos)

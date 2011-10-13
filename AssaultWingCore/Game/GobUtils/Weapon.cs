@@ -70,11 +70,6 @@ namespace AW2.Game.GobUtils
         private float _recoilMomentum;
 
         /// <summary>
-        /// Indices of the bones that define the locations of the weapon barrels on the owning ship.
-        /// </summary>
-        private int[] BoneIndices { get { return Owner.BarrelBoneIndices; } }
-
-        /// <summary>
         /// Names of the weapon type upgrades of the weapon, in order of upgrades.
         /// </summary>
         public CanonicalString[] UpgradeNames { get { return _upgradeNames; } }
@@ -97,6 +92,11 @@ namespace AW2.Game.GobUtils
         {
         }
 
+        public static new Weapon Create(CanonicalString typeName)
+        {
+            return (Weapon)Clonable.Instantiate(typeName);
+        }
+
         /// <summary>
         /// Applies recoil to the owner of the weapon.
         /// Subclasses should call this method when they emit a new shot
@@ -116,10 +116,19 @@ namespace AW2.Game.GobUtils
                   ShipBarrelTypes.Right |
                   ShipBarrelTypes.Rear)) != 0)
                 throw new ApplicationException("Unknown ShipBarrelTypes " + barrelTypes);
-            if ((barrelTypes & ShipBarrelTypes.Middle) != 0) action(BoneIndices[0], 0);
-            if ((barrelTypes & ShipBarrelTypes.Left) != 0) action(BoneIndices[1], 0);
-            if ((barrelTypes & ShipBarrelTypes.Right) != 0) action(BoneIndices[2], 0);
-            if ((barrelTypes & ShipBarrelTypes.Rear) != 0) action(BoneIndices[3], MathHelper.Pi);
+            if ((barrelTypes & ShipBarrelTypes.Middle) != 0) action(GetBarrelBoneIndex(0), 0);
+            if ((barrelTypes & ShipBarrelTypes.Left) != 0) action(GetBarrelBoneIndex(1), 0);
+            if ((barrelTypes & ShipBarrelTypes.Right) != 0) action(GetBarrelBoneIndex(2), 0);
+            if ((barrelTypes & ShipBarrelTypes.Rear) != 0) action(GetBarrelBoneIndex(3), MathHelper.Pi);
+        }
+
+        /// <summary>
+        /// Returns the 3D model bone index corresponding to a barrel.
+        /// </summary>
+        private int GetBarrelBoneIndex(int barrelIndex)
+        {
+            var boneIndices = Owner.BarrelBoneIndices;
+            return barrelIndex >= boneIndices.Length ? 0 : boneIndices[barrelIndex];
         }
     }
 }

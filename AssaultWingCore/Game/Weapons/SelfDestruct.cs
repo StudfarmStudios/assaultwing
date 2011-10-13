@@ -29,7 +29,7 @@ namespace AW2.Game.Weapons
                 Gob.CreateGob<Gob>(Owner.Game, gobType, gob =>
                 {
                     gob.ResetPos(Owner.Pos, Vector2.Zero, Owner.Rotation);
-                    gob.Owner = Owner.Owner;
+                    gob.Owner = PlayerOwner;
                     Arena.Gobs.Add(gob);
                 });
         }

@@ -66,14 +66,14 @@ namespace AW2.Game.Weapons
                     Owner.Enable();
                     _targetPos = null;
                     _safetyTimeout = TimeSpan.Zero;
-                    if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
+                    if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.Remove(EFFECT_NAME);
                 }
             }
         }
 
         public override void Dispose()
         {
-            if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
+            if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.Remove(EFFECT_NAME);
             base.Dispose();
         }
 
@@ -96,7 +96,7 @@ namespace AW2.Game.Weapons
 
         protected override void CreateVisuals()
         {
-            if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
+            if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
         }
 
         protected override void ShowFiringFailedEffect()

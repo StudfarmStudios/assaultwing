@@ -458,7 +458,6 @@ namespace AW2.Game
             InitializeCollisionAreas();
             InitializeGobs();
             InitializeAmbientSounds();
-
         }
 
         private void UninitializeAmbientSounds()

@@ -222,6 +222,8 @@ namespace AW2.Game
         /// </summary>
         private BoundingSphere _drawBounds;
 
+        private int[] _barrelBoneIndices;
+
         #endregion Fields for all gobs
 
         #region Fields for gobs with thrusters
@@ -509,6 +511,22 @@ namespace AW2.Game
                     CopyAbsoluteBoneTransformsTo(ModelSkeleton, _modelPartTransforms);
                 }
                 return _modelPartTransforms;
+            }
+        }
+
+        /// <summary>
+        /// 3D model bone indices of gun barrels, or the empty array if the gob has no gun barrels.
+        /// </summary>
+        public int[] BarrelBoneIndices
+        {
+            get
+            {
+                if (_barrelBoneIndices == null)
+                {
+                    var boneIs = GetNamedPositions("Gun");
+                    _barrelBoneIndices = boneIs.OrderBy(index => index.Item1).Select(index => index.Item2).ToArray();
+                }
+                return _barrelBoneIndices;
             }
         }
 
@@ -1037,6 +1055,11 @@ namespace AW2.Game
         {
             if (areaID < 0 || areaID >= _collisionAreas.Length) return null;
             return _collisionAreas[areaID];
+        }
+
+        public virtual ChargeProvider GetChargeProvider(ShipDevice.OwnerHandleType deviceType)
+        {
+            return new ChargeProvider(() => int.MaxValue, () => 0);
         }
 
         /// <summary>

@@ -117,7 +117,6 @@ namespace AW2.Game
         public void StartArena()
         {
             // Clear old stuff from previous arena, if any.
-            Devices.Clear();
             _lastArenaRadarSilhouetteUpdate = TimeSpan.Zero;
             foreach (var player in Spectators) player.ResetForArena();
         }

@@ -87,8 +87,6 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _weapon2ChargeSpeed;
 
-        private int[] _barrelBoneIndices;
-
         #endregion Ship fields related to weapons
 
         #region Ship fields related to rolling
@@ -228,20 +226,6 @@ namespace AW2.Game.Gobs
         public ShipDevice ExtraDevice { get; private set; }
 
         public ShipInfo ShipInfo { get { return _shipInfo; } set { _shipInfo = value; } }
-
-        public int[] BarrelBoneIndices
-        {
-            get
-            {
-                if (_barrelBoneIndices == null)
-                {
-                    var boneIs = GetNamedPositions("Gun");
-                    if (boneIs.Count() != 4) throw new ApplicationException(string.Format("Unexpected number of gun barrels ({0}) in ship 3D model ({1})", boneIs.Count(), ModelName));
-                    _barrelBoneIndices = boneIs.OrderBy(index => index.Item1).Select(index => index.Item2).ToArray();
-                }
-                return _barrelBoneIndices;
-            }
-        }
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.
@@ -564,7 +548,7 @@ namespace AW2.Game.Gobs
 
         public ShipLocationPredicter LocationPredicter { get; private set; }
 
-        public ChargeProvider GetChargeProvider(ShipDevice.OwnerHandleType deviceType)
+        public override ChargeProvider GetChargeProvider(ShipDevice.OwnerHandleType deviceType)
         {
             switch (deviceType)
             {
@@ -600,12 +584,12 @@ namespace AW2.Game.Gobs
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
             if (oldDevice != null) Game.DataEngine.Devices.Remove(oldDevice);
-            var newDevice = (ShipDevice)Clonable.Instantiate(typeName);
+            ShipDevice newDevice = null;
             switch (deviceType)
             {
-                case ShipDevice.OwnerHandleType.PrimaryWeapon: Weapon1 = (Weapon)newDevice; break;
-                case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2 = (Weapon)newDevice; break;
-                case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDevice = newDevice; break;
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: newDevice = Weapon1 = Weapon.Create(typeName); break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: newDevice = Weapon2 = Weapon.Create(typeName); break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: newDevice = ExtraDevice = ShipDevice.Create(typeName); break;
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
             InitializeDevice(newDevice, deviceType);
@@ -636,7 +620,7 @@ namespace AW2.Game.Gobs
         private void InitializeDevice(ShipDevice device, ShipDevice.OwnerHandleType ownerHandle)
         {
             device.AttachTo(this, ownerHandle);
-            device.Owner.Game.DataEngine.Devices.Add(device);
+            Game.DataEngine.Devices.Add(device);
         }
 
         /// <param name="force">Force of turn; (0,1] for a left turn, or [-1,0) for a right turn.</param>

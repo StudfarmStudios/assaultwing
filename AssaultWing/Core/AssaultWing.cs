@@ -556,8 +556,8 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Client && !CommandLineOptions.DedicatedServer)
                 MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
             foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
-            arena.Reset(); // this usually takes several seconds
             DataEngine.Arena = arena;
+            arena.Reset(); // this usually takes several seconds
         }
 
         private void StopGameplay()

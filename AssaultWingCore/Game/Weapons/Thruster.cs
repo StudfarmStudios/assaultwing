@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
+using AW2.Game.Gobs;
 
 namespace AW2.Game.Weapons
 {
@@ -38,6 +39,12 @@ namespace AW2.Game.Weapons
         private CanonicalString _ramEffectName;
 
         /// <summary>
+        /// HACK !!! to make code compile. Consider either rewriting Thruster as not using Ship thrusters
+        /// but by adding a separate thurst mechanism and effect to any Gob.
+        /// </summary>
+        private Ship ShipOwner { get { return (Ship)Owner; } }
+
+        /// <summary>
         /// Only for serialization.
         /// </summary>
         public Thruster()
@@ -61,14 +68,14 @@ namespace AW2.Game.Weapons
             base.Activate();
             Owner.CollisionDamageToOthersMultiplier *= _collisionDamageToOthersMultiplier;
             Owner.CollisionDamageFilter = FilterDamage;
-            Owner.PhysicalCollidedInto += PhysicalCollisionHandler;
+            ShipOwner.PhysicalCollidedInto += PhysicalCollisionHandler;
         }
 
         public override FiringResult TryFire(AW2.UI.ControlState triggerState)
         {
             var thrustForce = triggerState.Force * _thrustForceFactor;
             var direction = _reverse ? Owner.Rotation + MathHelper.Pi : Owner.Rotation;
-            Owner.Thrust(thrustForce, Owner.Game.GameTime.ElapsedGameTime, direction);
+            ShipOwner.Thrust(thrustForce, Owner.Game.GameTime.ElapsedGameTime, direction);
             return FiringResult.Void;
         }
 

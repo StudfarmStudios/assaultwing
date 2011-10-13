@@ -130,9 +130,9 @@ namespace AW2.Game.GobUtils
         public Arena Arena { get; set; }
 
         /// <summary>
-        /// The ship this weapon is attached to.
+        /// The gob this weapon is attached to.
         /// </summary>
-        public Ship Owner { get; protected set; }
+        public Gob Owner { get; protected set; }
 
         /// <summary>
         /// The player who owns the ship who owns this device, or <c>null</c> if none exists.
@@ -169,13 +169,13 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Amount of charge required to fire the weapon once.
         /// </summary>
-        // TODO: Move FireCharge and fireCharge to FiringOperatorSingle
+        // TODO: Move FireCharge and fireCharge to FiringOperator
         public float FireCharge { get { return _fireCharge; } }
 
         /// <summary>
         /// Amount of charge required for one second of rapid firing the weapon.
         /// </summary>
-        // TODO: Move FireChargePerSecond and fireChargePerSecond to FiringOperatorContinuous
+        // TODO: Move FireChargePerSecond and fireChargePerSecond to FiringOperator
         public float FireChargePerSecond { get { return _fireChargePerSecond; } }
 
         public FiringOperator FiringOperator { get; set; }
@@ -211,11 +211,16 @@ namespace AW2.Game.GobUtils
             SendDeviceReadyMessages = true;
         }
 
+        public static ShipDevice Create(CanonicalString typeName)
+        {
+            return (ShipDevice)Clonable.Instantiate(typeName);
+        }
+
         #region Public methods
 
         /// <param name="owner">The ship to attach to.</param>
         /// <param name="ownerHandle">A handle for identifying the device at the owner.</param>
-        public void AttachTo(Ship owner, OwnerHandleType ownerHandle)
+        public void AttachTo(Gob owner, OwnerHandleType ownerHandle)
         {
             Owner = owner;
             OwnerHandle = ownerHandle;

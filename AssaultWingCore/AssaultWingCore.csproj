@@ -131,6 +131,7 @@
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
+    <Compile Include="Game\Gobs\Bot.cs" />
     <Compile Include="Game\MessageContainer.cs" />
     <Compile Include="Game\CollisionArea.cs" />
     <Compile Include="Game\CollisionAreaType.cs" />

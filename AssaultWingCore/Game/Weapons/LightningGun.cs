@@ -87,7 +87,7 @@ namespace AW2.Game.Weapons
             Gob.CreateGob<Lightning>(Owner.Game, _shotTypeName, shot =>
             {
                 shot.ResetPos(Vector2.Zero, Vector2.Zero, Gob.DEFAULT_ROTATION); // pos not used but must be initialized
-                shot.Owner = Owner.Owner;
+                shot.Owner = PlayerOwner;
                 shot.Shooter = source;
                 shot.ShooterBoneIndex = sourceBoneIndex;
                 shot.Target = target;

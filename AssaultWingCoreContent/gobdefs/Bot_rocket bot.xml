@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Bot">
+  <typeName>rocket bot</typeName>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <mass>120</mass>
+  <scale>0.047</scale>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <modelName>clustermine</modelName>
+  <movable>true</movable>
+  <maxDamage>500</maxDamage>
+  <birthGobTypes>
+    <Item>dumb glow</Item>
+    <Item>bazooka electric ball</Item>
+    <Item>bazooka electric streaks</Item>
+  </birthGobTypes>
+  <deathGobTypes>
+    <Item>bomb explosion</Item>
+  </deathGobTypes>
+  <exhaustEngineNames>
+    <Item>dumbfirethrust1</Item>
+  </exhaustEngineNames>
+  <collisionAreas>
+    <Item>
+      <type>PhysicalDamageable</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Hit</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>213</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
+  </collisionAreas>
+</GobType>

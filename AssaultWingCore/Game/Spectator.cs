@@ -61,7 +61,7 @@ namespace AW2.Game
         /// <summary>
         /// Does the spectator need a viewport on the game window.
         /// </summary>
-        public virtual bool NeedsViewport { get { return true; } }
+        public virtual bool NeedsViewport { get { return false; } }
 
         public Spectator(AssaultWingCore game)
             : this(game, -1)

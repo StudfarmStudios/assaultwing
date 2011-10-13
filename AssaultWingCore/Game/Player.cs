@@ -106,9 +106,6 @@ namespace AW2.Game
         /// </summary>
         public Color PlayerColor { get; set; }
 
-        /// <summary>
-        /// Does the player need a viewport on the game window.
-        /// </summary>
         public override bool NeedsViewport { get { return !IsRemote; } }
 
         /// <summary>

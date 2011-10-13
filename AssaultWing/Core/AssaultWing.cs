@@ -272,6 +272,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
+            DataEngine.Spectators.Add(new BotPlayer(this));
             try
             {
                 NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result,
@@ -689,9 +690,9 @@ namespace AW2.Core
         private void SpectatorAddedHandler(Spectator spectator)
         {
             if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
+            spectator.ResetForArena();
             var player = spectator as Player;
             if (player == null) return;
-            player.ResetForArena();
             if (NetworkMode != NetworkMode.Server || !player.IsRemote) return;
             player.IsAllowedToCreateShip = () => NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
             player.Messages.NewMessage += message =>

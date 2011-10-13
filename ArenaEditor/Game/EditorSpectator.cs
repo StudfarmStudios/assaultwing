@@ -16,6 +16,8 @@ namespace AW2.Game
         /// </summary>
         public Vector2 LookAtPos { get; set; }
 
+        public override bool NeedsViewport { get { return true; } }
+
         public EditorSpectator(AssaultWingCore game)
             : base(game)
         {

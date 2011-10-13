@@ -325,6 +325,7 @@ namespace AW2.Game
 
         public float MinCoordinate { get { return -ARENA_OUTER_BOUNDARY_THICKNESS; } }
         public float MaxCoordinate { get { return MathHelper.Max(Dimensions.X, Dimensions.Y) + ARENA_OUTER_BOUNDARY_THICKNESS; } }
+        public Rectangle BoundedArea { get { return new Rectangle(Vector2.Zero, Dimensions); } }
 
         /// <summary>
         /// Filename of the arena's binary data container.

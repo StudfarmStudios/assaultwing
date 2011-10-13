@@ -315,17 +315,7 @@ namespace AW2.UI.WPF
             _game.RunBegan += () =>
             {
                 _game.DataEngine.Spectators.Clear();
-                var spectatorControls = new PlayerControls
-                {
-                    Thrust = new KeyboardKey(Keys.Up),
-                    Left = new KeyboardKey(Keys.Left),
-                    Right = new KeyboardKey(Keys.Right),
-                    Down = new KeyboardKey(Keys.Down),
-                    Fire1 = new KeyboardKey(Keys.RightControl),
-                    Fire2 = new KeyboardKey(Keys.RightShift),
-                    Extra = new KeyboardKey(Keys.Enter)
-                };
-                var spectator = new EditorSpectator(_game, spectatorControls);
+                var spectator = new EditorSpectator(_game);
                 spectator.ViewportCreated += viewport =>
                     viewport.LayerDrawing += layer =>
                         LayerNames.Items.Cast<LayerReference>().First(lay => lay.Value == layer).Visible;

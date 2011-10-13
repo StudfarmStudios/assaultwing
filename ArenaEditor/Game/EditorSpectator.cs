@@ -16,8 +16,8 @@ namespace AW2.Game
         /// </summary>
         public Vector2 LookAtPos { get; set; }
 
-        public EditorSpectator(AssaultWingCore game, PlayerControls controls)
-            : base(game, controls)
+        public EditorSpectator(AssaultWingCore game)
+            : base(game)
         {
         }
 
@@ -26,16 +26,6 @@ namespace AW2.Game
             var viewport = new EditorViewport(this, onScreen, () => new CanonicalString[0]);
             if (ViewportCreated != null) ViewportCreated(viewport);
             return viewport;
-        }
-
-        public override void Update()
-        {
-            float moveSpeed = 10;
-            LookAtPos +=
-                Vector2.UnitY * moveSpeed * Controls.Thrust.Force
-                - Vector2.UnitY * moveSpeed * Controls.Down.Force
-                + Vector2.UnitX * moveSpeed * Controls.Right.Force
-                - Vector2.UnitX * moveSpeed * Controls.Left.Force;
         }
     }
 }

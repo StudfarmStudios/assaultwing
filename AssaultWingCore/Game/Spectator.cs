@@ -59,24 +59,18 @@ namespace AW2.Game
         public string Name { get; set; }
 
         /// <summary>
-        /// The controls the player uses in menus and in game.
-        /// </summary>
-        public PlayerControls Controls { get; set; }
-
-        /// <summary>
         /// Does the spectator need a viewport on the game window.
         /// </summary>
         public virtual bool NeedsViewport { get { return true; } }
 
-        public Spectator(AssaultWingCore game, PlayerControls controls)
-            : this(game, controls, -1)
+        public Spectator(AssaultWingCore game)
+            : this(game, -1)
         {
         }
 
-        public Spectator(AssaultWingCore game, PlayerControls controls, int connectionId)
+        public Spectator(AssaultWingCore game, int connectionId)
         {
             Game = game;
-            Controls = controls;
             ConnectionID = connectionId;
         }
 

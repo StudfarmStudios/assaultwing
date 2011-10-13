@@ -197,6 +197,11 @@ namespace AW2.Game
         /// </summary>
         public CanonicalString ExtraDeviceName { get; set; }
 
+        /// <summary>
+        /// The controls the player uses in menus and in game.
+        /// </summary>
+        public PlayerControls Controls { get; set; }
+
         public List<BonusAction> BonusActions { get; private set; }
 
         /// <summary>
@@ -300,12 +305,13 @@ namespace AW2.Game
 
         private Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
             CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
-            : base(game, controls, connectionId)
+            : base(game, connectionId)
         {
             Name = name;
             ShipName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
+            Controls = controls;
             Messages = new MessageContainer();
             PlayerColor = Color.Gray;
             BonusActions = new List<BonusAction>();

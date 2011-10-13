@@ -195,11 +195,11 @@ namespace AW2.Net.MessageHandling
 
         private static void HandlePlayerControlsMessage(PlayerControlsMessage mess)
         {
-            var player = AssaultWingCore.Instance.DataEngine.Spectators.First(plr => plr.ID == mess.PlayerID);
-            if (player.ConnectionID != mess.ConnectionID)
+            var player = AssaultWingCore.Instance.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
+            if (player == null || player.ConnectionID != mess.ConnectionID)
             {
-                // A client sent controls for a player that lives on another game instance.
-                // We silently ignore the controls.
+                // A client sent controls for a nonexisting player or a player that
+                // lives on another game instance. We silently ignore the controls.
                 return;
             }
             Action<RemoteControl, ControlState> setRemoteControlState =

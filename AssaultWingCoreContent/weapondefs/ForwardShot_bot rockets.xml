@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.ForwardShot">
+
+  <deviceInfo>
+    <pictureName>menu_equip_weaponpicture_rockets</pictureName>
+    <titlePictureName>menu_equip_weaponname_rockets</titlePictureName>
+    <infoText>
+      Fires 2 semi-guided rockets.
+      They are petrol powered and will
+      eventually run out of juice.
+    </infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>menu_equip_wep2_rockets</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Average</shotSpeed>
+    <recoilMomentum>Low</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>bot rockets</typeName>
+  <gunBarrels>Middle</gunBarrels>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>b_icon_berserkers</iconName>
+  <fireSound>Missile</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
+  <shotTypeName>rocket</shotTypeName>
+  <shotSpeed>150</shotSpeed>
+  <loadTime>4</loadTime>
+  <fireCharge>0</fireCharge>
+  <fireChargePerSecond>0</fireChargePerSecond>
+  <shotCount>2</shotCount>
+  <shotSpacing>0.2</shotSpacing>
+  <shotAngleVariation>0.262</shotAngleVariation>
+  <shotSpeedVariation>10</shotSpeedVariation>
+  <recoilMomentum>0</recoilMomentum>
+  <muzzleFireEngineNames>
+    <Item>basic muzzle fire</Item>
+  </muzzleFireEngineNames>
+</ShipDeviceType>

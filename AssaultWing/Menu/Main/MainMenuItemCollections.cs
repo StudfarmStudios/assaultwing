@@ -178,7 +178,9 @@ namespace AW2.Menu.Main
 Cannot refresh game server list.
 Either your firewall blocks the
 traffic or the server is down.");
-            _menuComponent.SetItems(StartItems);
+            // FIXME !!! This condition is triggered ALSO when the client clicks to join a server but the server never
+            // replies. Consider keeping on asking refreshes from the management server.
+            Game.ShowMainMenuAndResetGameplay();
             _gameServerListReplyDeadline = null;
         }
 

@@ -260,7 +260,7 @@ namespace AW2.Net.MessageHandling
                 var extraInfo = diffIndex == 0 ? "" : string.Format(", client previous: {0}, server previous: {1}",
                     mess.CanonicalStrings[diffIndex - 1], CanonicalString.CanonicalForms[diffIndex - 1]);
                 Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo + extraInfo);
-                var reply = new ConnectionClosingMessage { Info = "of version mismatch (canonical strings)." };
+                var reply = new ConnectionClosingMessage { Info = "of version mismatch (canonical strings)" };
                 connection.Send(reply);
                 net.DropClient(mess.ConnectionID, false);
             }
@@ -370,7 +370,7 @@ namespace AW2.Net.MessageHandling
             if (!result.Successful)
             {
                 Log.Write("Failed to connect to server: " + result.Error);
-                AssaultWing.Instance.StopClient("Failed to connect to server");
+                AssaultWing.Instance.StopClient("Failed to connect to server.");
             }
             else
             {

@@ -335,7 +335,7 @@ namespace AW2.Core
             if (errorOrNull != null)
             {
                 var dialogData = new CustomOverlayDialogData(this,
-                    errorOrNull + "\nPress Enter to return to Main Menu",
+                    errorOrNull + "\nPress Enter to return to Main Menu.",
                     new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
                 ShowDialog(dialogData);
             }

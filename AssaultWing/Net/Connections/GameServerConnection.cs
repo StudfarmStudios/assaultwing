@@ -26,7 +26,7 @@ namespace AW2.Net.Connections
 
         protected override void DisposeImpl(bool error)
         {
-            if (error) Game.StopClient("Connection to server lost");
+            if (error) Game.StopClient("Connection to server lost.");
             base.DisposeImpl(error);
         }
     }

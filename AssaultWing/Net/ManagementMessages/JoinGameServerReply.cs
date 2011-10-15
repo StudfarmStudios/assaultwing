@@ -4,8 +4,8 @@ using System.Linq;
 namespace AW2.Net.ManagementMessages
 {
     /// <summary>
-    /// A message from a game instance to a management server, requesting a list
-    /// of available game servers.
+    /// A message from a management server to a game client, telling if joining a game server
+    /// is possible and if so, then how to do it.
     /// </summary>
     [ManagementMessage("serveraddress")]
     public class JoinGameServerReply : ManagementMessage

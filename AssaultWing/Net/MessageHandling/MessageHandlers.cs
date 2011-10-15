@@ -100,7 +100,6 @@ namespace AW2.Net.MessageHandling
             if (game.NetworkMode == NetworkMode.Client) return;
             if (mess.Success)
             {
-                DeactivateHandlers(GetStandaloneMenuHandlers(null));
                 game.SoundEngine.PlaySound("MenuChangeItem");
                 game.StartClient(mess.GameServerEndPoints, ConnectionResultOnClientCallback);
             }
@@ -375,6 +374,7 @@ namespace AW2.Net.MessageHandling
             }
             else
             {
+                DeactivateHandlers(GetStandaloneMenuHandlers(null));
                 net.GameServerConnection = result.Value;
                 ActivateHandlers(GetClientMenuHandlers());
                 var joinRequest = new GameServerHandshakeRequestTCP

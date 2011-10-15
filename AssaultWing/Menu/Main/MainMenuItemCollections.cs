@@ -21,7 +21,7 @@ namespace AW2.Menu.Main
         private const string NO_SERVERS_FOUND = "No servers found";
         private const string INCOMPATIBLE_SERVERS_FOUND = "Some incompatible servers";
         private static readonly TimeSpan GAME_SERVER_LIST_REPLY_TIMEOUT = TimeSpan.FromSeconds(5);
-        private static readonly TimeSpan GAME_SERVER_LIST_REQUEST_INTERVAL = TimeSpan.FromSeconds(15); // must be larger than GAME_SERVER_LIST_REPLY_TIMEOUT
+        private static readonly TimeSpan GAME_SERVER_LIST_REQUEST_INTERVAL = TimeSpan.FromSeconds(15);
 
         private MainMenuComponent _menuComponent;
         private MenuEngineImpl MenuEngine { get { return _menuComponent.MenuEngine; } }
@@ -51,11 +51,18 @@ namespace AW2.Menu.Main
             NetworkItems = new MainMenuItemCollection("Play at the Battlefront");
             NetworkItems.Update = () =>
             {
+                EnsureStandaloneMessageHandlersActivated();
                 CheckGameServerListReplyTimeout();
                 RefreshNetworkItems();
             };
             SetupItems = new MainMenuItemCollection("General Setup");
             RefreshSetupItems();
+        }
+
+        private void EnsureStandaloneMessageHandlersActivated()
+        {
+            if (Game.NetworkEngine.MessageHandlers.Any()) return; // FIXME: Oversimplified check; are the handlers the right ones?
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
         }
 
         private void InitializeStartItems()
@@ -76,7 +83,6 @@ namespace AW2.Menu.Main
                     RefreshNetworkItems(force: true);
                     _menuComponent.SetItems(NetworkItems);
                     Game.SoundEngine.PlaySound("MenuChangeItem");
-                    MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
                 }));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Setup",
                 () =>
@@ -165,6 +171,7 @@ namespace AW2.Menu.Main
 
         private void RequestGameServerList()
         {
+            if (GAME_SERVER_LIST_REQUEST_INTERVAL <= GAME_SERVER_LIST_REPLY_TIMEOUT) throw new ApplicationException("Game server list reply timeout too large");
             Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
             _gameServerListReplyDeadline = Game.GameTime.TotalRealTime + GAME_SERVER_LIST_REPLY_TIMEOUT;
         }
@@ -178,8 +185,6 @@ namespace AW2.Menu.Main
 Cannot refresh game server list.
 Either your firewall blocks the
 traffic or the server is down.");
-            // FIXME !!! This condition is triggered ALSO when the client clicks to join a server but the server never
-            // replies. Consider keeping on asking refreshes from the management server.
             Game.ShowMainMenuAndResetGameplay();
             _gameServerListReplyDeadline = null;
         }

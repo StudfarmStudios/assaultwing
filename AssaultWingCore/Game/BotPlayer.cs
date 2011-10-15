@@ -46,6 +46,7 @@ namespace AW2.Game
             {
                 var pos = Arena.GetFreePosition(bot, Arena.BoundedArea);
                 bot.ResetPos(pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
+                bot.Owner = this;
                 Arena.Gobs.Add(bot);
             });
         }

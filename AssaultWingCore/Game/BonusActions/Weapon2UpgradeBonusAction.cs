@@ -18,6 +18,8 @@ namespace AW2.Game.BonusActions
         private string _bonusText;
         private CanonicalString _bonusIconName;
 
+        public new Player Owner { get { return (Player)base.Owner; } }
+
         public override string BonusText
         {
             get

@@ -87,7 +87,7 @@ namespace AW2.Game.Weapons
             Vector2 kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
             Gob.CreateGob<Gob>(Owner.Game, _shotTypeName, shot =>
             {
-                shot.Owner = PlayerOwner;
+                shot.Owner = SpectatorOwner;
                 shot.ResetPos(Owner.GetNamedPosition(boneIndex), Owner.Move + kick,
                     Owner.Rotation);  // 'Owner.Rotation' could also be 'direction' for a different angle
                 Arena.Gobs.Add(shot);
@@ -100,7 +100,7 @@ namespace AW2.Game.Weapons
             {
                 Gob.CreateGob<Peng>(Owner.Game, engineName, fireEngine =>
                 {
-                    fireEngine.Owner = PlayerOwner;
+                    fireEngine.Owner = SpectatorOwner;
                     fireEngine.Leader = Owner;
                     fireEngine.LeaderBone = barrelBoneIndex;
                     Arena.Gobs.Add(fireEngine);

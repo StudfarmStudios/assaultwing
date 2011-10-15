@@ -268,6 +268,18 @@ namespace AW2.Game.Gobs
             CheckDeath();
         }
 
+        private Color Color
+        {
+            get
+            {
+                if (!_playerRelated) return Color.White;
+                var playerOwner = Owner as Player;
+                return playerOwner != null ? playerOwner.PlayerColor : Color.White;
+            }
+        }
+
+        private float BaseAlpha { get { return !_disregardHidingLeader && Leader != null && Leader.IsHiding ? Leader.Alpha : 1; } }
+
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
             Func<Particle, Vector2> getParticleCenterInGameWorld;
@@ -278,8 +290,7 @@ namespace AW2.Game.Gobs
             for (int i = 0; i < _particles.Count; i++)
                 _particlePosesTemp[i] = getParticleCenterInGameWorld(_particles[i]);
             Vector2.Transform(_particlePosesTemp, 0, ref gameToScreen, _particlePosesTemp, 0, _particles.Count);
-            var pengColor = _playerRelated && Owner != null ? Owner.PlayerColor : Color.White;
-            if (!_disregardHidingLeader && Leader != null && Leader.IsHiding) pengColor = Color.Multiply(pengColor, Leader.Alpha);
+            var pengColor = Color.Multiply(Color, BaseAlpha);
             for (int index = 0; index < _particles.Count; index++)
             {
                 var particle = _particles[index];

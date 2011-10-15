@@ -11,7 +11,7 @@ namespace AW2.Game.GobUtils
     /// </summary>
     public class Coroner
     {
-        public enum DeathTypeType { Suicide, Kill };
+        public enum DeathTypeType { Suicide, Kill }; // TODO: rename Suicide -> Accident
         private enum RecipientType { ScoringPlayer, Bystander, Corpse };
         private delegate SubjectWord SubjectWordProvider(RecipientType recipient);
 
@@ -113,9 +113,13 @@ namespace AW2.Game.GobUtils
             };
             Action<Player> markAsKill = killer =>
             {
-                if (killer == null) throw new ArgumentNullException("killer");
-                DeathType = DeathTypeType.Kill;
-                ScoringPlayer = killer;
+                if (killer == null)
+                    markAsSuicide();
+                else
+                {
+                    DeathType = DeathTypeType.Kill;
+                    ScoringPlayer = killer;
+                }
             };
             if (info.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
                 markAsKill(info.PlayerCause);
@@ -123,7 +127,7 @@ namespace AW2.Game.GobUtils
                 markAsKill(info.Target.LastDamager);
             else
                 markAsSuicide();
-            KilledPlayer = info.Target.Owner;
+            KilledPlayer = info.Target.Owner as Player;
         }
 
         private string GetMessageFor(RecipientType recipient)

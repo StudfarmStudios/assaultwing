@@ -137,7 +137,8 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// The player who owns the ship who owns this device, or <c>null</c> if none exists.
         /// </summary>
-        public Player PlayerOwner { get { return Owner == null ? null : Owner.Owner; } }
+        public Player PlayerOwner { get { return SpectatorOwner as Player; } }
+        public Spectator SpectatorOwner { get { return Owner == null ? null : Owner.Owner; } }
 
         /// <summary>
         /// The purpose for which the owner is using this device.

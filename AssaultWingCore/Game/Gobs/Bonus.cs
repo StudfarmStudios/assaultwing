@@ -65,11 +65,12 @@ namespace AW2.Game.Gobs
         {
             // We assume we have only one receptor area and that's the one for
             // bonus collection. That means that the other gob is a ship.
-            if (myArea.Type == CollisionAreaType.Receptor && theirArea.Owner is Ship)
+            var theirShip = theirArea.Owner as Ship;
+            if (myArea.Type == CollisionAreaType.Receptor && theirShip != null)
             {
                 if (sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Irreversible))
                 {
-                    DoBonusAction(theirArea.Owner.Owner);
+                    DoBonusAction(theirShip.Owner);
                     Game.SoundEngine.PlaySound("BonusCollection", this);
                     Die();
                     return Arena.CollisionSideEffectType.Irreversible;

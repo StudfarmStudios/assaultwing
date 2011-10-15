@@ -450,8 +450,8 @@ namespace AW2.Game
         /// <summary>
         /// The player who owns the gob. Can be null for impartial gobs.
         /// </summary>
-        public Player Owner { get { return OwnerProxy != null ? OwnerProxy.GetValue() : null; } set { OwnerProxy = value; } }
-        public LazyProxy<int, Player> OwnerProxy { get; set; }
+        public Spectator Owner { get { return OwnerProxy != null ? OwnerProxy.GetValue() : null; } set { OwnerProxy = value; } }
+        public LazyProxy<int, Spectator> OwnerProxy { get; set; }
 
         /// <summary>
         /// Arena layer of the gob, or <c>null</c> if uninitialised. Set by <see cref="Arena"/>.
@@ -959,7 +959,7 @@ namespace AW2.Game
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt16();
                 int ownerID = reader.ReadSByte();
-                OwnerProxy = new LazyProxy<int, Player>(FindPlayer);
+                OwnerProxy = new LazyProxy<int, Spectator>(FindPlayer);
                 OwnerProxy.SetData(ownerID);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
@@ -1266,10 +1266,10 @@ namespace AW2.Game
 
         #region Private methods
 
-        private Tuple<bool, Player> FindPlayer(int id)
+        private Tuple<bool, Spectator> FindPlayer(int id)
         {
-            if (id == Spectator.UNINITIALIZED_ID) return Tuple.Create(false, (Player)null);
-            var player = Game.DataEngine.Players.FirstOrDefault(p => p.ID == id);
+            if (id == Spectator.UNINITIALIZED_ID) return Tuple.Create(false, (Spectator)null);
+            var player = Game.DataEngine.Spectators.FirstOrDefault(p => p.ID == id);
             return Tuple.Create(player != null, player);
         }
 

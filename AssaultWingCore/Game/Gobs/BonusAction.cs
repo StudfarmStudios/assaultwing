@@ -18,6 +18,7 @@ namespace AW2.Game.Gobs
         public abstract CanonicalString BonusIconName { get; }
         public TimeSpan Duration { get { return _duration; } }
         public TimeSpan EndTime { get; private set; }
+        public new Player Owner { get { return (Player)base.Owner; } set { base.Owner = value; } }
 
         /// <summary>
         /// Creates a <see cref="BonusAction"/> or if an action of the same type and typename

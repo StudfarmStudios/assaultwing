@@ -70,6 +70,7 @@ namespace AW2.Game.Gobs
         #endregion Rocket fields
 
         public float TargetTurnSpeed { get { return _targetTurnSpeed; } }
+        public new Player Owner { get { return base.Owner as Player; } }
         private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
         private LazyProxy<int, Gob> _targetProxy;
 
@@ -257,8 +258,11 @@ namespace AW2.Game.Gobs
         {
             if (_targetTracker == null) return;
             if (Owner != null) Owner.GobTrackerItems.Remove(_targetTracker);
-            if (_targetTracker.Gob != null && _targetTracker.Gob.Owner != null)
-                _targetTracker.Gob.Owner.GobTrackerItems.Remove(_targetTracker);
+            if (_targetTracker.Gob != null)
+            {
+                var targetPlayerOwner = _targetTracker.Gob.Owner as Player;
+                if (targetPlayerOwner != null) targetPlayerOwner.GobTrackerItems.Remove(_targetTracker);
+            }
             _targetTracker = null;
         }
 
@@ -272,7 +276,8 @@ namespace AW2.Game.Gobs
                 ShowWhileTargetOnScreen = true,
             };
             if (Owner != null) Owner.GobTrackerItems.Add(_targetTracker);
-            if (Target.Owner != null) Target.Owner.GobTrackerItems.Add(_targetTracker);
+            var targetPlayerOwner = Target.Owner as Player;
+            if (targetPlayerOwner != null) targetPlayerOwner.GobTrackerItems.Add(_targetTracker);
         }
 
         #endregion Private methods

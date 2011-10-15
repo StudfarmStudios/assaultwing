@@ -226,6 +226,7 @@ namespace AW2.Game.Gobs
         public ShipDevice ExtraDevice { get; private set; }
 
         public ShipInfo ShipInfo { get { return _shipInfo; } set { _shipInfo = value; } }
+        public new Player Owner { get { return (Player)base.Owner; } set { base.Owner = value; } }
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.

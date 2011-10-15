@@ -12,6 +12,9 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Bot : Gob
     {
+        [TypeParameter]
+        private CanonicalString _weaponName;
+
         private Weapon _weapon;
 
         /// <summary>
@@ -19,18 +22,19 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Bot()
         {
+            _weaponName = (CanonicalString)"dummyweapontype";
         }
 
         public Bot(CanonicalString typeName)
            : base(typeName)
         {
+            Gravitating = false;
         }
 
         public override void Activate()
         {
-            // FIXME !!! Bot must have a non-null Owner so that its shots won't collide into it when shot.
             base.Activate();
-            _weapon = Weapon.Create((CanonicalString)"rockets");
+            _weapon = Weapon.Create(_weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
         }

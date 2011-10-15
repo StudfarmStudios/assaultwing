@@ -11,6 +11,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
+  <weaponName>bot rockets</weaponName>
   <modelName>clustermine</modelName>
   <movable>true</movable>
   <maxDamage>500</maxDamage>

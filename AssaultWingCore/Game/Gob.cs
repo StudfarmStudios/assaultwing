@@ -573,8 +573,7 @@ namespace AW2.Game
         public bool Movable { get { return _movable; } protected set { _movable = value; } }
 
         /// <summary>
-        /// True iff the gob's movement is affected by gravity and other forces.
-        /// Subclasses should set this according to their needs.
+        /// Does arena gravity affect the gob. Subclasses should set this according to their needs.
         /// </summary>
         public bool Gravitating { get; protected set; }
 

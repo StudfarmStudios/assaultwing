@@ -12,17 +12,18 @@ namespace AW2.Game
 {
     public class BotPlayer : Spectator
     {
-        private const int MAX_BOT_AND_PLAYER_COUNT = 4;
-        private readonly TimeSpan BOT_CREATION_INTERVAL = TimeSpan.FromSeconds(5.5);
+        private const int MAX_BOT_AND_SHIP_COUNT = 4;
+        private readonly TimeSpan BOT_CREATION_INTERVAL = TimeSpan.FromSeconds(9.5);
 
         private TimeSpan _nextBotCreationTime;
 
         private Arena Arena { get { return Game.DataEngine.Arena; } }
-        private bool EnoughBots { get { return Game.DataEngine.Players.Count() + Arena.Gobs.GameplayLayer.Gobs.Count(gob => gob is Bot) >= MAX_BOT_AND_PLAYER_COUNT; } }
+        private bool EnoughBots { get { return Arena.Gobs.GameplayLayer.Gobs.Count(gob => gob is Bot || gob is Ship) >= MAX_BOT_AND_SHIP_COUNT; } }
 
-        public BotPlayer(AssaultWingCore game)
-            : base(game)
+        public BotPlayer(AssaultWingCore game, int connectionID = Spectator.CONNECTION_ID_LOCAL)
+            : base(game, connectionID)
         {
+            Name = "The Bots";
         }
 
         public override void ResetForArena()

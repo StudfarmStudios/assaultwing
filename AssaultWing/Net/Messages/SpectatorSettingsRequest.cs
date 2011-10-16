@@ -1,27 +1,43 @@
 ﻿using System;
 using AW2.Helpers.Serialization;
 using AW2.Net.ConnectionUtils;
+using AW2.Game;
 
 namespace AW2.Net.Messages
 {
     /// <summary>
-    /// A message from a game instance to another, requesting the update of the settings of a player.
-    /// This may implicitly request creating the player on the remote game instance.
+    /// A message from a game instance to another, requesting the update of the settings
+    /// of a <see cref="Spectator"/>. This may implicitly request creating the spectator
+    /// on the remote game instance.
     /// </summary>
     [MessageType(0x2d, false)]
-    public class PlayerSettingsRequest : StreamMessage
+    public class SpectatorSettingsRequest : StreamMessage
     {
+        public enum SubclassType { Undefined, Spectator, Player, BotPlayer };
+
+        public static SubclassType GetSubclassType(Spectator spectator)
+        {
+            return spectator is Player ? SubclassType.Player :
+                spectator is BotPlayer ? SubclassType.BotPlayer :
+                SubclassType.Spectator;
+        }
+
         /// <summary>
-        /// Has the player (who lives at a client) been registered to the server.
+        /// The actual type of the spectator.
+        /// </summary>
+        public SubclassType Subclass { get; set; }
+
+        /// <summary>
+        /// Has the spectator (who lives at a client) been registered to the server.
         /// Meaningful only when sent from a client to the server.
         /// </summary>
         public bool IsRegisteredToServer { get; set; }
 
         /// <summary>
-        /// If <see cref="IsRegisteredToServer"/> is true, local identifier of the player to update.
-        /// If <see cref="IsRegisteredToServer"/> is false, global identifier of the player to update
+        /// If <see cref="IsRegisteredToServer"/> is true, local identifier of the spectator to update.
+        /// If <see cref="IsRegisteredToServer"/> is false, global identifier of the spectator to update
         /// </summary>
-        public int PlayerID { get; set; }
+        public int SpectatorID { get; set; }
 
         /// <summary>
         /// As <see cref="GameClientStatus.IsPlayingArena"/>.
@@ -43,17 +59,19 @@ namespace AW2.Net.Messages
             {
                 checked
                 {
-                    // Player settings request structure:
-                    // bool: has the player been registered to the server
+                    // Spectator settings request structure:
+                    // bool: has the spectator been registered to the server
                     // bool: is the game client playing the current arena
                     // bool: is the game client ready to play the next arena
-                    // byte: player identifier
+                    // byte: spectator identifier
+                    // byte: spectator subclass
                     // word: data length N
-                    // N bytes: serialised data of the player
+                    // N bytes: serialised data of the spectator
                     writer.Write((bool)IsRegisteredToServer);
                     writer.Write((bool)IsGameClientPlayingArena);
                     writer.Write((bool)IsGameClientReadyToStartArena);
-                    writer.Write((byte)PlayerID);
+                    writer.Write((byte)SpectatorID);
+                    writer.Write((byte)Subclass);
                     writer.Write((ushort)StreamedData.Length);
                     writer.Write(StreamedData, 0, StreamedData.Length);
                 }
@@ -65,14 +83,16 @@ namespace AW2.Net.Messages
             IsRegisteredToServer = reader.ReadBoolean();
             IsGameClientPlayingArena = reader.ReadBoolean();
             IsGameClientReadyToStartArena = reader.ReadBoolean();
-            PlayerID = reader.ReadByte();
+            SpectatorID = reader.ReadByte();
+            Subclass = (SubclassType)reader.ReadByte();
+            if (!Enum.IsDefined(typeof(SubclassType), Subclass)) throw new NetworkException("Invalid value for Subclass, " + Subclass);
             int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [PlayerID " + PlayerID + "]";
+            return base.ToString() + " [SpectatorID " + SpectatorID + ", Subclass " + Subclass + "]";
         }
     }
 }

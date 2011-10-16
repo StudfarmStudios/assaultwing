@@ -16,6 +16,7 @@ namespace AW2.Game
         public enum ServerRegistrationType { No, Requested, Yes };
 
         public const int UNINITIALIZED_ID = -1;
+        public const int CONNECTION_ID_LOCAL = -1;
 
         private static int g_nextLocalID;
 
@@ -63,12 +64,7 @@ namespace AW2.Game
         /// </summary>
         public virtual bool NeedsViewport { get { return false; } }
 
-        public Spectator(AssaultWingCore game)
-            : this(game, -1)
-        {
-        }
-
-        public Spectator(AssaultWingCore game, int connectionId)
+        public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL)
         {
             Game = game;
             ConnectionID = connectionId;

@@ -802,10 +802,10 @@ namespace AW2.Core
             {
                 case NetworkMode.Client:
                     if (NetworkEngine.IsConnectedToGameServer)
-                        SendPlayerSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
+                        SendSpectatorSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
                     break;
                 case NetworkMode.Server:
-                    SendPlayerSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
+                    SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
                     SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
                     break;
             }
@@ -817,37 +817,39 @@ namespace AW2.Core
             foreach (var conn in connections) conn.Send(mess);
         }
 
-        private void SendPlayerSettingsToGameServer(Func<Player, bool> sendCriteria)
+        private void SendSpectatorSettingsToGameServer(Func<Spectator, bool> sendCriteria)
         {
-            Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest = plr => new PlayerSettingsRequest
+            Func<Spectator, SpectatorSettingsRequest> newPlayerSettingsRequest = spec => new SpectatorSettingsRequest
             {
-                IsRegisteredToServer = plr.ServerRegistration == Spectator.ServerRegistrationType.Yes,
+                IsRegisteredToServer = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes,
                 IsGameClientPlayingArena = GameState == Core.GameState.Gameplay,
                 IsGameClientReadyToStartArena = MenuEngine.IsReadyToStartArena,
-                PlayerID = plr.ServerRegistration == Spectator.ServerRegistrationType.Yes ? plr.ID : plr.LocalID,
+                SpectatorID = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes ? spec.ID : spec.LocalID,
+                Subclass = SpectatorSettingsRequest.GetSubclassType(spec),
             };
-            SendPlayerSettingsToRemote(sendCriteria, newPlayerSettingsRequest, new[] { NetworkEngine.GameServerConnection });
+            SendSpectatorSettingsToRemote(sendCriteria, newPlayerSettingsRequest, new[] { NetworkEngine.GameServerConnection });
         }
 
-        private void SendPlayerSettingsToGameClients(Func<Player, bool> sendCriteria)
+        private void SendSpectatorSettingsToGameClients(Func<Spectator, bool> sendCriteria)
         {
-            Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest = plr => new PlayerSettingsRequest
+            Func<Spectator, SpectatorSettingsRequest> newPlayerSettingsRequest = spec => new SpectatorSettingsRequest
             {
                 IsRegisteredToServer = true,
-                PlayerID = plr.ID,
+                SpectatorID = spec.ID,
+                Subclass = SpectatorSettingsRequest.GetSubclassType(spec),
             };
-            SendPlayerSettingsToRemote(sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
+            SendSpectatorSettingsToRemote(sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
             foreach (var conn in NetworkEngine.GameClientConnections) conn.ConnectionStatus.HasPlayerSettings = true;
         }
 
-        private void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest, IEnumerable<Connection> connections)
+        private void SendSpectatorSettingsToRemote(Func<Spectator, bool> sendCriteria, Func<Spectator, SpectatorSettingsRequest> newSpectatorSettingsRequest, IEnumerable<Connection> connections)
         {
-            foreach (var player in DataEngine.Players.Where(sendCriteria))
+            foreach (var spectator in DataEngine.Spectators.Where(sendCriteria))
             {
-                var mess = newPlayerSettingsRequest(player);
-                mess.Write(player, SerializationModeFlags.ConstantData);
-                if (player.ServerRegistration == Spectator.ServerRegistrationType.No)
-                    player.ServerRegistration = Spectator.ServerRegistrationType.Requested;
+                var mess = newSpectatorSettingsRequest(spectator);
+                mess.Write(spectator, SerializationModeFlags.ConstantData);
+                if (spectator.ServerRegistration == Spectator.ServerRegistrationType.No)
+                    spectator.ServerRegistration = Spectator.ServerRegistrationType.Requested;
                 foreach (var conn in connections) conn.Send(mess);
             }
         }

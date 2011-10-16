@@ -46,7 +46,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ConnectionClosingMessage>(MessageHandlerBase.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(MessageHandlerBase.SourceType.Server, HandleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(MessageHandlerBase.SourceType.Server, HandlePlayerSettingsReply);
-            yield return new MessageHandler<PlayerSettingsRequest>(MessageHandlerBase.SourceType.Server, HandlePlayerSettingsRequestOnClient);
+            yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Server, HandlePlayerSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new MessageHandler<GameSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleGameSettingsRequest);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerMessageMessageOnClient);
@@ -66,7 +66,7 @@ namespace AW2.Net.MessageHandling
         public static IEnumerable<MessageHandlerBase> GetServerMenuHandlers()
         {
             yield return new MessageHandler<GameServerHandshakeRequestTCP>(MessageHandlerBase.SourceType.Client, HandleGameServerHandshakeRequestTCP);
-            yield return new MessageHandler<PlayerSettingsRequest>(MessageHandlerBase.SourceType.Client, HandlePlayerSettingsRequestOnServer);
+            yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Client, HandlePlayerSettingsRequestOnServer);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
 
@@ -117,14 +117,14 @@ namespace AW2.Net.MessageHandling
             net.ManagementServerConnection.OnPingReceived();
         }
 
-        private static void HandlePlayerSettingsRequestOnClient(PlayerSettingsRequest mess)
+        private static void HandlePlayerSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
             var spectator = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(
-                spec => spec.ID == mess.PlayerID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
+                spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
             {
-                var newPlayer = CreateAndAddNewPlayer(mess);
-                newPlayer.ID = mess.PlayerID;
+                var newPlayer = CreateAndAddNewSpectator(mess);
+                newPlayer.ID = mess.SpectatorID;
                 newPlayer.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             }
             else if (spectator.IsRemote)
@@ -133,6 +133,7 @@ namespace AW2.Net.MessageHandling
             }
             else
             {
+                if (mess.Subclass != SpectatorSettingsRequest.SubclassType.Player) throw new ApplicationException("Unexpected Spectator subclass " + mess.Subclass);
                 // Be careful not to overwrite our most recent name and equipment choices
                 // with something older from the server.
                 var tempPlayer = GetTempPlayer();
@@ -275,7 +276,7 @@ namespace AW2.Net.MessageHandling
             }
         }
 
-        private static void HandlePlayerSettingsRequestOnServer(PlayerSettingsRequest mess)
+        private static void HandlePlayerSettingsRequestOnServer(SpectatorSettingsRequest mess)
         {
             var clientConn = AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
             if (clientConn.ConnectionStatus.IsDropped) return;
@@ -283,18 +284,18 @@ namespace AW2.Net.MessageHandling
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)
             {
-                var newPlayer = CreateAndAddNewPlayer(mess);
+                var newSpectator = CreateAndAddNewSpectator(mess);
                 var reply = new PlayerSettingsReply
                 {
-                    PlayerLocalID = mess.PlayerID,
-                    PlayerID = newPlayer.ID
+                    PlayerLocalID = mess.SpectatorID,
+                    PlayerID = newSpectator.ID
                 };
                 clientConn.Send(reply);
             }
             else
             {
-                var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
-                if (player == null) throw new NetworkException("Settings update for unknown player ID " + mess.PlayerID);
+                var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
+                if (player == null) throw new NetworkException("Settings update for unknown spectator ID " + mess.SpectatorID);
                 if (player.ConnectionID != mess.ConnectionID)
                 {
                     // Silently ignoring update of a player that doesn't live on the client who sent the update.
@@ -349,12 +350,22 @@ namespace AW2.Net.MessageHandling
             return new Player(AssaultWing.Instance, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
         }
 
-        private static Player CreateAndAddNewPlayer(PlayerSettingsRequest mess)
+        private static Spectator CreateAndAddNewSpectator(SpectatorSettingsRequest mess)
         {
-            var newPlayer = new Player(AssaultWing.Instance, "<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID);
-            mess.Read(newPlayer, SerializationModeFlags.ConstantData, 0);
-            AssaultWingCore.Instance.DataEngine.Spectators.Add(newPlayer);
-            return newPlayer;
+            Spectator newSpectator = null;
+            switch (mess.Subclass)
+            {
+                case SpectatorSettingsRequest.SubclassType.Player:
+                    newSpectator = new Player(AssaultWing.Instance, "<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID);
+                    break;
+                case SpectatorSettingsRequest.SubclassType.BotPlayer:
+                    newSpectator = new BotPlayer(AssaultWing.Instance, mess.ConnectionID);
+                    break;
+                default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
+            }
+            mess.Read(newSpectator, SerializationModeFlags.ConstantData, 0);
+            AssaultWingCore.Instance.DataEngine.Spectators.Add(newSpectator);
+            return newSpectator;
         }
 
         private static void ConnectionResultOnClientCallback(Result<Connection> result)

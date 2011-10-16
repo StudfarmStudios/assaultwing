@@ -40,6 +40,14 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns randomly -1 or +1 with even distribution.
+        /// </summary>
+        public static int GetRandomSign()
+        {
+            return GetRandomInt(2) * 2 - 1;
+        }
+
+        /// <summary>
         /// Returns a random int between <see cref="int.MinValue"/> and
         /// <see cref="int.MaxValue"/>.
         /// </summary>

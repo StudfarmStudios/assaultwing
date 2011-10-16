@@ -12,7 +12,7 @@ namespace AW2.Game
 {
     public class BotPlayer : Spectator
     {
-        private const int MAX_BOT_AND_SHIP_COUNT = 4;
+        private const int MAX_BOT_AND_SHIP_COUNT = 0; // UNDONE: Temporarily in release 1.4.0.0 bots are turned off. This value should otherwise be 4.
         private readonly TimeSpan BOT_CREATION_INTERVAL = TimeSpan.FromSeconds(9.5);
 
         private TimeSpan _nextBotCreationTime;

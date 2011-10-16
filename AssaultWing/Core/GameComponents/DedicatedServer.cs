@@ -53,7 +53,6 @@ namespace AW2.Core.GameComponents
             }
             else
             {
-                Game.InitializePlayers(0);
                 _arenaInfos = (
                     from arena in Game.DataEngine.GetTypeTemplates<Arena>()
                     let info = arena.Info

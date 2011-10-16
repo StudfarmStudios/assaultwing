@@ -272,7 +272,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
-            DataEngine.Spectators.Add(new BotPlayer(this));
+            if (Settings.Players.BotsEnabled) DataEngine.Spectators.Add(new BotPlayer(this));
             try
             {
                 NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result,
@@ -805,7 +805,7 @@ namespace AW2.Core
                         SendPlayerSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
                     break;
                 case NetworkMode.Server:
-                    SendPlayerSettingsToGameClients(p => p.ID != Player.UNINITIALIZED_ID);
+                    SendPlayerSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
                     SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
                     break;
             }

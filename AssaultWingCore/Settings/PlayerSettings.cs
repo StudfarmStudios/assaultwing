@@ -30,7 +30,7 @@ namespace AW2.Settings
         };
         public static readonly PlayerSettingsItem PLAYER2DEFAULT = new PlayerSettingsItem
         {
-            Name = "Lamer",
+            Name = "Gamer",
             ShipName = "Bugger",
             Weapon2Name = "rockets",
             ExtraDeviceName = "catmoflage",
@@ -38,9 +38,11 @@ namespace AW2.Settings
 
         private PlayerSettingsItem _player1;
         private PlayerSettingsItem _player2;
+        private bool _botsEnabled;
 
         public PlayerSettingsItem Player1 { get { return _player1; } }
         public PlayerSettingsItem Player2 { get { return _player2; } }
+        public bool BotsEnabled { get { return _botsEnabled; } set { _botsEnabled = value; } }
 
         public PlayerSettings()
         {
@@ -51,6 +53,7 @@ namespace AW2.Settings
         {
             _player1 = PLAYER1DEFAULT;
             _player2 = PLAYER2DEFAULT;
+            _botsEnabled = true;
         }
 
         public void Validate(AssaultWingCore game)

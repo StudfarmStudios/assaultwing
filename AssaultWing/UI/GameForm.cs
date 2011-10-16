@@ -67,11 +67,12 @@ namespace AW2.UI
             set { BeginInvoke((Action)(() => MinimumSize = new System.Drawing.Size(value.Width, value.Height))); }
         }
         public GraphicsDeviceControl GameView { get { return _gameView; } }
+        public AssaultWing Game { get { return _game; } }
 
-        public GameForm()
+        public GameForm(CommandLineOptions commandLineOptions)
         {
             InitializeComponent();
-            InitializeGame(Handle);
+            InitializeGame(Handle, commandLineOptions);
             InitializeGameForm();
             InitializeGameView();
             InitializeRunner();
@@ -241,9 +242,8 @@ namespace AW2.UI
             if (_game.CommandLineOptions.DedicatedServer) _splitContainer.Panel1Collapsed = true;
         }
 
-        private void InitializeGame(IntPtr windowHandle)
+        private void InitializeGame(IntPtr windowHandle, CommandLineOptions commandLineOptions)
         {
-            var commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), AssaultWingCore.GetArgumentText());
             if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
             _game = new AssaultWing(_graphicsDeviceService, commandLineOptions);
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance

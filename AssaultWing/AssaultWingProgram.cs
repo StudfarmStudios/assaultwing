@@ -14,7 +14,7 @@ namespace AW2
         private const string AW_BUG_REPORT_SERVER = "assaultwing.com";
         private const int AW_BUG_REPORT_PORT = 'A' * 256 + 'W' - 1;
 
-        private GameForm _form;
+        private static CommandLineOptions g_commandLineOptions;
         private static string[] g_errorCaptions = new[]
         {
             "Oops, Assault Wing crashed!",
@@ -22,12 +22,14 @@ namespace AW2
             "You found a bug, congratulations!",
             "We're sorry for the inconvenience",
         };
+        private GameForm _form;
 
         public static AssaultWingProgram Instance { get; private set; }
 
         [STAThread]
         public static void Main(string[] args)
         {
+            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), AssaultWingCore.GetArgumentText());
             PostInstall.CreateDedicatedServerShortcut();
             AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
             try
@@ -50,7 +52,7 @@ namespace AW2
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            _form = new GameForm();
+            _form = new GameForm(g_commandLineOptions);
         }
 
         public void Run()
@@ -90,7 +92,9 @@ namespace AW2
                 " and the Assault Wing run log \"" + Log.LogFileName + "\"?";
             var report = string.Format("Assault Wing {0}\nCrashed on {1:u}\nHost {2}\n\n{3}",
                 AssaultWing.Instance.Version, DateTime.Now.ToUniversalTime(), Environment.MachineName, e.ToString());
-            var result = MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            var result = g_commandLineOptions.DedicatedServer
+                ? DialogResult.Yes
+                : MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
             var logHeader = "\n\n*** Assault Wing run log ***\n\n";
             if (result == DialogResult.Yes) SendMail(report + logHeader + Log.CloseAndGetContents());
         }

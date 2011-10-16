@@ -62,9 +62,9 @@ namespace AW2.Graphics
 
         private void CreateAll()
         {
+            if (_viewportCount == 0) return;
             _lastGraphicsDeviceViewportSize = CurrentGraphicsDeviceViewportSize;
             RemoveAllViewports();
-            if (_viewportCount == 0) return;
             int rows, columns;
             FindOptimalArrangement(_viewportCount, WindowWidth, WindowHeight, out rows, out columns);
             CreateViewports(_viewportCount, _viewportConstructor, rows, columns);

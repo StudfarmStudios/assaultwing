@@ -312,6 +312,7 @@ namespace AW2.UI
 
         private void AddToLogView(string text)
         {
+            if (_logView.IsDisposed) return;
             BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
         }
     }

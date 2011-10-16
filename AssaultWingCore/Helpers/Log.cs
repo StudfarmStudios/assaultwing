@@ -72,6 +72,7 @@ namespace AW2.Helpers
         public static string CloseAndGetContents()
         {
             g_writer.Close();
+            g_writer = null;
             return File.ReadAllText(LogFileName);
         }
 

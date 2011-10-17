@@ -67,9 +67,10 @@ namespace AW2.Graphics
         {
             base.Update();
             _lookAtController.Compute();
-            var VIEW_MASS = 0.1f;
-            var VIEW_DRAG = 0.7f;
-            var lookAtAcceleration = (_lookAtController.Output - VIEW_DRAG * _lookAtSpeed) / VIEW_MASS;
+            var VIEW_MASS = 0.05f;
+            var VIEW_DRAG = 0.5f;
+            var CONTROLLER_LIMIT = 1200;
+            var lookAtAcceleration = (_lookAtController.Output.Clamp(0, CONTROLLER_LIMIT) - VIEW_DRAG * _lookAtSpeed) / VIEW_MASS;
             _lookAtSpeed += lookAtAcceleration / Game.TargetFPS;
             CurrentLookAt += _lookAtSpeed / Game.TargetFPS;
         }

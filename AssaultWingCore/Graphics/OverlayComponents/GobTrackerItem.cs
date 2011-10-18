@@ -9,11 +9,6 @@ namespace AW2.Graphics.OverlayComponents
 {
     public class GobTrackerItem
     {
-        public static readonly string PLAYER_TEXTURE = "gui_tracker_player";
-        public static readonly string DOCK_TEXTURE = "gui_tracker_dock";
-        public static readonly string BONUS_TEXTURE = "gui_tracker_bonus";
-        public static readonly string ROCKET_TARGET_TEXTURE = "gui_tracker_rockettarget";
-
         public Gob Gob { get; private set; }
         public Gob TrackerGob { get; private set; }
         public bool StickToBorders { get; set; }
@@ -25,16 +20,16 @@ namespace AW2.Graphics.OverlayComponents
         {
             get
             {
-                var color = PlayerColor(TrackerGob, () => PlayerColor(Gob, () => Color.White));
+                var color = SpectatorColor(TrackerGob, () => SpectatorColor(Gob, () => Color.White));
                 return Color.Multiply(color, Gob.Alpha);
             }
         }
 
-        private Color PlayerColor(Gob gob, Func<Color> otherwise)
+        private Color SpectatorColor(Gob gob, Func<Color> otherwise)
         {
-            if (gob == null) return otherwise();
-            var player = gob.Owner as Player;
-            return player != null ? player.Color : otherwise();
+            return gob == null || gob.Owner == null
+                ? otherwise()
+                : gob.Owner.Color;
         }
 
         public GobTrackerItem(Gob gob, Gob trackerGob, string texture)

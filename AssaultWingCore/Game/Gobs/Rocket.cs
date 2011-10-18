@@ -266,7 +266,7 @@ namespace AW2.Game.Gobs
         {
             if (_targetTracker != null) throw new ApplicationException("Rocket is creating a gob tracker although it has one already");
             if (Target == null) return;
-            _targetTracker = new GobTrackerItem(Target, this, GobTrackerItem.ROCKET_TARGET_TEXTURE)
+            _targetTracker = new GobTrackerItem(Target, this, "gui_tracker_rockettarget")
             {
                 StickToBorders = false,
                 ShowWhileTargetOnScreen = true,

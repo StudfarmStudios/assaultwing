@@ -164,7 +164,7 @@ namespace AW2.Graphics.OverlayComponents
             // Draw bonus icon.
             var iconPos = bonusPos - backgroundOrigin + new Vector2(133, 9);
             var icon = _player.Game.Content.Load<Texture2D>(bonusAction.BonusIconName);
-            spriteBatch.Draw(icon, iconPos, null, _player.PlayerColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(icon, iconPos, null, _player.Color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus duration meter.
             var duration = (bonusAction.EndTime - _player.Game.DataEngine.ArenaTotalTime).Divide(bonusAction.Duration);

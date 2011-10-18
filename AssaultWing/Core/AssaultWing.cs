@@ -357,7 +357,7 @@ namespace AW2.Core
             var messageContent = text.Trim();
             if (messageContent == "") return;
             var preText = from.Name + ">";
-            var textColor = from.PlayerColor;
+            var textColor = from.Color;
             var message = new PlayerMessage(preText, messageContent, textColor);
             switch (NetworkMode)
             {

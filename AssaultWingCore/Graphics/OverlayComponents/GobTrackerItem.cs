@@ -34,7 +34,7 @@ namespace AW2.Graphics.OverlayComponents
         {
             if (gob == null) return otherwise();
             var player = gob.Owner as Player;
-            return player != null ? player.PlayerColor : otherwise();
+            return player != null ? player.Color : otherwise();
         }
 
         public GobTrackerItem(Gob gob, Gob trackerGob, string texture)

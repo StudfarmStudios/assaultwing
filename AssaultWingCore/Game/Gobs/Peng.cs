@@ -274,7 +274,7 @@ namespace AW2.Game.Gobs
             {
                 if (!_playerRelated) return Color.White;
                 var playerOwner = Owner as Player;
-                return playerOwner != null ? playerOwner.PlayerColor : Color.White;
+                return playerOwner != null ? playerOwner.Color : Color.White;
             }
         }
 

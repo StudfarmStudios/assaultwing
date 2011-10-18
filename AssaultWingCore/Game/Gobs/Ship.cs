@@ -503,7 +503,7 @@ namespace AW2.Game.Gobs
             var playerNameSize = playerNameFont.MeasureString(Owner.Name);
             var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
             var nameAlpha = (IsHiding ? Alpha : 1) * 0.8f;
-            var nameColor = Color.Multiply(Owner.PlayerColor, nameAlpha);
+            var nameColor = Color.Multiply(Owner.Color, nameAlpha);
             spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
         }
 

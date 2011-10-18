@@ -74,7 +74,7 @@ namespace AW2.Game
                 from p in players
                 let score = CalculateScore(p)
                 orderby score descending, p.Kills descending, p.Name
-                select new Standing(p.Name, p.PlayerColor, p.IsRemote, score, p.Kills, p.Deaths, p.ID);
+                select new Standing(p.Name, p.Color, p.IsRemote, score, p.Kills, p.Deaths, p.ID);
         }
 
         public bool ArenaFinished(Arena arena, IEnumerable<Player> players)

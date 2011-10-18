@@ -212,7 +212,7 @@ namespace AW2.Menu.Equip
                 }
 
                 // Draw pane background.
-                spriteBatch.Draw(Content.PlayerNameBackgroundTexture, GetPlayerPanePos(playerI) - view, player.PlayerColor);
+                spriteBatch.Draw(Content.PlayerNameBackgroundTexture, GetPlayerPanePos(playerI) - view, player.Color);
                 spriteBatch.Draw(Content.PlayerNameBorderTexture, GetPlayerPanePos(playerI) - view, Color.White);
                 spriteBatch.Draw(Content.PlayerPaneTexture, GetPlayerPanePos(playerI) - view + PlayerPaneMainDeltaPos, Color.White);
                 spriteBatch.DrawString(Content.FontSmall, player.Name, (GetPlayerNamePos(playerI, player.Name) - view).Round(), Color.White);
@@ -330,7 +330,7 @@ namespace AW2.Menu.Equip
             var moveTime = (float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds;
             var nameChangeInfoPos = MenuComponent.Pos - view + new Vector2(250 + g_nameInfoMove.Evaluate(moveTime), 180);
             var nameChangeInfoTexture = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_player_name_changeinfo");
-            spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).Item1.PlayerColor);
+            spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).Item1.Color);
         }
 
         private void PlayerNameKeyPressHandler()

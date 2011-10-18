@@ -333,7 +333,7 @@ namespace AW2.Game
 
         private Color GetFreePlayerColor()
         {
-            return GetPlayerColorPalette().Except(Players.Select(p => p.PlayerColor)).First();
+            return GetPlayerColorPalette().Except(Players.Select(p => p.Color)).First();
         }
 
         private static IEnumerable<Color> GetPlayerColorPalette()
@@ -371,8 +371,8 @@ namespace AW2.Game
             var player = spectator as Player;
             if (player != null && Game.NetworkMode != NetworkMode.Client)
             {
-                player.PlayerColor = Color.Black; // reset to a color that won't affect free color picking
-                player.PlayerColor = GetFreePlayerColor();
+                player.Color = Color.Black; // reset to a color that won't affect free color picking
+                player.Color = GetFreePlayerColor();
             }
             if (SpectatorAdded != null) SpectatorAdded(spectator);
         }

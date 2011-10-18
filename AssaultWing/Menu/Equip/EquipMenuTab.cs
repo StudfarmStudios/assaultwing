@@ -54,7 +54,7 @@ namespace AW2.Menu.Equip
             PlayerList.ForEachVisible((realIndex, visibleInidex, isSelected) =>
             {
                 var plr = playersArray[realIndex];
-                spriteBatch.DrawString(Content.FontSmall, plr.Name, currentPlayerPos.Round(), plr.PlayerColor);
+                spriteBatch.DrawString(Content.FontSmall, plr.Name, currentPlayerPos.Round(), plr.Color);
                 currentPlayerPos += PlayerListLineHeight;
                 if (drawCursor && isSelected)
                 {

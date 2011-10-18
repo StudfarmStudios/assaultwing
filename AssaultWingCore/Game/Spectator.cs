@@ -60,6 +60,11 @@ namespace AW2.Game
         public string Name { get; set; }
 
         /// <summary>
+        /// Identification color of the spectator.
+        /// </summary>
+        public Color Color { get; set; }
+
+        /// <summary>
         /// Does the spectator need a viewport on the game window.
         /// </summary>
         public virtual bool NeedsViewport { get { return false; } }
@@ -73,6 +78,7 @@ namespace AW2.Game
         {
             Game = game;
             ConnectionID = connectionId;
+            Color = Color.LightGray;
         }
 
         /// <param name="onScreen">Location of the viewport on screen.</param>

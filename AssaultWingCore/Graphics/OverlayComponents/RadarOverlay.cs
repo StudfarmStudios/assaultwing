@@ -36,7 +36,7 @@ namespace AW2.Graphics.OverlayComponents
             DrawBackground(spriteBatch);
             DrawWalls(spriteBatch);
             DrawDocks(spriteBatch);
-            DrawShips(spriteBatch);
+            DrawMinions(spriteBatch);
         }
 
         private void DrawBackground(SpriteBatch spriteBatch)
@@ -68,17 +68,18 @@ namespace AW2.Graphics.OverlayComponents
             if (deadDocks) _docks.RemoveAll(dock => dock.Dead);
         }
 
-        private void DrawShips(SpriteBatch spriteBatch)
+        private void DrawMinions(SpriteBatch spriteBatch)
         {
             var arenaToRadarTransform = Game.DataEngine.ArenaToRadarTransform;
-            foreach (var player in Game.DataEngine.Players)
+            foreach (var minion in Game.DataEngine.Minions)
             {
-                if (player.Ship == null || player.Ship.Dead) continue;
-                var posInArena = player.Ship.Pos;
+                if (minion.Dead) continue;
+                var owner = minion.Owner;
+                var posInArena = minion.Pos;
                 var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
-                var shipAlpha = player.IsRemote && player.Ship.IsHiding ? player.Ship.Alpha : 1;
-                var shipColor = Color.Multiply(_player.ID == player.ID ? Color.White : player.PlayerColor, shipAlpha);
-                var shipScale = _player.ID == player.ID ? 0.7f : 0.4f;
+                var shipAlpha = owner.IsRemote && minion.IsHiding ? minion.Alpha : 1;
+                var shipColor = Color.Multiply(_player.ID == owner.ID ? Color.White : owner.Color, shipAlpha);
+                var shipScale = _player.ID == owner.ID ? 0.7f : 0.4f;
                 spriteBatch.Draw(Game.GraphicsEngine.GameContent.ShipOnRadarTexture, posOnRadar, null, shipColor, 0,
                     Game.GraphicsEngine.GameContent.ShipOnRadarTexture.Dimensions() / 2, shipScale, SpriteEffects.None, 0);
             }

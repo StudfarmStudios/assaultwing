@@ -101,11 +101,6 @@ namespace AW2.Game
 
         public int KillsWithoutDying { get; set; }
 
-        /// <summary>
-        /// The player's Color on radar.
-        /// </summary>
-        public Color PlayerColor { get; set; }
-
         public override bool NeedsViewport { get { return !IsRemote; } }
         public override IEnumerable<Gob> Minions { get { if (Ship != null) yield return Ship; } }
 
@@ -311,7 +306,7 @@ namespace AW2.Game
             ExtraDeviceName = extraDeviceName;
             Controls = controls;
             Messages = new MessageContainer();
-            PlayerColor = Color.Gray;
+            Color = Color.Gray;
             BonusActions = new List<BonusAction>();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
             GobTrackerItems = new List<GobTrackerItem>();
@@ -404,7 +399,7 @@ namespace AW2.Game
                         writer.Write((CanonicalString)ShipName);
                         writer.Write((CanonicalString)Weapon2Name);
                         writer.Write((CanonicalString)ExtraDeviceName);
-                        writer.Write((Color)PlayerColor);
+                        writer.Write((Color)Color);
                     }
                     if ((mode & SerializationModeFlags.VaryingData) != 0)
                     {
@@ -425,7 +420,7 @@ namespace AW2.Game
                 var newShipName = reader.ReadCanonicalString();
                 var newWeapon2Name = reader.ReadCanonicalString();
                 var newExtraDeviceName = reader.ReadCanonicalString();
-                PlayerColor = reader.ReadColor();
+                Color = reader.ReadColor();
                 if (Game.DataEngine.GetTypeTemplate(newShipName) is Ship) ShipName = newShipName;
                 if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
                 if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
@@ -550,7 +545,7 @@ namespace AW2.Game
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 gob.Message = perpetrator.Name;
                 gob.IconName = iconName;
-                gob.DrawColor = perpetrator.PlayerColor;
+                gob.DrawColor = perpetrator.Color;
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });
         }

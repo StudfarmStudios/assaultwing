@@ -138,7 +138,7 @@ namespace AW2.Net.MessageHandling
                 // with something older from the server.
                 var tempPlayer = GetTempPlayer();
                 mess.Read(tempPlayer, SerializationModeFlags.ConstantData, 0);
-                if (spectator is Player) ((Player)spectator).PlayerColor = tempPlayer.PlayerColor;
+                if (spectator is Player) ((Player)spectator).Color = tempPlayer.Color;
             }
         }
 
@@ -303,9 +303,9 @@ namespace AW2.Net.MessageHandling
                 else
                 {
                     // Be careful not to overwrite the player's color with something silly from the client.
-                    var oldColor = player is Player ? (Color?)((Player)player).PlayerColor : null;
+                    var oldColor = player is Player ? (Color?)((Player)player).Color : null;
                     mess.Read(player, SerializationModeFlags.ConstantData, 0);
-                    if (oldColor.HasValue) ((Player)player).PlayerColor = oldColor.Value;
+                    if (oldColor.HasValue) ((Player)player).Color = oldColor.Value;
                 }
             }
         }

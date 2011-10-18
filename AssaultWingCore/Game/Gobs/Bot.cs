@@ -19,6 +19,8 @@ namespace AW2.Game.Gobs
         private Weapon _weapon;
         private float _rotationSpeed; // radians/second
 
+        public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
+
         /// <summary>
         /// Only for deserialization.
         /// </summary>
@@ -68,6 +70,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
+            if (Owner != null) Owner.SeizeBot(this);
             if (mode.HasFlag(SerializationModeFlags.ConstantData))
             {
                 _rotationSpeed = reader.ReadSingle();

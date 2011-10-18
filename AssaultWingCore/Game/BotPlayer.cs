@@ -27,6 +27,7 @@ namespace AW2.Game
         {
             _bots = new List<Gob>();
             Name = "The Bots";
+            Color = Color.LightGray;
         }
 
         public override void ResetForArena()
@@ -42,6 +43,14 @@ namespace AW2.Game
             CreateBot();
         }
 
+        public void SeizeBot(Bot bot)
+        {
+            if (_bots.Contains(bot)) return;
+            _bots.Add(bot);
+            bot.Owner = this;
+            bot.Death += coroner => _bots.Remove(bot);
+        }
+
         private void CreateBot()
         {
             if (_nextBotCreationTime > Game.GameTime.TotalGameTime) return;
@@ -49,12 +58,10 @@ namespace AW2.Game
             if (EnoughBots) return;
             Gob.CreateGob<Bot>(Game, (CanonicalString)"rocket bot", bot =>
             {
+                SeizeBot(bot);
                 var pos = Arena.GetFreePosition(bot, Arena.BoundedArea);
                 bot.ResetPos(pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
-                bot.Owner = this;
                 Arena.Gobs.Add(bot);
-                bot.Death += coroner => _bots.Remove(bot);
-                _bots.Add(bot);
             });
         }
     }

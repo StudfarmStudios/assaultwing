@@ -64,6 +64,11 @@ namespace AW2.Game
         /// </summary>
         public virtual bool NeedsViewport { get { return false; } }
 
+        /// <summary>
+        /// All the gobs this spectator controls.
+        /// </summary>
+        public virtual IEnumerable<Gob> Minions { get { yield break; } }
+
         public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL)
         {
             Game = game;

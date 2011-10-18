@@ -12,17 +12,20 @@ namespace AW2.Game
 {
     public class BotPlayer : Spectator
     {
-        private const int MAX_BOT_AND_SHIP_COUNT = 0; // UNDONE: Temporarily in release 1.4.0.0 bots are turned off. This value should otherwise be 4.
+        private const int MAX_BOT_AND_SHIP_COUNT = 4;
         private readonly TimeSpan BOT_CREATION_INTERVAL = TimeSpan.FromSeconds(9.5);
 
+        private List<Gob> _bots;
         private TimeSpan _nextBotCreationTime;
 
+        public override IEnumerable<Gob> Minions { get { return _bots; } }
         private Arena Arena { get { return Game.DataEngine.Arena; } }
         private bool EnoughBots { get { return Arena.Gobs.GameplayLayer.Gobs.Count(gob => gob is Bot || gob is Ship) >= MAX_BOT_AND_SHIP_COUNT; } }
 
         public BotPlayer(AssaultWingCore game, int connectionID = Spectator.CONNECTION_ID_LOCAL)
             : base(game, connectionID)
         {
+            _bots = new List<Gob>();
             Name = "The Bots";
         }
 
@@ -30,6 +33,7 @@ namespace AW2.Game
         {
             base.ResetForArena();
             _nextBotCreationTime = BOT_CREATION_INTERVAL;
+            _bots.Clear();
         }
 
         public override void Update()
@@ -49,6 +53,8 @@ namespace AW2.Game
                 bot.ResetPos(pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 bot.Owner = this;
                 Arena.Gobs.Add(bot);
+                bot.Death += coroner => _bots.Remove(bot);
+                _bots.Add(bot);
             });
         }
     }

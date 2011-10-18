@@ -44,11 +44,7 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            var potentialTargets =
-                from player in Owner.Game.DataEngine.Players
-                where player.Ship != null && player.Ship != Owner
-                select player.Ship;
-            FireAtTargets(FindTargets(potentialTargets));
+            FireAtTargets(FindTargets(Owner.Game.DataEngine.Minions));
         }
 
         public IEnumerable<Gob> FindTargets(IEnumerable<Gob> potentialTargets)

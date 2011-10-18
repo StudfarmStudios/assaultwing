@@ -231,11 +231,7 @@ namespace AW2.Game.Gobs
             if (_lastFindTarget + FIND_TARGET_INTERVAL > Arena.TotalTime) return;
             _lastFindTarget = Arena.TotalTime;
             var oldTarget = Target;
-            var potentialTargets =
-                from player in Game.DataEngine.Players
-                where player.Ship != null
-                select player.Ship;
-            var newBestTarget = TargetSelection.ChooseTarget(potentialTargets, this, this.Rotation, _findTargetRange);
+            var newBestTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _findTargetRange);
             if (newBestTarget != null &&
                 (newBestTarget.Owner == null || newBestTarget.Owner == Owner) &&
                 RandomHelper.GetRandomFloat() < 0.9)

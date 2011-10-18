@@ -51,6 +51,7 @@ namespace AW2.Game
             }
         }
 
+        public IEnumerable<Gob> Minions { get { return Spectators.SelectMany(spec => spec.Minions); } }
         public IEnumerable<Player> Players { get { return Spectators.OfType<Player>(); } }
         // TODO: Maybe Arena is a more natural place for Devices, alongside Gobs?
         public IndexedItemCollection<ShipDevice> Devices { get; private set; }

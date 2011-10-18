@@ -107,6 +107,7 @@ namespace AW2.Game
         public Color PlayerColor { get; set; }
 
         public override bool NeedsViewport { get { return !IsRemote; } }
+        public override IEnumerable<Gob> Minions { get { if (Ship != null) yield return Ship; } }
 
         /// <summary>
         /// Does the player state need to be updated to the clients.

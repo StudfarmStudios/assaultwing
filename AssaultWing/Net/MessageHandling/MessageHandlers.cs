@@ -261,7 +261,7 @@ namespace AW2.Net.MessageHandling
                 var extraInfo = diffIndex == 0 ? "" : string.Format(", client previous: {0}, server previous: {1}",
                     mess.CanonicalStrings[diffIndex - 1], CanonicalString.CanonicalForms[diffIndex - 1]);
                 Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo + extraInfo);
-                var reply = new ConnectionClosingMessage { Info = "of version mismatch (canonical strings)" };
+                var reply = new ConnectionClosingMessage { Info = "of version mismatch (canonical strings).\nPlease install the latest version from\nwww.assaultwing.com" };
                 connection.Send(reply);
                 net.DropClient(mess.ConnectionID, false);
             }

@@ -13,9 +13,13 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Bot : Gob
     {
-        private const float ROTATION_SPEED = MathHelper.TwoPi / 10; // radians/second
-        private const float TARGET_FIND_RANGE = 500;
-        private static readonly TimeSpan TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.5);
+        private static readonly TimeSpan TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
+
+        [TypeParameter]
+        private float _rotationSpeed; // radians/second
+
+        [TypeParameter]
+        private float _targetFindRange;
 
         [TypeParameter]
         private CanonicalString _weaponName;
@@ -32,6 +36,8 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Bot()
         {
+            _rotationSpeed = MathHelper.TwoPi / 10;
+            _targetFindRange = 500;
             _weaponName = (CanonicalString)"dummyweapontype";
         }
 
@@ -90,7 +96,7 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Arena.TotalTime < _nextTargetUpdate) return;
             _nextTargetUpdate = Arena.TotalTime + TARGET_UPDATE_INTERVAL;
-            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, TARGET_FIND_RANGE, TargetSelection.SectorType.FullCircle);
+            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _targetFindRange, TargetSelection.SectorType.FullCircle);
             if (newTarget == null || newTarget.Owner == Owner)
                 Target = null;
             else
@@ -103,7 +109,7 @@ namespace AW2.Game.Gobs
         private void Aim()
         {
             if (Target == null) return;
-            var rotationStep = Game.PhysicsEngine.ApplyChange(ROTATION_SPEED, Game.GameTime.ElapsedGameTime);
+            var rotationStep = Game.PhysicsEngine.ApplyChange(_rotationSpeed, Game.GameTime.ElapsedGameTime);
             Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, (Target.Pos - Pos).Angle(), rotationStep);
         }
 

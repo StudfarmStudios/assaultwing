@@ -11,6 +11,8 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
+  <rotationSpeed>0.8</rotationSpeed>
+  <targetFindRange>600</targetFindRange>
   <weaponName>bot rockets</weaponName>
   <modelName>clustermine</modelName>
   <movable>true</movable>

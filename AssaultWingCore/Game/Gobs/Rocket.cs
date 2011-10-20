@@ -64,15 +64,16 @@ namespace AW2.Game.Gobs
         /// </summary>
         private TimeSpan _thrustEndTime;
 
-        private TimeSpan _lastFindTarget;
+        private TimeSpan _nextFindTarget;
         private GobTrackerItem _targetTracker;
+        private LazyProxy<int, Gob> _targetProxy;
 
         #endregion Rocket fields
 
         public float TargetTurnSpeed { get { return _targetTurnSpeed; } }
-        public new Player Owner { get { return base.Owner as Player; } }
+        public bool IsThrusting { get { return Arena.TotalTime < _thrustEndTime; } }
+        public Player PlayerOwner { get { return Owner as Player; } }
         private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
-        private LazyProxy<int, Gob> _targetProxy;
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -99,14 +100,19 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _thrustEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_thrustDuration);
+            // Avoid choosing the initial target on the first frame. This helps the case
+            // where the rocket was shot from the owner's position (when the owner doesn't
+            // have weapon barrels marked in its 3D model). Otherwise the rocket will
+            // target the owner because it's so close.
+            _nextFindTarget = Arena.TotalTime + TimeSpan.FromSeconds(0.1);
         }
 
         public override void Update()
         {
             CheckLoseTarget();
-            UpdateTarget();
-            if (Arena.TotalTime < _thrustEndTime)
+            if (IsThrusting)
             {
+                UpdateTarget();
                 if (Target != null)
                 {
                     var predictedTargetPos = PredictPositionDecent(Target);
@@ -120,11 +126,8 @@ namespace AW2.Game.Gobs
                 if (_targetTracker != null)
                     RemoveGobTrackers();
             }
-
             base.Update();
-
-            if (Arena.TotalTime >= _thrustEndTime)
-                SetExhaustEffectsEnabled(false);
+            if (!IsThrusting) SetExhaustEffectsEnabled(false);
         }
 
         public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
@@ -228,8 +231,8 @@ namespace AW2.Game.Gobs
 
         private void UpdateTarget()
         {
-            if (_lastFindTarget + FIND_TARGET_INTERVAL > Arena.TotalTime) return;
-            _lastFindTarget = Arena.TotalTime;
+            if (_nextFindTarget > Arena.TotalTime) return;
+            _nextFindTarget = Arena.TotalTime + FIND_TARGET_INTERVAL;
             var oldTarget = Target;
             var newBestTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _findTargetRange);
             if (newBestTarget != null &&
@@ -253,7 +256,7 @@ namespace AW2.Game.Gobs
         private void RemoveGobTrackers()
         {
             if (_targetTracker == null) return;
-            if (Owner != null) Owner.GobTrackerItems.Remove(_targetTracker);
+            if (PlayerOwner != null) PlayerOwner.GobTrackerItems.Remove(_targetTracker);
             if (_targetTracker.Gob != null)
             {
                 var targetPlayerOwner = _targetTracker.Gob.Owner as Player;
@@ -271,7 +274,7 @@ namespace AW2.Game.Gobs
                 StickToBorders = false,
                 ShowWhileTargetOnScreen = true,
             };
-            if (Owner != null) Owner.GobTrackerItems.Add(_targetTracker);
+            if (PlayerOwner != null) PlayerOwner.GobTrackerItems.Add(_targetTracker);
             var targetPlayerOwner = Target.Owner as Player;
             if (targetPlayerOwner != null) targetPlayerOwner.GobTrackerItems.Add(_targetTracker);
         }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using AW2.Game.GobUtils;
-using Microsoft.Xna.Framework;
 
 namespace AW2.Game.Gobs
 {
@@ -13,13 +13,19 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Bot : Gob
     {
+        private const float ROTATION_SPEED = MathHelper.TwoPi / 10; // radians/second
+        private const float TARGET_FIND_RANGE = 500;
+        private static readonly TimeSpan TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.5);
+
         [TypeParameter]
         private CanonicalString _weaponName;
 
         private Weapon _weapon;
-        private float _rotationSpeed; // radians/second
+        private LazyProxy<int, Gob> _targetProxy;
+        private TimeSpan _nextTargetUpdate;
 
         public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
+        private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
 
         /// <summary>
         /// Only for deserialization.
@@ -41,13 +47,12 @@ namespace AW2.Game.Gobs
             _weapon = Weapon.Create(_weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
-            if (Game.NetworkMode != Core.NetworkMode.Client)
-                _rotationSpeed = RandomHelper.GetRandomSign() * (MathHelper.TwoPi / 10 + RandomHelper.GetRandomFloat(-MathHelper.TwoPi / 100, MathHelper.TwoPi / 100));
         }
 
         public override void Update()
         {
             base.Update();
+            UpdateTarget();
             Aim();
             Shoot();
         }
@@ -60,9 +65,10 @@ namespace AW2.Game.Gobs
             checked
             {
                 base.Serialize(writer, mode);
-                if (mode.HasFlag(SerializationModeFlags.ConstantData))
+                if (mode.HasFlag(SerializationModeFlags.VaryingData))
                 {
-                    writer.Write((float)_rotationSpeed);
+                    int targetID = Target != null ? Target.ID : Gob.INVALID_ID;
+                    writer.Write((short)targetID);
                 }
             }
         }
@@ -71,20 +77,40 @@ namespace AW2.Game.Gobs
         {
             base.Deserialize(reader, mode, framesAgo);
             if (Owner != null) Owner.SeizeBot(this);
-            if (mode.HasFlag(SerializationModeFlags.ConstantData))
+            if (mode.HasFlag(SerializationModeFlags.VaryingData))
             {
-                _rotationSpeed = reader.ReadSingle();
+                int targetID = reader.ReadInt16();
+                _targetProxy = new LazyProxy<int, Gob>(FindGob);
+                _targetProxy.SetData(targetID);
+            }
+        }
+
+        private void UpdateTarget()
+        {
+            if (Game.NetworkMode == Core.NetworkMode.Client) return;
+            if (Arena.TotalTime < _nextTargetUpdate) return;
+            _nextTargetUpdate = Arena.TotalTime + TARGET_UPDATE_INTERVAL;
+            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, TARGET_FIND_RANGE, TargetSelection.SectorType.FullCircle);
+            if (newTarget == null || newTarget.Owner == Owner)
+                Target = null;
+            else
+            {
+                Target = newTarget;
+                if (Game.NetworkMode == Core.NetworkMode.Server) ForcedNetworkUpdate = true;
             }
         }
 
         private void Aim()
         {
-            Rotation += _rotationSpeed * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            if (Target == null) return;
+            var rotationStep = Game.PhysicsEngine.ApplyChange(ROTATION_SPEED, Game.GameTime.ElapsedGameTime);
+            Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, (Target.Pos - Pos).Angle(), rotationStep);
         }
 
         private void Shoot()
         {
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
+            if (Target == null) return;
             _weapon.TryFire(new UI.ControlState(1, true));
         }
     }

@@ -27,10 +27,17 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _shootRange;
         [TypeParameter]
+        private float _optimalTargetDistance;
+        [TypeParameter]
+        private float _thrustForce;
+        [TypeParameter]
+        private float _maxSpeed; // TODO: Extract the whole thruster thingy (implemented in Bot, Ship, Rocket); fields, force application, pengs.
+        [TypeParameter]
         private CanonicalString _weaponName;
 
         private Weapon _weapon;
         private LazyProxy<int, Gob> _targetProxy;
+        private PIDController _thrustController;
         private TimeSpan _nextMoveTargetUpdate;
         private TimeSpan _nextAimTargetUpdate;
 
@@ -45,11 +52,14 @@ namespace AW2.Game.Gobs
             _rotationSpeed = MathHelper.TwoPi / 10;
             _aimRange = 700;
             _shootRange = 500;
+            _optimalTargetDistance = 400;
+            _thrustForce = 50000;
+            _maxSpeed = 150;
             _weaponName = (CanonicalString)"dummyweapontype";
         }
 
         public Bot(CanonicalString typeName)
-           : base(typeName)
+            : base(typeName)
         {
             Gravitating = false;
         }
@@ -60,6 +70,13 @@ namespace AW2.Game.Gobs
             _weapon = Weapon.Create(_weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
+            _thrustController = new PIDController(() => _optimalTargetDistance, () => Target == null ? 0 : Vector2.Distance(Target.Pos, Pos))
+            {
+                ProportionalGain = 2,
+                IntegralGain = 0,
+                DerivativeGain = 0,
+                OutputMaxAmplitude = 200,
+            };
         }
 
         public override void Update()
@@ -67,6 +84,7 @@ namespace AW2.Game.Gobs
             base.Update();
             UpdateMoveTarget();
             UpdateAimTarget();
+            MoveAround();
             Aim();
             Shoot();
         }
@@ -124,9 +142,18 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == Core.NetworkMode.Server && oldTarget != newTarget) ForcedNetworkUpdate = true;
         }
 
+        private void MoveAround()
+        {
+            if (Target == null || Target.IsHidden) return;
+            var trip = Target.Pos - Pos;
+            _thrustController.Compute();
+            var force = -_thrustForce * _thrustController.Output / _thrustController.OutputMaxAmplitude * Vector2.Normalize(trip);
+            Game.PhysicsEngine.ApplyLimitedForce(this, force, _maxSpeed, Game.GameTime.ElapsedGameTime);
+        }
+
         private void Aim()
         {
-            if (Target == null) return;
+            if (Target == null || Target.IsHidden) return;
             var rotationStep = Game.PhysicsEngine.ApplyChange(_rotationSpeed, Game.GameTime.ElapsedGameTime);
             Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, (Target.Pos - Pos).Angle(), rotationStep);
         }

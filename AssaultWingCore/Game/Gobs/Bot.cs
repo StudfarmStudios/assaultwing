@@ -11,22 +11,28 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// Semi-intellectual armed flying gob.
     /// </summary>
+    /// <remarks>
+    /// Locks on to an enemy for a few seconds, moves toward it, and looks for nearby targets meanwhile.
+    /// A nearby target may replace the locked target.
+    /// </remarks>
     public class Bot : Gob
     {
-        private static readonly TimeSpan TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
+        private static readonly TimeSpan MOVE_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(11);
+        private static readonly TimeSpan AIM_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
 
         [TypeParameter]
         private float _rotationSpeed; // radians/second
-
         [TypeParameter]
-        private float _targetFindRange;
-
+        private float _aimRange;
+        [TypeParameter]
+        private float _shootRange;
         [TypeParameter]
         private CanonicalString _weaponName;
 
         private Weapon _weapon;
         private LazyProxy<int, Gob> _targetProxy;
-        private TimeSpan _nextTargetUpdate;
+        private TimeSpan _nextMoveTargetUpdate;
+        private TimeSpan _nextAimTargetUpdate;
 
         public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
         private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
@@ -37,7 +43,8 @@ namespace AW2.Game.Gobs
         public Bot()
         {
             _rotationSpeed = MathHelper.TwoPi / 10;
-            _targetFindRange = 500;
+            _aimRange = 700;
+            _shootRange = 500;
             _weaponName = (CanonicalString)"dummyweapontype";
         }
 
@@ -58,7 +65,8 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            UpdateTarget();
+            UpdateMoveTarget();
+            UpdateAimTarget();
             Aim();
             Shoot();
         }
@@ -91,19 +99,29 @@ namespace AW2.Game.Gobs
             }
         }
 
-        private void UpdateTarget()
+        private void UpdateMoveTarget()
         {
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
-            if (Arena.TotalTime < _nextTargetUpdate) return;
-            _nextTargetUpdate = Arena.TotalTime + TARGET_UPDATE_INTERVAL;
-            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _targetFindRange, TargetSelection.SectorType.FullCircle);
-            if (newTarget == null || newTarget.Owner == Owner)
-                Target = null;
-            else
-            {
-                Target = newTarget;
-                if (Game.NetworkMode == Core.NetworkMode.Server) ForcedNetworkUpdate = true;
-            }
+            if (Arena.TotalTime < _nextMoveTargetUpdate) return;
+            _nextMoveTargetUpdate = Arena.TotalTime + MOVE_TARGET_UPDATE_INTERVAL;
+            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, float.MaxValue, TargetSelection.SectorType.FullCircle, float.MaxValue, 1);
+            var oldTarget = Target;
+            Target = newTarget;
+            if (Game.NetworkMode == Core.NetworkMode.Server && oldTarget != newTarget) ForcedNetworkUpdate = true;
+        }
+
+        private void UpdateAimTarget()
+        {
+            // TODO !!! Extract functionality that is common with UpdateMoveTarget().
+            if (Game.NetworkMode == Core.NetworkMode.Client) return;
+            if (Arena.TotalTime < _nextAimTargetUpdate) return;
+            _nextAimTargetUpdate = Arena.TotalTime + AIM_TARGET_UPDATE_INTERVAL;
+            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _aimRange, TargetSelection.SectorType.FullCircle, float.MaxValue);
+            // If no short range target found, then continue with long range target.
+            if (newTarget == null) return;
+            var oldTarget = Target;
+            Target = newTarget;
+            if (Game.NetworkMode == Core.NetworkMode.Server && oldTarget != newTarget) ForcedNetworkUpdate = true;
         }
 
         private void Aim()
@@ -117,6 +135,7 @@ namespace AW2.Game.Gobs
         {
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Target == null) return;
+            if (Vector2.DistanceSquared(Target.Pos, Pos) > _shootRange * _shootRange) return;
             _weapon.TryFire(new UI.ControlState(1, true));
         }
     }

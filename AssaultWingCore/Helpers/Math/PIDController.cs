@@ -21,6 +21,7 @@ namespace AW2.Helpers
         public float ProportionalGain { get; set; }
         public float IntegralGain { get; set; }
         public float DerivativeGain { get; set; }
+        public float OutputMaxLength { get; set; }
 
         public Func<Vector2> Target { get; private set; }
         public Func<Vector2> Current { get; private set; }
@@ -33,6 +34,7 @@ namespace AW2.Helpers
             ProportionalGain = 0.07f;
             IntegralGain = 0.0005f;
             DerivativeGain = 0.01f;
+            OutputMaxLength = float.MaxValue;
         }
 
         public void Compute()
@@ -41,9 +43,9 @@ namespace AW2.Helpers
             _errorIntegral += error;
             _errorDelta = error - _previousError;
             _previousError = error;
-            Output = ProportionalGain * error +
+            Output = (ProportionalGain * error +
                 IntegralGain * _errorIntegral +
-                DerivativeGain * _errorDelta;
+                DerivativeGain * _errorDelta).Clamp(0, OutputMaxLength);
         }
 
         /// <summary>

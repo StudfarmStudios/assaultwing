@@ -49,6 +49,7 @@ namespace AW2.Graphics
                 ProportionalGain = 2,
                 IntegralGain = 0,
                 DerivativeGain = 0,
+                OutputMaxLength = 1200,
             };
             AddOverlayComponent(new MiniStatusOverlay(this));
             AddOverlayComponent(new CombatLogOverlay(this));
@@ -69,8 +70,7 @@ namespace AW2.Graphics
             _lookAtController.Compute();
             var VIEW_MASS = 0.05f;
             var VIEW_DRAG = 0.5f;
-            var CONTROLLER_LIMIT = 1200;
-            var lookAtAcceleration = (_lookAtController.Output.Clamp(0, CONTROLLER_LIMIT) - VIEW_DRAG * _lookAtSpeed) / VIEW_MASS;
+            var lookAtAcceleration = (_lookAtController.Output - VIEW_DRAG * _lookAtSpeed) / VIEW_MASS;
             _lookAtSpeed += lookAtAcceleration / Game.TargetFPS;
             CurrentLookAt += _lookAtSpeed / Game.TargetFPS;
         }

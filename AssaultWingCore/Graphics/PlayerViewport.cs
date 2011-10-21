@@ -14,7 +14,7 @@ namespace AW2.Graphics
     {
         private Player _player;
         private GobTrackerOverlay _gobTrackerOverlay;
-        private PIDController _lookAtController;
+        private PIDController2 _lookAtController;
         private Vector2 _lookAtSpeed;
         private Vector2 _lastLookAtTarget;
 
@@ -44,12 +44,12 @@ namespace AW2.Graphics
         {
             _player = player;
             _shakeSign = -1;
-            _lookAtController = new PIDController(() => LookAtTarget, () => CurrentLookAt)
+            _lookAtController = new PIDController2(() => LookAtTarget, () => CurrentLookAt)
             {
                 ProportionalGain = 2,
                 IntegralGain = 0,
                 DerivativeGain = 0,
-                OutputMaxLength = 1200,
+                OutputMaxAmplitude = 1200,
             };
             AddOverlayComponent(new MiniStatusOverlay(this));
             AddOverlayComponent(new CombatLogOverlay(this));

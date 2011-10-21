@@ -122,7 +122,7 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Arena.TotalTime < _nextMoveTargetUpdate) return;
             _nextMoveTargetUpdate = Arena.TotalTime + MOVE_TARGET_UPDATE_INTERVAL;
-            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, float.MaxValue, TargetSelection.SectorType.FullCircle, float.MaxValue, 1);
+            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, float.MaxValue, MathHelper.Pi, float.MaxValue, 0);
             var oldTarget = Target;
             Target = newTarget;
             if (Game.NetworkMode == Core.NetworkMode.Server && oldTarget != newTarget) ForcedNetworkUpdate = true;
@@ -134,7 +134,7 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Arena.TotalTime < _nextAimTargetUpdate) return;
             _nextAimTargetUpdate = Arena.TotalTime + AIM_TARGET_UPDATE_INTERVAL;
-            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _aimRange, TargetSelection.SectorType.FullCircle, float.MaxValue);
+            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _aimRange, MathHelper.Pi, float.MaxValue);
             // If no short range target found, then continue with long range target.
             if (newTarget == null) return;
             var oldTarget = Target;

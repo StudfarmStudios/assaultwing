@@ -11,8 +11,6 @@ namespace AW2.Game.GobUtils
     /// </summary>
     public class TargetSelection
     {
-        public enum SectorType { HalfCircle, FullCircle };
-
         /// <summary>
         /// Chooses a target, preferring those that are
         /// 1. enemies or at least not friends, and
@@ -20,7 +18,7 @@ namespace AW2.Game.GobUtils
         /// 3. close
         /// </summary>
         public static Gob ChooseTarget(IEnumerable<Gob> candidates, Gob source, float direction, float maxRange,
-            SectorType sector = SectorType.HalfCircle, float friendlyWeight = 5, float aheadWeight = 5)
+            float maxAngle = MathHelper.PiOver2, float friendlyWeight = 5, float angleWeight = 5)
         {
             // TODO !!! Turn into an object method; most parameters turn into properties.
             var targets =
@@ -29,12 +27,12 @@ namespace AW2.Game.GobUtils
                 let ownerWeight = gob.Owner == source.Owner ? friendlyWeight : gob.Owner == null ? 1f : 0.5f
                 let relativePos = (gob.Pos - source.Pos).Rotate(-direction)
                 let distanceSquared = relativePos.LengthSquared()
-                let totalWeight = ownerWeight * (Math.Abs(relativePos.X) + aheadWeight * Math.Abs(relativePos.Y))
                 where distanceSquared <= maxRange * maxRange
-                where sector == SectorType.HalfCircle ? relativePos.X >= 0 : true
+                let targetAngle = Math.Abs(relativePos.Angle())
+                where targetAngle <= maxAngle
+                let totalWeight = ownerWeight * (1 + angleWeight * targetAngle)
                 where totalWeight < float.MaxValue
                 orderby totalWeight ascending
-                // FIXME !!! aheadWeight doesn't work for SectorType.FullCircle when target is behind us
                 select gob;
             return targets.FirstOrDefault();
         }

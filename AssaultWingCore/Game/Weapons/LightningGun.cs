@@ -28,6 +28,8 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private float _chainLinkRangeMultiplier;
 
+        private TargetSelector _targetSelector;
+
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
@@ -40,6 +42,7 @@ namespace AW2.Game.Weapons
         public LightningGun(CanonicalString typeName)
             : base(typeName)
         {
+            _targetSelector = new TargetSelector(0); // maxRange is set later
         }
 
         protected override void ShootImpl()
@@ -49,12 +52,12 @@ namespace AW2.Game.Weapons
 
         public IEnumerable<Gob> FindTargets(IEnumerable<Gob> potentialTargets)
         {
-            Gob current = Owner;
+            var current = Owner;
             var direction = Owner.Rotation;
-            var range = _range;
+            _targetSelector.MaxRange = _range;
             for (int i = 0; i < LIGHTNING_CHAIN_LENGTH_MAX; i++)
             {
-                var target = TargetSelection.ChooseTarget(potentialTargets, current, direction, range);
+                var target = _targetSelector.ChooseTarget(potentialTargets, current, direction);
                 if (target == null)
                 {
                     if (i == 0) yield return null;
@@ -63,7 +66,7 @@ namespace AW2.Game.Weapons
                 yield return target;
                 direction = (target.Pos - current.Pos).Angle();
                 current = target;
-                range *= _chainLinkRangeMultiplier;
+                _targetSelector.MaxRange *= _chainLinkRangeMultiplier;
             }
         }
 

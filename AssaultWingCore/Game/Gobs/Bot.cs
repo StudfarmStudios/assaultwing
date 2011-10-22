@@ -40,6 +40,8 @@ namespace AW2.Game.Gobs
         private PIDController _thrustController;
         private TimeSpan _nextMoveTargetUpdate;
         private TimeSpan _nextAimTargetUpdate;
+        private TargetSelector _aimTargetSelector;
+        private TargetSelector _moveTargetSelector;
 
         public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
         private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
@@ -76,6 +78,17 @@ namespace AW2.Game.Gobs
                 IntegralGain = 0,
                 DerivativeGain = 0,
                 OutputMaxAmplitude = 200,
+            };
+            _aimTargetSelector = new TargetSelector(_aimRange)
+            {
+                MaxAngle = MathHelper.Pi,
+                FriendlyWeight = float.MaxValue,
+            };
+            _moveTargetSelector = new TargetSelector(float.MaxValue)
+            {
+                MaxAngle = MathHelper.Pi,
+                FriendlyWeight = float.MaxValue,
+                AngleWeight = 0,
             };
         }
 
@@ -122,7 +135,7 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Arena.TotalTime < _nextMoveTargetUpdate) return;
             _nextMoveTargetUpdate = Arena.TotalTime + MOVE_TARGET_UPDATE_INTERVAL;
-            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, float.MaxValue, MathHelper.Pi, float.MaxValue, 0);
+            var newTarget = _moveTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
             var oldTarget = Target;
             Target = newTarget;
             if (Game.NetworkMode == Core.NetworkMode.Server && oldTarget != newTarget) ForcedNetworkUpdate = true;
@@ -134,7 +147,7 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Arena.TotalTime < _nextAimTargetUpdate) return;
             _nextAimTargetUpdate = Arena.TotalTime + AIM_TARGET_UPDATE_INTERVAL;
-            var newTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _aimRange, MathHelper.Pi, float.MaxValue);
+            var newTarget = _aimTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
             // If no short range target found, then continue with long range target.
             if (newTarget == null) return;
             var oldTarget = Target;

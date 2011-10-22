@@ -64,6 +64,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         private TimeSpan _thrustEndTime;
 
+        private TargetSelector _targetSelector;
         private TimeSpan _nextFindTarget;
         private GobTrackerItem _targetTracker;
         private LazyProxy<int, Gob> _targetProxy;
@@ -99,6 +100,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            _targetSelector = new TargetSelector(_findTargetRange);
             _thrustEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_thrustDuration);
             // Avoid choosing the initial target on the first frame. This helps the case
             // where the rocket was shot from the owner's position (when the owner doesn't
@@ -234,7 +236,7 @@ namespace AW2.Game.Gobs
             if (_nextFindTarget > Arena.TotalTime) return;
             _nextFindTarget = Arena.TotalTime + FIND_TARGET_INTERVAL;
             var oldTarget = Target;
-            var newBestTarget = TargetSelection.ChooseTarget(Game.DataEngine.Minions, this, Rotation, _findTargetRange);
+            var newBestTarget = _targetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
             if (newBestTarget != null &&
                 (newBestTarget.Owner == null || newBestTarget.Owner == Owner) &&
                 RandomHelper.GetRandomFloat() < 0.9)

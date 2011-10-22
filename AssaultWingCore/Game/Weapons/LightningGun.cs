@@ -28,7 +28,7 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private float _chainLinkRangeMultiplier;
 
-        private TargetSelector _targetSelector;
+        private TargetSelector _targetSelector = new TargetSelector(0); // maxRange is set later;
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -42,7 +42,6 @@ namespace AW2.Game.Weapons
         public LightningGun(CanonicalString typeName)
             : base(typeName)
         {
-            _targetSelector = new TargetSelector(0); // maxRange is set later
         }
 
         protected override void ShootImpl()

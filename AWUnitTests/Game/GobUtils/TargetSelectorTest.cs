@@ -30,6 +30,58 @@ namespace AW2.Game.GobUtils
         }
 
         [Test]
+        public void TestTargetDistanceWeight()
+        {
+            var gobs = new[] { _hostileGob1, _hostileGob2 };
+            _hostileGob1.Pos = new Vector2(100, 0);
+            _hostileGob2.Pos = new Vector2(110, 0);
+            Assert.AreSame(_hostileGob1, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _hostileGob2.Pos = Vector2.Zero;
+            Assert.AreSame(_hostileGob2, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _hostileGob2.Pos = new Vector2(10000, 0);
+            Assert.AreSame(_hostileGob1, _targetSelector.ChooseTarget(gobs, _source, 0));
+        }
+
+        [Test]
+        public void TestOwnerWeight()
+        {
+            var gobs = new[] { _source, _hostileGob1, _neutralGob, _friendlyGob };
+            _hostileGob1.Pos = _neutralGob.Pos = _friendlyGob.Pos = new Vector2(100, 0);
+
+            // Test default weights; hostile preferred over neutral preferred over friendly in roughly 0.5:1:5 proportion.
+            Assert.AreSame(_hostileGob1, _targetSelector.ChooseTarget(gobs, _source, 0));
+
+            _neutralGob.Pos = new Vector2(55, 0);
+            Assert.AreSame(_hostileGob1, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _neutralGob.Pos = new Vector2(45, 0);
+            Assert.AreSame(_neutralGob, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _neutralGob.Pos = _hostileGob1.Pos;
+
+            _friendlyGob.Pos = new Vector2(15, 0);
+            Assert.AreSame(_hostileGob1, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _friendlyGob.Pos = new Vector2(5, 0);
+            Assert.AreSame(_friendlyGob, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _friendlyGob.Pos = _hostileGob1.Pos;
+
+            // Test setting weights.
+            _targetSelector.FriendlyWeight = 1;
+            _targetSelector.NeutralWeight = 1;
+            _targetSelector.HostileWeight = 1;
+            _neutralGob.Pos = new Vector2(95, 0);
+            Assert.AreSame(_neutralGob, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _neutralGob.Pos = _hostileGob1.Pos;
+            _friendlyGob.Pos = new Vector2(95, 0);
+            Assert.AreSame(_friendlyGob, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _friendlyGob.Pos = _hostileGob1.Pos;
+
+            // Test setting weight to float.MaxValue.
+            _friendlyGob.Pos = Vector2.Zero;
+            Assert.AreSame(_friendlyGob, _targetSelector.ChooseTarget(gobs, _source, 0));
+            _targetSelector.FriendlyWeight = float.MaxValue;
+            Assert.AreNotSame(_friendlyGob, _targetSelector.ChooseTarget(gobs, _source, 0));
+        }
+
+        [Test]
         public void TestTargetAngleWeight()
         {
             _targetSelector.AngleWeight = 2.5f;

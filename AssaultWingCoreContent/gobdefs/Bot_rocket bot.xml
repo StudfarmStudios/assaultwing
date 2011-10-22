@@ -15,8 +15,10 @@
   <aimRange>800</aimRange>
   <shootRange>600</shootRange>
   <optimalTargetDistance>450</optimalTargetDistance>
-  <thrustForce>55000</thrustForce>
-  <maxSpeed>150</maxSpeed>
+  <thruster>
+    <maxForce>55000</maxForce>
+    <maxSpeed>150</maxSpeed>
+  </thruster>
   <weaponName>bot rockets</weaponName>
   <modelName>clustermine</modelName>
   <movable>true</movable>

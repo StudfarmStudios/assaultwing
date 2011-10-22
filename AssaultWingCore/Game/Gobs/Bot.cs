@@ -29,9 +29,7 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _optimalTargetDistance;
         [TypeParameter]
-        private float _thrustForce;
-        [TypeParameter]
-        private float _maxSpeed; // TODO: Extract the whole thruster thingy (implemented in Bot, Ship, Rocket); fields, force application, pengs.
+        private Thruster _thruster;
         [TypeParameter]
         private CanonicalString _weaponName;
 
@@ -55,8 +53,7 @@ namespace AW2.Game.Gobs
             _aimRange = 700;
             _shootRange = 500;
             _optimalTargetDistance = 400;
-            _thrustForce = 50000;
-            _maxSpeed = 150;
+            _thruster = new Thruster();
             _weaponName = (CanonicalString)"dummyweapontype";
         }
 
@@ -69,6 +66,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            _thruster.Owner = this;
             _weapon = Weapon.Create(_weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
@@ -160,8 +158,7 @@ namespace AW2.Game.Gobs
             if (Target == null || Target.IsHidden) return;
             var trip = Target.Pos - Pos;
             _thrustController.Compute();
-            var force = -_thrustForce * _thrustController.Output / _thrustController.OutputMaxAmplitude * Vector2.Normalize(trip);
-            Game.PhysicsEngine.ApplyLimitedForce(this, force, _maxSpeed, Game.GameTime.ElapsedGameTime);
+            _thruster.Thrust(-_thrustController.Output / _thrustController.OutputMaxAmplitude, trip);
         }
 
         private void Aim()

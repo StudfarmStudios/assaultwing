@@ -338,6 +338,7 @@ namespace AW2.Helpers
         [Test]
         public void TestAngle()
         {
+            var DELTA = 0.000001;
             Assert.AreEqual(0, new Vector2(0, 0).Angle());
             Assert.AreEqual(0, new Vector2(0.1f, 0).Angle());
             Assert.AreEqual(0, new Vector2(1, 0).Angle());
@@ -346,7 +347,10 @@ namespace AW2.Helpers
             Assert.AreEqual(MathHelper.PiOver2, new Vector2(0, 1).Angle());
             Assert.AreEqual(-MathHelper.PiOver2, new Vector2(0, -1).Angle());
             Assert.AreEqual(MathHelper.Pi, new Vector2(-1, 0).Angle());
-            Assert.AreEqual(3 * MathHelper.PiOver4, new Vector2(-4, 4).Angle());
+            Assert.AreEqual(MathHelper.PiOver4, new Vector2(4, 4).Angle(), DELTA);
+            Assert.AreEqual(3 * MathHelper.PiOver4, new Vector2(-4, 4).Angle(), DELTA);
+            Assert.AreEqual(-3 * MathHelper.PiOver4, new Vector2(-4, -4).Angle(), DELTA);
+            Assert.AreEqual(-MathHelper.PiOver4, new Vector2(4, -4).Angle(), DELTA);
         }
 
         [Test]

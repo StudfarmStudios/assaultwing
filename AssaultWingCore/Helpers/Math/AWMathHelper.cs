@@ -314,15 +314,16 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Returns the angle of the vector. The X unit vector has angle zero and
+        /// Returns the angle of the vector between -pi and pi. The X unit vector has angle zero and
         /// the positive winding direction is counter-clockwise.
         /// </summary>
         public static float Angle(this Vector2 v)
         {
             float yDivLength = v.X == 0 ? Math.Sign(v.Y) : v.Y / v.Length();
             float asin = (float)Math.Asin(yDivLength);
-            if (v.X < 0) return MathHelper.Pi - asin;
-            return asin;
+            if (v.X >= 0) return asin;
+            if (v.Y >= 0) return MathHelper.Pi - asin;
+            return -MathHelper.Pi - asin;
         }
 
         /// <summary>

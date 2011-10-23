@@ -225,6 +225,7 @@ namespace AW2.Game
         private BoundingSphere _drawBounds;
 
         private int[] _barrelBoneIndices;
+        private Vector2 _previousMove;
 
         #endregion Fields for all gobs
 
@@ -303,7 +304,6 @@ namespace AW2.Game
         public int StaticID { get { return _staticID; } set { _staticID = value; } }
 
         public AssaultWingCore Game { get; set; }
-
         public Arena Arena { get; set; }
 
         /// <summary>
@@ -312,6 +312,14 @@ namespace AW2.Game
         /// independently on a client.
         /// </summary>
         public virtual bool IsRelevant { get { return true; } }
+        public bool MayBeDifficultToPredictOnClient
+        {
+            get
+            {
+                return Vector2.DistanceSquared(_previousMove, Move) > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF * 0.95f
+                    && _birthTime + TimeSpan.FromSeconds(0.1) < Arena.TotalTime;
+            }
+        }
 
         public bool IsDisposed { get; private set; }
         public bool IsDamageable
@@ -423,7 +431,7 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Get or set the gob's movement vector.
+        /// The gob's movement in meters/second.
         /// </summary>
         public virtual Vector2 Move { get; set; }
 
@@ -778,6 +786,8 @@ namespace AW2.Game
         /// </summary>
         public virtual void Update()
         {
+            if (IsRelevant && MayBeDifficultToPredictOnClient) ForcedNetworkUpdate = true;
+            _previousMove = Move;
             Arena.Move(this, Game.TargetElapsedTime, allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
             DrawPosOffset *= 0.95f; // reduces the offset to less than 5 % in 60 updates
             DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);

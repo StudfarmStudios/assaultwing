@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Rocket">
   <impactDamage>200</impactDamage>
-  <thrustForce>75000</thrustForce>
+  <thruster>
+    <maxForce>75000</maxForce>
+    <maxSpeed>370</maxSpeed>
+    <exhaustEngineNames>
+      <Item>windlord engine 1</Item>
+      <Item>windlord engine 2</Item>
+    </exhaustEngineNames>
+  </thruster>
+  <exhaustEngineNames/>
   <thrustDuration>3.5</thrustDuration>
-  <maxSpeed>370</maxSpeed>
   <fallTurnSpeed>1</fallTurnSpeed>
   <targetTurnSpeed>2</targetTurnSpeed>
   <findTargetRange>1000</findTargetRange>
@@ -22,15 +29,10 @@
   <maxDamage>100</maxDamage>
   <movable>true</movable>
   <birthGobTypes>
-    <!--<Item>rocket glow</Item> -->
   </birthGobTypes>
   <deathGobTypes>
     <Item>berserker explosion</Item>
   </deathGobTypes>
-  <exhaustEngineNames>
-    <Item>windlord engine 1</Item>
-    <Item>windlord engine 2</Item>
-  </exhaustEngineNames>
   <collisionAreas>
     <Item>
       <type>PhysicalShot</type>

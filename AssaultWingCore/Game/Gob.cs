@@ -27,12 +27,14 @@ namespace AW2.Game
     /// initialise their type parameter fields by copying them from a template instance.
     /// Template instances are referred to by human-readable names such as "rocket pod".
     /// 
+    /// !!! Thruster >>>
     /// Class Gob manages exhaust engines, i.e. particle engines that produce
     /// engine exhaust fumes or similar. Exhaust engines are created automatically,
     /// provided that the gob's 3D model has bones whose name begins with Thruster
     /// and <b>exhaustEngineNames</b> contains at least one valid particle engine name.
     /// All exhaust engines are set on loop and their position and direction
     /// are set each frame. The subclass should manage other parameters of the engines.
+    /// !!! <<<
     /// 
     /// Class Gob also provides methods required by certain Gob subclasses 
     /// such as those that can be damaged. This serves to keep general code
@@ -226,6 +228,7 @@ namespace AW2.Game
 
         #endregion Fields for all gobs
 
+        // !!! Thruster >>>
         #region Fields for gobs with thrusters
 
         /// <summary>
@@ -242,6 +245,7 @@ namespace AW2.Game
         private bool _exhaustEffectsEnabled = true;
 
         #endregion Fields for gobs with thrusters
+        // !!! <<<
 
         /// <summary>
         /// Collision primitives, translated according to the gob's location.
@@ -690,7 +694,7 @@ namespace AW2.Game
         /// <seealso cref="CreateGob(Gob, Action&lt;Gob&gt;)"/>
         private static Gob CreateGob(Gob runtimeState)
         {
-            Gob gob = (Gob)Clonable.Instantiate(runtimeState.TypeName);
+            var gob = (Gob)Clonable.Instantiate(runtimeState.TypeName);
             if (runtimeState.GetType() != gob.GetType())
                 throw new ArgumentException("Runtime gob of class " + runtimeState.GetType().Name +
                     " has type name \"" + runtimeState.TypeName + "\" which is for class " + gob.GetType().Name);
@@ -758,7 +762,7 @@ namespace AW2.Game
                 TransformUnmovableCollisionAreas(_collisionAreas);
                 CreateBirthGobs();
                 CreateModelBirthGobs();
-                CreateExhaustEngines();
+                CreateExhaustEngines(); // !!! Thruster
             }
             if (!Game.CommandLineOptions.DedicatedServer)
             {
@@ -770,10 +774,8 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Updates the gob according to physical laws.
+        /// Updates the gob's state for another step of game time.
         /// </summary>
-        /// Overriden Update methods should explicitly call this method in order to have 
-        /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
             Arena.Move(this, Game.TargetElapsedTime, allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
@@ -1091,15 +1093,7 @@ namespace AW2.Game
 
         #endregion Gob public methods
 
-        #region Gob methods related to thrusters
-
-        /// <summary>
-        /// Creates exhaust engines for the gob in all thrusters named in its 3D model.
-        /// </summary>
-        /// A subclass should call this method on <b>Activate</b> 
-        /// if it wants to have visible thrusters,
-        /// and then do final adjustments on the newly created <b>exhaustEngines</b>.
-        /// The subclass should regularly <b>Update</b> its <b>exhaustEngines</b>.
+        // !!! Thruster >>>
         private void CreateExhaustEngines()
         {
             var boneIndices = GetNamedPositions("Thruster");
@@ -1119,8 +1113,7 @@ namespace AW2.Game
                     });
             _exhaustEngines = exhaustEngineList.ToArray();
         }
-
-        #endregion Gob methods related to thrusters
+        // !!! <<<
 
         #region Gob miscellaneous protected methods
 
@@ -1132,6 +1125,7 @@ namespace AW2.Game
             return Tuple.Create(gob != null, gob);
         }
 
+        // !!! Thruster >>>
         protected virtual void SetExhaustEffectsEnabled(bool active)
         {
             if (active == _exhaustEffectsEnabled) return;
@@ -1142,6 +1136,7 @@ namespace AW2.Game
                 else
                     exhaustEngine.Emitter.Pause();
         }
+        // !!! <<<
 
         /// <summary>
         /// Copies a transform of each bone in a model relative to all parent bones of the bone into a given array.
@@ -1392,9 +1387,6 @@ namespace AW2.Game
 
         #region IConsistencyCheckable and Clonable Members
 
-        /// <summary>
-        /// Called on a cloned object after the cloning.
-        /// </summary>
         public override void Cloned()
         {
             foreach (var area in _collisionAreas) area.Owner = this;

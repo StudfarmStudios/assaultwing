@@ -23,23 +23,14 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _impactDamage;
 
-        /// <summary>
-        /// Maximum force of thrust of the rocket, measured in Newtons.
-        /// </summary>
         [TypeParameter]
-        private float _thrustForce;
+        private Thruster _thruster;
 
         /// <summary>
         /// Duration of thrust, measured in seconds.
         /// </summary>
         [TypeParameter]
         private float _thrustDuration;
-
-        /// <summary>
-        /// Rocket's maximum speed reachable by thrust, measured in meters per second.
-        /// </summary>
-        [TypeParameter]
-        private float _maxSpeed;
 
         /// <summary>
         /// Maximum turning speed of the rocket when falling without thrusting, measured in radians per second.
@@ -82,9 +73,8 @@ namespace AW2.Game.Gobs
         public Rocket()
         {
             _impactDamage = 100;
-            _thrustForce = 100;
+            _thruster = new Thruster();
             _thrustDuration = 2;
-            _maxSpeed = 400;
             _fallTurnSpeed = 5;
             _targetTurnSpeed = 5;
             _findTargetRange = 800;
@@ -100,6 +90,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            _thruster.Activate(owner: this, enable: true);
             _targetSelector = new TargetSelector(_findTargetRange);
             _thrustEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_thrustDuration);
             // Avoid choosing the initial target on the first frame. This helps the case
@@ -129,7 +120,7 @@ namespace AW2.Game.Gobs
                     RemoveGobTrackers();
             }
             base.Update();
-            if (!IsThrusting) SetExhaustEffectsEnabled(false);
+            if (!IsThrusting) _thruster.SetExhaustEffectsEnabled(false);
         }
 
         public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
@@ -199,7 +190,7 @@ namespace AW2.Game.Gobs
             float distance = trip.Length();
             var unitTowardsTarget = trip / distance;
             var targetEscapeMove = unitTowardsTarget * Vector2.Dot(Target.Move, unitTowardsTarget);
-            var rocketChaseMove = unitTowardsTarget * _maxSpeed;
+            var rocketChaseMove = unitTowardsTarget * _thruster.MaxSpeed;
             var relativeMove = rocketChaseMove - targetEscapeMove;
             float secondsToCollisionEstimate = distance / relativeMove.Length();
             float lookAheadSeconds = MathHelper.Clamp(secondsToCollisionEstimate, 0, 1);
@@ -220,9 +211,7 @@ namespace AW2.Game.Gobs
 
         private void Thrust()
         {
-            var forceVector = _thrustForce * AWMathHelper.GetUnitVector2(Rotation);
-            Game.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed,
-                Game.GameTime.ElapsedGameTime);
+            _thruster.Thrust(1, Rotation);
         }
 
         private void CheckLoseTarget()

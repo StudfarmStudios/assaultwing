@@ -18,6 +18,7 @@
   <thruster>
     <maxForce>55000</maxForce>
     <maxSpeed>150</maxSpeed>
+    <exhaustEngineNames/>
   </thruster>
   <weaponName>bot rockets</weaponName>
   <modelName>clustermine</modelName>

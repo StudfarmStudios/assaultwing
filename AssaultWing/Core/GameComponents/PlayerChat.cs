@@ -21,10 +21,12 @@ namespace AW2.Core.GameComponents
         private EditableText _message;
         private SpriteBatch _spriteBatch;
         private SpriteFont _typingFont;
+        private MessageBeeper _messageBeeper;
 
         private Color TypingColor { get { return Color.White; } }
         private bool IsTyping { get { return _message != null; } }
         private Player ChatPlayer { get { return Game.DataEngine.Players.First(plr => !plr.IsRemote); } }
+        private IEnumerable<MessageContainer.Item> Messages { get { return ChatPlayer.Messages.ReversedChat(); } }
 
         private static Curve g_cursorBlinkCurve;
         private static Curve g_scrollArrowBlinkCurve;
@@ -70,6 +72,7 @@ namespace AW2.Core.GameComponents
             _scrollDownControl = new KeyboardKey(Keys.Down);
             _cursorBlinkStartTime = _game.GameTime.TotalRealTime;
             _scrollArrowGlowStartTime = _game.GameTime.TotalRealTime;
+            _messageBeeper = new MessageBeeper(game, "PlayerMessage", () => Messages.FirstOrDefault());
         }
 
         public override void LoadContent()
@@ -104,6 +107,7 @@ namespace AW2.Core.GameComponents
             {
                 if (_game.ChatStartControl.Pulse) StartWritingMessage();
             }
+            _messageBeeper.BeepOnNewMessage();
         }
 
         public override void Draw()
@@ -163,7 +167,7 @@ namespace AW2.Core.GameComponents
             var messageY = 7;
             var messageLines = IsTyping ? _linesWhenTyping : _linesWhenClosed;
 
-            foreach (var item in ChatPlayer.Messages.ReversedChat().Skip(_scrollPosition).Take(messageLines).Reverse())
+            foreach (var item in Messages.Skip(_scrollPosition).Take(messageLines).Reverse())
             {
                 var preTextSize = _typingFont.MeasureString(item.Message.PreText);
                 var textSize = _typingFont.MeasureString(item.Message.Text);

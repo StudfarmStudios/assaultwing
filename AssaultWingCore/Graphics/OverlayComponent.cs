@@ -57,6 +57,8 @@ namespace AW2.Graphics
             LoadContent();
         }
 
+        public virtual void Update() { }
+
         /// <summary>
         /// Draws the overlay graphics component, correctly aligned in the
         /// graphics device's current viewport.

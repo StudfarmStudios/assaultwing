@@ -184,6 +184,7 @@ namespace AW2.Graphics
         public virtual void Update()
         {
             _previousLookAt = CurrentLookAt;
+            foreach (var component in _overlayComponents) component.Update();
         }
 
         public abstract void Reset(Vector2 lookAtPos);

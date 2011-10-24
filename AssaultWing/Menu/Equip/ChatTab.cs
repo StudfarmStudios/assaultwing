@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,15 +18,16 @@ namespace AW2.Menu.Equip
 
         private static Curve g_cursorBlinkCurve;
         private TimeSpan _cursorBlinkStartTime;
+        private MessageBeeper _messageBeeper;
 
         public override Texture2D TabTexture { get { return Content.TabChatTexture; } }
         public override string HelpText { get { return "Enter sends message, " + BasicHelpText; } }
-        public MessageContainer Messages
+        public IEnumerable<MessageContainer.Item> Messages
         {
             get
             {
-                if (ChatPlayer == null) return new MessageContainer();
-                return ChatPlayer.Messages;
+                if (ChatPlayer == null) return Enumerable.Empty<MessageContainer.Item>();
+                return ChatPlayer.Messages.ReversedChat();
             }
         }
 
@@ -37,8 +39,9 @@ namespace AW2.Menu.Equip
             : base(menuComponent)
         {
             _sendControl = new KeyboardKey(Keys.Enter);
+            // FIXME !!! Memory leak: _message will never be garbage collected because it is referenced by the Window.KeyPress event.
             _message = new EditableText("", 40, new CharacterSet(Content.FontChat.Characters), MenuEngine.Game, () => { });
-            // FIXME !!! Memory leak: _message will never be garbage collected because it referenced by the Window.KeyPress event
+            _messageBeeper = new MessageBeeper(MenuEngine.Game, "PlayerMessage", () => Messages.FirstOrDefault());
 
             g_cursorBlinkCurve = new Curve();
             g_cursorBlinkCurve.Keys.Add(new CurveKey(0, 1));
@@ -58,6 +61,7 @@ namespace AW2.Menu.Equip
                 MenuEngine.Game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
                 _message.Clear();
             }
+            _messageBeeper.BeepOnNewMessage();
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
@@ -74,7 +78,7 @@ namespace AW2.Menu.Equip
             var visibleLines = height / Font.LineSpacing;
             var lineDelta = new Vector2(0, Font.LineSpacing);
             var preTextPos = lowerLeftCorner - view - lineDelta;
-            foreach (var item in Messages.ReversedChat().Take(visibleLines))
+            foreach (var item in Messages.Take(visibleLines))
             {
                 var preTextSize = Font.MeasureString(item.Message.PreText);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);

@@ -134,6 +134,7 @@
     <Compile Include="Game\BotPlayer.cs" />
     <Compile Include="Game\Gobs\Bot.cs" />
     <Compile Include="Game\GobUtils\Thruster.cs" />
+    <Compile Include="Game\MessageBeeper.cs" />
     <Compile Include="Game\MessageContainer.cs" />
     <Compile Include="Game\CollisionArea.cs" />
     <Compile Include="Game\CollisionAreaType.cs" />

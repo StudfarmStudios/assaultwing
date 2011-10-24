@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,6 +20,7 @@ namespace AW2.Graphics.OverlayComponents
         private static Curve g_messageFadeoutCurve;
         private Player _player;
         private SpriteFont _chatBoxFont;
+        private MessageBeeper _messageBeeper;
 
         public override Point Dimensions
         {
@@ -28,6 +30,8 @@ namespace AW2.Graphics.OverlayComponents
                 return new Point(gfx.Viewport.Width, (int)(_chatBoxFont.LineSpacing * VISIBLE_LINES + 2 * SHADOW_THICKNESS));
             }
         }
+
+        private IEnumerable<MessageContainer.Item> Messages { get { return _player.Messages.ReversedCombatLog(); } }
 
         static CombatLogOverlay()
         {
@@ -44,15 +48,7 @@ namespace AW2.Graphics.OverlayComponents
         {
             CustomAlignment = new Vector2(0, 300);
             _player = viewport.Player;
-            // WARNING !!! Attaching this handler to Player.NewMessage may cause a memory leak
-            // in the following situation: Screen is resized which triggers recreation of viewports,
-            // including ChatBoxOverlay. Someone forgets to call Dispose on the AWViewport and
-            // consequently Dispose is not called on ChatBoxOverlay. Then the old ChatBoxOverlay
-            // instance will not be garbage collected because Player.NewMessage is still holding
-            // a reference to it. This does not happen as of 2010-12-12 but future code changes
-            // may introduce a memory leak. A good permanent fix would be to use the weak event
-            // pattern from WPF in Player.NewMessage.
-            _player.Messages.NewMessage += HandleNewPlayerMessage;
+            _messageBeeper = new MessageBeeper(_player.Game, "PlayerMessage", () => Messages.FirstOrDefault());
         }
 
         public override void LoadContent()
@@ -60,16 +56,16 @@ namespace AW2.Graphics.OverlayComponents
             _chatBoxFont = AssaultWingCore.Instance.Content.Load<SpriteFont>("MenuFontBig");
         }
 
-        public override void Dispose()
+        public override void Update()
         {
-            _player.Messages.NewMessage -= HandleNewPlayerMessage;
-            base.Dispose();
+            base.Update();
+            _messageBeeper.BeepOnNewMessage();
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             var messageY = SHADOW_THICKNESS;
-            foreach (var item in _player.Messages.ReversedCombatLog().Take(VISIBLE_LINES))
+            foreach (var item in Messages.Take(VISIBLE_LINES))
             {
                 float alpha = GetMessageAlpha(item);
                 if (alpha == 0) continue;
@@ -86,11 +82,6 @@ namespace AW2.Graphics.OverlayComponents
         private float GetMessageAlpha(MessageContainer.Item item)
         {
             return g_messageFadeoutCurve.Evaluate(item.EntryRealTime.SecondsAgoRealTime());
-        }
-
-        private void HandleNewPlayerMessage(PlayerMessage message)
-        {
-            _player.Game.SoundEngine.PlaySound("PlayerMessage");
         }
     }
 }

@@ -226,7 +226,6 @@ namespace AW2.Core
 
         public override void StartArena()
         {
-            foreach (var player in DataEngine.Spectators) player.InitializeForGameSession();
             Log.Write("Saving settings to file");
             Settings.ToFile();
             if (NetworkMode == NetworkMode.Server)

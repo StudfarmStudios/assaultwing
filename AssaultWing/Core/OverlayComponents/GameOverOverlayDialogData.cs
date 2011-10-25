@@ -67,8 +67,8 @@ namespace AW2.Core.OverlayComponents
                 line++;
                 var column1Pos = new Vector2(textLeftX, textCenter.Y);
                 var textColor =
-                    allPlayersAreLocal ? entry.PlayerColor
-                    : entry.IsRemote ? entry.PlayerColor
+                    allPlayersAreLocal ? entry.Color
+                    : entry.IsRemote ? entry.Color
                     : Color.White;
                 GraphicsEngineImpl.DrawFormattedText(column1Pos, enWidth,
                     string.Format("{0}\t\x5{1}{2}", line.ToOrdinalString(), entry.Name, GetScoreCells(entry.Score, entry.Kills, entry.Deaths)),

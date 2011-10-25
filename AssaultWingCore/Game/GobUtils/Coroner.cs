@@ -164,14 +164,14 @@ namespace AW2.Game.GobUtils
         private void AssignSpecialPhrase()
         {
             if (ScoringPlayer == null) return;
-            if (ScoringPlayer.KillsWithoutDying < 3) return;
+            if (ScoringPlayer.ArenaStatistics.KillsWithoutDying < 3) return;
             var hypePhrase =
-                ScoringPlayer.KillsWithoutDying < 6 ? "is on fire" :
-                ScoringPlayer.KillsWithoutDying < 12 ? "is unstoppable" :
-                ScoringPlayer.KillsWithoutDying < 24 ? "wreaks havoc" :
+                ScoringPlayer.ArenaStatistics.KillsWithoutDying < 6 ? "is on fire" :
+                ScoringPlayer.ArenaStatistics.KillsWithoutDying < 12 ? "is unstoppable" :
+                ScoringPlayer.ArenaStatistics.KillsWithoutDying < 24 ? "wreaks havoc" :
                 "rules everyone";
             var randomOmg = RandomHelper.GetRandomFloat() < 0.6f ? "" : ", " + g_omgs[RandomHelper.GetRandomInt(g_omgs.Length)];
-            _specialPhrase = string.Format("{0} {1} with {2} kills{3}!", ScoringPlayer.Name, hypePhrase, ScoringPlayer.KillsWithoutDying, randomOmg);
+            _specialPhrase = string.Format("{0} {1} with {2} kills{3}!", ScoringPlayer.Name, hypePhrase, ScoringPlayer.ArenaStatistics.KillsWithoutDying, randomOmg);
         }
     }
 }

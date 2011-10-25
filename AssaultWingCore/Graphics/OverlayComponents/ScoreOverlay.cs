@@ -45,7 +45,7 @@ namespace AW2.Graphics.OverlayComponents
                 var scorePos = textTopLeft + new Vector2(playerNameWidth, line * SCORE_LINE_SPACING - 3);
                 var killsPos = textTopLeft + new Vector2(playerNameWidth + scoreWidth, line * SCORE_LINE_SPACING);
                 var deathsPos = textTopLeft + new Vector2(playerNameWidth + scoreWidth + scoreEntryWidth, line * SCORE_LINE_SPACING);
-                var rowColor = _player.ID == entry.SpectatorID ? Color.White : entry.PlayerColor;
+                var rowColor = _player.ID == entry.SpectatorID ? Color.White : entry.Color;
 
                 ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Name, playerNamePos.Round(), rowColor, 0.9f, 1);
                 ModelRenderer.DrawBorderedText(spriteBatch, Content.ScoreFont, entry.Score.ToString(), scorePos.Round(), rowColor, 0.9f, 1);

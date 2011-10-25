@@ -88,13 +88,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Initialises the spectator for a game session, that is, for the first arena.
-        /// </summary>
-        public virtual void InitializeForGameSession()
-        {
-        }
-
-        /// <summary>
         /// Updates the spectator.
         /// </summary>
         public virtual void Update()

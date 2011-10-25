@@ -90,7 +90,7 @@ namespace AW2.Graphics.OverlayComponents
 
         private void DrawPlayerLives(SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < _player.Lives; ++i)
+            for (int i = 0; i < _player.ArenaStatistics.Lives; ++i)
                 spriteBatch.Draw(_iconShipTexture,
                     new Vector2(_statusDisplayTexture.Width +
                                 _barShipTexture.Width + (8 + i * 10) * 2,

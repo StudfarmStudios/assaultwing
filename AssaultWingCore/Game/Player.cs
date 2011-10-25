@@ -99,8 +99,6 @@ namespace AW2.Game
 
         public List<GobTrackerItem> GobTrackerItems { get; private set; }
 
-        public int KillsWithoutDying { get; set; }
-
         public override bool NeedsViewport { get { return !IsRemote; } }
         public override IEnumerable<Gob> Minions { get { if (Ship != null) yield return Ship; } }
 
@@ -114,13 +112,6 @@ namespace AW2.Game
         /// The ship the player is controlling in the game arena.
         /// </summary>
         public Ship Ship { get; set; }
-
-        /// <summary>
-        /// If positive, how many reincarnations the player has left.
-        /// If negative, the player has infinite lives.
-        /// If zero, the player cannot play.
-        /// </summary>
-        public int Lives { get; set; }
 
         /// <summary>
         /// Amount of shake the player is suffering right now, in radians.
@@ -210,13 +201,12 @@ namespace AW2.Game
         {
             get
             {
-                if (!(Ship == null && Lives != 0 && _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)) return false;
+                if (!(Ship == null && ArenaStatistics.Lives != 0 && _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)) return false;
                 return !(IsAllowedToCreateShip != null && !IsAllowedToCreateShip());
             }
         }
 
-        public int Kills { get; private set; }
-        public int Deaths { get; private set; }
+        public SpectatorArenaStatistics ArenaStatistics { get; private set; }
 
         #endregion Player properties
 
@@ -306,6 +296,7 @@ namespace AW2.Game
             ExtraDeviceName = extraDeviceName;
             Controls = controls;
             Messages = new MessageContainer();
+            ArenaStatistics = new SpectatorArenaStatistics(game.DataEngine.GameplayMode);
             Color = Color.Gray;
             BonusActions = new List<BonusAction>();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
@@ -338,19 +329,13 @@ namespace AW2.Game
             return new AW2.Graphics.PlayerViewport(this, onScreen, () => PostprocessEffectNames);
         }
 
-        public override void InitializeForGameSession()
-        {
-            Kills = Deaths = 0;
-        }
-
         public override void ResetForArena()
         {
             base.ResetForArena();
             _shipSpawnTime = MOURNING_DELAY;
             _shakeUpdateTime = TimeSpan.Zero;
             _relativeShakeDamage = 0;
-            KillsWithoutDying = 0;
-            Lives = Game.DataEngine.GameplayMode.StartLives;
+            ArenaStatistics = new SpectatorArenaStatistics(Game.DataEngine.GameplayMode);
             BonusActions.Clear();
             PostprocessEffectNames.Clear();
             Ship = null;
@@ -394,20 +379,18 @@ namespace AW2.Game
                 checked
                 {
                     base.Serialize(writer, mode);
-                    if ((mode & SerializationModeFlags.ConstantData) != 0)
+                    if (mode.HasFlag(SerializationModeFlags.ConstantData))
                     {
                         writer.Write((CanonicalString)ShipName);
                         writer.Write((CanonicalString)Weapon2Name);
                         writer.Write((CanonicalString)ExtraDeviceName);
                         writer.Write((Color)Color);
                     }
-                    if ((mode & SerializationModeFlags.VaryingData) != 0)
+                    if (mode.HasFlag(SerializationModeFlags.VaryingData))
                     {
                         writer.Write((byte)_deviceUsages);
-                        writer.Write((short)Lives);
-                        writer.Write((short)Kills);
-                        writer.Write((short)Deaths);
                     }
+                    ArenaStatistics.Serialize(writer, mode);
                 }
             }
         }
@@ -415,7 +398,7 @@ namespace AW2.Game
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if (mode.HasFlag(SerializationModeFlags.ConstantData))
             {
                 var newShipName = reader.ReadCanonicalString();
                 var newWeapon2Name = reader.ReadCanonicalString();
@@ -425,14 +408,12 @@ namespace AW2.Game
                 if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
                 if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
             }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            if (mode.HasFlag(SerializationModeFlags.VaryingData))
             {
                 var deviceUsages = (DeviceUsages)reader.ReadByte();
                 if (Ship != null) ApplyDeviceUsages(deviceUsages);
-                Lives = reader.ReadInt16();
-                Kills = reader.ReadInt16();
-                Deaths = reader.ReadInt16();
             }
+            ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }
 
         #endregion Public methods
@@ -493,15 +474,15 @@ namespace AW2.Game
                 case Coroner.DeathTypeType.Suicide:
                     break;
                 case Coroner.DeathTypeType.Kill:
-                    coroner.ScoringPlayer.Kills++;
-                    coroner.ScoringPlayer.KillsWithoutDying++;
+                    coroner.ScoringPlayer.ArenaStatistics.Kills++;
+                    coroner.ScoringPlayer.ArenaStatistics.KillsWithoutDying++;
                     if (Game.NetworkMode == NetworkMode.Server)
                         coroner.ScoringPlayer.MustUpdateToClients = true;
                     break;
             }
-            Deaths++;
-            Lives--;
-            KillsWithoutDying = 0;
+            ArenaStatistics.Deaths++;
+            ArenaStatistics.Lives--;
+            ArenaStatistics.KillsWithoutDying = 0;
         }
 
         private void Die_SendMessages(Coroner coroner)

@@ -4,26 +4,68 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game
 {
+    /// <summary>
+    /// Statistics of one <see cref="Spectator"/> from one <see cref="Arena"/>.
+    /// </summary>
+    public class SpectatorArenaStatistics : INetworkSerializable
+    {
+        /// <summary>
+        /// If positive, how many reincarnations the player has left.
+        /// If negative, the player has infinite lives.
+        /// If zero, the player cannot play.
+        /// </summary>
+        public int Lives { get; set; }
+        public int Kills { get; set; }
+        public int Deaths { get; set; }
+        public int KillsWithoutDying { get; set; }
+
+        public SpectatorArenaStatistics(GameplayMode gameplayMode)
+        {
+            Lives = gameplayMode.StartLives;
+        }
+
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            {
+                writer.Write((short)Lives);
+                writer.Write((short)Kills);
+                writer.Write((short)Deaths);
+            }
+        }
+
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
+        {
+            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            {
+                Lives = reader.ReadInt16();
+                Kills = reader.ReadInt16();
+                Deaths = reader.ReadInt16();
+            }
+        }
+    }
+
     /// <summary>
     /// The entry of one player in a score table.
     /// </summary>
     public class Standing
     {
         public string Name { get; private set; }
-        public Color PlayerColor { get; private set; }
+        public Color Color { get; private set; }
         public bool IsRemote { get; private set; }
         public int Score { get; private set; }
         public int Kills { get; private set; }
         public int Deaths { get; private set; }
         public int SpectatorID { get; private set; }
 
-        public Standing(string name, Color playerColor, bool isRemote, int score, int kills, int deaths, int spectatorID)
+        public Standing(string name, Color color, bool isRemote, int score, int kills, int deaths, int spectatorID)
         {
             Name = name;
-            PlayerColor = playerColor;
+            Color = color;
             IsRemote = isRemote;
             Score = score;
             Kills = kills;
@@ -63,24 +105,25 @@ namespace AW2.Game
             }
         }
 
-        public int CalculateScore(Player player)
+        public int CalculateScore(SpectatorArenaStatistics statistics)
         {
-            return 2 * player.Kills - player.Deaths;
+            return 2 * statistics.Kills - statistics.Deaths;
         }
 
         public IEnumerable<Standing> GetStandings(IEnumerable<Player> players)
         {
             return
                 from p in players
-                let score = CalculateScore(p)
-                orderby score descending, p.Kills descending, p.Name
-                select new Standing(p.Name, p.Color, p.IsRemote, score, p.Kills, p.Deaths, p.ID);
+                let stats = p.ArenaStatistics
+                let score = CalculateScore(stats)
+                orderby score descending, stats.Kills descending, p.Name
+                select new Standing(p.Name, p.Color, p.IsRemote, score, stats.Kills, stats.Deaths, p.ID);
         }
 
         public bool ArenaFinished(Arena arena, IEnumerable<Player> players)
         {
             if (players.Count() < 2) return false;
-            int playersAlive = players.Count(player => player.Lives != 0);
+            int playersAlive = players.Count(player => player.ArenaStatistics.Lives != 0);
             return playersAlive < 2;
         }
     }

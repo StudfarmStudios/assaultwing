@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AW2.Core;
 using AW2.Helpers;
 
 namespace AW2.Game.GobUtils
@@ -22,6 +23,7 @@ namespace AW2.Game.GobUtils
         private string _specialPhrase;
         private SubjectWordProvider[] _subjectNameProviders;
 
+        public AssaultWingCore Game { get { return DamageInfo.Target.Game; } }
         public BoundDamageInfo DamageInfo { get; private set; }
 
         /// <summary>
@@ -125,7 +127,7 @@ namespace AW2.Game.GobUtils
                 }
             };
             if (info.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
-                markAsKill(info.PlayerCause);
+                markAsKill(info.Cause.Owner);
             else if (!info.IgnoreLastDamager && info.Target.LastDamagerTimeout >= info.Time && info.Target.LastDamager != null)
                 markAsKill(info.Target.LastDamager);
             else

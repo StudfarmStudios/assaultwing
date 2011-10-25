@@ -347,7 +347,7 @@ namespace AW2.Game
         /// <summary>
         /// The last player to damage this gob
         /// </summary>
-        public Player LastDamager { get; private set; }
+        public Spectator LastDamager { get; private set; }
 
         /// <summary>
         /// Last time when <see cref="LastDamager"/> is relevant, in game time.
@@ -1252,7 +1252,7 @@ namespace AW2.Game
             var boundInfo = info.Bind(this, Arena.TotalTime);
             if (boundInfo.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
             {
-                LastDamager = boundInfo.PlayerCause;
+                LastDamager = boundInfo.Cause.Owner;
                 LastDamagerTimeout = Arena.TotalTime + TimeSpan.FromSeconds(6);
             }
             DamageLevel = Math.Min(_maxDamage, DamageLevel + damageAmount);

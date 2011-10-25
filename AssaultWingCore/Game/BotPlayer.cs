@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Game.Gobs;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
@@ -48,6 +49,7 @@ namespace AW2.Game
             if (_bots.Contains(bot)) return;
             _bots.Add(bot);
             bot.Owner = this;
+            bot.Death += MinionDeathHandler.OnMinionDeath;
             bot.Death += coroner => _bots.Remove(bot);
         }
 

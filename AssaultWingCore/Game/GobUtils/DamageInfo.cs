@@ -58,7 +58,6 @@ namespace AW2.Game.GobUtils
                     : SourceTypeType.EnemyPlayer;
             }
         }
-        public Player PlayerCause { get { return Cause.Owner as Player; } }
 
         public BoundDamageInfo(DamageInfo info, Gob target, TimeSpan time)
             : base(info)

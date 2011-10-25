@@ -24,7 +24,7 @@ namespace AW2.Core.OverlayComponents
         {
             get
             {
-                if (_standings == null) _standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Players).ToArray();
+                if (_standings == null) _standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators).ToArray();
                 return _standings;
             }
         }
@@ -60,14 +60,14 @@ namespace AW2.Core.OverlayComponents
                 GetScoreCells("Score", "Kills", "Deaths"),
                 (textPos, text) => spriteBatch.DrawString(FontSmall, text, textPos, Color.White));
             AdvanceLine(ref textCenter, FontSmall);
-            var allPlayersAreLocal = Standings.All(entry => !entry.IsRemote);
+            var allSpectatorsAreLocal = Standings.All(entry => !entry.IsRemote);
             int line = 0;
             foreach (var entry in Standings)
             {
                 line++;
                 var column1Pos = new Vector2(textLeftX, textCenter.Y);
                 var textColor =
-                    allPlayersAreLocal ? entry.Color
+                    allSpectatorsAreLocal ? entry.Color
                     : entry.IsRemote ? entry.Color
                     : Color.White;
                 GraphicsEngineImpl.DrawFormattedText(column1Pos, enWidth,
@@ -86,11 +86,6 @@ namespace AW2.Core.OverlayComponents
         private string GetScoreCells(object scoreText, object killsText, object deathsText)
         {
             return string.Format("\t\x16{0}\t\x1c{1}\t\x22{2}", scoreText, killsText, deathsText);
-        }
-
-        private Player GetPlayerOrNull(Standing entry)
-        {
-            return Game.DataEngine.Players.FirstOrDefault(plr => plr.ID == entry.SpectatorID);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace AW2.Core.OverlayComponents
         /// <summary>
         /// Updates the overlay dialog contents and acts on triggered callbacks.
         /// </summary>
-        public virtual void Update()
+        public override void Update()
         {
             if (_firstUpdate == TimeSpan.Zero) _firstUpdate = Game.GameTime.TotalRealTime;
             if (IsCheckingActions && _actions.Any(action => action.Update())) Hide();

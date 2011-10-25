@@ -103,12 +103,6 @@ namespace AW2.Game
         public override IEnumerable<Gob> Minions { get { if (Ship != null) yield return Ship; } }
 
         /// <summary>
-        /// Does the player state need to be updated to the clients.
-        /// For use by game server only.
-        /// </summary>
-        public bool MustUpdateToClients { get; set; }
-
-        /// <summary>
         /// The ship the player is controlling in the game arena.
         /// </summary>
         public Ship Ship { get; set; }
@@ -206,8 +200,6 @@ namespace AW2.Game
             }
         }
 
-        public SpectatorArenaStatistics ArenaStatistics { get; private set; }
-
         #endregion Player properties
 
         #region Events
@@ -296,7 +288,6 @@ namespace AW2.Game
             ExtraDeviceName = extraDeviceName;
             Controls = controls;
             Messages = new MessageContainer();
-            ArenaStatistics = new SpectatorArenaStatistics(game.DataEngine.GameplayMode);
             Color = Color.Gray;
             BonusActions = new List<BonusAction>();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
@@ -335,7 +326,6 @@ namespace AW2.Game
             _shipSpawnTime = MOURNING_DELAY;
             _shakeUpdateTime = TimeSpan.Zero;
             _relativeShakeDamage = 0;
-            ArenaStatistics = new SpectatorArenaStatistics(Game.DataEngine.GameplayMode);
             BonusActions.Clear();
             PostprocessEffectNames.Clear();
             Ship = null;
@@ -390,7 +380,6 @@ namespace AW2.Game
                     {
                         writer.Write((byte)_deviceUsages);
                     }
-                    ArenaStatistics.Serialize(writer, mode);
                 }
             }
         }
@@ -413,7 +402,6 @@ namespace AW2.Game
                 var deviceUsages = (DeviceUsages)reader.ReadByte();
                 if (Ship != null) ApplyDeviceUsages(deviceUsages);
             }
-            ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }
 
         #endregion Public methods
@@ -474,10 +462,10 @@ namespace AW2.Game
                 case Coroner.DeathTypeType.Suicide:
                     break;
                 case Coroner.DeathTypeType.Kill:
-                    coroner.ScoringPlayer.ArenaStatistics.Kills++;
-                    coroner.ScoringPlayer.ArenaStatistics.KillsWithoutDying++;
+                    coroner.ScoringSpectator.ArenaStatistics.Kills++;
+                    coroner.ScoringSpectator.ArenaStatistics.KillsWithoutDying++;
                     if (Game.NetworkMode == NetworkMode.Server)
-                        coroner.ScoringPlayer.MustUpdateToClients = true;
+                        coroner.ScoringSpectator.MustUpdateToClients = true;
                     break;
             }
             ArenaStatistics.Deaths++;
@@ -485,49 +473,52 @@ namespace AW2.Game
             ArenaStatistics.KillsWithoutDying = 0;
         }
 
-        private void Die_SendMessages(Coroner coroner)
+        private static void Die_SendMessages(Coroner coroner)
         {
+            var scoringPlayer = coroner.ScoringSpectator as Player;
+            var killedPlayer = coroner.KilledSpectator as Player;
+            var players = coroner.DamageInfo.Target.Game.DataEngine.Players;
             switch (coroner.DeathType)
             {
                 default: throw new ApplicationException("Unexpected DeathType " + coroner.DeathType);
                 case Coroner.DeathTypeType.Kill:
-                    CreateKillMessage(coroner.ScoringPlayer, Ship.Pos);
-                    coroner.ScoringPlayer.Messages.Add(new PlayerMessage(coroner.MessageToScoringPlayer, PlayerMessage.KILL_COLOR));
-                    Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.DEATH_COLOR));
+                    CreateKillMessage(coroner.ScoringSpectator, coroner.DamageInfo.Target.Pos);
+                    if (scoringPlayer != null) scoringPlayer.Messages.Add(new PlayerMessage(coroner.MessageToScoringPlayer, PlayerMessage.KILL_COLOR));
+                    if (killedPlayer != null) killedPlayer.Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.DEATH_COLOR));
                     break;
                 case Coroner.DeathTypeType.Suicide:
-                    CreateSuicideMessage(this, Ship.Pos);
-                    Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.SUICIDE_COLOR));
+                    CreateSuicideMessage(coroner.KilledSpectator, coroner.DamageInfo.Target.Pos);
+                    killedPlayer.Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.SUICIDE_COLOR));
                     break;
             }
             var bystanderMessage = new PlayerMessage(coroner.MessageToBystander, PlayerMessage.DEFAULT_COLOR);
-            foreach (var plr in coroner.GetBystanders(Game.DataEngine.Players)) plr.Messages.Add(bystanderMessage);
+            foreach (var plr in coroner.GetBystandingPlayers(players)) plr.Messages.Add(bystanderMessage);
             if (coroner.SpecialMessage != null)
             {
                 var specialMessage = new PlayerMessage(coroner.SpecialMessage, PlayerMessage.SPECIAL_KILL_COLOR);
-                foreach (var plr in Game.DataEngine.Players) plr.Messages.Add(specialMessage);
+                foreach (var plr in players) plr.Messages.Add(specialMessage);
             }
         }
 
-        private void CreateSuicideMessage(Player perpetrator, Vector2 pos)
+        private static void CreateSuicideMessage(Spectator perpetrator, Vector2 pos)
         {
             CreateDeathMessage(perpetrator, pos, "b_icon_take_life");
         }
 
-        private void CreateKillMessage(Player perpetrator, Vector2 pos)
+        private static void CreateKillMessage(Spectator perpetrator, Vector2 pos)
         {
             CreateDeathMessage(perpetrator, pos, "b_icon_add_kill");
         }
 
-        private void CreateDeathMessage(Player perpetrator, Vector2 Pos, string iconName)
+        private static void CreateDeathMessage(Spectator perpetrator, Vector2 Pos, string iconName)
         {
-            Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"deathmessage", gob =>
+            Gob.CreateGob<ArenaMessage>(perpetrator.Game, (CanonicalString)"deathmessage", gob =>
             {
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 gob.Message = perpetrator.Name;
                 gob.IconName = iconName;
                 gob.DrawColor = perpetrator.Color;
-                Game.DataEngine.Arena.Gobs.Add(gob);
+                perpetrator.Game.DataEngine.Arena.Gobs.Add(gob);
             });
         }
 

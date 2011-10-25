@@ -22,20 +22,22 @@ namespace AW2.Game.GobUtils
         private string _specialPhrase;
         private SubjectWordProvider[] _subjectNameProviders;
 
+        public BoundDamageInfo DamageInfo { get; private set; }
+
         /// <summary>
         /// The reason of the death.
         /// </summary>
         public DeathTypeType DeathType { get; private set; }
 
         /// <summary>
-        /// The player who gets a frag for the death. May be <c>null</c> if no-one gets a frag.
+        /// The one who gets a frag for the death. May be <c>null</c> if no-one gets a frag.
         /// </summary>
-        public Player ScoringPlayer { get; private set; }
+        public Spectator ScoringSpectator { get; private set; }
 
         /// <summary>
-        /// The player whose gob was killed. May be <c>null</c>.
+        /// The one whose gob was killed. May be <c>null</c>.
         /// </summary>
-        public Player KilledPlayer { get; private set; }
+        public Spectator KilledSpectator { get; private set; }
 
         public string MessageToScoringPlayer { get { return GetMessageFor(RecipientType.ScoringPlayer); } }
         public string MessageToBystander { get { return GetMessageFor(RecipientType.Bystander); } }
@@ -46,8 +48,8 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public string SpecialMessage { get { return _specialPhrase; } }
 
-        private SubjectWord ScoringPlayerName { get { return SubjectWord.FromProperNoun(ScoringPlayer != null ? ScoringPlayer.Name : "Nature"); } }
-        private SubjectWord CorpseName { get { return SubjectWord.FromProperNoun(KilledPlayer.Name); } }
+        private SubjectWord ScoringPlayerName { get { return SubjectWord.FromProperNoun(ScoringSpectator != null ? ScoringSpectator.Name : "Nature"); } }
+        private SubjectWord CorpseName { get { return SubjectWord.FromProperNoun(KilledSpectator.Name); } }
         private SubjectWordProvider ScoringPlayerNameProvider { get { return recipient => recipient == RecipientType.ScoringPlayer ? SubjectWord.You : ScoringPlayerName; } }
         private SubjectWordProvider CorpseNameProvider { get { return recipient => recipient == RecipientType.Corpse ? SubjectWord.You : CorpseName; } }
 
@@ -94,14 +96,15 @@ namespace AW2.Game.GobUtils
 
         public Coroner(BoundDamageInfo info)
         {
+            DamageInfo = info;
             AnalyzeDeath(info);
             AssignKillPhrase();
             AssignSpecialPhrase();
         }
 
-        public IEnumerable<Player> GetBystanders(IEnumerable<Player> everybody)
+        public IEnumerable<Player> GetBystandingPlayers(IEnumerable<Player> everybody)
         {
-            return everybody.Except(new[] { KilledPlayer, ScoringPlayer });
+            return everybody.Except(new[] { KilledSpectator, ScoringSpectator }.OfType<Player>());
         }
 
         private void AnalyzeDeath(BoundDamageInfo info)
@@ -109,16 +112,16 @@ namespace AW2.Game.GobUtils
             Action markAsSuicide = () =>
             {
                 DeathType = DeathTypeType.Suicide;
-                ScoringPlayer = null;
+                ScoringSpectator = null;
             };
-            Action<Player> markAsKill = killer =>
+            Action<Spectator> markAsKill = killer =>
             {
                 if (killer == null)
                     markAsSuicide();
                 else
                 {
                     DeathType = DeathTypeType.Kill;
-                    ScoringPlayer = killer;
+                    ScoringSpectator = killer;
                 }
             };
             if (info.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
@@ -127,7 +130,7 @@ namespace AW2.Game.GobUtils
                 markAsKill(info.Target.LastDamager);
             else
                 markAsSuicide();
-            KilledPlayer = info.Target.Owner as Player;
+            KilledSpectator = info.Target.Owner;
         }
 
         private string GetMessageFor(RecipientType recipient)
@@ -163,15 +166,15 @@ namespace AW2.Game.GobUtils
 
         private void AssignSpecialPhrase()
         {
-            if (ScoringPlayer == null) return;
-            if (ScoringPlayer.ArenaStatistics.KillsWithoutDying < 3) return;
+            if (ScoringSpectator == null) return;
+            if (ScoringSpectator.ArenaStatistics.KillsWithoutDying < 3) return;
             var hypePhrase =
-                ScoringPlayer.ArenaStatistics.KillsWithoutDying < 6 ? "is on fire" :
-                ScoringPlayer.ArenaStatistics.KillsWithoutDying < 12 ? "is unstoppable" :
-                ScoringPlayer.ArenaStatistics.KillsWithoutDying < 24 ? "wreaks havoc" :
+                ScoringSpectator.ArenaStatistics.KillsWithoutDying < 6 ? "is on fire" :
+                ScoringSpectator.ArenaStatistics.KillsWithoutDying < 12 ? "is unstoppable" :
+                ScoringSpectator.ArenaStatistics.KillsWithoutDying < 24 ? "wreaks havoc" :
                 "rules everyone";
             var randomOmg = RandomHelper.GetRandomFloat() < 0.6f ? "" : ", " + g_omgs[RandomHelper.GetRandomInt(g_omgs.Length)];
-            _specialPhrase = string.Format("{0} {1} with {2} kills{3}!", ScoringPlayer.Name, hypePhrase, ScoringPlayer.ArenaStatistics.KillsWithoutDying, randomOmg);
+            _specialPhrase = string.Format("{0} {1} with {2} kills{3}!", ScoringSpectator.Name, hypePhrase, ScoringSpectator.ArenaStatistics.KillsWithoutDying, randomOmg);
         }
     }
 }

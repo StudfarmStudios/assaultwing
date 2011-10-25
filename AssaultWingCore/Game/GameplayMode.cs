@@ -23,6 +23,11 @@ namespace AW2.Game
         public int Deaths { get; set; }
         public int KillsWithoutDying { get; set; }
 
+        public SpectatorArenaStatistics()
+        {
+            Lives = -1;
+        }
+
         public SpectatorArenaStatistics(GameplayMode gameplayMode)
         {
             Lives = gameplayMode.StartLives;
@@ -110,21 +115,21 @@ namespace AW2.Game
             return 2 * statistics.Kills - statistics.Deaths;
         }
 
-        public IEnumerable<Standing> GetStandings(IEnumerable<Player> players)
+        public IEnumerable<Standing> GetStandings(IEnumerable<Spectator> spectators)
         {
             return
-                from p in players
-                let stats = p.ArenaStatistics
+                from spec in spectators
+                let stats = spec.ArenaStatistics
                 let score = CalculateScore(stats)
-                orderby score descending, stats.Kills descending, p.Name
-                select new Standing(p.Name, p.Color, p.IsRemote, score, stats.Kills, stats.Deaths, p.ID);
+                orderby score descending, stats.Kills descending, spec.Name
+                select new Standing(spec.Name, spec.Color, spec.IsRemote, score, stats.Kills, stats.Deaths, spec.ID);
         }
 
-        public bool ArenaFinished(Arena arena, IEnumerable<Player> players)
+        public bool ArenaFinished(Arena arena, IEnumerable<Spectator> spectators)
         {
-            if (players.Count() < 2) return false;
-            int playersAlive = players.Count(player => player.ArenaStatistics.Lives != 0);
-            return playersAlive < 2;
+            if (spectators.Count() < 2) return false;
+            int spectatorsAlive = spectators.Count(player => player.ArenaStatistics.Lives != 0);
+            return spectatorsAlive < 2;
         }
     }
 }

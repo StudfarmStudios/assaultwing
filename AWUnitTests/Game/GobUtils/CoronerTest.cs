@@ -33,7 +33,7 @@ namespace AW2.Game.GobUtils
             Coroner.SetPhraseSets(new[] { suicidePhrase }, new[] { "dummy" }, new string[0]);
             var info = new DamageInfo(_gob2Nature).Bind(_gob1, TimeSpan.FromSeconds(10));
             var coroner = new Coroner(info);
-            Assert.AreEqual(null, coroner.ScoringPlayer);
+            Assert.AreEqual(null, coroner.ScoringSpectator);
             Assert.AreEqual(Coroner.DeathTypeType.Suicide, coroner.DeathType);
             Assert.AreEqual(deathMessage, coroner.MessageToCorpse);
             Assert.AreEqual(bystanderMessage, coroner.MessageToBystander);
@@ -44,7 +44,7 @@ namespace AW2.Game.GobUtils
             Coroner.SetPhraseSets(new[] { "dummy" }, new[] { killPhrase }, new string[0]);
             var info = new DamageInfo(_gob2).Bind(_gob1, TimeSpan.FromSeconds(10));
             var coroner = new Coroner(info);
-            Assert.AreEqual(_player2, coroner.ScoringPlayer);
+            Assert.AreEqual(_player2, coroner.ScoringSpectator);
             Assert.AreEqual(Coroner.DeathTypeType.Kill, coroner.DeathType);
             Assert.AreEqual(killMessage, coroner.MessageToScoringPlayer);
             Assert.AreEqual(deathMessage, coroner.MessageToCorpse);
@@ -95,7 +95,7 @@ namespace AW2.Game.GobUtils
             Action<Coroner, Player, Coroner.DeathTypeType> assertCoroner = (coroner, expectedScoringPlayer, expectedDeathType) =>
             {
                 Assert.AreEqual(expectedDeathType, coroner.DeathType);
-                Assert.AreEqual(expectedScoringPlayer, coroner.ScoringPlayer);
+                Assert.AreEqual(expectedScoringPlayer, coroner.ScoringSpectator);
             };
             assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, DamageInfo.Unspecified), null, Coroner.DeathTypeType.Suicide);
             assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(null)), null, Coroner.DeathTypeType.Suicide);
@@ -123,7 +123,7 @@ namespace AW2.Game.GobUtils
             Assert.AreEqual(BoundDamageInfo.SourceTypeType.Unspecified, info.SourceType);
             var coroner = new Coroner(info);
             Assert.AreEqual(Coroner.DeathTypeType.Suicide, coroner.DeathType);
-            Assert.AreEqual(null, coroner.ScoringPlayer);
+            Assert.AreEqual(null, coroner.ScoringSpectator);
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace AW2.Game.GobUtils
         {
             var info = new DamageInfo(_gob2).Bind(_gob1, TimeSpan.FromSeconds(10));
             var coroner = new Coroner(info);
-            var bystanders = coroner.GetBystanders(new[] { _player1, _player2, _player3 }).ToArray();
+            var bystanders = coroner.GetBystandingPlayers(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player3 }, bystanders);
         }
 
@@ -140,7 +140,7 @@ namespace AW2.Game.GobUtils
         {
             var info = DamageInfo.Unspecified.Bind(_gob1, TimeSpan.FromSeconds(10));
             var coroner = new Coroner(info);
-            var bystanders = coroner.GetBystanders(new[] { _player1, _player2, _player3 }).ToArray();
+            var bystanders = coroner.GetBystandingPlayers(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player2, _player3 }, bystanders);
         }
 
@@ -149,7 +149,7 @@ namespace AW2.Game.GobUtils
         {
             var info = new DamageInfo(_gob1).Bind(_gob1, TimeSpan.FromSeconds(10));
             var coroner = new Coroner(info);
-            var bystanders = coroner.GetBystanders(new[] { _player1, _player2, _player3 }).ToArray();
+            var bystanders = coroner.GetBystandingPlayers(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player2, _player3 }, bystanders);
         }
 
@@ -158,7 +158,7 @@ namespace AW2.Game.GobUtils
         {
             var info = DamageInfo.Unspecified.Bind(_gob1DamagedBy2, TimeSpan.FromSeconds(11));
             var coroner = new Coroner(info);
-            var bystanders = coroner.GetBystanders(new[] { _player1, _player2, _player3 }).ToArray();
+            var bystanders = coroner.GetBystandingPlayers(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player3 }, bystanders);
         }
     }

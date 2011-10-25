@@ -55,6 +55,12 @@ namespace AW2.Game
         public bool IsRemote { get { return ConnectionID >= 0; } }
 
         /// <summary>
+        /// Does the spectator state need to be updated to the clients.
+        /// For use by game server only.
+        /// </summary>
+        public bool MustUpdateToClients { get; set; }
+
+        /// <summary>
         /// The human-readable name of the spectator.
         /// </summary>
         public string Name { get; set; }
@@ -74,11 +80,14 @@ namespace AW2.Game
         /// </summary>
         public virtual IEnumerable<Gob> Minions { get { yield break; } }
 
+        public SpectatorArenaStatistics ArenaStatistics { get; private set; }
+
         public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL)
         {
             Game = game;
             ConnectionID = connectionId;
             Color = Color.LightGray;
+            ArenaStatistics = new SpectatorArenaStatistics();
         }
 
         /// <param name="onScreen">Location of the viewport on screen.</param>
@@ -99,6 +108,7 @@ namespace AW2.Game
         /// </summary>
         public virtual void ResetForArena()
         {
+            ArenaStatistics = new SpectatorArenaStatistics(Game.DataEngine.GameplayMode);
         }
 
         public void ResetForClient()
@@ -113,8 +123,6 @@ namespace AW2.Game
         {
         }
 
-        #region INetworkSerializable
-
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING
@@ -122,21 +130,21 @@ namespace AW2.Game
 #endif
             {
 
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if (mode.HasFlag(SerializationModeFlags.ConstantData))
                 {
                     writer.Write((string)Name);
                 }
+                ArenaStatistics.Serialize(writer, mode);
             }
         }
 
         public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if (mode.HasFlag(SerializationModeFlags.ConstantData))
             {
                 Name = reader.ReadString();
             }
+            ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }
-
-        #endregion INetworkSerializable
     }
 }

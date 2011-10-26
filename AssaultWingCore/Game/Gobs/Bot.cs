@@ -61,6 +61,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             Gravitating = false;
+            IsKeptInArenaBounds = true;
         }
 
         public override void Activate()

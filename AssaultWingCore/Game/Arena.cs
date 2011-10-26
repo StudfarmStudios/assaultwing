@@ -1076,12 +1076,7 @@ namespace AW2.Game
         /// </summary>
         private bool ArenaBoundaryLegal(Gob gob)
         {
-            if (gob is Gobs.Ship)
-            {
-                OutOfArenaBounds outOfBounds = IsOutOfArenaBounds(gob);
-                return outOfBounds == OutOfArenaBounds.None;
-            }
-            return true;
+            return !gob.IsKeptInArenaBounds || IsOutOfArenaBounds(gob) == OutOfArenaBounds.None;
         }
 
         /// <summary>
@@ -1094,22 +1089,20 @@ namespace AW2.Game
         private void ArenaBoundaryActions(Gob gob, bool allowSideEffects)
         {
             var outOfBounds = IsOutOfArenaBounds(gob);
-
-            // Ships we restrict to the arena boundary.
-            if (gob is Gobs.Ship)
+            if (gob.IsKeptInArenaBounds)
             {
-                if ((outOfBounds & OutOfArenaBounds.Left) != 0)
+                if (outOfBounds.HasFlag(OutOfArenaBounds.Left))
                     gob.Move = new Vector2(MathHelper.Max(0, gob.Move.X), gob.Move.Y);
-                if ((outOfBounds & OutOfArenaBounds.Bottom) != 0)
+                if (outOfBounds.HasFlag(OutOfArenaBounds.Bottom))
                     gob.Move = new Vector2(gob.Move.X, MathHelper.Max(0, gob.Move.Y));
-                if ((outOfBounds & OutOfArenaBounds.Right) != 0)
+                if (outOfBounds.HasFlag(OutOfArenaBounds.Right))
                     gob.Move = new Vector2(MathHelper.Min(0, gob.Move.X), gob.Move.Y);
-                if ((outOfBounds & OutOfArenaBounds.Top) != 0)
+                if (outOfBounds.HasFlag(OutOfArenaBounds.Top))
                     gob.Move = new Vector2(gob.Move.X, MathHelper.Min(0, gob.Move.Y));
                 return;
             }
 
-            // Other projectiles disintegrate if they are outside 
+            // Gobs that are not kept in arena bounds disintegrate if they are outside 
             // the outer arena boundary.
             if ((outOfBounds & OutOfArenaBounds.OuterBoundary) != 0 && allowSideEffects)
                 Gobs.Remove(gob);

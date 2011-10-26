@@ -281,6 +281,7 @@ namespace AW2.Game.Gobs
         public Ship(CanonicalString typeName)
             : base(typeName)
         {
+            IsKeptInArenaBounds = true;
             _temporarilyDisabledGobs = new List<Gob>();
             LocationPredicter = new ShipLocationPredicter(this);
         }

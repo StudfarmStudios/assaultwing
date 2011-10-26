@@ -589,6 +589,12 @@ namespace AW2.Game
         /// </summary>
         public bool Gravitating { get; protected set; }
 
+        /// <summary>
+        /// If true, the gob is not let outside the arena boundary. Otherwise the gob is
+        /// removed when it passes the arena boundary.
+        /// </summary>
+        public bool IsKeptInArenaBounds { get; protected set; }
+
         #endregion Gob Properties
 
         #region Network properties

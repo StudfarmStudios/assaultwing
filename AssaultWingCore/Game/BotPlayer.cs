@@ -13,7 +13,8 @@ namespace AW2.Game
 {
     public class BotPlayer : Spectator
     {
-        private const int MAX_BOT_AND_SHIP_COUNT = 4;
+        private const int MAX_MINION_COUNT = 5;
+        private const int MIN_BOT_COUNT = 2; // overrides MAX_MINION_COUNT
         private readonly TimeSpan BOT_CREATION_INTERVAL = TimeSpan.FromSeconds(9.5);
 
         private List<Gob> _bots;
@@ -21,7 +22,16 @@ namespace AW2.Game
 
         public override IEnumerable<Gob> Minions { get { return _bots; } }
         private Arena Arena { get { return Game.DataEngine.Arena; } }
-        private bool EnoughBots { get { return Arena.Gobs.GameplayLayer.Gobs.Count(gob => gob is Bot || gob is Ship) >= MAX_BOT_AND_SHIP_COUNT; } }
+        private bool EnoughBots
+        {
+            get
+            {
+                var minions = Game.DataEngine.Minions;
+                var botCount = minions.OfType<Bot>().Count();
+                var minionCount = minions.Count();
+                return botCount >= MIN_BOT_COUNT && minionCount >= MAX_MINION_COUNT;
+            }
+        }
 
         public BotPlayer(AssaultWingCore game, int connectionID = Spectator.CONNECTION_ID_LOCAL)
             : base(game, connectionID)

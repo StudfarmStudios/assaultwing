@@ -770,7 +770,7 @@ namespace AW2.Core
 
         private void SendPlayerUpdatesOnServer()
         {
-            foreach (var player in DataEngine.Players.Where(p => p.MustUpdateToClients))
+            foreach (var player in DataEngine.Spectators.Where(p => p.MustUpdateToClients))
             {
                 player.MustUpdateToClients = false;
                 var plrMessage = new PlayerUpdateMessage();

@@ -38,7 +38,7 @@
   <shotSpacing>0.2</shotSpacing>
   <shotAngleVariation>0.262</shotAngleVariation>
   <shotSpeedVariation>10</shotSpeedVariation>
-  <recoilMomentum>0</recoilMomentum>
+  <recoilMomentum>1000</recoilMomentum>
   <muzzleFireEngineNames>
     <Item>basic muzzle fire</Item>
   </muzzleFireEngineNames>

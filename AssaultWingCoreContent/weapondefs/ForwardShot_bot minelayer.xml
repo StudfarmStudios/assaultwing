@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.ForwardShot">
+
+  <deviceInfo>
+    <pictureName>menu_equip_weaponpicture_mines</pictureName>
+    <titlePictureName>menu_equip_weaponname_mines</titlePictureName>
+    <infoText>
+      Mines are equipped with the Catmoflage(tm)
+      cloaking device, rendering them almost
+      unnoticable to unsuspecting foes. The
+      Magnedog(tm) proximity homing device
+      helps the mine find its target. Be smart
+      about where you lay these devastating
+      Easter eggs.
+    </infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Poor</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>menu_equip_wep2_mines</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Great</singleShotDamage>
+    <shotSpeed>Low</shotSpeed>
+    <recoilMomentum>Low</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>bot minelayer</typeName>
+  <gunBarrels>Middle</gunBarrels>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>b_icon_mines</iconName>
+  <fireSound>DropMines</fireSound>
+  <fireSoundType>Once</fireSoundType>
+  <fireEffectType>Once</fireEffectType>
+  <shotTypeName>mine</shotTypeName>
+  <shotSpeed>350</shotSpeed>
+  <loadTime>7</loadTime>
+  <fireCharge>0</fireCharge>
+  <fireChargePerSecond>0</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>0.05</shotSpacing>
+  <shotAngleVariation>0</shotAngleVariation>
+  <shotSpeedVariation>100</shotSpeedVariation>
+  <recoilMomentum>25000</recoilMomentum>
+  <muzzleFireEngineNames>
+  </muzzleFireEngineNames>
+</ShipDeviceType>

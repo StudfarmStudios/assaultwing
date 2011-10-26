@@ -13,12 +13,19 @@ namespace AW2.Game
 {
     public class BotPlayer : Spectator
     {
+        private static CanonicalString[] g_botTypes = new[]
+        {
+            (CanonicalString)"rocket bot",
+            (CanonicalString)"bazooka bot",
+            (CanonicalString)"mine bot",
+        };
         private const int MAX_MINION_COUNT = 5;
         private const int MIN_BOT_COUNT = 2; // overrides MAX_MINION_COUNT
         private readonly TimeSpan BOT_CREATION_INTERVAL = TimeSpan.FromSeconds(9.5);
 
         private List<Gob> _bots;
         private TimeSpan _nextBotCreationTime;
+        private int _preferredBotTypeIndex;
 
         public override IEnumerable<Gob> Minions { get { return _bots; } }
         private Arena Arena { get { return Game.DataEngine.Arena; } }
@@ -68,7 +75,8 @@ namespace AW2.Game
             if (_nextBotCreationTime > Game.GameTime.TotalGameTime) return;
             _nextBotCreationTime = Game.GameTime.TotalGameTime + BOT_CREATION_INTERVAL;
             if (EnoughBots) return;
-            Gob.CreateGob<Bot>(Game, (CanonicalString)"rocket bot", bot =>
+            _preferredBotTypeIndex = (_preferredBotTypeIndex + 1) % g_botTypes.Length;
+            Gob.CreateGob<Bot>(Game, g_botTypes[_preferredBotTypeIndex], bot =>
             {
                 SeizeBot(bot);
                 var pos = Arena.GetFreePosition(bot, Arena.BoundedArea);

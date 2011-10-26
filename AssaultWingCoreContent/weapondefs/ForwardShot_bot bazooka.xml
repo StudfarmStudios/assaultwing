@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.ForwardShot">
+
+  <deviceInfo>
+    <pictureName>menu_equip_weaponpicture_bazooka</pictureName>
+    <titlePictureName>menu_equip_weaponname_bazooka</titlePictureName>
+    <infoText>
+      Shoots two supercharged energy shells that
+      explode heavily on impact. The explosion
+      impulse is useful for keeping unwanted
+      ships at a distance. This weapon is ideal
+      for long-range sniper shots as well as
+      semi-rapid punishment from close range.
+    </infoText>
+    <reloadSpeed>Great</reloadSpeed>
+    <energyUsage>Great</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>menu_equip_wep2_dumbfire</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>High</singleShotDamage>
+    <shotSpeed>High</shotSpeed>
+    <recoilMomentum>Average</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>bot bazooka</typeName>
+  <gunBarrels>Middle</gunBarrels>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>b_icon_bouncegun</iconName>
+  <fireSound>Bazooka</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
+  <shotTypeName>bomb</shotTypeName>
+  <shotSpeed>650</shotSpeed>
+  <loadTime>3.5</loadTime>
+  <fireCharge>0</fireCharge>
+  <fireChargePerSecond>0</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>1</shotSpacing>
+  <shotAngleVariation>0.26</shotAngleVariation>
+  <shotSpeedVariation>10</shotSpeedVariation>
+  <recoilMomentum>75000</recoilMomentum>
+  <muzzleFireEngineNames>
+    <Item>blue muzzle flame</Item>
+  </muzzleFireEngineNames>
+</ShipDeviceType>

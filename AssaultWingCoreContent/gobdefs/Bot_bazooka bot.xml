@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Bot">
-  <typeName>rocket bot</typeName>
+  <typeName>bazooka bot</typeName>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
@@ -13,17 +13,17 @@
   <layerPreference>Front</layerPreference>
   <rotationSpeed>0.8</rotationSpeed>
   <aimRange>800</aimRange>
-  <shootRange>650</shootRange>
-  <optimalTargetDistance>450</optimalTargetDistance>
+  <shootRange>500</shootRange>
+  <optimalTargetDistance>370</optimalTargetDistance>
   <thruster>
     <maxForce>55000</maxForce>
-    <maxSpeed>120</maxSpeed>
+    <maxSpeed>180</maxSpeed>
     <exhaustEngineNames/>
   </thruster>
-  <weaponName>bot rockets</weaponName>
+  <weaponName>bot bazooka</weaponName>
   <modelName>clustermine</modelName>
   <movable>true</movable>
-  <maxDamage>1700</maxDamage>
+  <maxDamage>2000</maxDamage>
   <birthGobTypes>
     <Item>dumb glow</Item>
     <Item>bazooka electric ball</Item>

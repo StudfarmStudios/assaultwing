@@ -121,6 +121,7 @@ namespace AW2.Game.Gobs
             }
             base.Update();
             if (!IsThrusting) _thruster.SetExhaustEffectsEnabled(false);
+            _thruster.Update();
         }
 
         public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)

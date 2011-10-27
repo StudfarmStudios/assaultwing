@@ -32,8 +32,12 @@
   <deathGobTypes>
     <Item>mine explosion</Item>
   </deathGobTypes>
-  <exhaustEngineNames>
-  </exhaustEngineNames>
+  <thruster>
+    <maxSpeed>0</maxSpeed>
+    <maxForce>0</maxForce>
+    <runningSound></runningSound>
+    <exhaustEngineNames/>
+  </thruster>
   <collisionAreas>
     <Item>
       <type>PhysicalShip</type>

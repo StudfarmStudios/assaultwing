@@ -16,8 +16,6 @@
   <deathGobTypes>
   </deathGobTypes>
   <movable>true</movable>
-  <exhaustEngineNames>
-  </exhaustEngineNames>
   <collisionAreas>
   </collisionAreas>
   <maxDamage>100</maxDamage>

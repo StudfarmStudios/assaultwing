@@ -25,6 +25,16 @@
     </infoText>
   </shipInfo>
 
+  <thruster>
+    <maxSpeed>300</maxSpeed>
+    <maxForce>125000</maxForce>
+    <runningSound>windlordEngine</runningSound>
+    <exhaustEngineNames>
+      <Item>windlord engine 1</Item>
+      <Item>windlord engine 2</Item>
+    </exhaustEngineNames>
+  </thruster>
+
   <mass>500</mass>
   <maxDamage>1750</maxDamage>
   <weapon1TypeName>talon swoop</weapon1TypeName>
@@ -32,9 +42,6 @@
   <weapon2ChargeMax>1150</weapon2ChargeMax>
   <extraDeviceChargeSpeed>47</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>47</weapon2ChargeSpeed>
-  <thrustForce>125000</thrustForce>
-  <thrusterSoundName>windlordEngine</thrusterSoundName>
-  <maxSpeed>300</maxSpeed>
   <turnSpeed>3.47</turnSpeed>
   <rollMax>0.5</rollMax>
   <rollSpeed>3.0</rollSpeed>
@@ -53,13 +60,6 @@
   <deathGobTypes>
     <Item>ship explosion</Item>
   </deathGobTypes>
-  <exhaustEngineNames>
-    <!--<Item>beamer</Item>
-      <Item>beamer2</Item>
-      <Item>enginesmoke</Item> -->
-    <Item>windlord engine 1</Item>
-    <Item>windlord engine 2</Item>
-  </exhaustEngineNames>
   <coughEngineNames>
     <Item>shipsmoke</Item>
   </coughEngineNames>

@@ -27,15 +27,6 @@ namespace AW2.Game
     /// initialise their type parameter fields by copying them from a template instance.
     /// Template instances are referred to by human-readable names such as "rocket pod".
     /// 
-    /// !!! Thruster >>>
-    /// Class Gob manages exhaust engines, i.e. particle engines that produce
-    /// engine exhaust fumes or similar. Exhaust engines are created automatically,
-    /// provided that the gob's 3D model has bones whose name begins with Thruster
-    /// and <b>exhaustEngineNames</b> contains at least one valid particle engine name.
-    /// All exhaust engines are set on loop and their position and direction
-    /// are set each frame. The subclass should manage other parameters of the engines.
-    /// !!! <<<
-    /// 
     /// Class Gob also provides methods required by certain Gob subclasses 
     /// such as those that can be damaged. This serves to keep general code
     /// in one place only.
@@ -228,25 +219,6 @@ namespace AW2.Game
         private Vector2 _previousMove;
 
         #endregion Fields for all gobs
-
-        // !!! Thruster >>>
-        #region Fields for gobs with thrusters
-
-        /// <summary>
-        /// Names of exhaust engine types.
-        /// </summary>
-        [TypeParameter, ShallowCopy]
-        private CanonicalString[] _exhaustEngineNames;
-
-        /// <summary>
-        /// Particle engines that manage exhaust fumes.
-        /// </summary>
-        private Gob[] _exhaustEngines;
-
-        private bool _exhaustEffectsEnabled = true;
-
-        #endregion Fields for gobs with thrusters
-        // !!! <<<
 
         /// <summary>
         /// Collision primitives, translated according to the gob's location.
@@ -656,7 +628,6 @@ namespace AW2.Game
             _birthTime = new TimeSpan(23, 59, 59);
             _dead = false;
             _movable = true;
-            _exhaustEngineNames = new CanonicalString[0];
         }
 
         /// <summary>
@@ -667,7 +638,6 @@ namespace AW2.Game
         {
             Gravitating = true;
             ResetPos(new Vector2(float.NaN), Vector2.Zero, float.NaN); // resets Pos and Rotation smoothing on game clients
-            _exhaustEngines = new Gob[0];
             Alpha = 1;
             _previousBleach = -1;
             CollisionDamageToOthersMultiplier = 1;
@@ -776,7 +746,6 @@ namespace AW2.Game
                 TransformUnmovableCollisionAreas(_collisionAreas);
                 CreateBirthGobs();
                 CreateModelBirthGobs();
-                CreateExhaustEngines(); // !!! Thruster
             }
             if (!Game.CommandLineOptions.DedicatedServer)
             {
@@ -1109,28 +1078,6 @@ namespace AW2.Game
 
         #endregion Gob public methods
 
-        // !!! Thruster >>>
-        private void CreateExhaustEngines()
-        {
-            var boneIndices = GetNamedPositions("Thruster");
-            int templates = _exhaustEngineNames.Length;
-            var exhaustBoneIList = new List<int>();
-            var exhaustEngineList = new List<Gob>();
-            foreach (var boneIndex in boneIndices)
-                for (int tempI = 0; tempI < templates; ++tempI)
-                    Gob.CreateGob<Gobs.Peng>(Game, _exhaustEngineNames[tempI], gob =>
-                    {
-                        gob.Leader = this;
-                        gob.LeaderBone = boneIndex.Item2;
-                        if (!_exhaustEffectsEnabled) gob.Emitter.Pause();
-                        Arena.Gobs.Add(gob);
-                        exhaustBoneIList.Add(boneIndex.Item2);
-                        exhaustEngineList.Add(gob);
-                    });
-            _exhaustEngines = exhaustEngineList.ToArray();
-        }
-        // !!! <<<
-
         #region Gob miscellaneous protected methods
 
         protected Tuple<bool, Gob> FindGob(int id)
@@ -1140,19 +1087,6 @@ namespace AW2.Game
                 : Arena.Gobs.FirstOrDefault(g => g.ID == id);
             return Tuple.Create(gob != null, gob);
         }
-
-        // !!! Thruster >>>
-        protected virtual void SetExhaustEffectsEnabled(bool active)
-        {
-            if (active == _exhaustEffectsEnabled) return;
-            _exhaustEffectsEnabled = active;
-            foreach (var exhaustEngine in _exhaustEngines.OfType<Gobs.Peng>())
-                if (active)
-                    exhaustEngine.Emitter.Resume();
-                else
-                    exhaustEngine.Emitter.Pause();
-        }
-        // !!! <<<
 
         /// <summary>
         /// Copies a transform of each bone in a model relative to all parent bones of the bone into a given array.

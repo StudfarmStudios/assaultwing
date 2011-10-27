@@ -99,6 +99,7 @@ namespace AW2.Game.Gobs
             MoveAround();
             Aim();
             Shoot();
+            _thruster.Update();
         }
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

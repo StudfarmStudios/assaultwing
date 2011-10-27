@@ -4,12 +4,12 @@
   <thruster>
     <maxForce>70000</maxForce>
     <maxSpeed>425</maxSpeed>
+    <runningSound></runningSound>
     <exhaustEngineNames>
       <Item>windlord engine 1</Item>
       <Item>windlord engine 2</Item>
     </exhaustEngineNames>
   </thruster>
-  <exhaustEngineNames/>
   <thrustDuration>3.5</thrustDuration>
   <fallTurnSpeed>1</fallTurnSpeed>
   <targetTurnSpeed>2</targetTurnSpeed>

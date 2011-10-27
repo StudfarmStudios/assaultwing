@@ -18,7 +18,10 @@
   <thruster>
     <maxForce>55000</maxForce>
     <maxSpeed>120</maxSpeed>
-    <exhaustEngineNames/>
+    <runningSound></runningSound>
+    <exhaustEngineNames>
+      <Item>dumbfirethrust1</Item>
+    </exhaustEngineNames>
   </thruster>
   <weaponName>bot rockets</weaponName>
   <modelName>clustermine</modelName>
@@ -32,9 +35,6 @@
   <deathGobTypes>
     <Item>bomb explosion</Item>
   </deathGobTypes>
-  <exhaustEngineNames>
-    <Item>dumbfirethrust1</Item>
-  </exhaustEngineNames>
   <collisionAreas>
     <Item>
       <type>PhysicalDamageable</type>

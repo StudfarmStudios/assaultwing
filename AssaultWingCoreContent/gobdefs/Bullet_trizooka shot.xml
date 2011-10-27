@@ -30,9 +30,14 @@
   <deathGobTypes>
     <Item>bomb explosion</Item>
   </deathGobTypes>
-  <exhaustEngineNames>
-    <Item>dumbfirethrust1</Item>
-  </exhaustEngineNames>
+  <thruster>
+    <maxSpeed>0</maxSpeed>
+    <maxForce>0</maxForce>
+    <runningSound></runningSound>
+    <exhaustEngineNames>
+      <Item>dumbfirethrust1</Item>
+    </exhaustEngineNames>
+  </thruster>
   <collisionAreas>
     <Item>
       <type>PhysicalShot</type>

@@ -15,7 +15,6 @@
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <birthGobTypes/>
-  <exhaustEngineNames/>
   <maxDamage>100</maxDamage>
   <movable>true</movable>
 </GobType>

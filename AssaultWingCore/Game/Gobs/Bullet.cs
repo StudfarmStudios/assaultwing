@@ -51,6 +51,9 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _rotationSpeed;
 
+        [TypeParameter]
+        private Thruster _thruster;
+
         /// <summary>
         /// Time of certain death of the bullet, in game time.
         /// </summary>
@@ -73,6 +76,7 @@ namespace AW2.Game.Gobs
             _lifetime = 60;
             _isRotating = false;
             _rotationSpeed = 5;
+            _thruster = new Thruster();
             DeathTime = new TimeSpan(0, 1, 2);
         }
 
@@ -90,13 +94,12 @@ namespace AW2.Game.Gobs
                 base.ModelName = _bulletModelNames[modelNameI];
             }
             base.Activate();
+            _thruster.Activate(this, true);
         }
 
         public override void Update()
         {
-            if (Arena.TotalTime >= DeathTime)
-                Die();
-            
+            if (Arena.TotalTime >= DeathTime) Die();
             base.Update();
             if (_isRotating)
             {
@@ -112,12 +115,13 @@ namespace AW2.Game.Gobs
                     Rotation = rotationGoal;
                 }
             }
+            _thruster.Update();
         }
 
         public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
             var result = Arena.CollisionSideEffectType.None;
-            if ((sideEffectTypes & Arena.CollisionSideEffectType.Reversible) != 0)
+            if (sideEffectTypes.HasFlag(Arena.CollisionSideEffectType.Reversible))
             {
                 if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 {
@@ -125,7 +129,7 @@ namespace AW2.Game.Gobs
                     result |= Arena.CollisionSideEffectType.Reversible;
                 }
             }
-            if ((sideEffectTypes & Arena.CollisionSideEffectType.Irreversible) != 0)
+            if (sideEffectTypes.HasFlag(Arena.CollisionSideEffectType.Irreversible))
             {
                 Arena.MakeHole(Pos, _impactHoleRadius);
                 Die();

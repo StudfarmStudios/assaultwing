@@ -26,6 +26,15 @@
     </infoText>
   </shipInfo>
 
+  <thruster>
+    <maxSpeed>200</maxSpeed>
+    <maxForce>145000</maxForce>
+    <runningSound>plisskenEngine</runningSound>
+    <exhaustEngineNames>
+      <Item>snake_engine</Item>
+    </exhaustEngineNames>
+  </thruster>
+
   <mass>420</mass>
   <maxDamage>2050</maxDamage>
   <weapon1TypeName>venom spray</weapon1TypeName>
@@ -33,9 +42,6 @@
   <weapon2ChargeMax>1400</weapon2ChargeMax>
   <extraDeviceChargeSpeed>40</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>40</weapon2ChargeSpeed>
-  <thrustForce>145000</thrustForce>
-  <thrusterSoundName>plisskenEngine</thrusterSoundName>
-  <maxSpeed>200</maxSpeed>
   <turnSpeed>3.96</turnSpeed>
   <rollMax>0.9</rollMax>
   <rollSpeed>2.2</rollSpeed>
@@ -54,9 +60,6 @@
   <deathGobTypes>
     <Item>ship explosion</Item>
   </deathGobTypes>
-  <exhaustEngineNames>
-    <Item>snake_engine</Item>
-  </exhaustEngineNames>
   <coughEngineNames>
     <Item>shipsmoke</Item>
   </coughEngineNames>

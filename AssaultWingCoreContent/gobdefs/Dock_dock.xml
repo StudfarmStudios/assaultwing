@@ -18,7 +18,6 @@
   <movable>true</movable>
   <maxDamage>1000</maxDamage>
   <birthGobTypes/>
-  <exhaustEngineNames/>
   <deathGobTypes>
   </deathGobTypes>
   <dockIdleEffectName>dockeffect</dockIdleEffectName>

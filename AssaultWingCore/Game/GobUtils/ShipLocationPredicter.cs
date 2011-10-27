@@ -43,7 +43,7 @@ namespace AW2.Game.GobUtils
                     ControlStates = ship.GetControlStates(),
                 },
                 TurnSpeed = ship.TurnSpeed,
-                ThrustForce = ship.ThrustForce,
+                ThrustForce = ship.Thruster.MaxForce,
                 Mass = ship.Mass,
                 TargetElapsedTime = ship.Game.TargetElapsedTime,
             };

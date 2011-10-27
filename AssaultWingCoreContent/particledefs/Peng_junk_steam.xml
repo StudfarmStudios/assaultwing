@@ -137,7 +137,6 @@
   <birthGobTypes/>
   <deathGobTypes/>
   <movable>false</movable>
-  <exhaustEngineNames/>
   <collisionAreas/>
   <mass>1</mass>
   <modelName>dummymodel</modelName>

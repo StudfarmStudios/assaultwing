@@ -22,34 +22,18 @@ namespace AW2.Game.Gobs
     public class Ship : Gob
     {
         private const string SHIP_BIRTH_SOUND = "NewCraft";
-        private const string SHIP_THRUST_TURN_SOUND = "LowEngine";
         private static readonly ControlState[] g_defaultControlStates;
 
         #region Ship fields related to flying
 
-        /// <summary>
-        /// Maximum force of thrust of the ship, measured in Newtons.
-        /// </summary>
         [TypeParameter]
-        private float _thrustForce;
+        private Thruster _thruster;
 
         /// <summary>
         /// Maximum turning speed of the ship, measured in radians per second.
         /// </summary>
         [TypeParameter]
         private float _turnSpeed;
-
-        /// <summary>
-        /// Ship's maximum speed reachable by thrust, measured in meters per second.
-        /// </summary>
-        [TypeParameter]
-        private float _maxSpeed;
-
-        [TypeParameter]
-        private string _thrusterSoundName;
-
-        private SoundInstance _thrusterSound;
-        private SoundInstance _thrusterTurnSound;
 
         #endregion Ship fields related to flying
 
@@ -134,7 +118,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// True iff the amount of exhaust output has been set by ship thrusting this frame.
         /// </summary>
-        private bool _exhaustAmountUpdated;
+        private bool _exhaustAmountUpdated; // TODO !!! Move to Thruster
 
         /// <summary>
         /// Gobs that we have temporarily disabled while we move through them.
@@ -143,14 +127,12 @@ namespace AW2.Game.Gobs
 
         private bool _isBirthFlashing;
 
-        private float _turnSoundBlend;
-
         #endregion Ship fields related to other things
 
         #region Ship fields for signalling visual things over the network
 
-        private float _visualThrustForce;
-        private bool _visualThrustForceSerializedThisFrame;
+        private float _visualThrustForce; // TODO !!! Move to Thruster
+        private bool _visualThrustForceSerializedThisFrame; // TODO !!! Move to Thruster
 
         #endregion Ship fields for signalling visual things over the network
 
@@ -201,7 +183,7 @@ namespace AW2.Game.Gobs
         }
 
         public float TurnSpeed { get { return _turnSpeed; } }
-        public float ThrustForce { get { return _thrustForce; } }
+        public Thruster Thruster { get { return _thruster; } }
 
         /// <summary>
         /// Name of the type of main weapon the ship is using. Same as
@@ -254,10 +236,8 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Ship()
         {
-            _thrustForce = 100;
+            _thruster = new Thruster();
             _turnSpeed = 3;
-            _maxSpeed = 200;
-            _thrusterSoundName = "dummysound";
             _rollMax = (float)MathHelper.PiOver4;
             _rollSpeed = (float)(MathHelper.TwoPi / 2.0);
             _weapon1TypeName = (CanonicalString)"dummyweapon";
@@ -293,7 +273,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Called when the ship is thrusting.
         /// </summary>
-        protected virtual void Thrusting(float thrustForce) { }
+        protected virtual void Thrusting(float thrustForce) { }  // TODO !!! Move to Thruster
 
         #endregion Protected methods
 
@@ -331,9 +311,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _thrusterSound = Game.SoundEngine.CreateSound(_thrusterSoundName, this);
-            _thrusterTurnSound = Game.SoundEngine.CreateSound(SHIP_THRUST_TURN_SOUND, this);
-            SetExhaustEffectsEnabled(false);
+            _thruster.Activate(this, false);
             _exhaustAmountUpdated = false;
             CreateCoughEngines();
             CreateGlow();
@@ -348,9 +326,9 @@ namespace AW2.Game.Gobs
             base.Update();
             foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
             _temporarilyDisabledGobs.Clear();
-            UpdateThrustInNetworkGame();
-            UpdateExhaustEngines();
-            UpdateThrusterSound();
+            UpdateThrustInNetworkGame(); // TODO !!! Move to Thruster
+            UpdateExhaustEngines(); // TODO !!! Move to Thruster
+            _thruster.Update();
             UpdateCoughEngines();
             UpdateCharges();
             UpdateFlashing();
@@ -365,8 +343,6 @@ namespace AW2.Game.Gobs
                 Game.DataEngine.Devices.Remove(Weapon2);
                 Game.DataEngine.Devices.Remove(ExtraDevice);
             };
-            _thrusterSound.Dispose();
-            _thrusterTurnSound.Dispose();
             base.Dispose();
         }
 
@@ -468,11 +444,10 @@ namespace AW2.Game.Gobs
         {
             System.Diagnostics.Debug.Assert(force >= 0 && force <= 1);
             if (Disabled) return;
-            Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * _thrustForce;
-            Game.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed, duration);
+            _thruster.Thrust(force, direction);
             _visualThrustForce = force;
             Thrusting(force);
-            SetExhaustEffectsEnabled(true);
+            _thruster.SetExhaustEffectsEnabled(true);
             _exhaustAmountUpdated = true;
         }
 
@@ -604,21 +579,6 @@ namespace AW2.Game.Gobs
                 : g_defaultControlStates;
         }
 
-        protected override void SetExhaustEffectsEnabled(bool active)
-        {
-            base.SetExhaustEffectsEnabled(active);
-            if (active)
-            {
-                _thrusterSound.EnsureIsPlaying();
-                _thrusterTurnSound.EnsureIsPlaying();
-            }
-            else
-            {
-                _thrusterSound.Stop();
-                _thrusterTurnSound.Stop();
-            }
-        }
-
         private void InitializeDevice(ShipDevice device, ShipDevice.OwnerHandleType ownerHandle)
         {
             device.AttachTo(this, ownerHandle);
@@ -636,7 +596,7 @@ namespace AW2.Game.Gobs
             float moveLength = Move.Length();
             float headingFactor = // fancy roll
                 moveLength == 0 ? 0 :
-                moveLength <= _maxSpeed ? Vector2.Dot(headingNormal, Move / _maxSpeed) :
+                moveLength <= _thruster.MaxSpeed ? Vector2.Dot(headingNormal, Move / _thruster.MaxSpeed) :
                 Vector2.Dot(headingNormal, Move / moveLength);
             _rollAngle.Target = -_rollMax * force * headingFactor;
             _rollAngleGoalUpdated = true;
@@ -651,14 +611,14 @@ namespace AW2.Game.Gobs
             _rollAngleGoalUpdated = false;
         }
 
-        private void UpdateThrustInNetworkGame()
+        private void UpdateThrustInNetworkGame() // TODO !!! Move to Thruster
         {
             switch (Game.NetworkMode)
             {
                 case NetworkMode.Client:
                     if (_visualThrustForce > 0)
                         Thrust(_visualThrustForce, Game.GameTime.ElapsedGameTime, Rotation);
-                    _visualThrustForce *= 0.977f;
+                    _visualThrustForce *= 0.977f; // fade down to half force in 30 frames (0.5 seconds)
                     if (_visualThrustForce < 0.5f) _visualThrustForce = 0;
                     break;
                 case NetworkMode.Server:
@@ -671,19 +631,11 @@ namespace AW2.Game.Gobs
             }
         }
 
-        private void UpdateExhaustEngines()
+        private void UpdateExhaustEngines() // TODO !!! Move to Thruster
         {
             if (!_exhaustAmountUpdated)
-                SetExhaustEffectsEnabled(false);
+                _thruster.SetExhaustEffectsEnabled(false);
             _exhaustAmountUpdated = false;
-        }
-
-        private void UpdateThrusterSound()
-        {
-            var turnBlendTarget = MathHelper.Clamp(Move.Length() / _maxSpeed, 0, 1);
-            _turnSoundBlend = AWMathHelper.InterpolateTowards(_turnSoundBlend, turnBlendTarget, (float)Game.TargetElapsedTime.TotalSeconds);
-            _thrusterSound.SetVolume(_turnSoundBlend);
-            _thrusterTurnSound.SetVolume(1 - _turnSoundBlend);
         }
 
         private void UpdateCoughEngines()

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
+using AW2.Sound;
 
 namespace AW2.Game.GobUtils
 {
@@ -32,11 +33,20 @@ namespace AW2.Game.GobUtils
         [TypeParameter, ShallowCopy]
         private CanonicalString[] _exhaustEngineNames;
 
+        [TypeParameter]
+        private string _runningSound;
+
         private Peng[] _exhaustEngines;
         private bool _exhaustEffectsEnabled = true;
+        private SoundInstance _thrusterSound;
+        private SoundInstance _thrusterTurnSound;
+        private float _turnSoundBlend;
 
         public float MaxSpeed { get { return _maxSpeed; } }
+        public float MaxForce { get { return _maxForce; } }
         public Gob Owner { get; private set; }
+
+        private bool HasSound { get { return !string.IsNullOrEmpty(_runningSound); } }
 
         /// <summary>
         /// Only for serialization.
@@ -46,6 +56,7 @@ namespace AW2.Game.GobUtils
             _maxForce = 50000;
             _maxSpeed = 200;
             _exhaustEngineNames = new CanonicalString[0];
+            _runningSound = "";
         }
 
         /// <summary>
@@ -57,7 +68,28 @@ namespace AW2.Game.GobUtils
             if (owner == null) throw new ArgumentNullException("owner");
             Owner = owner;
             _exhaustEngines = CreateExhaustEngines();
+            if (HasSound)
+            {
+                _thrusterSound = Owner.Game.SoundEngine.CreateSound(_runningSound, Owner);
+                _thrusterTurnSound = Owner.Game.SoundEngine.CreateSound("LowEngine", Owner);
+            }
             SetExhaustEffectsEnabled(enable);
+        }
+
+        public void Update()
+        {
+            UpdateThrusterSound();
+        }
+
+        public void Dispose()
+        {
+            if (HasSound)
+            {
+                _thrusterSound.Dispose();
+                _thrusterSound = null;
+                _thrusterTurnSound.Dispose();
+                _thrusterTurnSound = null;
+            }
         }
 
         /// <param name="proportionalThrust">Proportional amount of thrust, between -1 (full thrust backward)
@@ -82,9 +114,23 @@ namespace AW2.Game.GobUtils
             _exhaustEffectsEnabled = active;
             foreach (var exhaustEngine in _exhaustEngines)
                 if (active)
+                {
                     exhaustEngine.Emitter.Resume();
+                    if (HasSound)
+                    {
+                        _thrusterSound.EnsureIsPlaying();
+                        _thrusterTurnSound.EnsureIsPlaying();
+                    }
+                }
                 else
+                {
                     exhaustEngine.Emitter.Pause();
+                    if (HasSound)
+                    {
+                        _thrusterSound.Stop();
+                        _thrusterTurnSound.Stop();
+                    }
+                }
         }
 
         private void ThrustImpl(float proportionalThrust, Vector2 unitDirection)
@@ -97,8 +143,8 @@ namespace AW2.Game.GobUtils
         private Peng[] CreateExhaustEngines()
         {
             var exhaustEngineList = new List<Peng>();
-            foreach (var boneIndex in Owner.GetNamedPositions("Thruster"))
-                foreach (var engineName in _exhaustEngineNames)
+            foreach (var engineName in _exhaustEngineNames)
+                foreach (var boneIndex in Owner.GetNamedPositions("Thruster"))
                     Gob.CreateGob<Peng>(Owner.Game, engineName, peng =>
                     {
                         peng.Leader = Owner;
@@ -108,6 +154,15 @@ namespace AW2.Game.GobUtils
                         exhaustEngineList.Add(peng);
                     });
             return exhaustEngineList.ToArray();
+        }
+
+        private void UpdateThrusterSound()
+        {
+            if (!HasSound) return;
+            var turnBlendTarget = MathHelper.Clamp(Owner.Move.Length() / _maxSpeed, 0, 1);
+            _turnSoundBlend = AWMathHelper.InterpolateTowards(_turnSoundBlend, turnBlendTarget, (float)Owner.Game.GameTime.ElapsedGameTime.TotalSeconds);
+            _thrusterSound.SetVolume(_turnSoundBlend);
+            _thrusterTurnSound.SetVolume(1 - _turnSoundBlend);
         }
     }
 }

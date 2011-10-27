@@ -30,8 +30,6 @@
   <maxDamage>100</maxDamage>
   <birthGobTypes>
   </birthGobTypes>
-  <exhaustEngineNames>
-  </exhaustEngineNames>
   <deathGobTypes>
   </deathGobTypes>
   <collisionAreas>

@@ -16,7 +16,6 @@
   <bonusActionTypeName>speedloader bonus action</bonusActionTypeName>
   <layerPreference>Front</layerPreference>
   <movable>true</movable>
-  <exhaustEngineNames/>
   <birthGobTypes>
     <Item>bonus birth</Item>
     <Item>bonus blink</Item>

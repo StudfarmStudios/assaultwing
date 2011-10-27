@@ -15,7 +15,6 @@
   <networkUpdatePeriod>
     <ticks>0</ticks>
   </networkUpdatePeriod>
-  <exhaustEngineNames />
   <collisionAreas />
   <maxDamage>100</maxDamage>
   <scaleCurve>

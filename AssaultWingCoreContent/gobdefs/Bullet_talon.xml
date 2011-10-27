@@ -30,8 +30,12 @@
   <birthGobTypes>
     <Item>bullet glow</Item>
   </birthGobTypes>
-  <exhaustEngineNames>
-  </exhaustEngineNames>
+  <thruster>
+    <maxSpeed>0</maxSpeed>
+    <maxForce>0</maxForce>
+    <runningSound></runningSound>
+    <exhaustEngineNames/>
+  </thruster>
   <collisionAreas>
     <Item>
       <type>PhysicalShot</type>

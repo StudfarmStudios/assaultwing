@@ -197,7 +197,7 @@ namespace AW2.Game
         /// </summary>
         public void RearrangeViewports(int privilegedPlayer)
         {
-            var player = Game.DataEngine.Spectators[privilegedPlayer];
+            var player = Game.DataEngine.Players.ElementAt(privilegedPlayer);
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 1, (index, viewport) => player.CreateViewport(viewport));
         }
 

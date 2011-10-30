@@ -35,6 +35,7 @@
     </exhaustEngineNames>
   </thruster>
 
+  <aerodynamics>ThrustToStraightenToHeading</aerodynamics>
   <mass>500</mass>
   <maxDamage>1750</maxDamage>
   <weapon1TypeName>talon swoop</weapon1TypeName>

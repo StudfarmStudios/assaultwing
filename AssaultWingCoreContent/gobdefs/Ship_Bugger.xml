@@ -33,6 +33,7 @@
     </exhaustEngineNames>
   </thruster>
 
+  <aerodynamics>ThrustTowardsHeading</aerodynamics>
   <mass>350</mass>
   <maxDamage>1450</maxDamage>
   <weapon1TypeName>lightning gun</weapon1TypeName>

@@ -21,6 +21,12 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Ship : Gob
     {
+        private enum AerodynamicsType
+        {
+            ThrustTowardsHeading,
+            ThrustToStraightenToHeading,
+        };
+
         private const string SHIP_BIRTH_SOUND = "NewCraft";
         private static readonly ControlState[] g_defaultControlStates;
 
@@ -28,6 +34,9 @@ namespace AW2.Game.Gobs
 
         [TypeParameter]
         private Thruster _thruster;
+
+        [TypeParameter]
+        private AerodynamicsType _aerodynamics;
 
         /// <summary>
         /// Maximum turning speed of the ship, measured in radians per second.
@@ -249,6 +258,7 @@ namespace AW2.Game.Gobs
         public Ship()
         {
             _thruster = new Thruster();
+            _aerodynamics = AerodynamicsType.ThrustTowardsHeading;
             _turnSpeed = 3;
             _rollMax = (float)MathHelper.PiOver4;
             _rollSpeed = (float)(MathHelper.TwoPi / 2.0);
@@ -267,7 +277,7 @@ namespace AW2.Game.Gobs
             }
             _birthAlpha.Keys.Add(new CurveKey(2, 1));
             _birthAlpha.ComputeTangents(CurveTangent.Flat);
-            _coughEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
+            _coughEngineNames = new CanonicalString[0];
         }
 
         public Ship(CanonicalString typeName)
@@ -443,11 +453,21 @@ namespace AW2.Game.Gobs
         /// Thrusts the ship.
         /// </summary>
         /// <param name="force">Thrust force factor relative to ship's maximum thrust.</param>
-        public void Thrust(float force, TimeSpan duration, float direction)
+        public void Thrust(float force, TimeSpan duration)
         {
             System.Diagnostics.Debug.Assert(force >= 0 && force <= 1);
             if (Disabled) return;
-            var args = new ThrustArgs { Force = force, Direction = direction };
+            var args = new ThrustArgs { Force = force, Direction = Rotation };
+            switch (_aerodynamics)
+            {
+                case AerodynamicsType.ThrustTowardsHeading:
+                    args.Direction = Rotation;
+                    break;
+                case AerodynamicsType.ThrustToStraightenToHeading:
+                    args.Direction = (Math.Max(_thruster.MaxSpeed, Move.Length()) * AWMathHelper.GetUnitVector2(args.Direction) - Move).Angle();
+                    break;
+                default: throw new ApplicationException("Unknown aerodynamics " + _aerodynamics);
+            }
             if (Thrusting != null) Thrusting(args);
             _thruster.Thrust(args.Force, args.Direction);
             _visualThrustForce = args.Force;
@@ -621,7 +641,7 @@ namespace AW2.Game.Gobs
             {
                 case NetworkMode.Client:
                     if (_visualThrustForce > 0)
-                        Thrust(_visualThrustForce, Game.GameTime.ElapsedGameTime, Rotation);
+                        Thrust(_visualThrustForce, Game.GameTime.ElapsedGameTime);
                     _visualThrustForce *= 0.977f; // fade down to half force in 30 frames (0.5 seconds)
                     if (_visualThrustForce < 0.5f) _visualThrustForce = 0;
                     break;

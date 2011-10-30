@@ -35,6 +35,7 @@
     </exhaustEngineNames>
   </thruster>
 
+  <aerodynamics>ThrustTowardsHeading</aerodynamics>
   <mass>420</mass>
   <maxDamage>2050</maxDamage>
   <weapon1TypeName>venom spray</weapon1TypeName>

@@ -663,20 +663,17 @@ namespace AW2.Game.Gobs
 
         private void UpdateFlashing()
         {
-            if (_isBirthFlashing)
-            {
-                Alpha = _birthAlpha.Evaluate(AgeInGameSeconds);
-                if (AgeInGameSeconds >= _birthAlpha.Keys[_birthAlpha.Keys.Count - 1].Position)
-                {
-                    Enable();
-                    _isBirthFlashing = false;
-                }
-            }
+            if (!_isBirthFlashing) return;
+            Alpha = _birthAlpha.Evaluate(AgeInGameSeconds);
+            if (AgeInGameSeconds < _birthAlpha.Keys[_birthAlpha.Keys.Count - 1].Position) return;
+            Enable();
+            _isBirthFlashing = false;
         }
 
         private void StoreCurrentShipLocation()
         {
-            if (LocationPredicter != null) LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
+            if (LocationPredicter == null) return;
+            LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
             {
                 GameTime = Game.DataEngine.ArenaTotalTime,
                 Move = Move,

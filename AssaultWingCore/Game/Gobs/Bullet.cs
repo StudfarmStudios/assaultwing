@@ -118,6 +118,12 @@ namespace AW2.Game.Gobs
             _thruster.Update();
         }
 
+        public override void Dispose()
+        {
+            _thruster.Dispose();
+            base.Dispose();
+        }
+
         public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
             var result = Arena.CollisionSideEffectType.None;

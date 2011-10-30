@@ -356,6 +356,7 @@ namespace AW2.Game.Gobs
                 Game.DataEngine.Devices.Remove(Weapon2);
                 Game.DataEngine.Devices.Remove(ExtraDevice);
             };
+            _thruster.Dispose();
             base.Dispose();
         }
 

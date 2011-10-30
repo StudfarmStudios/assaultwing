@@ -146,6 +146,7 @@ namespace AW2.Game.Gobs
         public override void Dispose()
         {
             RemoveGobTrackers();
+            _thruster.Dispose();
             base.Dispose();
         }
 

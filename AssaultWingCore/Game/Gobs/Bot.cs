@@ -102,6 +102,12 @@ namespace AW2.Game.Gobs
             _thruster.Update();
         }
 
+        public override void Dispose()
+        {
+            _thruster.Dispose();
+            base.Dispose();
+        }
+
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING

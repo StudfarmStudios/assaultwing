@@ -40,6 +40,7 @@ namespace AW2.Game.Gobs
         public SnakeShip(CanonicalString typeName)
             : base(typeName)
         {
+            Thrusting = StraightenTail;
         }
 
         public override void Activate()
@@ -68,9 +69,9 @@ namespace AW2.Game.Gobs
                 _tailAmplitudes[i] = MathHelper.Max(MIN_TAIL_AMPLITUDE, _tailAmplitudes[i] - 0.01f);
         }
 
-        protected override void Thrusting(float thrustForce)
+        private void StraightenTail(ThrustArgs args)
         {
-            _thrustRemainderForTurnShift += thrustForce;
+            _thrustRemainderForTurnShift += args.Force;
             while (_thrustRemainderForTurnShift > THRUST_NEEDED_FOR_TURN_SHIFT)
             {
                 _thrustRemainderForTurnShift -= THRUST_NEEDED_FOR_TURN_SHIFT;

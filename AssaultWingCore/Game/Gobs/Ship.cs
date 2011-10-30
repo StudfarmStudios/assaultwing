@@ -185,6 +185,18 @@ namespace AW2.Game.Gobs
         public float TurnSpeed { get { return _turnSpeed; } }
         public Thruster Thruster { get { return _thruster; } }
 
+        protected class ThrustArgs
+        {
+            public float Force { get; set; }
+            public float Direction { get; set; }
+            public Vector2 DirectionVector { set { Direction = value.Angle(); } }
+        }
+
+        /// <summary>
+        /// Called when the ship is thrusting.
+        /// </summary>
+        protected Action<ThrustArgs> Thrusting { get; set; }
+
         /// <summary>
         /// Name of the type of main weapon the ship is using. Same as
         /// <c>Weapon1.TypeName</c> but works even when <see cref="Weapon1"/> is null.
@@ -267,15 +279,6 @@ namespace AW2.Game.Gobs
         }
 
         #endregion Ship constructors
-
-        #region Protected methods
-
-        /// <summary>
-        /// Called when the ship is thrusting.
-        /// </summary>
-        protected virtual void Thrusting(float thrustForce) { }  // TODO !!! Move to Thruster
-
-        #endregion Protected methods
 
         #region Private methods
 
@@ -444,9 +447,10 @@ namespace AW2.Game.Gobs
         {
             System.Diagnostics.Debug.Assert(force >= 0 && force <= 1);
             if (Disabled) return;
-            _thruster.Thrust(force, direction);
-            _visualThrustForce = force;
-            Thrusting(force);
+            var args = new ThrustArgs { Force = force, Direction = direction };
+            if (Thrusting != null) Thrusting(args);
+            _thruster.Thrust(args.Force, args.Direction);
+            _visualThrustForce = args.Force;
             _thruster.SetExhaustEffectsEnabled(true);
             _exhaustAmountUpdated = true;
         }

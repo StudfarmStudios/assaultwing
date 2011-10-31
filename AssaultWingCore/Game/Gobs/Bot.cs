@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.GobUtils;
+using AW2.Graphics.Content;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -19,6 +20,7 @@ namespace AW2.Game.Gobs
     {
         private static readonly TimeSpan MOVE_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(11);
         private static readonly TimeSpan AIM_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
+        private const float FAN_ANGLE_SPEED_MAX = 30;
 
         [TypeParameter]
         private float _rotationSpeed; // radians/second
@@ -40,6 +42,8 @@ namespace AW2.Game.Gobs
         private TimeSpan _nextAimTargetUpdate;
         private TargetSelector _aimTargetSelector;
         private TargetSelector _moveTargetSelector;
+        private float _fanAngle; // in radians
+        private float _fanAngleSpeed; // in radians/second
 
         public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
         private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
@@ -100,6 +104,7 @@ namespace AW2.Game.Gobs
             Aim();
             Shoot();
             _thruster.Update();
+            MoveFan();
         }
 
         public override void Dispose()
@@ -133,6 +138,25 @@ namespace AW2.Game.Gobs
                 int targetID = reader.ReadInt16();
                 _targetProxy = new LazyProxy<int, Gob>(FindGob);
                 _targetProxy.SetData(targetID);
+            }
+        }
+
+        protected override void CopyAbsoluteBoneTransformsTo(ModelGeometry skeleton, Matrix[] transforms)
+        {
+            if (transforms == null) throw new ArgumentNullException("Null transformation matrix array");
+            if (transforms.Length < skeleton.Bones.Length) throw new ArgumentException("Too short transformation matrix array");
+            foreach (var bone in skeleton.Bones)
+            {
+                if (bone.Parent == null)
+                    transforms[bone.Index] = bone.Transform;
+                else
+                {
+                    if (bone.Parent.Index >= bone.Index) throw new Exception("Unexpected situation: bone parent doesn't precede the bone itself");
+                    var extraTransform = bone.Name.StartsWith("fan")
+                        ? Matrix.CreateRotationZ(_fanAngle)
+                        : Matrix.Identity;
+                    transforms[bone.Index] = extraTransform * bone.Transform * transforms[bone.Parent.Index];
+                }
             }
         }
 
@@ -173,7 +197,10 @@ namespace AW2.Game.Gobs
         {
             if (Target == null || Target.IsHidden) return;
             var rotationStep = Game.PhysicsEngine.ApplyChange(_rotationSpeed, Game.GameTime.ElapsedGameTime);
+            var oldRotation = Rotation;
             Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, (Target.Pos - Pos).Angle(), rotationStep);
+            var rotationDelta = AWMathHelper.GetAbsoluteMinimalEqualAngle(Rotation - oldRotation);
+            _fanAngleSpeed = MathHelper.Clamp(_fanAngleSpeed + rotationDelta * 10, -FAN_ANGLE_SPEED_MAX, FAN_ANGLE_SPEED_MAX);
         }
 
         private void Shoot()
@@ -182,6 +209,12 @@ namespace AW2.Game.Gobs
             if (Target == null) return;
             if (Vector2.DistanceSquared(Target.Pos, Pos) > _shootRange * _shootRange) return;
             _weapon.TryFire(new UI.ControlState(1, true));
+        }
+
+        private void MoveFan()
+        {
+            _fanAngle += _fanAngleSpeed * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            _fanAngleSpeed *= 0.9873f; // slow down to 10 % in 180 updates (i.e. 3 seconds)
         }
     }
 }

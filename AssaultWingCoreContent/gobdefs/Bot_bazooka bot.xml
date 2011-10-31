@@ -24,7 +24,7 @@
     </exhaustEngineNames>
   </thruster>
   <weaponName>bot bazooka</weaponName>
-  <modelName>clustermine</modelName>
+  <modelName>bot</modelName>
   <movable>true</movable>
   <maxDamage>2000</maxDamage>
   <birthGobTypes>

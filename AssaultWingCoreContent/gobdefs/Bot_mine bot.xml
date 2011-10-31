@@ -24,7 +24,7 @@
     </exhaustEngineNames>
   </thruster>
   <weaponName>bot minelayer</weaponName>
-  <modelName>clustermine</modelName>
+  <modelName>bot</modelName>
   <movable>true</movable>
   <maxDamage>2200</maxDamage>
   <birthGobTypes>

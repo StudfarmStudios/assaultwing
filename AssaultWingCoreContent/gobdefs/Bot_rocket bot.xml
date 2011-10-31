@@ -24,7 +24,7 @@
     </exhaustEngineNames>
   </thruster>
   <weaponName>bot rockets</weaponName>
-  <modelName>clustermine</modelName>
+  <modelName>bot</modelName>
   <movable>true</movable>
   <maxDamage>1700</maxDamage>
   <birthGobTypes>

@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Core.OverlayComponents;
+using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
@@ -73,6 +74,7 @@ namespace AW2.Menu.Main
                 {
                     _menuComponent.MenuEngine.Activate(MenuComponentType.Equip);
                     Game.InitializePlayers(2);
+                    if (Game.Settings.Players.BotsEnabled) Game.DataEngine.Spectators.Add(new BotPlayer(Game));
                 }));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront",
                 () =>

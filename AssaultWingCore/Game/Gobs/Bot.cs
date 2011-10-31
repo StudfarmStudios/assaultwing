@@ -196,7 +196,7 @@ namespace AW2.Game.Gobs
             _thrustController.Compute();
             var proportionalThrust = -_thrustController.Output / _thrustController.OutputMaxAmplitude;
             _thruster.Thrust(proportionalThrust, trip);
-            _thruster.SetExhaustEffectsEnabled(Math.Abs(proportionalThrust) >= 0.2f);
+            _thruster.SetExhaustEffectsEnabled(Math.Abs(proportionalThrust) >= 0.5f);
         }
 
         private void Aim()

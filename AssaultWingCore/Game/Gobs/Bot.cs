@@ -187,10 +187,16 @@ namespace AW2.Game.Gobs
 
         private void MoveAround()
         {
-            if (Target == null || Target.IsHidden) return;
+            if (Target == null || Target.IsHidden)
+            {
+                _thruster.SetExhaustEffectsEnabled(false);
+                return;
+            }
             var trip = Target.Pos - Pos;
             _thrustController.Compute();
-            _thruster.Thrust(-_thrustController.Output / _thrustController.OutputMaxAmplitude, trip);
+            var proportionalThrust = -_thrustController.Output / _thrustController.OutputMaxAmplitude;
+            _thruster.Thrust(proportionalThrust, trip);
+            _thruster.SetExhaustEffectsEnabled(Math.Abs(proportionalThrust) >= 0.2f);
         }
 
         private void Aim()

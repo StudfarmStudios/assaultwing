@@ -94,7 +94,7 @@ namespace AW2.Game.Gobs
                 base.ModelName = _bulletModelNames[modelNameI];
             }
             base.Activate();
-            _thruster.Activate(this, true);
+            _thruster.Activate(this);
         }
 
         public override void Update()
@@ -115,6 +115,7 @@ namespace AW2.Game.Gobs
                     Rotation = rotationGoal;
                 }
             }
+            _thruster.Thrust(1, Rotation);
             _thruster.Update();
         }
 

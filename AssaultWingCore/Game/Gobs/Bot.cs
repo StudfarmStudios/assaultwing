@@ -71,7 +71,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _thruster.Activate(owner: this, enable: false);
+            _thruster.Activate(this);
             _weapon = Weapon.Create(_weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
@@ -187,16 +187,11 @@ namespace AW2.Game.Gobs
 
         private void MoveAround()
         {
-            if (Target == null || Target.IsHidden)
-            {
-                _thruster.SetExhaustEffectsEnabled(false);
-                return;
-            }
+            if (Target == null || Target.IsHidden) return;
             var trip = Target.Pos - Pos;
             _thrustController.Compute();
             var proportionalThrust = -_thrustController.Output / _thrustController.OutputMaxAmplitude;
             _thruster.Thrust(proportionalThrust, trip);
-            _thruster.SetExhaustEffectsEnabled(Math.Abs(proportionalThrust) >= 0.5f);
         }
 
         private void Aim()

@@ -38,6 +38,7 @@ namespace AW2.Game.GobUtils
 
         private Peng[] _exhaustEngines;
         private bool _exhaustEffectsEnabled = true;
+        private bool _exhaustAmountUpdated;
         private SoundInstance _thrusterSound;
         private SoundInstance _thrusterTurnSound;
         private float _turnSoundBlend;
@@ -62,8 +63,7 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Attaches the thruster to a gob. Call this method right after creating the gob.
         /// </summary>
-        /// <param name="enable">If true, the thruster effects will be enabled right away.</param>
-        public void Activate(Gob owner, bool enable)
+        public void Activate(Gob owner)
         {
             if (owner == null) throw new ArgumentNullException("owner");
             Owner = owner;
@@ -73,12 +73,12 @@ namespace AW2.Game.GobUtils
                 _thrusterSound = Owner.Game.SoundEngine.CreateSound(_runningSound, Owner);
                 _thrusterTurnSound = Owner.Game.SoundEngine.CreateSound("LowEngine", Owner);
             }
-            SetExhaustEffectsEnabled(enable);
         }
 
         public void Update()
         {
             UpdateThrusterSound();
+            UpdateExhaustEngines();
         }
 
         public void Dispose()
@@ -108,7 +108,7 @@ namespace AW2.Game.GobUtils
             ThrustImpl(proportionalThrust, Vector2.Normalize(direction));
         }
 
-        public void SetExhaustEffectsEnabled(bool active)
+        private void SetExhaustEffectsEnabled(bool active)
         {
             if (active == _exhaustEffectsEnabled) return;
             _exhaustEffectsEnabled = active;
@@ -138,6 +138,8 @@ namespace AW2.Game.GobUtils
             if (proportionalThrust < -1 || proportionalThrust > 1) throw new ArgumentOutOfRangeException("proportionalThrust");
             var force = _maxForce * proportionalThrust * unitDirection;
             Owner.Game.PhysicsEngine.ApplyLimitedForce(Owner, force, _maxSpeed, Owner.Game.GameTime.ElapsedGameTime);
+            SetExhaustEffectsEnabled(Math.Abs(proportionalThrust) >= 0.5f);
+            _exhaustAmountUpdated = true;
         }
 
         private Peng[] CreateExhaustEngines()
@@ -163,6 +165,12 @@ namespace AW2.Game.GobUtils
             _turnSoundBlend = AWMathHelper.InterpolateTowards(_turnSoundBlend, turnBlendTarget, (float)Owner.Game.GameTime.ElapsedGameTime.TotalSeconds);
             _thrusterSound.SetVolume(_turnSoundBlend);
             _thrusterTurnSound.SetVolume(1 - _turnSoundBlend);
+        }
+
+        private void UpdateExhaustEngines()
+        {
+            if (!_exhaustAmountUpdated) SetExhaustEffectsEnabled(false);
+            _exhaustAmountUpdated = false;
         }
     }
 }

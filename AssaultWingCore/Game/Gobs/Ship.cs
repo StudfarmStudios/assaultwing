@@ -125,11 +125,6 @@ namespace AW2.Game.Gobs
         private ShipInfo _shipInfo;
 
         /// <summary>
-        /// True iff the amount of exhaust output has been set by ship thrusting this frame.
-        /// </summary>
-        private bool _exhaustAmountUpdated; // TODO !!! Move to Thruster
-
-        /// <summary>
         /// Gobs that we have temporarily disabled while we move through them.
         /// </summary>
         private List<Gob> _temporarilyDisabledGobs; // TODO: Move to physics engine
@@ -324,8 +319,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _thruster.Activate(this, false);
-            _exhaustAmountUpdated = false;
+            _thruster.Activate(this);
             CreateCoughEngines();
             CreateGlow();
             Disable(); // re-enabled in Update()
@@ -340,7 +334,6 @@ namespace AW2.Game.Gobs
             foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
             _temporarilyDisabledGobs.Clear();
             UpdateThrustInNetworkGame(); // TODO !!! Move to Thruster
-            UpdateExhaustEngines(); // TODO !!! Move to Thruster
             _thruster.Update();
             UpdateCoughEngines();
             UpdateCharges();
@@ -363,12 +356,6 @@ namespace AW2.Game.Gobs
         #endregion Methods related to gobs' functionality in the game world
 
         #region Methods related to serialisation
-
-        protected override void SetRuntimeState(Gob runtimeState)
-        {
-            base.SetRuntimeState(runtimeState);
-            _exhaustAmountUpdated = false;
-        }
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
@@ -472,8 +459,6 @@ namespace AW2.Game.Gobs
             if (Thrusting != null) Thrusting(args);
             _thruster.Thrust(args.Force, args.Direction);
             _visualThrustForce = args.Force;
-            _thruster.SetExhaustEffectsEnabled(true);
-            _exhaustAmountUpdated = true;
         }
 
         /// <param name="force">Force of turn; between 0 and 1.</param>
@@ -654,13 +639,6 @@ namespace AW2.Game.Gobs
                     }
                     break;
             }
-        }
-
-        private void UpdateExhaustEngines() // TODO !!! Move to Thruster
-        {
-            if (!_exhaustAmountUpdated)
-                _thruster.SetExhaustEffectsEnabled(false);
-            _exhaustAmountUpdated = false;
         }
 
         private void UpdateCoughEngines()

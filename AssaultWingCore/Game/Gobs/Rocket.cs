@@ -90,7 +90,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _thruster.Activate(owner: this, enable: true);
+            _thruster.Activate(this);
             _targetSelector = new TargetSelector(_findTargetRange);
             _thrustEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_thrustDuration);
             // Avoid choosing the initial target on the first frame. This helps the case
@@ -111,7 +111,7 @@ namespace AW2.Game.Gobs
                     var predictedTargetPos = PredictPositionDecent(Target);
                     RotateTowards(predictedTargetPos - Pos, _targetTurnSpeed);
                 }
-                Thrust();
+                _thruster.Thrust(1, Rotation);
             }
             else
             {
@@ -120,7 +120,6 @@ namespace AW2.Game.Gobs
                     RemoveGobTrackers();
             }
             base.Update();
-            if (!IsThrusting) _thruster.SetExhaustEffectsEnabled(false);
             _thruster.Update();
         }
 
@@ -209,11 +208,6 @@ namespace AW2.Game.Gobs
             var rotationLimitedByMove = rotationGoal.ClampAngle(moveDirection - TURN_LIMIT, moveDirection + TURN_LIMIT);
             Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationLimitedByMove,
                 Game.PhysicsEngine.ApplyChange(rotationSpeed, Game.GameTime.ElapsedGameTime));
-        }
-
-        private void Thrust()
-        {
-            _thruster.Thrust(1, Rotation);
         }
 
         private void CheckLoseTarget()

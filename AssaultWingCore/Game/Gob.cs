@@ -1011,9 +1011,16 @@ namespace AW2.Game
         /// <seealso cref="GetNamedPosition(int)"/>
         public float GetBoneRotation(int boneIndex)
         {
-            var transformed = Vector2.TransformNormal(Vector2.UnitX, ModelPartTransforms[boneIndex]);
-            float boneRotation = transformed.Angle();
-            return Rotation + DrawRotationOffset + boneRotation;
+            return Rotation + DrawRotationOffset + GetBoneRotationRelativeToGob(boneIndex);
+        }
+
+        /// <summary>
+        /// Returns the rotation of a named position on the gob's 3D model, relative to the 3D model's rotation.
+        /// </summary>
+        /// <seealso cref="GetNamedPosition(int)"/>
+        public float GetBoneRotationRelativeToGob(int boneIndex)
+        {
+            return Vector2.TransformNormal(Vector2.UnitX, ModelPartTransforms[boneIndex]).Angle();
         }
 
         /// <summary>

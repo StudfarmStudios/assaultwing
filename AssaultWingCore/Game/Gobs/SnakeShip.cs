@@ -69,9 +69,9 @@ namespace AW2.Game.Gobs
                 _tailAmplitudes[i] = MathHelper.Max(MIN_TAIL_AMPLITUDE, _tailAmplitudes[i] - 0.01f);
         }
 
-        private void StraightenTail(ThrustArgs args)
+        private void StraightenTail(float proportionalForce)
         {
-            _thrustRemainderForTurnShift += args.Force;
+            _thrustRemainderForTurnShift += proportionalForce;
             while (_thrustRemainderForTurnShift > THRUST_NEEDED_FOR_TURN_SHIFT)
             {
                 _thrustRemainderForTurnShift -= THRUST_NEEDED_FOR_TURN_SHIFT;

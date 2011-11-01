@@ -115,7 +115,7 @@ namespace AW2.Game.Gobs
                     Rotation = rotationGoal;
                 }
             }
-            _thruster.Thrust(1, Rotation);
+            _thruster.Thrust(1);
             _thruster.Update();
         }
 

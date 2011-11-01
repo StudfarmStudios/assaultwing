@@ -15,6 +15,33 @@ namespace AW2.Game.GobUtils
     [LimitedSerialization]
     public class Thruster
     {
+        private class ExhaustEngine
+        {
+            private Peng _peng;
+            private float _directionRelativeToOwner;
+            private bool _paused;
+
+            public ExhaustEngine(Peng peng, float directionRelativetoOwner)
+            {
+                _peng = peng;
+                _directionRelativeToOwner = directionRelativetoOwner;
+                EnsurePaused(true);
+            }
+
+            public void EnsurePaused(bool toBePaused)
+            {
+                var isOn = !_paused;
+                if (!toBePaused && !isOn) _peng.Emitter.Resume();
+                if (toBePaused && isOn) _peng.Emitter.Pause();
+                _paused = toBePaused;
+            }
+
+            public void EnableForDirection(float directionRelativeToOwner)
+            {
+                EnsurePaused(AWMathHelper.AbsoluteAngleDifference(_directionRelativeToOwner, directionRelativeToOwner) > MathHelper.PiOver2);
+            }
+        }
+
         /// <summary>
         /// Maximum force of thrust, measured in Newtons.
         /// </summary>
@@ -36,8 +63,7 @@ namespace AW2.Game.GobUtils
         [TypeParameter]
         private string _runningSound;
 
-        private Peng[] _exhaustEngines;
-        private bool _exhaustEffectsEnabled = true;
+        private ExhaustEngine[] _exhaustEngines;
         private bool _exhaustAmountUpdated;
         private SoundInstance _thrusterSound;
         private SoundInstance _thrusterTurnSound;
@@ -92,68 +118,70 @@ namespace AW2.Game.GobUtils
             }
         }
 
+        /// <summary>
+        /// Thrust owner to where it is heading.
+        /// </summary>
         /// <param name="proportionalThrust">Proportional amount of thrust, between -1 (full thrust backward)
         /// and 1 (full thrust forward).</param>
-        /// <param name="direction">Direction of thrust in radians.</param>
-        public void Thrust(float proportionalThrust, float direction)
+        public void Thrust(float proportionalThrust)
         {
-            ThrustImpl(proportionalThrust, AWMathHelper.GetUnitVector2(direction));
+            ThrustImpl(proportionalThrust, MathHelper.Pi, AWMathHelper.GetUnitVector2(Owner.Rotation));
         }
 
         /// <param name="proportionalThrust">Proportional amount of thrust, between -1 (full thrust backward)
         /// and 1 (full thrust forward).</param>
-        /// <param name="direction">Direction of thrust. Amplitude is irrelevant.</param>
-        public void Thrust(float proportionalThrust, Vector2 direction)
+        /// <param name="thrustDirection">Amplitude is irrelevant.</param>
+        public void Thrust(float proportionalThrust, Vector2 thrustDirection)
         {
-            ThrustImpl(proportionalThrust, Vector2.Normalize(direction));
+            var exhaustDirection = (-thrustDirection).Angle() - Owner.Rotation;
+            ThrustImpl(proportionalThrust, exhaustDirection, Vector2.Normalize(thrustDirection));
         }
 
-        private void SetExhaustEffectsEnabled(bool active)
+        private void EnableExhaustEffects(float exhaustDirectionRelativeToOwner)
         {
-            if (active == _exhaustEffectsEnabled) return;
-            _exhaustEffectsEnabled = active;
-            foreach (var exhaustEngine in _exhaustEngines)
-                if (active)
-                {
-                    exhaustEngine.Emitter.Resume();
-                    if (HasSound)
-                    {
-                        _thrusterSound.EnsureIsPlaying();
-                        _thrusterTurnSound.EnsureIsPlaying();
-                    }
-                }
-                else
-                {
-                    exhaustEngine.Emitter.Pause();
-                    if (HasSound)
-                    {
-                        _thrusterSound.Stop();
-                        _thrusterTurnSound.Stop();
-                    }
-                }
+            foreach (var exhaustEngine in _exhaustEngines) exhaustEngine.EnableForDirection(exhaustDirectionRelativeToOwner);
+            if (HasSound)
+            {
+                _thrusterSound.EnsureIsPlaying();
+                _thrusterTurnSound.EnsureIsPlaying();
+            }
         }
 
-        private void ThrustImpl(float proportionalThrust, Vector2 unitDirection)
+        private void DisableExhaustEffects()
+        {
+            foreach (var exhaustEngine in _exhaustEngines) exhaustEngine.EnsurePaused(true);
+            if (HasSound)
+            {
+                _thrusterSound.Stop();
+                _thrusterTurnSound.Stop();
+            }
+        }
+
+        private void ThrustImpl(float proportionalThrust, float exhaustDirectionRelativeToOwner, Vector2 thrustDirectionUnit)
         {
             if (proportionalThrust < -1 || proportionalThrust > 1) throw new ArgumentOutOfRangeException("proportionalThrust");
-            var force = _maxForce * proportionalThrust * unitDirection;
+            var force = _maxForce * proportionalThrust * thrustDirectionUnit;
             Owner.Game.PhysicsEngine.ApplyLimitedForce(Owner, force, _maxSpeed, Owner.Game.GameTime.ElapsedGameTime);
-            SetExhaustEffectsEnabled(Math.Abs(proportionalThrust) >= 0.5f);
+            if (proportionalThrust >= 0.4f)
+                EnableExhaustEffects(exhaustDirectionRelativeToOwner);
+            else if (proportionalThrust <= -0.4f)
+                EnableExhaustEffects(exhaustDirectionRelativeToOwner + MathHelper.Pi);
+            else
+                DisableExhaustEffects();
             _exhaustAmountUpdated = true;
         }
 
-        private Peng[] CreateExhaustEngines()
+        private ExhaustEngine[] CreateExhaustEngines()
         {
-            var exhaustEngineList = new List<Peng>();
+            var exhaustEngineList = new List<ExhaustEngine>();
             foreach (var engineName in _exhaustEngineNames)
                 foreach (var boneIndex in Owner.GetNamedPositions("Thruster"))
                     Gob.CreateGob<Peng>(Owner.Game, engineName, peng =>
                     {
                         peng.Leader = Owner;
                         peng.LeaderBone = boneIndex.Item2;
-                        if (!_exhaustEffectsEnabled) peng.Emitter.Pause();
                         Owner.Arena.Gobs.Add(peng);
-                        exhaustEngineList.Add(peng);
+                        exhaustEngineList.Add(new ExhaustEngine(peng, Owner.GetBoneRotationRelativeToGob(boneIndex.Item2)));
                     });
             return exhaustEngineList.ToArray();
         }
@@ -169,7 +197,7 @@ namespace AW2.Game.GobUtils
 
         private void UpdateExhaustEngines()
         {
-            if (!_exhaustAmountUpdated) SetExhaustEffectsEnabled(false);
+            if (!_exhaustAmountUpdated) DisableExhaustEffects();
             _exhaustAmountUpdated = false;
         }
     }

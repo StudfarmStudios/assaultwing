@@ -189,17 +189,11 @@ namespace AW2.Game.Gobs
         public float TurnSpeed { get { return _turnSpeed; } }
         public Thruster Thruster { get { return _thruster; } }
 
-        protected class ThrustArgs
-        {
-            public float Force { get; set; }
-            public float Direction { get; set; }
-            public Vector2 DirectionVector { set { Direction = value.Angle(); } }
-        }
 
         /// <summary>
-        /// Called when the ship is thrusting.
+        /// Called when the ship is thrusting. Parameter is proportional thrust, between -1 and 1.
         /// </summary>
-        protected Action<ThrustArgs> Thrusting { get; set; }
+        protected Action<float> Thrusting { get; set; }
 
         /// <summary>
         /// Name of the type of main weapon the ship is using. Same as
@@ -445,20 +439,20 @@ namespace AW2.Game.Gobs
         {
             System.Diagnostics.Debug.Assert(force >= 0 && force <= 1);
             if (Disabled) return;
-            var args = new ThrustArgs { Force = force, Direction = Rotation };
+            var proportionalForce = force;
             switch (_aerodynamics)
             {
                 case AerodynamicsType.ThrustTowardsHeading:
-                    args.Direction = Rotation;
+                    _thruster.Thrust(proportionalForce);
                     break;
                 case AerodynamicsType.ThrustToStraightenToHeading:
-                    args.Direction = (Math.Max(_thruster.MaxSpeed, Move.Length()) * AWMathHelper.GetUnitVector2(args.Direction) - Move).Angle();
+                    var thrustDirection = Math.Max(_thruster.MaxSpeed, Move.Length() + 1) * AWMathHelper.GetUnitVector2(Rotation) - Move;
+                    _thruster.Thrust(proportionalForce, thrustDirection);
                     break;
                 default: throw new ApplicationException("Unknown aerodynamics " + _aerodynamics);
             }
-            if (Thrusting != null) Thrusting(args);
-            _thruster.Thrust(args.Force, args.Direction);
-            _visualThrustForce = args.Force;
+            if (Thrusting != null) Thrusting(proportionalForce);
+            _visualThrustForce = proportionalForce;
         }
 
         /// <param name="force">Force of turn; between 0 and 1.</param>

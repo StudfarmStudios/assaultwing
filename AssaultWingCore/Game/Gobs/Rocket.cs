@@ -111,7 +111,7 @@ namespace AW2.Game.Gobs
                     var predictedTargetPos = PredictPositionDecent(Target);
                     RotateTowards(predictedTargetPos - Pos, _targetTurnSpeed);
                 }
-                _thruster.Thrust(1, Rotation);
+                _thruster.Thrust(1);
             }
             else
             {

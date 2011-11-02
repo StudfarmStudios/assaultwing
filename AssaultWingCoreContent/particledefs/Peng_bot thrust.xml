@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Peng">
+  <typeName>bot thrust</typeName>
+  <disregardHidingLeader>false</disregardHidingLeader>
+  <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <depthLayer2D>0.40</depthLayer2D>
+  <drawMode2D>
+    <type>Additive</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <coordinateSystem>Game</coordinateSystem>
+  <playerRelated>false</playerRelated>
+  <emitter>
+    <emissionFrequency>30</emissionFrequency>
+    <numberToCreate>-1</numberToCreate>
+    <radius>1</radius>
+    <sprayAngle>0.0</sprayAngle>
+    <facingType>Random</facingType>
+    <textureNames>
+      <Item>p_yellowblueball</Item>
+    </textureNames>
+    <gobTypeNames>
+    </gobTypeNames>
+    <initialVelocity type="AW2.Game.Pengs.ConstantValue">
+      <value>85</value>
+    </initialVelocity>
+  </emitter>
+  <updater>
+    <areParticlesImmortal>false</areParticlesImmortal>
+    <drag>0.0</drag>
+    <particleAge type="AW2.Game.Pengs.ExpectedValue">
+      <expected>0.26</expected>
+      <variance>0.07</variance>
+    </particleAge>
+    <accelerationInputScale>0</accelerationInputScale>
+    <acceleration type="AW2.Game.Pengs.ConstantValue">
+      <value>0</value>
+    </acceleration>
+    <rotationSpeedInputScale>0</rotationSpeedInputScale>
+    <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
+      <value>0.1</value>
+    </rotationSpeed>
+    <scaleInputScale>0.13</scaleInputScale>
+    <scale type="AW2.Game.Pengs.SimpleCurve">
+      <randomAmplitude>0.03</randomAmplitude>
+      <randomMixer>0</randomMixer>
+      <keys>
+        <Item>0.18</Item>
+        <Item>0.03</Item>
+      </keys>
+    </scale>
+    <alphaInputScale>0.3</alphaInputScale>
+    <alpha type="AW2.Game.Pengs.SimpleCurve">
+      <randomAmplitude>0.05</randomAmplitude>
+      <randomMixer>1</randomMixer>
+      <keys>
+        <Item>0.65</Item>
+        <Item>0.5</Item>
+        <Item>0.3</Item>
+        <Item>0.05</Item>
+      </keys>
+    </alpha>
+  </updater>
+  <birthGobTypes/>
+  <deathGobTypes/>
+  <movable>false</movable>
+  <collisionAreas/>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1</scale>
+  <maxDamage>100</maxDamage>
+</GobType>

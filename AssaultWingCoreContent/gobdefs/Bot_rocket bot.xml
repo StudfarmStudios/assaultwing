@@ -20,7 +20,7 @@
     <maxSpeed>120</maxSpeed>
     <runningSound></runningSound>
     <exhaustEngineNames>
-      <Item>dumbfirethrust1</Item>
+      <Item>bot thrust</Item>
     </exhaustEngineNames>
   </thruster>
   <weaponName>bot rockets</weaponName>

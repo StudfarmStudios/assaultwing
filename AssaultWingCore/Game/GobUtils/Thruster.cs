@@ -36,9 +36,12 @@ namespace AW2.Game.GobUtils
                 _paused = toBePaused;
             }
 
-            public void EnableForDirection(float directionRelativeToOwner)
+            public void EnableForDirection(float directionRelativeToOwner, float pengInput)
             {
-                EnsurePaused(AWMathHelper.AbsoluteAngleDifference(_directionRelativeToOwner, directionRelativeToOwner) > MathHelper.PiOver2);
+                const float MAX_DIRECTION_ERROR = MathHelper.PiOver2;
+                var directionError = AWMathHelper.AbsoluteAngleDifference(_directionRelativeToOwner, directionRelativeToOwner);
+                _peng.Input = pengInput * (1 - directionError / MAX_DIRECTION_ERROR);
+                EnsurePaused(directionError > MAX_DIRECTION_ERROR);
             }
         }
 
@@ -137,9 +140,26 @@ namespace AW2.Game.GobUtils
             ThrustImpl(proportionalThrust, exhaustDirection, Vector2.Normalize(thrustDirection));
         }
 
-        private void EnableExhaustEffects(float exhaustDirectionRelativeToOwner)
+        private void ThrustImpl(float proportionalThrust, float exhaustDirectionRelativeToOwner, Vector2 thrustDirectionUnit)
         {
-            foreach (var exhaustEngine in _exhaustEngines) exhaustEngine.EnableForDirection(exhaustDirectionRelativeToOwner);
+            if (proportionalThrust < -1 || proportionalThrust > 1) throw new ArgumentOutOfRangeException("proportionalThrust");
+            var force = _maxForce * proportionalThrust * thrustDirectionUnit;
+            Owner.Game.PhysicsEngine.ApplyLimitedForce(Owner, force, _maxSpeed, Owner.Game.GameTime.ElapsedGameTime);
+            const float VISIBLE_PROPORTIONAL_THRUST_MIN = 0.2f;
+            var pengInput = (Math.Abs(proportionalThrust) - VISIBLE_PROPORTIONAL_THRUST_MIN) / (1 - VISIBLE_PROPORTIONAL_THRUST_MIN);
+            if (proportionalThrust >= VISIBLE_PROPORTIONAL_THRUST_MIN)
+                EnableExhaustEffects(exhaustDirectionRelativeToOwner, pengInput);
+            else if (proportionalThrust <= -VISIBLE_PROPORTIONAL_THRUST_MIN)
+                EnableExhaustEffects(exhaustDirectionRelativeToOwner + MathHelper.Pi, pengInput);
+            else
+                DisableExhaustEffects();
+            _exhaustAmountUpdated = true;
+        }
+
+        private void EnableExhaustEffects(float exhaustDirectionRelativeToOwner, float pengInput)
+        {
+            foreach (var exhaustEngine in _exhaustEngines)
+                exhaustEngine.EnableForDirection(exhaustDirectionRelativeToOwner, pengInput);
             if (HasSound)
             {
                 _thrusterSound.EnsureIsPlaying();
@@ -155,20 +175,6 @@ namespace AW2.Game.GobUtils
                 _thrusterSound.Stop();
                 _thrusterTurnSound.Stop();
             }
-        }
-
-        private void ThrustImpl(float proportionalThrust, float exhaustDirectionRelativeToOwner, Vector2 thrustDirectionUnit)
-        {
-            if (proportionalThrust < -1 || proportionalThrust > 1) throw new ArgumentOutOfRangeException("proportionalThrust");
-            var force = _maxForce * proportionalThrust * thrustDirectionUnit;
-            Owner.Game.PhysicsEngine.ApplyLimitedForce(Owner, force, _maxSpeed, Owner.Game.GameTime.ElapsedGameTime);
-            if (proportionalThrust >= 0.4f)
-                EnableExhaustEffects(exhaustDirectionRelativeToOwner);
-            else if (proportionalThrust <= -0.4f)
-                EnableExhaustEffects(exhaustDirectionRelativeToOwner + MathHelper.Pi);
-            else
-                DisableExhaustEffects();
-            _exhaustAmountUpdated = true;
         }
 
         private ExhaustEngine[] CreateExhaustEngines()

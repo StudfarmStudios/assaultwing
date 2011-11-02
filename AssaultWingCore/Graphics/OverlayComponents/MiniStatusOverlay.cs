@@ -21,6 +21,7 @@ namespace AW2.Graphics.OverlayComponents
         private Player _player;
         private Texture2D _barFillTexture, _barBackgroundTexture;
         private SpriteFont _healthFont;
+        private Rectangle _customAlignmentDampBox;
 
         public override Point Dimensions
         {
@@ -31,6 +32,7 @@ namespace AW2.Graphics.OverlayComponents
             : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
             _player = viewport.Player;
+            _customAlignmentDampBox = new Rectangle(0, 0, 2, 2);
         }
 
         public override void LoadContent()
@@ -44,10 +46,7 @@ namespace AW2.Graphics.OverlayComponents
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             if (_player.Ship == null) return;
-            // Note: Screen Y axis points down and game Y axis points up.
-            // Note: Setting CustomAlignment here means that the value will be applied not until
-            // the next draw. This is good enough.
-            CustomAlignment = new Vector2(0, 40) + (_player.Ship.Pos + _player.Ship.DrawPosOffset - Viewport.CurrentLookAt).MirrorY();
+            SetCustomAlignment();
 
             // Calculate alpha level based on changes in player's ship damage.
             float relativeHealth = 1 - _player.Ship.DamageLevel / _player.Ship.MaxDamageLevel;
@@ -60,6 +59,20 @@ namespace AW2.Graphics.OverlayComponents
             float alpha = MathHelper.Clamp((float)(_fadeoutFinishTime - AssaultWingCore.Instance.DataEngine.ArenaTotalTime).TotalSeconds / FADEOUT_DURATION, 0, 1);
             DrawHealthBar(spriteBatch, relativeHealth, alpha);
             DrawHealthPercentage(spriteBatch, relativeHealth, alpha);
+        }
+
+        private void SetCustomAlignment()
+        {
+            // Note: Screen Y axis points down and game Y axis points up.
+            // Note: Setting CustomAlignment here means that the value will be applied not until
+            // the next draw. This is good enough.
+            var newCustomAlignment = new Vector2(0, 40) + (_player.Ship.Pos + _player.Ship.DrawPosOffset - Viewport.CurrentLookAt).MirrorY();
+            var newCustomAlignmentPoint = newCustomAlignment.Round().ToPoint();
+            if (!_customAlignmentDampBox.Contains(newCustomAlignmentPoint))
+            {
+                CustomAlignment = newCustomAlignment;
+                _customAlignmentDampBox = _customAlignmentDampBox.MoveToContain(newCustomAlignmentPoint);
+            }
         }
 
         private void DrawHealthBar(SpriteBatch spriteBatch, float relativeHealth, float alpha)

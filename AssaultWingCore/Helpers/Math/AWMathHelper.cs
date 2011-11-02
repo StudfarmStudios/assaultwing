@@ -314,6 +314,14 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Truncates the floating-point Vector2 into an integral Point.
+        /// </summary>
+        public static Point ToPoint(this Vector2 v)
+        {
+            return new Point((int)v.X, (int)v.Y);
+        }
+
+        /// <summary>
         /// Returns the angle of the vector between -pi and pi. The X unit vector has angle zero and
         /// the positive winding direction is counter-clockwise.
         /// </summary>
@@ -465,6 +473,19 @@ namespace AW2.Helpers
                 height = rect.Width * height / width;
                 width = rect.Width;
             }
+        }
+
+        /// <summary>
+        /// Returns a Rectangle that is obtained by moving <paramref name="rect"/> as little
+        /// as possible to contain the <paramref name="p"/>.
+        /// </summary>
+        public static Rectangle MoveToContain(this Rectangle rect, Point p)
+        {
+            rect.X = Math.Min(rect.X, p.X);
+            rect.Y = Math.Min(rect.Y, p.Y);
+            rect.X = Math.Max(rect.X + rect.Width - 1, p.X) - (rect.Width - 1);
+            rect.Y = Math.Max(rect.Y + rect.Height - 1, p.Y) - (rect.Height - 1);
+            return rect;
         }
 
         /// <summary>

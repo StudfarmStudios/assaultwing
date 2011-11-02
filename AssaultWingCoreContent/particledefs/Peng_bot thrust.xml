@@ -14,7 +14,7 @@
   <coordinateSystem>Game</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
-    <emissionFrequency>30</emissionFrequency>
+    <emissionFrequency>40</emissionFrequency>
     <numberToCreate>-1</numberToCreate>
     <radius>1</radius>
     <sprayAngle>0.0</sprayAngle>
@@ -25,15 +25,15 @@
     <gobTypeNames>
     </gobTypeNames>
     <initialVelocity type="AW2.Game.Pengs.ConstantValue">
-      <value>85</value>
+      <value>0</value>
     </initialVelocity>
   </emitter>
   <updater>
     <areParticlesImmortal>false</areParticlesImmortal>
-    <drag>0.0</drag>
+    <drag>0.97</drag>
     <particleAge type="AW2.Game.Pengs.ExpectedValue">
-      <expected>0.26</expected>
-      <variance>0.07</variance>
+      <expected>0.42</expected>
+      <variance>0.08</variance>
     </particleAge>
     <accelerationInputScale>0</accelerationInputScale>
     <acceleration type="AW2.Game.Pengs.ConstantValue">
@@ -43,23 +43,23 @@
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
       <value>0.1</value>
     </rotationSpeed>
-    <scaleInputScale>0.13</scaleInputScale>
+    <scaleInputScale>0.19</scaleInputScale>
     <scale type="AW2.Game.Pengs.SimpleCurve">
       <randomAmplitude>0.03</randomAmplitude>
       <randomMixer>0</randomMixer>
       <keys>
-        <Item>0.18</Item>
+        <Item>0.29</Item>
         <Item>0.03</Item>
       </keys>
     </scale>
-    <alphaInputScale>0.3</alphaInputScale>
+    <alphaInputScale>0.28</alphaInputScale>
     <alpha type="AW2.Game.Pengs.SimpleCurve">
       <randomAmplitude>0.05</randomAmplitude>
       <randomMixer>1</randomMixer>
       <keys>
-        <Item>0.65</Item>
-        <Item>0.5</Item>
-        <Item>0.3</Item>
+        <Item>0.55</Item>
+        <Item>0.4</Item>
+        <Item>0.25</Item>
         <Item>0.05</Item>
       </keys>
     </alpha>

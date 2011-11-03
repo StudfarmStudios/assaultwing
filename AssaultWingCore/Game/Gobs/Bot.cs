@@ -38,15 +38,22 @@ namespace AW2.Game.Gobs
         private Weapon _weapon;
         private LazyProxy<int, Gob> _targetProxy;
         private PIDController _thrustController;
-        private TimeSpan _nextMoveTargetUpdate;
-        private TimeSpan _nextAimTargetUpdate;
+        private List<TimedAction> _timedActions;
         private TargetSelector _aimTargetSelector;
         private TargetSelector _moveTargetSelector;
         private float _fanAngle; // in radians
         private float _fanAngleSpeed; // in radians/second
 
         public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
-        private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
+        private Gob Target
+        {
+            get { return _targetProxy != null ? _targetProxy.GetValue() : null; }
+            set
+            {
+                if (Game.NetworkMode == Core.NetworkMode.Server && Target != value) ForcedNetworkUpdate = true;
+                _targetProxy = value;
+            }
+        }
 
         /// <summary>
         /// Only for deserialization.
@@ -93,13 +100,18 @@ namespace AW2.Game.Gobs
                 FriendlyWeight = float.MaxValue,
                 AngleWeight = 0,
             };
+            _timedActions = new List<TimedAction>();
+            if (Game.NetworkMode != Core.NetworkMode.Client)
+            {
+                _timedActions.Add(new TimedAction(MOVE_TARGET_UPDATE_INTERVAL, UpdateMoveTarget));
+                _timedActions.Add(new TimedAction(AIM_TARGET_UPDATE_INTERVAL, UpdateAimTarget));
+            }
         }
 
         public override void Update()
         {
             base.Update();
-            UpdateMoveTarget();
-            UpdateAimTarget();
+            foreach (var act in _timedActions) act.Update(Arena.TotalTime);
             MoveAround();
             Aim();
             Shoot();
@@ -162,27 +174,13 @@ namespace AW2.Game.Gobs
 
         private void UpdateMoveTarget()
         {
-            if (Game.NetworkMode == Core.NetworkMode.Client) return;
-            if (Arena.TotalTime < _nextMoveTargetUpdate) return;
-            _nextMoveTargetUpdate = Arena.TotalTime + MOVE_TARGET_UPDATE_INTERVAL;
-            var newTarget = _moveTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
-            var oldTarget = Target;
-            Target = newTarget;
-            if (Game.NetworkMode == Core.NetworkMode.Server && oldTarget != newTarget) ForcedNetworkUpdate = true;
+            Target = _moveTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
         }
 
         private void UpdateAimTarget()
         {
-            // TODO !!! Extract functionality that is common with UpdateMoveTarget().
-            if (Game.NetworkMode == Core.NetworkMode.Client) return;
-            if (Arena.TotalTime < _nextAimTargetUpdate) return;
-            _nextAimTargetUpdate = Arena.TotalTime + AIM_TARGET_UPDATE_INTERVAL;
-            var newTarget = _aimTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
             // If no short range target found, then continue with long range target.
-            if (newTarget == null) return;
-            var oldTarget = Target;
-            Target = newTarget;
-            if (Game.NetworkMode == Core.NetworkMode.Server && oldTarget != newTarget) ForcedNetworkUpdate = true;
+            Target = _aimTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation) ?? Target;
         }
 
         private void MoveAround()

@@ -21,15 +21,6 @@ namespace AW2.Helpers
         }
 
         [Test]
-        public void TestShiftRandomIntN()
-        {
-            int seed = RandomHelper.GetRandomInt();
-            int n = 0;
-            TestEvenDistributionInt(16, 300, () => RandomHelper.ShiftRandomInt(seed, n++));
-            TestPredictability(seed, 100, (x, k) => RandomHelper.ShiftRandomInt(seed, k));
-        }
-
-        [Test]
         public void TestMixRandomInt()
         {
             int seed = RandomHelper.GetRandomInt();

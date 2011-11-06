@@ -60,23 +60,6 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Returns the n'th integer from a random sequence determined by a seed value.
-        /// </summary>
-        /// This method iterates over n, so use only small values for n.
-        /// <param name="seed">Random seed</param>
-        /// <param name="n">How manieth value to return from the sequence determined by the seed.</param>
-        /// <returns>The n'th integer from the random sequence determined by the seed value.</returns>
-        public static int ShiftRandomInt(int seed, int n)
-        {
-            // The implementation is a linear feedback shift register (with maximal period)
-            // which we iterate n times.
-            int value = seed;
-            for (; n > 0; --n)
-                value = ShiftRandomInt(value);
-            return value;
-        }
-
-        /// <summary>
         /// Mixes a seed value with a mixing value, producing a predictable random value.
         /// </summary>
         /// <param name="seed">Random seed</param>

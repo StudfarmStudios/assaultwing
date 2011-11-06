@@ -50,6 +50,7 @@
     <Compile Include="Game\GobUtils\TargetSelectorTest.cs" />
     <Compile Include="Game\Weapons\LightningGunTest.cs" />
     <Compile Include="Graphics\AWViewportCollectionTest.cs" />
+    <Compile Include="Graphics\WrappedTextTest.cs" />
     <Compile Include="Helpers\AWMathHelperTest.cs" />
     <Compile Include="Helpers\Geometric\GeometryTest.cs" />
     <Compile Include="Helpers\Geometric\PolygonTest.cs" />

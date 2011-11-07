@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}</ProjectGuid>
+    <ProjectGuid>{1813E562-567E-4D87-BDDF-4E1DE1E47022}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -14,36 +14,21 @@
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>Reach</XnaProfile>
-    <XnaCrossPlatformGroupID>e08490cb-b1a7-42e0-8ffc-bd41c4ee7f13</XnaCrossPlatformGroupID>
+    <XnaCrossPlatformGroupID>43249f8d-738e-4d4f-b086-b1cb5fafbb3e</XnaCrossPlatformGroupID>
     <XnaOutputType>Library</XnaOutputType>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>false</XnaCompressContent>
+    <XnaCompressContent>True</XnaCompressContent>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
@@ -59,45 +44,31 @@
     <XnaCompressContent>true</XnaCompressContent>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>AssaultWingCore.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Video, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="mscorlib">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Video, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
-      <Private>False</Private>
     </Reference>
+    <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AssaultWingCore.cs" />
@@ -122,33 +93,28 @@
     <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs" />
     <Compile Include="Game\Arenas\ArenaBin.cs" />
+    <Compile Include="Game\Arenas\ArenaInfo.cs" />
     <Compile Include="Game\Arenas\ArenaLayer.cs" />
     <Compile Include="Game\Arenas\ArenaLayerGobCollection.cs" />
-    <Compile Include="Game\Arenas\LightingSettings.cs" />
     <Compile Include="Game\Arenas\ArenaLoadException.cs" />
-    <Compile Include="Game\Arenas\ArenaInfo.cs" />
     <Compile Include="Game\Arenas\ArenaTypeLoader.cs" />
+    <Compile Include="Game\Arenas\GobCollection.cs" />
+    <Compile Include="Game\Arenas\LightingSettings.cs" />
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
     <Compile Include="Game\BotPlayer.cs" />
-    <Compile Include="Game\Gobs\Bot.cs" />
-    <Compile Include="Game\GobUtils\MinionDeathHandler.cs" />
-    <Compile Include="Game\GobUtils\Thruster.cs" />
-    <Compile Include="Game\GobUtils\TimedAction.cs" />
-    <Compile Include="Game\MessageBeeper.cs" />
-    <Compile Include="Game\MessageContainer.cs" />
     <Compile Include="Game\CollisionArea.cs" />
     <Compile Include="Game\CollisionAreaType.cs" />
     <Compile Include="Game\CollisionMaterialType.cs" />
     <Compile Include="Game\DataEngine.cs" />
-    <Compile Include="Game\GobUtils\DamageInfo.cs" />
     <Compile Include="Game\GameContent.cs" />
     <Compile Include="Game\GameplayMode.cs" />
     <Compile Include="Game\Gob.cs" />
-    <Compile Include="Game\Arenas\GobCollection.cs" />
     <Compile Include="Game\Gobs\ArenaMessage.cs" />
     <Compile Include="Game\Gobs\Bonus.cs" />
+    <Compile Include="Game\Gobs\BonusAction.cs" />
+    <Compile Include="Game\Gobs\Bot.cs" />
     <Compile Include="Game\Gobs\BounceBullet.cs" />
     <Compile Include="Game\Gobs\Bullet.cs" />
     <Compile Include="Game\Gobs\CollisionTrigger.cs" />
@@ -170,29 +136,36 @@
     <Compile Include="Game\Gobs\WallPolygon.cs" />
     <Compile Include="Game\GobUtils\ChargeProvider.cs" />
     <Compile Include="Game\GobUtils\Coroner.cs" />
+    <Compile Include="Game\GobUtils\DamageInfo.cs" />
     <Compile Include="Game\GobUtils\EquipInfo.cs" />
     <Compile Include="Game\GobUtils\FiringOperator.cs" />
-    <Compile Include="Game\Gobs\BonusAction.cs" />
     <Compile Include="Game\GobUtils\GobHelper.cs" />
     <Compile Include="Game\GobUtils\GobPropertyDescriptor.cs" />
+    <Compile Include="Game\GobUtils\MinionDeathHandler.cs" />
     <Compile Include="Game\GobUtils\RadialFlow.cs" />
     <Compile Include="Game\GobUtils\ShipDevice.cs" />
     <Compile Include="Game\GobUtils\ShipDeviceInfo.cs" />
     <Compile Include="Game\GobUtils\ShipInfo.cs" />
     <Compile Include="Game\GobUtils\ShipLocationPredicter.cs" />
     <Compile Include="Game\GobUtils\SubjectWord.cs" />
+    <Compile Include="Game\GobUtils\TargetSelector.cs" />
+    <Compile Include="Game\GobUtils\Thruster.cs" />
+    <Compile Include="Game\GobUtils\TimedAction.cs" />
     <Compile Include="Game\GobUtils\WallIndexMap.cs" />
     <Compile Include="Game\GobUtils\Weapon.cs" />
     <Compile Include="Game\GobUtils\WeaponInfo.cs" />
     <Compile Include="Game\LogicEngine.cs" />
+    <Compile Include="Game\MessageBeeper.cs" />
+    <Compile Include="Game\MessageContainer.cs" />
     <Compile Include="Game\Pengs\ConstantValue.cs" />
-    <Compile Include="Game\Pengs\SimpleCurve.cs" />
     <Compile Include="Game\Pengs\CurveLerp.cs" />
     <Compile Include="Game\Pengs\CurveLerpKey.cs" />
     <Compile Include="Game\Pengs\CurveLerpKeyCollection.cs" />
+    <Compile Include="Game\Pengs\ExpectedValue.cs" />
     <Compile Include="Game\Pengs\Particle.cs" />
     <Compile Include="Game\Pengs\PengParameter.cs" />
     <Compile Include="Game\Pengs\PhysicalUpdater.cs" />
+    <Compile Include="Game\Pengs\SimpleCurve.cs" />
     <Compile Include="Game\Pengs\SprayEmitter.cs" />
     <Compile Include="Game\PhysicsEngine.cs" />
     <Compile Include="Game\Player.cs" />
@@ -200,26 +173,24 @@
     <Compile Include="Game\PostprocessEffectNameContainer.cs" />
     <Compile Include="Game\Spectator.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />
-    <Compile Include="Game\Weapons\Cloak.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Game\Weapons\Repulsor.cs" />
+    <Compile Include="Game\Weapons\Cloak.cs" />
     <Compile Include="Game\Weapons\ForwardShot.cs" />
     <Compile Include="Game\Weapons\LightningGun.cs" />
+    <Compile Include="Game\Weapons\Repulsor.cs" />
     <Compile Include="Game\Weapons\SelfDestruct.cs" />
     <Compile Include="Game\Weapons\ShipBarrelTypes.cs" />
-    <Compile Include="Game\GobUtils\TargetSelector.cs" />
     <Compile Include="Graphics\AutoRenderTarget2D.cs" />
-    <Compile Include="Graphics\Content\AWContentManager.cs" />
     <Compile Include="Graphics\AWVideo.cs" />
     <Compile Include="Graphics\AWViewport.cs" />
     <Compile Include="Graphics\AWViewportCollection.cs" />
+    <Compile Include="Graphics\Content\AWContentManager.cs" />
     <Compile Include="Graphics\Content\BinaryReaderExtensions.cs" />
     <Compile Include="Graphics\Content\IndexBuffer.cs" />
     <Compile Include="Graphics\Content\ModelBone.cs" />
     <Compile Include="Graphics\Content\ModelGeometry.cs" />
     <Compile Include="Graphics\Content\ModelMesh.cs" />
     <Compile Include="Graphics\Content\ModelMeshPart.cs" />
+    <Compile Include="Graphics\Content\ModelSkeleton.cs" />
     <Compile Include="Graphics\Content\TypeReaders.cs" />
     <Compile Include="Graphics\Content\VertexBuffer.cs" />
     <Compile Include="Graphics\Content\XNBReader.cs" />
@@ -262,7 +233,6 @@
     <Compile Include="Helpers\LazyProxy.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Helpers\Math\AWMathHelper.cs" />
-    <Compile Include="Game\Pengs\ExpectedValue.cs" />
     <Compile Include="Helpers\Math\Half.cs" />
     <Compile Include="Helpers\Math\InterpolatingValue.cs" />
     <Compile Include="Helpers\Math\MovementCurve.cs" />
@@ -273,6 +243,7 @@
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
+    <Compile Include="Helpers\Serialization\ChangingState.cs" />
     <Compile Include="Helpers\Serialization\ExcludeFromDeepCopyAttribute.cs" />
     <Compile Include="Helpers\Serialization\FieldFinder.cs" />
     <Compile Include="Helpers\Serialization\IAWSerializable.cs" />
@@ -291,18 +262,17 @@
     <Compile Include="Helpers\Serialization\SerializedNameAttribute.cs" />
     <Compile Include="Helpers\Serialization\SerializedTypeAttribute.cs" />
     <Compile Include="Helpers\Serialization\ShallowCopyAttribute.cs" />
-    <Compile Include="Helpers\Serialization\ChangingState.cs" />
     <Compile Include="Helpers\Serialization\TypeLoader.cs" />
     <Compile Include="Helpers\Serialization\TypeParameterAttribute.cs" />
     <Compile Include="Helpers\SpatialGrid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AWSettings.cs" />
     <Compile Include="Settings\ControlsSettings.cs" />
-    <Compile Include="Settings\PlayerSettings.cs" />
-    <Compile Include="Settings\SystemSettings.cs" />
     <Compile Include="Settings\GraphicsSettings.cs" />
     <Compile Include="Settings\NetSettings.cs" />
+    <Compile Include="Settings\PlayerSettings.cs" />
     <Compile Include="Settings\SoundSettings.cs" />
+    <Compile Include="Settings\SystemSettings.cs" />
     <Compile Include="Sound\AWMusic.cs" />
     <Compile Include="Sound\AWSound.cs" />
     <Compile Include="Sound\BackgroundMusic.cs" />
@@ -328,13 +298,15 @@
     <Compile Include="UI\UIEngineImpl.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AssaultWingCore.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AssaultWingCoreContent\AssaultWingCoreContent.contentproj">
-      <Project>{10BBD3AE-07F8-424F-BA02-9AE8FD49CFAD}</Project>
+      <Project>{BC61714D-0E55-44C0-8AD8-969690DCE2F7}</Project>
       <Name>AssaultWingCoreContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

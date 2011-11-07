@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <ProjectGuid>{10BBD3AE-07F8-424F-BA02-9AE8FD49CFAD}</ProjectGuid>
+    <ProjectGuid>{BC61714D-0E55-44C0-8AD8-969690DCE2F7}</ProjectGuid>
     <ProjectTypeGuids>{96E2B04D-8817-42c6-938A-82C39BA4D311};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -9,45 +9,19 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
-    <ContentRootDirectory>CoreContent</ContentRootDirectory>
-    <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\$(Platform)\$(Configuration)</OutputPath>
-    <RootNamespace>AW2</RootNamespace>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <ContentRootDirectory>CoreContent</ContentRootDirectory>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>AssaultWingCoreContent</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.EffectImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.FBXImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.TextureImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.XImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.AudioImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.EffectImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.FBXImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.TextureImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.XImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.AudioImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <None Include="arenas\Arena_Amazonas.bin">
@@ -60,6 +34,10 @@
     </None>
     <None Include="arenas\Arena_Junk.bin">
       <Name>Arena_Junk</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="arenas\Arena_Lumipesu.bin">
+      <Name>Arena_Lumipesu</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="assaultwingsounds.xap">
@@ -82,11 +60,15 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
+    <Compile Include="fonts\ChatFont.spritefont">
+      <Name>ChatFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <Compile Include="fonts\ConsoleFont.spritefont">
       <Name>ConsoleFont</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
-      <SubType>Designer</SubType>
     </Compile>
     <Compile Include="fonts\MenuFontBig.spritefont">
       <Name>MenuFontBig</Name>
@@ -103,10 +85,1362 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-    <Compile Include="textures\amazonas_bg_parallax.png">
-      <Name>amazonas_bg_parallax</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="fonts\ScoreFont.spritefont">
+      <Name>ScoreFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="arenas\Arena_Amazonas.xml">
+      <Name>Arena_Amazonas</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="arenas\Arena_Blood Bowl.xml">
+      <Name>Arena_Blood Bowl</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="arenas\Arena_Junk.xml">
+      <Name>Arena_Junk</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="arenas\Arena_Lumipesu.xml">
+      <Name>Arena_Lumipesu</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\ArenaMessage_bonusmessage.xml">
+      <Name>ArenaMessage_bonusmessage</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\ArenaMessage_deathmessage.xml">
+      <Name>ArenaMessage_deathmessage</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BonusAction_nanobot repair bonus action.xml">
+      <Name>BonusAction_nanobot repair bonus action</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BonusAction_speedloader bonus action.xml">
+      <Name>BonusAction_speedloader bonus action</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BonusAction_suicide bomber bonus action.xml">
+      <Name>BonusAction_suicide bomber bonus action</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BonusAction_venom_damage bonus action.xml">
+      <Name>BonusAction_venom_damage bonus action</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BonusAction_weapon upgrade bonus action.xml">
+      <Name>BonusAction_weapon upgrade bonus action</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bot_bazooka bot.xml">
+      <Name>Bot_bazooka bot</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bot_mine bot.xml">
+      <Name>Bot_mine bot</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bot_rocket bot.xml">
+      <Name>Bot_rocket bot</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BounceBullet_falling crate.xml">
+      <Name>BounceBullet_falling crate</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BounceBullet_falling pipe.xml">
+      <Name>BounceBullet_falling pipe</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BounceBullet_large fragment.xml">
+      <Name>BounceBullet_large fragment</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\BounceBullet_lava chunk.xml">
+      <Name>BounceBullet_lava chunk</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bullet_bomb.xml">
+      <Name>Bullet_bomb</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bullet_dummygobtype.xml">
+      <Name>Bullet_dummygobtype</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bullet_dust fragment.xml">
+      <Name>Bullet_dust fragment</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bullet_exploding fragment.xml">
+      <Name>Bullet_exploding fragment</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bullet_talon.xml">
+      <Name>Bullet_talon</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Bullet_trizooka shot.xml">
+      <Name>Bullet_trizooka shot</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\CollisionTrigger_door opener.xml">
+      <Name>CollisionTrigger_door opener</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\DefinedBonus_kamikaze.xml">
+      <Name>DefinedBonus_kamikaze</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\DefinedBonus_repairsystem.xml">
+      <Name>DefinedBonus_repairsystem</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\DefinedBonus_upgradeweapon1loadtime.xml">
+      <Name>DefinedBonus_upgradeweapon1loadtime</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\DefinedBonus_upgradeweapon2.xml">
+      <Name>DefinedBonus_upgradeweapon2</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Dock_dock.xml">
+      <Name>Dock_dock</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Explosion_berserker explosion.xml">
+      <Name>Explosion_berserker explosion</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Explosion_bomb explosion.xml">
+      <Name>Explosion_bomb explosion</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Explosion_clustermine explosion.xml">
+      <Name>Explosion_clustermine explosion</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Explosion_mine explosion.xml">
+      <Name>Explosion_mine explosion</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Explosion_rocket explosion.xml">
+      <Name>Explosion_rocket explosion</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Explosion_selfdestruct.xml">
+      <Name>Explosion_selfdestruct</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Explosion_ship explosion.xml">
+      <Name>Explosion_ship explosion</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\FloatingBullet_clustermine.xml">
+      <Name>FloatingBullet_clustermine</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\FloatingBullet_mine.xml">
+      <Name>FloatingBullet_mine</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Lightning_lightning.xml">
+      <Name>Lightning_lightning</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\MovingWall_moving wall.xml">
+      <Name>MovingWall_moving wall</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\PropModel_prop model.xml">
+      <Name>PropModel_prop model</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Rocket_berserker.xml">
+      <Name>Rocket_berserker</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Rocket_rocket.xml">
+      <Name>Rocket_rocket</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Ship_Bugger.xml">
+      <Name>Ship_Bugger</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\Ship_Windlord.xml">
+      <Name>Ship_Windlord</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\SnakeShip_Plissken.xml">
+      <Name>SnakeShip_Plissken</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\SpawnGob_bonus spawn.xml">
+      <Name>SpawnGob_bonus spawn</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\SpawnPlayer_player spawn.xml">
+      <Name>SpawnPlayer_player spawn</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\VenomDrop_venom drop.xml">
+      <Name>VenomDrop_venom drop</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="gobdefs\WallModel_wall model.xml">
+      <Name>WallModel_wall model</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="music\BG_Amazon.mp3">
+      <Name>BG_Amazon</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="music\BG_Dark.mp3">
+      <Name>BG_Dark</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="music\jyri_1.mp3">
+      <Name>jyri_1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="music\menu music.mp3">
+      <Name>menu music</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="music\toikka_1.mp3">
+      <Name>toikka_1</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <None Include="particledefs\Peng_airstreaks.xml">
+      <Name>Peng_airstreaks</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_amazon rain.xml">
+      <Name>Peng_amazon rain</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_amazon rainfall.xml">
+      <Name>Peng_amazon rainfall</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_amazon steam.xml">
+      <Name>Peng_amazon steam</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_basic_muzzle_fire.xml">
+      <Name>Peng_basic_muzzle_fire</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bazooka electric ball.xml">
+      <Name>Peng_bazooka electric ball</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bazooka electric streaks.xml">
+      <Name>Peng_bazooka electric streaks</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_blink fail target.xml">
+      <Name>Peng_blink fail target</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_blink fail.xml">
+      <Name>Peng_blink fail</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bonus birth.xml">
+      <Name>Peng_bonus birth</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bonus blink.xml">
+      <Name>Peng_bonus blink</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bonus collect flash.xml">
+      <Name>Peng_bonus collect flash</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bonus collect.xml">
+      <Name>Peng_bonus collect</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bot electric ball.xml">
+      <Name>Peng_bot electric ball</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bot electric streaks.xml">
+      <Name>Peng_bot electric streaks</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bot thrust.xml">
+      <Name>Peng_bot thrust</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_buggerlights.xml">
+      <Name>Peng_buggerlights</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bugger_engine_1.xml">
+      <Name>Peng_bugger_engine_1</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bugger_engine_2.xml">
+      <Name>Peng_bugger_engine_2</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bugger_engine_3.xml">
+      <Name>Peng_bugger_engine_3</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bullet explo.xml">
+      <Name>Peng_bullet explo</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bullet fragments.xml">
+      <Name>Peng_bullet fragments</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_bullet glow.xml">
+      <Name>Peng_bullet glow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_dock effect occupied.xml">
+      <Name>Peng_dock effect occupied</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_dock effect.xml">
+      <Name>Peng_dock effect</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_docklight.xml">
+      <Name>Peng_docklight</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_dockredlight.xml">
+      <Name>Peng_dockredlight</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_dumb glow.xml">
+      <Name>Peng_dumb glow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_dumbfirethrust1.xml">
+      <Name>Peng_dumbfirethrust1</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_dummypeng.xml">
+      <Name>Peng_dummypeng</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_dust fragments.xml">
+      <Name>Peng_dust fragments</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_electric_shockwave.xml">
+      <Name>Peng_electric_shockwave</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_explo center selfdestruct.xml">
+      <Name>Peng_explo center selfdestruct</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_explo center.xml">
+      <Name>Peng_explo center</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_explo dots.xml">
+      <Name>Peng_explo dots</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_explo shockwave.xml">
+      <Name>Peng_explo shockwave</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_explo smoke.xml">
+      <Name>Peng_explo smoke</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_explo white flash.xml">
+      <Name>Peng_explo white flash</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_fragment explo.xml">
+      <Name>Peng_fragment explo</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_fragment glow.xml">
+      <Name>Peng_fragment glow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_fragment smoke.xml">
+      <Name>Peng_fragment smoke</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_fragments.xml">
+      <Name>Peng_fragments</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_junk bonus spray.xml">
+      <Name>Peng_junk bonus spray</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_junk junk spray.xml">
+      <Name>Peng_junk junk spray</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_junk sparkrain.xml">
+      <Name>Peng_junk sparkrain</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_junk_background_flashes.xml">
+      <Name>Peng_junk_background_flashes</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_junk_steam.xml">
+      <Name>Peng_junk_steam</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_large fragment explo.xml">
+      <Name>Peng_large fragment explo</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_large fragment glow.xml">
+      <Name>Peng_large fragment glow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_large fragments.xml">
+      <Name>Peng_large fragments</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_lava spray.xml">
+      <Name>Peng_lava spray</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_lavachunkglow.xml">
+      <Name>Peng_lavachunkglow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_lumipesu snowfall.xml">
+      <Name>Peng_lumipesu snowfall</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_medium explo center.xml">
+      <Name>Peng_medium explo center</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_medium explo shockwave.xml">
+      <Name>Peng_medium explo shockwave</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_medium explo smoke.xml">
+      <Name>Peng_medium explo smoke</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_medium explo white flash.xml">
+      <Name>Peng_medium explo white flash</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_mine warning.xml">
+      <Name>Peng_mine warning</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_muzzle_blue_flame.xml">
+      <Name>Peng_muzzle_blue_flame</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_nanobot repair.xml">
+      <Name>Peng_nanobot repair</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_player birth stars.xml">
+      <Name>Peng_player birth stars</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_player birth strokes.xml">
+      <Name>Peng_player birth strokes</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_playerglow.xml">
+      <Name>Peng_playerglow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_ramdamage.xml">
+      <Name>Peng_ramdamage</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_ramshield.xml">
+      <Name>Peng_ramshield</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_selfdestruct_wave.xml">
+      <Name>Peng_selfdestruct_wave</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_ship explo center.xml">
+      <Name>Peng_ship explo center</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_ship explo shockwave.xml">
+      <Name>Peng_ship explo shockwave</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_ship explo smoke.xml">
+      <Name>Peng_ship explo smoke</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_ship explo white flash.xml">
+      <Name>Peng_ship explo white flash</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_ship_smoke.xml">
+      <Name>Peng_ship_smoke</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_slimeglow.xml">
+      <Name>Peng_slimeglow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_slimetrail.xml">
+      <Name>Peng_slimetrail</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_snake haze.xml">
+      <Name>Peng_snake haze</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_snake_engine.xml">
+      <Name>Peng_snake_engine</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_star flash.xml">
+      <Name>Peng_star flash</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_trizooka glow.xml">
+      <Name>Peng_trizooka glow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_venom explo.xml">
+      <Name>Peng_venom explo</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_venom fragments.xml">
+      <Name>Peng_venom fragments</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_venom poisoning.xml">
+      <Name>Peng_venom poisoning</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_venom splash.xml">
+      <Name>Peng_venom splash</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_volcano.xml">
+      <Name>Peng_volcano</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_windlord_claws.xml">
+      <Name>Peng_windlord_claws</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_windlord_engine_1.xml">
+      <Name>Peng_windlord_engine_1</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_windlord_engine_2.xml">
+      <Name>Peng_windlord_engine_2</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="sounds\amazonasAmbience01.wav">
+      <Name>amazonasAmbience01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\amazonasCoins01.wav">
+      <Name>amazonasCoins01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\amazonasLeaves01.wav">
+      <Name>amazonasLeaves01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\angry01.wav">
+      <Name>angry01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\angry02.wav">
+      <Name>angry02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\angry03.wav">
+      <Name>angry03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bad01.wav">
+      <Name>bad01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bad02.wav">
+      <Name>bad02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bad03.wav">
+      <Name>bad03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bazooka01.wav">
+      <Name>bazooka01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bazooka02.wav">
+      <Name>bazooka02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bazooka03.wav">
+      <Name>bazooka03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bazooka04.wav">
+      <Name>bazooka04</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bazooka05.wav">
+      <Name>bazooka05</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\blink01.wav">
+      <Name>blink01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\blink02.wav">
+      <Name>blink02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bonusCollection01.wav">
+      <Name>bonusCollection01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\bonusCollection02.wav">
+      <Name>bonusCollection02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\buggerEngine01.wav">
+      <Name>buggerEngine01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\collision01.wav">
+      <Name>collision01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\collision02.wav">
+      <Name>collision02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\dropMines01.wav">
+      <Name>dropMines01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\dummysound01.wav">
+      <Name>dummysound01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\engine01.wav">
+      <Name>engine01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\escPause01.wav">
+      <Name>escPause01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\escPause02.wav">
+      <Name>escPause02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\explosion01.wav">
+      <Name>explosion01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\explosion02.wav">
+      <Name>explosion02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\explosion03.wav">
+      <Name>explosion03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\good01.wav">
+      <Name>good01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\homeBaseLoop01.wav">
+      <Name>homeBaseLoop01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\homeBaseLoopLow01.wav">
+      <Name>homeBaseLoopLow01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\lightningWeapon01.wav">
+      <Name>lightningWeapon01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\lowengine01.wav">
+      <Name>lowengine01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuBrowseItem01.wav">
+      <Name>menuBrowseItem01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuBrowseItem02.wav">
+      <Name>menuBrowseItem02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuBrowseItem03.wav">
+      <Name>menuBrowseItem03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeEnd01.wav">
+      <Name>menuChangeEnd01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeEnd02.wav">
+      <Name>menuChangeEnd02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeEnd03.wav">
+      <Name>menuChangeEnd03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeEnd04.wav">
+      <Name>menuChangeEnd04</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeEnd05.wav">
+      <Name>menuChangeEnd05</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeItem01.wav">
+      <Name>menuChangeItem01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeStart01.wav">
+      <Name>menuChangeStart01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeStart02.wav">
+      <Name>menuChangeStart02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeStart03.wav">
+      <Name>menuChangeStart03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeStart04.wav">
+      <Name>menuChangeStart04</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\menuChangeStart05.wav">
+      <Name>menuChangeStart05</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\meow01.wav">
+      <Name>meow01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\meow02.wav">
+      <Name>meow02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\meow03.wav">
+      <Name>meow03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\meow04.wav">
+      <Name>meow04</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\meow05.wav">
+      <Name>meow05</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\meow06.wav">
+      <Name>meow06</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\mineHit01.wav">
+      <Name>mineHit01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\missile01.wav">
+      <Name>missile01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\missileHit01.wav">
+      <Name>missileHit01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\missileHit02.wav">
+      <Name>missileHit02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\missileHit03.wav">
+      <Name>missileHit03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\newCraft01.wav">
+      <Name>newCraft01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\newCraft02.wav">
+      <Name>newCraft02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\newCraft03.wav">
+      <Name>newCraft03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\newCraft04.wav">
+      <Name>newCraft04</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\newCraft05.wav">
+      <Name>newCraft05</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\playerMessage01.wav">
+      <Name>playerMessage01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\plisskenEngine01.wav">
+      <Name>plisskenEngine01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\purpur01.wav">
+      <Name>purpur01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\shipcollision01.wav">
+      <Name>shipcollision01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\shipcollision02.wav">
+      <Name>shipcollision02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\shipcollision03.wav">
+      <Name>shipcollision03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <None Include="sounds\sounddefs.xml">
+      <Name>sounddefs</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="sounds\talon01.wav">
+      <Name>talon01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon02.wav">
+      <Name>talon02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon03.wav">
+      <Name>talon03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon04.wav">
+      <Name>talon04</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon05.wav">
+      <Name>talon05</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon06.wav">
+      <Name>talon06</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon07.wav">
+      <Name>talon07</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon08.wav">
+      <Name>talon08</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon09.wav">
+      <Name>talon09</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\talon10.wav">
+      <Name>talon10</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\venomSpray01.wav">
+      <Name>venomSpray01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\weaponFail01.wav">
+      <Name>weaponFail01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+    <Compile Include="sounds\windlordEngine01.wav">
+      <Name>windlordEngine01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="textures\amazonas_bg_parallax.png">
       <Name>amazonas_bg_parallax</Name>
@@ -188,6 +1522,46 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\gui_chat_bg.png">
+      <Name>gui_chat_bg</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\gui_chat_scroll_arrow_down.png">
+      <Name>gui_chat_scroll_arrow_down</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\gui_chat_scroll_arrow_glow.png">
+      <Name>gui_chat_scroll_arrow_glow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\gui_chat_scroll_arrow_up.png">
+      <Name>gui_chat_scroll_arrow_up</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\gui_chat_scroll_marker.png">
+      <Name>gui_chat_scroll_marker</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\gui_chat_scroll_track.png">
+      <Name>gui_chat_scroll_track</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\gui_chat_typeline_bg.png">
+      <Name>gui_chat_typeline_bg</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\gui_chat_typeline_cursor.png">
+      <Name>gui_chat_typeline_cursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\gui_playerinfo_bar_loadamount.png">
       <Name>gui_playerinfo_bar_loadamount</Name>
       <Importer>TextureImporter</Importer>
@@ -233,6 +1607,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\gui_playerlist_bg.png">
+      <Name>gui_playerlist_bg</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\gui_radar_bg.png">
       <Name>gui_radar_bg</Name>
       <Importer>TextureImporter</Importer>
@@ -260,6 +1639,16 @@
     </Compile>
     <Compile Include="textures\ingame_dialog.png">
       <Name>ingame_dialog</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\junk_background.png">
+      <Name>junk_background</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\junk_smog.png">
+      <Name>junk_smog</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -298,6 +1687,16 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\menu_equip_devicename_catmoflage.png">
+      <Name>menu_equip_devicename_catmoflage</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_devicename_repulsor.png">
+      <Name>menu_equip_devicename_repulsor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\menu_equip_devicename_revthrust.png">
       <Name>menu_equip_devicename_revthrust</Name>
       <Importer>TextureImporter</Importer>
@@ -305,6 +1704,16 @@
     </Compile>
     <Compile Include="textures\menu_equip_devicepicture_blink.png">
       <Name>menu_equip_devicepicture_blink</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_devicepicture_catmoflage.png">
+      <Name>menu_equip_devicepicture_catmoflage</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_devicepicture_repulsor.png">
+      <Name>menu_equip_devicepicture_repulsor</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -320,6 +1729,16 @@
     </Compile>
     <Compile Include="textures\menu_equip_mod_blink.png">
       <Name>menu_equip_mod_blink</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_mod_catmoflage.png">
+      <Name>menu_equip_mod_catmoflage</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_mod_repulsor.png">
+      <Name>menu_equip_mod_repulsor</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -365,6 +1784,11 @@
     </Compile>
     <Compile Include="textures\menu_equip_player_name_textcursor.png">
       <Name>menu_equip_player_name_textcursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_readytofight.png">
+      <Name>menu_equip_readytofight</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -418,8 +1842,18 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\menu_equip_small_status_display.png">
+      <Name>menu_equip_small_status_display</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\menu_equip_status_display.png">
       <Name>menu_equip_status_display</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_status_display_extra.png">
+      <Name>menu_equip_status_display_extra</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -558,6 +1992,21 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\menu_scrollarrow_down.png">
+      <Name>menu_scrollarrow_down</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_scrollarrow_hilite.png">
+      <Name>menu_scrollarrow_hilite</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_scrollarrow_up.png">
+      <Name>menu_scrollarrow_up</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\mini_hpbar_bg.png">
       <Name>mini_hpbar_bg</Name>
       <Importer>TextureImporter</Importer>
@@ -638,6 +2087,21 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\p_blue_electric_ball.png">
+      <Name>p_blue_electric_ball</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_blue_electric_streak_1.png">
+      <Name>p_blue_electric_streak_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_blue_electric_streak_2.png">
+      <Name>p_blue_electric_streak_2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\p_blue_muzzleflame.png">
       <Name>p_blue_muzzleflame</Name>
       <Importer>TextureImporter</Importer>
@@ -678,6 +2142,16 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\p_drop_1.png">
+      <Name>p_drop_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_electric_shockwave.png">
+      <Name>p_electric_shockwave</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\p_explo_center.png">
       <Name>p_explo_center</Name>
       <Importer>TextureImporter</Importer>
@@ -685,6 +2159,16 @@
     </Compile>
     <Compile Include="textures\p_explo_white.png">
       <Name>p_explo_white</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_greenbolt.png">
+      <Name>p_greenbolt</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_greenbolt2.png">
+      <Name>p_greenbolt2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -703,8 +2187,38 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\p_health.png">
+      <Name>p_health</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_lightblue_blob.png">
+      <Name>p_lightblue_blob</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_lightblue_circle.png">
+      <Name>p_lightblue_circle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\p_orangeball.png">
       <Name>p_orangeball</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_red_arrow.png">
+      <Name>p_red_arrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_red_blob.png">
+      <Name>p_red_blob</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_red_circle.png">
+      <Name>p_red_circle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -720,6 +2234,26 @@
     </Compile>
     <Compile Include="textures\p_snakehaze.png">
       <Name>p_snakehaze</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_snow_1.png">
+      <Name>p_snow_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_snow_2.png">
+      <Name>p_snow_2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_snow_3.png">
+      <Name>p_snow_3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_snow_4.png">
+      <Name>p_snow_4</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -748,1040 +2282,15 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="textures\p_yellow_circle.png">
+      <Name>p_yellow_circle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\viewport_border_vertical.png">
       <Name>viewport_border_vertical</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="arenas\Arena_Amazonas.xml">
-      <Name>Arena_Amazonas</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="arenas\Arena_Blood Bowl.xml">
-      <Name>Arena_Blood Bowl</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="arenas\Arena_Junk.xml">
-      <Name>Arena_Junk</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="arenas\Arena_Lumipesu.bin">
-      <Name>Arena_Lumipesu</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Compile Include="fonts\ScoreFont.spritefont">
-      <Name>ScoreFont</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-    </Compile>
-    <Compile Include="fonts\ChatFont.spritefont">
-      <Name>ChatFont</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-    </Compile>
-    <None Include="gobdefs\ArenaMessage_bonusmessage.xml">
-      <Name>ArenaMessage_bonusmessage</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\ArenaMessage_deathmessage.xml">
-      <Name>ArenaMessage_deathmessage</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\BounceBullet_large fragment.xml">
-      <Name>BounceBullet_large fragment</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\BounceBullet_lava chunk.xml">
-      <Name>BounceBullet_lava chunk</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Bullet_bomb.xml">
-      <Name>Bullet_bomb</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Bullet_dummygobtype.xml">
-      <Name>Bullet_dummygobtype</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Bullet_dust fragment.xml">
-      <Name>Bullet_dust fragment</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Bullet_exploding fragment.xml">
-      <Name>Bullet_exploding fragment</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Bullet_talon.xml">
-      <Name>Bullet_talon</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\CollisionTrigger_door opener.xml">
-      <Name>CollisionTrigger_door opener</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\DefinedBonus_kamikaze.xml">
-      <Name>DefinedBonus_kamikaze</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\DefinedBonus_repairsystem.xml">
-      <Name>DefinedBonus_repairsystem</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\DefinedBonus_upgradeweapon1loadtime.xml">
-      <Name>DefinedBonus_upgradeweapon1loadtime</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\DefinedBonus_upgradeweapon2.xml">
-      <Name>DefinedBonus_upgradeweapon2</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Dock_dock.xml">
-      <Name>Dock_dock</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Explosion_bomb explosion.xml">
-      <Name>Explosion_bomb explosion</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Explosion_rocket explosion.xml">
-      <Name>Explosion_rocket explosion</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Explosion_selfdestruct.xml">
-      <Name>Explosion_selfdestruct</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="gobdefs\Explosion_ship explosion.xml">
-      <Name>Explosion_ship explosion</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\FloatingBullet_mine.xml">
-      <Name>FloatingBullet_mine</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="gobdefs\Lightning_lightning.xml">
-      <Name>Lightning_lightning</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="gobdefs\MovingWall_moving wall.xml">
-      <Name>MovingWall_moving wall</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\PropModel_prop model.xml">
-      <Name>PropModel_prop model</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Rocket_berserker.xml">
-      <Name>Rocket_berserker</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Rocket_rocket.xml">
-      <Name>Rocket_rocket</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="gobdefs\Ship_Bugger.xml">
-      <Name>Ship_Bugger</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\Ship_Windlord.xml">
-      <Name>Ship_Windlord</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="gobdefs\SnakeShip_Plissken.xml">
-      <Name>SnakeShip_Plissken</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="gobdefs\SpawnGob_bonus spawn.xml">
-      <Name>SpawnGob_bonus spawn</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\SpawnPlayer_player spawn.xml">
-      <Name>SpawnPlayer_player spawn</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="gobdefs\VenomDrop_venom drop.xml">
-      <Name>VenomDrop_venom drop</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="gobdefs\WallModel_wall model.xml">
-      <Name>WallModel_wall model</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Compile Include="music\BG_Amazon.mp3">
-      <Name>BG_Amazon</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="music\BG_Dark.mp3">
-      <Name>BG_Dark</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="music\jyri_1.mp3">
-      <Name>jyri_1</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="music\menu music.mp3">
-      <Name>menu music</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="music\toikka_1.mp3">
-      <Name>toikka_1</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <None Include="particledefs\Peng_airstreaks.xml">
-      <Name>Peng_airstreaks</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_amazon rain.xml">
-      <Name>Peng_amazon rain</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_amazon steam.xml">
-      <Name>Peng_amazon steam</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="particledefs\Peng_basic_muzzle_fire.xml">
-      <Name>Peng_basic_muzzle_fire</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bonus birth.xml">
-      <Name>Peng_bonus birth</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bonus blink.xml">
-      <Name>Peng_bonus blink</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="particledefs\Peng_bonus collect flash.xml">
-      <Name>Peng_bonus collect flash</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bonus collect.xml">
-      <Name>Peng_bonus collect</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_dumbfirethrust1.xml">
-      <Name>Peng_dumbfirethrust1</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_buggerlights.xml">
-      <Name>Peng_buggerlights</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bugger_engine_1.xml">
-      <Name>Peng_bugger_engine_1</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bugger_engine_2.xml">
-      <Name>Peng_bugger_engine_2</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bugger_engine_3.xml">
-      <Name>Peng_bugger_engine_3</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bullet explo.xml">
-      <Name>Peng_bullet explo</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bullet fragments.xml">
-      <Name>Peng_bullet fragments</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bullet glow.xml">
-      <Name>Peng_bullet glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_dock effect.xml">
-      <Name>Peng_dock effect</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_docklight.xml">
-      <Name>Peng_docklight</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_dockredlight.xml">
-      <Name>Peng_dockredlight</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_dumb glow.xml">
-      <Name>Peng_dumb glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_dummypeng.xml">
-      <Name>Peng_dummypeng</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_dust fragments.xml">
-      <Name>Peng_dust fragments</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_explo center selfdestruct.xml">
-      <Name>Peng_explo center selfdestruct</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_explo center.xml">
-      <Name>Peng_explo center</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_explo dots.xml">
-      <Name>Peng_explo dots</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_explo shockwave.xml">
-      <Name>Peng_explo shockwave</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_explo smoke.xml">
-      <Name>Peng_explo smoke</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_explo white flash.xml">
-      <Name>Peng_explo white flash</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_fragment explo.xml">
-      <Name>Peng_fragment explo</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_fragment glow.xml">
-      <Name>Peng_fragment glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_fragment smoke.xml">
-      <Name>Peng_fragment smoke</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_fragments.xml">
-      <Name>Peng_fragments</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_junk sparkrain.xml">
-      <Name>Peng_junk sparkrain</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_junk_background_flashes.xml">
-      <Name>Peng_junk_background_flashes</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_junk_steam.xml">
-      <Name>Peng_junk_steam</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_large fragment explo.xml">
-      <Name>Peng_large fragment explo</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_large fragment glow.xml">
-      <Name>Peng_large fragment glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_large fragments.xml">
-      <Name>Peng_large fragments</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_lava spray.xml">
-      <Name>Peng_lava spray</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_lavachunkglow.xml">
-      <Name>Peng_lavachunkglow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_muzzle_blue_flame.xml">
-      <Name>Peng_muzzle_blue_flame</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_player birth stars.xml">
-      <Name>Peng_player birth stars</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_player birth strokes.xml">
-      <Name>Peng_player birth strokes</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_playerglow.xml">
-      <Name>Peng_playerglow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_selfdestruct_wave.xml">
-      <Name>Peng_selfdestruct_wave</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_ship explo center.xml">
-      <Name>Peng_ship explo center</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_ship explo shockwave.xml">
-      <Name>Peng_ship explo shockwave</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_ship explo smoke.xml">
-      <Name>Peng_ship explo smoke</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_ship explo white flash.xml">
-      <Name>Peng_ship explo white flash</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_ship_smoke.xml">
-      <Name>Peng_ship_smoke</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="particledefs\Peng_snake haze.xml">
-      <Name>Peng_snake haze</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_slimeglow.xml">
-      <Name>Peng_slimeglow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_slimetrail.xml">
-      <Name>Peng_slimetrail</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_snake_engine.xml">
-      <Name>Peng_snake_engine</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_star flash.xml">
-      <Name>Peng_star flash</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_venom explo.xml">
-      <Name>Peng_venom explo</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_venom fragments.xml">
-      <Name>Peng_venom fragments</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_venom splash.xml">
-      <Name>Peng_venom splash</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_volcano.xml">
-      <Name>Peng_volcano</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_windlord_claws.xml">
-      <Name>Peng_windlord_claws</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_windlord_engine_1.xml">
-      <Name>Peng_windlord_engine_1</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_windlord_engine_2.xml">
-      <Name>Peng_windlord_engine_2</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Compile Include="sounds\bad01.wav">
-      <Name>bad01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bad02.wav">
-      <Name>bad02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bad03.wav">
-      <Name>bad03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bazooka01.wav">
-      <Name>bazooka01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bazooka02.wav">
-      <Name>bazooka02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bazooka03.wav">
-      <Name>bazooka03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bazooka04.wav">
-      <Name>bazooka04</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bazooka05.wav">
-      <Name>bazooka05</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\blink01.wav">
-      <Name>blink01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\blink02.wav">
-      <Name>blink02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bonusCollection01.wav">
-      <Name>bonusCollection01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\bonusCollection02.wav">
-      <Name>bonusCollection02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\collision01.wav">
-      <Name>collision01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\collision02.wav">
-      <Name>collision02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\dropMines01.wav">
-      <Name>dropMines01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\dummysound01.wav">
-      <Name>dummysound01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\engine01.wav">
-      <Name>engine01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\escPause01.wav">
-      <Name>escPause01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\escPause02.wav">
-      <Name>escPause02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\explosion01.wav">
-      <Name>explosion01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\explosion02.wav">
-      <Name>explosion02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\explosion03.wav">
-      <Name>explosion03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\good01.wav">
-      <Name>good01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\homeBaseLoop01.wav">
-      <Name>homeBaseLoop01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\lightningWeapon01.wav">
-      <Name>lightningWeapon01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuBrowseItem01.wav">
-      <Name>menuBrowseItem01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuBrowseItem02.wav">
-      <Name>menuBrowseItem02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuBrowseItem03.wav">
-      <Name>menuBrowseItem03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeEnd01.wav">
-      <Name>menuChangeEnd01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeEnd02.wav">
-      <Name>menuChangeEnd02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeEnd03.wav">
-      <Name>menuChangeEnd03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeEnd04.wav">
-      <Name>menuChangeEnd04</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeEnd05.wav">
-      <Name>menuChangeEnd05</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeItem01.wav">
-      <Name>menuChangeItem01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeStart01.wav">
-      <Name>menuChangeStart01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeStart02.wav">
-      <Name>menuChangeStart02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeStart03.wav">
-      <Name>menuChangeStart03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeStart04.wav">
-      <Name>menuChangeStart04</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\menuChangeStart05.wav">
-      <Name>menuChangeStart05</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\missile01.wav">
-      <Name>missile01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\missileHit01.wav">
-      <Name>missileHit01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\missileHit02.wav">
-      <Name>missileHit02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\missileHit03.wav">
-      <Name>missileHit03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\newCraft01.wav">
-      <Name>newCraft01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\newCraft02.wav">
-      <Name>newCraft02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\newCraft03.wav">
-      <Name>newCraft03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\newCraft04.wav">
-      <Name>newCraft04</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\newCraft05.wav">
-      <Name>newCraft05</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\playerMessage01.wav">
-      <Name>playerMessage01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\shipcollision01.wav">
-      <Name>shipcollision01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\shipcollision02.wav">
-      <Name>shipcollision02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\shipcollision03.wav">
-      <Name>shipcollision03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <None Include="sounds\sounddefs.xml">
-      <Name>sounddefs</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <Compile Include="sounds\talon01.wav">
-      <Name>talon01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon02.wav">
-      <Name>talon02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon03.wav">
-      <Name>talon03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon04.wav">
-      <Name>talon04</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon05.wav">
-      <Name>talon05</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon06.wav">
-      <Name>talon06</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon07.wav">
-      <Name>talon07</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon08.wav">
-      <Name>talon08</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon09.wav">
-      <Name>talon09</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\talon10.wav">
-      <Name>talon10</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\venomSpray01.wav">
-      <Name>venomSpray01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\weaponFail01.wav">
-      <Name>weaponFail01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="video\aw_intro.wmv">
       <Name>aw_intro</Name>
@@ -1790,6 +2299,12 @@
     </Compile>
     <None Include="weapondefs\Blink_blink.xml">
       <Name>Blink_blink</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="weapondefs\Cloak_catmoflage.xml">
+      <Name>Cloak_catmoflage</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1806,14 +2321,26 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="weapondefs\ForwardShot_dummyweapontype.xml">
-      <Name>ForwardShot_dummyweapontype</Name>
+    <None Include="weapondefs\ForwardShot_bot bazooka.xml">
+      <Name>ForwardShot_bot bazooka</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="weapondefs\ForwardShot_trizooka.xml">
-      <Name>ForwardShot_trizooka</Name>
+    <None Include="weapondefs\ForwardShot_bot minelayer.xml">
+      <Name>ForwardShot_bot minelayer</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="weapondefs\ForwardShot_bot rockets.xml">
+      <Name>ForwardShot_bot rockets</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="weapondefs\ForwardShot_dummyweapontype.xml">
+      <Name>ForwardShot_dummyweapontype</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1847,780 +2374,34 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
+    </None>
+    <None Include="weapondefs\ForwardShot_trizooka.xml">
+      <Name>ForwardShot_trizooka</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="weapondefs\ForwardShot_venom spray.xml">
       <Name>ForwardShot_venom spray</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
     <None Include="weapondefs\LightningGun_lightning gun.xml">
       <Name>LightningGun_lightning gun</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\junk_background.png">
-      <Name>junk_background</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\junk_smog.png">
-      <Name>junk_smog</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\BounceBullet_falling crate.xml">
-      <Name>BounceBullet_falling crate</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_junk junk spray.xml">
-      <Name>Peng_junk junk spray</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_junk bonus spray.xml">
-      <Name>Peng_junk bonus spray</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\BounceBullet_falling pipe.xml">
-      <Name>BounceBullet_falling pipe</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\Explosion_mine explosion.xml">
-      <Name>Explosion_mine explosion</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\Explosion_berserker explosion.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Explosion_berserker explosion</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\lowengine01.wav">
-      <Name>lowengine01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\homeBaseLoopLow01.wav">
-      <Name>homeBaseLoopLow01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\amazonasAmbience01.wav">
-      <Name>amazonasAmbience01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\amazonasCoins01.wav">
-      <Name>amazonasCoins01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\amazonasLeaves01.wav">
-      <Name>amazonasLeaves01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_yellow_circle.png">
-      <Name>p_yellow_circle</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_dock effect occupied.xml">
-      <Name>Peng_dock effect occupied</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_electric_shockwave.xml">
-      <Name>Peng_electric_shockwave</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_electric_shockwave.png">
-      <Name>p_electric_shockwave</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="weapondefs\Repulsor_repulsor.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Repulsor_repulsor</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_devicepicture_repulsor.png">
-      <Name>menu_equip_devicepicture_repulsor</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_mod_repulsor.png">
-      <Name>menu_equip_mod_repulsor</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_devicename_repulsor.png">
-      <Name>menu_equip_devicename_repulsor</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_devicename_catmoflage.png">
-      <Name>menu_equip_devicename_catmoflage</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\menu_equip_devicepicture_catmoflage.png">
-      <Name>menu_equip_devicepicture_catmoflage</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\menu_equip_mod_catmoflage.png">
-      <Name>menu_equip_mod_catmoflage</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="arenas\Arena_Lumipesu.xml">
-      <Name>Arena_Lumipesu</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_lumipesu snowfall.xml">
-      <Name>Peng_lumipesu snowfall</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_snow_1.png">
-      <Name>p_snow_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\p_snow_2.png">
-      <Name>p_snow_2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\p_snow_3.png">
-      <Name>p_snow_3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\p_snow_4.png">
-      <Name>p_snow_4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="weapondefs\Cloak_catmoflage.xml">
-      <Name>Cloak_catmoflage</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\meow01.wav">
-      <Name>meow01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\meow02.wav">
-      <Name>meow02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\meow03.wav">
-      <Name>meow03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\meow04.wav">
-      <Name>meow04</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\meow05.wav">
-      <Name>meow05</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\meow06.wav">
-      <Name>meow06</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\purpur01.wav">
-      <Name>purpur01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_readytofight.png">
-      <Name>menu_equip_readytofight</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_status_display_extra.png">
-      <Name>menu_equip_status_display_extra</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_drop_1.png">
-      <Name>p_drop_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_amazon rainfall.xml">
-      <Name>Peng_amazon rainfall</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\angry01.wav">
-      <Name>angry01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\angry02.wav">
-      <Name>angry02</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sounds\angry03.wav">
-      <Name>angry03</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\buggerEngine01.wav">
-      <Name>buggerEngine01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_playerlist_bg.png">
-      <Name>gui_playerlist_bg</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_lightblue_circle.png">
-      <Name>p_lightblue_circle</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_ramshield.xml">
-      <Name>Peng_ramshield</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_lightblue_blob.png">
-      <Name>p_lightblue_blob</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_ramdamage.xml">
-      <Name>Peng_ramdamage</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\BonusAction_suicide bomber bonus action.xml">
-      <Name>BonusAction_suicide bomber bonus action</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\BonusAction_nanobot repair bonus action.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>BonusAction_nanobot repair bonus action</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\BonusAction_speedloader bonus action.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>BonusAction_speedloader bonus action</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\BonusAction_weapon upgrade bonus action.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>BonusAction_weapon upgrade bonus action</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\BonusAction_venom_damage bonus action.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>BonusAction_venom_damage bonus action</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_venom poisoning.xml">
-      <Name>Peng_venom poisoning</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_trizooka glow.xml">
-      <Name>Peng_trizooka glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_greenbolt.png">
-      <Name>p_greenbolt</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\p_greenbolt2.png">
-      <Name>p_greenbolt2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\Bullet_trizooka shot.xml">
-      <Name>Bullet_trizooka shot</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\FloatingBullet_clustermine.xml">
-      <Name>FloatingBullet_clustermine</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_nanobot repair.xml">
-      <Name>Peng_nanobot repair</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_health.png">
-      <Name>p_health</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_blue_electric_ball.png">
-      <Name>p_blue_electric_ball</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\p_blue_electric_streak_1.png">
-      <Name>p_blue_electric_streak_1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\p_blue_electric_streak_2.png">
-      <Name>p_blue_electric_streak_2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_bazooka electric ball.xml">
-      <Name>Peng_bazooka electric ball</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_bazooka electric streaks.xml">
-      <Name>Peng_bazooka electric streaks</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\Explosion_clustermine explosion.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Explosion_clustermine explosion</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_mine warning.xml">
-      <Name>Peng_mine warning</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_red_blob.png">
-      <Name>p_red_blob</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_medium explo center.xml">
-      <Name>Peng_medium explo center</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_medium explo shockwave.xml">
-      <Name>Peng_medium explo shockwave</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_medium explo smoke.xml">
-      <Name>Peng_medium explo smoke</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_medium explo white flash.xml">
-      <Name>Peng_medium explo white flash</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\plisskenEngine01.wav">
-      <Name>plisskenEngine01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\windlordEngine01.wav">
-      <Name>windlordEngine01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sounds\mineHit01.wav">
-      <Name>mineHit01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_red_arrow.png">
-      <Name>p_red_arrow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_blink fail.xml">
-      <Name>Peng_blink fail</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_blink fail target.xml">
-      <Name>Peng_blink fail target</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\p_red_circle.png">
-      <Name>p_red_circle</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_scrollarrow_down.png">
-      <Name>menu_scrollarrow_down</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\menu_scrollarrow_hilite.png">
-      <Name>menu_scrollarrow_hilite</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\menu_scrollarrow_up.png">
-      <Name>menu_scrollarrow_up</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_small_status_display.png">
-      <Name>menu_equip_small_status_display</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_chat_bg.png">
-      <Name>gui_chat_bg</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_chat_typeline_bg.png">
-      <Name>gui_chat_typeline_bg</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_chat_typeline_cursor.png">
-      <Name>gui_chat_typeline_cursor</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_chat_scroll_arrow_up.png">
-      <Name>gui_chat_scroll_arrow_up</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_chat_scroll_arrow_down.png">
-      <Name>gui_chat_scroll_arrow_down</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_chat_scroll_track.png">
-      <Name>gui_chat_scroll_track</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_chat_scroll_arrow_glow.png">
-      <Name>gui_chat_scroll_arrow_glow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_chat_scroll_marker.png">
-      <Name>gui_chat_scroll_marker</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\Bot_rocket bot.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Bot_rocket bot</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="weapondefs\ForwardShot_bot rockets.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ForwardShot_bot rockets</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\Bot_bazooka bot.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Bot_bazooka bot</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\Bot_mine bot.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Bot_mine bot</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="weapondefs\ForwardShot_bot bazooka.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ForwardShot_bot bazooka</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="weapondefs\ForwardShot_bot minelayer.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ForwardShot_bot minelayer</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_bot electric ball.xml">
-      <Name>Peng_bot electric ball</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_bot electric streaks.xml">
-      <Name>Peng_bot electric streaks</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_bot thrust.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Peng_bot thrust</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
-  <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

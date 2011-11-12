@@ -21,6 +21,7 @@ namespace AW2.Game
         public SpriteBatch RadarSilhouetteSpriteBatch { get; private set; }
         public SpriteFont ScoreFont { get; private set; }
         public SpriteFont ConsoleFont { get; private set; }
+        public SpriteFont ChatFont { get; private set; }
 
         public GameContent(AWGame game)
         {
@@ -56,6 +57,8 @@ namespace AW2.Game
 
             ScoreFont = _game.Content.Load<SpriteFont>("ScoreFont");
             ConsoleFont = _game.Content.Load<SpriteFont>("ConsoleFont");
+            ChatFont = _game.Content.Load<SpriteFont>("ChatFont");
+            ChatFont.LineSpacing = 15;
         }
 
         public void UnloadContent()

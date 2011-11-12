@@ -16,21 +16,34 @@ namespace AW2.Core.GameComponents
     /// </summary>
     public class PlayerChat : AWGameComponent
     {
+        private class MessageLine
+        {
+            public string Text { get; private set; }
+            public Color Color { get; private set; }
+            public bool ContainsPretext { get; private set; }
+            public MessageLine(string text, Color color, bool containsPretext)
+            {
+                Text = text;
+                Color = color;
+                ContainsPretext = containsPretext;
+            }
+        }
+
+        private const int LINE_KEEP_COUNT = 200;
+        private const int SCROLL_MARKER_POSITION_MIN = 25;
+        private const int SCROLL_MARKER_POSITION_MAX = 208;
+
         private AssaultWing _game;
         private Control _chatSendControl, _escapeControl, _scrollUpControl, _scrollDownControl;
         private EditableText _message;
         private SpriteBatch _spriteBatch;
-        private SpriteFont _typingFont;
         private MessageBeeper _messageBeeper;
-
-        private Color TypingColor { get { return Color.White; } }
-        private bool IsTyping { get { return _message != null; } }
-        private Player ChatPlayer { get { return Game.DataEngine.Players.First(plr => !plr.IsRemote); } }
-        private IEnumerable<MessageContainer.Item> Messages { get { return ChatPlayer.Messages.ReversedChat(); } }
+        private Player _previousChatPlayer;
 
         private static Curve g_cursorBlinkCurve;
         private static Curve g_scrollArrowBlinkCurve;
-        
+        private static char[] g_pretextSplitChars = new[] { '>' };
+
         private Texture2D _chatBackgroundTexture;
         private Texture2D _typeLineBackgroundTexture, _typeLineCursorTexture;
         private Texture2D _scrollArrowUpTexture, _scrollArrowDownTexture, _scrollArrowGlowTexture, _scrollTrackTexture, _scrollMarkerTexture;
@@ -38,14 +51,28 @@ namespace AW2.Core.GameComponents
         private TimeSpan _scrollArrowGlowStartTime;
         private TimeSpan _cursorBlinkStartTime;
 
-        private int _scrollPosition = 0;
-        private int _linesWhenTyping = 16;
-        private int _linesWhenClosed = 6;
-        private int _minScrollMarkerPosition = 25;
-        private int _maxScrollMarkerPosition = 208;
+        private List<MessageLine> _messageLines;
+        private int _scrollPosition;
 
-        private bool IsScrollable { get { return ChatPlayer.Messages.ChatItems.Count() > _linesWhenTyping; } }
-        private bool CanScrollUp { get { return _scrollPosition < ChatPlayer.Messages.ChatItems.Count() - _linesWhenTyping; } }
+        private Viewport Viewport { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport; } }
+        private Vector2 TopLeftCorner { get { return new Vector2(Viewport.Width - ChatAreaWidth, Viewport.Height - ChatAreaHeight); } }
+        private Vector2 TypingPos { get { return TopLeftCorner + new Vector2(12, ChatAreaHeight - 20).Round(); } }
+        private float ChatAreaWidth { get { return _chatBackgroundTexture.Width; } }
+        private float ChatAreaHeight { get { return IsTyping ? _chatBackgroundTexture.Height : _chatBackgroundTexture.Height - 172; } }
+        private float ChatTextWidth { get { return ChatAreaWidth - 22; } }
+        private int VisibleLines { get { return (int)ChatAreaHeight / ChatFont.LineSpacing - (IsTyping ? 2 : 0); } }
+        private SpriteFont ChatFont { get { return Game.GraphicsEngine.GameContent.ChatFont; } }
+        private float CursorAlpha { get { return g_cursorBlinkCurve.Evaluate((float)(_game.GameTime.TotalRealTime - _cursorBlinkStartTime).TotalSeconds); } }
+        private Color TypingColor { get { return Color.White; } }
+        private Color ChatBackgroundColor { get { return IsTyping ? Color.White : Color.Multiply(Color.White, 0.7f); } }
+        private Color ArrowUpColor { get { return CanScrollUp ? Color.White : Color.Multiply(Color.White, 0.2f); } }
+        private Color ArrowDownColor { get { return CanScrollDown ? Color.White : Color.Multiply(Color.White, 0.2f); } }
+        private Player ChatPlayer { get { return Game.DataEngine.Players.First(plr => !plr.IsRemote); } }
+        private IEnumerable<MessageContainer.Item> Messages { get { return ChatPlayer.Messages.ReversedChat(); } }
+
+        private bool IsTyping { get { return _message != null; } }
+        private bool IsScrollable { get { return _messageLines.Count > VisibleLines; } }
+        private bool CanScrollUp { get { return _scrollPosition < _messageLines.Count - VisibleLines; } }
         private bool CanScrollDown { get { return _scrollPosition > 0; } }
 
         public PlayerChat(AssaultWing game, int updateOrder)
@@ -72,13 +99,13 @@ namespace AW2.Core.GameComponents
             _scrollDownControl = new KeyboardKey(Keys.Down);
             _cursorBlinkStartTime = _game.GameTime.TotalRealTime;
             _scrollArrowGlowStartTime = _game.GameTime.TotalRealTime;
+            _messageLines = new List<MessageLine>();
             _messageBeeper = new MessageBeeper(game, "PlayerMessage", () => Messages.FirstOrDefault());
         }
 
         public override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
-            _typingFont = Game.Content.Load<SpriteFont>("ChatFont");
             _chatBackgroundTexture = Game.Content.Load<Texture2D>("gui_chat_bg");
             _typeLineCursorTexture = Game.Content.Load<Texture2D>("gui_chat_typeline_cursor");
             _typeLineBackgroundTexture = Game.Content.Load<Texture2D>("gui_chat_typeline_bg");
@@ -92,6 +119,7 @@ namespace AW2.Core.GameComponents
 
         public override void Update()
         {
+            UpdateMessageLinesIfChatPlayerChanged();
             if (IsTyping)
             {
                 if (_scrollUpControl.Force > 0) ScrollUp();
@@ -112,76 +140,26 @@ namespace AW2.Core.GameComponents
 
         public override void Draw()
         {
-            var viewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
-            var chatBoxPos = new Vector2(viewport.Width - _chatBackgroundTexture.Width, viewport.Height - _chatBackgroundTexture.Height);
-            
-            // When closed, chat is smaller
-            if (!IsTyping)
-                chatBoxPos = new Vector2(viewport.Width - _chatBackgroundTexture.Width, viewport.Height - 100);
-
-            // When closed, chat background is less visible
-            Color chatBackgroundColor = Color.White;
-            if (!IsTyping)
-                chatBackgroundColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, 0.7f));
-
-            _typingFont.LineSpacing = 15;
             _spriteBatch.Begin();
-            _spriteBatch.Draw(_chatBackgroundTexture, chatBoxPos, chatBackgroundColor);
-
-            if (IsTyping)
+            _spriteBatch.Draw(_chatBackgroundTexture, TopLeftCorner, ChatBackgroundColor);
+            DrawTypingBox();
+            var textPos = TopLeftCorner + new Vector2(11, 7);
+            foreach (var line in _messageLines.GetRange(Math.Max(0, _messageLines.Count - VisibleLines - _scrollPosition), Math.Min(VisibleLines, _messageLines.Count)))
             {
-                Vector2 typeLinePos = chatBoxPos + new Vector2((_chatBackgroundTexture.Width - _typeLineBackgroundTexture.Width) / 2, _chatBackgroundTexture.Height - _typeLineBackgroundTexture.Height - 2);
-                Vector2 scrollPos = chatBoxPos + new Vector2(_chatBackgroundTexture.Width - 20, 0);
-                Color arrowGlowColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_scrollArrowBlinkCurve.Evaluate((float)(_game.GameTime.TotalRealTime - _scrollArrowGlowStartTime).TotalSeconds)));
-                Color arrowUpColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, 0.2f));
-                Color arrowDownColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, 0.2f));
-
-                if (CanScrollUp)
+                if (line.ContainsPretext)
                 {
-                    arrowUpColor = Color.White;
-                    _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 1), arrowGlowColor);
+                    var splitIndex = line.Text.IndexOf('>');
+                    if (splitIndex < 0) throw new ApplicationException("Pretext char not found");
+                    var pretext = line.Text.Substring(0, splitIndex + 1);
+                    var properText = line.Text.Substring(splitIndex + 1);
+                    ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, pretext, textPos.Round(), Color.White, 1, 1);
+                    var properPos = textPos + new Vector2(ChatFont.MeasureString(pretext).X, 0);
+                    ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, properText, properPos.Round(), line.Color, 1, 1);
                 }
-                _spriteBatch.Draw(_scrollArrowUpTexture, scrollPos + new Vector2(0, 13), arrowUpColor);
-
-                if (CanScrollDown)
-                {
-                    arrowDownColor = Color.White;
-                    _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 216), arrowGlowColor);
-                }
-                _spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, 230), arrowDownColor);
-
-                _spriteBatch.Draw(_typeLineBackgroundTexture, typeLinePos.Round(), Color.White);
-                _spriteBatch.Draw(_scrollTrackTexture, scrollPos + new Vector2(0, 24), Color.White);
-
-                if (IsScrollable)
-                    _spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, GetScrollMarkerYPosition()), Color.White);
-
-                // Draw typeline text
-                var chatName = ChatPlayer != null ? ChatPlayer.Name : "???";
-                var text = string.Format("{0}>{1}", chatName, _message.Content);
-                Color cursorColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_cursorBlinkCurve.Evaluate((float)(_game.GameTime.TotalRealTime - _cursorBlinkStartTime).TotalSeconds)));
-                _spriteBatch.DrawString(_typingFont, text, GetTypingPos(text).Round(), TypingColor);
-                _spriteBatch.Draw(_typeLineCursorTexture, GetTypingPos(text).Round() + new Vector2(_typingFont.MeasureString(text).X + 2, -2), cursorColor);
+                else
+                    ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, line.Text, textPos.Round(), line.Color, 1, 1);
+                textPos.Y += ChatFont.LineSpacing;
             }
-
-            var messageY = 7;
-            var messageLines = IsTyping ? _linesWhenTyping : _linesWhenClosed;
-
-            foreach (var item in Messages.Skip(_scrollPosition).Take(messageLines).Reverse())
-            {
-                var preTextSize = _typingFont.MeasureString(item.Message.PreText);
-                var textSize = _typingFont.MeasureString(item.Message.Text);
-                var preTextPos = chatBoxPos + new Vector2(11, messageY);
-                var textPos = preTextPos + new Vector2(preTextSize.X, 0);
-
-                if (preTextSize.X > 2)
-                    textPos += new Vector2(4, 0);
-
-                ModelRenderer.DrawBorderedText(_spriteBatch, _typingFont, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR, 1, 1);
-                ModelRenderer.DrawBorderedText(_spriteBatch, _typingFont, item.Message.Text, textPos.Round(), item.Message.TextColor, 1, 1);
-                messageY += _typingFont.LineSpacing;
-            }
-
             _spriteBatch.End();
         }
 
@@ -190,12 +168,30 @@ namespace AW2.Core.GameComponents
             if ((!Enabled || !Visible) && IsTyping) StopWritingMessage();
         }
 
-        private Vector2 GetTypingPos(string text)
+        private void DrawTypingBox()
         {
-            var viewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
-            var textY = viewport.Height - 20;
-            var textX = viewport.Width - 471;
-            return new Vector2(textX, textY);
+            if (!IsTyping) return;
+            var typeLinePos = TopLeftCorner + new Vector2((_chatBackgroundTexture.Width - _typeLineBackgroundTexture.Width) / 2, _chatBackgroundTexture.Height - _typeLineBackgroundTexture.Height - 2);
+            var scrollPos = TopLeftCorner + new Vector2(_chatBackgroundTexture.Width - 20, 0);
+            var arrowGlowColor = Color.Multiply(Color.White, g_scrollArrowBlinkCurve.Evaluate((float)(_game.GameTime.TotalRealTime - _scrollArrowGlowStartTime).TotalSeconds));
+
+            if (CanScrollUp) _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 1), arrowGlowColor);
+            _spriteBatch.Draw(_scrollArrowUpTexture, scrollPos + new Vector2(0, 13), ArrowUpColor);
+
+            if (CanScrollDown) _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 216), arrowGlowColor);
+            _spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, 230), ArrowDownColor);
+
+            _spriteBatch.Draw(_typeLineBackgroundTexture, typeLinePos.Round(), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            _spriteBatch.Draw(_scrollTrackTexture, scrollPos + new Vector2(0, 24), Color.White);
+
+            if (IsScrollable) _spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, GetScrollMarkerYPosition()), Color.White);
+
+            // Draw typeline text
+            var chatName = ChatPlayer != null ? ChatPlayer.Name : "???";
+            var text = string.Format("{0}>{1}", chatName, _message.Content);
+            var cursorColor = Color.Multiply(Color.White, CursorAlpha);
+            _spriteBatch.DrawString(ChatFont, text, TypingPos, TypingColor);
+            _spriteBatch.Draw(_typeLineCursorTexture, TypingPos + new Vector2(ChatFont.MeasureString(text).X + 2, -2), cursorColor);
         }
 
         private void StartWritingMessage()
@@ -203,7 +199,7 @@ namespace AW2.Core.GameComponents
             if (_message != null) throw new InvalidOperationException("Already writing a message");
             IEnumerable<Control> exclusiveControls = new[] { _chatSendControl, _escapeControl, _scrollUpControl, _scrollDownControl };
             _game.UIEngine.PushExclusiveControls(exclusiveControls);
-            _message = new EditableText("", 40, new CharacterSet(_typingFont.Characters), _game, () => { }) { IsActive = true };
+            _message = new EditableText("", 1000, new CharacterSet(ChatFont.Characters), _game, () => { }) { IsActive = true };
         }
 
         private void StopWritingMessage()
@@ -213,7 +209,6 @@ namespace AW2.Core.GameComponents
             _scrollPosition = 0;
             _game.UIEngine.PopExclusiveControls();
         }
-
 
         private void ScrollUp()
         {
@@ -225,17 +220,41 @@ namespace AW2.Core.GameComponents
             if (CanScrollDown) _scrollPosition--;
         }
 
-        private int GetScrollMarkerYPosition()
+        private float GetScrollMarkerYPosition()
         {
-            if (!IsScrollable) return _maxScrollMarkerPosition;
-                
-            float scrollLength = _maxScrollMarkerPosition - _minScrollMarkerPosition;
-            float totalLines = ChatPlayer.Messages.ChatItems.Count() - _linesWhenTyping;
-            float lineToPixelRatio = scrollLength / totalLines;
-            float scrollAmountInPixels = _scrollPosition * lineToPixelRatio;
-            int markerYPosition = (int)Math.Round(_maxScrollMarkerPosition - scrollAmountInPixels);
+            var lineToPixelRatio = (SCROLL_MARKER_POSITION_MAX - SCROLL_MARKER_POSITION_MIN) / (float)(_messageLines.Count - VisibleLines);
+            var scrollAmountInPixels = _scrollPosition * lineToPixelRatio;
+            return MathHelper.Clamp(SCROLL_MARKER_POSITION_MAX - scrollAmountInPixels, SCROLL_MARKER_POSITION_MIN, SCROLL_MARKER_POSITION_MAX);
+        }
 
-            return markerYPosition;
+        private float GetMessageLineWidth(string line)
+        {
+            return _game.GraphicsEngine.GameContent.ChatFont.MeasureString(line).X;
+        }
+
+        private IEnumerable<MessageLine> GetMessageLines(PlayerMessage message)
+        {
+            var fullText = message.PreText.Length > 0 ? message.PreText + " " + message.Text : message.Text;
+            var lines = new WrappedText(fullText, GetMessageLineWidth).WrapToWidth(ChatTextWidth);
+            if (lines.Length == 0) yield break;
+            var lineContainsPretext = message.PreText.Length > 0;
+            foreach (var line in lines)
+            {
+                yield return new MessageLine(line, message.TextColor, lineContainsPretext);
+                lineContainsPretext = false;
+            }
+        }
+
+        private void UpdateMessageLinesIfChatPlayerChanged()
+        {
+            if (ChatPlayer == _previousChatPlayer) return;
+            _previousChatPlayer = ChatPlayer;
+            _messageLines = Messages.SelectMany(item => GetMessageLines(item.Message)).ToList();
+            ChatPlayer.Messages.NewMessage += mess =>
+            {
+                _messageLines.AddRange(GetMessageLines(Messages.First().Message));
+                if (_messageLines.Count >= LINE_KEEP_COUNT * 2) _messageLines.RemoveRange(0, _messageLines.Count - LINE_KEEP_COUNT);
+            };
         }
     }
 }

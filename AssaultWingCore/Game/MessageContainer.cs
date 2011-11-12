@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AW2.Core;
+using AW2.Graphics;
 
 namespace AW2.Game
 {
@@ -18,22 +19,24 @@ namespace AW2.Game
             }
         }
 
-        private const int MESSAGE_KEEP_COUNT = 500;
+        private const int MESSAGE_KEEP_COUNT = 100;
 
+        private AssaultWingCore _game;
         public event Action<PlayerMessage> NewMessage;
 
         public List<Item> ChatItems { get; private set; }
         public List<Item> CombatLogItems { get; private set; }
 
-        public MessageContainer()
+        public MessageContainer(AssaultWingCore game)
         {
+            _game = game;
             ChatItems = new List<Item>();
             CombatLogItems = new List<Item>();
         }
 
         public void Add(PlayerMessage message)
         {
-            var item = new Item(message, AssaultWingCore.Instance.GameTime.TotalRealTime);
+            var item = new Item(message, _game.GameTime.TotalRealTime);
             var log = item.IsChatMessage ? ChatItems : CombatLogItems;
             log.Add(item);
             if (log.Count >= 2 * MESSAGE_KEEP_COUNT) log.RemoveRange(0, log.Count - MESSAGE_KEEP_COUNT);

@@ -12,16 +12,21 @@ namespace AW2.Graphics
         private string _text;
         private Func<string, float> _getStringWidth;
         private float _enWidth;
+        private Dictionary<float, string[]> _cachedLines;
 
         public WrappedText(string text, Func<string, float> getStringWidth)
         {
             _text = text;
             _getStringWidth = getStringWidth;
             _enWidth = getStringWidth("N");
+            _cachedLines = new Dictionary<float, string[]>();
         }
 
-        public IEnumerable<string> WrapToWidth(float width)
+        public string[] WrapToWidth(float width)
         {
+            string[] result;
+            if (_cachedLines.TryGetValue(width, out result)) return result;
+            var lines = new List<string>();
             for (int startIndex = GetNextWordStart(-1); startIndex < _text.Length; )
             {
                 var endIndex = GetPreviousWordEnd(startIndex, startIndex + (int)(width / _enWidth)); // exclusive index
@@ -41,9 +46,12 @@ namespace AW2.Graphics
                     guessOverflow = newGuessOverflow;
                     if (guessOverflow > 0 && newGuessOverflow <= 0) break;
                 }
-                yield return line;
+                lines.Add(line);
                 startIndex = GetNextWordStart(endIndex);
             }
+            result = lines.ToArray();
+            _cachedLines.Add(width, result);
+            return result;
         }
 
         public override string ToString()

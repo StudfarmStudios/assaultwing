@@ -13,13 +13,15 @@ namespace AW2.Graphics
         [SetUp]
         public void Setup()
         {
-            _getStringWidth = x =>
-            {
-                var narrowChars = x.Count(ch => ch == 'i');
-                var wideChars = x.Count(ch => ch == 'W');
-                var normalChars = x.Length - narrowChars - wideChars;
-                return narrowChars * 2.2f + wideChars * 11 + normalChars * 5.5f;
-            };
+            _getStringWidth = x => x.Sum(ch => ch == 'i' ? 2.2f : ch == 'W' ? 11 : 5.5f);
+        }
+
+        [Test]
+        public void TestEmptyLine()
+        {
+            var text = new WrappedText("", _getStringWidth);
+            var lines = text.WrapToWidth(20).ToArray();
+            Assert.AreEqual(0, lines.Length);
         }
 
         [Test]

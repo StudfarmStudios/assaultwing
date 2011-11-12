@@ -287,7 +287,7 @@ namespace AW2.Game
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
             Controls = controls;
-            Messages = new MessageContainer();
+            Messages = new MessageContainer(Game);
             Color = Color.Gray;
             BonusActions = new List<BonusAction>();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);

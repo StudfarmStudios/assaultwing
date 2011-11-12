@@ -4,11 +4,10 @@
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
-  <impactHoleRadius>42</impactHoleRadius>
+  <impactHoleRadius>45</impactHoleRadius>
   <particleEngineNames>
     <Item>fragments</Item>
     <Item>explo shockwave</Item>
-    <!--<Item>shockwave</Item>-->
     <Item>explo white flash</Item>
     <Item>explo center</Item>
     <Item>large fragments</Item>

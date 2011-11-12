@@ -8,7 +8,7 @@
   </networkUpdatePeriod>
   <lifetime>0.6</lifetime>
   <impactDamage>13</impactDamage>
-  <impactHoleRadius>7</impactHoleRadius>
+  <impactHoleRadius>8</impactHoleRadius>
   <mass>10</mass>
   <scale>0.06</scale>
   <depthLayer2D>0.5</depthLayer2D>

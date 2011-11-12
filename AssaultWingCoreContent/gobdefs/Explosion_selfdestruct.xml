@@ -4,14 +4,13 @@
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
-  <impactHoleRadius>50</impactHoleRadius>
+  <impactHoleRadius>57</impactHoleRadius>
   <particleEngineNames>
     <Item>dust fragments</Item>
     <Item>dust fragments</Item>
     <Item>fragments</Item>
     <Item>ship explo shockwave</Item>
     <Item>selfdestruct_shockwave</Item>
-    <!--<Item>shockwave_large</Item> -->
     <Item>explo center selfdestruct</Item>
     <Item>ship explo white flash</Item>
     <Item>ship explo center</Item>

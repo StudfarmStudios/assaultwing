@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,20 +17,6 @@ namespace AW2.Core.GameComponents
     /// </summary>
     public class PlayerChat : AWGameComponent
     {
-        private class MessageLine
-        {
-            public string Text { get; private set; }
-            public Color Color { get; private set; }
-            public bool ContainsPretext { get; private set; }
-            public MessageLine(string text, Color color, bool containsPretext)
-            {
-                Text = text;
-                Color = color;
-                ContainsPretext = containsPretext;
-            }
-        }
-
-        private const int LINE_KEEP_COUNT = 200;
         private const int SCROLL_MARKER_POSITION_MIN = 25;
         private const int SCROLL_MARKER_POSITION_MAX = 208;
 
@@ -38,7 +25,6 @@ namespace AW2.Core.GameComponents
         private EditableText _message;
         private SpriteBatch _spriteBatch;
         private MessageBeeper _messageBeeper;
-        private Player _previousChatPlayer;
 
         private static Curve g_cursorBlinkCurve;
         private static Curve g_scrollArrowBlinkCurve;
@@ -50,8 +36,6 @@ namespace AW2.Core.GameComponents
 
         private TimeSpan _scrollArrowGlowStartTime;
         private TimeSpan _cursorBlinkStartTime;
-
-        private List<MessageLine> _messageLines;
         private int _scrollPosition;
 
         private Viewport Viewport { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport; } }
@@ -67,12 +51,13 @@ namespace AW2.Core.GameComponents
         private Color ChatBackgroundColor { get { return IsTyping ? Color.White : Color.Multiply(Color.White, 0.7f); } }
         private Color ArrowUpColor { get { return CanScrollUp ? Color.White : Color.Multiply(Color.White, 0.2f); } }
         private Color ArrowDownColor { get { return CanScrollDown ? Color.White : Color.Multiply(Color.White, 0.2f); } }
-        private Player ChatPlayer { get { return Game.DataEngine.Players.First(plr => !plr.IsRemote); } }
+        private Player ChatPlayer { get { return Game.DataEngine.ChatPlayer; } }
         private IEnumerable<MessageContainer.Item> Messages { get { return ChatPlayer.Messages.ReversedChat(); } }
+        private ReadOnlyCollection<WrappedTextList.Line> MessageLines { get { return _game.DataEngine.ChatHistory[ChatTextWidth]; } }
 
         private bool IsTyping { get { return _message != null; } }
-        private bool IsScrollable { get { return _messageLines.Count > VisibleLines; } }
-        private bool CanScrollUp { get { return _scrollPosition < _messageLines.Count - VisibleLines; } }
+        private bool IsScrollable { get { return MessageLines.Count > VisibleLines; } }
+        private bool CanScrollUp { get { return _scrollPosition < MessageLines.Count - VisibleLines; } }
         private bool CanScrollDown { get { return _scrollPosition > 0; } }
 
         public PlayerChat(AssaultWing game, int updateOrder)
@@ -99,7 +84,6 @@ namespace AW2.Core.GameComponents
             _scrollDownControl = new KeyboardKey(Keys.Down);
             _cursorBlinkStartTime = _game.GameTime.TotalRealTime;
             _scrollArrowGlowStartTime = _game.GameTime.TotalRealTime;
-            _messageLines = new List<MessageLine>();
             _messageBeeper = new MessageBeeper(game, "PlayerMessage", () => Messages.FirstOrDefault());
         }
 
@@ -119,7 +103,6 @@ namespace AW2.Core.GameComponents
 
         public override void Update()
         {
-            UpdateMessageLinesIfChatPlayerChanged();
             if (IsTyping)
             {
                 if (_scrollUpControl.Force > 0) ScrollUp();
@@ -144,7 +127,7 @@ namespace AW2.Core.GameComponents
             _spriteBatch.Draw(_chatBackgroundTexture, TopLeftCorner, ChatBackgroundColor);
             DrawTypingBox();
             var textPos = TopLeftCorner + new Vector2(11, 7);
-            foreach (var line in _messageLines.GetRange(Math.Max(0, _messageLines.Count - VisibleLines - _scrollPosition), Math.Min(VisibleLines, _messageLines.Count)))
+            foreach (var line in MessageLines.GetRange(Math.Max(0, MessageLines.Count - VisibleLines - _scrollPosition), Math.Min(VisibleLines, MessageLines.Count)))
             {
                 if (line.ContainsPretext)
                 {
@@ -222,39 +205,9 @@ namespace AW2.Core.GameComponents
 
         private float GetScrollMarkerYPosition()
         {
-            var lineToPixelRatio = (SCROLL_MARKER_POSITION_MAX - SCROLL_MARKER_POSITION_MIN) / (float)(_messageLines.Count - VisibleLines);
+            var lineToPixelRatio = (SCROLL_MARKER_POSITION_MAX - SCROLL_MARKER_POSITION_MIN) / (float)(MessageLines.Count - VisibleLines);
             var scrollAmountInPixels = _scrollPosition * lineToPixelRatio;
             return MathHelper.Clamp(SCROLL_MARKER_POSITION_MAX - scrollAmountInPixels, SCROLL_MARKER_POSITION_MIN, SCROLL_MARKER_POSITION_MAX);
-        }
-
-        private float GetMessageLineWidth(string line)
-        {
-            return _game.GraphicsEngine.GameContent.ChatFont.MeasureString(line).X;
-        }
-
-        private IEnumerable<MessageLine> GetMessageLines(PlayerMessage message)
-        {
-            var fullText = message.PreText.Length > 0 ? message.PreText + " " + message.Text : message.Text;
-            var lines = new WrappedText(fullText, GetMessageLineWidth).WrapToWidth(ChatTextWidth);
-            if (lines.Length == 0) yield break;
-            var lineContainsPretext = message.PreText.Length > 0;
-            foreach (var line in lines)
-            {
-                yield return new MessageLine(line, message.TextColor, lineContainsPretext);
-                lineContainsPretext = false;
-            }
-        }
-
-        private void UpdateMessageLinesIfChatPlayerChanged()
-        {
-            if (ChatPlayer == _previousChatPlayer) return;
-            _previousChatPlayer = ChatPlayer;
-            _messageLines = Messages.SelectMany(item => GetMessageLines(item.Message)).ToList();
-            ChatPlayer.Messages.NewMessage += mess =>
-            {
-                _messageLines.AddRange(GetMessageLines(Messages.First().Message));
-                if (_messageLines.Count >= LINE_KEEP_COUNT * 2) _messageLines.RemoveRange(0, _messageLines.Count - LINE_KEEP_COUNT);
-            };
         }
     }
 }

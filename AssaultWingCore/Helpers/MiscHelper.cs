@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.ObjectModel;
 
 namespace AW2.Helpers
 {
@@ -129,6 +130,13 @@ namespace AW2.Helpers
                 if (!aHas && !bHas) diffIndex = -1;
                 return aHas || bHas;
             }
+        }
+
+        public static IEnumerable<T> GetRange<T>(this ReadOnlyCollection<T> items, int start, int count)
+        {
+            var safeStart = start.Clamp(0, items.Count - 1);
+            var safeEnd = safeStart + count.Clamp(0, items.Count - safeStart);
+            for (int i = safeStart; i < safeEnd; i++) yield return items[i];
         }
 
         public static Vector2 Dimensions(this Texture2D texture)

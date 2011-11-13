@@ -22,7 +22,8 @@ namespace AW2.Game
         private const int MESSAGE_KEEP_COUNT = 100;
 
         private AssaultWingCore _game;
-        public event Action<PlayerMessage> NewMessage;
+        public event Action<PlayerMessage> NewChatMessage;
+        public event Action<PlayerMessage> NewCombatLogMessage;
 
         public List<Item> ChatItems { get; private set; }
         public List<Item> CombatLogItems { get; private set; }
@@ -40,7 +41,8 @@ namespace AW2.Game
             var log = item.IsChatMessage ? ChatItems : CombatLogItems;
             log.Add(item);
             if (log.Count >= 2 * MESSAGE_KEEP_COUNT) log.RemoveRange(0, log.Count - MESSAGE_KEEP_COUNT);
-            if (NewMessage != null) NewMessage(message);
+            if (item.IsChatMessage && NewChatMessage != null) NewChatMessage(message);
+            if (!item.IsChatMessage && NewCombatLogMessage != null) NewCombatLogMessage(message);
         }
 
         public void Clear()

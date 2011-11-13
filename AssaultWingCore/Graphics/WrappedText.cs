@@ -12,20 +12,16 @@ namespace AW2.Graphics
         private string _text;
         private Func<string, float> _getStringWidth;
         private float _enWidth;
-        private Dictionary<float, string[]> _cachedLines;
 
         public WrappedText(string text, Func<string, float> getStringWidth)
         {
             _text = text;
             _getStringWidth = getStringWidth;
             _enWidth = getStringWidth("N");
-            _cachedLines = new Dictionary<float, string[]>();
         }
 
         public string[] WrapToWidth(float width)
         {
-            string[] result;
-            if (_cachedLines.TryGetValue(width, out result)) return result;
             var lines = new List<string>();
             for (int startIndex = GetNextWordStart(-1); startIndex < _text.Length; )
             {
@@ -49,14 +45,7 @@ namespace AW2.Graphics
                 lines.Add(line);
                 startIndex = GetNextWordStart(endIndex);
             }
-            result = lines.ToArray();
-            _cachedLines.Add(width, result);
-            return result;
-        }
-
-        public override string ToString()
-        {
-            return _text;
+            return lines.ToArray();
         }
 
         private int GetPreviousWordEnd(int startIndex, int i)

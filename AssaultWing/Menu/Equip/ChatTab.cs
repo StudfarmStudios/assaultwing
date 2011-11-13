@@ -35,21 +35,23 @@ namespace AW2.Menu.Equip
         private SpriteFont Font { get { return Content.FontChat; } }
         private Vector2 TypingPos { get { return StatusPanePos + new Vector2(30, Content.StatusPaneTexture.Height - 44); } }
 
-        public ChatTab(EquipMenuComponent menuComponent)
-            : base(menuComponent)
+        static ChatTab()
         {
-            _sendControl = new KeyboardKey(Keys.Enter);
-            // FIXME !!! Memory leak: _message will never be garbage collected because it is referenced by the Window.KeyPress event.
-            _message = new EditableText("", 40, new CharacterSet(Content.FontChat.Characters), MenuEngine.Game, () => { });
-            _messageBeeper = new MessageBeeper(MenuEngine.Game, "PlayerMessage", () => Messages.FirstOrDefault());
-
             g_cursorBlinkCurve = new Curve();
             g_cursorBlinkCurve.Keys.Add(new CurveKey(0, 1));
             g_cursorBlinkCurve.Keys.Add(new CurveKey(0.5f, 0));
             g_cursorBlinkCurve.Keys.Add(new CurveKey(1, 1));
             g_cursorBlinkCurve.PreLoop = CurveLoopType.Cycle;
             g_cursorBlinkCurve.PostLoop = CurveLoopType.Cycle;
+        }
 
+        public ChatTab(EquipMenuComponent menuComponent)
+            : base(menuComponent)
+        {
+            _sendControl = new KeyboardKey(Keys.Enter);
+            // FIXME !!! Memory leak: _message will never be garbage collected because it is referenced by the Window.KeyPress event.
+            _message = new EditableText("", 1000, new CharacterSet(Content.FontChat.Characters), MenuEngine.Game, () => { });
+            _messageBeeper = new MessageBeeper(MenuEngine.Game, "PlayerMessage", () => Messages.FirstOrDefault());
             _cursorBlinkStartTime = MenuEngine.Game.GameTime.TotalRealTime;
         }
 

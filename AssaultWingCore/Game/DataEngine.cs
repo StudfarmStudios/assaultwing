@@ -53,11 +53,14 @@ namespace AW2.Game
 
         public IEnumerable<Gob> Minions { get { return Spectators.SelectMany(spec => spec.Minions); } }
         public IEnumerable<Player> Players { get { return Spectators.OfType<Player>(); } }
+        public Player ChatPlayer { get { return Players.First(plr => !plr.IsRemote); } }
+
         // TODO: Maybe Arena is a more natural place for Devices, alongside Gobs?
         public IndexedItemCollection<ShipDevice> Devices { get; private set; }
         public Arena Arena { get; set; }
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
+        public WrappedTextList ChatHistory { get; private set; }
 
         public event Action<Spectator> SpectatorAdded;
         public event Action<Spectator> SpectatorRemoved;
@@ -73,7 +76,7 @@ namespace AW2.Game
                 device.Activate();
             };
             Devices.Removed += device => device.Dispose();
-
+            ChatHistory = new WrappedTextList(Game);
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
             _templates = new NamedItemCollection<object>();
         }

@@ -211,6 +211,7 @@
     <Compile Include="Graphics\TexturePostprocessor.cs" />
     <Compile Include="Graphics\VerticalAlignment.cs" />
     <Compile Include="Graphics\WrappedText.cs" />
+    <Compile Include="Graphics\WrappedTextList.cs" />
     <Compile Include="Helpers\AbortableThreadPool.cs" />
     <Compile Include="Helpers\AWPerformanceCounter.cs" />
     <Compile Include="Helpers\CanonicalString.cs" />

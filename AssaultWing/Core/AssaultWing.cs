@@ -14,6 +14,7 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
+using AW2.Graphics;
 
 namespace AW2.Core
 {
@@ -694,18 +695,21 @@ namespace AW2.Core
             if (player == null) return;
             if (NetworkMode != NetworkMode.Server || !player.IsRemote) return;
             player.IsAllowedToCreateShip = () => NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
-            player.Messages.NewMessage += message =>
+            player.Messages.NewChatMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
+            player.Messages.NewCombatLogMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
+        }
+
+        private void SendPlayerMessageToRemoteSpectator(PlayerMessage message, Player player)
+        {
+            try
             {
-                try
-                {
-                    var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Message = message };
-                    NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
-                }
-                catch (InvalidOperationException)
-                {
-                    // The connection of the player doesn't exist any more. Just don't send the message then.
-                }
-            };
+                var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Message = message };
+                NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
+            }
+            catch (InvalidOperationException)
+            {
+                // The connection of the player doesn't exist any more. Just don't send the message then.
+            }
         }
 
         private void SpectatorRemovedHandler(Spectator spectator)

@@ -134,6 +134,7 @@ namespace AW2.Helpers
 
         public static IEnumerable<T> GetRange<T>(this ReadOnlyCollection<T> items, int start, int count)
         {
+            if (items.Count == 0) yield break;
             var safeStart = start.Clamp(0, items.Count - 1);
             var safeEnd = safeStart + count.Clamp(0, items.Count - safeStart);
             for (int i = safeStart; i < safeEnd; i++) yield return items[i];

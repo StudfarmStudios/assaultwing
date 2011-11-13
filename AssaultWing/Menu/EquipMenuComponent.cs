@@ -190,9 +190,9 @@ namespace AW2.Menu
         {
             if (_chatTab == null || _tab == _chatTab || MenuEngine.Game.NetworkMode == NetworkMode.Standalone) return;
             var extraChatBoxPos = Pos + new Vector2(540, 540);
-            var textLowerLeftPos = extraChatBoxPos + new Vector2(29, 131);
+            var textTopLeftPos = extraChatBoxPos + new Vector2(29, 21);
             spriteBatch.Draw(_extraChatBoxTexture, extraChatBoxPos - view, Color.White);
-            _chatTab.DrawChatMessages(view, spriteBatch, textLowerLeftPos, 110);
+            _chatTab.DrawChatMessages(view, spriteBatch, textTopLeftPos, 110);
         }
 
         private void DrawTabsAndButtons(Vector2 view, SpriteBatch spriteBatch)

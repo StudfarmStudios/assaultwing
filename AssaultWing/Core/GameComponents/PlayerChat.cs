@@ -126,6 +126,18 @@ namespace AW2.Core.GameComponents
             _spriteBatch.Begin();
             _spriteBatch.Draw(_chatBackgroundTexture, TopLeftCorner, ChatBackgroundColor);
             DrawTypingBox();
+            DrawChatHistory();
+            _spriteBatch.End();
+        }
+
+        protected override void EnabledOrVisibleChanged()
+        {
+            if ((!Enabled || !Visible) && IsTyping) StopWritingMessage();
+        }
+
+        private void DrawChatHistory()
+        {
+            // TODO !!! Combine with ChatTab.DrawChatMessages()
             var textPos = TopLeftCorner + new Vector2(11, 7);
             foreach (var line in MessageLines.GetRange(Math.Max(0, MessageLines.Count - VisibleLines - _scrollPosition), Math.Min(VisibleLines, MessageLines.Count)))
             {
@@ -135,7 +147,7 @@ namespace AW2.Core.GameComponents
                     if (splitIndex < 0) throw new ApplicationException("Pretext char not found");
                     var pretext = line.Text.Substring(0, splitIndex + 1);
                     var properText = line.Text.Substring(splitIndex + 1);
-                    ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, pretext, textPos.Round(), Color.White, 1, 1);
+                    ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, pretext, textPos.Round(), PlayerMessage.PRETEXT_COLOR, 1, 1);
                     var properPos = textPos + new Vector2(ChatFont.MeasureString(pretext).X, 0);
                     ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, properText, properPos.Round(), line.Color, 1, 1);
                 }
@@ -143,12 +155,6 @@ namespace AW2.Core.GameComponents
                     ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, line.Text, textPos.Round(), line.Color, 1, 1);
                 textPos.Y += ChatFont.LineSpacing;
             }
-            _spriteBatch.End();
-        }
-
-        protected override void EnabledOrVisibleChanged()
-        {
-            if ((!Enabled || !Visible) && IsTyping) StopWritingMessage();
         }
 
         private void DrawTypingBox()

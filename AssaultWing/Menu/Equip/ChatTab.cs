@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,10 +31,13 @@ namespace AW2.Menu.Equip
                 return ChatPlayer.Messages.ReversedChat();
             }
         }
+        private ReadOnlyCollection<WrappedTextList.Line> MessageLines { get { return MenuEngine.Game.DataEngine.ChatHistory[ChatTextWidth]; } }
 
         private Player ChatPlayer { get { return MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => !plr.IsRemote); } }
         private SpriteFont Font { get { return Content.FontChat; } }
-        private Vector2 TypingPos { get { return StatusPanePos + new Vector2(30, Content.StatusPaneTexture.Height - 44); } }
+        private Vector2 TypingPos { get { return StatusPanePos + new Vector2(30, Content.StatusPaneTexture.Height - 47); } }
+        private Vector2 ChatHistoryPos { get { return StatusPanePos + new Vector2(30, 32); } }
+        private float ChatTextWidth { get { return 571; } }
 
         static ChatTab()
         {
@@ -70,34 +74,38 @@ namespace AW2.Menu.Equip
         {
             DrawLargeStatusBackground(view, spriteBatch);
             DrawPlayerListDisplay(view, spriteBatch, drawCursor: false);
-            DrawChatMessages(view, spriteBatch, TypingPos, Content.StatusPaneTexture.Height - 70);
+            DrawChatMessages(view, spriteBatch, ChatHistoryPos, Content.StatusPaneTexture.Height - 70);
             DrawChatTextInputBox(view, spriteBatch);
         }
 
-        public void DrawChatMessages(Vector2 view, SpriteBatch spriteBatch, Vector2 lowerLeftCorner, int height)
+        public void DrawChatMessages(Vector2 view, SpriteBatch spriteBatch, Vector2 topLeftCorner, int height)
         {
-            Font.LineSpacing = 15;
+            // TODO !!! Combine with PlayerChat.DrawChatHistory()
             var visibleLines = height / Font.LineSpacing;
             var lineDelta = new Vector2(0, Font.LineSpacing);
-            var preTextPos = lowerLeftCorner - view - lineDelta;
-            foreach (var item in Messages.Take(visibleLines))
+            var textPos = topLeftCorner - view;
+            foreach (var line in MessageLines.GetRange(MessageLines.Count - visibleLines, visibleLines))
             {
-                var preTextSize = Font.MeasureString(item.Message.PreText);
-                var textPos = preTextPos + new Vector2(preTextSize.X, 0);
-
-                if (preTextSize.X > 2)
-                    textPos += new Vector2(4, 0);
-
-                ModelRenderer.DrawBorderedText(spriteBatch, Font, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR, 1, 1);
-                ModelRenderer.DrawBorderedText(spriteBatch, Font, item.Message.Text, textPos.Round(), item.Message.TextColor, 1, 1);
-                preTextPos -= lineDelta;
+                if (line.ContainsPretext)
+                {
+                    var splitIndex = line.Text.IndexOf('>');
+                    if (splitIndex < 0) throw new ApplicationException("Pretext char not found");
+                    var pretext = line.Text.Substring(0, splitIndex + 1);
+                    var properText = line.Text.Substring(splitIndex + 1);
+                    ModelRenderer.DrawBorderedText(spriteBatch, Font, pretext, textPos.Round(), PlayerMessage.PRETEXT_COLOR, 1, 1);
+                    var properPos = textPos + new Vector2(Font.MeasureString(pretext).X, 0);
+                    ModelRenderer.DrawBorderedText(spriteBatch, Font, properText, properPos.Round(), line.Color, 1, 1);
+                }
+                else
+                    ModelRenderer.DrawBorderedText(spriteBatch, Font, line.Text, textPos.Round(), line.Color, 1, 1);
+                textPos += lineDelta;
             }
         }
 
         private void DrawChatTextInputBox(Vector2 view, SpriteBatch spriteBatch)
         {
             if (ChatPlayer == null) return;
-            var text = string.Format("{0}>{1}", ChatPlayer.Name, _message.Content);
+            var text = string.Format("{0}> {1}", ChatPlayer.Name, _message.Content);
             ModelRenderer.DrawBorderedText(spriteBatch, Font, text, (TypingPos - view).Round(), Color.White, 1, 1);
             Color cursorColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_cursorBlinkCurve.Evaluate((float)(MenuEngine.Game.GameTime.TotalRealTime - _cursorBlinkStartTime).TotalSeconds)));
             spriteBatch.Draw(Content.TypingCursor, (TypingPos - view).Round() + new Vector2(Font.MeasureString(text).X + 2, -2), cursorColor);

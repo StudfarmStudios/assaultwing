@@ -53,20 +53,20 @@ namespace AW2.Graphics
             _items = new Dictionary<float, List<Line>>();
         }
 
+        private void AddCachedTextWidth(float textWidth)
+        {
+            if (_items.Keys.Count > 100) throw new NotImplementedException("WrappedTextList purging outdated text widths");
+            _items[textWidth] = new List<Line>();
+            foreach (var mess in ChatPlayer.Messages.ChatItems) AddMessage(mess.Message, textWidth);
+        }
+
         private void AddMessage(PlayerMessage message)
         {
             foreach (var textWidth in _items.Keys) AddMessage(message, textWidth);
         }
 
-        private void AddCachedTextWidth(float textWidth)
-        {
-            if (_items.Keys.Count > 100) throw new NotImplementedException("WrappedTextList purging outdated text widths");
-            foreach (var mess in ChatPlayer.Messages.ReversedChat()) AddMessage(mess.Message, textWidth);
-        }
-
         private void AddMessage(PlayerMessage message, float textWidth)
         {
-            if (!_items.ContainsKey(textWidth)) _items[textWidth] = new List<Line>();
             var lines = _items[textWidth];
             lines.AddRange(GetMessageLines(message, textWidth));
             if (lines.Count >= LINE_KEEP_COUNT * 2) lines.RemoveRange(0, lines.Count - LINE_KEEP_COUNT);

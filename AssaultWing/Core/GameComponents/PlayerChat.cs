@@ -177,10 +177,19 @@ namespace AW2.Core.GameComponents
 
             // Draw typeline text
             var chatName = ChatPlayer != null ? ChatPlayer.Name : "???";
-            var text = string.Format("{0}>{1}", chatName, _message.Content);
+            var text = GetVisibleInputString(chatName + "> ", _message.Content);
             var cursorColor = Color.Multiply(Color.White, CursorAlpha);
             _spriteBatch.DrawString(ChatFont, text, TypingPos, TypingColor);
             _spriteBatch.Draw(_typeLineCursorTexture, TypingPos + new Vector2(ChatFont.MeasureString(text).X + 2, -2), cursorColor);
+        }
+
+        private string GetVisibleInputString(string pretext, string text)
+        {
+            var visibleTextWidth = ChatTextWidth - ChatFont.MeasureString(pretext).X - _typeLineCursorTexture.Width;
+            var visibleText = MiscHelper.FindMaxAcceptedOrMin<string>(0, text.Length,
+                get: len => text.Substring(text.Length - len, len),
+                accept: substr => ChatFont.MeasureString(substr).X <= visibleTextWidth);
+            return string.Format("{0}{1}", pretext, visibleText);
         }
 
         private void StartWritingMessage()

@@ -14,6 +14,8 @@ namespace AW2.Menu.Equip
 {
     public class ChatTab : EquipMenuTab
     {
+        private const float CHAT_TEXT_WIDTH = 565;
+
         private Control _sendControl;
         private EditableText _message;
 
@@ -31,13 +33,13 @@ namespace AW2.Menu.Equip
                 return ChatPlayer.Messages.ReversedChat();
             }
         }
-        private ReadOnlyCollection<WrappedTextList.Line> MessageLines { get { return MenuEngine.Game.DataEngine.ChatHistory[ChatTextWidth]; } }
+        private ReadOnlyCollection<WrappedTextList.Line> MessageLines { get { return MenuEngine.Game.DataEngine.ChatHistory[CHAT_TEXT_WIDTH]; } }
 
         private Player ChatPlayer { get { return MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => !plr.IsRemote); } }
         private SpriteFont Font { get { return Content.FontChat; } }
         private Vector2 TypingPos { get { return StatusPanePos + new Vector2(30, Content.StatusPaneTexture.Height - 47); } }
         private Vector2 ChatHistoryPos { get { return StatusPanePos + new Vector2(30, 32); } }
-        private float ChatTextWidth { get { return 571; } }
+        private Color CursorColor { get { return Color.Multiply(Color.White, g_cursorBlinkCurve.Evaluate((float)(MenuEngine.Game.GameTime.TotalRealTime - _cursorBlinkStartTime).TotalSeconds)); } }
 
         static ChatTab()
         {
@@ -105,10 +107,18 @@ namespace AW2.Menu.Equip
         private void DrawChatTextInputBox(Vector2 view, SpriteBatch spriteBatch)
         {
             if (ChatPlayer == null) return;
-            var text = string.Format("{0}> {1}", ChatPlayer.Name, _message.Content);
+            var text = GetVisibleInputString(ChatPlayer.Name + "> ", _message.Content);
             ModelRenderer.DrawBorderedText(spriteBatch, Font, text, (TypingPos - view).Round(), Color.White, 1, 1);
-            Color cursorColor = Color.FromNonPremultiplied(new Vector4(1, 1, 1, g_cursorBlinkCurve.Evaluate((float)(MenuEngine.Game.GameTime.TotalRealTime - _cursorBlinkStartTime).TotalSeconds)));
-            spriteBatch.Draw(Content.TypingCursor, (TypingPos - view).Round() + new Vector2(Font.MeasureString(text).X + 2, -2), cursorColor);
+            spriteBatch.Draw(Content.TypingCursor, (TypingPos - view).Round() + new Vector2(Font.MeasureString(text).X + 2, -2), CursorColor);
+        }
+
+        private string GetVisibleInputString(string pretext, string text)
+        {
+            var visibleTextWidth = CHAT_TEXT_WIDTH - Font.MeasureString(pretext).X - Content.TypingCursor.Width;
+            var visibleText = MiscHelper.FindMaxAcceptedOrMin<string>(0, text.Length,
+                get: len => text.Substring(text.Length - len, len),
+                accept: substr => Font.MeasureString(substr).X <= visibleTextWidth);
+            return string.Format("{0}{1}", pretext, visibleText);
         }
     }
 }

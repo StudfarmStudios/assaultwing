@@ -195,6 +195,26 @@ namespace AW2.Helpers
             return string.Join(",", bytes);
         }
 
+        /// <summary>
+        /// Returns the item at the greatest index that is accepted. Assumes that acceptable items
+        /// come before rejectable items. If no item is acceptable, returns the first item.
+        /// </summary>
+        public static T FindMaxAcceptedOrMin<T>(int min, int max, Func<int, T> get, Func<T, bool> accept)
+        {
+            if (min > max) new ArgumentException("Min cannot be greater than max");
+            if (accept(get(max))) return get(max);
+            if (!accept(get(min))) return get(min);
+            var maxAccepted = min;
+            var minRejected = max;
+            while (true)
+            {
+                if (maxAccepted + 1 == minRejected) return get(maxAccepted);
+                var test = (maxAccepted + minRejected) / 2;
+                if (accept(get(test))) maxAccepted = test;
+                else minRejected = test;
+            }
+        }
+
         public static bool EqualsDeep(this PresentationParameters a, PresentationParameters b)
         {
             return b != null

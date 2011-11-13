@@ -34,7 +34,7 @@ namespace AW2.Game.Pengs
         {
             // Rewrite our curve by linear interpolation between keys.
             // This is a temporary hack to simplify curve editing in serialised XML.
-#warning CurveLerpKey tangents are always linear
+            // TODO !!! Replace CurveLerp by SimpleCurve
             _curve.ComputeTangents(CurveTangent.Linear);
         }
     }

@@ -34,6 +34,7 @@ namespace AW2.Graphics
                     var newEndIndex = guessOverflow > 0
                         ? GetPreviousWordEnd(startIndex, endIndex)
                         : GetNextWordEnd(endIndex);
+                    if (newEndIndex == startIndex) break;
                     var newLine = _text.Substring(startIndex, newEndIndex - startIndex);
                     var newGuessOverflow = _getStringWidth(newLine) - width;
                     if (guessOverflow <= 0 && newGuessOverflow > 0) break;

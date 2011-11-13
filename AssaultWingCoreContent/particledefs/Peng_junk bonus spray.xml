@@ -14,7 +14,7 @@
   <coordinateSystem>Game</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
-      <emissionFrequency>0.15</emissionFrequency>
+      <emissionFrequency>0.20</emissionFrequency>
       <numberToCreate>-1</numberToCreate>
       <radius>10</radius>
       <sprayAngle>0.7</sprayAngle>

@@ -3422,7 +3422,7 @@
               <Y>2780</Y>
             </max>
           </spawnArea>
-          <spawnInterval>40</spawnInterval>
+          <spawnInterval>30</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
               <weight>1</weight>

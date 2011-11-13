@@ -1555,7 +1555,7 @@
               <Y>120</Y>
             </max>
           </spawnArea>
-          <spawnInterval>38</spawnInterval>
+          <spawnInterval>32</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
               <weight>10</weight>
@@ -1627,7 +1627,7 @@
               <Y>1740</Y>
             </max>
           </spawnArea>
-          <spawnInterval>38</spawnInterval>
+          <spawnInterval>32</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
               <weight>10</weight>

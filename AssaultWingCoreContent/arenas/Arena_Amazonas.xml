@@ -2965,7 +2965,7 @@
               <Y>2680</Y>
             </max>
           </spawnArea>
-          <spawnInterval>60</spawnInterval>
+          <spawnInterval>30</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
               <weight>6</weight>
@@ -3003,7 +3003,7 @@
               <Y>3795</Y>
             </max>
           </spawnArea>
-          <spawnInterval>40</spawnInterval>
+          <spawnInterval>32</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
               <weight>1</weight>
@@ -3029,7 +3029,7 @@
               <Y>3165</Y>
             </max>
           </spawnArea>
-          <spawnInterval>40</spawnInterval>
+          <spawnInterval>32</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
               <weight>1</weight>
@@ -3055,7 +3055,7 @@
               <Y>135</Y>
             </max>
           </spawnArea>
-          <spawnInterval>40</spawnInterval>
+          <spawnInterval>32</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
               <weight>1</weight>
@@ -3081,7 +3081,7 @@
               <Y>575</Y>
             </max>
           </spawnArea>
-          <spawnInterval>40</spawnInterval>
+          <spawnInterval>32</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
               <weight>1</weight>

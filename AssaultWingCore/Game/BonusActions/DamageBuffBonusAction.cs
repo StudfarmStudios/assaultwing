@@ -26,7 +26,6 @@ namespace AW2.Game.BonusActions
         public override string BonusText { get { return _buffName; } }
         public override CanonicalString BonusIconName { get { return _bonusIconName; } }
         public Gob Cause { get; set; }
-        public new Player Owner { get { return (Player)base.Owner; } }
 
         /// <summary>
         /// Only for serialization.

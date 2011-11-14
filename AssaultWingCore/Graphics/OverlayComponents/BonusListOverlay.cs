@@ -192,89 +192,78 @@ namespace AW2.Graphics.OverlayComponents
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            //Remove expired bonusOverlays from the queue
-            for (int i = _displayQueue.Count - 1; i >= 1; i--)
+            // Remove expired bonusOverlays from the queue.
+            _displayQueue.RemoveAll(overlay => overlay.displayPosition.X >= 0 && overlay.bonusEntryDirection == DisplayDirection.Exit);
+
+            // This dictionary is only used for reduce load from the loop that adds new objects to queue.
+            var bonusActionsInQueue = _displayQueue
+                .Skip(1)
+                .Where(overlay => overlay.bonusEntryDirection == DisplayDirection.Enter)
+                .ToDictionary(overlay => overlay.bonusActionData.GetType());
+
+            // Loop bonusActions and add them to displayQueue if they don't exist yet.
+            if (_player.Ship != null)
+            {
+                foreach (var action in _player.Ship.BonusActions)
+                {
+                    if (!bonusActionsInQueue.Keys.Contains(action.GetType()))
+                    {
+                        _displayQueue.Add(new BonusOverlay(action));
+                    }
+                    else
+                    {
+                        bonusActionsInQueue[action.GetType()].bonusActionData = action;
+                    }
+                }
+            }
+
+            for (int i = 1; i < _displayQueue.Count; i++)
             {
                 var bonusOverlay = _displayQueue[i];
-                if (bonusOverlay.displayPosition.X >= 0 && bonusOverlay.bonusEntryDirection == DisplayDirection.Exit)
-                    _displayQueue.RemoveAt(i);
-            }
-
-            //this dictionary is only used for reduce load from the loop that adds new objects to queue
-            var bonusActionsInQueue = new Dictionary<Type, BonusOverlay>();
-            for (int i = 1; i < _displayQueue.Count; i++)
-            {
-                BonusOverlay bonusOverlay = _displayQueue[i];
-                //if bonus is exitting it doesn't exist. when the same bonus is activated
-                //when the bonusOverlay is exitting, the will be a new bonusOverlay as a last item it the list
-                if (bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
-                    bonusActionsInQueue.Add(bonusOverlay.bonusActionData.GetType(), bonusOverlay);
-            }
-
-            //Loop bonusActions and add them to displayQueue if they don't exist yet
-            foreach (BonusAction action in _player.BonusActions)
-            {
-                if (!bonusActionsInQueue.Keys.Contains(action.GetType()))
-                {
-                    _displayQueue.Add(new BonusOverlay(action));
-                }
-                else
-                {
-                    BonusOverlay bonusOverlay = bonusActionsInQueue[action.GetType()];
-                    bonusOverlay.bonusActionData = action;
-                }
-            }
-
-            //Handle Displayables
-            for (int i = 1; i < _displayQueue.Count; i++)
-            {
-                BonusOverlay bonusOverlay = _displayQueue[i];
                 float slideTime = (float)(AssaultWingCore.Instance.DataEngine.ArenaTotalTime.TotalSeconds
-                - bonusOverlay.bonusEntryTimeIn.TotalSeconds);
+                    - bonusOverlay.bonusEntryTimeIn.TotalSeconds);
 
-                Vector2 adjustment = bonusOverlay.bonusEntryPosAdjustment;
+                var adjustment = bonusOverlay.bonusEntryPosAdjustment;
                 Vector2 curvePos, shift, scale;
 
-                //Do entry for bonusOverlay
                 if (bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
                 {
+                    // Do entry for bonusOverlay
                     curvePos = GetCurvePos(g_bonusBoxEntry, g_bonusBoxAvoid, slideTime);
                     shift = GetEntryShift(g_bonusBoxEntry, g_bonusBoxAvoid, adjustment);
                     scale = GetScale(g_bonusBoxEntry, g_bonusBoxAvoid, adjustment);
-                } //do exit for bonusOverlay
+                }
                 else
                 {
+                    // Do exit for bonusOverlay
                     curvePos = GetCurvePos(g_bonusBoxExit, g_bonusBoxClose, slideTime);
                     shift = GetExitShift(g_bonusBoxExit, g_bonusBoxClose, adjustment);
                     scale = GetScale(g_bonusBoxExit, g_bonusBoxClose, adjustment);
                 }
 
-                //get relative position
-                Vector2 relativePos = new Vector2(
+                var relativePos = new Vector2(
                     (curvePos.X + shift.X) * scale.X,
                     (curvePos.Y + shift.Y) * scale.Y);
 
-                /*update bonusOverlay when the bonus in player ceases to be*/
-                if (!_player.BonusActions.Contains(bonusOverlay.bonusActionData) && bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
+                // Update bonusOverlay when the bonus in player ceases to be.
+                if (bonusOverlay.bonusEntryDirection == DisplayDirection.Enter &&
+                    (_player.Ship == null || !_player.Ship.BonusActions.Contains(bonusOverlay.bonusActionData)))
                 {
                     bonusOverlay.bonusEntryPosAdjustment = relativePos;
                     bonusOverlay.bonusEntryTimeIn = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
                     bonusOverlay.bonusEntryDirection = DisplayDirection.Exit;
                 }
 
-                //calculate position for each displayable
                 bonusOverlay.displayPosition = new Vector2(-_bonusBackgroundTexture.Width * relativePos.X,
-                        _displayQueue[i - 1].displayPosition.Y + _bonusBackgroundTexture.Height * relativePos.Y);
+                    _displayQueue[i - 1].displayPosition.Y + _bonusBackgroundTexture.Height * relativePos.Y);
             }
 
-            // Draw the bonus boxes in their places.
-            Point dimensions = Dimensions;
-            Vector2 bonusBoxAreaTopRight = new Vector2(dimensions.X * 2,
-                dimensions.Y - _displayQueue[_displayQueue.Count - 1].displayPosition.Y) / 2;
+            var bonusBoxAreaTopRight = new Vector2(Dimensions.X * 2,
+                Dimensions.Y - _displayQueue[_displayQueue.Count - 1].displayPosition.Y) / 2;
 
             for (int i = 1; i < _displayQueue.Count; ++i)
             {
-                Vector2 leftMiddlePoint = new Vector2(_displayQueue[i].displayPosition.X + bonusBoxAreaTopRight.X,
+                var leftMiddlePoint = new Vector2(_displayQueue[i].displayPosition.X + bonusBoxAreaTopRight.X,
                     bonusBoxAreaTopRight.Y + (_displayQueue[i].displayPosition.Y + _displayQueue[i - 1].displayPosition.Y) / 2);
                 DrawBonusBox(spriteBatch, leftMiddlePoint, _displayQueue[i].bonusActionData);
             }

@@ -326,6 +326,8 @@ namespace AW2.Game
         /// </summary>
         public TimeSpan LastDamagerTimeout { get; private set; }
 
+        public List<Gobs.BonusAction> BonusActions { get; private set; }
+
         /// <summary>
         /// Drawing mode of 2D graphics of the gob.
         /// </summary>
@@ -641,6 +643,7 @@ namespace AW2.Game
             Alpha = 1;
             _previousBleach = -1;
             CollisionDamageToOthersMultiplier = 1;
+            BonusActions = new List<Gobs.BonusAction>();
         }
 
         /// <summary>

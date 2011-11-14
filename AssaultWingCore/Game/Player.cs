@@ -180,8 +180,6 @@ namespace AW2.Game
         /// </summary>
         public PlayerControls Controls { get; set; }
 
-        public List<BonusAction> BonusActions { get; private set; }
-
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
         /// </summary>
@@ -289,7 +287,6 @@ namespace AW2.Game
             Controls = controls;
             Messages = new MessageContainer(Game);
             Color = Color.Gray;
-            BonusActions = new List<BonusAction>();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
             GobTrackerItems = new List<GobTrackerItem>();
         }
@@ -326,7 +323,6 @@ namespace AW2.Game
             _shipSpawnTime = MOURNING_DELAY;
             _shakeUpdateTime = TimeSpan.Zero;
             _relativeShakeDamage = 0;
-            BonusActions.Clear();
             PostprocessEffectNames.Clear();
             Ship = null;
         }
@@ -446,7 +442,6 @@ namespace AW2.Game
         {
             if (Game.NetworkMode != NetworkMode.Client)
                 _shipSpawnTime = coroner.Game.DataEngine.ArenaTotalTime + MOURNING_DELAY;
-            BonusActions.Clear();
             Ship = null;
         }
 

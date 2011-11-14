@@ -12,7 +12,6 @@ namespace AW2.Game.BonusActions
 
         public override string BonusText { get { return Owner.Weapon1Name + "\nspeedloader"; } }
         public override CanonicalString BonusIconName { get { return (CanonicalString)"b_icon_rapid_fire_1"; } }
-        public new Player Owner { get { return (Player)base.Owner; } }
 
         /// <summary>
         /// Only for serialization.

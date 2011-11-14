@@ -30,7 +30,7 @@ namespace AW2.Game.Gobs
         public static T Create<T>(CanonicalString typeName, Player player, Action<T> init) where T : BonusAction
         {
             var actionType = player.Game.DataEngine.GetTypeTemplate(typeName).GetType();
-            var sameTypeActions = player.BonusActions.Where(ba => ba.GetType() == actionType);
+            var sameTypeActions = player.Ship.BonusActions.Where(ba => ba.GetType() == actionType);
             if (sameTypeActions.Any())
             {
                 var oldAction = sameTypeActions.FirstOrDefault(ba => ba.TypeName == typeName);
@@ -46,7 +46,7 @@ namespace AW2.Game.Gobs
             {
                 gob.ResetPos(Vector2.Zero, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 gob.Owner = player;
-                player.BonusActions.Add(gob);
+                player.Ship.BonusActions.Add(gob);
                 init(gob);
                 player.Game.DataEngine.Arena.Gobs.Add(gob);
                 result = gob;
@@ -73,8 +73,8 @@ namespace AW2.Game.Gobs
             ResetTimeout();
             if (Game.NetworkMode == Core.NetworkMode.Client)
             {
-                foreach (var ba in Owner.BonusActions.Where(ba => ba != this && ba.GetType() == GetType()).ToArray()) ba.DieOnClient();
-                if (!Owner.BonusActions.Contains(this)) Owner.BonusActions.Add(this);
+                foreach (var ba in Owner.Ship.BonusActions.Where(ba => ba != this && ba.GetType() == GetType()).ToArray()) ba.DieOnClient();
+                if (!Owner.Ship.BonusActions.Contains(this)) Owner.Ship.BonusActions.Add(this);
             }
         }
 
@@ -86,7 +86,7 @@ namespace AW2.Game.Gobs
 
         public override void Dispose()
         {
-            Owner.BonusActions.Remove(this);
+            if (Owner.Ship != null) Owner.Ship.BonusActions.Remove(this);
             base.Dispose();
         }
 

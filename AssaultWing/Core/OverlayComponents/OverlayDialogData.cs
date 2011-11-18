@@ -27,6 +27,12 @@ namespace AW2.Core.OverlayComponents
         public IEnumerable<Control> Controls { get { return _actions.Select(action => action.Control); } }
 
         /// <summary>
+        /// If non-null, then the <see cref="OverlayDialogData"/> will replace all
+        /// previous <see cref="OverlayDialogData"/>s with the same <see cref="GroupName"/>.
+        /// </summary>
+        public string GroupName { get; set; }
+
+        /// <summary>
         /// The triggered callbacks for the dialog.
         /// </summary>
         protected TriggeredCallback[] Actions { set { _actions = value; } }

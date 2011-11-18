@@ -143,11 +143,10 @@ namespace AW2.Core
         /// Like calling <see cref="ShowDialog"/> with <see cref="TriggeredCallback.PROCEED_CONTROL"/> that
         /// doesn't do anything.
         /// </summary>
-        /// <param name="text"></param>
-        public void ShowInfoDialog(string text)
+        public void ShowInfoDialog(string text, string groupName = null)
         {
             ShowDialog(new CustomOverlayDialogData(this, text,
-                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })));
+                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })) { GroupName = groupName });
         }
 
         public void HideDialog()
@@ -419,7 +418,7 @@ namespace AW2.Core
             {
                 StopGameplay();
                 _clearGameDataWhenEnteringMenus = true;
-                ShowDialog(new GameOverOverlayDialogData(this));
+                ShowDialog(new GameOverOverlayDialogData(this) { GroupName = "Game over" });
             }
         }
 

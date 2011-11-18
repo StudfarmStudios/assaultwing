@@ -186,7 +186,7 @@ namespace AW2.Menu.Main
 @"No reply from management server.
 Cannot refresh game server list.
 Either your firewall blocks the
-traffic or the server is down.");
+traffic or the server is down.", "No reply from management server");
             Game.ShowMainMenuAndResetGameplay();
             _gameServerListReplyDeadline = null;
         }

@@ -46,8 +46,8 @@ namespace AW2.Game.BonusActions
         public override void Activate()
         {
             base.Activate();
-            if (_pengTypeName != "" && _myPengs == null && Owner.Ship != null)
-                _myPengs = GobHelper.CreatePengs(new[] { _pengTypeName }, Owner.Ship);
+            if (_pengTypeName != "" && _myPengs == null && Host != null)
+                _myPengs = GobHelper.CreatePengs(new[] { _pengTypeName }, Host);
         }
 
         public override void Dispose()
@@ -60,12 +60,12 @@ namespace AW2.Game.BonusActions
         {
             base.Update();
             float damage = Game.PhysicsEngine.ApplyChange(_damagePerSecond, Game.GameTime.ElapsedGameTime);
-            if (Owner.Ship != null)
+            if (Host != null)
             {
                 if (damage > 0)
-                    Owner.Ship.InflictDamage(damage, new DamageInfo(Cause));
+                    Host.InflictDamage(damage, new DamageInfo(Cause));
                 else
-                    Owner.Ship.RepairDamage(-damage);
+                    Host.RepairDamage(-damage);
             }
         }
     }

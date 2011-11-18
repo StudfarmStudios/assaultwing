@@ -89,7 +89,7 @@ namespace AW2.Game.Gobs
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 gob.Message = gameAction.BonusText;
                 gob.IconName = gameAction.BonusIconName;
-                gob.DrawColor = gameAction.Owner.Color;
+                gob.DrawColor = player.Color;
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });
             player.Messages.Add(new PlayerMessage("You collected " + gameAction.BonusText, player.Color));

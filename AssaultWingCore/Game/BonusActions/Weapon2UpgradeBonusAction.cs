@@ -1,5 +1,6 @@
 ﻿using System;
 using AW2.Core;
+using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -18,12 +19,14 @@ namespace AW2.Game.BonusActions
         private string _bonusText;
         private CanonicalString _bonusIconName;
 
+        public new Ship Host { get { return base.Host as Ship; } }
+
         public override string BonusText
         {
             get
             {
                 if (string.IsNullOrEmpty(_bonusText))
-                    _bonusText = Owner.Ship == null ? "" : Owner.Ship.Weapon2Name;
+                    _bonusText = Host == null ? "" : Host.Weapon2Name;
                 return _bonusText;
             }
         }
@@ -33,7 +36,7 @@ namespace AW2.Game.BonusActions
             get
             {
                 if (_bonusIconName.IsNull || _bonusIconName.Equals(DUMMY_ICON_NAME))
-                    _bonusIconName = Owner.Ship == null ? DUMMY_ICON_NAME : Owner.Ship.Weapon2.IconName;
+                    _bonusIconName = Host == null ? DUMMY_ICON_NAME : Host.Weapon2.IconName;
                 return _bonusIconName;
             }
         }
@@ -60,21 +63,20 @@ namespace AW2.Game.BonusActions
 
         public override void Dispose()
         {
-            if (Owner.Ship != null)
-                Owner.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Owner.Weapon2Name);
-            if (_effectName != "") Owner.PostprocessEffectNames.Remove(_effectName);
+            if (Host != null) Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Host.Owner.Weapon2Name);
+            if (_effectName != "") Host.Owner.PostprocessEffectNames.Remove(_effectName);
             base.Dispose();
         }
 
         private void UpgradeWeapon()
         {
-            if (Owner.Ship == null)
+            if (Host == null)
                 Die();
             else
             {
-                var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName : Owner.Ship.Weapon2.UpgradeNames[0];
-                Owner.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
-                if (_effectName != "") Owner.PostprocessEffectNames.EnsureContains(_effectName);
+                var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName : Host.Weapon2.UpgradeNames[0];
+                Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
+                if (_effectName != "") Host.Owner.PostprocessEffectNames.EnsureContains(_effectName);
             }
         }
     }

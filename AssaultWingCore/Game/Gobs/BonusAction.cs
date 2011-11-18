@@ -18,7 +18,7 @@ namespace AW2.Game.Gobs
         public abstract CanonicalString BonusIconName { get; }
         public TimeSpan Duration { get { return _duration; } }
         public TimeSpan EndTime { get; private set; }
-        public new Player Owner { get { return (Player)base.Owner; } set { base.Owner = value; } }
+        public Gob Host { get; private set; }
 
         /// <summary>
         /// Creates a <see cref="BonusAction"/> or if an action of the same type and typename
@@ -29,8 +29,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         public static T Create<T>(CanonicalString typeName, Player player, Action<T> init) where T : BonusAction
         {
+            var host = player.Ship;
             var actionType = player.Game.DataEngine.GetTypeTemplate(typeName).GetType();
-            var sameTypeActions = player.Ship.BonusActions.Where(ba => ba.GetType() == actionType);
+            var sameTypeActions = host.BonusActions.Where(ba => ba.GetType() == actionType);
             if (sameTypeActions.Any())
             {
                 var oldAction = sameTypeActions.FirstOrDefault(ba => ba.TypeName == typeName);
@@ -45,8 +46,8 @@ namespace AW2.Game.Gobs
             Gob.CreateGob<T>(player.Game, typeName, gob =>
             {
                 gob.ResetPos(Vector2.Zero, Vector2.Zero, Gob.DEFAULT_ROTATION);
-                gob.Owner = player;
-                player.Ship.BonusActions.Add(gob);
+                gob.Host = host;
+                host.BonusActions.Add(gob);
                 init(gob);
                 player.Game.DataEngine.Arena.Gobs.Add(gob);
                 result = gob;
@@ -73,20 +74,20 @@ namespace AW2.Game.Gobs
             ResetTimeout();
             if (Game.NetworkMode == Core.NetworkMode.Client)
             {
-                foreach (var ba in Owner.Ship.BonusActions.Where(ba => ba != this && ba.GetType() == GetType()).ToArray()) ba.DieOnClient();
-                if (!Owner.Ship.BonusActions.Contains(this)) Owner.Ship.BonusActions.Add(this);
+                foreach (var ba in Host.BonusActions.Where(ba => ba != this && ba.GetType() == GetType()).ToArray()) ba.DieOnClient();
+                if (!Host.BonusActions.Contains(this)) Host.BonusActions.Add(this);
             }
         }
 
         public override void Update()
         {
             base.Update();
-            if (EndTime <= Arena.TotalTime || Owner.Ship == null || Owner.Ship.Dead) Die();
+            if (EndTime <= Arena.TotalTime || Host == null || Host.Dead) Die();
         }
 
         public override void Dispose()
         {
-            if (Owner.Ship != null) Owner.Ship.BonusActions.Remove(this);
+            if (Host != null) Host.BonusActions.Remove(this);
             base.Dispose();
         }
 

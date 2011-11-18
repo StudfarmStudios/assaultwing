@@ -1,4 +1,5 @@
 ﻿using System;
+using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -10,8 +11,9 @@ namespace AW2.Game.BonusActions
         [TypeParameter]
         private float _loadTimeMultiplier;
 
-        public override string BonusText { get { return Owner.Weapon1Name + "\nspeedloader"; } }
+        public override string BonusText { get { return (Host.Owner != null ? Host.Owner.Weapon1Name + "\n" : "") + "speedloader"; } }
         public override CanonicalString BonusIconName { get { return (CanonicalString)"b_icon_rapid_fire_1"; } }
+        public new Ship Host { get { return base.Host as Ship; } }
 
         /// <summary>
         /// Only for serialization.
@@ -29,13 +31,12 @@ namespace AW2.Game.BonusActions
         public override void Activate()
         {
             base.Activate();
-            if (Owner.Ship != null) Owner.Ship.Weapon1.LoadTimeMultiplier *= _loadTimeMultiplier;
+            if (Host != null) Host.Weapon1.LoadTimeMultiplier *= _loadTimeMultiplier;
         }
 
         public override void Dispose()
         {
-            if (Owner.Ship != null)
-                Owner.Ship.Weapon1.LoadTimeMultiplier = 1;
+            if (Host != null) Host.Weapon1.LoadTimeMultiplier = 1;
             base.Dispose();
         }
     }

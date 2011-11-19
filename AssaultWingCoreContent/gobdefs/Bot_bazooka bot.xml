@@ -15,6 +15,7 @@
   <aimRange>800</aimRange>
   <shootRange>500</shootRange>
   <optimalTargetDistance>370</optimalTargetDistance>
+
   <thruster>
     <maxForce>55000</maxForce>
     <maxSpeed>180</maxSpeed>
@@ -23,6 +24,13 @@
       <Item>bot thrust</Item>
     </exhaustEngineNames>
   </thruster>
+
+  <coughEngine>
+    <pengNames>
+      <Item>shipsmoke</Item>
+    </pengNames>
+  </coughEngine>
+
   <weaponName>bot bazooka</weaponName>
   <modelName>bot</modelName>
   <movable>true</movable>

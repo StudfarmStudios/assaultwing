@@ -102,14 +102,8 @@ namespace AW2.Game.Gobs
 
         #endregion Ship fields related to rolling
 
-        #region Ship fields related to coughing
-
-        [TypeParameter, ShallowCopy]
-        private CanonicalString[] _coughEngineNames;
-        private List<Peng> _coughEngines;
-        private bool _coughEnginesEnabled;
-
-        #endregion Ship fields related to coughing
+        [TypeParameter]
+        private CoughEngine _coughEngine;
 
         #region Ship fields related to other things
 
@@ -189,7 +183,6 @@ namespace AW2.Game.Gobs
         public float TurnSpeed { get { return _turnSpeed; } }
         public Thruster Thruster { get { return _thruster; } }
 
-
         /// <summary>
         /// Called when the ship is thrusting. Parameter is proportional thrust, between -1 and 1.
         /// </summary>
@@ -230,6 +223,8 @@ namespace AW2.Game.Gobs
 
         public event Action<Gob> PhysicalCollidedInto;
 
+        private SpriteFont PlayerNameFont { get { return Game.GraphicsEngine.GameContent.ConsoleFont; } }
+
         #endregion Ship properties
 
         #region Ship constructors
@@ -266,7 +261,7 @@ namespace AW2.Game.Gobs
             }
             _birthAlpha.Keys.Add(new CurveKey(2, 1));
             _birthAlpha.ComputeTangents(CurveTangent.Flat);
-            _coughEngineNames = new CanonicalString[0];
+            _coughEngine = new CoughEngine();
         }
 
         public Ship(CanonicalString typeName)
@@ -279,42 +274,13 @@ namespace AW2.Game.Gobs
 
         #endregion Ship constructors
 
-        #region Private methods
-
-        private void CreateCoughEngines()
-        {
-            _coughEngines = new List<Peng>();
-            foreach (var name in _coughEngineNames)
-            {
-                Gob.CreateGob<Peng>(Game, name, gob =>
-                {
-                    gob.Emitter.Pause();
-                    gob.Leader = this;
-                    Arena.Gobs.Add(gob);
-                    _coughEngines.Add(gob);
-                });
-            }
-        }
-
-        private void CreateGlow()
-        {
-            Gob.CreateGob<Peng>(Game, (CanonicalString)"playerglow", gob =>
-            {
-                gob.OwnerProxy = OwnerProxy;
-                gob.Leader = this;
-                Game.DataEngine.Arena.Gobs.Add(gob);
-            });
-        }
-
-        #endregion Private methods
-
         #region Methods related to gobs' functionality in the game world
 
         public override void Activate()
         {
             base.Activate();
             _thruster.Activate(this);
-            CreateCoughEngines();
+            _coughEngine.Activate(this);
             CreateGlow();
             Disable(); // re-enabled in Update()
             _isBirthFlashing = true;
@@ -329,7 +295,7 @@ namespace AW2.Game.Gobs
             _temporarilyDisabledGobs.Clear();
             UpdateThrustInNetworkGame(); // TODO !!! Move to Thruster
             _thruster.Update();
-            UpdateCoughEngines();
+            _coughEngine.Update();
             UpdateCharges();
             UpdateFlashing();
             StoreCurrentShipLocation();
@@ -473,27 +439,16 @@ namespace AW2.Game.Gobs
 
         #endregion Ship public methods
 
-        private SpriteFont playerNameFont;
-
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
             // Draw player name
             if (Owner == null || !Owner.IsRemote) return;
             var screenPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
-            var playerNameSize = playerNameFont.MeasureString(Owner.Name);
+            var playerNameSize = PlayerNameFont.MeasureString(Owner.Name);
             var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
             var nameAlpha = (IsHiding ? Alpha : 1) * 0.8f;
             var nameColor = Color.Multiply(Owner.Color, nameAlpha);
-            spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
-        }
-
-        public override void LoadContent()
-        {
-            base.LoadContent();
-
-            var content = Game.Content;
-            playerNameFont = content.Load<SpriteFont>("ConsoleFont");
-
+            spriteBatch.DrawString(PlayerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
         }
 
         public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
@@ -583,6 +538,18 @@ namespace AW2.Game.Gobs
                 : g_defaultControlStates;
         }
 
+        #region Private methods
+
+        private void CreateGlow()
+        {
+            Gob.CreateGob<Peng>(Game, (CanonicalString)"playerglow", gob =>
+            {
+                gob.OwnerProxy = OwnerProxy;
+                gob.Leader = this;
+                Game.DataEngine.Arena.Gobs.Add(gob);
+            });
+        }
+
         private void InitializeDevice(ShipDevice device, ShipDevice.OwnerHandleType ownerHandle)
         {
             device.AttachTo(this, ownerHandle);
@@ -635,22 +602,6 @@ namespace AW2.Game.Gobs
             }
         }
 
-        private void UpdateCoughEngines()
-        {
-            const float RELATIVE_COUGH_TRESHOLD = 0.8f;
-            float coughArgument = (DamageLevel / MaxDamageLevel - RELATIVE_COUGH_TRESHOLD) / (1 - RELATIVE_COUGH_TRESHOLD);
-            coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
-            var mustEnable = !_coughEnginesEnabled && coughArgument > 0;
-            var mustDisable = _coughEnginesEnabled && coughArgument == 0;
-            _coughEnginesEnabled = coughArgument > 0;
-            foreach (var coughEngine in _coughEngines)
-            {
-                coughEngine.Input = coughArgument;
-                if (mustEnable) coughEngine.Emitter.Resume();
-                if (mustDisable) coughEngine.Emitter.Pause();
-            }
-        }
-
         private void UpdateCharges()
         {
             float elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
@@ -679,5 +630,7 @@ namespace AW2.Game.Gobs
                 ControlStates = GetControlStates(),
             });
         }
+
+        #endregion Private methods
     }
 }

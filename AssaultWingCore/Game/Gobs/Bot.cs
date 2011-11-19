@@ -33,6 +33,8 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private Thruster _thruster;
         [TypeParameter]
+        private CoughEngine _coughEngine;
+        [TypeParameter]
         private CanonicalString _weaponName;
 
         private Weapon _weapon;
@@ -65,6 +67,7 @@ namespace AW2.Game.Gobs
             _shootRange = 500;
             _optimalTargetDistance = 400;
             _thruster = new Thruster();
+            _coughEngine = new CoughEngine();
             _weaponName = (CanonicalString)"dummyweapontype";
         }
 
@@ -79,6 +82,7 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _thruster.Activate(this);
+            _coughEngine.Activate(this);
             _weapon = Weapon.Create(_weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
@@ -116,6 +120,7 @@ namespace AW2.Game.Gobs
             Aim();
             Shoot();
             _thruster.Update();
+            _coughEngine.Update();
             MoveFan();
         }
 

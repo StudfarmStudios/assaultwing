@@ -136,6 +136,7 @@
     <Compile Include="Game\Gobs\WallPolygon.cs" />
     <Compile Include="Game\GobUtils\ChargeProvider.cs" />
     <Compile Include="Game\GobUtils\Coroner.cs" />
+    <Compile Include="Game\GobUtils\CoughEngine.cs" />
     <Compile Include="Game\GobUtils\DamageInfo.cs" />
     <Compile Include="Game\GobUtils\EquipInfo.cs" />
     <Compile Include="Game\GobUtils\FiringOperator.cs" />

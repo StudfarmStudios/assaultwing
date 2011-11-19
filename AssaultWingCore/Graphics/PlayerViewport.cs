@@ -73,6 +73,7 @@ namespace AW2.Graphics
             var lookAtAcceleration = (_lookAtController.Output - VIEW_DRAG * _lookAtSpeed) / VIEW_MASS;
             _lookAtSpeed += lookAtAcceleration / Game.TargetFPS;
             CurrentLookAt += _lookAtSpeed / Game.TargetFPS;
+            _shakeSign = -_shakeSign;
         }
 
         public override void Reset(Vector2 lookAtPos)
@@ -86,10 +87,7 @@ namespace AW2.Graphics
         {
             get
             {
-                // TODO: Shake only if gameplay is on. Otherwise freeze because shake won't be attenuated either.
-                _shakeSign = -_shakeSign;
-
-                float viewShake = _shakeSign * _player.Shake;
+                var viewShake = _shakeSign * _player.Shake;
                 return Matrix.CreateLookAt(new Vector3(CurrentLookAt, 1000), new Vector3(CurrentLookAt, 0),
                     new Vector3(AWMathHelper.GetUnitVector2(MathHelper.PiOver2 + viewShake), 0));
             }

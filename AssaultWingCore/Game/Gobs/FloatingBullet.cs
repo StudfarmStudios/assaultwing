@@ -82,9 +82,9 @@ namespace AW2.Game.Gobs
             Move *= 0.97f;
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
-            Alpha = Game.DataEngine.Players
-                .Where(plr => plr != Owner && plr.Ship != null && !plr.Ship.IsHidden)
-                .Select(plr => Vector2.Distance(Pos, plr.Ship.Pos))
+            Alpha = Game.DataEngine.Minions
+                .Where(gob => gob.Owner != Owner && !gob.IsHidden)
+                .Select(gob => Vector2.Distance(Pos, gob.Pos))
                 .Select(_enemyDistanceToAlpha.Evaluate)
                 .DefaultIfEmpty(0)
                 .Max();
@@ -93,14 +93,15 @@ namespace AW2.Game.Gobs
         public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
             var result = Arena.CollisionSideEffectType.None;
-            var reversibleEffects = (sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0;
-            var irreversibleEffects = (sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0;
+            var reversibleEffects = sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Reversible);
+            var irreversibleEffects = sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Irreversible);
             var collidedWithFriend = theirArea.Owner.Owner == Owner;
             var collidedWithNeutral = theirArea.Owner.Owner == null || theirArea.Owner.IsHidden;
+            var collidedWithHostile = !collidedWithNeutral && !collidedWithFriend;
             switch (myArea.Name)
             {
                 case "Magnet":
-                    if (reversibleEffects && !collidedWithNeutral && !collidedWithFriend)
+                    if (reversibleEffects && collidedWithHostile)
                     {
                         MoveTowards(theirArea.Owner.Pos, _attractionForce);
                         result |= Arena.CollisionSideEffectType.Reversible;

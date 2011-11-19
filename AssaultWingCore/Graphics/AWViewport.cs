@@ -109,21 +109,17 @@ namespace AW2.Graphics
         }
 
         /// <summary>
-        /// Checks if a bounding volume might be visible in the viewport.
+        /// Checks if a bounding volume might be visible in the viewport at a certain depth.
+        /// Returns false if the bounding volume definitely cannot be seen in the viewport.
         /// </summary>
-        /// <param name="volume">The bounding volume.</param>
-        /// <param name="z">The depth at which the volume resides.</param>
-        /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
-        /// <b>true</b> otherwise.</returns>
-        public bool Intersects(BoundingSphere volume, float z)
+        private bool Intersects(BoundingSphere volume, float z)
         {
-            Vector2 min, max;
-            GetWorldAreaMinAndMax(z, out min, out max);
+            var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
             var safeRadius = volume.Radius + 1f;
-            if (volume.Center.X + safeRadius < min.X) return false;
-            if (volume.Center.Y + safeRadius < min.Y) return false;
-            if (max.X < volume.Center.X - safeRadius) return false;
-            if (max.Y < volume.Center.Y - safeRadius) return false;
+            if (volume.Center.X + safeRadius < -halfDiagonal.X) return false;
+            if (volume.Center.Y + safeRadius < -halfDiagonal.Y) return false;
+            if (halfDiagonal.X < volume.Center.X - safeRadius) return false;
+            if (halfDiagonal.Y < volume.Center.Y - safeRadius) return false;
             return true;
         }
 
@@ -265,16 +261,6 @@ namespace AW2.Graphics
             return 1000 / (1000 - z);
         }
 
-        /// <summary>
-        /// Returns the minimum and maximum coordinates of the game world this viewport shows at a depth.
-        /// </summary>
-        private void GetWorldAreaMinAndMax(float z, out Vector2 min, out Vector2 max)
-        {
-            var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
-            min = CurrentLookAt - halfDiagonal;
-            max = CurrentLookAt + halfDiagonal;
-        }
-
         private void DoInMyViewport(Action action)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
@@ -290,7 +276,7 @@ namespace AW2.Graphics
             {
                 if (!gob.IsVisible || IsBlockedFromView(gob)) continue;
                 var bounds = gob.DrawBounds;
-                if (bounds.Radius <= 0 || !Intersects(bounds, layer.Z)) continue;
+                if (bounds.Radius <= 0 || !Intersects(bounds.Transform(view), layer.Z)) continue;
                 gob.Draw(view, projection);
             }
         }

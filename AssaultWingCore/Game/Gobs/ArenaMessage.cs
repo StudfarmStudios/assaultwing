@@ -83,6 +83,7 @@ namespace AW2.Game.Gobs
         public ArenaMessage(CanonicalString typeName)
             : base(typeName)
         {
+            DrawColor = Color.White;
         }
 
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)

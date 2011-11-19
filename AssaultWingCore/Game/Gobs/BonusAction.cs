@@ -27,10 +27,9 @@ namespace AW2.Game.Gobs
         /// Returns the action that was created or whose timeout was reset,
         /// or returns null if no action was created or reset.
         /// </summary>
-        public static T Create<T>(CanonicalString typeName, Player player, Action<T> init) where T : BonusAction
+        public static T Create<T>(CanonicalString typeName, Gob host, Action<T> init) where T : BonusAction
         {
-            var host = player.Ship;
-            var actionType = player.Game.DataEngine.GetTypeTemplate(typeName).GetType();
+            var actionType = host.Game.DataEngine.GetTypeTemplate(typeName).GetType();
             var sameTypeActions = host.BonusActions.Where(ba => ba.GetType() == actionType);
             if (sameTypeActions.Any())
             {
@@ -43,13 +42,13 @@ namespace AW2.Game.Gobs
                 sameTypeActions.First().Die();
             }
             T result = null;
-            Gob.CreateGob<T>(player.Game, typeName, gob =>
+            Gob.CreateGob<T>(host.Game, typeName, gob =>
             {
                 gob.ResetPos(Vector2.Zero, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 gob.Host = host;
                 host.BonusActions.Add(gob);
                 init(gob);
-                player.Game.DataEngine.Arena.Gobs.Add(gob);
+                host.Game.DataEngine.Arena.Gobs.Add(gob);
                 result = gob;
             });
             return result;

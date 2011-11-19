@@ -70,7 +70,7 @@ namespace AW2.Game.Gobs
             {
                 if (sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Irreversible))
                 {
-                    DoBonusAction(theirShip.Owner);
+                    DoBonusAction(theirShip);
                     Game.SoundEngine.PlaySound("BonusCollection", this);
                     Die();
                     return Arena.CollisionSideEffectType.Irreversible;
@@ -79,21 +79,22 @@ namespace AW2.Game.Gobs
             return Arena.CollisionSideEffectType.None;
         }
 
-        private void DoBonusAction(Player player)
+        private void DoBonusAction(Gob host)
         {
             if (Game.NetworkMode == NetworkMode.Client) return;
-            var gameAction = BonusAction.Create<BonusAction>(_bonusActionTypeName, player, gob => { });
+            var gameAction = BonusAction.Create<BonusAction>(_bonusActionTypeName, host, gob => { });
             if (gameAction == null) return;
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>
             {
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
-                gob.Owner = player;
+                gob.Owner = host.Owner;
                 gob.Message = gameAction.BonusText;
                 gob.IconName = gameAction.BonusIconName;
-                gob.DrawColor = player.Color;
+                if (host.Owner != null) gob.DrawColor = host.Owner.Color;
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });
-            player.Messages.Add(new PlayerMessage("You collected " + gameAction.BonusText, player.Color));
+            var playerOwner = host.Owner as Player;
+            if (playerOwner != null) playerOwner.Messages.Add(new PlayerMessage("You collected " + gameAction.BonusText, playerOwner.Color));
         }
     }
 }

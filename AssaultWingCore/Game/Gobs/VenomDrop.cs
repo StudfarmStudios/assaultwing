@@ -52,7 +52,7 @@ namespace AW2.Game.Gobs
             var player = target.Owner as Player;
             if (!(target is Ship) || player == null) return; // TODO: damage over time for all gobs
             var action = BonusAction.Create<DamageBuffBonusAction>(_damageEffectTypeName, player, gob => { });
-            if (action != null) action.Cause = this;
+            if (action != null) action.Owner = Owner;
         }
     }
 }

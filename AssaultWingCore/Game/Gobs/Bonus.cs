@@ -87,6 +87,7 @@ namespace AW2.Game.Gobs
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>
             {
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
+                gob.Owner = player;
                 gob.Message = gameAction.BonusText;
                 gob.IconName = gameAction.BonusIconName;
                 gob.DrawColor = player.Color;

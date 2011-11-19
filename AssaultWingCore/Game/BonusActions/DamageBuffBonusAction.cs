@@ -25,7 +25,6 @@ namespace AW2.Game.BonusActions
 
         public override string BonusText { get { return _buffName; } }
         public override CanonicalString BonusIconName { get { return _bonusIconName; } }
-        public Gob Cause { get; set; }
 
         /// <summary>
         /// Only for serialization.
@@ -63,7 +62,7 @@ namespace AW2.Game.BonusActions
             if (Host != null)
             {
                 if (damage > 0)
-                    Host.InflictDamage(damage, new DamageInfo(Cause));
+                    Host.InflictDamage(damage, new DamageInfo(this));
                 else
                     Host.RepairDamage(-damage);
             }

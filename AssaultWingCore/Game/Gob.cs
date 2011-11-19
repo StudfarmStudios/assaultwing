@@ -827,9 +827,10 @@ namespace AW2.Game
             else if (ID < 0)
                 g_unusedIrrelevantIDs.Enqueue(ID);
         }
-        public virtual void Draw(Matrix view, Matrix projection)
+
+        public virtual void Draw3D(Matrix view, Matrix projection)
         {
-            float bleachFactor = GetBleach();
+            var bleachFactor = GetBleach();
             if (bleachFactor > 0.01f)
                 ModelRenderer.DrawBleached(Model, WorldMatrix, view, projection, ModelPartTransforms, bleachFactor);
             else if (Alpha < 1)

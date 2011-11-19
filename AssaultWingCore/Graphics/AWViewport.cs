@@ -109,21 +109,6 @@ namespace AW2.Graphics
         }
 
         /// <summary>
-        /// Checks if a bounding volume might be visible in the viewport at a certain depth.
-        /// Returns false if the bounding volume definitely cannot be seen in the viewport.
-        /// </summary>
-        private bool Intersects(BoundingSphere volume, float z)
-        {
-            var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
-            var safeRadius = volume.Radius + 1f;
-            if (volume.Center.X + safeRadius < -halfDiagonal.X) return false;
-            if (volume.Center.Y + safeRadius < -halfDiagonal.Y) return false;
-            if (halfDiagonal.X < volume.Center.X - safeRadius) return false;
-            if (halfDiagonal.Y < volume.Center.Y - safeRadius) return false;
-            return true;
-        }
-
-        /// <summary>
         /// Converts a 2D point in the viewport into a 2D point in an arena layer in the game world.
         /// </summary>
         /// <param name="pointInViewport">Point in viewport; origin is top left corner,
@@ -161,11 +146,7 @@ namespace AW2.Graphics
 
         public void PrepareForDraw()
         {
-            DoInMyViewport(() =>
-            {
-                Draw_InitializeParallaxIn3D();
-                _postprocessor.PrepareForDisplay();
-            });
+            DoInMyViewport(_postprocessor.PrepareForDisplay);
         }
 
         public void Draw()
@@ -193,27 +174,6 @@ namespace AW2.Graphics
                 * Matrix.CreateScale(new Vector3(Viewport.Width, Viewport.Height, Viewport.MaxDepth - Viewport.MinDepth) / 2);
         }
 
-        protected virtual void RenderGameWorld()
-        {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            //var view = ViewMatrix;
-            if (AssaultWingCore.Instance.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
-            int layerIndex = AssaultWingCore.Instance.DataEngine.Arena.Layers.Count();
-            gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
-            foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
-            {
-                Matrix translationMatrix = Matrix.CreateTranslation(0, 0, -1024 * layerIndex--);
-                var view = Matrix.Multiply(ViewMatrix, translationMatrix);
-                if (LayerDrawing != null && !LayerDrawing(layer)) continue;
-                float layerScale = GetScale(layer.Z);
-                var projection = GetProjectionMatrix(layer.Z);
-                Draw_DrawParallaxIn3D(layer);
-                Draw3D(layer, ref view, ref projection);
-                Draw2D(layer, layerScale);
-                if (GobDrawn != null) foreach (var gob in layer.Gobs) GobDrawn(gob);
-            }
-        }
-
         /// <summary>
         /// Called when graphics resources need to be loaded.
         /// </summary>
@@ -226,6 +186,21 @@ namespace AW2.Graphics
                     container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
             };
             _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance, RenderGameWorld, effectContainerUpdater);
+            _effect = new BasicEffect(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice);
+            _effect.World = Matrix.Identity;
+            _effect.Projection = Matrix.Identity;
+            _effect.View = Matrix.Identity;
+            _effect.TextureEnabled = true;
+            _effect.LightingEnabled = false;
+            _effect.FogEnabled = false;
+            _effect.VertexColorEnabled = false;
+            _vertexData = new[]
+            {
+                new VertexPositionTexture(new Vector3(-1, -1, 1), Vector2.UnitY),
+                new VertexPositionTexture(new Vector3(-1, 1, 1), Vector2.Zero),
+                new VertexPositionTexture(new Vector3(1, -1, 1), Vector2.One),
+                new VertexPositionTexture(new Vector3(1, 1, 1), Vector2.UnitX)
+            };
             foreach (var component in _overlayComponents) component.LoadContent();
         }
 
@@ -239,6 +214,11 @@ namespace AW2.Graphics
             {
                 _postprocessor.Dispose();
                 _postprocessor = null;
+            }
+            if (_effect != null)
+            {
+                _effect.Dispose();
+                _effect = null;
             }
         }
 
@@ -261,6 +241,26 @@ namespace AW2.Graphics
             return 1000 / (1000 - z);
         }
 
+        private void RenderGameWorld()
+        {
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+            if (AssaultWingCore.Instance.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
+            int layerIndex = AssaultWingCore.Instance.DataEngine.Arena.Layers.Count();
+            gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
+            foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
+            {
+                Matrix translationMatrix = Matrix.CreateTranslation(0, 0, -1024 * layerIndex--);
+                var view = Matrix.Multiply(ViewMatrix, translationMatrix);
+                if (LayerDrawing != null && !LayerDrawing(layer)) continue;
+                float layerScale = GetScale(layer.Z);
+                var projection = GetProjectionMatrix(layer.Z);
+                DrawParallax(layer);
+                Draw3D(layer, ref view, ref projection);
+                Draw2D(layer, layerScale);
+                if (GobDrawn != null) foreach (var gob in layer.Gobs) GobDrawn(gob);
+            }
+        }
+
         private void DoInMyViewport(Action action)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
@@ -277,8 +277,23 @@ namespace AW2.Graphics
                 if (!gob.IsVisible || IsBlockedFromView(gob)) continue;
                 var bounds = gob.DrawBounds;
                 if (bounds.Radius <= 0 || !Intersects(bounds.Transform(view), layer.Z)) continue;
-                gob.Draw(view, projection);
+                gob.Draw3D(view, projection);
             }
+        }
+
+        /// <summary>
+        /// Checks if a bounding volume might be visible in the viewport at a certain depth.
+        /// Returns false if the bounding volume definitely cannot be seen in the viewport.
+        /// </summary>
+        private bool Intersects(BoundingSphere volume, float z)
+        {
+            var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
+            var safeRadius = volume.Radius + 1f;
+            if (volume.Center.X + safeRadius < -halfDiagonal.X) return false;
+            if (volume.Center.Y + safeRadius < -halfDiagonal.Y) return false;
+            if (halfDiagonal.X < volume.Center.X - safeRadius) return false;
+            if (halfDiagonal.Y < volume.Center.Y - safeRadius) return false;
+            return true;
         }
 
         private void Draw2D(ArenaLayer layer, float layerScale)
@@ -308,37 +323,12 @@ namespace AW2.Graphics
             foreach (var component in _overlayComponents) component.Draw(SpriteBatch);
         }
 
-        /// <summary>
-        /// TODO: Move the contents of this method to appropriate places in
-        /// LoadContent and UnloadContent.
-        /// </summary>
-        private void Draw_InitializeParallaxIn3D()
-        {
-            if (_effect != null) return;
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            _effect = new BasicEffect(gfx);
-            _effect.World = Matrix.Identity;
-            _effect.Projection = Matrix.Identity;
-            _effect.View = Matrix.Identity;
-            _effect.TextureEnabled = true;
-            _effect.LightingEnabled = false;
-            _effect.FogEnabled = false;
-            _effect.VertexColorEnabled = false;
-            _vertexData = new[]
-            {
-                new VertexPositionTexture(new Vector3(-1, -1, 1), Vector2.UnitY),
-                new VertexPositionTexture(new Vector3(-1, 1, 1), Vector2.Zero),
-                new VertexPositionTexture(new Vector3(1, -1, 1), Vector2.One),
-                new VertexPositionTexture(new Vector3(1, 1, 1), Vector2.UnitX)
-            };
-        }
-
-        private void Draw_DrawParallaxIn3D(ArenaLayer layer)
+        private void DrawParallax(ArenaLayer layer)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             if (layer.ParallaxName != "")
             {
-                BlendState oldState = gfx.BlendState;
+                var oldState = gfx.BlendState;
 
                 // Modify renderstate for parallax.
                 gfx.SamplerStates[0] = SamplerState.LinearWrap;

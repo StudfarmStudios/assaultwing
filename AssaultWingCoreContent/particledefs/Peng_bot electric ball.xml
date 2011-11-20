@@ -7,7 +7,7 @@
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
   <layerPreference>Front</layerPreference>
-  <depthLayer2D>0.5</depthLayer2D>
+  <depthLayer2D>0.58</depthLayer2D>
   <drawMode2D>
     <type>Additive</type>
   </drawMode2D>

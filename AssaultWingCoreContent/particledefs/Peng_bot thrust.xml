@@ -6,7 +6,7 @@
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
-  <depthLayer2D>0.40</depthLayer2D>
+  <depthLayer2D>0.57</depthLayer2D>
   <drawMode2D>
     <type>Additive</type>
   </drawMode2D>

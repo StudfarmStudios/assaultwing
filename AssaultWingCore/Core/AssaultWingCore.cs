@@ -92,7 +92,7 @@ namespace AW2.Core
 
         public Window Window { get; set; }
 
-        private static readonly TimeSpan ARGUMENT_FILE_AGE_MAX = TimeSpan.FromSeconds(15);
+        private static readonly TimeSpan ARGUMENT_FILE_AGE_MAX = TimeSpan.FromHours(1);
         public static string ArgumentPath { get { return Path.Combine(SettingsDirectory, "arguments.txt"); } }
         public static string GetArgumentText()
         {
@@ -101,7 +101,10 @@ namespace AW2.Core
             if (argumentAge < ARGUMENT_FILE_AGE_MAX)
             {
                 Log.Write("Reading argument file {0} because it's less than {1} old", ArgumentPath, MiscHelper.ToDurationString(ARGUMENT_FILE_AGE_MAX, "day", "hour", "minute", "second", usePlurals: true));
-                return File.ReadAllText(ArgumentPath);
+                var text = File.ReadAllText(ArgumentPath);
+                try { File.Delete(ArgumentPath); }
+                catch { }
+                return text;
             }
             return "";
         }

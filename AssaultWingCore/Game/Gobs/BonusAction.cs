@@ -18,7 +18,8 @@ namespace AW2.Game.Gobs
         public abstract CanonicalString BonusIconName { get; }
         public TimeSpan Duration { get { return _duration; } }
         public TimeSpan EndTime { get; private set; }
-        public Gob Host { get; private set; }
+        public Gob Host { get { return HostProxy != null ? HostProxy.GetValue() : null; } private set { HostProxy = value; } }
+        private LazyProxy<int, Gob> HostProxy { get; set; }
 
         /// <summary>
         /// Creates a <see cref="BonusAction"/> or if an action of the same type and typename
@@ -71,7 +72,7 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             ResetTimeout();
-            if (Game.NetworkMode == Core.NetworkMode.Client)
+            if (Game.NetworkMode == Core.NetworkMode.Client && Host != null)
             {
                 foreach (var ba in Host.BonusActions.Where(ba => ba != this && ba.GetType() == GetType()).ToArray()) ba.DieOnClient();
                 if (!Host.BonusActions.Contains(this)) Host.BonusActions.Add(this);
@@ -93,6 +94,10 @@ namespace AW2.Game.Gobs
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
+            if (mode.HasFlag(SerializationModeFlags.ConstantData))
+            {
+                writer.Write((short)Host.ID);
+            }
             if (mode.HasFlag(SerializationModeFlags.VaryingData))
             {
                 writer.Write((bool)_timeoutReset);
@@ -103,6 +108,12 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
+            if (mode.HasFlag(SerializationModeFlags.ConstantData))
+            {
+                var hostID = reader.ReadInt16();
+                HostProxy = new LazyProxy<int, Gob>(FindGob);
+                HostProxy.SetData(hostID);
+            }
             if (mode.HasFlag(SerializationModeFlags.VaryingData))
             {
                 if (reader.ReadBoolean()) ResetTimeout();

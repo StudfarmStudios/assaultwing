@@ -132,6 +132,11 @@ namespace AW2.Menu.Main
             SetupItems.Add(GetSetupItemBase(() => "Audio setup", () => _menuComponent.SetItems(GetAudioItems())));
             SetupItems.Add(GetSetupItemBase(() => "Graphics setup", () => _menuComponent.SetItems(GetGraphicsItems())));
             SetupItems.Add(GetSetupItemBase(() => "Controls setup", () => _menuComponent.SetItems(GetControlsItems())));
+            SetupItems.Add(GetSetupItem(
+                () => string.Format("Bots\t\xe{0}", Game.Settings.Players.BotsEnabled ? "Included" : "Excluded"),
+                new[] { false, true },
+                () => Game.Settings.Players.BotsEnabled,
+                botsEnabled => Game.Settings.Players.BotsEnabled = botsEnabled));
         }
 
         private MainMenuItem GetSetupItemBase(Func<string> getName, Action action, Action actionLeft = null)

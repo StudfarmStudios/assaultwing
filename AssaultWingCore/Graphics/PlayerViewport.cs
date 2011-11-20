@@ -62,7 +62,7 @@ namespace AW2.Graphics
             foreach (var customOverlayCreator in CustomOverlayCreators) AddOverlayComponent(customOverlayCreator(this));
         }
 
-        public Player Player { get { return _player; } }
+        public override Player Owner { get { return _player; } }
 
         public override void Update()
         {
@@ -91,11 +91,6 @@ namespace AW2.Graphics
                 return Matrix.CreateLookAt(new Vector3(CurrentLookAt, 1000), new Vector3(CurrentLookAt, 0),
                     new Vector3(AWMathHelper.GetUnitVector2(MathHelper.PiOver2 + viewShake), 0));
             }
-        }
-
-        protected override bool IsBlockedFromView(Gob gob)
-        {
-            return gob.VisibilityLimitedTo != null && gob.VisibilityLimitedTo != _player;
         }
     }
 }

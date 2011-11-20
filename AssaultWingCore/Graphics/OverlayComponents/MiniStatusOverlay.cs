@@ -31,7 +31,7 @@ namespace AW2.Graphics.OverlayComponents
         public MiniStatusOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
-            _player = viewport.Player;
+            _player = viewport.Owner;
             _customAlignmentDampBox = new Rectangle(0, 0, 2, 2);
         }
 

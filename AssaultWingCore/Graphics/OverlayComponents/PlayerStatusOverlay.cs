@@ -49,7 +49,7 @@ namespace AW2.Graphics.OverlayComponents
         public PlayerStatusOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Top)
         {
-            _player = viewport.Player;
+            _player = viewport.Owner;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)

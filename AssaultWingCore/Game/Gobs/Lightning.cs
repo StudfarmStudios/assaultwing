@@ -147,7 +147,7 @@ namespace AW2.Game.Gobs
                 Die();
         }
 
-        public override void Draw3D(Matrix view, Matrix projection)
+        public override void Draw3D(Matrix view, Matrix projection, Player viewer)
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             gfx.BlendState = AW2.Graphics.GraphicsEngineImpl.AdditiveBlendPremultipliedAlpha;

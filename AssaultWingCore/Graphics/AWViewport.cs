@@ -33,6 +33,7 @@ namespace AW2.Graphics
         private Vector2 _previousLookAt;
 
         public AssaultWingCore Game { get; private set; }
+        public virtual Player Owner { get { return null; } }
 
         /// <summary>
         /// Ratio of screen pixels to game world meters. Default value is 1.
@@ -48,8 +49,6 @@ namespace AW2.Graphics
         public Vector2 Move { get { return Game.TargetFPS * (CurrentLookAt - _previousLookAt); } }
         public event Func<ArenaLayer, bool> LayerDrawing;
         public event Action<Gob> GobDrawn;
-
-        protected virtual bool IsBlockedFromView(Gob gob) { return false; }
 
         /// <summary>
         /// The area of the display to draw on.
@@ -274,10 +273,9 @@ namespace AW2.Graphics
         {
             foreach (var gob in layer.Gobs)
             {
-                if (!gob.IsVisible || IsBlockedFromView(gob)) continue;
                 var bounds = gob.DrawBounds;
                 if (bounds.Radius <= 0 || !Intersects(bounds.Transform(view), layer.Z)) continue;
-                gob.Draw3D(view, projection);
+                gob.Draw3D(view, projection, Owner);
             }
         }
 
@@ -302,7 +300,6 @@ namespace AW2.Graphics
             var gameToScreenMatrix = GetGameToScreenMatrix(layer.Z);
             layer.Gobs.ForEachIn2DOrder(gob =>
             {
-                if (!gob.IsVisible || IsBlockedFromView(gob)) return;
                 if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
                 {
                     if (drawMode.HasValue)
@@ -310,7 +307,7 @@ namespace AW2.Graphics
                     drawMode = gob.DrawMode2D;
                     drawMode.Value.BeginDraw(AssaultWingCore.Instance, SpriteBatch);
                 }
-                gob.Draw2D(gameToScreenMatrix, SpriteBatch, layerScale * ZoomRatio);
+                gob.Draw2D(gameToScreenMatrix, SpriteBatch, layerScale * ZoomRatio, Owner);
             });
             if (drawMode.HasValue)
                 drawMode.Value.EndDraw(AssaultWingCore.Instance, SpriteBatch);

@@ -111,6 +111,7 @@ namespace AW2.Game.Gobs
         #region Peng properties
 
         public override bool IsRelevant { get { return false; } }
+        public Player VisibilityLimitedTo { get; set; }
 
         public override Vector2 Pos
         {
@@ -280,8 +281,9 @@ namespace AW2.Game.Gobs
 
         private float BaseAlpha { get { return !_disregardHidingLeader && Leader != null && Leader.IsHiding ? Leader.Alpha : 1; } }
 
-        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
+        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
         {
+            if (VisibilityLimitedTo != null && VisibilityLimitedTo != viewer) return;
             Func<Particle, Vector2> getParticleCenterInGameWorld;
             Func<Particle, float> getDrawRotation;
             GetPosAndRotationAccessors(out getParticleCenterInGameWorld, out getDrawRotation);

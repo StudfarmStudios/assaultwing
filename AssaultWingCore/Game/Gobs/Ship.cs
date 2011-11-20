@@ -439,7 +439,7 @@ namespace AW2.Game.Gobs
 
         #endregion Ship public methods
 
-        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
+        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
         {
             // Draw player name
             if (Owner == null || !Owner.IsRemote) return;

@@ -301,8 +301,6 @@ namespace AW2.Game
                 return CollisionAreas.Any(area => (area.Type & CollisionAreaType.PhysicalDamageable) != 0);
             }
         }
-        public bool IsVisible { get; set; }
-        public Player VisibilityLimitedTo { get; set; }
         public float CollisionDamageToOthersMultiplier { get; set; }
 
         /// <summary>
@@ -742,7 +740,6 @@ namespace AW2.Game
             EnsureHasID();
             _birthTime = Arena.TotalTime;
             LastNetworkUpdate = Arena.TotalTime;
-            IsVisible = true;
             LoadContent();
             if (Arena.IsForPlaying)
             {
@@ -828,7 +825,7 @@ namespace AW2.Game
                 g_unusedIrrelevantIDs.Enqueue(ID);
         }
 
-        public virtual void Draw3D(Matrix view, Matrix projection)
+        public virtual void Draw3D(Matrix view, Matrix projection, Player viewer)
         {
             var bleachFactor = GetBleach();
             if (bleachFactor > 0.01f)
@@ -837,7 +834,7 @@ namespace AW2.Game
                 ModelRenderer.DrawTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, Alpha);
             else
                 ModelRenderer.Draw(Model, WorldMatrix, view, projection, ModelPartTransforms);
-            if (IsHiding && Owner != null && !Owner.IsRemote)
+            if (IsHiding && Owner == viewer)
             {
                 var outlineAlpha = Alpha < HIDING_ALPHA_LIMIT ? 1 : Math.Max(0, 0.3f - 2 * Alpha);
                 ModelRenderer.DrawOutlineTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, outlineAlpha);
@@ -853,7 +850,7 @@ namespace AW2.Game
         /// to screen coordinates (pixels).</param>
         /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
         /// <param name="scale">Scale of graphics.</param>
-        public virtual void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
+        public virtual void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
         {
             // No 2D graphics by default.
         }

@@ -135,11 +135,11 @@ namespace AW2.Game.Gobs
             if (TriangleCount == 0) Die();
         }
 
-        public override void Draw3D(Matrix view, Matrix projection)
+        public override void Draw3D(Matrix view, Matrix projection, Player viewer)
         {
             if (!Arena.IsForPlaying)
             {
-                base.Draw3D(view, projection);
+                base.Draw3D(view, projection, viewer);
                 return;
             }
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;

@@ -86,7 +86,7 @@ namespace AW2.Game.Gobs
             DrawColor = Color.White;
         }
 
-        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
+        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
         {
             Vector2 backgroundPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
             float finalScale = _scaleCurve.Evaluate(AgeInGameSeconds) * scale;

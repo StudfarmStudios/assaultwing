@@ -24,7 +24,7 @@ namespace AW2.Graphics.OverlayComponents
         public ScoreOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Left, VerticalAlignment.Bottom)
         {
-            _player = viewport.Player;
+            _player = viewport.Owner;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)

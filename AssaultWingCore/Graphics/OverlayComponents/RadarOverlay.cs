@@ -26,7 +26,7 @@ namespace AW2.Graphics.OverlayComponents
         public RadarOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Left, VerticalAlignment.Top)
         {
-            _player = viewport.Player;
+            _player = viewport.Owner;
             _docks = Game.DataEngine.Arena.Gobs.OfType<Dock>().ToList();
             Game.DataEngine.Arena.GobAdded += GobAddedHandler;
         }

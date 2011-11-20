@@ -143,7 +143,7 @@ namespace AW2.Graphics.OverlayComponents
         public BonusListOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Right, VerticalAlignment.Center)
         {
-            _player = viewport.Player;
+            _player = viewport.Owner;
             _displayQueue.Add(new BonusOverlay(null));
         }
 

@@ -24,7 +24,7 @@ namespace AW2.Core.GameComponents
         public SystemStatusOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Right, VerticalAlignment.Top)
         {
-            _game = (AssaultWing)viewport.Player.Game;
+            _game = (AssaultWing)viewport.Owner.Game;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)

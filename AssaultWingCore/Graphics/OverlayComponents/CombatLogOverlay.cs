@@ -47,7 +47,7 @@ namespace AW2.Graphics.OverlayComponents
             : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
             CustomAlignment = new Vector2(0, 300);
-            _player = viewport.Player;
+            _player = viewport.Owner;
             _messageBeeper = new MessageBeeper(_player.Game, "PlayerMessage", () => Messages.FirstOrDefault());
         }
 

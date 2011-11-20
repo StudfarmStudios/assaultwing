@@ -11,7 +11,7 @@ namespace AW2.Graphics.OverlayComponents
     public class GobTrackerOverlay : OverlayComponent
     {
         private PlayerViewport _viewport;
-        private Player Player { get { return _viewport.Player; } }
+        private Player Player { get { return _viewport.Owner; } }
 
         /// <summary>
         /// Dimensions are meaningless because our alignments are Stretch.

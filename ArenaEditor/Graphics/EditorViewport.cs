@@ -20,8 +20,7 @@ namespace AW2.Graphics
             _spectator = spectator;
             GobDrawn += gob =>
             {
-                if (IsCirclingSmallAndInvisibleGobs &&
-                    (gob.DrawBounds.Radius < SMALL_GOB_RADIUS || !gob.IsVisible))
+                if (IsCirclingSmallAndInvisibleGobs && gob.DrawBounds.Radius < SMALL_GOB_RADIUS)
                     CircleGob(gob);
             };
         }

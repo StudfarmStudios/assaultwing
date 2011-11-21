@@ -107,7 +107,13 @@ namespace AW2.Net.ConnectionUtils
         {
             UseSocket(socket =>
             {
-                if (socket.Connected) socket.Shutdown(SocketShutdown.Both);
+                if (socket.Connected)
+                    try
+                    {
+                        // Shutdown may throw "System.Net.Sockets.SocketException (0x80004005): An existing connection was forcibly closed by the remote host"
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch (SocketException) { }
             });
             if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
             Application.ApplicationExit -= ApplicationExitCallback;

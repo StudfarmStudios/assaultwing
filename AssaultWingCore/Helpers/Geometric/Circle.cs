@@ -117,7 +117,7 @@ namespace AW2.Helpers.Geometric
 #endif
             {
 
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((float)center.X);
                     writer.Write((float)center.Y);
@@ -131,7 +131,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 center = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
                 radius = reader.ReadSingle();

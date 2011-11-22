@@ -33,7 +33,7 @@ namespace AW2.Net.Messages
                     // short: player ID
                     // word: data length, N
                     // N bytes: serialised message data
-                    Write(Message, SerializationModeFlags.All);
+                    Write(Message, SerializationModeFlags.AllFromServer);
                     writer.Write((short)PlayerID);
                     writer.Write((ushort)StreamedData.Length);
                     writer.Write(StreamedData, 0, StreamedData.Length);
@@ -48,7 +48,7 @@ namespace AW2.Net.Messages
             int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);
             Message = new PlayerMessage();
-            Read(Message, SerializationModeFlags.All, 0);
+            Read(Message, SerializationModeFlags.AllFromServer, 0);
         }
 
         public override string ToString()

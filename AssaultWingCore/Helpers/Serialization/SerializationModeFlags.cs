@@ -16,16 +16,16 @@ namespace AW2.Helpers.Serialization
         /// <summary>
         /// Serialise data that is constant after initialisation.
         /// </summary>
-        ConstantData = 0x01,
+        ConstantDataFromServer = 0x01,
 
         /// <summary>
         /// Serialise data that varies even after initialisation.
         /// </summary>
-        VaryingData = 0x02,
+        VaryingDataFromServer = 0x02,
 
         /// <summary>
         /// Serialise all data.
         /// </summary>
-        All = ConstantData | VaryingData,
+        AllFromServer = ConstantDataFromServer | VaryingDataFromServer,
     }
 }

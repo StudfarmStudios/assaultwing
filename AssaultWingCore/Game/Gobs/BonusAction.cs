@@ -94,11 +94,11 @@ namespace AW2.Game.Gobs
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if (mode.HasFlag(SerializationModeFlags.ConstantData))
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 writer.Write((short)Host.ID);
             }
-            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 writer.Write((bool)_timeoutReset);
                 _timeoutReset = false;
@@ -108,13 +108,13 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if (mode.HasFlag(SerializationModeFlags.ConstantData))
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 var hostID = reader.ReadInt16();
                 HostProxy = new LazyProxy<int, Gob>(FindGob);
                 HostProxy.SetData(hostID);
             }
-            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 if (reader.ReadBoolean()) ResetTimeout();
             }

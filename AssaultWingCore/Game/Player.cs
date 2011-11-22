@@ -366,14 +366,14 @@ namespace AW2.Game
                 checked
                 {
                     base.Serialize(writer, mode);
-                    if (mode.HasFlag(SerializationModeFlags.ConstantData))
+                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
                     {
                         writer.Write((CanonicalString)ShipName);
                         writer.Write((CanonicalString)Weapon2Name);
                         writer.Write((CanonicalString)ExtraDeviceName);
                         writer.Write((Color)Color);
                     }
-                    if (mode.HasFlag(SerializationModeFlags.VaryingData))
+                    if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                     {
                         writer.Write((byte)_deviceUsages);
                     }
@@ -384,7 +384,7 @@ namespace AW2.Game
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if (mode.HasFlag(SerializationModeFlags.ConstantData))
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 var newShipName = reader.ReadCanonicalString();
                 var newWeapon2Name = reader.ReadCanonicalString();
@@ -394,7 +394,7 @@ namespace AW2.Game
                 if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
                 if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
             }
-            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 var deviceUsages = (DeviceUsages)reader.ReadByte();
                 if (Ship != null) ApplyDeviceUsages(deviceUsages);

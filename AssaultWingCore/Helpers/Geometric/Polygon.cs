@@ -327,7 +327,7 @@ namespace AW2.Helpers.Geometric
 #endif
             checked
             {
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((ushort)vertices.Length);
                     foreach (var vertex in vertices) writer.Write((Vector2)vertex);
@@ -337,7 +337,7 @@ namespace AW2.Helpers.Geometric
 
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 int vertexCount = reader.ReadUInt16();
                 vertices = new Vector2[vertexCount];

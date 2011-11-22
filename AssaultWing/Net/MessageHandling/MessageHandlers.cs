@@ -129,7 +129,7 @@ namespace AW2.Net.MessageHandling
             }
             else if (spectator.IsRemote)
             {
-                mess.Read(spectator, SerializationModeFlags.ConstantData, 0);
+                mess.Read(spectator, SerializationModeFlags.ConstantDataFromServer, 0);
             }
             else
             {
@@ -137,7 +137,7 @@ namespace AW2.Net.MessageHandling
                 // Be careful not to overwrite our most recent name and equipment choices
                 // with something older from the server.
                 var tempPlayer = GetTempPlayer();
-                mess.Read(tempPlayer, SerializationModeFlags.ConstantData, 0);
+                mess.Read(tempPlayer, SerializationModeFlags.ConstantDataFromServer, 0);
                 if (spectator is Player) ((Player)spectator).Color = tempPlayer.Color;
             }
         }
@@ -244,7 +244,7 @@ namespace AW2.Net.MessageHandling
             var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(mess);
             var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
             if (player == null) return; // Silently ignoring update for an unknown player
-            mess.Read(player, SerializationModeFlags.VaryingData, framesAgo);
+            mess.Read(player, SerializationModeFlags.VaryingDataFromServer, framesAgo);
         }
 
         private static void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)
@@ -304,7 +304,7 @@ namespace AW2.Net.MessageHandling
                 {
                     // Be careful not to overwrite the player's color with something silly from the client.
                     var oldColor = player is Player ? (Color?)((Player)player).Color : null;
-                    mess.Read(player, SerializationModeFlags.ConstantData, 0);
+                    mess.Read(player, SerializationModeFlags.ConstantDataFromServer, 0);
                     if (oldColor.HasValue) ((Player)player).Color = oldColor.Value;
                 }
             }
@@ -363,7 +363,7 @@ namespace AW2.Net.MessageHandling
                     break;
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
-            mess.Read(newSpectator, SerializationModeFlags.ConstantData, 0);
+            mess.Read(newSpectator, SerializationModeFlags.ConstantDataFromServer, 0);
             AssaultWingCore.Instance.DataEngine.Spectators.Add(newSpectator);
             return newSpectator;
         }

@@ -778,7 +778,7 @@ namespace AW2.Core
                 player.MustUpdateToClients = false;
                 var plrMessage = new PlayerUpdateMessage();
                 plrMessage.PlayerID = player.ID;
-                plrMessage.Write(player, SerializationModeFlags.VaryingData);
+                plrMessage.Write(player, SerializationModeFlags.VaryingDataFromServer);
                 NetworkEngine.SendToGameClients(plrMessage);
             }
         }
@@ -849,7 +849,7 @@ namespace AW2.Core
             foreach (var spectator in DataEngine.Spectators.Where(sendCriteria))
             {
                 var mess = newSpectatorSettingsRequest(spectator);
-                mess.Write(spectator, SerializationModeFlags.ConstantData);
+                mess.Write(spectator, SerializationModeFlags.ConstantDataFromServer);
                 if (spectator.ServerRegistration == Spectator.ServerRegistrationType.No)
                     spectator.ServerRegistration = Spectator.ServerRegistrationType.Requested;
                 foreach (var conn in connections) conn.Send(mess);

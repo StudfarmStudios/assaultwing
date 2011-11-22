@@ -30,7 +30,7 @@ namespace AW2.Net.Messages
         {
             _gobTypeNames.Add(gob.TypeName);
             _layerIndices.Add(gob.Arena.Layers.IndexOf(gob.Layer));
-            Write(gob, SerializationModeFlags.All);
+            Write(gob, SerializationModeFlags.AllFromServer);
         }
 
         public void ReadGobs(int framesAgo, Func<CanonicalString, int, Gob> createGob, Action<Gob> initGob)
@@ -39,7 +39,7 @@ namespace AW2.Net.Messages
             {
                 var gob = createGob(_gobTypeNames[i], _layerIndices[i]);
                 if (gob == null) continue;
-                Read(gob, SerializationModeFlags.All, framesAgo);
+                Read(gob, SerializationModeFlags.AllFromServer, framesAgo);
                 initGob(gob);
             }
         }

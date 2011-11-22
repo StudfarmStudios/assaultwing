@@ -7,7 +7,7 @@ namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client updating
-    /// the <see cref="SerializationModeFlags.VaryingData"/> state of a gob.
+    /// the <see cref="SerializationModeFlags.VaryingDataFromServer"/> state of a gob.
     /// </summary>
     [MessageType(0x24, false)]
     public class GobUpdateMessage : GameplayMessage
@@ -26,7 +26,7 @@ namespace AW2.Net.Messages
             // The only solution is to skip the remaining message, losing many gob updates.
             // This is why GobUpdateMessage does not send SerializationModeFlags.ConstantData.
             _gobIds.Add(gobId);
-            Write(gob, SerializationModeFlags.VaryingData);
+            Write(gob, SerializationModeFlags.VaryingDataFromServer);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace AW2.Net.Messages
                     gobTypes.Append(gob.GetType().Name);
                     if (gob is Gob) gobTypes.AppendFormat(" [{0}]", ((Gob)gob).TypeName);
                     gobTypes.Append(", ");
-                    Read(gob, SerializationModeFlags.VaryingData, framesAgo);
+                    Read(gob, SerializationModeFlags.VaryingDataFromServer, framesAgo);
                 }
             }
             catch (Exception)

@@ -328,11 +328,11 @@ namespace AW2.Game.Gobs
                 // HACK to avoid null references:
                 //   - ForwardShot using Ship.Model before LoadContent() is called
                 //   - Thrust() using _thrusterSound before Activate() is called
-                var shipMode = (mode & SerializationModeFlags.ConstantData) != 0
-                    ? mode & ~SerializationModeFlags.VaryingData
+                var shipMode = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+                    ? mode & ~SerializationModeFlags.VaryingDataFromServer
                     : mode;
 
-                if (shipMode.HasFlag(SerializationModeFlags.VaryingData))
+                if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                 {
                     writer.Write((byte)MathHelper.Clamp(_visualThrustForce * 255, 0, 255));
                     _visualThrustForceSerializedThisFrame = true;
@@ -358,8 +358,8 @@ namespace AW2.Game.Gobs
             // HACK to avoid null references:
             //   - ForwardShot using Ship.Model before LoadContent() is called
             //   - Thrust() using _thrusterSound before Activate() is called
-            var shipMode = (mode & SerializationModeFlags.ConstantData) != 0
-                ? mode & ~SerializationModeFlags.VaryingData
+            var shipMode = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+                ? mode & ~SerializationModeFlags.VaryingDataFromServer
                 : mode;
 
             // HACK: superclass Gob deserializes old Pos and Move and calculates them forward;
@@ -379,7 +379,7 @@ namespace AW2.Game.Gobs
                     DrawRotationOffset = 0;
             }
 
-            if (shipMode.HasFlag(SerializationModeFlags.VaryingData))
+            if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 _visualThrustForce = reader.ReadByte() / 255f;
                 Action<ShipDevice> deserializeDevice = device =>

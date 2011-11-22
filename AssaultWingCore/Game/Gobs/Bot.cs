@@ -138,7 +138,7 @@ namespace AW2.Game.Gobs
             checked
             {
                 base.Serialize(writer, mode);
-                if (mode.HasFlag(SerializationModeFlags.VaryingData))
+                if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                 {
                     int targetID = Target != null ? Target.ID : Gob.INVALID_ID;
                     writer.Write((short)targetID);
@@ -150,7 +150,7 @@ namespace AW2.Game.Gobs
         {
             base.Deserialize(reader, mode, framesAgo);
             if (Owner != null) Owner.SeizeBot(this);
-            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 int targetID = reader.ReadInt16();
                 _targetProxy = new LazyProxy<int, Gob>(FindGob);

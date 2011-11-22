@@ -52,7 +52,7 @@ namespace AW2.Game.Gobs
 #endif
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((CanonicalString)_propModelName);
                 }
@@ -62,7 +62,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 _propModelName = reader.ReadCanonicalString();
                 ModelName = _propModelName;

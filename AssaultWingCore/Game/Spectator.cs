@@ -130,7 +130,7 @@ namespace AW2.Game
 #endif
             {
 
-                if (mode.HasFlag(SerializationModeFlags.ConstantData))
+                if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
                 {
                     writer.Write((string)Name);
                 }
@@ -140,7 +140,7 @@ namespace AW2.Game
 
         public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if (mode.HasFlag(SerializationModeFlags.ConstantData))
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 Name = reader.ReadString();
             }

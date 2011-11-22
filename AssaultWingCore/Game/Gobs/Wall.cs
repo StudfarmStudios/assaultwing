@@ -186,20 +186,20 @@ namespace AW2.Game.Gobs
 #endif
             {
                 // HACK to reduce network traffic
-                var reducedMode = (mode & SerializationModeFlags.ConstantData) != 0
-                    ? SerializationModeFlags.All
+                var reducedMode = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+                    ? SerializationModeFlags.AllFromServer
                     : SerializationModeFlags.None;
                 base.Serialize(writer, reducedMode);
                 checked
                 {
                     if (mode != SerializationModeFlags.None)
                     {
-                        var indices = (mode & SerializationModeFlags.ConstantData) != 0
+                        var indices = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
                             ? _removedTriangleIndicesOfAllTime
                             : _removedTriangleIndicesToSerialize;
                         writer.Write((short)indices.Count());
                         foreach (short index in indices) writer.Write((short)index);
-                        if ((mode & SerializationModeFlags.VaryingData) != 0) _removedTriangleIndicesToSerialize.Clear();
+                        if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0) _removedTriangleIndicesToSerialize.Clear();
                     }
                 }
             }
@@ -208,8 +208,8 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             // HACK to reduce network traffic
-            var reducedMode = (mode & SerializationModeFlags.ConstantData) != 0
-                ? SerializationModeFlags.All
+            var reducedMode = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+                ? SerializationModeFlags.AllFromServer
                 : SerializationModeFlags.None;
             base.Deserialize(reader, reducedMode, framesAgo);
             if (mode != SerializationModeFlags.None)

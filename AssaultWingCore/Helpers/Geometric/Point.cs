@@ -128,7 +128,7 @@ namespace AW2.Helpers.Geometric
 #endif
             {
 
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
 #if TRUSTED_VISIBILITY_BREACH
                 var location = Location;
@@ -144,7 +144,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
 #if TRUSTED_VISIBILITY_BREACH
                 var

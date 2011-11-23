@@ -32,11 +32,19 @@ namespace AW2.Net.MessageHandling
 
         private static IEnumerable<Connection> GetConnections(SourceType source)
         {
+            var net = AssaultWing.Instance.NetworkEngine;
             switch (source)
             {
-                case SourceType.Client: return AssaultWing.Instance.NetworkEngine.GameClientConnections;
-                case SourceType.Server: return new Connection[] { AssaultWing.Instance.NetworkEngine.GameServerConnection };
-                case SourceType.Management: return new Connection[] { AssaultWing.Instance.NetworkEngine.ManagementServerConnection };
+                case SourceType.Client:
+                    if (net.GameClientConnections != null)
+                        foreach (var conn in net.GameClientConnections) yield return conn;
+                    break;
+                case SourceType.Server:
+                    if (net.GameServerConnection != null) yield return net.GameServerConnection;
+                    break;
+                case SourceType.Management:
+                    if (net.ManagementServerConnection != null) yield return net.ManagementServerConnection;
+                    break;
                 default: throw new ApplicationException("Invalid SourceType " + source);
             }
         }

@@ -59,7 +59,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PlayerUpdateMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, handleGobCreationMessage) { OneMessageAtATime = true };
-            yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessage);
+            yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
         }
 
@@ -72,7 +72,9 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<MessageHandlerBase> GetServerGameplayHandlers()
         {
+            var networkEngine = AssaultWing.Instance.NetworkEngine;
             yield return new MessageHandler<PlayerControlsMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerControlsMessage);
+            yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Client, networkEngine, HandleGobUpdateMessageOnServer);
         }
 
         public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)
@@ -129,7 +131,7 @@ namespace AW2.Net.MessageHandling
             }
             else if (spectator.IsRemote)
             {
-                mess.Read(spectator, SerializationModeFlags.ConstantData, 0);
+                mess.Read(spectator, SerializationModeFlags.ConstantDataFromServer, 0);
             }
             else
             {
@@ -137,7 +139,7 @@ namespace AW2.Net.MessageHandling
                 // Be careful not to overwrite our most recent name and equipment choices
                 // with something older from the server.
                 var tempPlayer = GetTempPlayer();
-                mess.Read(tempPlayer, SerializationModeFlags.ConstantData, 0);
+                mess.Read(tempPlayer, SerializationModeFlags.ConstantDataFromServer, 0);
                 if (spectator is Player) ((Player)spectator).Color = tempPlayer.Color;
             }
         }
@@ -207,7 +209,7 @@ namespace AW2.Net.MessageHandling
             foreach (PlayerControlType control in System.Enum.GetValues(typeof(PlayerControlType)))
                 setRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
             var playerPlayer = player as Player;
-            if (playerPlayer != null && playerPlayer.Ship != null)
+            if (playerPlayer != null && playerPlayer.Ship != null && playerPlayer.Ship.LocationPredicter != null)
                 playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageGameTime(mess));
         }
 
@@ -244,7 +246,7 @@ namespace AW2.Net.MessageHandling
             var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(mess);
             var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
             if (player == null) return; // Silently ignoring update for an unknown player
-            mess.Read(player, SerializationModeFlags.VaryingData, framesAgo);
+            mess.Read(player, SerializationModeFlags.VaryingDataFromServer, framesAgo);
         }
 
         private static void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)
@@ -304,13 +306,13 @@ namespace AW2.Net.MessageHandling
                 {
                     // Be careful not to overwrite the player's color with something silly from the client.
                     var oldColor = player is Player ? (Color?)((Player)player).Color : null;
-                    mess.Read(player, SerializationModeFlags.ConstantData, 0);
+                    mess.Read(player, SerializationModeFlags.ConstantDataFromServer, 0);
                     if (oldColor.HasValue) ((Player)player).Color = oldColor.Value;
                 }
             }
         }
 
-        private static void HandleGobUpdateMessage(GobUpdateMessage mess, int framesAgo)
+        private static void HandleGobUpdateMessageOnClient(GobUpdateMessage mess, int framesAgo)
         {
             var arena = AssaultWingCore.Instance.DataEngine.Arena;
             foreach (var collisionEvent in mess.CollisionEvents)
@@ -335,7 +337,19 @@ namespace AW2.Net.MessageHandling
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                 return theGob == null || theGob.IsDisposed ? null : theGob;
-            }, framesAgo);
+            }, framesAgo, SerializationModeFlags.VaryingDataFromServer);
+        }
+
+        private static void HandleGobUpdateMessageOnServer(GobUpdateMessage mess, int framesAgo)
+        {
+            var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            var messOwner = AssaultWingCore.Instance.DataEngine.Spectators.SingleOrDefault(plr => plr.ConnectionID == mess.ConnectionID);
+            if (messOwner == null) return;
+            mess.ReadGobs(gobId =>
+            {
+                var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
+                return theGob == null || theGob.IsDisposed || theGob.Owner != messOwner ? null : theGob;
+            }, framesAgo, SerializationModeFlags.VaryingDataFromClient);
         }
 
         private static void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)
@@ -363,7 +377,7 @@ namespace AW2.Net.MessageHandling
                     break;
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
-            mess.Read(newSpectator, SerializationModeFlags.ConstantData, 0);
+            mess.Read(newSpectator, SerializationModeFlags.ConstantDataFromServer, 0);
             AssaultWingCore.Instance.DataEngine.Spectators.Add(newSpectator);
             return newSpectator;
         }

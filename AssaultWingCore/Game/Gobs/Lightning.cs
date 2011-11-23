@@ -176,7 +176,7 @@ namespace AW2.Game.Gobs
             checked
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((short)Shooter.GetValue().ID);
                     writer.Write((byte)ShooterBoneIndex);
@@ -190,7 +190,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 Shooter.SetData(reader.ReadInt16());
                 ShooterBoneIndex = reader.ReadByte();

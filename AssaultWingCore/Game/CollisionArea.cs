@@ -242,28 +242,28 @@ namespace AW2.Game
             using (new NetworkProfilingScope(this))
 #endif
             {
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((int)_type);
                     writer.Write((int)_collidesAgainst);
                     writer.Write((int)_cannotOverlap);
                     writer.Write((string)_name);
                     writer.Write((byte)_collisionMaterial);
-                    _area.Serialize(writer, SerializationModeFlags.All);
+                    _area.Serialize(writer, SerializationModeFlags.AllFromServer);
                 }
             }
         }
 
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 _type = (CollisionAreaType)reader.ReadInt32();
                 _collidesAgainst = (CollisionAreaType)reader.ReadInt32();
                 _cannotOverlap = (CollisionAreaType)reader.ReadInt32();
                 _name = reader.ReadString();
                 _collisionMaterial = (CollisionMaterialType)reader.ReadByte();
-                _area.Deserialize(reader, SerializationModeFlags.All, framesAgo);
+                _area.Deserialize(reader, SerializationModeFlags.AllFromServer, framesAgo);
             }
         }
     }

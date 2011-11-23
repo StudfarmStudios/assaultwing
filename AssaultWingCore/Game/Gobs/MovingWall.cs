@@ -121,12 +121,12 @@ namespace AW2.Game.Gobs
 #endif
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((CanonicalString)wallModelName);
                     writer.Write((byte)wallCollisionAreas.Length);
                     foreach (var area in wallCollisionAreas)
-                        area.Serialize(writer, SerializationModeFlags.All);
+                        area.Serialize(writer, SerializationModeFlags.AllFromServer);
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 ModelName = wallModelName = reader.ReadCanonicalString();
                 int collisionAreaCount = reader.ReadByte();
@@ -142,7 +142,7 @@ namespace AW2.Game.Gobs
                 for (int i = 0; i < collisionAreaCount; ++i)
                 {
                     wallCollisionAreas[i] = new CollisionArea();
-                    wallCollisionAreas[i].Deserialize(reader, SerializationModeFlags.All, framesAgo);
+                    wallCollisionAreas[i].Deserialize(reader, SerializationModeFlags.AllFromServer, framesAgo);
                 }
                 foreach (var area in wallCollisionAreas) area.Owner = this;
             }

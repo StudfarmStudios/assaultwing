@@ -211,7 +211,7 @@ namespace AW2.Helpers.Geometric
             using (new NetworkProfilingScope(this))
 #endif
             {
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
 #if TRUSTED_VISIBILITY_BREACH
                 var p1 = P1;
@@ -233,7 +233,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
 #if TRUSTED_VISIBILITY_BREACH
                 Vector2 p1, p2, p3;

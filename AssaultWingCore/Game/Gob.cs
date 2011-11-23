@@ -895,7 +895,7 @@ namespace AW2.Game
             {
                 checked
                 {
-                    if ((mode & SerializationModeFlags.ConstantData) != 0)
+                    if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                     {
                         writer.Write((short)ID);
                         byte flags = 0;
@@ -907,7 +907,7 @@ namespace AW2.Game
                         else
                             writer.Write((sbyte)Spectator.UNINITIALIZED_ID);
                     }
-                    if ((mode & SerializationModeFlags.VaryingData) != 0)
+                    if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
                     {
                         var fullUpdate = true; // UNDONE because of bugs !!! _nextFullNetworkUdpateTime <= Game.GameTime.TotalGameTime;
                         byte rotationAndFlags = unchecked((byte)(((int)Math.Round(_rotation / MathHelper.TwoPi * 128)) & 0x7f));
@@ -940,7 +940,7 @@ namespace AW2.Game
         /// <param name="mode">Which parts of the gob to deserialise.</param>
         public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 ID = reader.ReadInt16();
                 byte flags = reader.ReadByte();
@@ -949,7 +949,7 @@ namespace AW2.Game
                 OwnerProxy = new LazyProxy<int, Spectator>(FindPlayer);
                 OwnerProxy.SetData(ownerID);
             }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
                 var oldRotation = _rotation;
                 byte rotationAndFlags = reader.ReadByte();

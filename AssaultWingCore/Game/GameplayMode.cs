@@ -35,7 +35,7 @@ namespace AW2.Game
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 writer.Write((short)Lives);
                 writer.Write((short)Kills);
@@ -45,7 +45,7 @@ namespace AW2.Game
 
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if (mode.HasFlag(SerializationModeFlags.VaryingData))
+            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 Lives = reader.ReadInt16();
                 Kills = reader.ReadInt16();

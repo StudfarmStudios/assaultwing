@@ -39,7 +39,7 @@ namespace AW2.Game.Gobs
             using (new NetworkProfilingScope(this))
 #endif
             {
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((float)weight);
                     writer.Write((CanonicalString)spawnTypeName);
@@ -49,7 +49,7 @@ namespace AW2.Game.Gobs
 
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 weight = reader.ReadSingle();
                 spawnTypeName = reader.ReadCanonicalString();
@@ -151,12 +151,12 @@ namespace AW2.Game.Gobs
             checked
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((float)_spawnInterval);
                     writer.Write((byte)_spawnTypes.Length);
                     foreach (var spawnType in _spawnTypes)
-                        spawnType.Serialize(writer, SerializationModeFlags.ConstantData);
+                        spawnType.Serialize(writer, SerializationModeFlags.ConstantDataFromServer);
                 }
             }
         }
@@ -164,13 +164,13 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 _spawnInterval = reader.ReadSingle();
                 int spawnTypesCount = reader.ReadByte();
                 _spawnTypes = new SpawnType[spawnTypesCount];
                 for (int i = 0; i < spawnTypesCount; ++i)
-                    _spawnTypes[i].Deserialize(reader, SerializationModeFlags.ConstantData, framesAgo);
+                    _spawnTypes[i].Deserialize(reader, SerializationModeFlags.ConstantDataFromServer, framesAgo);
             }
         }
 

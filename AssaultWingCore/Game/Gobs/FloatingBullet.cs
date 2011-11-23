@@ -142,7 +142,7 @@ namespace AW2.Game.Gobs
 #endif
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.VaryingData) != 0)
+                if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
                 {
                     if (_hoverAroundPos.HasValue)
                         writer.WriteHalf(_hoverAroundPos.Value);
@@ -155,7 +155,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
                 var maybeHoverAroundPos = reader.ReadHalfVector2();
                 if (float.IsNaN(maybeHoverAroundPos.X))

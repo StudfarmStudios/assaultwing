@@ -161,7 +161,7 @@ namespace AW2.Game.Gobs
             checked
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.VaryingData) != 0)
+                if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
                 {
                     int targetID = Target != null ? Target.ID : Gob.INVALID_ID;
                     writer.Write((short)targetID);
@@ -172,7 +172,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
                 int targetID = reader.ReadInt16();
                 _targetProxy = new LazyProxy<int, Gob>(FindGob);

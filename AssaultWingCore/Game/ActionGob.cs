@@ -43,7 +43,7 @@ namespace AW2.Game
 #endif
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((string)actionGobName);
                 }
@@ -53,7 +53,7 @@ namespace AW2.Game
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 actionGobName = reader.ReadString();
             }

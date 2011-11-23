@@ -3,9 +3,7 @@
   <typeName>dummygobtype</typeName>
   <isRotating>false</isRotating>
   <rotationSpeed>0.0</rotationSpeed>
-  <networkUpdatePeriod>
-    <ticks>10000000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
   <lifetime>600</lifetime>
   <mass>1</mass>
   <modelName>dummymodel</modelName>

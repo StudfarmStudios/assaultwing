@@ -82,6 +82,11 @@ namespace AW2.Helpers.Serialization
                 SerializeXml(writer, "B", color.B, limitationAttribute);
                 SerializeXml(writer, "A", color.A, limitationAttribute);
             }
+            else if (type == typeof(TimeSpan))
+            {
+                var timeSpan = (TimeSpan)castObj;
+                writer.WriteValue(timeSpan.TotalSeconds);
+            }
             else if (typeof(IEnumerable).IsAssignableFrom(type))
                 foreach (object item in (IEnumerable)castObj)
                     SerializeXml(writer, "Item", item, limitationAttribute, typeof(object));
@@ -132,6 +137,8 @@ namespace AW2.Helpers.Serialization
                     returnValue = DeserializeXmlEnum(reader, writtenType);
                 else if (writtenType == typeof(Color))
                     returnValue = DeserializeXmlColor(reader, limitationAttribute, tolerant);
+                else if (writtenType == typeof(TimeSpan) && !reader.IsStartElement()) // Note: IsStartElement() is to support old style TimeSpan serialization with <ticks> element at release 1.8.0.0. Remove support after a few versions.
+                    returnValue = TimeSpan.FromSeconds(reader.ReadContentAsDouble());
                 else if (IsIEnumerable(writtenType))
                     returnValue = DeserializeXmlIEnumerable(reader, objType, limitationAttribute, writtenType, tolerant);
                 else

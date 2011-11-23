@@ -3,9 +3,7 @@
   <typeName>nanobot repair</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
-  <networkUpdatePeriod>
-    <ticks>10000000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.6</depthLayer2D>
   <drawMode2D>
     <type>Additive</type>

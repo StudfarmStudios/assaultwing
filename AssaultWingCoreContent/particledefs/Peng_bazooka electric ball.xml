@@ -3,9 +3,7 @@
   <typeName>bazooka electric ball</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
-  <networkUpdatePeriod>
-    <ticks>10000000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
   <layerPreference>Front</layerPreference>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>

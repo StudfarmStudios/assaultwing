@@ -1,14 +1,10 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.BonusActions.Weapon2UpgradeBonusAction">
   <typeName>suicide bomber bonus action</typeName>
-  <duration>
-    <ticks>200000000</ticks>
-  </duration>
+  <duration>20</duration>
   <fixedWeaponName>suicide bomber</fixedWeaponName>
   <effectName>bomber_rage</effectName>
-  <networkUpdatePeriod>
-    <ticks>10000000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

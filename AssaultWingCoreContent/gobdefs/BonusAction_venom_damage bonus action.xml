@@ -1,16 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.BonusActions.DamageBuffBonusAction">
   <typeName>venom damage bonus action</typeName>
-  <duration>
-    <ticks>90000000</ticks>
-  </duration>
+  <duration>9</duration>
   <buffName>venom drop</buffName>
   <bonusIconName>b_icon_venomdrop</bonusIconName>
   <pengTypeName>venom poisoning</pengTypeName>
   <damagePerSecond>10</damagePerSecond>
-  <networkUpdatePeriod>
-    <ticks>10000000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

@@ -1,13 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.BonusActions.Weapon1UpgradeLoadTimeBonusAction">
   <typeName>speedloader bonus action</typeName>
-  <duration>
-    <ticks>600000000</ticks>
-  </duration>
+  <duration>60</duration>
   <loadTimeMultiplier>0.6</loadTimeMultiplier>
-  <networkUpdatePeriod>
-    <ticks>10000000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

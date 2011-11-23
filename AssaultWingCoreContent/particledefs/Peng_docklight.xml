@@ -3,9 +3,7 @@
   <typeName>docklight</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
-  <networkUpdatePeriod>
-    <ticks>10000000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
   <layerPreference>Back</layerPreference>
   <depthLayer2D>0.7</depthLayer2D>
   <drawMode2D>

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.SnakeShip">
   <typeName>Plissken</typeName>
-  <networkUpdatePeriod>
-    <ticks>500000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>0.05</networkUpdatePeriod>
 
   <shipInfo>
     <iconEquipName>menu_equip_ship_snake</iconEquipName>

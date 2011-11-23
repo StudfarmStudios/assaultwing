@@ -12,9 +12,7 @@
   <birthGobTypes />
   <deathGobTypes />
   <movable>false</movable>
-  <networkUpdatePeriod>
-    <ticks>0</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>0</networkUpdatePeriod>
   <collisionAreas />
   <maxDamage>100</maxDamage>
   <scaleCurve>

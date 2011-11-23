@@ -3,9 +3,7 @@
   <typeName>fragment explo</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
-   <networkUpdatePeriod>
-      <ticks>10000000</ticks>
-   </networkUpdatePeriod>
+   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.3</depthLayer2D>
   <drawMode2D>
       <type>Additive</type>

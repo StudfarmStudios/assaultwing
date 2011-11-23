@@ -3,9 +3,7 @@
   <typeName>exploding fragment</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>0.0</rotationSpeed>
-  <networkUpdatePeriod>
-    <ticks>10000000</ticks>
-  </networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
   <lifetime>30</lifetime>
   <impactDamage>5</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>

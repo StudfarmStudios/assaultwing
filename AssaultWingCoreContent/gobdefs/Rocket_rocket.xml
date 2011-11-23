@@ -15,7 +15,7 @@
   <targetTurnSpeed>2</targetTurnSpeed>
   <findTargetRange>1000</findTargetRange>
   <typeName>rocket</typeName>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <mass>80</mass>
   <modelName>missile</modelName>
   <scale>0.0387</scale>

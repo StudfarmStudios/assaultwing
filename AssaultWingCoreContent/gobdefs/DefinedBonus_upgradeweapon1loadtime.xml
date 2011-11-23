@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Bonus">
   <typeName>upgradeweapon1loadtime</typeName>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>30</lifetime>
   <maxDamage>300</maxDamage>
   <mass>50</mass>

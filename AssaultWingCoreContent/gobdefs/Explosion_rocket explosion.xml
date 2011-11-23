@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Explosion">
   <typeName>rocket explosion</typeName>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <impactHoleRadius>30</impactHoleRadius>
   <particleEngineNames>
     <Item>fragments</Item>

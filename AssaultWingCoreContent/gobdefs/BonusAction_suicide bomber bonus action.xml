@@ -4,7 +4,7 @@
   <duration>20</duration>
   <fixedWeaponName>suicide bomber</fixedWeaponName>
   <effectName>bomber_rage</effectName>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

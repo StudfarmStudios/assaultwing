@@ -3,7 +3,7 @@
   <typeName>dust fragment</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>0.0</rotationSpeed>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>30</lifetime>
   <impactDamage>2</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>

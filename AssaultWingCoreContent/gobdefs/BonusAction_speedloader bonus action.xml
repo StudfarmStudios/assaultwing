@@ -3,7 +3,7 @@
   <typeName>speedloader bonus action</typeName>
   <duration>60</duration>
   <loadTimeMultiplier>0.6</loadTimeMultiplier>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

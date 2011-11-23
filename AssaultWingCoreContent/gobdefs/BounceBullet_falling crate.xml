@@ -3,7 +3,7 @@
   <typeName>falling crate</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>2.0</rotationSpeed>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>30</lifetime>
   <maxDamage>100</maxDamage>
   <impactDamage>20</impactDamage>

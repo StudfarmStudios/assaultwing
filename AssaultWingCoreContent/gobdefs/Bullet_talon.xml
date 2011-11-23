@@ -3,7 +3,7 @@
   <typeName>talon</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>10.0</rotationSpeed>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>0.6</lifetime>
   <impactDamage>13</impactDamage>
   <impactHoleRadius>8</impactHoleRadius>

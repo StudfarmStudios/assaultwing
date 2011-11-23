@@ -6,7 +6,7 @@
   <bonusIconName>b_icon_venomdrop</bonusIconName>
   <pengTypeName>venom poisoning</pengTypeName>
   <damagePerSecond>10</damagePerSecond>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

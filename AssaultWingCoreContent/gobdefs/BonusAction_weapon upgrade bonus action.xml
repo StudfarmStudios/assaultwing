@@ -4,7 +4,7 @@
   <duration>45</duration>
   <fixedWeaponName></fixedWeaponName>
   <effectName></effectName>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

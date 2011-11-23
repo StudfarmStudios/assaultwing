@@ -7,7 +7,7 @@
   <attractionForce>55000</attractionForce>
   <spreadingForce>12000</spreadingForce>
   <hitSound>mineHit</hitSound>
-  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>35</lifetime>
   <impactDamage>550</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>

@@ -740,35 +740,17 @@ namespace AW2.Core
                 switch (NetworkMode)
                 {
                     case NetworkMode.Server:
-                        SendGobUpdates();
+                        SendGobUpdatesToRemote(DataEngine.Arena.Gobs.GameplayLayer.Gobs,
+                            SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
                         SendPlayerUpdatesOnServer();
                         break;
                     case NetworkMode.Client:
+                        SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && !gob.Owner.IsRemote),
+                            SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
                         SendPlayerUpdatesOnClient();
                         break;
                 }
             }
-        }
-
-        private void SendGobUpdates()
-        {
-            var now = DataEngine.ArenaTotalTime;
-            var gobMessage = new GobUpdateMessage();
-            foreach (var gob in DataEngine.Arena.Gobs.GameplayLayer.Gobs)
-            {
-                if (!gob.ForcedNetworkUpdate)
-                {
-                    if (!gob.IsRelevant) continue;
-                    if (!gob.Movable) continue;
-                    if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
-                    if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
-                }
-                gob.ForcedNetworkUpdate = false;
-                gob.LastNetworkUpdate = now;
-                gobMessage.AddGob(gob.ID, gob);
-            }
-            gobMessage.CollisionEvents = DataEngine.Arena.GetCollisionEvents();
-            NetworkEngine.SendToGameClients(gobMessage);
         }
 
         private void SendPlayerUpdatesOnServer()
@@ -794,6 +776,27 @@ namespace AW2.Core
                     message.SetControlState(controlType, player.Controls[controlType].State);
                 NetworkEngine.GameServerConnection.Send(message);
             }
+        }
+
+        private void SendGobUpdatesToRemote(IEnumerable<Gob> gobs, SerializationModeFlags serializationMode, IEnumerable<Connection> connections)
+        {
+            var now = DataEngine.ArenaTotalTime;
+            var gobMessage = new GobUpdateMessage();
+            foreach (var gob in gobs)
+            {
+                if (!gob.ForcedNetworkUpdate)
+                {
+                    if (!gob.IsRelevant) continue;
+                    if (!gob.Movable) continue;
+                    if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
+                    if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
+                }
+                gob.ForcedNetworkUpdate = false;
+                gob.LastNetworkUpdate = now;
+                gobMessage.AddGob(gob.ID, gob, serializationMode);
+            }
+            gobMessage.CollisionEvents = DataEngine.Arena.GetCollisionEvents();
+            foreach (var conn in connections) conn.Send(gobMessage);
         }
 
         private void SendGameSettings()

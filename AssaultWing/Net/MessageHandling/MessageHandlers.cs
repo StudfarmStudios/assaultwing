@@ -59,7 +59,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PlayerUpdateMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, handleGobCreationMessage) { OneMessageAtATime = true };
-            yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessage);
+            yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
         }
 
@@ -72,7 +72,9 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<MessageHandlerBase> GetServerGameplayHandlers()
         {
+            var networkEngine = AssaultWing.Instance.NetworkEngine;
             yield return new MessageHandler<PlayerControlsMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerControlsMessage);
+            yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Client, networkEngine, HandleGobUpdateMessageOnServer);
         }
 
         public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)
@@ -207,7 +209,7 @@ namespace AW2.Net.MessageHandling
             foreach (PlayerControlType control in System.Enum.GetValues(typeof(PlayerControlType)))
                 setRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
             var playerPlayer = player as Player;
-            if (playerPlayer != null && playerPlayer.Ship != null)
+            if (playerPlayer != null && playerPlayer.Ship != null && playerPlayer.Ship.LocationPredicter != null)
                 playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageGameTime(mess));
         }
 
@@ -310,7 +312,7 @@ namespace AW2.Net.MessageHandling
             }
         }
 
-        private static void HandleGobUpdateMessage(GobUpdateMessage mess, int framesAgo)
+        private static void HandleGobUpdateMessageOnClient(GobUpdateMessage mess, int framesAgo)
         {
             var arena = AssaultWingCore.Instance.DataEngine.Arena;
             foreach (var collisionEvent in mess.CollisionEvents)
@@ -335,7 +337,19 @@ namespace AW2.Net.MessageHandling
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                 return theGob == null || theGob.IsDisposed ? null : theGob;
-            }, framesAgo);
+            }, framesAgo, SerializationModeFlags.VaryingDataFromServer);
+        }
+
+        private static void HandleGobUpdateMessageOnServer(GobUpdateMessage mess, int framesAgo)
+        {
+            var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            var messOwner = AssaultWingCore.Instance.DataEngine.Spectators.SingleOrDefault(plr => plr.ConnectionID == mess.ConnectionID);
+            if (messOwner == null) return;
+            mess.ReadGobs(gobId =>
+            {
+                var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
+                return theGob == null || theGob.IsDisposed || theGob.Owner != messOwner ? null : theGob;
+            }, framesAgo, SerializationModeFlags.VaryingDataFromClient);
         }
 
         private static void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)

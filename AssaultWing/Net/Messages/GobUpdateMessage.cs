@@ -17,7 +17,7 @@ namespace AW2.Net.Messages
         public override MessageSendType SendType { get { return MessageSendType.UDP; } }
         public List<Arena.CollisionEvent> CollisionEvents { get; set; }
 
-        public void AddGob(int gobId, INetworkSerializable gob)
+        public void AddGob(int gobId, INetworkSerializable gob, SerializationModeFlags serializationMode)
         {
             // Note: Data in GobUpdateMessage may get lost on client because of this case:
             // Client doesn't have the gob at the moment the update message is received.
@@ -26,7 +26,7 @@ namespace AW2.Net.Messages
             // The only solution is to skip the remaining message, losing many gob updates.
             // This is why GobUpdateMessage does not send SerializationModeFlags.ConstantData.
             _gobIds.Add(gobId);
-            Write(gob, SerializationModeFlags.VaryingDataFromServer);
+            Write(gob, serializationMode);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace AW2.Net.Messages
         /// </summary>
         /// <param name="gobFinder">A method returning a gob for its identifier.</param>
         /// <param name="framesAgo">How long time ago was the message current.</param>
-        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, int framesAgo)
+        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, int framesAgo, SerializationModeFlags serializationMode)
         {
             var gobTypes = new System.Text.StringBuilder(); // debugging a rare EndOfStreamException
             try
@@ -46,7 +46,7 @@ namespace AW2.Net.Messages
                     gobTypes.Append(gob.GetType().Name);
                     if (gob is Gob) gobTypes.AppendFormat(" [{0}]", ((Gob)gob).TypeName);
                     gobTypes.Append(", ");
-                    Read(gob, SerializationModeFlags.VaryingDataFromServer, framesAgo);
+                    Read(gob, serializationMode, framesAgo);
                 }
             }
             catch (Exception)

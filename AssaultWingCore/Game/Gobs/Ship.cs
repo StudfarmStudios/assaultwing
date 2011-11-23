@@ -144,6 +144,7 @@ namespace AW2.Game.Gobs
             get
             {
                 if (LocationPredicter == null) return Rotation;
+                if (Game.NetworkMode == NetworkMode.Client && !Owner.IsRemote) return Rotation;
                 return LocationPredicter.GetShipLocation(Game.DataEngine.ArenaTotalTime).Rotation;
             }
         }
@@ -269,7 +270,6 @@ namespace AW2.Game.Gobs
         {
             IsKeptInArenaBounds = true;
             _temporarilyDisabledGobs = new List<Gob>();
-            LocationPredicter = new ShipLocationPredicter(this);
         }
 
         #endregion Ship constructors
@@ -279,6 +279,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            if (Game.NetworkMode == NetworkMode.Client && Owner.IsRemote) LocationPredicter = new ShipLocationPredicter(this);
             _thruster.Activate(this);
             _coughEngine.Activate(this);
             CreateGlow();
@@ -328,7 +329,7 @@ namespace AW2.Game.Gobs
                 // HACK to avoid null references:
                 //   - ForwardShot using Ship.Model before LoadContent() is called
                 //   - Thrust() using _thrusterSound before Activate() is called
-                var shipMode = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+                var shipMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
                     ? mode & ~SerializationModeFlags.VaryingDataFromServer
                     : mode;
 
@@ -345,6 +346,11 @@ namespace AW2.Game.Gobs
                     serializeDevice(Weapon2);
                     serializeDevice(ExtraDevice);
                 }
+                if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromClient))
+                {
+                    var rotationByte = unchecked((byte)((int)Math.Round(Rotation / MathHelper.TwoPi * (byte.MaxValue + 1))));
+                    writer.Write((byte)rotationByte);
+                }
             }
         }
 
@@ -358,7 +364,7 @@ namespace AW2.Game.Gobs
             // HACK to avoid null references:
             //   - ForwardShot using Ship.Model before LoadContent() is called
             //   - Thrust() using _thrusterSound before Activate() is called
-            var shipMode = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+            var shipMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
                 ? mode & ~SerializationModeFlags.VaryingDataFromServer
                 : mode;
 
@@ -378,6 +384,12 @@ namespace AW2.Game.Gobs
                 if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > Gob.ROTATION_SMOOTHING_CUTOFF)
                     DrawRotationOffset = 0;
             }
+            else
+            {
+                // Client alone decides on the rotation of his own ship.
+                if (!float.IsNaN(oldRotation)) Rotation = oldRotation;
+                DrawRotationOffset = 0;
+            }
 
             if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
@@ -390,6 +402,11 @@ namespace AW2.Game.Gobs
                 deserializeDevice(Weapon1);
                 deserializeDevice(Weapon2);
                 deserializeDevice(ExtraDevice);
+            }
+            if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromClient))
+            {
+                var rotationByte = reader.ReadByte();
+                Rotation = rotationByte * MathHelper.TwoPi / (byte.MaxValue + 1);
             }
         }
 
@@ -482,6 +499,9 @@ namespace AW2.Game.Gobs
             base.InflictDamage(damageAmount, cause);
         }
 
+        /// <summary>
+        /// Ship location predicter or null.
+        /// </summary>
         public ShipLocationPredicter LocationPredicter { get; private set; }
 
         public override ChargeProvider GetChargeProvider(ShipDevice.OwnerHandleType deviceType)

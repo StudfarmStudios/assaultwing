@@ -22,6 +22,8 @@ namespace AW2.Core
 
         public event EventHandler Exiting;
 
+        private bool _takeScreenShot;
+
         public AWGame(GraphicsDeviceService graphicsDeviceService)
         {
             GraphicsDeviceService = graphicsDeviceService;
@@ -29,6 +31,11 @@ namespace AW2.Core
             if (graphicsDeviceService != null) Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
             Components = new AWGameComponentCollection();
             TargetFPS = 60;
+        }
+
+        public void TakeScreenShot()
+        {
+            _takeScreenShot = true;
         }
 
         public void Dispose()
@@ -77,9 +84,9 @@ namespace AW2.Core
         /// </summary>
         public virtual void Draw()
         {
-            foreach (var item in Components)
-                if (item.Visible)
-                    item.Draw();
+            if (_takeScreenShot) RenderToFile(DrawImpl);
+            _takeScreenShot = false;
+            DrawImpl();
         }
 
         /// <summary>
@@ -96,6 +103,31 @@ namespace AW2.Core
         protected virtual void OnExiting(object sender, EventArgs args)
         {
             if (Exiting != null) Exiting(sender, args);
+        }
+
+        private void RenderToFile(Action render)
+        {
+            var gfx = GraphicsDeviceService.GraphicsDevice;
+            var pp = gfx.PresentationParameters;
+            using (var screenshot = new RenderTarget2D(gfx, gfx.Viewport.Width, gfx.Viewport.Height, false, pp.BackBufferFormat, pp.DepthStencilFormat))
+            {
+                gfx.SetRenderTarget(screenshot);
+                render();
+                gfx.SetRenderTarget(null);
+                var filename = string.Format("AW {0:yyyy-MM-dd HH-mm-ss}.png", DateTime.Now);
+                var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), filename);
+                using (var stream = System.IO.File.OpenWrite(path))
+                {
+                    screenshot.SaveAsPng(stream, screenshot.Width, screenshot.Height);
+                }
+            }
+        }
+
+        private void DrawImpl()
+        {
+            foreach (var item in Components)
+                if (item.Visible)
+                    item.Draw();
         }
     }
 }

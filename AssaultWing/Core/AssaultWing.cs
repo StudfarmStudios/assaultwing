@@ -22,7 +22,7 @@ namespace AW2.Core
     public class AssaultWing : AssaultWingCore
     {
         private GameState _gameState;
-        private Control _escapeControl;
+        private Control _escapeControl, _screenShotControl;
         private List<Gob> _addedGobs;
         private TimeSpan _lastGameSettingsSent;
         private TimeSpan _lastFrameNumberSynchronization;
@@ -81,6 +81,7 @@ namespace AW2.Core
             GameState = GameState.Initializing;
             ChatStartControl = Settings.Controls.Chat.GetControl();
             _escapeControl = new KeyboardKey(Keys.Escape);
+            _screenShotControl = new KeyboardKey(Keys.PrintScreen);
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
@@ -605,6 +606,7 @@ namespace AW2.Core
                 }
                 ShowDialog(dialogData);
             }
+            if (_screenShotControl.Pulse) TakeScreenShot();
         }
 
         [System.Diagnostics.Conditional("DEBUG")]

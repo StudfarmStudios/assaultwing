@@ -87,7 +87,7 @@ namespace AW2.Graphics
                     Gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
                 }
             }
-            Gfx.SetRenderTarget(null);
+            Gfx.SetRenderTarget(_game.DefaultRenderTarget);
         }
 
         private void PrepareFirstPass()
@@ -113,7 +113,7 @@ namespace AW2.Graphics
         {
             _sourceIndex = _targetIndex;
             _targetIndex = -1;
-            Gfx.SetRenderTarget(null);
+            Gfx.SetRenderTarget(_game.DefaultRenderTarget);
             Gfx.DepthStencilState = DepthStencilState.None;
             Gfx.BlendState = BlendState.Opaque;
             Gfx.Viewport = _oldViewport;

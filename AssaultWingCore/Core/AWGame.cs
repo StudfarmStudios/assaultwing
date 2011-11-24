@@ -14,6 +14,7 @@ namespace AW2.Core
     public class AWGame : IDisposable
     {
         public GraphicsDeviceService GraphicsDeviceService { get; private set; }
+        public RenderTarget2D DefaultRenderTarget { get; private set; }
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
         public AWGameComponentCollection Components { get; private set; }
@@ -111,14 +112,14 @@ namespace AW2.Core
             var pp = gfx.PresentationParameters;
             using (var screenshot = new RenderTarget2D(gfx, gfx.Viewport.Width, gfx.Viewport.Height, false, pp.BackBufferFormat, pp.DepthStencilFormat))
             {
-                gfx.SetRenderTarget(screenshot);
+                gfx.SetRenderTarget(DefaultRenderTarget = screenshot);
                 render();
-                gfx.SetRenderTarget(null);
+                gfx.SetRenderTarget(DefaultRenderTarget = null);
                 var filename = string.Format("AW {0:yyyy-MM-dd HH-mm-ss}.png", DateTime.Now);
                 var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), filename);
                 using (var stream = System.IO.File.OpenWrite(path))
                 {
-                    screenshot.SaveAsPng(stream, screenshot.Width, screenshot.Height);
+                    screenshot.SaveAsJpeg(stream, screenshot.Width, screenshot.Height);
                 }
             }
         }

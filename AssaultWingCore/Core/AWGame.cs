@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Graphics.Content;
 using AW2.Helpers;
+using AW2.Graphics;
 
 namespace AW2.Core
 {
@@ -24,6 +25,7 @@ namespace AW2.Core
         public event EventHandler Exiting;
 
         private bool _takeScreenShot;
+        private AutoRenderTarget2D _screenshotRenderTarget;
 
         public AWGame(GraphicsDeviceService graphicsDeviceService)
         {
@@ -32,6 +34,12 @@ namespace AW2.Core
             if (graphicsDeviceService != null) Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
             Components = new AWGameComponentCollection();
             TargetFPS = 60;
+            _screenshotRenderTarget = new AutoRenderTarget2D(graphicsDeviceService.GraphicsDevice, () => new AutoRenderTarget2D.CreationData
+            {
+                Width = graphicsDeviceService.GraphicsDevice.Viewport.Width,
+                Height = graphicsDeviceService.GraphicsDevice.Viewport.Height,
+                DepthStencilState = graphicsDeviceService.GraphicsDevice.DepthStencilState,
+            });
         }
 
         public void TakeScreenShot()
@@ -59,6 +67,8 @@ namespace AW2.Core
         /// </summary>
         public virtual void UnloadContent()
         {
+            if (_screenshotRenderTarget != null) _screenshotRenderTarget.Dispose();
+            _screenshotRenderTarget = null;
             foreach (var item in Components) item.UnloadContent();
             Content.Unload();
         }
@@ -106,22 +116,25 @@ namespace AW2.Core
             if (Exiting != null) Exiting(sender, args);
         }
 
+        private string GetScreenshotPath()
+        {
+            var filename = string.Format("AW {0:yyyy-MM-dd HH-mm-ss}.png", DateTime.Now);
+            return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), filename);
+        }
+
         private void RenderToFile(Action render)
         {
             var gfx = GraphicsDeviceService.GraphicsDevice;
             var pp = gfx.PresentationParameters;
-            using (var screenshot = new RenderTarget2D(gfx, gfx.Viewport.Width, gfx.Viewport.Height, false, pp.BackBufferFormat, pp.DepthStencilFormat))
-            {
-                gfx.SetRenderTarget(DefaultRenderTarget = screenshot);
-                render();
-                gfx.SetRenderTarget(DefaultRenderTarget = null);
-                var filename = string.Format("AW {0:yyyy-MM-dd HH-mm-ss}.png", DateTime.Now);
-                var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), filename);
-                using (var stream = System.IO.File.OpenWrite(path))
-                {
-                    screenshot.SaveAsJpeg(stream, screenshot.Width, screenshot.Height);
-                }
-            }
+            var oldViewport = gfx.Viewport;
+            _screenshotRenderTarget.SetAsRenderTarget();
+            DefaultRenderTarget = _screenshotRenderTarget.GetTexture();
+            render();
+            gfx.SetRenderTarget(DefaultRenderTarget = null);
+            gfx.Viewport = oldViewport;
+            var screenshot = _screenshotRenderTarget.GetTexture();
+            using (var stream = System.IO.File.OpenWrite(GetScreenshotPath()))
+                screenshot.SaveAsJpeg(stream, screenshot.Width, screenshot.Height);
         }
 
         private void DrawImpl()

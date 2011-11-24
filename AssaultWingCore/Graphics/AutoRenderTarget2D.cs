@@ -31,7 +31,7 @@ namespace AW2.Graphics
             _getCreationData = getCreationData;
         }
 
-        public Texture2D GetTexture()
+        public RenderTarget2D GetTexture()
         {
             return _target;
         }

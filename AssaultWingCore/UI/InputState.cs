@@ -38,5 +38,15 @@ namespace AW2.UI
                 GamePad4 = Microsoft.Xna.Framework.Input.GamePad.GetState(PlayerIndex.Four)
             };
         }
+
+        public GamePadState GetGamePadState(int gamePadIndex)
+        {
+            if (gamePadIndex < 0 || gamePadIndex > 3) throw new IndexOutOfRangeException("Invalid game pad index " + gamePadIndex);
+            return
+                gamePadIndex == 0 ? GamePad1 :
+                gamePadIndex == 1 ? GamePad2 :
+                gamePadIndex == 2 ? GamePad3 :
+                GamePad4;
+        }
     }
 }

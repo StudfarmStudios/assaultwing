@@ -289,6 +289,7 @@
     <Compile Include="UI\Control.cs" />
     <Compile Include="UI\ControlState.cs" />
     <Compile Include="UI\EditableText.cs" />
+    <Compile Include="UI\GamePad.cs" />
     <Compile Include="UI\InputState.cs" />
     <Compile Include="UI\Keyboard.cs" />
     <Compile Include="UI\MultiControl.cs" />

@@ -54,23 +54,17 @@ namespace AW2.Graphics
         public static void DrawFormattedText(Vector2 origin, float enWidth, string text, Action<Vector2, string> draw)
         {
             var rawName = text;
-            int parseIndex = 0;
-            int textStartIndex = 0;
+            var textStartIndex = 0;
             var textPos = origin;
-            while (parseIndex < rawName.Length)
+            while (true)
             {
-                var tabIndex = rawName.IndexOf('\t', parseIndex);
+                var tabIndex = rawName.IndexOf('\t', textStartIndex);
                 int textLength = (tabIndex == -1 ? rawName.Length : tabIndex) - textStartIndex;
                 draw(textPos.Round(), rawName.Substring(textStartIndex, textLength));
-                if (tabIndex == -1)
-                    parseIndex = rawName.Length;
-                else
-                {
-                    parseIndex = tabIndex + 1;
-                    int enCount = rawName[parseIndex];
-                    textStartIndex = parseIndex + 1;
-                    textPos = origin + new Vector2(enWidth * enCount, 0);
-                }
+                if (tabIndex == -1) break;
+                var enCount = rawName[tabIndex + 1];
+                textStartIndex = tabIndex + 2;
+                textPos = origin + new Vector2(enWidth * enCount, 0);
             }
         }
 

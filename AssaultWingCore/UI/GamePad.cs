@@ -9,12 +9,12 @@ namespace AW2.UI
         B,
         Back,
         BigButton,
-        LeftShoulder,
-        LeftStick,
-        RightShoulder,
-        RightStick,
-        LeftTrigger,
-        RightTrigger,
+        LShoulder,
+        LStick,
+        RShoulder,
+        RStick,
+        LTrigger,
+        RTrigger,
         Start,
         X,
         Y,
@@ -23,8 +23,8 @@ namespace AW2.UI
     public enum GamePadStickType
     {
         DPad,
-        LeftThumb,
-        RightThumb,
+        LThumb,
+        RThumb,
     }
 
     public enum GamePadStickDirectionType
@@ -71,15 +71,15 @@ namespace AW2.UI
                 case GamePadButtonType.B: return buttons.B == ButtonState.Pressed;
                 case GamePadButtonType.Back: return buttons.Back == ButtonState.Pressed;
                 case GamePadButtonType.BigButton: return buttons.BigButton == ButtonState.Pressed;
-                case GamePadButtonType.LeftShoulder: return buttons.LeftShoulder == ButtonState.Pressed;
-                case GamePadButtonType.LeftStick: return buttons.LeftStick == ButtonState.Pressed;
-                case GamePadButtonType.RightShoulder: return buttons.RightShoulder == ButtonState.Pressed;
-                case GamePadButtonType.RightStick: return buttons.RightStick == ButtonState.Pressed;
+                case GamePadButtonType.LShoulder: return buttons.LeftShoulder == ButtonState.Pressed;
+                case GamePadButtonType.LStick: return buttons.LeftStick == ButtonState.Pressed;
+                case GamePadButtonType.RShoulder: return buttons.RightShoulder == ButtonState.Pressed;
+                case GamePadButtonType.RStick: return buttons.RightStick == ButtonState.Pressed;
                 case GamePadButtonType.Start: return buttons.Start == ButtonState.Pressed;
                 case GamePadButtonType.X: return buttons.X == ButtonState.Pressed;
                 case GamePadButtonType.Y: return buttons.Y == ButtonState.Pressed;
-                case GamePadButtonType.LeftTrigger: return gamePadState.Triggers.Left >= 0.5f;
-                case GamePadButtonType.RightTrigger: return gamePadState.Triggers.Right >= 0.5f;
+                case GamePadButtonType.LTrigger: return gamePadState.Triggers.Left >= 0.5f;
+                case GamePadButtonType.RTrigger: return gamePadState.Triggers.Right >= 0.5f;
                 default: throw new ApplicationException("Unexpected game pad button " + _button);
             }
         }
@@ -94,15 +94,15 @@ namespace AW2.UI
                 case GamePadButtonType.B: return buttons.B == ButtonState.Pressed ? 1 : 0;
                 case GamePadButtonType.Back: return buttons.Back == ButtonState.Pressed ? 1 : 0;
                 case GamePadButtonType.BigButton: return buttons.BigButton == ButtonState.Pressed ? 1 : 0;
-                case GamePadButtonType.LeftShoulder: return buttons.LeftShoulder == ButtonState.Pressed ? 1 : 0;
-                case GamePadButtonType.LeftStick: return buttons.LeftStick == ButtonState.Pressed ? 1 : 0;
-                case GamePadButtonType.RightShoulder: return buttons.RightShoulder == ButtonState.Pressed ? 1 : 0;
-                case GamePadButtonType.RightStick: return buttons.RightStick == ButtonState.Pressed ? 1 : 0;
+                case GamePadButtonType.LShoulder: return buttons.LeftShoulder == ButtonState.Pressed ? 1 : 0;
+                case GamePadButtonType.LStick: return buttons.LeftStick == ButtonState.Pressed ? 1 : 0;
+                case GamePadButtonType.RShoulder: return buttons.RightShoulder == ButtonState.Pressed ? 1 : 0;
+                case GamePadButtonType.RStick: return buttons.RightStick == ButtonState.Pressed ? 1 : 0;
                 case GamePadButtonType.Start: return buttons.Start == ButtonState.Pressed ? 1 : 0;
                 case GamePadButtonType.X: return buttons.X == ButtonState.Pressed ? 1 : 0;
                 case GamePadButtonType.Y: return buttons.Y == ButtonState.Pressed ? 1 : 0;
-                case GamePadButtonType.LeftTrigger: return gamePadState.Triggers.Left;
-                case GamePadButtonType.RightTrigger: return gamePadState.Triggers.Right;
+                case GamePadButtonType.LTrigger: return gamePadState.Triggers.Left;
+                case GamePadButtonType.RTrigger: return gamePadState.Triggers.Right;
                 default: throw new ApplicationException("Unexpected game pad button " + _button);
             }
         }
@@ -150,7 +150,7 @@ namespace AW2.UI
                         case GamePadStickDirectionType.Right: return gamePadState.DPad.Right == ButtonState.Pressed;
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
-                case GamePadStickType.LeftThumb:
+                case GamePadStickType.LThumb:
                     switch (_direction)
                     {
                         case GamePadStickDirectionType.Up: return gamePadState.ThumbSticks.Left.Y > 0.5f;
@@ -159,7 +159,7 @@ namespace AW2.UI
                         case GamePadStickDirectionType.Right: return gamePadState.ThumbSticks.Left.X > 0.5f;
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
-                case GamePadStickType.RightThumb:
+                case GamePadStickType.RThumb:
                     switch (_direction)
                     {
                         case GamePadStickDirectionType.Up: return gamePadState.ThumbSticks.Right.Y > 0.5f;
@@ -186,7 +186,7 @@ namespace AW2.UI
                         case GamePadStickDirectionType.Right: return gamePadState.DPad.Right == ButtonState.Pressed ? 1 : 0;
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
-                case GamePadStickType.LeftThumb:
+                case GamePadStickType.LThumb:
                     switch (_direction)
                     {
                         case GamePadStickDirectionType.Up: return Math.Max(0, gamePadState.ThumbSticks.Left.Y);
@@ -195,7 +195,7 @@ namespace AW2.UI
                         case GamePadStickDirectionType.Right: return Math.Max(0, gamePadState.ThumbSticks.Left.X);
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
-                case GamePadStickType.RightThumb:
+                case GamePadStickType.RThumb:
                     switch (_direction)
                     {
                         case GamePadStickDirectionType.Up: return Math.Max(0, gamePadState.ThumbSticks.Right.Y);

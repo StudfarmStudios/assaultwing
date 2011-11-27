@@ -128,6 +128,26 @@ namespace AW2.Settings
             Fire2 = new KeyControlType(Keys.LeftShift),
             Extra = new KeyControlType(Keys.X),
         };
+        public static readonly PlayerControlsSettings PRESET_GAMEPAD1 = new PlayerControlsSettings
+        {
+            Thrust = new GamePadButtonControlType(0, GamePadButtonType.X),
+            Left = new GamePadStickDirectionControlType(0, GamePadStickType.LThumb, GamePadStickDirectionType.Left),
+            Right = new GamePadStickDirectionControlType(0, GamePadStickType.LThumb, GamePadStickDirectionType.Right),
+            Down = new GamePadButtonControlType(0, GamePadButtonType.A),
+            Fire1 = new GamePadButtonControlType(0, GamePadButtonType.RShoulder),
+            Fire2 = new GamePadButtonControlType(0, GamePadButtonType.LShoulder),
+            Extra = new GamePadButtonControlType(0, GamePadButtonType.A),
+        };
+        public static readonly PlayerControlsSettings PRESET_GAMEPAD2 = new PlayerControlsSettings
+        {
+            Thrust = new GamePadButtonControlType(1, GamePadButtonType.X),
+            Left = new GamePadStickDirectionControlType(1, GamePadStickType.LThumb, GamePadStickDirectionType.Left),
+            Right = new GamePadStickDirectionControlType(1, GamePadStickType.LThumb, GamePadStickDirectionType.Right),
+            Down = new GamePadButtonControlType(1, GamePadButtonType.A),
+            Fire1 = new GamePadButtonControlType(1, GamePadButtonType.RShoulder),
+            Fire2 = new GamePadButtonControlType(1, GamePadButtonType.LShoulder),
+            Extra = new GamePadButtonControlType(1, GamePadButtonType.A),
+        };
 
         private PlayerControlsSettings _player1;
         private PlayerControlsSettings _player2;

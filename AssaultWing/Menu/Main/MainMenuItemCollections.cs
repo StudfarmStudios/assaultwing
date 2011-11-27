@@ -239,18 +239,20 @@ traffic or the server is down.", "No reply from management server");
             var items = new MainMenuItemCollection(collectionName);
             items.Add(GetSetupItemBase(() => "Preset keyboard right", () => controls.CopyFrom(ControlsSettings.PRESET_KEYBOARD_RIGHT)));
             items.Add(GetSetupItemBase(() => "Preset keyboard left", () => controls.CopyFrom(ControlsSettings.PRESET_KEYBOARD_LEFT)));
-            items.Add(GetControlsItem("Thrust/Up", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
+            items.Add(GetSetupItemBase(() => "Preset game pad 1", () => controls.CopyFrom(ControlsSettings.PRESET_GAMEPAD1)));
+            items.Add(GetSetupItemBase(() => "Preset game pad 2", () => controls.CopyFrom(ControlsSettings.PRESET_GAMEPAD2)));
+            items.Add(GetControlsItem("Thrust", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
             items.Add(GetControlsItem("Left", () => controls.Left, ctrl => controls.Left = ctrl));
             items.Add(GetControlsItem("Right", () => controls.Right, ctrl => controls.Right = ctrl));
-            items.Add(GetControlsItem("Ship modification", () => controls.Extra, ctrl => controls.Down = controls.Extra = ctrl));
-            items.Add(GetControlsItem("Primary weapon", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
-            items.Add(GetControlsItem("Extra weapon", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
+            items.Add(GetControlsItem("Ship mod", () => controls.Extra, ctrl => controls.Down = controls.Extra = ctrl));
+            items.Add(GetControlsItem("Weapon 1", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
+            items.Add(GetControlsItem("Weapon 2", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
             return items;
         }
 
         private MainMenuItem GetControlsItem(string name, Func<IControlType> get, Action<IControlType> set)
         {
-            return new MainMenuItem(MenuEngine, () => string.Format("{0}\t\xf{1}", name, get()),
+            return new MainMenuItem(MenuEngine, () => string.Format("{0}\t\x9{1}", name, get()),
                 () => Game.ShowDialog(
                     new KeypressOverlayDialogData(Game, "Hit key for " + name,
                         key => set(new KeyControlType(key)))));

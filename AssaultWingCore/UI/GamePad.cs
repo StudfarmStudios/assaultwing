@@ -23,8 +23,8 @@ namespace AW2.UI
     public enum GamePadStickType
     {
         DPad,
-        LeftThumbStick,
-        RightThumbStick,
+        LeftThumb,
+        RightThumb,
     }
 
     public enum GamePadStickDirectionType
@@ -58,7 +58,7 @@ namespace AW2.UI
 
         public override string ToString()
         {
-            return string.Format("{0} on game pad {1}", _button, _gamePadIndex + 1);
+            return string.Format("Pad{0} {1}", _gamePadIndex + 1, _button);
         }
 
         private bool IsGamePadButtonPressed(InputState state)
@@ -131,6 +131,11 @@ namespace AW2.UI
 
         public override float Force { get { return GetGamePadStickDirectionForce(NewState); } }
 
+        public override string ToString()
+        {
+            return string.Format("Pad{0} {1} {2}", _gamePadIndex + 1, _stick, _direction);
+        }
+
         private bool IsGamePadStickDirectionPressed(InputState state)
         {
             var gamePadState = state.GetGamePadState(_gamePadIndex);
@@ -145,21 +150,21 @@ namespace AW2.UI
                         case GamePadStickDirectionType.Right: return gamePadState.DPad.Right == ButtonState.Pressed;
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
-                case GamePadStickType.LeftThumbStick:
+                case GamePadStickType.LeftThumb:
                     switch (_direction)
                     {
                         case GamePadStickDirectionType.Up: return gamePadState.ThumbSticks.Left.Y > 0.5f;
-                        case GamePadStickDirectionType.Down: return gamePadState.ThumbSticks.Left.Y < 0.5f;
-                        case GamePadStickDirectionType.Left: return gamePadState.ThumbSticks.Left.X < 0.5f;
+                        case GamePadStickDirectionType.Down: return gamePadState.ThumbSticks.Left.Y < -0.5f;
+                        case GamePadStickDirectionType.Left: return gamePadState.ThumbSticks.Left.X < -0.5f;
                         case GamePadStickDirectionType.Right: return gamePadState.ThumbSticks.Left.X > 0.5f;
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
-                case GamePadStickType.RightThumbStick:
+                case GamePadStickType.RightThumb:
                     switch (_direction)
                     {
                         case GamePadStickDirectionType.Up: return gamePadState.ThumbSticks.Right.Y > 0.5f;
-                        case GamePadStickDirectionType.Down: return gamePadState.ThumbSticks.Right.Y < 0.5f;
-                        case GamePadStickDirectionType.Left: return gamePadState.ThumbSticks.Right.X < 0.5f;
+                        case GamePadStickDirectionType.Down: return gamePadState.ThumbSticks.Right.Y < -0.5f;
+                        case GamePadStickDirectionType.Left: return gamePadState.ThumbSticks.Right.X < -0.5f;
                         case GamePadStickDirectionType.Right: return gamePadState.ThumbSticks.Right.X > 0.5f;
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
@@ -181,21 +186,21 @@ namespace AW2.UI
                         case GamePadStickDirectionType.Right: return gamePadState.DPad.Right == ButtonState.Pressed ? 1 : 0;
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
-                case GamePadStickType.LeftThumbStick:
+                case GamePadStickType.LeftThumb:
                     switch (_direction)
                     {
                         case GamePadStickDirectionType.Up: return Math.Max(0, gamePadState.ThumbSticks.Left.Y);
-                        case GamePadStickDirectionType.Down: return Math.Min(0, gamePadState.ThumbSticks.Left.Y);
-                        case GamePadStickDirectionType.Left: return Math.Min(0, gamePadState.ThumbSticks.Left.X);
+                        case GamePadStickDirectionType.Down: return Math.Max(0, -gamePadState.ThumbSticks.Left.Y);
+                        case GamePadStickDirectionType.Left: return Math.Max(0, -gamePadState.ThumbSticks.Left.X);
                         case GamePadStickDirectionType.Right: return Math.Max(0, gamePadState.ThumbSticks.Left.X);
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }
-                case GamePadStickType.RightThumbStick:
+                case GamePadStickType.RightThumb:
                     switch (_direction)
                     {
                         case GamePadStickDirectionType.Up: return Math.Max(0, gamePadState.ThumbSticks.Right.Y);
-                        case GamePadStickDirectionType.Down: return Math.Min(0, gamePadState.ThumbSticks.Right.Y);
-                        case GamePadStickDirectionType.Left: return Math.Min(0, gamePadState.ThumbSticks.Right.X);
+                        case GamePadStickDirectionType.Down: return Math.Max(0, -gamePadState.ThumbSticks.Right.Y);
+                        case GamePadStickDirectionType.Left: return Math.Max(0, -gamePadState.ThumbSticks.Right.X);
                         case GamePadStickDirectionType.Right: return Math.Max(0, gamePadState.ThumbSticks.Right.X);
                         default: throw new ApplicationException("Unexpected game pad stick direction " + _direction);
                     }

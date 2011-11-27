@@ -29,6 +29,47 @@ namespace AW2.Settings
         }
     }
 
+    public class GamePadButtonControlType : IControlType
+    {
+        private int _gamePad;
+        private GamePadButtonType _button;
+
+        public GamePadButtonControlType(int gamePad, GamePadButtonType button)
+        {
+            _gamePad = gamePad;
+            _button = button;
+        }
+
+        public Control GetControl()
+        {
+            return new GamePadButton(_gamePad, _button);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} on pad {1}", _button, _gamePad + 1);
+        }
+    }
+
+    public class GamePadStickDirectionControlType : IControlType
+    {
+        private int _gamePad;
+        private GamePadStickType _stick;
+        private GamePadStickDirectionType _direction;
+
+        public GamePadStickDirectionControlType(int gamePad, GamePadStickType stick, GamePadStickDirectionType direction)
+        {
+            _gamePad = gamePad;
+            _stick = stick;
+            _direction = direction;
+        }
+
+        public Control GetControl()
+        {
+            return new GamePadStickDirection(_gamePad, _stick, _direction);
+        }
+    }
+
     public class PlayerControlsSettings
     {
         private IControlType _thrust;

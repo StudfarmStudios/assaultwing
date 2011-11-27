@@ -4,6 +4,7 @@ using AW2.UI;
 
 namespace AW2.Settings
 {
+    // TODO: Replace IControlType by Control. It works when you add LimitedSerializationAttibute to Control etc.
     public interface IControlType
     {
         Control GetControl();
@@ -47,7 +48,7 @@ namespace AW2.Settings
 
         public override string ToString()
         {
-            return string.Format("{0} on pad {1}", _button, _gamePad + 1);
+            return string.Format("Pad{0} {1}", _gamePad + 1, _button);
         }
     }
 
@@ -68,6 +69,11 @@ namespace AW2.Settings
         {
             return new GamePadStickDirection(_gamePad, _stick, _direction);
         }
+
+        public override string ToString()
+        {
+            return string.Format("Pad{0} {1} {2}", _gamePad + 1, _stick, _direction);
+        }
     }
 
     public class PlayerControlsSettings
@@ -87,10 +93,42 @@ namespace AW2.Settings
         public IControlType Fire1 { get { return _fire1; } set { _fire1 = value; } }
         public IControlType Fire2 { get { return _fire2; } set { _fire2 = value; } }
         public IControlType Extra { get { return _extra; } set { _extra = value; } }
+
+        public void CopyFrom(PlayerControlsSettings other)
+        {
+            Thrust = other.Thrust;
+            Left = other.Left;
+            Right = other.Right;
+            Down = other.Down;
+            Fire1 = other.Fire1;
+            Fire2 = other.Fire2;
+            Extra = other.Extra;
+        }
     }
 
     public class ControlsSettings
     {
+        public static readonly PlayerControlsSettings PRESET_KEYBOARD_RIGHT = new PlayerControlsSettings
+        {
+            Thrust = new KeyControlType(Keys.Up),
+            Left = new KeyControlType(Keys.Left),
+            Right = new KeyControlType(Keys.Right),
+            Down = new KeyControlType(Keys.Down),
+            Fire1 = new KeyControlType(Keys.RightControl),
+            Fire2 = new KeyControlType(Keys.RightShift),
+            Extra = new KeyControlType(Keys.Down),
+        };
+        public static readonly PlayerControlsSettings PRESET_KEYBOARD_LEFT = new PlayerControlsSettings
+        {
+            Thrust = new KeyControlType(Keys.W),
+            Left = new KeyControlType(Keys.A),
+            Right = new KeyControlType(Keys.D),
+            Down = new KeyControlType(Keys.X),
+            Fire1 = new KeyControlType(Keys.LeftControl),
+            Fire2 = new KeyControlType(Keys.LeftShift),
+            Extra = new KeyControlType(Keys.X),
+        };
+
         private PlayerControlsSettings _player1;
         private PlayerControlsSettings _player2;
         private IControlType _chat;
@@ -106,26 +144,8 @@ namespace AW2.Settings
 
         public void Reset()
         {
-            _player1 = new PlayerControlsSettings
-            {
-                Thrust = new KeyControlType(Keys.Up),
-                Left = new KeyControlType(Keys.Left),
-                Right = new KeyControlType(Keys.Right),
-                Down = new KeyControlType(Keys.Down),
-                Fire1 = new KeyControlType(Keys.RightControl),
-                Fire2 = new KeyControlType(Keys.RightShift),
-                Extra = new KeyControlType(Keys.Down),
-            };
-            _player2 = new PlayerControlsSettings
-            {
-                Thrust = new KeyControlType(Keys.W),
-                Left = new KeyControlType(Keys.A),
-                Right = new KeyControlType(Keys.D),
-                Down = new KeyControlType(Keys.X),
-                Fire1 = new KeyControlType(Keys.LeftControl),
-                Fire2 = new KeyControlType(Keys.LeftShift),
-                Extra = new KeyControlType(Keys.X),
-            };
+            _player1 = PRESET_KEYBOARD_RIGHT;
+            _player2 = PRESET_KEYBOARD_LEFT;
             _chat = new KeyControlType(Keys.Enter);
         }
     }

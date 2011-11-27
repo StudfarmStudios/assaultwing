@@ -225,18 +225,20 @@ traffic or the server is down.", "No reply from management server");
 
         private MainMenuItemCollection GetControlsItems()
         {
-            var items = new MainMenuItemCollection("Controls Setup");
+            var items = new MainMenuItemCollection("Controls");
             items.Add(GetSetupItemBase(() => "Player 1 controls...",
-                () => _menuComponent.SetItems(GetPlayerControlsItems(Game.Settings.Controls.Player1))));
+                () => _menuComponent.SetItems(GetPlayerControlsItems("Player 1", Game.Settings.Controls.Player1))));
             items.Add(GetSetupItemBase(() => "Player 2 controls...",
-                () => _menuComponent.SetItems(GetPlayerControlsItems(Game.Settings.Controls.Player2))));
+                () => _menuComponent.SetItems(GetPlayerControlsItems("Player 2", Game.Settings.Controls.Player2))));
             items.Add(GetControlsItem("Chat key", () => Game.Settings.Controls.Chat, ctrl => Game.Settings.Controls.Chat = ctrl));
             return items;
         }
 
-        private MainMenuItemCollection GetPlayerControlsItems(PlayerControlsSettings controls)
+        private MainMenuItemCollection GetPlayerControlsItems(string collectionName, PlayerControlsSettings controls)
         {
-            var items = new MainMenuItemCollection("Controls Setup");
+            var items = new MainMenuItemCollection(collectionName);
+            items.Add(GetSetupItemBase(() => "Preset keyboard right", () => controls.CopyFrom(ControlsSettings.PRESET_KEYBOARD_RIGHT)));
+            items.Add(GetSetupItemBase(() => "Preset keyboard left", () => controls.CopyFrom(ControlsSettings.PRESET_KEYBOARD_LEFT)));
             items.Add(GetControlsItem("Thrust/Up", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
             items.Add(GetControlsItem("Left", () => controls.Left, ctrl => controls.Left = ctrl));
             items.Add(GetControlsItem("Right", () => controls.Right, ctrl => controls.Right = ctrl));

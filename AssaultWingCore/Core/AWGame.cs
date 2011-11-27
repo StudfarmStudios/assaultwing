@@ -78,7 +78,11 @@ namespace AW2.Core
         /// </summary>
         public virtual void BeginRun()
         {
-            foreach (var component in Components) component.LoadContent();
+            foreach (var component in Components)
+            {
+                Log.Write("Loading content for " + component.GetType().Name);
+                component.LoadContent();
+            }
         }
 
         /// <summary>

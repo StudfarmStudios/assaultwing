@@ -119,7 +119,7 @@
     <Compile Include="Core\GameState.cs" />
     <Compile Include="Core\OverlayComponents\CustomOverlayDialogData.cs" />
     <Compile Include="Core\OverlayComponents\GameOverOverlayDialogData.cs" />
-    <Compile Include="Core\OverlayComponents\KeypressOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayComponents\ControlSelectionOverlayDialogData.cs" />
     <Compile Include="Core\OverlayComponents\OverlayDialogData.cs" />
     <Compile Include="Core\OverlayComponents\ProgressBar.cs" />
     <Compile Include="Core\OverlayComponents\SystemStatusOverlay.cs" />

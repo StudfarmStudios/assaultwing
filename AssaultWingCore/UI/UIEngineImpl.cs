@@ -23,6 +23,8 @@ namespace AW2.UI
         /// the mouse in any practical manner. Defaults to <b>false</b>.
         /// </summary>
         public bool MouseControlsEnabled { get; set; }
+        public InputState InputState { get { return _newState; } }
+        public InputState PreviousInputState { get { return _oldState; } }
 
         public UIEngineImpl(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)

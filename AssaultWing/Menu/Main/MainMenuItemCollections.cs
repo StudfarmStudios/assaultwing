@@ -244,7 +244,8 @@ traffic or the server is down.", "No reply from management server");
             items.Add(GetControlsItem("Thrust", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
             items.Add(GetControlsItem("Left", () => controls.Left, ctrl => controls.Left = ctrl));
             items.Add(GetControlsItem("Right", () => controls.Right, ctrl => controls.Right = ctrl));
-            items.Add(GetControlsItem("Ship mod", () => controls.Extra, ctrl => controls.Down = controls.Extra = ctrl));
+            items.Add(GetControlsItem("Down", () => controls.Down, ctrl => controls.Down = ctrl));
+            items.Add(GetControlsItem("Ship mod", () => controls.Extra, ctrl => controls.Extra = ctrl));
             items.Add(GetControlsItem("Weapon 1", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
             items.Add(GetControlsItem("Weapon 2", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
             return items;
@@ -254,8 +255,8 @@ traffic or the server is down.", "No reply from management server");
         {
             return new MainMenuItem(MenuEngine, () => string.Format("{0}\t\x9{1}", name, get()),
                 () => Game.ShowDialog(
-                    new KeypressOverlayDialogData(Game, "Hit key for " + name,
-                        key => set(new KeyControlType(key)))));
+                    new ControlSelectionOverlayDialogData(Game, "Press control for " + name,
+                        control => set(control))));
         }
 
         private MainMenuItemCollection GetAudioItems()

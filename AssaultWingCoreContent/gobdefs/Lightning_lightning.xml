@@ -7,10 +7,15 @@
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <impactDamage>71</impactDamage>
+  <chainDamageMultiplier>1.1</chainDamageMultiplier>
   <wildness>0.3</wildness>
   <fineness>20</fineness>
   <thickness>0.5</thickness>
-  <textureName>lightning</textureName>
+  <textureNames>
+    <Item>lightning</Item>
+    <Item>lightning_2</Item>
+    <Item>lightning_3</Item>
+  </textureNames>
   <alphaCurve>
     <preLoop>Constant</preLoop>
     <postLoop>Constant</postLoop>

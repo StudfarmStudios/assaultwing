@@ -71,16 +71,17 @@ namespace AW2.Game.Weapons
 
         private void FireAtTargets(IEnumerable<Gob> targets)
         {
-            ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(Owner, index, targets.First()));
+            ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(Owner, index, targets.First(), 0));
             var previous = targets.First();
+            var chainIndex = 1;
             foreach (var target in targets.Skip(1))
             {
-                CreateShot(previous, 0, target);
+                CreateShot(previous, 0, target, chainIndex++);
                 previous = target;
             }
         }
 
-        private void CreateShot(Gob source, int sourceBoneIndex, Gob target)
+        private void CreateShot(Gob source, int sourceBoneIndex, Gob target, int chainIndex)
         {
             Gob.CreateGob<Lightning>(Owner.Game, _shotTypeName, shot =>
             {
@@ -89,6 +90,7 @@ namespace AW2.Game.Weapons
                 shot.Shooter = source;
                 shot.ShooterBoneIndex = sourceBoneIndex;
                 shot.Target = target;
+                shot.ChainIndex = chainIndex;
                 Arena.Gobs.Add(shot);
             });
         }

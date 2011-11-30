@@ -31,7 +31,7 @@ namespace AW2.Game.Gobs
         private const float BLANK_SHOT_RANGE = 100;
         private static readonly VertexPositionTexture ZERO_VERTEX = new VertexPositionTexture(Vector3.Zero, Vector2.Zero);
         private static readonly VertexPositionTexture[] EMPTY_MESH = new[] { ZERO_VERTEX, ZERO_VERTEX, ZERO_VERTEX };
-        private Texture2D _texture;
+        private Texture2D[] _textures;
 
         private bool _damageDealt;
 
@@ -39,47 +39,60 @@ namespace AW2.Game.Gobs
         /// Amount of damage to inflict on impact with a damageable gob.
         /// </summary>
         [TypeParameter]
-        private float impactDamage;
+        private float _impactDamage;
+
+        /// <summary>
+        /// Impact damage factor of each successive part in a chain lightning compared to
+        /// the previous chain part.
+        /// </summary>
+        [TypeParameter]
+        private float _chainDamageMultiplier;
 
         /// <summary>
         /// Wildness of the lightning. 0 gives a straight line,
         /// 1 gives a very chaotic mess. 0.4 is a decent value.
         /// </summary>
         [TypeParameter]
-        private float wildness;
+        private float _wildness;
 
         /// <summary>
         /// Maximum length of each lightning segment in meters.
         /// </summary>
         [TypeParameter]
-        private float fineness;
+        private float _fineness;
 
         /// <summary>
         /// Thickness multiplier of the lightning. 1 makes the lightning
         /// as wide as its texture.
         /// </summary>
         [TypeParameter]
-        private float thickness;
+        private float _thickness;
 
         /// <summary>
-        /// Name of the texture of the lightning. The name indexes the texture database in GraphicsEngine.
+        /// Names of the lightning textures. The name indexes the texture database in GraphicsEngine.
+        /// Each name is for a separate part in a chain lightning.
         /// </summary>
         [TypeParameter]
-        private CanonicalString textureName;
+        private CanonicalString[] _textureNames;
 
         /// <summary>
         /// Amount of lighting alpha as a function of time from creation,
         /// in seconds of game time.
         [TypeParameter]
-        private Curve alphaCurve;
+        private Curve _alphaCurve;
 
         public LazyProxy<int, Gob> Shooter { get; set; }
         public int ShooterBoneIndex { get; set; }
         public LazyProxy<int, Gob> Target { get; set; }
 
+        /// <summary>
+        /// Which part of a lightning chain this lightning is. Zero-based index.
+        /// </summary>
+        public int ChainIndex { get; set; }
+
         public override IEnumerable<CanonicalString> TextureNames
         {
-            get { return base.TextureNames.Concat(new[] { textureName }); }
+            get { return base.TextureNames.Concat(_textureNames); }
         }
 
         public override BoundingSphere DrawBounds
@@ -94,22 +107,25 @@ namespace AW2.Game.Gobs
             }
         }
 
+        private Texture2D Texture { get { return _textures[ChainIndex.Modulo(_textures.Length)]; } }
+        private float ImpactDamage { get { return _impactDamage * (float)Math.Pow(_chainDamageMultiplier, ChainIndex); } }
+
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
         public Lightning()
         {
-            impactDamage = 200;
-            wildness = 0.4f;
-            fineness = 20;
-            thickness = 1;
-            textureName = (CanonicalString)"dummytexture";
-            alphaCurve = new Curve();
-            alphaCurve.Keys.Add(new CurveKey(0, 1));
-            alphaCurve.Keys.Add(new CurveKey(0.5f, 0));
-            alphaCurve.ComputeTangents(CurveTangent.Linear);
-            alphaCurve.PreLoop = CurveLoopType.Constant;
-            alphaCurve.PostLoop = CurveLoopType.Constant;
+            _impactDamage = 200;
+            _wildness = 0.4f;
+            _fineness = 20;
+            _thickness = 1;
+            _textureNames = new[] { (CanonicalString)"dummytexture" };
+            _alphaCurve = new Curve();
+            _alphaCurve.Keys.Add(new CurveKey(0, 1));
+            _alphaCurve.Keys.Add(new CurveKey(0.5f, 0));
+            _alphaCurve.ComputeTangents(CurveTangent.Linear);
+            _alphaCurve.PreLoop = CurveLoopType.Constant;
+            _alphaCurve.PostLoop = CurveLoopType.Constant;
         }
 
         public Lightning(CanonicalString typeName)
@@ -124,7 +140,7 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             base.LoadContent();
-            _texture = Game.Content.Load<Texture2D>(textureName);
+            _textures = _textureNames.Select(name => Game.Content.Load<Texture2D>(name)).ToArray();
         }
 
         public override void Activate()
@@ -139,11 +155,11 @@ namespace AW2.Game.Gobs
             if (!_damageDealt)
             {
                 var target = Target.GetValue();
-                if (target != null) target.InflictDamage(impactDamage, new DamageInfo(this));
+                if (target != null) target.InflictDamage(ImpactDamage, new DamageInfo(this));
                 _damageDealt = true;
             }
-            Alpha = alphaCurve.Evaluate(AgeInGameSeconds);
-            if (AgeInGameSeconds >= alphaCurve.Keys.Last().Position)
+            Alpha = _alphaCurve.Evaluate(AgeInGameSeconds);
+            if (AgeInGameSeconds >= _alphaCurve.Keys.Last().Position)
                 Die();
         }
 
@@ -155,7 +171,7 @@ namespace AW2.Game.Gobs
             effect.Projection = projection;
             effect.View = view;
             effect.Alpha = Alpha;
-            effect.Texture = _texture;
+            effect.Texture = Texture;
             var vertexData = CreateMesh();
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
@@ -209,8 +225,8 @@ namespace AW2.Game.Gobs
             Gob target = Target;
             if (shooter == null) return EMPTY_MESH;
             var segments = GetInitialSegments(shooter, ShooterBoneIndex, target);
-            segments = FineSegments(segments, wildness, fineness);
-            return CreateVertexData(segments, _texture.Width * thickness, _texture.Height * thickness);
+            segments = FineSegments(segments, _wildness, _fineness);
+            return CreateVertexData(segments, Texture.Width * _thickness, Texture.Height * _thickness);
         }
 
         private static List<Segment> GetInitialSegments(Gob shooter, int shooterBoneIndex, Gob target)

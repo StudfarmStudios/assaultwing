@@ -9,11 +9,11 @@ namespace AW2.Game.GobUtils
     public class FiringOperator
     {
         private TimeSpan _nextShot;
-        private int _shotsLeft;
         private TimeSpan _loadedTime;
         private ShipDevice _device;
 
-        public bool IsItTimeToShoot { get { return _nextShot <= _device.Arena.TotalTime && _shotsLeft > 0; } }
+        public int ShotsLeft { get; private set; }
+        public bool IsItTimeToShoot { get { return _nextShot <= _device.Arena.TotalTime && ShotsLeft > 0; } }
         public float VisualChargeUsage { get { return _device.FireCharge; } }
         public TimeSpan LoadedTime { get { return _loadedTime; } }
         public bool Loaded { get { return NextFireSkipsLoadAndCharge || _loadedTime <= _device.Arena.TotalTime; } }
@@ -34,15 +34,15 @@ namespace AW2.Game.GobUtils
                 _device.Charge -= _device.FireCharge;
                 _loadedTime = TimeSpan.MaxValue; // Make the weapon unloaded for eternity until someone calls DoneFiring()
             }
-            _shotsLeft = _device.ShotCount;
+            ShotsLeft = _device.ShotCount;
             NextFireSkipsLoadAndCharge = false;
         }
 
         public void ShotFired()
         {
             _nextShot += TimeSpan.FromSeconds(_device.ShotSpacing);
-            --_shotsLeft;
-            if (_shotsLeft == 0) DoneFiring();
+            --ShotsLeft;
+            if (ShotsLeft == 0) DoneFiring();
         }
 
         public void UseChargeForOneFrame()

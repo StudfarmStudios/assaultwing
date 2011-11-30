@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot">
-  
+
   <deviceInfo>
-	<pictureName>dummytexture</pictureName>
-	<titlePictureName>dummytexture</titlePictureName>
-	<infoText>Info</infoText>
-	<reloadSpeed>Average</reloadSpeed>
-	<energyUsage>Average</energyUsage>
-	<usageType>Single</usageType>
+    <pictureName>dummytexture</pictureName>
+    <titlePictureName>dummytexture</titlePictureName>
+    <infoText>Info</infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
     <iconEquipName>dummytexture</iconEquipName>
   </deviceInfo>
 
   <weaponInfo>
-	<singleShotDamage>Average</singleShotDamage>
-	<shotSpeed>Average</shotSpeed>
-	<recoilMomentum>Average</recoilMomentum>
-  </weaponInfo>  
- 
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Average</shotSpeed>
+    <recoilMomentum>Average</recoilMomentum>
+  </weaponInfo>
+
   <typeName>dummyweapontype</typeName>
   <gunBarrels>Middle, Left, Right, Rear</gunBarrels>
   <shotSpeed>300</shotSpeed>
@@ -29,6 +29,7 @@
   <shotCount>6</shotCount>
   <shotSpacing>0</shotSpacing>
   <shotAngleVariation>0.2</shotAngleVariation>
+  <shotAngleEvenDistribution>false</shotAngleEvenDistribution>
   <shotSpeedVariation>100</shotSpeedVariation>
   <fireCharge>100</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>

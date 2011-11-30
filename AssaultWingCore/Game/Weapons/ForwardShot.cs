@@ -46,6 +46,13 @@ namespace AW2.Game.Weapons
         private float _shotAngleVariation;
 
         /// <summary>
+        /// If true, shots are distributed evenly over the angle variation.
+        /// Otherwise shot angles are chosen at random from the variation range.
+        /// </summary>
+        [TypeParameter]
+        private bool _shotAngleEvenDistribution;
+
+        /// <summary>
         /// Difference of the maximum and the minimum of a shot's random speed
         /// relative to the general shot speed.
         /// </summary>
@@ -54,13 +61,16 @@ namespace AW2.Game.Weapons
 
         #endregion ForwardShot fields
 
+        /// <summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public ForwardShot()
         {
             _gunBarrels = ShipBarrelTypes.Middle | ShipBarrelTypes.Left | ShipBarrelTypes.Right | ShipBarrelTypes.Rear;
             _muzzleFireEngineNames = new[] { (CanonicalString)"dummypeng" };
             _shotSpeed = 300f;
             _shotAngleVariation = 0.3f;
+            _shotAngleEvenDistribution = false;
             _shotSpeedVariation = 20f;
         }
 
@@ -82,9 +92,9 @@ namespace AW2.Game.Weapons
 
         private void CreateShot(int boneIndex, float barrelRotation)
         {
-            float direction = barrelRotation + Owner.Rotation + _shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
-            float kickSpeed = _shotSpeed + _shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
-            Vector2 kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
+            var direction = barrelRotation + Owner.Rotation + GetShotAngleVariation();
+            var kickSpeed = _shotSpeed + _shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            var kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
             Gob.CreateGob<Gob>(Owner.Game, _shotTypeName, shot =>
             {
                 shot.Owner = SpectatorOwner;
@@ -92,6 +102,15 @@ namespace AW2.Game.Weapons
                     Owner.Rotation);  // 'Owner.Rotation' could also be 'direction' for a different angle
                 Arena.Gobs.Add(shot);
             });
+        }
+
+        private float GetShotAngleVariation()
+        {
+            if (!_shotAngleEvenDistribution) return _shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            var step = _shotAngleVariation / 2 / ShotCount;
+            var shotIndex = ShotCount - FiringOperator.ShotsLeft;
+            var sign = (shotIndex % 2) * 2 - 1;
+            return step * shotIndex * sign;
         }
 
         private void CreateMuzzleFire(int barrelBoneIndex, float barrelRotation)

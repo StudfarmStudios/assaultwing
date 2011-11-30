@@ -33,6 +33,7 @@
   <fireCharge>200</fireCharge>
   <fireChargePerSecond>200</fireChargePerSecond>
   <shotAngleVariation>0.1</shotAngleVariation>
+  <shotAngleEvenDistribution>false</shotAngleEvenDistribution>
   <shotSpeedVariation>60</shotSpeedVariation>
   <recoilMomentum>3</recoilMomentum>
   <muzzleFireEngineNames>

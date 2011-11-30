@@ -2363,8 +2363,8 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="weapondefs\ForwardShot_suicide bomber.xml">
-      <Name>ForwardShot_suicide bomber</Name>
+    <None Include="weapondefs\SelfDestruct_suicide bomber.xml">
+      <Name>SelfDestruct_suicide bomber</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

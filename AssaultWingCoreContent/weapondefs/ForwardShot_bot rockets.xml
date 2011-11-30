@@ -37,6 +37,7 @@
   <shotCount>2</shotCount>
   <shotSpacing>0.2</shotSpacing>
   <shotAngleVariation>0.262</shotAngleVariation>
+  <shotAngleEvenDistribution>false</shotAngleEvenDistribution>
   <shotSpeedVariation>10</shotSpeedVariation>
   <recoilMomentum>1000</recoilMomentum>
   <muzzleFireEngineNames>

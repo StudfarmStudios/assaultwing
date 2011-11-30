@@ -116,6 +116,7 @@ namespace AW2.Game.Gobs
         public Lightning()
         {
             _impactDamage = 200;
+            _chainDamageMultiplier = 1.1f;
             _wildness = 0.4f;
             _fineness = 20;
             _thickness = 1;

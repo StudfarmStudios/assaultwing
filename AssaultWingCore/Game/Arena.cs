@@ -744,13 +744,13 @@ namespace AW2.Game
             gob.Rotation = 0;
 
             var boundingDimensions = gob.PhysicalArea.Area.BoundingBox.Dimensions;
-            float checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN,
-                1.2f * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
-            float checkRadiusGobCoords = checkRadiusMeters / gob.Scale; // in gob coordinates
+            var checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN,
+                1.1f * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
+            var checkRadiusGobCoords = checkRadiusMeters / gob.Scale; // in gob coordinates
             var wallCheckArea = new CollisionArea("", new Circle(Vector2.Zero, checkRadiusGobCoords), gob,
                 gob.PhysicalArea.Type, gob.PhysicalArea.CollidesAgainst, gob.PhysicalArea.CannotOverlap, CollisionMaterialType.Regular);
             gob.Pos = position;
-            bool result = ArenaBoundaryLegal(gob) && !GetOverlappers(wallCheckArea, wallCheckArea.CannotOverlap).Any();
+            var result = ArenaBoundaryLegal(gob) && !GetOverlappers(wallCheckArea, wallCheckArea.CannotOverlap).Any();
 
             // Restore old values
             gob.Pos = oldPos;

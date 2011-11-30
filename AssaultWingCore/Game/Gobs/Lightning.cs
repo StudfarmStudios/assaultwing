@@ -193,13 +193,14 @@ namespace AW2.Game.Gobs
             checked
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
+                if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
                 {
                     writer.Write((short)Shooter.GetValue().ID);
                     writer.Write((byte)ShooterBoneIndex);
                     var target = Target.GetValue();
                     int targetID = target == null ? 0 : target.ID;
                     writer.Write((short)targetID);
+                    writer.Write((byte)ChainIndex);
                 }
             }
         }
@@ -207,12 +208,13 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 Shooter.SetData(reader.ReadInt16());
                 ShooterBoneIndex = reader.ReadByte();
                 int targetID = reader.ReadInt16();
                 if (targetID != 0) Target.SetData(targetID);
+                ChainIndex = reader.ReadByte();
             }
         }
 

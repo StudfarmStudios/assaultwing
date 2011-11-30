@@ -34,6 +34,9 @@
   <movable>true</movable>
   <maxDamage>2000</maxDamage>
   <birthGobTypes>
+    <Item>bot birth electric ball</Item>
+    <Item>bot birth electric streaks</Item>
+    <Item>bot birth glowdust</Item>
     <Item>dumb glow</Item>
     <Item>bot electric ball</Item>
     <Item>bot electric streaks</Item>

@@ -22,7 +22,7 @@
   <upgradeNames>
   </upgradeNames>
   <iconName>b_icon_berserkers</iconName>
-  <shotSpeed>480</shotSpeed>
+  <shotSpeed>570</shotSpeed>
   <fireSound>Talon</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>

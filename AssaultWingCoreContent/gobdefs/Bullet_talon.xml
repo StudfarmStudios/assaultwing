@@ -4,10 +4,10 @@
   <isRotating>true</isRotating>
   <rotationSpeed>10.0</rotationSpeed>
   <networkUpdatePeriod>2</networkUpdatePeriod>
-  <lifetime>0.6</lifetime>
-  <impactDamage>13</impactDamage>
+  <lifetime>0.65</lifetime>
+  <impactDamage>30</impactDamage>
   <impactHoleRadius>8</impactHoleRadius>
-  <mass>10</mass>
+  <mass>20</mass>
   <scale>0.06</scale>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>

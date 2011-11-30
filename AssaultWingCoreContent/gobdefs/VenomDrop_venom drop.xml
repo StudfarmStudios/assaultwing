@@ -5,7 +5,7 @@
   <rotationSpeed>0.0</rotationSpeed>
   <lifetime>1</lifetime>
   <damageEffectTypeName>venom damage bonus action</damageEffectTypeName>
-  <impactDamage>20</impactDamage>
+  <impactDamage>32</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
   <bulletModelNames>
     <Item>snake_bullet</Item>

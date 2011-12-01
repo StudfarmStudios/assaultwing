@@ -356,6 +356,8 @@ namespace AW2.Game
             }
         }
 
+        protected CanonicalString[] DeathGobTypes { get { return _deathGobTypes; } set { _deathGobTypes = value; } }
+
         /// <summary>
         /// The 3D model of the gob.
         /// </summary>
@@ -1280,11 +1282,6 @@ namespace AW2.Game
                 if (area.Owner != this) throw new ApplicationException("Trying to transform area to a non-owner");
                 area.AreaGob = area.AreaGob.Transform(WorldMatrix);
             }
-        }
-
-        public void SelfDestruct(CanonicalString[] deathGobTypes)
-        {
-            _deathGobTypes = deathGobTypes;
         }
 
         /// <param name="forceRemove">Force removal of the dead gob. Useful for clients.</param>

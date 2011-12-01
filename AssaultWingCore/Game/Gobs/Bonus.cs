@@ -1,18 +1,24 @@
 using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.Gobs
 {
     /// <summary>
     /// A bonus that can be collected by a player.
     /// </summary>
-    public class Bonus : Gob, IConsistencyCheckable
+    public class Bonus : Gob
     {
+        /// <summary>
+        /// Types of gobs to create on being collected.
+        /// </summary>
+        [TypeParameter, ShallowCopy]
+        private CanonicalString[] _collectGobTypes;
+
         /// <summary>
         /// Lifetime of the bonus, in seconds.
         /// </summary>
@@ -35,16 +41,15 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Bonus()
         {
+            _collectGobTypes = new[] { (CanonicalString)"dummypeng" };
             _lifetime = 10;
+            _bonusActionTypeName = (CanonicalString)"dummygob";
         }
 
         public Bonus(CanonicalString typeName)
             : base(typeName)
         {
-            _bonusActionTypeName = (CanonicalString)"dummygob";
         }
-
-        #region Methods related to gobs' functionality in the game world
 
         public override void Activate()
         {
@@ -59,8 +64,6 @@ namespace AW2.Game.Gobs
                 Die();
         }
 
-        #endregion Methods related to gobs' functionality in the game world
-
         public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
             // We assume we have only one receptor area and that's the one for
@@ -72,6 +75,7 @@ namespace AW2.Game.Gobs
                 {
                     DoBonusAction(theirShip);
                     Game.SoundEngine.PlaySound("BonusCollection", this);
+                    DeathGobTypes = _collectGobTypes;
                     Die();
                     return Arena.CollisionSideEffectType.Irreversible;
                 }

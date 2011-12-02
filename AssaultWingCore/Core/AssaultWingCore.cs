@@ -233,9 +233,6 @@ namespace AW2.Core
             if (_arenaFinished) return;
             _arenaFinished = true;
             FinishArenaImpl();
-#if NETWORK_PROFILING
-            AW2.Helpers.Serialization.ProfilingNetworkBinaryWriter.DumpStats();
-#endif
         }
 
         public void ShowPlayerHelp()
@@ -301,6 +298,9 @@ namespace AW2.Core
             Log.Write("Assault Wing ends the run");
             Log.Write("Saving settings to file");
             Settings.ToFile();
+#if NETWORK_PROFILING
+            AW2.Helpers.Serialization.ProfilingNetworkBinaryWriter.DumpStats();
+#endif
             base.EndRun();
         }
 

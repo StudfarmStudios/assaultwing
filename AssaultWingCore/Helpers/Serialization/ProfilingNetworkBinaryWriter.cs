@@ -1,205 +1,159 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics;
 
 namespace AW2.Helpers.Serialization
 {
-    // Scope Tree represents current point of execution (node per frame at root level, nodes within frame for various serialized objects)
-    //
-    // Registering written bytes adds them to currently active Scope Tree Node
-
+    /// <summary>
+    /// Scope Tree represents current point of execution (node per frame at root level, nodes within frame for various serialized objects).
+    /// Registering written bytes adds them to currently active <see cref="ScopeTreeNode"/>.
+    /// </summary>
     public class ScopeTreeNode : IComparable
     {
-        public string name;
-        public uint totalBytes;
-        public List<ScopeTreeNode> children = new List<ScopeTreeNode>();
+        public string Name { get; set; }
+        public uint TotalBytes { get; set; }
+        public List<ScopeTreeNode> Children { get; private set; }
 
         public ScopeTreeNode(string name)
         {
-            this.name = name;
+            Name = name;
+            Children = new List<ScopeTreeNode>();
         }
+
         public void Sort()
         {
-            children.Sort();
+            Children.Sort();
         }
 
         public ScopeTreeNode GetChild(string name)
         {
-            foreach (ScopeTreeNode child in children)
-            {
-                if (child.name == null)
-                {
-                    if (name == null)
-                    {
-                        return child;
-                    }
-                } else if (child.name.Equals(name))
-                {
-                    return child;
-                }
-            }
-            ScopeTreeNode newNode = new ScopeTreeNode(name);
-            children.Add(newNode);
+            var item = Children.FirstOrDefault(child => child.Name == name);
+            if (item != null) return item;
+            var newNode = new ScopeTreeNode(name);
+            Children.Add(newNode);
             return newNode;
         }
 
         public int CompareTo(object obj)
         {
-            long delta = ((ScopeTreeNode)obj).totalBytes - totalBytes;
-            return (int)delta;
+            return ((ScopeTreeNode)obj).TotalBytes.CompareTo(TotalBytes);
         }
-
     }
 
     public class ProfilingNetworkBinaryWriter : NetworkBinaryWriter
     {
-        private static Stack<ScopeTreeNode> currentStack;
-        private static ScopeTreeNode rootNode = null;
-
-        public ProfilingNetworkBinaryWriter(Stream output) : base(output)
+        private class Counter
         {
-            if (rootNode == null)
+            public uint Total;
+            public uint Min = UInt32.MaxValue;
+            public uint Max = UInt32.MinValue;
+            public uint Count;
+
+            public void Add(uint value)
             {
-                Reset();
+                if (value == 0) return;
+                Total += value;
+                Count++;
+                Min = (value < Min ? value : Min);
+                Max = (value > Max ? value : Max);
             }
+        }
+
+        private static Stack<ScopeTreeNode> _currentStack;
+        private static ScopeTreeNode _rootNode;
+
+        public ProfilingNetworkBinaryWriter(Stream output)
+            : base(output)
+        {
+            if (_rootNode == null) Reset();
         }
 
         public static void Reset()
         {
-            currentStack = new Stack<ScopeTreeNode>();
-            rootNode = new ScopeTreeNode("ROOT");
-            currentStack.Push(rootNode);
-        }
-        
-        protected override void WriteBytes(byte[] bytes, int index, int count)
-        {
-            base.WriteBytes(bytes, index, count);
-            
-            if (currentStack.Peek().name == null)
-                return;
-            
-            // Record byte count on current nodes
-            foreach (ScopeTreeNode stackNode in currentStack)
-            {
-                stackNode.totalBytes += (uint)count;
-            }
+            _currentStack = new Stack<ScopeTreeNode>();
+            _rootNode = new ScopeTreeNode("ROOT");
+            _currentStack.Push(_rootNode);
         }
 
         public static void Push(string scopeName)
         {
-            if (currentStack != null)
-            {
-                ScopeTreeNode newNode = currentStack.Peek().GetChild(scopeName);
-                currentStack.Push(newNode);
-            }
+            if (_currentStack == null) return;
+            var newNode = _currentStack.Peek().GetChild(scopeName);
+            _currentStack.Push(newNode);
         }
 
         public static void Pop()
         {
-            if (currentStack != null)
-            {
-                currentStack.Pop();
-            }
+            if (_currentStack == null) return;
+            _currentStack.Pop();
         }
 
-        internal class Counter
-        {
-            public uint total;
-            public uint min = UInt32.MaxValue;
-            public uint max = UInt32.MinValue;
-            public uint count;
-
-            public void Add(uint value)
-            {
-                if (value == 0)
-                    return;
-                
-                total += value;
-                count++;
-                min = (value < min ? value : min);
-                max = (value > max ? value : max);
-            }
-        }
-
-        // Write out a report of network statistics
-        // Dump all frames, sorted so the heaviest traffic comes last
-        
-
+        /// <summary>
+        /// Write out a report of network statistics.
+        /// Dump all frames, sorted so the heaviest traffic comes first.
+        /// </summary>
         public static void DumpStats()
         {
-            if (currentStack == null)
-                return;
-            
-            string statFile = AW2.Helpers.Log.LogPath + "\\network-stats-" + Process.GetCurrentProcess().Id + ".txt";
-
-            using (StreamWriter writer = new StreamWriter(statFile))
+            if (_currentStack == null) return;
+            var statFile = Path.Combine(AW2.Helpers.Log.LogPath, string.Format("network-stats-{0:yyyy-MM-dd HH-mm-ss}.txt", DateTime.Now));
+            Log.Write("Dumping network stats to " + statFile);
+            using (var writer = new StreamWriter(statFile))
             {
                 writer.WriteLine("=== SUMMARY PER TAG === ");
-
-                Dictionary<string, Counter> perTag = new Dictionary<string, Counter>();
-                CollectPerTagInfo(rootNode, perTag);
-                foreach (var pair in perTag.OrderByDescending(x => x.Value.total))
+                var perTag = new Dictionary<string, Counter>();
+                CollectPerTagInfo(_rootNode, perTag);
+                foreach (var pair in perTag.OrderByDescending(x => x.Value.Total))
                 {
-                    string name = pair.Key;
-                    if (pair.Value.count > 0 )
-                        writer.WriteLine(name.PadRight(20) + " Total:" + pair.Value.total + " Count:" + pair.Value.count + " (Min:" + pair.Value.min + " Avg:" + (int)(pair.Value.total / pair.Value.count) + " Max:" + pair.Value.max + ")");
+                    if (pair.Value.Count == 0) continue;
+                    writer.WriteLine("{0}\tTotal={1}\tCount={2}\t(Min:{3}\tAvg:{4}\tMax:{5})",
+                        pair.Key, pair.Value.Total, pair.Value.Count, pair.Value.Min, pair.Value.Total / pair.Value.Count, pair.Value.Max);
                 }
-
+                writer.WriteLine();
                 writer.WriteLine("=== SCOPE TREE ===");
-
-                Dump(rootNode, writer, 0);
-
-                
+                Dump(_rootNode, writer, 0);
             }
+        }
+
+        protected override void WriteBytes(byte[] bytes, int index, int count)
+        {
+            base.WriteBytes(bytes, index, count);
+            if (_currentStack.Peek().Name == null) return;
+
+            // Record byte count on current nodes
+            foreach (var stackNode in _currentStack)
+                stackNode.TotalBytes += (uint)count;
         }
 
         private static void CollectPerTagInfo(ScopeTreeNode node, Dictionary<string, Counter> perTagInfo)
         {
-            if (node.name != null)
+            if (node.Name != null)
             {
-                if (perTagInfo.ContainsKey(node.name))
+                if (perTagInfo.ContainsKey(node.Name))
                 {
-                    perTagInfo[node.name].Add(node.totalBytes);
+                    perTagInfo[node.Name].Add(node.TotalBytes);
                 }
                 else
                 {
-                    Counter c = new Counter();
-                    c.Add(node.totalBytes);
-
-
-                    perTagInfo.Add(node.name, c);
+                    var c = new Counter();
+                    c.Add(node.TotalBytes);
+                    perTagInfo.Add(node.Name, c);
                 }
             }
-            foreach (ScopeTreeNode child in node.children)
-            {
-                CollectPerTagInfo(child, perTagInfo);
-            }
-
+            foreach (var child in node.Children) CollectPerTagInfo(child, perTagInfo);
         }
+
         private static void Dump(ScopeTreeNode node, StreamWriter writer, int depth)
         {
-            for (int i = 0; i < depth; i++)
-                writer.Write("    ");
+            for (int i = 0; i < depth; i++) writer.Write("    ");
             node.Sort();
-            
-            if (node.name != null)
-                writer.WriteLine(node.name + " (" + node.totalBytes + ")");
-
-            foreach (ScopeTreeNode child in node.children)
-            {
-                Dump(child, writer, depth + 1);
-            }
+            if (node.Name != null) writer.WriteLine(node.Name + " (" + node.TotalBytes + ")");
+            foreach (ScopeTreeNode child in node.Children) Dump(child, writer, depth + 1);
         }
-
-        public static ScopeTreeNode Peek()
-        {
-            return currentStack.Peek();
-        }    
     }
 }

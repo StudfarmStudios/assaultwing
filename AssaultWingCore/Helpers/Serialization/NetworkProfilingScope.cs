@@ -12,21 +12,14 @@ namespace AW2.Helpers.Serialization
         {
             ProfilingNetworkBinaryWriter.Push(name);
         }
-    
+
         public NetworkProfilingScope(object obj)
         {
-            if (obj == null)
-            {
-                ProfilingNetworkBinaryWriter.Push(null);
-            }
-            else if (obj is Gob)
-            {
-                ProfilingNetworkBinaryWriter.Push("Gob: " + ((Gob)obj).TypeName);
-            }
-            else
-            {
-                ProfilingNetworkBinaryWriter.Push(obj.GetType().Name);
-            }
+            if (obj == null) throw new ArgumentNullException();
+            ProfilingNetworkBinaryWriter.Push(
+                obj is string ? (string)obj :
+                obj is Gob ? "Gob: " + ((Gob)obj).TypeName :
+                obj.GetType().Name);
         }
 
         public void Dispose()

@@ -140,7 +140,7 @@ namespace AW2.Net
         public static Message Deserialize(ArraySegment<byte> headerAndBody, TimeSpan creationTime)
         {
             if (headerAndBody.Array == null) throw new ArgumentNullException("headerAndBody.Array");
-            if (!IsValidHeader(headerAndBody)) throw new ArgumentException("Invalid message header", "headerAndBody");
+            if (!IsValidHeader(headerAndBody)) throw new MessageException("Invalid message header");
             int expectedLength = HEADER_LENGTH + GetBodyLength(headerAndBody);
             if (expectedLength > headerAndBody.Count) throw new ArgumentException("Message length mismatch (" + expectedLength + " expected, " + headerAndBody.Count + " got)");
             var message = (Message)GetMessageSubclass(headerAndBody).GetConstructor(System.Type.EmptyTypes).Invoke(null);

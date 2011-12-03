@@ -62,6 +62,11 @@ namespace AW2.Net.ConnectionUtils
                         _messageHandler(bufferSegment, endPoint);
                     }
                 }
+                catch (MessageException)
+                {
+                    // Usually this happens when receiving messages from the management server before
+                    // management server address has been resolved.
+                }
                 catch (Exception e)
                 {
                     var message = string.Format("{0} in ReceiveFromCompleted: {1}", e.GetType().ToString(),

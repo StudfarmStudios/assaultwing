@@ -46,7 +46,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ConnectionClosingMessage>(MessageHandlerBase.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(MessageHandlerBase.SourceType.Server, HandleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(MessageHandlerBase.SourceType.Server, HandlePlayerSettingsReply);
-            yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Server, HandlePlayerSettingsRequestOnClient);
+            yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleSpectatorSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new MessageHandler<GameSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleGameSettingsRequest);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerMessageMessageOnClient);
@@ -66,7 +66,7 @@ namespace AW2.Net.MessageHandling
         public static IEnumerable<MessageHandlerBase> GetServerMenuHandlers()
         {
             yield return new MessageHandler<GameServerHandshakeRequestTCP>(MessageHandlerBase.SourceType.Client, HandleGameServerHandshakeRequestTCP);
-            yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Client, HandlePlayerSettingsRequestOnServer);
+            yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Client, HandleSpectatorSettingsRequestOnServer);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
 
@@ -119,13 +119,13 @@ namespace AW2.Net.MessageHandling
             net.ManagementServerConnection.OnPingReceived();
         }
 
-        private static void HandlePlayerSettingsRequestOnClient(SpectatorSettingsRequest mess)
+        private static void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
             var spectator = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
             {
-                var newPlayer = CreateAndAddNewSpectator(mess);
+                var newPlayer = CreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromServer);
                 newPlayer.ID = mess.SpectatorID;
                 newPlayer.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             }
@@ -278,7 +278,7 @@ namespace AW2.Net.MessageHandling
             }
         }
 
-        private static void HandlePlayerSettingsRequestOnServer(SpectatorSettingsRequest mess)
+        private static void HandleSpectatorSettingsRequestOnServer(SpectatorSettingsRequest mess)
         {
             var clientConn = AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
             if (clientConn.ConnectionStatus.IsDropped) return;
@@ -286,7 +286,7 @@ namespace AW2.Net.MessageHandling
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)
             {
-                var newSpectator = CreateAndAddNewSpectator(mess);
+                var newSpectator = CreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromClient);
                 var reply = new PlayerSettingsReply
                 {
                     PlayerLocalID = mess.SpectatorID,
@@ -306,7 +306,7 @@ namespace AW2.Net.MessageHandling
                 {
                     // Be careful not to overwrite the player's color with something silly from the client.
                     var oldColor = player is Player ? (Color?)((Player)player).Color : null;
-                    mess.Read(player, SerializationModeFlags.ConstantDataFromServer, 0);
+                    mess.Read(player, SerializationModeFlags.ConstantDataFromClient, 0);
                     if (oldColor.HasValue) ((Player)player).Color = oldColor.Value;
                 }
             }
@@ -364,7 +364,7 @@ namespace AW2.Net.MessageHandling
             return new Player(AssaultWing.Instance, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
         }
 
-        private static Spectator CreateAndAddNewSpectator(SpectatorSettingsRequest mess)
+        private static Spectator CreateAndAddNewSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
             Spectator newSpectator = null;
             switch (mess.Subclass)
@@ -377,7 +377,7 @@ namespace AW2.Net.MessageHandling
                     break;
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
-            mess.Read(newSpectator, SerializationModeFlags.ConstantDataFromServer, 0);
+            mess.Read(newSpectator, mode, 0);
             AssaultWingCore.Instance.DataEngine.Spectators.Add(newSpectator);
             return newSpectator;
         }

@@ -19,14 +19,19 @@ namespace AW2.Helpers.Serialization
         ConstantDataFromServer = 0x01,
 
         /// <summary>
-        /// Serialise data that varies even after initialisation. Serialisation is done from server to client.
+        /// Serialise data that may vary after initialisation. Serialisation is done from server to client.
         /// </summary>
         VaryingDataFromServer = 0x02,
 
         /// <summary>
-        /// Serialise data that varies even after initialisation. Serialisation is done from client to server.
+        /// Serialise data that is constant after initialisation. Serialisation is done from client to server.
         /// </summary>
-        VaryingDataFromClient = 0x04,
+        ConstantDataFromClient = 0x04,
+
+        /// <summary>
+        /// Serialise data that may vary after initialisation. Serialisation is done from client to server.
+        /// </summary>
+        VaryingDataFromClient = 0x08,
 
         /// <summary>
         /// Serialise all data from server to client.

@@ -13,7 +13,7 @@ using AW2.UI;
 namespace AW2.Game
 {
     /// <summary>
-    /// Player of the game. 
+    /// Human player of the game. 
     /// </summary>
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
@@ -101,6 +101,7 @@ namespace AW2.Game
 
         public override bool NeedsViewport { get { return !IsRemote; } }
         public override IEnumerable<Gob> Minions { get { if (Ship != null) yield return Ship; } }
+        public string LoginToken { get; set; }
 
         /// <summary>
         /// The ship the player is controlling in the game arena.
@@ -366,7 +367,8 @@ namespace AW2.Game
                 checked
                 {
                     base.Serialize(writer, mode);
-                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
+                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
+                        mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
                     {
                         writer.Write((CanonicalString)ShipName);
                         writer.Write((CanonicalString)Weapon2Name);
@@ -377,6 +379,10 @@ namespace AW2.Game
                     {
                         writer.Write((byte)_deviceUsages);
                     }
+                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
+                    {
+                        writer.Write((string)LoginToken);
+                    }
                 }
             }
         }
@@ -384,7 +390,8 @@ namespace AW2.Game
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
+                mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
             {
                 var newShipName = reader.ReadCanonicalString();
                 var newWeapon2Name = reader.ReadCanonicalString();
@@ -398,6 +405,10 @@ namespace AW2.Game
             {
                 var deviceUsages = (DeviceUsages)reader.ReadByte();
                 if (Ship != null) ApplyDeviceUsages(deviceUsages);
+            }
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
+            {
+                LoginToken = reader.ReadString();
             }
         }
 

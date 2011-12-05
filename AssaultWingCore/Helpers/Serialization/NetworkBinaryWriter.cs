@@ -96,9 +96,13 @@ namespace AW2.Helpers.Serialization
             checked
             {
                 Write((ushort)value.Length);
-                var bytes = Encoding.UTF8.GetBytes((char[])value.ToCharArray());
-                Write(bytes);
+                WriteStringWithoutLength(value);
             }
+        }
+
+        public void WriteStringWithoutLength(string value)
+        {
+            Write(Encoding.UTF8.GetBytes(value.ToCharArray()));
         }
 
         public void Write(ushort value)

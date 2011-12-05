@@ -10,11 +10,13 @@ namespace AW2.Settings
         private string _shipName;
         private string _weapon2Name;
         private string _extraDeviceName;
+        private string _password;
 
         public string Name { get { return _name; } set { _name = value; } }
         public string ShipName { get { return _shipName; } set { _shipName = value; } }
         public string Weapon2Name { get { return _weapon2Name; } set { _weapon2Name = value; } }
         public string ExtraDeviceName { get { return _extraDeviceName; } set { _extraDeviceName = value; } }
+        public string Password { get { return _password; } set { _password = value; } }
     }
 
     public class PlayerSettings
@@ -27,6 +29,7 @@ namespace AW2.Settings
             ShipName = "Plissken",
             Weapon2Name = "bazooka",
             ExtraDeviceName = "repulsor",
+            Password = "",
         };
         public static readonly PlayerSettingsItem PLAYER2DEFAULT = new PlayerSettingsItem
         {
@@ -34,6 +37,7 @@ namespace AW2.Settings
             ShipName = "Bugger",
             Weapon2Name = "rockets",
             ExtraDeviceName = "catmoflage",
+            Password = "",
         };
 
         private PlayerSettingsItem _player1;

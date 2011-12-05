@@ -231,6 +231,11 @@ namespace AW2.Core
             Settings.ToFile();
             if (NetworkMode == NetworkMode.Server)
             {
+                Stats.Send(new
+                {
+                    Arena = DataEngine.Arena.Info.Name.Value,
+                    Players = DataEngine.Players.Select(plr => plr.LoginToken),
+                });
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
                 DataEngine.Arena.GobAdded += gob => { if (gob.IsRelevant) _addedGobs.Add(gob); };
                 DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
@@ -272,6 +277,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
+            Stats.Initialize(this);
             if (Settings.Players.BotsEnabled) DataEngine.Spectators.Add(new BotPlayer(this));
             try
             {
@@ -298,6 +304,7 @@ namespace AW2.Core
                 throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
             DeactivateAllMessageHandlers();
             NetworkEngine.StopServer();
+            Stats.Dispose();
             NetworkMode = NetworkMode.Standalone;
             DataEngine.RemoveRemoteSpectators();
         }
@@ -834,7 +841,7 @@ namespace AW2.Core
                 SpectatorID = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes ? spec.ID : spec.LocalID,
                 Subclass = SpectatorSettingsRequest.GetSubclassType(spec),
             };
-            SendSpectatorSettingsToRemote(sendCriteria, newPlayerSettingsRequest, new[] { NetworkEngine.GameServerConnection });
+            SendSpectatorSettingsToRemote(SerializationModeFlags.ConstantDataFromClient, sendCriteria, newPlayerSettingsRequest, new[] { NetworkEngine.GameServerConnection });
         }
 
         private void SendSpectatorSettingsToGameClients(Func<Spectator, bool> sendCriteria)
@@ -845,16 +852,16 @@ namespace AW2.Core
                 SpectatorID = spec.ID,
                 Subclass = SpectatorSettingsRequest.GetSubclassType(spec),
             };
-            SendSpectatorSettingsToRemote(sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
+            SendSpectatorSettingsToRemote(SerializationModeFlags.ConstantDataFromServer, sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
             foreach (var conn in NetworkEngine.GameClientConnections) conn.ConnectionStatus.HasPlayerSettings = true;
         }
 
-        private void SendSpectatorSettingsToRemote(Func<Spectator, bool> sendCriteria, Func<Spectator, SpectatorSettingsRequest> newSpectatorSettingsRequest, IEnumerable<Connection> connections)
+        private void SendSpectatorSettingsToRemote(SerializationModeFlags mode, Func<Spectator, bool> sendCriteria, Func<Spectator, SpectatorSettingsRequest> newSpectatorSettingsRequest, IEnumerable<Connection> connections)
         {
             foreach (var spectator in DataEngine.Spectators.Where(sendCriteria))
             {
                 var mess = newSpectatorSettingsRequest(spectator);
-                mess.Write(spectator, SerializationModeFlags.ConstantDataFromServer);
+                mess.Write(spectator, mode);
                 if (spectator.ServerRegistration == Spectator.ServerRegistrationType.No)
                     spectator.ServerRegistration = Spectator.ServerRegistrationType.Requested;
                 foreach (var conn in connections) conn.Send(mess);

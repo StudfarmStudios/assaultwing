@@ -66,17 +66,17 @@ namespace AW2.Net.ConnectionUtils
 
         /// <param name="socket">A socket to the remote host. This <see cref="AWSocket"/>
         /// instance owns the socket and will dispose of it.</param>
-        /// <param name="messageHandler">Delegate that handles received message data.</param>
+        /// <param name="messageHandler">Delegate that handles received message data.
+        /// If null then no data will be received.</param>
         protected AWSocket(Socket socket, MessageHandler messageHandler)
         {
             if (socket == null) throw new ArgumentNullException("socket", "Null socket argument");
-            if (messageHandler == null) throw new ArgumentNullException("messageHandler", "Null message handler");
             Application.ApplicationExit += ApplicationExitCallback;
             _socket = socket;
             ConfigureSocket(_socket);
             _messageHandler = messageHandler;
             Errors = new ThreadSafeWrapper<Queue<string>>(new Queue<string>());
-            StartReceiving();
+            if (messageHandler != null) StartReceiving();
         }
 
         public void Send(Action<NetworkBinaryWriter> writeData)

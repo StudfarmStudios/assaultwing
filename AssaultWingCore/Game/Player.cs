@@ -290,6 +290,7 @@ namespace AW2.Game
             Color = Color.Gray;
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
             GobTrackerItems = new List<GobTrackerItem>();
+            LoginToken = "";
         }
 
         #endregion Constructors

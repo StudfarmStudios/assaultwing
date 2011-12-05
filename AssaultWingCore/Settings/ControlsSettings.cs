@@ -123,10 +123,10 @@ namespace AW2.Settings
             Thrust = new KeyControlType(Keys.W),
             Left = new KeyControlType(Keys.A),
             Right = new KeyControlType(Keys.D),
-            Down = new KeyControlType(Keys.X),
+            Down = new KeyControlType(Keys.S),
             Fire1 = new KeyControlType(Keys.LeftControl),
             Fire2 = new KeyControlType(Keys.LeftShift),
-            Extra = new KeyControlType(Keys.X),
+            Extra = new KeyControlType(Keys.S),
         };
         public static readonly PlayerControlsSettings PRESET_GAMEPAD1 = new PlayerControlsSettings
         {

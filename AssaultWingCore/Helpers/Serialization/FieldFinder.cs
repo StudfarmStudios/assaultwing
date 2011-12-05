@@ -34,7 +34,7 @@ namespace AW2.Helpers.Serialization
         public void CheckForMissing()
         {
             int missingIndex = Array.FindIndex(_fieldFounds, f => !f);
-            if (missingIndex >= 0 && !_tolerant) throw new MemberSerializationException("Value not found", _fields[missingIndex].Name);
+            if (!_tolerant && missingIndex >= 0) throw new MemberSerializationException("Value not found", _fields[missingIndex].Name);
         }
 
         private void InitializeFields()
@@ -45,7 +45,8 @@ namespace AW2.Helpers.Serialization
         private FieldInfo FindField(string xmlElementName)
         {
             int fieldIndex = FindFieldIndex(xmlElementName);
-            if (_fieldFounds[fieldIndex] && !_tolerant) throw new MemberSerializationException("Field deserialised twice", xmlElementName);
+            if (_tolerant && fieldIndex < 0) return null;
+            if (!_tolerant && _fieldFounds[fieldIndex]) throw new MemberSerializationException("Field deserialised twice", xmlElementName);
             _fieldFounds[fieldIndex] = true;
             return _fields[fieldIndex];
         }

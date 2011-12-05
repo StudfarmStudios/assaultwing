@@ -417,8 +417,13 @@ namespace AW2.Helpers.Serialization
                 while (reader.IsStartElement())
                 {
                     var field = fieldFinder.Find(reader.Name);
+                    if (field == null)
+                    {
+                        reader.Skip();
+                        continue;
+                    }
                     var fieldLimitationAttribute = GetFieldLimitationAttribute(field, limitationAttribute);
-                    object value = DeserializeXml(reader, reader.Name, field.FieldType, fieldLimitationAttribute, tolerant);
+                    var value = DeserializeXml(reader, reader.Name, field.FieldType, fieldLimitationAttribute, tolerant);
                     field.SetValue(obj, value);
                 }
                 fieldFinder.CheckForMissing();

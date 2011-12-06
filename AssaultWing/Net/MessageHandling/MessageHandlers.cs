@@ -264,7 +264,7 @@ namespace AW2.Net.MessageHandling
                 Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo + extraInfo);
                 var reply = new ConnectionClosingMessage { Info = "of version mismatch (canonical strings).\nPlease install the latest version from\nwww.assaultwing.com" };
                 connection.Send(reply);
-                net.DropClient(mess.ConnectionID, false);
+                net.DropClient(mess.ConnectionID);
             }
             else
             {
@@ -378,6 +378,7 @@ namespace AW2.Net.MessageHandling
             }
             mess.Read(newSpectator, mode, 0);
             Game.DataEngine.Spectators.Add(newSpectator);
+            Game.Stats.Send(new { AddPlayer = newSpectator.LoginToken });
             return newSpectator;
         }
 

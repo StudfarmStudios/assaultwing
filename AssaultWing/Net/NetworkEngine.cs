@@ -246,11 +246,9 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Drops the connection to a game client. To be called only
-        /// as the game server.
+        /// Drops the connection to a game client. To be called only as the game server.
         /// </summary>
-        /// <param name="error">If true, client is being dropped due to an error condition.</param>
-        public void DropClient(int connectionID, bool error)
+        public void DropClient(int connectionID)
         {
             if (Game.NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot drop client in mode " + Game.NetworkMode);
@@ -262,18 +260,13 @@ namespace AW2.Net
             _removedClientConnections.Add(connection);
 
             // Remove the client's players.
-            if (error)
+            var droppedPlayers = Game.DataEngine.Spectators.Where(plr => plr.ConnectionID == connection.ID);
+            foreach (var plr in droppedPlayers) Game.Stats.Send(new { RemovePlayer = plr.LoginToken });
+            if (droppedPlayers.Any())
             {
-                var droppedPlayerNames =
-                    from plr in Game.DataEngine.Spectators
-                    where plr.ConnectionID == connection.ID
-                    select plr.Name;
-                if (droppedPlayerNames.Any())
-                {
-                    var message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
-                    foreach (var player in Game.DataEngine.Players.Where(plr => !plr.IsRemote))
-                        player.Messages.Add(new PlayerMessage(message, PlayerMessage.DEFAULT_COLOR));
-                }
+                var message = string.Join(" and ", droppedPlayers.Select(plr => plr.Name).ToArray()) + " left the game";
+                foreach (var player in Game.DataEngine.Players.Where(plr => !plr.IsRemote))
+                    player.Messages.Add(new PlayerMessage(message, PlayerMessage.DEFAULT_COLOR));
             }
             Game.DataEngine.Spectators.Remove(player => player.ConnectionID == connection.ID);
         }
@@ -658,7 +651,7 @@ namespace AW2.Net
                 if (!conn.IsHandshaken && Game.GameTime.TotalRealTime > conn.FirstHandshakeAttempt + HANDSHAKE_TIMEOUT)
                 {
                     conn.Send(new ConnectionClosingMessage { Info = "handshake failed" });
-                    DropClient(conn.ID, true);
+                    DropClient(conn.ID);
                 }
             }
         }

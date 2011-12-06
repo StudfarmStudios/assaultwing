@@ -101,7 +101,6 @@ namespace AW2.Game
 
         public override bool NeedsViewport { get { return !IsRemote; } }
         public override IEnumerable<Gob> Minions { get { if (Ship != null) yield return Ship; } }
-        public string LoginToken { get; set; }
 
         /// <summary>
         /// The ship the player is controlling in the game arena.
@@ -290,7 +289,6 @@ namespace AW2.Game
             Color = Color.Gray;
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
             GobTrackerItems = new List<GobTrackerItem>();
-            LoginToken = "";
         }
 
         #endregion Constructors
@@ -380,10 +378,6 @@ namespace AW2.Game
                     {
                         writer.Write((byte)_deviceUsages);
                     }
-                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
-                    {
-                        writer.Write((string)LoginToken);
-                    }
                 }
             }
         }
@@ -406,10 +400,6 @@ namespace AW2.Game
             {
                 var deviceUsages = (DeviceUsages)reader.ReadByte();
                 if (Ship != null) ApplyDeviceUsages(deviceUsages);
-            }
-            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
-            {
-                LoginToken = reader.ReadString();
             }
         }
 

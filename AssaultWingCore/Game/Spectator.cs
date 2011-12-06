@@ -49,6 +49,11 @@ namespace AW2.Game
         public int ConnectionID { get; private set; }
 
         /// <summary>
+        /// Identification token of the logged-in spectator on the statistics server, or the empty string.
+        /// </summary>
+        public string LoginToken { get; set; }
+
+        /// <summary>
         /// If <c>true</c> then the spectator lives at a remote game instance.
         /// If <c>false</c> then the spectator lives at this game instance.
         /// </summary>
@@ -88,6 +93,7 @@ namespace AW2.Game
             ConnectionID = connectionId;
             Color = Color.LightGray;
             ArenaStatistics = new SpectatorArenaStatistics();
+            LoginToken = "";
         }
 
         /// <param name="onScreen">Location of the viewport on screen.</param>
@@ -135,6 +141,10 @@ namespace AW2.Game
                 {
                     writer.Write((string)Name);
                 }
+                if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
+                {
+                    writer.Write((string)LoginToken);
+                }
                 ArenaStatistics.Serialize(writer, mode);
             }
         }
@@ -145,6 +155,10 @@ namespace AW2.Game
                 mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
             {
                 Name = reader.ReadString();
+            }
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
+            {
+                LoginToken = reader.ReadString();
             }
             ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }

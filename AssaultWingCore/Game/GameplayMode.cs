@@ -77,7 +77,7 @@ namespace AW2.Game
             Kills = spec.ArenaStatistics.Kills;
             Deaths = spec.ArenaStatistics.Deaths;
             SpectatorID = spec.ID;
-            LoginToken = spec is Player ? ((Player)spec).LoginToken : "";
+            LoginToken = spec.LoginToken;
         }
     }
 

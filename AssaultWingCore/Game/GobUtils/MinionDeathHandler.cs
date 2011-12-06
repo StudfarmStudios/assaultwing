@@ -13,10 +13,25 @@ namespace AW2.Game.GobUtils
         public static void OnMinionDeath(Coroner coroner)
         {
             if (coroner.Game.NetworkMode == NetworkMode.Client) return;
-            Die_SendMessages(coroner);
+            SendStats(coroner);
+            SendMessages(coroner);
         }
 
-        private static void Die_SendMessages(Coroner coroner)
+        private static void SendStats(Coroner coroner)
+        {
+            switch (coroner.DeathType)
+            {
+                default: throw new ApplicationException("Invalid DeathType " + coroner.DeathType);
+                case Coroner.DeathTypeType.Kill:
+                    coroner.Game.Stats.Send(new { Killer = coroner.ScoringSpectator.LoginToken, Victim = coroner.KilledSpectator.LoginToken });
+                    break;
+                case Coroner.DeathTypeType.Suicide:
+                    coroner.Game.Stats.Send(new { Suicide = coroner.KilledSpectator.LoginToken });
+                    break;
+            }
+        }
+
+        private static void SendMessages(Coroner coroner)
         {
             var scoringPlayer = coroner.ScoringSpectator as Player;
             var killedPlayer = coroner.KilledSpectator as Player;

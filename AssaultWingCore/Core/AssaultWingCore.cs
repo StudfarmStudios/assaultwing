@@ -23,6 +23,7 @@ namespace AW2.Core
     {
         #region AssaultWing fields
 
+        private StatsBase _stats;
         private UIEngineImpl _uiEngine;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
@@ -62,6 +63,19 @@ namespace AW2.Core
                 return MiscHelper.IsNetworkDeployed
                     ? ApplicationDeployment.CurrentDeployment.DataDirectory
                     : System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            }
+        }
+        public StatsBase Stats
+        {
+            get
+            {
+                if (_stats == null) _stats = new StatsBase();
+                return _stats;
+            }
+            protected set
+            {
+                if (_stats != null) _stats.Dispose();
+                _stats = value;
             }
         }
         public int ManagedThreadID { get; private set; }

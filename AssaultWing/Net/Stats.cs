@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Net.Sockets;
 using AW2.Helpers;
 using AW2.Core;
@@ -14,34 +9,32 @@ namespace AW2.Net
     /// <summary>
     /// Sends game statistics to statistics server.
     /// </summary>
-    public static class Stats
+    public class Stats : StatsBase
     {
-        private static bool g_initialized;
-        private static AWTCPSocket g_statsDataSocket;
+        private bool _disposed;
+        private AWTCPSocket _statsDataSocket;
 
-        public static void Initialize(AssaultWing game)
+        public Stats(AssaultWingCore game)
         {
-            if (g_initialized) throw new InvalidOperationException("Already initialized");
             var statsDataSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             var statsEndPoint = MiscHelper.ParseIPEndPoint(game.Settings.Net.StatsServerAddress);
             statsEndPoint.Port = game.Settings.Net.StatsDataPort;
             statsDataSocket.Connect(statsEndPoint);
-            g_statsDataSocket = new AWTCPSocket(statsDataSocket, null);
-            g_initialized = true;
+            _statsDataSocket = new AWTCPSocket(statsDataSocket, null);
         }
 
-        public static void Dispose()
+        public override void Dispose()
         {
-            if (!g_initialized) throw new InvalidOperationException("Not initialized");
-            g_statsDataSocket.Dispose();
-            g_initialized = false;
+            if (_disposed) return;
+            _statsDataSocket.Dispose();
+            _statsDataSocket = null;
+            _disposed = true;
         }
 
-        public static void Send(object obj)
+        public override void Send(object obj)
         {
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(obj) + "\r\n";
-            Log.Write("!!! Sending JSON '{0}'", json);
-            g_statsDataSocket.Send(writer => writer.WriteStringWithoutLength(json));
+            _statsDataSocket.Send(writer => writer.WriteStringWithoutLength(json));
         }
 
     }

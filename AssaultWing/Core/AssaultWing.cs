@@ -277,7 +277,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
-            Stats.Initialize(this);
+            Stats = new Stats(this);
             if (Settings.Players.BotsEnabled) DataEngine.Spectators.Add(new BotPlayer(this));
             try
             {
@@ -304,7 +304,7 @@ namespace AW2.Core
                 throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
             DeactivateAllMessageHandlers();
             NetworkEngine.StopServer();
-            Stats.Dispose();
+            Stats = new StatsBase();
             NetworkMode = NetworkMode.Standalone;
             DataEngine.RemoveRemoteSpectators();
         }

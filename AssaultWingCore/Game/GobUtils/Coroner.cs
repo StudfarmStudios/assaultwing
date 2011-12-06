@@ -100,6 +100,7 @@ namespace AW2.Game.GobUtils
         {
             DamageInfo = info;
             AnalyzeDeath(info);
+            HandleMinionDeath(info);
             AssignKillPhrase();
             AssignSpecialPhrase();
         }
@@ -133,6 +134,27 @@ namespace AW2.Game.GobUtils
             else
                 markAsSuicide();
             KilledSpectator = info.Target.Owner;
+        }
+
+        private void HandleMinionDeath(BoundDamageInfo info)
+        {
+            if (KilledSpectator == null || !KilledSpectator.Minions.Contains(info.Target)) return;
+            switch (DeathType)
+            {
+                default: throw new ApplicationException("Unexpected DeathType " + DeathType);
+                case Coroner.DeathTypeType.Suicide:
+                    break;
+                case Coroner.DeathTypeType.Kill:
+                    ScoringSpectator.ArenaStatistics.Kills++;
+                    ScoringSpectator.ArenaStatistics.KillsWithoutDying++;
+                    if (Game.NetworkMode == NetworkMode.Server)
+                        ScoringSpectator.MustUpdateToClients = true;
+                    break;
+            }
+            KilledSpectator.ArenaStatistics.Deaths++;
+            KilledSpectator.ArenaStatistics.Lives--;
+            KilledSpectator.ArenaStatistics.KillsWithoutDying = 0;
+            KilledSpectator.MustUpdateToClients = true;
         }
 
         private string GetMessageFor(RecipientType recipient)

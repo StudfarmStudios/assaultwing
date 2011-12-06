@@ -453,7 +453,7 @@ namespace AW2.Game
         private void ShipDeathHandler(Coroner coroner)
         {
             if (Game.NetworkMode != NetworkMode.Client)
-                _shipSpawnTime = coroner.Game.DataEngine.ArenaTotalTime + MOURNING_DELAY;
+                _shipSpawnTime = Game.DataEngine.ArenaTotalTime + MOURNING_DELAY;
             Ship = null;
         }
 

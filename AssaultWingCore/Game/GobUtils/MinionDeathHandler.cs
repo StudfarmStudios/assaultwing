@@ -13,28 +13,7 @@ namespace AW2.Game.GobUtils
         public static void OnMinionDeath(Coroner coroner)
         {
             if (coroner.Game.NetworkMode == NetworkMode.Client) return;
-            Die_HandleCounters(coroner);
             Die_SendMessages(coroner);
-        }
-
-        private static void Die_HandleCounters(Coroner coroner)
-        {
-            switch (coroner.DeathType)
-            {
-                default: throw new ApplicationException("Unexpected DeathType " + coroner.DeathType);
-                case Coroner.DeathTypeType.Suicide:
-                    break;
-                case Coroner.DeathTypeType.Kill:
-                    coroner.ScoringSpectator.ArenaStatistics.Kills++;
-                    coroner.ScoringSpectator.ArenaStatistics.KillsWithoutDying++;
-                    if (coroner.Game.NetworkMode == NetworkMode.Server)
-                        coroner.ScoringSpectator.MustUpdateToClients = true;
-                    break;
-            }
-            coroner.KilledSpectator.ArenaStatistics.Deaths++;
-            coroner.KilledSpectator.ArenaStatistics.Lives--;
-            coroner.KilledSpectator.ArenaStatistics.KillsWithoutDying = 0;
-            coroner.KilledSpectator.MustUpdateToClients = true;
         }
 
         private static void Die_SendMessages(Coroner coroner)

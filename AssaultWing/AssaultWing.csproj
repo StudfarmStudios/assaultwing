@@ -204,7 +204,7 @@
     <Compile Include="Net\NetworkEngine.cs" />
     <Compile Include="Net\NetworkException.cs" />
     <Compile Include="Net\Result.cs" />
-    <Compile Include="Net\Stats.cs" />
+    <Compile Include="Net\StatsSender.cs" />
     <Compile Include="Net\StreamMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\AccessibilityShortcuts.cs" />

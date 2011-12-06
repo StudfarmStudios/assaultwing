@@ -7,14 +7,14 @@ using AW2.Net.ConnectionUtils;
 namespace AW2.Net
 {
     /// <summary>
-    /// Sends game statistics to statistics server.
+    /// Collects game statistics to a remote statistics server.
     /// </summary>
-    public class Stats : StatsBase
+    public class StatsSender : StatsBase
     {
         private bool _disposed;
         private AWTCPSocket _statsDataSocket;
 
-        public Stats(AssaultWingCore game)
+        public StatsSender(AssaultWingCore game)
         {
             var statsDataSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             var statsEndPoint = MiscHelper.ParseIPEndPoint(game.Settings.Net.StatsServerAddress);

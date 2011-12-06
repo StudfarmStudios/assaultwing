@@ -15,23 +15,15 @@ namespace AW2.Core.OverlayComponents
     /// </summary>
     public class GameOverOverlayDialogData : OverlayDialogData
     {
-        private Standing[] _standings;
+        private IEnumerable<Standing> _standings;
 
         private SpriteFont FontHuge { get { return Game.MenuEngine.MenuContent.FontHuge; } }
         private SpriteFont FontSmall { get { return Game.MenuEngine.MenuContent.FontSmall; } }
 
-        private Standing[] Standings
-        {
-            get
-            {
-                if (_standings == null) _standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators).ToArray();
-                return _standings;
-            }
-        }
-
-        public GameOverOverlayDialogData(AssaultWing game)
+        public GameOverOverlayDialogData(AssaultWing game, IEnumerable<Standing> standings)
             : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { if (game.GameState == GameState.GameplayStopped) game.ShowEquipMenu(); }))
         {
+            _standings = standings;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
@@ -60,9 +52,9 @@ namespace AW2.Core.OverlayComponents
                 GetScoreCells("Score", "Kills", "Deaths"),
                 (textPos, text) => spriteBatch.DrawString(FontSmall, text, textPos, Color.White));
             AdvanceLine(ref textCenter, FontSmall);
-            var allSpectatorsAreLocal = Standings.All(entry => !entry.IsRemote);
+            var allSpectatorsAreLocal = _standings.All(entry => !entry.IsRemote);
             int line = 0;
-            foreach (var entry in Standings)
+            foreach (var entry in _standings)
             {
                 line++;
                 var column1Pos = new Vector2(textLeftX, textCenter.Y);

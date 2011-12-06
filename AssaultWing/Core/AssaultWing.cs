@@ -277,7 +277,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
-            Stats = new Stats(this);
+            Stats = new StatsSender(this);
             if (Settings.Players.BotsEnabled) DataEngine.Spectators.Add(new BotPlayer(this));
             try
             {
@@ -426,7 +426,9 @@ namespace AW2.Core
             {
                 StopGameplay();
                 _clearGameDataWhenEnteringMenus = true;
-                ShowDialog(new GameOverOverlayDialogData(this) { GroupName = "Game over" });
+                var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray();
+                ShowDialog(new GameOverOverlayDialogData(this, standings) { GroupName = "Game over" });
+                Stats.Send(new { ArenaStandings = standings });
             }
         }
 

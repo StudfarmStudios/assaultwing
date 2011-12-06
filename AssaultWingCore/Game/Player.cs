@@ -546,6 +546,13 @@ namespace AW2.Game
                 Game.DataEngine.Arena.Gobs.Add(newShip);
                 SpawnPlayer.PositionNewShip(newShip);
             });
+            Game.Stats.Send(new
+            {
+                Ship = ShipName.Value,
+                Weapon2 = Weapon2Name.Value,
+                Device = ExtraDeviceName.Value,
+                Player = LoginToken,
+            });
         }
 
         /// <summary>

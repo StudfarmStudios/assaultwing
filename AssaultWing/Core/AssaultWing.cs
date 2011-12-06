@@ -67,11 +67,13 @@ namespace AW2.Core
         private PlayerChat PlayerChat { get; set; }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
+        public MessageHandlers MessageHandlers { get; private set; }
         public WebData WebData { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
         {
+            MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
             StartupScreen = new StartupScreen(this, -1);
             NetworkEngine = new NetworkEngine(this, 0);
             WebData = new WebData(this, 21);

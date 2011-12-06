@@ -63,7 +63,7 @@ namespace AW2.Menu.Main
         private void EnsureStandaloneMessageHandlersActivated()
         {
             if (Game.NetworkEngine.MessageHandlers.Any()) return; // FIXME: Oversimplified check; are the handlers the right ones?
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
+            Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
         }
 
         private void InitializeStartItems()

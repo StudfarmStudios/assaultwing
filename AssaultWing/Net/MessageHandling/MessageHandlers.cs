@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Core.OverlayComponents;
 using AW2.Game;
@@ -13,26 +12,31 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
 using AW2.UI;
 using AW2.Net.Connections;
-using System.Net.Sockets;
 
 namespace AW2.Net.MessageHandling
 {
-    public static class MessageHandlers
+    public class MessageHandlers
     {
-        public static void ActivateHandlers(IEnumerable<MessageHandlerBase> handlers)
+        private AssaultWing Game { get; set; }
+
+        public MessageHandlers(AssaultWing game)
         {
-            AssaultWing.Instance.NetworkEngine.MessageHandlers.AddRange(handlers);
+            Game = game;
         }
 
-        public static void DeactivateHandlers(IEnumerable<MessageHandlerBase> handlers)
+        public void ActivateHandlers(IEnumerable<MessageHandlerBase> handlers)
         {
-            var net = AssaultWing.Instance.NetworkEngine;
+            Game.NetworkEngine.MessageHandlers.AddRange(handlers);
+        }
+
+        public void DeactivateHandlers(IEnumerable<MessageHandlerBase> handlers)
+        {
             var handlerTypesToRemove = handlers.Select(handler => handler.GetType());
-            foreach (var handler in net.MessageHandlers)
+            foreach (var handler in Game.NetworkEngine.MessageHandlers)
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
         }
 
-        public static IEnumerable<MessageHandlerBase> GetStandaloneMenuHandlers(Action<GameServerListReply> handleGameServerListReply)
+        public IEnumerable<MessageHandlerBase> GetStandaloneMenuHandlers(Action<GameServerListReply> handleGameServerListReply)
         {
             yield return new MessageHandler<GameServerListReply>(MessageHandlerBase.SourceType.Management, handleGameServerListReply);
             yield return new MessageHandler<JoinGameServerReply>(MessageHandlerBase.SourceType.Management, HandleJoinGameServerReply);
@@ -41,7 +45,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PingMessage>(MessageHandlerBase.SourceType.Management, HandlePingMessage);
         }
 
-        public static IEnumerable<MessageHandlerBase> GetClientMenuHandlers()
+        public IEnumerable<MessageHandlerBase> GetClientMenuHandlers()
         {
             yield return new MessageHandler<ConnectionClosingMessage>(MessageHandlerBase.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(MessageHandlerBase.SourceType.Server, HandleStartGameMessage);
@@ -53,9 +57,9 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ArenaFinishMessage>(MessageHandlerBase.SourceType.Server, HandleArenaFinishMessage);
         }
 
-        public static IEnumerable<MessageHandlerBase> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
+        public IEnumerable<MessageHandlerBase> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
-            var networkEngine = AssaultWing.Instance.NetworkEngine;
+            var networkEngine = Game.NetworkEngine;
             yield return new MessageHandler<PlayerUpdateMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, handleGobCreationMessage) { OneMessageAtATime = true };
@@ -63,27 +67,27 @@ namespace AW2.Net.MessageHandling
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
         }
 
-        public static IEnumerable<MessageHandlerBase> GetServerMenuHandlers()
+        public IEnumerable<MessageHandlerBase> GetServerMenuHandlers()
         {
             yield return new MessageHandler<GameServerHandshakeRequestTCP>(MessageHandlerBase.SourceType.Client, HandleGameServerHandshakeRequestTCP);
             yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Client, HandleSpectatorSettingsRequestOnServer);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
 
-        public static IEnumerable<MessageHandlerBase> GetServerGameplayHandlers()
+        public IEnumerable<MessageHandlerBase> GetServerGameplayHandlers()
         {
-            var networkEngine = AssaultWing.Instance.NetworkEngine;
+            var networkEngine = Game.NetworkEngine;
             yield return new MessageHandler<PlayerControlsMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerControlsMessage);
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Client, networkEngine, HandleGobUpdateMessageOnServer);
         }
 
-        public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)
+        public void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)
         {
             if (!result.Successful)
                 Log.Write("Some client failed to connect: " + result.Error);
             else if (allowNewConnection())
             {
-                AssaultWing.Instance.NetworkEngine.GameClientConnections.Add((GameClientConnection)result.Value);
+                Game.NetworkEngine.GameClientConnections.Add((GameClientConnection)result.Value);
                 Log.Write("Server obtained {0} from {1}", result.Value.Name, result.Value.RemoteTCPEndPoint);
             }
             else
@@ -96,32 +100,30 @@ namespace AW2.Net.MessageHandling
 
         #region Handler implementations
 
-        private static void HandleJoinGameServerReply(JoinGameServerReply mess)
+        private void HandleJoinGameServerReply(JoinGameServerReply mess)
         {
-            var game = AssaultWing.Instance;
-            if (game.NetworkMode == NetworkMode.Client) return;
+            if (Game.NetworkMode == NetworkMode.Client) return;
             if (mess.Success)
             {
-                game.SoundEngine.PlaySound("MenuChangeItem");
-                game.StartClient(mess.GameServerEndPoints, ConnectionResultOnClientCallback);
+                Game.SoundEngine.PlaySound("MenuChangeItem");
+                Game.StartClient(mess.GameServerEndPoints, ConnectionResultOnClientCallback);
             }
             else
             {
                 Log.Write("Couldn't connect to server: " + mess.FailMessage);
-                game.ShowInfoDialog("Couldn't connect to server:\n" + mess.FailMessage); // TODO: Proper line wrapping in dialogs
+                Game.ShowInfoDialog("Couldn't connect to server:\n" + mess.FailMessage); // TODO: Proper line wrapping in dialogs
             }
         }
 
-        private static void HandlePingMessage(PingMessage mess)
+        private void HandlePingMessage(PingMessage mess)
         {
-            var net = AssaultWing.Instance.NetworkEngine;
-            net.ManagementServerConnection.Send(new PongMessage());
-            net.ManagementServerConnection.OnPingReceived();
+            Game.NetworkEngine.ManagementServerConnection.Send(new PongMessage());
+            Game.NetworkEngine.ManagementServerConnection.OnPingReceived();
         }
 
-        private static void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
+        private void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
-            var spectator = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(
+            var spectator = Game.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
             {
@@ -144,60 +146,58 @@ namespace AW2.Net.MessageHandling
             }
         }
 
-        private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
+        private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
-            var game = AssaultWing.Instance;
             Log.Write("Server is going to close the connection because {0}.", mess.Info);
-            var dialogData = new CustomOverlayDialogData(game, "Server closed connection because\n" + mess.Info + ".",
-                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMainMenuAndResetGameplay));
-            game.ShowDialog(dialogData);
+            var dialogData = new CustomOverlayDialogData(Game, "Server closed connection because\n" + mess.Info + ".",
+                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, Game.ShowMainMenuAndResetGameplay));
+            Game.ShowDialog(dialogData);
         }
 
-        private static void HandleStartGameMessage(StartGameMessage mess)
+        private void HandleStartGameMessage(StartGameMessage mess)
         {
-            var game = AssaultWing.Instance;
-            if (game.IsLoadingArena) return;
-            game.ShowEquipMenu();
-            game.SelectedArenaName = mess.ArenaToPlay;
-            game.MenuEngine.ProgressBar.Start(mess.WallCount);
-            game.MenuEngine.ProgressBarAction(
-                () => game.PrepareSelectedArena(mess.ArenaID),
+            if (Game.IsLoadingArena) return;
+            Game.ShowEquipMenu();
+            Game.SelectedArenaName = mess.ArenaToPlay;
+            Game.MenuEngine.ProgressBar.Start(mess.WallCount);
+            Game.MenuEngine.ProgressBarAction(
+                () => Game.PrepareSelectedArena(mess.ArenaID),
                 () =>
                 {
                     // The network connection may have been cut during arena loading.
-                    if (game.NetworkMode != NetworkMode.Client) return;
-                    ActivateHandlers(GetClientGameplayHandlers(game.HandleGobCreationMessage));
-                    game.IsClientAllowedToStartArena = true;
-                    game.StartArenaButStayInMenu();
+                    if (Game.NetworkMode != NetworkMode.Client) return;
+                    ActivateHandlers(GetClientGameplayHandlers(Game.HandleGobCreationMessage));
+                    Game.IsClientAllowedToStartArena = true;
+                    Game.StartArenaButStayInMenu();
                 });
         }
 
-        private static void HandlePlayerSettingsReply(PlayerSettingsReply mess)
+        private void HandlePlayerSettingsReply(PlayerSettingsReply mess)
         {
-            var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.LocalID == mess.PlayerLocalID);
+            var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.LocalID == mess.PlayerLocalID);
             if (player == null) throw new ApplicationException("Cannot find unregistered local player with local ID " + mess.PlayerLocalID);
             player.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             player.ID = mess.PlayerID;
         }
 
-        private static void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
+        private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
         {
-            AssaultWingCore.Instance.DataEngine.Spectators.Remove(spec => spec.IsRemote && spec.ID == mess.PlayerID);
+            Game.DataEngine.Spectators.Remove(spec => spec.IsRemote && spec.ID == mess.PlayerID);
         }
 
-        private static void HandleGameSettingsRequest(GameSettingsRequest mess)
+        private void HandleGameSettingsRequest(GameSettingsRequest mess)
         {
-            AssaultWing.Instance.SelectedArenaName = mess.ArenaToPlay;
+            Game.SelectedArenaName = mess.ArenaToPlay;
         }
 
-        private static void HandleArenaFinishMessage(ArenaFinishMessage mess)
+        private void HandleArenaFinishMessage(ArenaFinishMessage mess)
         {
-            AssaultWingCore.Instance.FinishArena();
+            Game.FinishArena();
         }
 
-        private static void HandlePlayerControlsMessage(PlayerControlsMessage mess)
+        private void HandlePlayerControlsMessage(PlayerControlsMessage mess)
         {
-            var player = AssaultWingCore.Instance.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
+            var player = Game.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
             if (player == null || player.ConnectionID != mess.ConnectionID)
             {
                 // A client sent controls for a nonexisting player or a player that
@@ -210,48 +210,47 @@ namespace AW2.Net.MessageHandling
                 setRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
             var playerPlayer = player as Player;
             if (playerPlayer != null && playerPlayer.Ship != null && playerPlayer.Ship.LocationPredicter != null)
-                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageGameTime(mess));
+                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, Game.NetworkEngine.GetMessageGameTime(mess));
         }
 
-        private static void HandlePlayerMessageMessageOnServer(PlayerMessageMessage mess)
+        private void HandlePlayerMessageMessageOnServer(PlayerMessageMessage mess)
         {
             if (mess.AllPlayers)
             {
-                var otherPlayers = AssaultWingCore.Instance.DataEngine.Players
-                    .Where(plr => plr.ConnectionID != mess.ConnectionID);
+                var otherPlayers = Game.DataEngine.Players.Where(plr => plr.ConnectionID != mess.ConnectionID);
                 foreach (var player in otherPlayers) player.Messages.Add(mess.Message);
             }
             else
             {
-                var player = AssaultWingCore.Instance.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
+                var player = Game.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
                 if (player != null)
                 {
                     if (player.IsRemote)
-                        AssaultWing.Instance.NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(mess);
+                        Game.NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(mess);
                     else
                         HandlePlayerMessageMessageOnClient(mess);
                 }
             }
         }
 
-        private static void HandlePlayerMessageMessageOnClient(PlayerMessageMessage mess)
+        private void HandlePlayerMessageMessageOnClient(PlayerMessageMessage mess)
         {
             if (mess.AllPlayers) throw new NotImplementedException("Client cannot broadcast player text messages");
-            var player = AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
+            var player = Game.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
             if (player != null) player.Messages.Add(mess.Message);
         }
 
-        private static void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)
+        private void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)
         {
-            var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(mess);
-            var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
+            var framesAgo = Game.NetworkEngine.GetMessageAge(mess);
+            var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
             if (player == null) return; // Silently ignoring update for an unknown player
             mess.Read(player, SerializationModeFlags.VaryingDataFromServer, framesAgo);
         }
 
-        private static void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)
+        private void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)
         {
-            var net = AssaultWing.Instance.NetworkEngine;
+            var net = Game.NetworkEngine;
             string clientDiff, serverDiff;
             int diffIndex;
             bool differ = MiscHelper.FirstDifference(mess.CanonicalStrings, CanonicalString.CanonicalForms, out clientDiff, out serverDiff, out diffIndex);
@@ -278,9 +277,9 @@ namespace AW2.Net.MessageHandling
             }
         }
 
-        private static void HandleSpectatorSettingsRequestOnServer(SpectatorSettingsRequest mess)
+        private void HandleSpectatorSettingsRequestOnServer(SpectatorSettingsRequest mess)
         {
-            var clientConn = AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
+            var clientConn = Game.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
             if (clientConn.ConnectionStatus.IsDropped) return;
             clientConn.ConnectionStatus.IsPlayingArena = mess.IsGameClientPlayingArena;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
@@ -296,7 +295,7 @@ namespace AW2.Net.MessageHandling
             }
             else
             {
-                var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
+                var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
                 if (player == null) throw new NetworkException("Settings update for unknown spectator ID " + mess.SpectatorID);
                 if (player.ConnectionID != mess.ConnectionID)
                 {
@@ -312,9 +311,9 @@ namespace AW2.Net.MessageHandling
             }
         }
 
-        private static void HandleGobUpdateMessageOnClient(GobUpdateMessage mess, int framesAgo)
+        private void HandleGobUpdateMessageOnClient(GobUpdateMessage mess, int framesAgo)
         {
-            var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            var arena = Game.DataEngine.Arena;
             foreach (var collisionEvent in mess.CollisionEvents)
             {
                 var gob1 = arena.Gobs.FirstOrDefault(gob => gob.ID == collisionEvent.Gob1ID);
@@ -340,10 +339,10 @@ namespace AW2.Net.MessageHandling
             }, framesAgo, SerializationModeFlags.VaryingDataFromServer);
         }
 
-        private static void HandleGobUpdateMessageOnServer(GobUpdateMessage mess, int framesAgo)
+        private void HandleGobUpdateMessageOnServer(GobUpdateMessage mess, int framesAgo)
         {
-            var arena = AssaultWingCore.Instance.DataEngine.Arena;
-            var messOwner = AssaultWingCore.Instance.DataEngine.Spectators.SingleOrDefault(plr => plr.ConnectionID == mess.ConnectionID);
+            var arena = Game.DataEngine.Arena;
+            var messOwner = Game.DataEngine.Spectators.SingleOrDefault(plr => plr.ConnectionID == mess.ConnectionID);
             if (messOwner == null) return;
             mess.ReadGobs(gobId =>
             {
@@ -352,39 +351,39 @@ namespace AW2.Net.MessageHandling
             }, framesAgo, SerializationModeFlags.VaryingDataFromClient);
         }
 
-        private static void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)
+        private void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)
         {
-            AssaultWingCore.Instance.LogicEngine.GobsToKillOnClient.Add(mess.GobID);
+            Game.LogicEngine.GobsToKillOnClient.Add(mess.GobID);
         }
 
         #endregion
 
-        private static Player GetTempPlayer()
+        private Player GetTempPlayer()
         {
-            return new Player(AssaultWing.Instance, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
+            return new Player(Game, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
         }
 
-        private static Spectator CreateAndAddNewSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
+        private Spectator CreateAndAddNewSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
             Spectator newSpectator = null;
             switch (mess.Subclass)
             {
                 case SpectatorSettingsRequest.SubclassType.Player:
-                    newSpectator = new Player(AssaultWing.Instance, "<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID);
+                    newSpectator = new Player(Game, "<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID);
                     break;
                 case SpectatorSettingsRequest.SubclassType.BotPlayer:
-                    newSpectator = new BotPlayer(AssaultWing.Instance, mess.ConnectionID);
+                    newSpectator = new BotPlayer(Game, mess.ConnectionID);
                     break;
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
             mess.Read(newSpectator, mode, 0);
-            AssaultWingCore.Instance.DataEngine.Spectators.Add(newSpectator);
+            Game.DataEngine.Spectators.Add(newSpectator);
             return newSpectator;
         }
 
-        private static void ConnectionResultOnClientCallback(Result<Connection> result)
+        private void ConnectionResultOnClientCallback(Result<Connection> result)
         {
-            var net = AssaultWing.Instance.NetworkEngine;
+            var net = Game.NetworkEngine;
             if (net.GameServerConnection != null)
             {
                 // Silently ignore extra server connection attempts.
@@ -395,7 +394,7 @@ namespace AW2.Net.MessageHandling
             if (!result.Successful)
             {
                 Log.Write("Failed to connect to server: " + result.Error);
-                AssaultWing.Instance.StopClient("Failed to connect to server.");
+                Game.StopClient("Failed to connect to server.");
             }
             else
             {
@@ -408,7 +407,7 @@ namespace AW2.Net.MessageHandling
                     GameClientKey = net.GetAssaultWingInstanceKey(),
                 };
                 net.GameServerConnection.Send(joinRequest);
-                AssaultWing.Instance.MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
+                Game.MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
             }
         }
     }

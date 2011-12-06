@@ -44,7 +44,7 @@ namespace AW2.Core.GameComponents
         {
             if (_initialized) return;
             _initialized = true;
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(mess => { }));
+            Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetStandaloneMenuHandlers(mess => { }));
             Game.NetworkEngine.ConnectToManagementServer();
             if (!Game.StartServer())
             {

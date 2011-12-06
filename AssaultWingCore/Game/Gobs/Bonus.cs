@@ -99,6 +99,7 @@ namespace AW2.Game.Gobs
             });
             var playerOwner = host.Owner as Player;
             if (playerOwner != null) playerOwner.Messages.Add(new PlayerMessage("You collected " + gameAction.BonusText, playerOwner.Color));
+            if (host.Owner != null) Game.Stats.Send(new { Bonus = _bonusActionTypeName.Value, Player = host.Owner.LoginToken });
         }
     }
 }

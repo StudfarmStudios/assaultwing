@@ -15,7 +15,8 @@ namespace AW2.Game.GobUtils
 
         public static SubjectWord FromProperNoun(string name)
         {
-            return new SubjectWord(name, name + "'s", "his", "himself");
+            var genetiveSuffix = name.Length > 0 && name[name.Length - 1] == 's' ? "'" : "'s";
+            return new SubjectWord(name, name + genetiveSuffix, "his", "himself");
         }
 
         private SubjectWord(string nominative, string genetive, string genetivePronoun, string reflexiveProunoun)

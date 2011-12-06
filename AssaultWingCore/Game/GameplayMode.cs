@@ -66,16 +66,18 @@ namespace AW2.Game
         public int Kills { get; private set; }
         public int Deaths { get; private set; }
         public int SpectatorID { get; private set; }
+        public string LoginToken { get; private set; }
 
-        public Standing(string name, Color color, bool isRemote, int score, int kills, int deaths, int spectatorID)
+        public Standing(Spectator spec, int score)
         {
-            Name = name;
-            Color = color;
-            IsRemote = isRemote;
+            Name = spec.Name;
+            Color = spec.Color;
+            IsRemote = spec.IsRemote;
             Score = score;
-            Kills = kills;
-            Deaths = deaths;
-            SpectatorID = spectatorID;
+            Kills = spec.ArenaStatistics.Kills;
+            Deaths = spec.ArenaStatistics.Deaths;
+            SpectatorID = spec.ID;
+            LoginToken = spec is Player ? ((Player)spec).LoginToken : "";
         }
     }
 
@@ -122,7 +124,7 @@ namespace AW2.Game
                 let stats = spec.ArenaStatistics
                 let score = CalculateScore(stats)
                 orderby score descending, stats.Kills descending, spec.Name
-                select new Standing(spec.Name, spec.Color, spec.IsRemote, score, stats.Kills, stats.Deaths, spec.ID);
+                select new Standing(spec, score);
         }
 
         public bool ArenaFinished(Arena arena, IEnumerable<Spectator> spectators)

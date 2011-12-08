@@ -257,6 +257,7 @@ namespace AW2.Game.GobUtils
                     FiringOperator.StartFiring();
                     if (_fireSoundType == FiringEffectPlayType.Once) PlayFiringSound();
                     if (_fireEffectType == FiringEffectPlayType.Once) CreateVisuals();
+                    Owner.Game.Stats.Send(new { Fired = SpectatorOwner.LoginToken, Role = OwnerHandle, Type = TypeName.Value });
                     break;
                 case FiringResult.Failure:
                     PlayFiringFailedSound();

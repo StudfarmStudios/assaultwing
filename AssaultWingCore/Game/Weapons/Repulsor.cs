@@ -32,7 +32,6 @@ namespace AW2.Game.Weapons
         protected override void ShootImpl()
         {
             _radialFlow.Activate(Owner, Arena.TotalTime);
-            Owner.Game.Stats.Send(new { Fired = PlayerOwner.LoginToken, Role = OwnerHandle, Type = TypeName.Value });
         }
 
         protected override void CreateVisuals()

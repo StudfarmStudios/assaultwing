@@ -92,7 +92,6 @@ namespace AW2.Game.Weapons
 
         private void CreateShot(int boneIndex, float barrelRotation)
         {
-            if (FiringOperator.ShotsLeft == ShotCount) Owner.Game.Stats.Send(new { Fired = PlayerOwner.LoginToken, Role = OwnerHandle, Type = TypeName.Value });
             var direction = barrelRotation + Owner.Rotation + GetShotAngleVariation();
             var kickSpeed = _shotSpeed + _shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             var kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);

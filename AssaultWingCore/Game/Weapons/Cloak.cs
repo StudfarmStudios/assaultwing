@@ -125,7 +125,6 @@ namespace AW2.Game.Weapons
             _fadeStartTime = Owner.Arena.TotalTime;
             _deactivationSafetyTimeout = Owner.Arena.TotalTime + _fadeOutDuration;
             _applyAlpha = true;
-            Owner.Game.Stats.Send(new { Cloaked = PlayerOwner.LoginToken, Role = OwnerHandle, Type = TypeName.Value });
         }
 
         private void DeactivateCloak()

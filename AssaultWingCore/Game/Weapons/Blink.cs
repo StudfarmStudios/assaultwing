@@ -92,7 +92,6 @@ namespace AW2.Game.Weapons
             _safetyTimeout = Owner.Arena.TotalTime + SafetyTimeoutInterval;
             _startPos = Owner.Pos;
             Owner.Disable(); // re-enabled in Update()
-            Owner.Game.Stats.Send(new { Blinked = PlayerOwner.LoginToken, Role = OwnerHandle, Type = TypeName.Value });
         }
 
         protected override void CreateVisuals()

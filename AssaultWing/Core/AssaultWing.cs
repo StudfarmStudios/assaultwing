@@ -236,7 +236,7 @@ namespace AW2.Core
                 Stats.Send(new
                 {
                     Arena = DataEngine.Arena.Info.Name.Value,
-                    Players = DataEngine.Players.Select(plr => plr.LoginToken),
+                    Players = DataEngine.Spectators.Select(spec => spec.LoginToken),
                 });
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
                 DataEngine.Arena.GobAdded += gob => { if (gob.IsRelevant) _addedGobs.Add(gob); };

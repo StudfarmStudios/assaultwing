@@ -124,8 +124,11 @@ namespace AW2.Net.ConnectionUtils
 
         protected void CheckSocketError(SocketAsyncEventArgs args)
         {
-            if (args.SocketError == SocketError.Success || args.SocketError == SocketError.ConnectionReset) return;
-            Errors.Do(queue => queue.Enqueue(string.Format("Error in {0}: {1}", args.LastOperation, args.SocketError)));
+            if (args.SocketError == SocketError.Success) return;
+            if (args.SocketError == SocketError.ConnectionReset)
+                Errors.Do(queue => queue.Enqueue(string.Format("Connection reset during {0}", args.LastOperation)));
+            else
+                Errors.Do(queue => queue.Enqueue(string.Format("Error in {0}: {1}", args.LastOperation, args.SocketError)));
         }
 
         protected void UseSocket(Action<Socket> action)

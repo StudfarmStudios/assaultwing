@@ -109,6 +109,12 @@ namespace AW2.Core
                 Components.Add(OverlayDialog);
             }
             AW2.Graphics.PlayerViewport.CustomOverlayCreators.Add(viewport => new SystemStatusOverlay(viewport));
+
+            // Replace the dummy StatsBase by a proper StatsSender.
+            Components.Remove(comp => comp is StatsBase);
+            Stats = new StatsSender(this, 7);
+            Components.Add(Stats);
+            Stats.Enabled = true;
         }
 
         public override void Update(AWGameTime gameTime)
@@ -231,13 +237,9 @@ namespace AW2.Core
         {
             Log.Write("Saving settings to file");
             Settings.ToFile();
+            Stats.BasicInfoSent = false;
             if (NetworkMode == NetworkMode.Server)
             {
-                Stats.Send(new
-                {
-                    Arena = DataEngine.Arena.Info.Name.Value,
-                    Players = DataEngine.Spectators.Select(spec => spec.LoginToken),
-                });
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
                 DataEngine.Arena.GobAdded += gob => { if (gob.IsRelevant) _addedGobs.Add(gob); };
                 DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
@@ -279,7 +281,6 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
-            Stats = new StatsSender(this);
             if (Settings.Players.BotsEnabled) DataEngine.Spectators.Add(new BotPlayer(this));
             try
             {
@@ -306,7 +307,6 @@ namespace AW2.Core
                 throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
             DeactivateAllMessageHandlers();
             NetworkEngine.StopServer();
-            Stats = new StatsBase();
             NetworkMode = NetworkMode.Standalone;
             DataEngine.RemoveRemoteSpectators();
         }
@@ -419,6 +419,7 @@ namespace AW2.Core
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             EnsureArenaLoadingStopped();
+            Stats.Send(new { ArenaFinished = "" });
             if (CommandLineOptions.DedicatedServer)
             {
                 DataEngine.ClearGameState();
@@ -430,7 +431,6 @@ namespace AW2.Core
                 _clearGameDataWhenEnteringMenus = true;
                 var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray();
                 ShowDialog(new GameOverOverlayDialogData(this, standings) { GroupName = "Game over" });
-                Stats.Send(new { ArenaStandings = standings });
             }
         }
 

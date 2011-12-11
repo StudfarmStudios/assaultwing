@@ -76,6 +76,17 @@ namespace AW2.Game
             Game.DataEngine.Arena.PerformNonphysicalCollisions(allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
             KillGobsOnClient();
 
+            if (!Game.Stats.BasicInfoSent && Game.DataEngine.Arena != null)
+            {
+                Game.Stats.Send(new { Server = Game.Settings.Net.GameServerName });
+                Game.Stats.Send(new
+                {
+                    Arena = Game.DataEngine.Arena.Info.Name.Value,
+                    Players = Game.DataEngine.Spectators.Select(spec => spec.LoginToken),
+                });
+                Game.Stats.BasicInfoSent = true;
+            }
+
             // Check for arena end. Network games end when the game server presses Esc.
             if (Game.NetworkMode == NetworkMode.Standalone)
             {

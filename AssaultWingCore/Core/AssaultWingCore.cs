@@ -23,7 +23,6 @@ namespace AW2.Core
     {
         #region AssaultWing fields
 
-        private StatsBase _stats;
         private UIEngineImpl _uiEngine;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
@@ -65,19 +64,6 @@ namespace AW2.Core
                     : System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }
         }
-        public StatsBase Stats
-        {
-            get
-            {
-                if (_stats == null) _stats = new StatsBase();
-                return _stats;
-            }
-            protected set
-            {
-                if (_stats != null) _stats.Dispose();
-                _stats = value;
-            }
-        }
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; private set; }
         public CommandLineOptions CommandLineOptions { get; private set; }
@@ -88,6 +74,7 @@ namespace AW2.Core
         public PostFrameLogicEngine PostFrameLogicEngine { get; private set; }
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngine SoundEngine { get; private set; }
+        public StatsBase Stats { get; set; }
 
         /// <summary>
         /// The current mode of network operation of the game.
@@ -131,14 +118,11 @@ namespace AW2.Core
             Log.Write("Assault Wing version " + Version);
             ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             CommandLineOptions = args;
-
             Log.Write("Loading settings from " + SettingsDirectory);
             Settings = AWSettings.FromFile(this, SettingsDirectory);
             InitializeGraphics();
-
             NetworkMode = NetworkMode.Standalone;
             GameTime = new AWGameTime();
-
             InitializeComponents();
         }
 
@@ -157,6 +141,7 @@ namespace AW2.Core
             LogicEngine = new LogicEngine(this, 3);
             PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
             _uiEngine = new UIEngineImpl(this, 1);
+            Stats = new StatsBase(this, 7);
             // TODO: Create a dummy SoundEngine for dedicated server
             switch (Settings.Sound.AudioEngineType)
             {
@@ -174,6 +159,7 @@ namespace AW2.Core
             Components.Add(PostFrameLogicEngine);
             Components.Add(SoundEngine);
             Components.Add(_uiEngine);
+            Components.Add(Stats);
             SoundEngine.Enabled = !CommandLineOptions.DedicatedServer;
             _uiEngine.Enabled = true;
 

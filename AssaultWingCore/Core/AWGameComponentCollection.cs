@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AW2.Core
 {
@@ -10,6 +11,11 @@ namespace AW2.Core
         {
             _components.Add(component);
             _components.Sort((a, b) => a.UpdateOrder.CompareTo(b.UpdateOrder));
+        }
+
+        public void Remove(Predicate<AWGameComponent> match)
+        {
+            _components.RemoveAll(match);
         }
 
         public IEnumerator<AWGameComponent> GetEnumerator()

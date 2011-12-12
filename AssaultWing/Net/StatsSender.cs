@@ -74,12 +74,20 @@ namespace AW2.Net
         {
             if (Game.NetworkMode != NetworkMode.Server || _isConnecting || !_connectTimer.IsElapsed) return;
             _isConnecting = true;
-            var statsDataSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var statsEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.StatsServerAddress);
-            statsEndPoint.Port = Game.Settings.Net.StatsDataPort;
-            var args = new SocketAsyncEventArgs { RemoteEndPoint = statsEndPoint };
-            args.Completed += ConnectCompleted;
-            statsDataSocket.ConnectAsync(args);
+            try
+            {
+                var statsDataSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                var statsEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.StatsServerAddress);
+                statsEndPoint.Port = Game.Settings.Net.StatsDataPort;
+                var args = new SocketAsyncEventArgs { RemoteEndPoint = statsEndPoint };
+                args.Completed += ConnectCompleted;
+                statsDataSocket.ConnectAsync(args);
+            }
+            catch (ArgumentException)
+            {
+                // May happen during MiscHelper.ParseIPEndPoint
+                _isConnecting = false;
+            }
         }
 
         private void SendToStatsServer()

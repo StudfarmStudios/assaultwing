@@ -65,7 +65,7 @@ namespace AW2.Core
             }
         }
         public int ManagedThreadID { get; private set; }
-        public AWSettings Settings { get; private set; }
+        public AWSettings Settings { get; set; }
         public CommandLineOptions CommandLineOptions { get; private set; }
         public PhysicsEngine PhysicsEngine { get; private set; }
         public DataEngine DataEngine { get; private set; }

@@ -15,10 +15,20 @@ namespace AW2.Core.GameComponents
         private enum EventType { ARENA_FINISH, ARENA_INIT };
 
         private bool _initialized;
-        private List<ArenaInfo> _arenaInfos;
+        private IEnumerable<ArenaInfo> ArenaInfos
+        {
+            get
+            {
+                return
+                    from arena in Game.DataEngine.GetTypeTemplates<Arena>()
+                    let info = arena.Info
+                    where !Settings.DedicatedServerArenaNames.Any() || Settings.DedicatedServerArenaNames.Contains(info.Name)
+                    select info;
+            }
+        }
         private TimeSpan _nextEvent;
         private EventType _nextEventType;
-        private string _lastArenaName;
+        private string _previousArenaName;
         private List<TimeSpan> _arenaTimeoutMessages;
 
         public new AssaultWing Game { get; private set; }
@@ -53,12 +63,6 @@ namespace AW2.Core.GameComponents
             }
             else
             {
-                _arenaInfos = (
-                    from arena in Game.DataEngine.GetTypeTemplates<Arena>()
-                    let info = arena.Info
-                    where !Settings.DedicatedServerArenaNames.Any() || Settings.DedicatedServerArenaNames.Contains(info.Name)
-                    select info
-                    ).ToList();
                 Game.SelectedArenaName = ChooseArenaName();
             }
         }
@@ -88,6 +92,7 @@ namespace AW2.Core.GameComponents
                     _nextEvent = Now + Settings.DedicatedServerArenaFinishCooldown;
                     _nextEventType = EventType.ARENA_INIT;
                     Game.FinishArena();
+                    Game.Settings = AWSettings.FromFile(Game, AssaultWingCore.SettingsDirectory);
                     Game.SelectedArenaName = ChooseArenaName();
                     break;
                 case EventType.ARENA_INIT:
@@ -108,10 +113,11 @@ namespace AW2.Core.GameComponents
 
         private string ChooseArenaName()
         {
-            var arenaIndex = RandomHelper.GetRandomInt(_arenaInfos.Count);
-            var candidate = _arenaInfos[arenaIndex].Name;
-            if (candidate == _lastArenaName) candidate = _arenaInfos[(arenaIndex + 1) % _arenaInfos.Count].Name;
-            _lastArenaName = candidate;
+            var arenaInfos = ArenaInfos.ToArray();
+            var arenaIndex = RandomHelper.GetRandomInt(arenaInfos.Length);
+            var candidate = arenaInfos[arenaIndex].Name;
+            if (candidate == _previousArenaName) candidate = arenaInfos[(arenaIndex + 1) % arenaInfos.Length].Name;
+            _previousArenaName = candidate;
             return candidate;
         }
     }

@@ -35,7 +35,7 @@
   <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>rocket</shotTypeName>
   <shotSpeed>150</shotSpeed>
-  <loadTime>4</loadTime>
+  <loadTime>4.5</loadTime>
   <fireCharge>400</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <shotCount>3</shotCount>

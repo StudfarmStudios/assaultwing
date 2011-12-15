@@ -92,7 +92,7 @@ namespace AW2.Core.GameComponents
                     _nextEvent = Now + Settings.DedicatedServerArenaFinishCooldown;
                     _nextEventType = EventType.ARENA_INIT;
                     Game.FinishArena();
-                    Game.Settings = AWSettings.FromFile(Game, AssaultWingCore.SettingsDirectory);
+                    RefreshGameSettings();
                     Game.SelectedArenaName = ChooseArenaName();
                     break;
                 case EventType.ARENA_INIT:
@@ -109,6 +109,15 @@ namespace AW2.Core.GameComponents
                     break;
                 default: throw new ApplicationException("Invalid event type " + _nextEventType);
             }
+        }
+
+        private void RefreshGameSettings()
+        {
+            Game.Settings = AWSettings.FromFile(Game, AssaultWingCore.SettingsDirectory);
+            if (Game.Settings.Players.BotsEnabled && !Game.DataEngine.Spectators.OfType<BotPlayer>().Any())
+                Game.DataEngine.Spectators.Add(new BotPlayer(Game));
+            if (!Game.Settings.Players.BotsEnabled)
+                Game.DataEngine.Spectators.Remove(spec => spec is BotPlayer);
         }
 
         private string ChooseArenaName()

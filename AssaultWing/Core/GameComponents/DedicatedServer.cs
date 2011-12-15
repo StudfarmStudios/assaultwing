@@ -55,7 +55,7 @@ namespace AW2.Core.GameComponents
             if (_initialized) return;
             _initialized = true;
             Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetStandaloneMenuHandlers(mess => { }));
-            Game.NetworkEngine.ConnectToManagementServer();
+            Game.NetworkEngine.EnsureConnectionToManagementServer();
             if (!Game.StartServer())
             {
                 AssaultWingProgram.Instance.Exit();

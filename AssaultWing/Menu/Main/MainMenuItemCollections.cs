@@ -110,7 +110,7 @@ namespace AW2.Menu.Main
         {
             try
             {
-                Game.NetworkEngine.ConnectToManagementServer();
+                Game.NetworkEngine.EnsureConnectionToManagementServer();
                 return true;
             }
             catch (ArgumentException e)

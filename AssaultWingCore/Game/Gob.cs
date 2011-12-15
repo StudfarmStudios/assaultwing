@@ -11,6 +11,7 @@ using AW2.Graphics;
 using AW2.Graphics.Content;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
+using System.Collections.Specialized;
 
 namespace AW2.Game
 {
@@ -585,6 +586,12 @@ namespace AW2.Game
         /// Time of last network update, in real time. Used only on the game server.
         /// </summary>
         public TimeSpan LastNetworkUpdate { get; set; }
+
+        /// <summary>
+        /// Does the gob exist on a client. Indexed by <c>1 &lt;&lt; N</c>, where N is the connection ID.
+        /// Used only on the game server.
+        /// </summary>
+        public BitVector32 ClientStatus;
 
         #endregion Network properties
 

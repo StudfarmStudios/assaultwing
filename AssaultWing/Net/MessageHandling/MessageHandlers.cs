@@ -57,12 +57,12 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ArenaFinishMessage>(MessageHandlerBase.SourceType.Server, HandleArenaFinishMessage);
         }
 
-        public IEnumerable<MessageHandlerBase> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
+        public IEnumerable<MessageHandlerBase> GetClientGameplayHandlers()
         {
             var networkEngine = Game.NetworkEngine;
             yield return new MessageHandler<PlayerUpdateMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
-            yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, handleGobCreationMessage) { OneMessageAtATime = true };
+            yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.HandleGobCreationMessage) { OneMessageAtATime = true };
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
         }
@@ -166,7 +166,7 @@ namespace AW2.Net.MessageHandling
                 {
                     // The network connection may have been cut during arena loading.
                     if (Game.NetworkMode != NetworkMode.Client) return;
-                    ActivateHandlers(GetClientGameplayHandlers(Game.HandleGobCreationMessage));
+                    ActivateHandlers(GetClientGameplayHandlers());
                     Game.IsClientAllowedToStartArena = true;
                     Game.StartArenaButStayInMenu();
                 });

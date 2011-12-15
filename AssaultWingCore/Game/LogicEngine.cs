@@ -108,6 +108,7 @@ namespace AW2.Game
             }
             GobsToKillOnClient = unfoundGobs;
 #if DEBUG
+            // TODO !!! Add a timestamp to each gob-to-kill. Remove the gob if older than, say, 10 seconds.
             if (GobsToKillOnClient.Count() >= _unfoundGobsToDeleteOnClientReportLimit )
             {
                 Log.Write("WARNING: {0} unfound gobs to kill on client", GobsToKillOnClient.Count());

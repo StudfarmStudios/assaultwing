@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -32,6 +33,7 @@ namespace AW2.Net.Connections
     {
         #region Fields
 
+        private const int MAX_CONNECTIONS = 32;
         private static readonly TimeSpan SIMULATED_NETWORK_LAG = TimeSpan.FromSeconds(0.0);
 
         /// <summary>
@@ -42,8 +44,7 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Least int that is known not to have been used as a connection identifier.
         /// </summary>
-        /// <see cref="Connection.Id"/>
-        private static int g_leastUnusedID = 0;
+        private static Queue<int> g_unusedIDs = new Queue<int>(Enumerable.Range(0, MAX_CONNECTIONS));
 
         private static List<ConnectAsyncState> g_connectAsyncStates = new List<ConnectAsyncState>();
 
@@ -67,7 +68,7 @@ namespace AW2.Net.Connections
         public AssaultWing Game { get; private set; }
 
         /// <summary>
-        /// Unique identifier of the connection. Nonnegative.
+        /// Unique identifier of the connection. At least zero and less than <see cref="MAX_CONNECTIONS"/>.
         /// </summary>
         public int ID { get; private set; }
 
@@ -307,6 +308,7 @@ namespace AW2.Net.Connections
         protected virtual void DisposeImpl(bool error)
         {
             _tcpSocket.Dispose();
+            g_unusedIDs.Enqueue(ID);
         }
 
         /// <summary>
@@ -331,7 +333,7 @@ namespace AW2.Net.Connections
         protected Connection(AssaultWing game)
         {
             Game = game;
-            ID = g_leastUnusedID++;
+            ID = g_unusedIDs.Dequeue();
             Name = "Connection " + ID;
             Messages = new ThreadSafeWrapper<ITypedQueue<Message>>(new TypedQueue<Message>());
             PingInfo = new PingInfo(this);

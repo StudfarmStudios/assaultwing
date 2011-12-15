@@ -176,11 +176,13 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Finds a management server and initialises <see cref="ManagementServerConnection"/>.
+        /// Does nothing if a connection to the management server already exists.
+        /// Otherwise, finds a management server and initialises <see cref="ManagementServerConnection"/>.
         /// May use DNS and take some time to finish. May throw <see cref="ArgumentException"/>.
         /// </summary>
-        public void ConnectToManagementServer()
+        public void EnsureConnectionToManagementServer()
         {
+            if (_managementServerConnection != null) return;
             var managementServerEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.ManagementServerAddress);
             if (managementServerEndPoint.Port == 0)
                 managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
@@ -600,19 +602,6 @@ namespace AW2.Net
                 WallCount = Game.DataEngine.Arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count()
             };
             conn.Send(startGameMessage);
-            var gobCreationMessage = new GobCreationMessage { ArenaID = Game.DataEngine.Arena.ID };
-            foreach (var gob in Game.DataEngine.Arena.Gobs.Where(g => g.IsRelevant))
-            {
-                gobCreationMessage.AddGob(gob);
-                // HACK: Split gobs into small messages so that a client initializing its arena
-                // has chances to draw its progress bar.
-                if (gobCreationMessage.GobCount == 2)
-                {
-                    conn.Send(gobCreationMessage);
-                    gobCreationMessage = new GobCreationMessage { ArenaID = Game.DataEngine.Arena.ID };
-                }
-            }
-            if (gobCreationMessage.GobCount > 0) conn.Send(gobCreationMessage);
             conn.ConnectionStatus.CurrentArenaName = arenaName;
         }
 
@@ -682,6 +671,13 @@ namespace AW2.Net
                 _managementServerConnection = null;
             if (GameServerConnection != null && GameServerConnection.IsDisposed)
                 GameServerConnection = null;
+            if (Game.DataEngine.Arena != null)
+            {
+                foreach (var conn in GameClientConnections)
+                    if (conn.IsDisposed)
+                        foreach (var gob in Game.DataEngine.Arena.Gobs.GameplayLayer.Gobs)
+                            gob.ClientStatus[1 << conn.ID] = false;
+            }
             GameClientConnections.RemoveAll(c => c.IsDisposed);
         }
 

@@ -23,7 +23,6 @@ namespace AW2.Core
     {
         private GameState _gameState;
         private Control _escapeControl, _screenShotControl;
-        private List<Gob> _addedGobs;
         private TimeSpan _lastGameSettingsSent;
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
@@ -87,7 +86,6 @@ namespace AW2.Core
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
-            _addedGobs = new List<Gob>();
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
@@ -241,7 +239,6 @@ namespace AW2.Core
             if (NetworkMode == NetworkMode.Server)
             {
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-                DataEngine.Arena.GobAdded += gob => { if (gob.IsRelevant) _addedGobs.Add(gob); };
                 DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
             }
             if (GameState != GameState.GameAndMenu)
@@ -416,10 +413,11 @@ namespace AW2.Core
         protected override void FinishArenaImpl()
         {
             IsClientAllowedToStartArena = false;
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             EnsureArenaLoadingStopped();
-            Stats.Send(new { ArenaFinished = "" });
+            var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray(); // ToArray takes a copy
+            Stats.Send(new { ArenaFinished = standings.Select(st => new { st.Name, st.LoginToken, st.Score, st.Kills, st.Deaths }).ToArray() });
             if (CommandLineOptions.DedicatedServer)
             {
                 DataEngine.ClearGameState();
@@ -429,7 +427,6 @@ namespace AW2.Core
             {
                 StopGameplay();
                 _clearGameDataWhenEnteringMenus = true;
-                var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray();
                 ShowDialog(new GameOverOverlayDialogData(this, standings) { GroupName = "Game over" });
             }
         }
@@ -675,14 +672,22 @@ namespace AW2.Core
 
         private void SendGobCreationMessage()
         {
+            if (NetworkMode != NetworkMode.Server) return;
             if (IsLoadingArena) return; // wait for arena load completion
             if (DataEngine.Arena == null) return; // happens if gobs are created on the frame the arena ends
-            if (NetworkMode == NetworkMode.Server && _addedGobs.Any())
+            foreach (var conn in NetworkEngine.GameClientConnections)
             {
+                // TODO HACK: Send max two walls in one message so that a client initializing its arena
+                // has chances to draw its progress bar.
+                var gobsToSend = DataEngine.Arena.Gobs.GameplayLayer.Gobs.Where(gob => gob.IsRelevant && !gob.ClientStatus[1 << conn.ID]).ToArray();
+                if (!gobsToSend.Any()) continue;
                 var message = new GobCreationMessage { ArenaID = DataEngine.Arena.ID };
-                foreach (var gob in _addedGobs) message.AddGob(gob);
-                _addedGobs.Clear();
-                NetworkEngine.SendToGameClients(message);
+                foreach (var gob in gobsToSend)
+                {
+                    message.AddGob(gob);
+                    gob.ClientStatus[1 << conn.ID] = true;
+                }
+                conn.Send(message);
             }
         }
 

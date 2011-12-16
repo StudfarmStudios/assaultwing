@@ -473,6 +473,7 @@ namespace AW2.Game
         public bool IsHiding { get; set; }
 
         public float AgeInGameSeconds { get { return _birthTime.SecondsAgoGameTime(); } }
+        public Vector2 BirthPos { get; private set; }
 
         /// <summary>
         /// Returns the world matrix of the gob, i.e., the translation from
@@ -623,19 +624,13 @@ namespace AW2.Game
             _depthLayer2D = 0.5f;
             _drawMode2D = new DrawMode2D(DrawModeType2D.None);
             _layerPreference = LayerPreferenceType.Front;
-            _pos = Vector2.Zero;
-            Move = Vector2.Zero;
-            _rotation = 0;
             _mass = 1;
             _modelName = (CanonicalString)"dummymodel";
             _scale = 1f;
             _birthGobTypes = new CanonicalString[0];
             _deathGobTypes = new CanonicalString[0];
             _collisionAreas = new CollisionArea[0];
-            DamageLevel = 0;
             _maxDamage = 100;
-            _birthTime = new TimeSpan(23, 59, 59);
-            _dead = false;
             _movable = true;
         }
 
@@ -748,6 +743,7 @@ namespace AW2.Game
         {
             EnsureHasID();
             _birthTime = Arena.TotalTime;
+            BirthPos = Pos;
             LastNetworkUpdate = Arena.TotalTime;
             LoadContent();
             if (Arena.IsForPlaying)
@@ -1156,6 +1152,7 @@ namespace AW2.Game
         /// to resolve the overlap.</param>
         public virtual Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
         {
+            // TODO !!! Split Collide into CollideReversible and CollideIrreversible
             return Arena.CollisionSideEffectType.None;
         }
 

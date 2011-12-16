@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
@@ -83,9 +82,10 @@ namespace AW2.Game.Weapons
 
         private void CreateShot(Gob source, int sourceBoneIndex, Gob target, int chainIndex)
         {
+            var birthPos = source.GetNamedPosition(sourceBoneIndex);
             Gob.CreateGob<Lightning>(Owner.Game, _shotTypeName, shot =>
             {
-                shot.ResetPos(Vector2.Zero, Vector2.Zero, Gob.DEFAULT_ROTATION); // pos not used but must be initialized
+                shot.ResetPos(birthPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 shot.Owner = PlayerOwner;
                 shot.Shooter = source;
                 shot.ShooterBoneIndex = sourceBoneIndex;

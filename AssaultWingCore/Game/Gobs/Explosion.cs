@@ -69,7 +69,7 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            Game.SoundEngine.PlaySound(_sound.ToString(), this);
+            Game.SoundEngine.PlaySound(_sound, this);
             GobHelper.CreateGobs(_particleEngineNames, Arena, Pos);
             _radialFlow.Activate(this, Arena.TotalTime);
             Arena.MakeHole(Pos, _impactHoleRadius);
@@ -87,8 +87,9 @@ namespace AW2.Game.Gobs
         {
             if (!_damageTime.HasValue || _damageTime.Value == Game.GameTime.TotalGameTime)
             {
-                if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
+                if (sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Reversible))
                 {
+                    Game.Stats.SendHit(this, theirArea.Owner);
                     _damageTime = Game.GameTime.TotalGameTime;
                     float distance = theirArea.Area.DistanceTo(Pos);
                     float damage = _inflictDamage.Evaluate(distance);

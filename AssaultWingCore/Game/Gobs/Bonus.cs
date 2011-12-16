@@ -104,6 +104,7 @@ namespace AW2.Game.Gobs
                 Bonus = _bonusActionTypeName.Value,
                 Player = host.Owner.LoginToken,
                 Pos = Pos,
+                BirthPos = BirthPos,
             });
         }
     }

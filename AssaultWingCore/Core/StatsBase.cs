@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
+using AW2.Game;
 
 namespace AW2.Core
 {
@@ -19,5 +21,6 @@ namespace AW2.Core
         }
 
         public virtual void Send(object obj) { }
+        public virtual void SendHit(Gob hitter, Gob target, Vector2? pos = null) { }
     }
 }

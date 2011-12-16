@@ -131,6 +131,7 @@ namespace AW2.Game.Gobs
                 if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 {
                     theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
+                    Game.Stats.SendHit(this, theirArea.Owner);
                     result |= Arena.CollisionSideEffectType.Reversible;
                 }
             }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using Microsoft.Xna.Framework;
 using AW2.Core;
+using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.ConnectionUtils;
 
@@ -53,6 +55,20 @@ namespace AW2.Net
         {
             if (Game.NetworkMode != NetworkMode.Server || !Connected) return;
             _sendQueue.Append(Newtonsoft.Json.JsonConvert.SerializeObject(obj)).Append("\r\n");
+        }
+
+        public override void SendHit(Gob hitter, Gob target, Vector2? pos)
+        {
+            if (hitter.Owner == null || target.Owner == null) return;
+            Send(new
+            {
+                Hit = hitter.TypeName.Value,
+                HitOwner = hitter.Owner.LoginToken,
+                Target = target.TypeName.Value,
+                TargetOwner = target.Owner.LoginToken,
+                Pos = pos.HasValue ? pos.Value : hitter.Pos,
+                BirthPos = hitter.BirthPos,
+            });
         }
 
         private void HandleSocketErrors()

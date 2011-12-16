@@ -35,6 +35,7 @@ namespace AW2.Game.Gobs
                 if (collidedWithPhysical)
                 {
                     theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
+                    Game.Stats.SendHit(this, theirArea.Owner);
                     result |= Arena.CollisionSideEffectType.Reversible;
                 }
             }

@@ -104,13 +104,13 @@ namespace AW2.Game.Gobs
                 if (ship != null)
                 {
                     var canRepair = CanRepair(ship);
-                    if ((sideEffectTypes & Arena.CollisionSideEffectType.Reversible) != 0)
+                    if (sideEffectTypes.HasFlag(Arena.CollisionSideEffectType.Reversible))
                     {
                         EnsureEffectActive();
                         if (canRepair) RepairShip(ship);
                         result |= Arena.CollisionSideEffectType.Reversible;
                     }
-                    if ((sideEffectTypes & Arena.CollisionSideEffectType.Irreversible) != 0)
+                    if (sideEffectTypes.HasFlag(Arena.CollisionSideEffectType.Irreversible))
                     {
                         if (ShouldNotifyPlayerAboutRepairPending(ship))
                         {

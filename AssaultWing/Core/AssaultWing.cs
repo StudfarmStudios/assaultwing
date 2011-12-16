@@ -677,12 +677,10 @@ namespace AW2.Core
             if (DataEngine.Arena == null) return; // happens if gobs are created on the frame the arena ends
             foreach (var conn in NetworkEngine.GameClientConnections)
             {
-                // TODO HACK: Send max two walls in one message so that a client initializing its arena
-                // has chances to draw its progress bar.
-                var gobsToSend = DataEngine.Arena.Gobs.GameplayLayer.Gobs.Where(gob => gob.IsRelevant && !gob.ClientStatus[1 << conn.ID]).ToArray();
+                var gobsToSend = DataEngine.Arena.Gobs.GameplayLayer.Gobs.Where(gob => gob.IsRelevant && !gob.ClientStatus[1 << conn.ID]);
                 if (!gobsToSend.Any()) continue;
                 var message = new GobCreationMessage { ArenaID = DataEngine.Arena.ID };
-                foreach (var gob in gobsToSend)
+                foreach (var gob in gobsToSend.Take(10)) // Avoid sending lots of gobs in one frame.
                 {
                     message.AddGob(gob);
                     gob.ClientStatus[1 << conn.ID] = true;

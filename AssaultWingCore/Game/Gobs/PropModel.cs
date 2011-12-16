@@ -19,6 +19,7 @@ namespace AW2.Game.Gobs
         [RuntimeState]
         private CanonicalString _propModelName;
 
+        public override bool IsRelevant { get { return false; } }
         public override IEnumerable<CanonicalString> ModelNames
         {
             get { return base.ModelNames.Union(new[] { _propModelName }); }
@@ -42,7 +43,7 @@ namespace AW2.Game.Gobs
         protected override void SetRuntimeState(Gob runtimeState)
         {
             base.SetRuntimeState(runtimeState);
-            base.ModelName = _propModelName;
+            ModelName = _propModelName;
         }
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
@@ -52,7 +53,7 @@ namespace AW2.Game.Gobs
 #endif
             {
                 base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
+                if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
                 {
                     writer.Write((CanonicalString)_propModelName);
                 }
@@ -62,7 +63,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 _propModelName = reader.ReadCanonicalString();
                 ModelName = _propModelName;

@@ -552,6 +552,7 @@ namespace AW2.Game
                 Weapon2 = Weapon2Name.Value,
                 Device = ExtraDeviceName.Value,
                 Player = LoginToken,
+                Pos = Ship.Pos,
             });
         }
 

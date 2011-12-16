@@ -23,10 +23,19 @@ namespace AW2.Game.GobUtils
             {
                 default: throw new ApplicationException("Invalid DeathType " + coroner.DeathType);
                 case Coroner.DeathTypeType.Kill:
-                    coroner.Game.Stats.Send(new { Killer = coroner.ScoringSpectator.LoginToken, Victim = coroner.KilledSpectator.LoginToken });
+                    coroner.Game.Stats.Send(new
+                    {
+                        Killer = coroner.ScoringSpectator.LoginToken,
+                        Victim = coroner.KilledSpectator.LoginToken,
+                        Pos = coroner.DamageInfo.Target.Pos,
+                    });
                     break;
                 case Coroner.DeathTypeType.Suicide:
-                    coroner.Game.Stats.Send(new { Suicide = coroner.KilledSpectator.LoginToken });
+                    coroner.Game.Stats.Send(new
+                    {
+                        Suicide = coroner.KilledSpectator.LoginToken,
+                        Pos = coroner.DamageInfo.Target.Pos,
+                    });
                     break;
             }
         }

@@ -134,7 +134,7 @@ namespace AW2.Game.Weapons
             FiringOperator.NextFireSkipsLoadAndCharge = false;
             _runningSound.Stop();
             _fadeStartTime = Owner.Arena.TotalTime;
-            Owner.Game.Stats.Send(new { Uncloaked = PlayerOwner.LoginToken });
+            Owner.Game.Stats.Send(new { Uncloaked = PlayerOwner.LoginToken, Pos = Owner.Pos });
         }
 
         private void WeaponFiredHandler()

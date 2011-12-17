@@ -115,7 +115,10 @@ namespace AW2.Core.GameComponents
         {
             Game.Settings = AWSettings.FromFile(Game, AssaultWingCore.SettingsDirectory);
             if (Game.Settings.Players.BotsEnabled && !Game.DataEngine.Spectators.OfType<BotPlayer>().Any())
+            {
                 Game.DataEngine.Spectators.Add(new BotPlayer(Game));
+                Game.WebData.LoginPilots();
+            }
             if (!Game.Settings.Players.BotsEnabled)
                 Game.DataEngine.Spectators.Remove(spec => spec is BotPlayer);
         }

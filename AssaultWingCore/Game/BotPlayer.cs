@@ -44,7 +44,7 @@ namespace AW2.Game
             : base(game, connectionID)
         {
             _bots = new List<Gob>();
-            Name = "The Bots";
+            Name = AW2.Settings.PlayerSettings.BOTS_NAME;
             Color = Color.LightGray;
         }
 

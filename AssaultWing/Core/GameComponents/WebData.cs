@@ -31,13 +31,26 @@ namespace AW2.Net
             nextScheduledGameRequest.BeginGetResponse(NextScheduledGameRequestDone, nextScheduledGameRequest);
         }
 
-        public void LoginPilot()
+        public void LoginPilots()
         {
             if (ServicePointManager.ServerCertificateValidationCallback == null)
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) => true;
+            foreach (var spec in Game.DataEngine.Spectators)
+            {
+                if (!string.IsNullOrEmpty(spec.LoginToken)) continue;
+                var plrs = Game.Settings.Players;
+                var password = plrs.Player1.Name == spec.Name ? plrs.Player1.Password :
+                    spec.Name == AW2.Settings.PlayerSettings.BOTS_NAME ? plrs.BotsPassword :
+                    "";
+                BeginRequestPlayerLoginToken(spec.Name, password);
+            }
+        }
+
+        private void BeginRequestPlayerLoginToken(string name, string password)
+        {
             var net = Game.Settings.Net;
-            var player = Game.Settings.Players.Player1;
-            var loginRequest = WebRequest.Create(new UriBuilder("https", net.StatsServerAddress, net.StatsHttpsPort, "login") { Query = string.Format("username={0}&password={1}", player.Name, player.Password) }.Uri);
+            var loginRequest = WebRequest.Create(new UriBuilder("https", net.StatsServerAddress, net.StatsHttpsPort, "login")
+                { Query = string.Format("username={0}&password={1}", name, password) }.Uri);
             loginRequest.BeginGetResponse(LoginRequestDone, loginRequest);
         }
 
@@ -64,7 +77,7 @@ namespace AW2.Net
                 var token = response["token"];
                 if (token != null)
                 {
-                    var player = Game.DataEngine.Players.FirstOrDefault(plr => plr.Name == response["username"].ToString());
+                    var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.Name == response["username"].ToString());
                     if (player != null) player.LoginToken = token.ToString();
                 }
             });

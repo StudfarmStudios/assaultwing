@@ -279,6 +279,7 @@ namespace AW2.Core
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
             if (Settings.Players.BotsEnabled) DataEngine.Spectators.Add(new BotPlayer(this));
+            WebData.LoginPilots();
             try
             {
                 NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result,

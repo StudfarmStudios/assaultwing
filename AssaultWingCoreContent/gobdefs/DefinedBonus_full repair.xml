@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Bonus">
+  <typeName>full repair</typeName>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
+  <lifetime>30</lifetime>
+  <maxDamage>300</maxDamage>
+  <mass>50</mass>
+  <modelName>bonus</modelName>
+  <scale>0.12</scale>
+  <depthLayer2D>0.6</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <bonusActionTypeName>full repair bonus action</bonusActionTypeName>
+  <layerPreference>Front</layerPreference>
+  <movable>true</movable>
+  <birthGobTypes>
+    <Item>bonus birth</Item>
+    <Item>bonus blink</Item>
+  </birthGobTypes>
+  <deathGobTypes>
+    <Item>bonus death dust</Item>
+  </deathGobTypes>
+  <collectGobTypes>
+    <Item>bonus collect flash</Item>
+    <Item>bonus collect</Item>
+  </collectGobTypes>
+  <collisionAreas>
+    <Item>
+      <type>PhysicalOtherDamageableMovable</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>General</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>90</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
+    <Item>
+      <type>Receptor</type>
+      <collidesAgainst>PhysicalShip</collidesAgainst>
+      <cannotOverlap>None</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Activate</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>176</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
+  </collisionAreas>
+</GobType>

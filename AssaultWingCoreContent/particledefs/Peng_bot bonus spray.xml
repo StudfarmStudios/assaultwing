@@ -20,9 +20,7 @@
     <textureNames>
     </textureNames>
     <gobTypeNames>
-      <Item>upgradeweapon2</Item>
-      <Item>upgradeweapon1loadtime</Item>
-      <Item>repairsystem</Item>
+      <Item>full repair</Item>
     </gobTypeNames>
     <initialVelocity type="AW2.Game.Pengs.ConstantValue">
       <value>0</value>

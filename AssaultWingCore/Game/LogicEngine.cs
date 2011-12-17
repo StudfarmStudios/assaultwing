@@ -81,7 +81,7 @@ namespace AW2.Game
                 Game.Stats.Send(new { Server = Game.Settings.Net.GameServerName });
                 Game.Stats.Send(new
                 {
-                    Arena = Game.DataEngine.Arena.Info.Name.Value,
+                    Arena = new { Name = Game.DataEngine.Arena.Info.Name.Value, Size = Game.DataEngine.Arena.Info.Dimensions },
                     Players = Game.DataEngine.Spectators.Select(spec => spec.LoginToken),
                 });
                 Game.Stats.BasicInfoSent = true;

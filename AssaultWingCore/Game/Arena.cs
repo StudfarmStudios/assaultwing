@@ -119,15 +119,6 @@ namespace AW2.Game
             }
         }
 
-        [Flags]
-        public enum CollisionSideEffectType
-        {
-            None = 0x00,
-            Reversible = 0x01,
-            Irreversible = 0x02,
-            All = Reversible | Irreversible,
-        }
-
         /// <summary>
         /// Ways of being outside arena boundaries.
         /// </summary>
@@ -573,14 +564,17 @@ namespace AW2.Game
 
         private void PerformCollisions(Gob gob, CollisionArea gobPhysical, bool stuck, bool allowIrreversibleSideEffects, IEnumerable<CollisionArea> colliders, CollisionSoundTypes soundsToPlay)
         {
-            var sideEffectTypes = allowIrreversibleSideEffects ? CollisionSideEffectType.All : CollisionSideEffectType.Reversible;
             foreach (var collider in colliders.Distinct())
             {
-                var sideEffects = soundsToPlay == CollisionSoundTypes.None ? CollisionSideEffectType.None : CollisionSideEffectType.Irreversible;
-                sideEffects |= gob.Collide(gobPhysical, collider, stuck, sideEffectTypes);
-                sideEffects |= collider.Owner.Collide(collider, gobPhysical, stuck, sideEffectTypes);
-                if (sideEffects.HasFlag(CollisionSideEffectType.Irreversible))
-                    _collisionEvents.Add(new CollisionEvent(gobPhysical, collider, stuck: stuck, collideBothWays: true, sound: soundsToPlay));
+                gob.CollideReversible(gobPhysical, collider, stuck);
+                collider.Owner.CollideReversible(collider, gobPhysical, stuck);
+                var irreversibleSideEffects = soundsToPlay != CollisionSoundTypes.None;
+                if (allowIrreversibleSideEffects)
+                {
+                    irreversibleSideEffects |= gob.CollideIrreversible(gobPhysical, collider, stuck);
+                    irreversibleSideEffects |= collider.Owner.CollideIrreversible(collider, gobPhysical, stuck);
+                }
+                if (irreversibleSideEffects) _collisionEvents.Add(new CollisionEvent(gobPhysical, collider, stuck: stuck, collideBothWays: true, sound: soundsToPlay));
                 if (gob.Dead) break;
             }
         }
@@ -592,7 +586,6 @@ namespace AW2.Game
         public void PerformNonphysicalCollisions(bool allowIrreversibleSideEffects)
         {
             var stuck = false;
-            var sideEffectTypes = allowIrreversibleSideEffects ? CollisionSideEffectType.All : CollisionSideEffectType.Reversible;
             for (int bitIndex = 0; bitIndex < _collisionAreas.Length; ++bitIndex)
             {
                 var container = _collisionAreas[bitIndex];
@@ -600,8 +593,8 @@ namespace AW2.Game
                     foreach (var area in container.GetElements())
                         foreach (var collider in GetOverlappers(area, area.CollidesAgainst))
                         {
-                            var sideEffects = area.Owner.Collide(area, collider, stuck, sideEffectTypes);
-                            if ((sideEffects & CollisionSideEffectType.Irreversible) != 0)
+                            area.Owner.CollideReversible(area, collider, stuck);
+                            if (allowIrreversibleSideEffects && area.Owner.CollideIrreversible(area, collider, stuck))
                                 _collisionEvents.Add(new CollisionEvent(area, collider, stuck: false, collideBothWays: false, sound: CollisionSoundTypes.None));
                         }
             }

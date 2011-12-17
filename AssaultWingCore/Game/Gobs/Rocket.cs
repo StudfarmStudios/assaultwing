@@ -123,24 +123,15 @@ namespace AW2.Game.Gobs
             _thruster.Update();
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            var result = Arena.CollisionSideEffectType.None;
-            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
+            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
             {
-                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                {
-                    theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
-                    Game.Stats.SendHit(this, theirArea.Owner);
-                    result |= Arena.CollisionSideEffectType.Reversible;
-                }
+                theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
+                Game.Stats.SendHit(this, theirArea.Owner);
             }
-            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0)
-            {
-                Die();
-                result |= Arena.CollisionSideEffectType.Irreversible;
-            }
-            return result;
+            Die();
+            return true;
         }
 
         public override void Dispose()

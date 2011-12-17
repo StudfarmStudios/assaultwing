@@ -90,49 +90,39 @@ namespace AW2.Game.Gobs
                 .Max();
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            var result = Arena.CollisionSideEffectType.None;
-            var reversibleEffects = sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Reversible);
-            var irreversibleEffects = sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Irreversible);
             var collidedWithFriend = theirArea.Owner.Owner == Owner;
             var collidedWithNeutral = theirArea.Owner.Owner == null || theirArea.Owner.IsHidden;
             var collidedWithHostile = !collidedWithNeutral && !collidedWithFriend;
             switch (myArea.Name)
             {
                 case "Magnet":
-                    if (reversibleEffects && collidedWithHostile)
-                    {
-                        MoveTowards(theirArea.Owner.Pos, _attractionForce);
-                        result |= Arena.CollisionSideEffectType.Reversible;
-                    }
+                    if (collidedWithHostile) MoveTowards(theirArea.Owner.Pos, _attractionForce);
                     break;
                 case "Spread":
-                    if (reversibleEffects && collidedWithFriend && theirArea.Owner is FloatingBullet)
-                    {
+                    if (collidedWithFriend && theirArea.Owner is FloatingBullet)
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
-                        result |= Arena.CollisionSideEffectType.Reversible;
-                    }
                     break;
                 default:
-                    if (!collidedWithFriend && (theirArea.Owner.MaxDamageLevel > 100 || (stuck && !theirArea.Owner.Movable)))
-                    {
-                        if (irreversibleEffects && _hitSound != "")
-                        {
-                            Game.SoundEngine.PlaySound(_hitSound, this);
-                            result |= Arena.CollisionSideEffectType.Irreversible;
-                        }
-                        result |= base.Collide(myArea, theirArea, stuck, sideEffectTypes);
-                    }
-                    else if (reversibleEffects && collidedWithFriend && stuck && theirArea.Owner is FloatingBullet)
+                    if (collidedWithFriend && theirArea.Owner is FloatingBullet && stuck)
                     {
                         theirArea.Owner.Disable(); // re-enabled in Update()
                         _temporarilyDisabledGobs.Add(theirArea.Owner);
-                        result |= Arena.CollisionSideEffectType.Reversible;
                     }
                     break;
             }
-            return result;
+        }
+
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        {
+            if (myArea.Name == "Magnet" || myArea.Name == "Spread") return false;
+            var collidedWithFriend = theirArea.Owner.Owner == Owner;
+            if (collidedWithFriend || (theirArea.Owner.MaxDamageLevel <= 100 && (theirArea.Owner.Movable || !stuck))) return false;
+            var hasHitSound = _hitSound != "";
+            if (hasHitSound) Game.SoundEngine.PlaySound(_hitSound, this);
+            var baseResult = base.CollideIrreversible(myArea, theirArea, stuck);
+            return hasHitSound || baseResult;
         }
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

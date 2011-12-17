@@ -125,25 +125,16 @@ namespace AW2.Game.Gobs
             base.Dispose();
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            return CollideImpl(myArea, theirArea, stuck, sideEffectTypes, skipIrreversible: false);
-        }
-
-        protected Arena.CollisionSideEffectType CollideImpl(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes, bool skipIrreversible)
-        {
-            if (sideEffectTypes.HasFlag(Arena.CollisionSideEffectType.Irreversible) && !skipIrreversible)
+            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
             {
-                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                {
-                    Game.Stats.SendHit(this, theirArea.Owner);
-                    theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
-                }
-                Arena.MakeHole(Pos, _impactHoleRadius);
-                Die();
-                return Arena.CollisionSideEffectType.Irreversible;
+                Game.Stats.SendHit(this, theirArea.Owner);
+                theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
             }
-            return Arena.CollisionSideEffectType.None;
+            Arena.MakeHole(Pos, _impactHoleRadius);
+            Die();
+            return true;
         }
     }
 }

@@ -468,20 +468,13 @@ namespace AW2.Game.Gobs
             spriteBatch.DrawString(PlayerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
-            {
-                if (stuck)
-                {
-                    // Set the other gob as disabled while we move, then enable it after we finish moving.
-                    // This works with the assumption that there are at least two moving iterations.
-                    theirArea.Owner.Disable(); // re-enabled in Update()
-                    _temporarilyDisabledGobs.Add(theirArea.Owner);
-                    return Arena.CollisionSideEffectType.Reversible;
-                }
-            }
-            return Arena.CollisionSideEffectType.None;
+            if (!stuck) return;
+            // Set the other gob as disabled while we move, then enable it after we finish moving.
+            // This works with the assumption that there are at least two moving iterations.
+            theirArea.Owner.Disable(); // re-enabled in Update()
+            _temporarilyDisabledGobs.Add(theirArea.Owner);
         }
 
         public override void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)

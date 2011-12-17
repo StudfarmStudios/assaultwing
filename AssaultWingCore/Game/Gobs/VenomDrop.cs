@@ -26,26 +26,16 @@ namespace AW2.Game.Gobs
         {
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            var result = Arena.CollisionSideEffectType.None;
-            var collidedWithPhysical = (theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0;
-            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Reversible) != 0)
+            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
             {
-                if (collidedWithPhysical)
-                {
-                    theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
-                    Game.Stats.SendHit(this, theirArea.Owner);
-                    result |= Arena.CollisionSideEffectType.Reversible;
-                }
+                theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
+                DoDamageOverTime(theirArea.Owner);
+                Game.Stats.SendHit(this, theirArea.Owner);
             }
-            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0)
-            {
-                if (collidedWithPhysical) DoDamageOverTime(theirArea.Owner);
-                Die();
-                result |= Arena.CollisionSideEffectType.Irreversible;
-            }
-            return result;
+            Die();
+            return true;
         }
 
         private void DoDamageOverTime(Gob target)

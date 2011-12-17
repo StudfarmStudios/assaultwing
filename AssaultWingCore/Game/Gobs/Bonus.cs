@@ -64,23 +64,20 @@ namespace AW2.Game.Gobs
                 Die();
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             // We assume we have only one receptor area and that's the one for
             // bonus collection. That means that the other gob is a ship.
             var theirShip = theirArea.Owner as Ship;
             if (myArea.Type == CollisionAreaType.Receptor && theirShip != null)
             {
-                if (sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Irreversible))
-                {
-                    DoBonusAction(theirShip);
-                    Game.SoundEngine.PlaySound("BonusCollection", this);
-                    DeathGobTypes = _collectGobTypes;
-                    Die();
-                    return Arena.CollisionSideEffectType.Irreversible;
-                }
+                DoBonusAction(theirShip);
+                Game.SoundEngine.PlaySound("BonusCollection", this);
+                DeathGobTypes = _collectGobTypes;
+                Die();
+                return true;
             }
-            return Arena.CollisionSideEffectType.None;
+            return false;
         }
 
         private void DoBonusAction(Gob host)

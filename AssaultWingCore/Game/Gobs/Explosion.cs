@@ -83,22 +83,15 @@ namespace AW2.Game.Gobs
             _radialFlow.Update();
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            if (!_damageTime.HasValue || _damageTime.Value == Game.GameTime.TotalGameTime)
-            {
-                if (sideEffectTypes.HasFlag(AW2.Game.Arena.CollisionSideEffectType.Reversible))
-                {
-                    Game.Stats.SendHit(this, theirArea.Owner);
-                    _damageTime = Game.GameTime.TotalGameTime;
-                    float distance = theirArea.Area.DistanceTo(Pos);
-                    float damage = _inflictDamage.Evaluate(distance);
-                    theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
-                    myArea.Disable();
-                    return Arena.CollisionSideEffectType.Reversible;
-                }
-            }
-            return Arena.CollisionSideEffectType.None;
+            if (_damageTime.HasValue && _damageTime.Value != Game.GameTime.TotalGameTime) return;
+            Game.Stats.SendHit(this, theirArea.Owner);
+            _damageTime = Game.GameTime.TotalGameTime;
+            float distance = theirArea.Area.DistanceTo(Pos);
+            float damage = _inflictDamage.Evaluate(distance);
+            theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
+            myArea.Disable();
         }
     }
 }

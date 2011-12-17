@@ -1139,21 +1139,29 @@ namespace AW2.Game
 
         /// <summary>
         /// Performs collision operations for the case when one of this gob's collision areas
-        /// is overlapping one of another gob's collision areas. Returns the kinds of side
-        /// effects that were performed.
+        /// is overlapping one of another gob's collision areas.
+        /// Called only when <b>theirArea.Type</b> matches <b>myArea.CollidesAgainst</b>.
         /// </summary>
-        /// Called only when <b>theirArea.Type</b> matches either <b>myArea.CollidesAgainst</b> or
-        /// <b>myArea.CannotOverlap</b>.
-        /// <param name="myArea">The collision area of this gob.</param>
-        /// <param name="theirArea">The collision area of the other gob.</param>
-        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
+        /// <param name="stuck">If <b>true</b> then
         /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
         /// to backtrack out of the overlap. It is then up to this gob and the other gob 
         /// to resolve the overlap.</param>
-        public virtual Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public virtual void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            // TODO !!! Split Collide into CollideReversible and CollideIrreversible
-            return Arena.CollisionSideEffectType.None;
+        }
+
+        /// <summary>
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas. Returns true if an irreversible effect was performed.
+        /// Called only when <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b>.
+        /// </summary>
+        /// <param name="stuck">If <b>true</b> then
+        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
+        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
+        /// to resolve the overlap.</param>
+        public virtual bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        {
+            return false;
         }
 
         #endregion Collision methods

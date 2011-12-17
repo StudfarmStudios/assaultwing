@@ -93,34 +93,20 @@ namespace AW2.Game.Gobs
             _dockSound.EnsureIsPlaying();
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            var result = Arena.CollisionSideEffectType.None;
-            // We assume we have only one Receptor collision area which handles docking.
-            // Then 'theirArea.Owner' must be damageable.
-            if (myArea.Name == "Dock")
-            {
-                var ship = theirArea.Owner as Ship;
-                if (ship != null)
-                {
-                    var canRepair = CanRepair(ship);
-                    if (sideEffectTypes.HasFlag(Arena.CollisionSideEffectType.Reversible))
-                    {
-                        EnsureEffectActive();
-                        if (canRepair) RepairShip(ship);
-                        result |= Arena.CollisionSideEffectType.Reversible;
-                    }
-                    if (sideEffectTypes.HasFlag(Arena.CollisionSideEffectType.Irreversible))
-                    {
-                        if (ShouldNotifyPlayerAboutRepairPending(ship))
-                        {
-                            ship.Owner.NotifyRepairPending();
-                            result |= Arena.CollisionSideEffectType.Irreversible;
-                        }
-                    }
-                }
-            }
-            return result;
+            var ship = theirArea.Owner as Ship;
+            if (myArea.Name != "Dock" || ship == null) return;
+            EnsureEffectActive();
+            if (CanRepair(ship)) RepairShip(ship);
+        }
+
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        {
+            var ship = theirArea.Owner as Ship;
+            if (myArea.Name != "Dock" || ship == null || !ShouldNotifyPlayerAboutRepairPending(ship)) return false;
+            ship.Owner.NotifyRepairPending();
+            return true;
         }
 
         public override void Dispose()

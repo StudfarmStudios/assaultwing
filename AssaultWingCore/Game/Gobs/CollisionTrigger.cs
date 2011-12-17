@@ -59,14 +59,10 @@ namespace AW2.Game.Gobs
         {
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            if ((sideEffectTypes & AW2.Game.Arena.CollisionSideEffectType.Irreversible) != 0)
-            {
-                if (ActionGob != null) ActionGob.Act();
-                return Arena.CollisionSideEffectType.Irreversible;
-            }
-            return Arena.CollisionSideEffectType.None;
+            if (ActionGob != null) ActionGob.Act();
+            return true;
         }
 
         public override void Update()

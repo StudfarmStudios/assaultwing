@@ -35,10 +35,10 @@ namespace AW2.Game.Gobs
             if (_deathBySlownessCounter > 3) Die();
         }
 
-        public override Arena.CollisionSideEffectType Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck, Arena.CollisionSideEffectType sideEffectTypes)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             var collidedWithPhysical = (theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0;
-            return CollideImpl(myArea, theirArea, stuck, sideEffectTypes, skipIrreversible: !collidedWithPhysical && !stuck);
+            return !collidedWithPhysical && !stuck ? false : base.CollideIrreversible(myArea, theirArea, stuck);
         }
     }
 }

@@ -323,9 +323,9 @@ namespace AW2.Net.MessageHandling
                 var area2 = gob2.GetCollisionArea(collisionEvent.Area2ID);
                 if (area1 != null && area2 != null)
                 {
-                    gob1.Collide(area1, area2, collisionEvent.Stuck, Arena.CollisionSideEffectType.Irreversible);
+                    gob1.CollideIrreversible(area1, area2, collisionEvent.Stuck);
                     if (collisionEvent.CollideBothWays)
-                        gob2.Collide(area2, area1, collisionEvent.Stuck, Arena.CollisionSideEffectType.Irreversible);
+                        gob2.CollideIrreversible(area2, area1, collisionEvent.Stuck);
                 }
                 if ((collisionEvent.Sound & Arena.CollisionSoundTypes.WallCollision) != 0)
                     arena.Game.SoundEngine.PlaySound("Collision", gob1);

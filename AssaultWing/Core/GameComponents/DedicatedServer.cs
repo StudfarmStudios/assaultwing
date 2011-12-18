@@ -96,10 +96,12 @@ namespace AW2.Core.GameComponents
                     Game.SelectedArenaName = ChooseArenaName();
                     break;
                 case EventType.ARENA_INIT:
-                    _nextEvent = Now + Settings.DedicatedServerArenaTimeout;
+                    var arenaFinishTime = Now + Settings.DedicatedServerArenaTimeout;
+                    _nextEvent = arenaFinishTime;
                     _nextEventType = EventType.ARENA_FINISH;
                     Game.PrepareSelectedArena();
                     Game.StartArena();
+                    Game.DataEngine.ArenaFinishTime = arenaFinishTime;
                     _arenaTimeoutMessages = (
                         from time in Settings.DedicatedServerArenaTimeoutMessages
                         where time < Settings.DedicatedServerArenaTimeout

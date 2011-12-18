@@ -1,4 +1,6 @@
-﻿using AW2.Helpers.Serialization;
+﻿using System;
+using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
 {
@@ -11,6 +13,7 @@ namespace AW2.Net.Messages
     {
         public byte ArenaID { get; set; }
         public string ArenaToPlay { get; set; }
+        public TimeSpan ArenaTimeLeft { get; set; }
         public int WallCount { get; set; }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
@@ -22,9 +25,11 @@ namespace AW2.Net.Messages
                 // Start game (request) message structure:
                 // byte: arena identifier
                 // variable-length string: name of arena to play
+                // TimeSpan: time left to play the arena, or zero if the arena doesn't time out
                 // int: number of wall objects in the arena
                 writer.Write((byte)ArenaID);
                 writer.Write((string)ArenaToPlay);
+                writer.Write((TimeSpan)ArenaTimeLeft);
                 writer.Write((int)WallCount);
             }
         }
@@ -33,12 +38,14 @@ namespace AW2.Net.Messages
         {
             ArenaID = reader.ReadByte();
             ArenaToPlay = reader.ReadString();
+            ArenaTimeLeft = reader.ReadTimeSpan();
             WallCount = reader.ReadInt32();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [" + ArenaToPlay + ", " + WallCount + " walls]";
+            return base.ToString() + " [" + ArenaToPlay + ", " + WallCount + " walls, "
+                + ArenaTimeLeft.ToDurationString("d", "h", "m", "s", usePlurals: false) + " left]";
         }
     }
 }

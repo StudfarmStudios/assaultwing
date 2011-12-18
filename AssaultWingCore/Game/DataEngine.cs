@@ -62,6 +62,11 @@ namespace AW2.Game
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
         public WrappedTextList ChatHistory { get; private set; }
 
+        /// <summary>
+        /// In real time. If zero, then the arena does not time out.
+        /// </summary>
+        public TimeSpan ArenaFinishTime { get; set; }
+
         public event Action<Spectator> SpectatorAdded;
         public event Action<Spectator> SpectatorRemoved;
 

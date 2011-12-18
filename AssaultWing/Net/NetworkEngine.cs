@@ -599,6 +599,7 @@ namespace AW2.Net
             {
                 ArenaID = Game.DataEngine.Arena.ID,
                 ArenaToPlay = arenaName,
+                ArenaTimeLeft = Game.DataEngine.ArenaFinishTime == TimeSpan.Zero ? TimeSpan.Zero : Game.DataEngine.ArenaFinishTime - Game.GameTime.TotalRealTime,
                 WallCount = Game.DataEngine.Arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count()
             };
             conn.Send(startGameMessage);

@@ -159,6 +159,7 @@ namespace AW2.Net.MessageHandling
             if (Game.IsLoadingArena) return;
             Game.ShowEquipMenu();
             Game.SelectedArenaName = mess.ArenaToPlay;
+            Game.DataEngine.ArenaFinishTime = mess.ArenaTimeLeft == TimeSpan.Zero ? TimeSpan.Zero : mess.ArenaTimeLeft + Game.GameTime.TotalRealTime;
             Game.MenuEngine.ProgressBar.Start(mess.WallCount);
             Game.MenuEngine.ProgressBarAction(
                 () => Game.PrepareSelectedArena(mess.ArenaID),

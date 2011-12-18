@@ -479,7 +479,7 @@ namespace AW2.Game
             {
                 case ShipDevice.FiringResult.Success:
                     _deviceUsages |= DeviceUsages.Weapon1Success;
-                    Ship.LastDamageTakenTime = Game.DataEngine.ArenaTotalTime;
+                    Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
                     if (WeaponFired != null) WeaponFired();
                     break;
                 case ShipDevice.FiringResult.Failure:
@@ -500,7 +500,7 @@ namespace AW2.Game
             {
                 case ShipDevice.FiringResult.Success:
                     _deviceUsages |= DeviceUsages.Weapon2Success;
-                    Ship.LastDamageTakenTime = Game.DataEngine.ArenaTotalTime;
+                    Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
                     if (WeaponFired != null) WeaponFired();
                     break;
                 case ShipDevice.FiringResult.Failure:

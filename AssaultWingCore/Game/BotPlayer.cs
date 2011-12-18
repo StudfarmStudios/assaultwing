@@ -51,7 +51,7 @@ namespace AW2.Game
         public override void ResetForArena()
         {
             base.ResetForArena();
-            _nextBotCreationTime = BOT_CREATION_INTERVAL;
+            _nextBotCreationTime = Game.GameTime.TotalGameTime + BOT_CREATION_INTERVAL;
             _bots.Clear();
         }
 

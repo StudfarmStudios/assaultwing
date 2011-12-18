@@ -82,6 +82,14 @@ namespace AW2.Game
                 var pos = Arena.GetFreePosition(bot, Arena.BoundedArea);
                 bot.ResetPos(pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 Arena.Gobs.Add(bot);
+                Game.Stats.Send(new
+                {
+                    Ship = bot.TypeName.Value,
+                    Weapon2 = bot.WeaponName.Value,
+                    Device = "",
+                    Player = LoginToken,
+                    Pos = bot.Pos,
+                });
             });
         }
     }

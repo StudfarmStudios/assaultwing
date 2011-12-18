@@ -46,6 +46,7 @@ namespace AW2.Game.Gobs
         private float _fanAngle; // in radians
         private float _fanAngleSpeed; // in radians/second
 
+        public CanonicalString WeaponName { get { return _weaponName; } }
         public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
         private Gob Target
         {

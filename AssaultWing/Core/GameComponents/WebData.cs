@@ -71,7 +71,8 @@ namespace AW2.Net
                 var error = response["error"];
                 if (error != null)
                 {
-                    Log.Write("Login error: " + error);
+                    var username = response["data"] != null ? response["data"]["username"] ?? "" : "";
+                    Log.Write("Login error ({0}): {1}", username, error);
                     // TODO !!! show popup
                 }
                 var token = response["token"];

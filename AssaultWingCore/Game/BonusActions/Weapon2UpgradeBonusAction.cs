@@ -63,7 +63,8 @@ namespace AW2.Game.BonusActions
 
         public override void Dispose()
         {
-            if (Host != null) Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Host.Owner.Weapon2Name);
+            if (Host != null && Host.Owner != null)
+                Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Host.Owner.Weapon2Name);
             if (_effectName != "") Host.Owner.PostprocessEffectNames.Remove(_effectName);
             base.Dispose();
         }

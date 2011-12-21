@@ -18,7 +18,11 @@ namespace AW2.Menu
     {
         private const int MENU_ITEM_COUNT = 6; // number of items that fit in the menu at once
 
+        /// <summary>
+        /// Access only through <see cref="ItemCollections"/>.
+        /// </summary>
         private MainMenuItemCollections _itemCollections;
+
         private Stack<Tuple<MainMenuItemCollection, int, int>> _currentItemsHistory; // items, currentIndex, topmostIndex
         private MainMenuItemCollection _currentItems;
         private ScrollableList _currentItem;
@@ -46,16 +50,26 @@ namespace AW2.Menu
         public override Vector2 Center { get { return _pos + new Vector2(700, 455); } }
         public override string HelpText { get { return "Arrows move, Enter proceeds, Esc cancels"; } }
 
-        private MainMenuItem CurrentItem { get { return _currentItems[_currentItem.CurrentIndex]; } }
+        public MainMenuItem CurrentItem { get { return _currentItems[_currentItem.CurrentIndex]; } }
+        private MainMenuItemCollections ItemCollections
+        {
+            get
+            {
+                if (_itemCollections == null)
+                {
+                    _itemCollections = new MainMenuItemCollections(this);
+                    ResetItems();
+                }
+                return _itemCollections;
+            }
+        }
 
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            _itemCollections = new MainMenuItemCollections(this);
             _pos = new Vector2(0, 698);
             _currentItemsHistory = new Stack<Tuple<MainMenuItemCollection, int, int>>();
             _currentItem = new ScrollableList(MENU_ITEM_COUNT, () => _currentItems == null ? 0 : _currentItems.Count);
-            ResetItems();
         }
 
         public void SetItems(MainMenuItemCollection items)
@@ -68,7 +82,7 @@ namespace AW2.Menu
         public override void Update()
         {
             if (!Active) return;
-            if (_currentItems != _itemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode);
+            if (_currentItems != ItemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode);
             _commonCallbacks.Update();
             foreach (var menuItem in _currentItems) menuItem.Update();
             _currentItems.Update();
@@ -83,7 +97,7 @@ namespace AW2.Menu
                 _currentItems[realIndex].Draw(spriteBatch, _pos - view, visibleIndex);
             });
 
-            if (_currentItems == _itemCollections.NetworkItems)
+            if (_currentItems == ItemCollections.NetworkItems)
                 DrawScheduledBattleDisplay(view, spriteBatch);
 
             var scrollUpPos = _pos - view + new Vector2(653, 260);
@@ -111,7 +125,7 @@ namespace AW2.Menu
         private void ResetItems()
         {
             _currentItemsHistory.Clear();
-            SetItems(_itemCollections.StartItems);
+            SetItems(ItemCollections.StartItems);
         }
 
         private void InitializeControlCallbacks()

@@ -29,6 +29,8 @@ namespace AW2.Menu.Main
         private AssaultWing Game { get { return MenuEngine.Game; } }
         private TimeSpan _lastNetworkItemsUpdate;
         private TimeSpan? _gameServerListReplyDeadline;
+        private EditableText _loginName;
+        private EditableText _loginPassword;
 
         /// <summary>
         /// The very first menu when the game starts.
@@ -39,6 +41,11 @@ namespace AW2.Menu.Main
         /// Menu for establishing a network game.
         /// </summary>
         public MainMenuItemCollection NetworkItems { get; private set; }
+
+        /// <summary>
+        /// Menu for registered pilots.
+        /// </summary>
+        public MainMenuItemCollection LoginItems { get; private set; }
 
         /// <summary>
         /// Menu for choosing general settings.
@@ -56,8 +63,8 @@ namespace AW2.Menu.Main
                 CheckGameServerListReplyTimeout();
                 RefreshNetworkItems();
             };
-            SetupItems = new MainMenuItemCollection("General Setup");
-            RefreshSetupItems();
+            InitializeLoginItems();
+            InitializeSetupItems();
         }
 
         private void EnsureStandaloneMessageHandlersActivated()
@@ -122,9 +129,45 @@ namespace AW2.Menu.Main
             }
         }
 
-        private void RefreshSetupItems()
+        private void InitializeLoginItems()
         {
-            SetupItems.Clear();
+            LoginItems = new MainMenuItemCollection("Pilot Login");
+            _loginName = new EditableText(Game.Settings.Players.Player1.Name, PlayerSettings.PLAYER_NAME_MAX_LENGTH,
+                new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game,
+                () =>
+                {
+                    var localPlayer = Game.DataEngine.Spectators.Single(spec => !spec.IsRemote);
+                    localPlayer.Name = Game.Settings.Players.Player1.Name = _loginName.Content;
+                });
+            _loginPassword = new EditableText("", PlayerSettings.PLAYER_PASSWORD_MAX_LENGTH, // TODO !!! Show *** instead of text
+                new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game, // TODO !!! Remove char set limit
+                () => { Game.Settings.Players.Player1.Password = _loginPassword.Content; });
+            var loginNameItem = new MainMenuTextField(MenuEngine, () => "Pilot: ", () => { }, _loginName);
+            var loginPasswordItem = new MainMenuTextField(MenuEngine, () => "Password: ", () => { }, _loginPassword);
+            LoginItems.Add(loginNameItem);
+            LoginItems.Add(loginPasswordItem);
+            LoginItems.Add(new MainMenuItem(MenuEngine, () =>
+            {
+                var loggedInLocalSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => !spec.IsRemote && spec.LoginToken != "");
+                return loggedInLocalSpectator == null ? "Log in!"
+                    : "Log in! (" + loggedInLocalSpectator.Name + ")";
+            }, () =>
+            {
+                Game.WebData.UnloginPilots();
+                Game.WebData.LoginPilots();
+            }));
+            LoginItems.Add(new MainMenuItem(MenuEngine, () => "Register a New Pilot",
+                () => Game.OpenURL("http://www.assaultwing.com/battlefront/#!/register")));
+            LoginItems.Update = () =>
+            {
+                if (_menuComponent.CurrentItem == loginNameItem) _loginName.ActivateTemporarily();
+                if (_menuComponent.CurrentItem == loginPasswordItem) _loginPassword.ActivateTemporarily();
+            };
+        }
+
+        private void InitializeSetupItems()
+        {
+            SetupItems = new MainMenuItemCollection("General Setup");
             SetupItems.Add(GetSetupItemBase(() => "Reset all settings to defaults",
                 () => Game.ShowDialog(new CustomOverlayDialogData(Game,
                     "Are you sure to reset all settings\nto their defaults? (Yes/No)",
@@ -165,6 +208,7 @@ namespace AW2.Menu.Main
             if (!force && _lastNetworkItemsUpdate + GAME_SERVER_LIST_REQUEST_INTERVAL > Game.GameTime.TotalRealTime) return;
             _lastNetworkItemsUpdate = Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
+            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Log in with Your Pilot", () => _menuComponent.SetItems(LoginItems)));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => NO_SERVERS_FOUND, () => { }));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Find More in Forums", () => Game.OpenURL("http://www.assaultwing.com/letsplay")));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Create a Server",
@@ -202,13 +246,13 @@ traffic or the server is down.", "No reply from management server");
             _gameServerListReplyDeadline = null;
             foreach (var server in mess.GameServers)
             {
-                if (NetworkItems[0].Name() == NO_SERVERS_FOUND) NetworkItems.RemoveAt(0);
+                NetworkItems.RemoveAll(item => item.Name() == NO_SERVERS_FOUND);
                 if (server.AWVersion.IsCompatibleWith(Game.Version))
                 {
                     var shortServerName = server.Name.Substring(0, Math.Min(12, server.Name.Length));
                     var menuItemText = string.Format("Join {0}\t\x10[{1}/{2}]", shortServerName, server.CurrentPlayers, server.MaxPlayers);
                     var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
-                    NetworkItems.Insert(0, new MainMenuItem(MenuEngine,
+                    NetworkItems.Insert(1, new MainMenuItem(MenuEngine,
                         () => menuItemText,
                         () =>
                         {

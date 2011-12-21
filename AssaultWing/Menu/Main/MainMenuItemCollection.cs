@@ -13,6 +13,10 @@ namespace AW2.Menu.Main
         public string Name { get; private set; }
         public int Count { get { return _menuItems.Count; } }
         public MainMenuItem this[int i] { get { return _menuItems[i]; } }
+
+        /// <summary>
+        /// Called regularly for the active collection.
+        /// </summary>
         public Action Update { get; set; }
 
         public MainMenuItemCollection(string name)
@@ -35,9 +39,9 @@ namespace AW2.Menu.Main
             UpdateItemIndices();
         }
 
-        public void RemoveAt(int index)
+        public void RemoveAll(Predicate<MainMenuItem> match)
         {
-            _menuItems.RemoveAt(index);
+            _menuItems.RemoveAll(match);
             UpdateItemIndices();
         }
 

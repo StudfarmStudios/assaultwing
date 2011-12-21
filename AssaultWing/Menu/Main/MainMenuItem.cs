@@ -22,7 +22,7 @@ namespace AW2.Menu.Main
         /// <summary>
         /// Visible name of the menu item.
         /// </summary>
-        public Func<string> Name { get; private set; }
+        public Func<string> Name { get; protected set; }
 
         /// <summary>
         /// Action to perform on triggering the menu item or pressing Right on the menu item.
@@ -34,7 +34,7 @@ namespace AW2.Menu.Main
         /// </summary>
         public Action ActionLeft { get; private set; }
 
-        private SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
+        protected SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
 
         public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action action)
             : this(menuEngine, getName, action, () => { })
@@ -51,9 +51,10 @@ namespace AW2.Menu.Main
 
         public void Update() { }
 
-        public void Draw(SpriteBatch spriteBatch, Vector2 origin, int visibleIndex)
+        public virtual void Draw(SpriteBatch spriteBatch, Vector2 origin, int visibleIndex)
         {
-            GraphicsEngineImpl.DrawFormattedText(origin, _menuEngine.MenuContent.FontBigEnWidth, Name(), (textPos, text) => Draw(spriteBatch, textPos, visibleIndex, text));
+            GraphicsEngineImpl.DrawFormattedText(origin, _menuEngine.MenuContent.FontBigEnWidth, Name(),
+                (textPos, text) => Draw(spriteBatch, textPos, visibleIndex, text));
         }
 
         public void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, int visibleIndex)
@@ -68,7 +69,7 @@ namespace AW2.Menu.Main
             spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, text, pos.Round(), Color.White);
         }
 
-        private void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta, int visibleIndex)
+        protected virtual void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta, int visibleIndex)
         {
             var highlightPos = GetHighlightPos(origin, visibleIndex);
             var cursorPos = highlightPos + cursorDelta;

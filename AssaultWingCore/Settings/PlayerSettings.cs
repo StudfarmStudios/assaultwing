@@ -22,6 +22,7 @@ namespace AW2.Settings
     public class PlayerSettings
     {
         public const int PLAYER_NAME_MAX_LENGTH = 12;
+        public const int PLAYER_PASSWORD_MAX_LENGTH = 12;
 
         public static readonly PlayerSettingsItem PLAYER1DEFAULT = new PlayerSettingsItem
         {

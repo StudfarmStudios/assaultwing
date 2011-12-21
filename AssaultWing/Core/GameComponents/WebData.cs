@@ -46,6 +46,11 @@ namespace AW2.Net
             }
         }
 
+        public void UnloginPilots()
+        {
+            foreach (var spec in Game.DataEngine.Spectators) spec.LoginToken = "";
+        }
+
         private void BeginRequestPlayerLoginToken(string name, string password)
         {
             var net = Game.Settings.Net;

@@ -12,7 +12,7 @@ namespace AW2.Menu.Main
     /// </summary>
     public class MainMenuItem
     {
-        private MenuEngineImpl _menuEngine;
+        public MenuEngineImpl MenuEngine { get; private set; }
 
         /// <summary>
         /// Index of the menu item in a menu item collection. Set by the menu item collection.
@@ -34,7 +34,7 @@ namespace AW2.Menu.Main
         /// </summary>
         public Action ActionLeft { get; private set; }
 
-        protected SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
+        protected SpriteFont Font { get { return MenuEngine.MenuContent.FontBig; } }
 
         public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action action)
             : this(menuEngine, getName, action, () => { })
@@ -43,7 +43,7 @@ namespace AW2.Menu.Main
 
         public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action action, Action actionLeft)
         {
-            _menuEngine = menuEngine;
+            MenuEngine = menuEngine;
             Name = getName;
             Action = action;
             ActionLeft = actionLeft;
@@ -53,7 +53,7 @@ namespace AW2.Menu.Main
 
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 origin, int visibleIndex)
         {
-            GraphicsEngineImpl.DrawFormattedText(origin, _menuEngine.MenuContent.FontBigEnWidth, Name(),
+            GraphicsEngineImpl.DrawFormattedText(origin, MenuEngine.MenuContent.FontBigEnWidth, Name(),
                 (textPos, text) => Draw(spriteBatch, textPos, visibleIndex, text));
         }
 
@@ -66,18 +66,18 @@ namespace AW2.Menu.Main
         {
             var highlightToTextDelta = new Vector2(34, 1);
             var pos = GetHighlightPos(origin, visibleIndex) + highlightToTextDelta;
-            spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, text, pos.Round(), Color.White);
+            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, text, pos.Round(), Color.White);
         }
 
         protected virtual void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta, int visibleIndex)
         {
             var highlightPos = GetHighlightPos(origin, visibleIndex);
             var cursorPos = highlightPos + cursorDelta;
-            spriteBatch.Draw(_menuEngine.MenuContent.MainCursor, cursorPos, Color.Multiply(Color.White, _menuEngine.GetCursorFade()));
-            spriteBatch.Draw(_menuEngine.MenuContent.MainHighlight, highlightPos, Color.White);
+            spriteBatch.Draw(MenuEngine.MenuContent.MainCursor, cursorPos, Color.Multiply(Color.White, MenuEngine.GetCursorFade()));
+            spriteBatch.Draw(MenuEngine.MenuContent.MainHighlight, highlightPos, Color.White);
         }
 
-        private Vector2 GetHighlightPos(Vector2 origin, int visibleIndex)
+        protected Vector2 GetHighlightPos(Vector2 origin, int visibleIndex)
         {
             var highlightDelta = new Vector2(551, 354);
             var lineDelta = new Vector2(0, Font.LineSpacing);

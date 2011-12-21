@@ -19,7 +19,12 @@ namespace AW2.Menu.Main
         protected override void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta, int visibleIndex)
         {
             base.DrawHighlight(spriteBatch, origin, cursorDelta, visibleIndex);
-            // TODO: Draw text caret.
+            var highlightPos = GetHighlightPos(origin, visibleIndex);
+            var textWidth = Font.MeasureString(Name()).X;
+            var caret = MenuEngine.MenuContent.MainCursor;
+            var caretPos = highlightPos + cursorDelta + new Vector2(textWidth + 36 + caret.Width, caret.Height);
+            spriteBatch.Draw(caret, caretPos, null, Color.Multiply(Color.White, MenuEngine.GetCursorFade()),
+                MathHelper.Pi, Vector2.Zero, 1, SpriteEffects.None, 0);
         }
     }
 }

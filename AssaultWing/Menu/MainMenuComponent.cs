@@ -82,6 +82,10 @@ namespace AW2.Menu
         public override void Update()
         {
             if (!Active) return;
+            MenuEngine.Game.WebData.LoginErrors.Do(queue =>
+            {
+                while (queue.Any()) MenuEngine.Game.ShowInfoDialog(queue.Dequeue());
+            });
             if (_currentItems != ItemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode);
             _commonCallbacks.Update();
             foreach (var menuItem in _currentItems) menuItem.Update();

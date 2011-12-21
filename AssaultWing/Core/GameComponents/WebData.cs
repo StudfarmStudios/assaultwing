@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Text;
 using AW2.Core;
 using AW2.Helpers;
+using AW2.Net.ConnectionUtils;
 using Newtonsoft.Json.Linq;
 
 namespace AW2.Net
@@ -19,9 +21,15 @@ namespace AW2.Net
         /// </summary>
         public DateTime? NextScheduledGame { get; private set; }
 
+        /// <summary>
+        /// Errors that have occurred during pilot login attempts.
+        /// </summary>
+        public ThreadSafeWrapper<Queue<string>> LoginErrors { get; private set; }
+
         public WebData(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
+            LoginErrors = new ThreadSafeWrapper<Queue<string>>(new Queue<string>());
         }
 
         public void RequestData()
@@ -55,7 +63,9 @@ namespace AW2.Net
         {
             var net = Game.Settings.Net;
             var loginRequest = WebRequest.Create(new UriBuilder("https", net.StatsServerAddress, net.StatsHttpsPort, "login")
-                { Query = string.Format("username={0}&password={1}", name, password) }.Uri);
+            {
+                Query = string.Format("username={0}&password={1}", name, password)
+            }.Uri);
             loginRequest.BeginGetResponse(LoginRequestDone, loginRequest);
         }
 
@@ -77,8 +87,9 @@ namespace AW2.Net
                 if (error != null)
                 {
                     var username = response["data"] != null ? response["data"]["username"] ?? "" : "";
-                    Log.Write("Login error ({0}): {1}", username, error);
-                    // TODO !!! show popup
+                    var errorPrelude = "Login error (" + username + ")";
+                    Log.Write("{0}: {1}", errorPrelude, error);
+                    LoginErrors.Do(queue => queue.Enqueue(errorPrelude + "\n" + error));
                 }
                 var token = response["token"];
                 if (token != null)

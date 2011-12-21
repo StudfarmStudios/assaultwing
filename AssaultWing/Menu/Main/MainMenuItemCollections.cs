@@ -94,14 +94,16 @@ namespace AW2.Menu.Main
                     _menuComponent.SetItems(NetworkItems);
                     Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
+                () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
+                () => Game.OpenURL("http://www.assaultwing.com/quickinstructions")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Setup",
                 () =>
                 {
                     _menuComponent.SetItems(SetupItems);
                     Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
-                () => Game.OpenURL("http://www.assaultwing.com/quickinstructions")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Quit",
                 () =>
                 {

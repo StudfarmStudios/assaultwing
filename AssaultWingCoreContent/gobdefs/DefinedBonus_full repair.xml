@@ -5,7 +5,7 @@
   <lifetime>30</lifetime>
   <maxDamage>300</maxDamage>
   <mass>50</mass>
-  <modelName>bonus</modelName>
+  <modelName>megabonus</modelName>
   <scale>0.12</scale>
   <depthLayer2D>0.6</depthLayer2D>
   <drawMode2D>
@@ -16,7 +16,7 @@
   <movable>true</movable>
   <birthGobTypes>
     <Item>bonus birth</Item>
-    <Item>bonus blink</Item>
+    <Item>megabonus blink</Item>
   </birthGobTypes>
   <deathGobTypes>
     <Item>bonus death dust</Item>

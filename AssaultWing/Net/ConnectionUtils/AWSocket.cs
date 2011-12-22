@@ -107,6 +107,7 @@ namespace AW2.Net.ConnectionUtils
         {
             UseSocket(socket =>
             {
+                Log.Write("Disposing {0} socket", socket.ProtocolType);
                 if (socket.Connected)
                     try
                     {

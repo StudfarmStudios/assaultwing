@@ -307,6 +307,7 @@ namespace AW2.Net.Connections
         /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
         protected virtual void DisposeImpl(bool error)
         {
+            Log.Write("Disposing " + Name);
             _tcpSocket.Dispose();
             g_unusedIDs.Enqueue(ID);
         }

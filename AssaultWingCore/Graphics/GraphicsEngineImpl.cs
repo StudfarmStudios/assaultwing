@@ -166,6 +166,7 @@ namespace AW2.Graphics
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             gfx.Clear(Color.Black);
+            Game.DataEngine.EnsureArenaRadarSilhouetteUpdated();
             foreach (var viewport in Game.DataEngine.Viewports) viewport.PrepareForDraw();
             foreach (var viewport in Game.DataEngine.Viewports) viewport.Draw();
             DrawViewportSeparators();

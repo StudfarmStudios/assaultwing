@@ -31,7 +31,6 @@ namespace AW2.Game
         /// </summary>
         private NamedItemCollection<object> _templates;
 
-        private Texture2D _arenaRadarSilhouette;
         private Vector2 _arenaDimensionsOnRadar;
         private Matrix _arenaToRadarTransform;
         private TimeSpan _lastArenaRadarSilhouetteUpdate;
@@ -92,20 +91,14 @@ namespace AW2.Game
         /// The currently active arena's silhouette, scaled and ready to be 
         /// drawn in a player's viewport's radar display.
         /// </summary>
-        public Texture2D ArenaRadarSilhouette
+        public Texture2D ArenaRadarSilhouette { get; private set; }
+        public void EnsureArenaRadarSilhouetteUpdated()
         {
-            get
-            {
-                if (_arenaRadarSilhouette == null ||
-                    (UpdateArenaRadarSilhouette && _lastArenaRadarSilhouetteUpdate.SecondsAgoGameTime() >= 1))
-                {
-                    RefreshArenaToRadarTransform();
-                    RefreshArenaRadarSilhouette();
-                    UpdateArenaRadarSilhouette = false;
-                    _lastArenaRadarSilhouetteUpdate = Game.GameTime.TotalGameTime;
-                }
-                return _arenaRadarSilhouette;
-            }
+            if (ArenaRadarSilhouette != null && (!UpdateArenaRadarSilhouette || _lastArenaRadarSilhouetteUpdate.SecondsAgoGameTime() < 0.5f)) return;
+            RefreshArenaToRadarTransform();
+            RefreshArenaRadarSilhouette();
+            UpdateArenaRadarSilhouette = false;
+            _lastArenaRadarSilhouetteUpdate = Game.GameTime.TotalGameTime;
         }
 
         /// <summary>
@@ -236,10 +229,10 @@ namespace AW2.Game
         /// </summary>
         public override void UnloadContent()
         {
-            if (_arenaRadarSilhouette != null)
+            if (ArenaRadarSilhouette != null)
             {
-                _arenaRadarSilhouette.Dispose();
-                _arenaRadarSilhouette = null;
+                ArenaRadarSilhouette.Dispose();
+                ArenaRadarSilhouette = null;
             }
         }
 
@@ -257,14 +250,15 @@ namespace AW2.Game
                 throw new InvalidOperationException("No active arena");
 
             // Dispose of any previous silhouette.
-            if (_arenaRadarSilhouette != null)
+            if (ArenaRadarSilhouette != null)
             {
-                _arenaRadarSilhouette.Dispose();
-                _arenaRadarSilhouette = null;
+                ArenaRadarSilhouette.Dispose();
+                ArenaRadarSilhouette = null;
             }
 
             // Draw arena walls in one color in a radar-sized texture.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
+            var oldViewport = gfx.Viewport;
             int targetWidth = (int)_arenaDimensionsOnRadar.X;
             int targetHeight = (int)_arenaDimensionsOnRadar.Y;
             var gfxAdapter = gfx.Adapter;
@@ -293,10 +287,11 @@ namespace AW2.Game
             // Create a copy of the texture in local memory so that a graphics device
             // reset (e.g. when changing resolution) doesn't lose the texture.
             gfx.SetRenderTarget(null);
+            gfx.Viewport = oldViewport;
             var textureData = new Color[targetHeight * targetWidth];
             maskTarget.GetData(textureData);
-            _arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, false, SurfaceFormat.Color);
-            _arenaRadarSilhouette.SetData(textureData);
+            ArenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, false, SurfaceFormat.Color);
+            ArenaRadarSilhouette.SetData(textureData);
 
             maskTarget.Dispose();
         }

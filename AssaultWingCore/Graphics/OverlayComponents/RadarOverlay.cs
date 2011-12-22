@@ -46,7 +46,8 @@ namespace AW2.Graphics.OverlayComponents
 
         private void DrawWalls(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Game.DataEngine.ArenaRadarSilhouette, RADAR_DISPLAY_TOP_LEFT, ARENA_RADAR_SILHOUETTE_COLOR);
+            if (Game.DataEngine.ArenaRadarSilhouette != null)
+                spriteBatch.Draw(Game.DataEngine.ArenaRadarSilhouette, RADAR_DISPLAY_TOP_LEFT, ARENA_RADAR_SILHOUETTE_COLOR);
         }
 
         private void DrawDocks(SpriteBatch spriteBatch)

@@ -46,32 +46,25 @@ namespace AW2.Graphics.OverlayComponents
 
         private void DrawWalls(SpriteBatch spriteBatch)
         {
-            if (Game.DataEngine.ArenaRadarSilhouette != null)
-                spriteBatch.Draw(Game.DataEngine.ArenaRadarSilhouette, RADAR_DISPLAY_TOP_LEFT, ARENA_RADAR_SILHOUETTE_COLOR);
+            if (Game.DataEngine.ArenaSilhouette.ArenaRadarSilhouette != null)
+                spriteBatch.Draw(Game.DataEngine.ArenaSilhouette.ArenaRadarSilhouette, RADAR_DISPLAY_TOP_LEFT, ARENA_RADAR_SILHOUETTE_COLOR);
         }
 
         private void DrawDocks(SpriteBatch spriteBatch)
         {
-            var arenaToRadarTransform = Game.DataEngine.ArenaToRadarTransform;
-            bool deadDocks = false;
+            var arenaToRadarTransform = Game.DataEngine.ArenaSilhouette.ArenaToRadarTransform;
             foreach (var dock in _docks)
             {
-                if (dock.Dead)
-                {
-                    deadDocks = true;
-                    continue;
-                }
                 var posInArena = dock.Pos;
                 var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
                 spriteBatch.Draw(Game.GraphicsEngine.GameContent.DockOnRadarTexture, posOnRadar, null, Color.White, 0,
                     Game.GraphicsEngine.GameContent.DockOnRadarTexture.Dimensions() / 2, 0.1f, SpriteEffects.None, 0);
             }
-            if (deadDocks) _docks.RemoveAll(dock => dock.Dead);
         }
 
         private void DrawMinions(SpriteBatch spriteBatch)
         {
-            var arenaToRadarTransform = Game.DataEngine.ArenaToRadarTransform;
+            var arenaToRadarTransform = Game.DataEngine.ArenaSilhouette.ArenaToRadarTransform;
             foreach (var minion in Game.DataEngine.Minions)
             {
                 if (minion.Dead) continue;

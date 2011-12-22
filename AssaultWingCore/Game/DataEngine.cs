@@ -31,9 +31,6 @@ namespace AW2.Game
         /// </summary>
         private NamedItemCollection<object> _templates;
 
-        private Vector2 _arenaDimensionsOnRadar;
-        private Matrix _arenaToRadarTransform;
-        private TimeSpan _lastArenaRadarSilhouetteUpdate;
         private IndexedItemCollection<Spectator> _spectators;
 
         /// <summary>
@@ -60,6 +57,7 @@ namespace AW2.Game
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
         public WrappedTextList ChatHistory { get; private set; }
+        public ArenaSilhouette ArenaSilhouette { get; private set; }
 
         /// <summary>
         /// In real time. If zero, then the arena does not time out.
@@ -83,43 +81,14 @@ namespace AW2.Game
             ChatHistory = new WrappedTextList(Game);
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
             _templates = new NamedItemCollection<object>();
+            ArenaSilhouette = new ArenaSilhouette(Game);
         }
 
         #region arenas
 
-        /// <summary>
-        /// The currently active arena's silhouette, scaled and ready to be 
-        /// drawn in a player's viewport's radar display.
-        /// </summary>
-        public Texture2D ArenaRadarSilhouette { get; private set; }
-        public void EnsureArenaRadarSilhouetteUpdated()
-        {
-            if (ArenaRadarSilhouette != null && (!UpdateArenaRadarSilhouette || _lastArenaRadarSilhouetteUpdate.SecondsAgoGameTime() < 0.5f)) return;
-            RefreshArenaToRadarTransform();
-            RefreshArenaRadarSilhouette();
-            UpdateArenaRadarSilhouette = false;
-            _lastArenaRadarSilhouetteUpdate = Game.GameTime.TotalGameTime;
-        }
-
-        /// <summary>
-        /// If true, the arena radar silhouette will be updated soon.
-        /// </summary>
-        public bool UpdateArenaRadarSilhouette { get; set; }
-
-        /// <summary>
-        /// The transformation to map coordinates in the current arena 
-        /// into player viewport radar display coordinates.
-        /// </summary>
-        /// Arena origin is the lower left corner, positive X is to the right,
-        /// and positive Y is up. Radar display origin is the top left corner
-        /// of the radar display area, positive X is to the right, and positive
-        /// Y is down.
-        public Matrix ArenaToRadarTransform { get { return _arenaToRadarTransform; } }
-
         public void StartArena()
         {
-            // Clear old stuff from previous arena, if any.
-            _lastArenaRadarSilhouetteUpdate = TimeSpan.Zero;
+            ArenaSilhouette.Clear();
             foreach (var player in Spectators) player.ResetForArena();
         }
 
@@ -224,76 +193,9 @@ namespace AW2.Game
             Devices.Clear();
         }
 
-        /// <summary>
-        /// Unloads content needed by the currently active arena.
-        /// </summary>
         public override void UnloadContent()
         {
-            if (ArenaRadarSilhouette != null)
-            {
-                ArenaRadarSilhouette.Dispose();
-                ArenaRadarSilhouette = null;
-            }
-        }
-
-        /// <summary>
-        /// Refreshes <c>ArenaRadarSilhouette</c> according to the contents 
-        /// of the currently active arena.
-        /// </summary>
-        /// To be called whenever arena (or arena walls) change,
-        /// after <c>RefreshArenaToRadarTransform</c>.
-        /// <seealso cref="ArenaRadarSilhouette"/>
-        /// <seealso cref="RefreshArenaToRadarTransform"/>
-        public void RefreshArenaRadarSilhouette()
-        {
-            if (Arena == null)
-                throw new InvalidOperationException("No active arena");
-
-            // Dispose of any previous silhouette.
-            if (ArenaRadarSilhouette != null)
-            {
-                ArenaRadarSilhouette.Dispose();
-                ArenaRadarSilhouette = null;
-            }
-
-            // Draw arena walls in one color in a radar-sized texture.
-            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            var oldViewport = gfx.Viewport;
-            int targetWidth = (int)_arenaDimensionsOnRadar.X;
-            int targetHeight = (int)_arenaDimensionsOnRadar.Y;
-            var gfxAdapter = gfx.Adapter;
-            SurfaceFormat selectedFormat;
-            DepthFormat selectedDepthFormat;
-            int selectedMultiSampleCount;
-            gfxAdapter.QueryRenderTargetFormat(GraphicsProfile.Reach, SurfaceFormat.Color, DepthFormat.None, 1, out selectedFormat, out selectedDepthFormat, out selectedMultiSampleCount);
-            var maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight, false, selectedFormat, selectedDepthFormat);
-
-            // Set up draw matrices.
-            var view = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
-            var projection = Matrix.CreateOrthographicOffCenter(0, Arena.Dimensions.X,
-                0, Arena.Dimensions.Y, 10, 1000);
-
-            // Set and clear our own render target.
-            gfx.SetRenderTarget(maskTarget);
-            gfx.Clear(ClearOptions.Target, Color.Transparent, 0, 0);
-
-            // Draw the arena's walls.
-            Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch.Begin();
-            foreach (var wall in Arena.Gobs.GameplayLayer.Gobs.OfType<Wall>())
-                wall.DrawSilhouette(view, projection, Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch);
-            Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch.End();
-
-            // Restore render target so what we can extract drawn pixels.
-            // Create a copy of the texture in local memory so that a graphics device
-            // reset (e.g. when changing resolution) doesn't lose the texture.
-            gfx.SetRenderTarget(null);
-            gfx.Viewport = oldViewport;
-            var textureData = new Color[targetHeight * targetWidth];
-            maskTarget.GetData(textureData);
-            ArenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, false, SurfaceFormat.Color);
-            ArenaRadarSilhouette.SetData(textureData);
-
-            maskTarget.Dispose();
+            ArenaSilhouette.Dispose();
         }
 
         #endregion miscellaneous
@@ -304,27 +206,6 @@ namespace AW2.Game
         }
 
         #region Private methods
-
-        /// <summary>
-        /// Refreshes <c>arenaToRadarTransform</c> and <c>arenaDimensionsOnRadar</c>
-        /// according to the dimensions of the currently active arena.
-        /// </summary>
-        /// To be called whenever arena (or arena dimensions) change.
-        /// <seealso cref="ArenaToRadarTransform"/>
-        private void RefreshArenaToRadarTransform()
-        {
-            if (Arena == null)
-                throw new InvalidOperationException("No active arena");
-            Vector2 radarDisplayDimensions = new Vector2(200, 200); // TODO: Make this constant configurable
-            Vector2 arenaDimensions = Arena.Dimensions;
-            float arenaToRadarScale = Math.Min(
-                radarDisplayDimensions.X / arenaDimensions.X,
-                radarDisplayDimensions.Y / arenaDimensions.Y);
-            _arenaDimensionsOnRadar = arenaDimensions * arenaToRadarScale;
-            _arenaToRadarTransform =
-                Matrix.CreateScale(arenaToRadarScale, -arenaToRadarScale, 1) *
-                Matrix.CreateTranslation(0, _arenaDimensionsOnRadar.Y, 0);
-        }
 
         private int GetFreeSpectatorID()
         {

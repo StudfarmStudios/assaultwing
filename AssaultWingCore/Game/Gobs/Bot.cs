@@ -98,6 +98,7 @@ namespace AW2.Game.Gobs
             {
                 MaxAngle = MathHelper.Pi,
                 FriendlyWeight = float.MaxValue,
+                AngleWeight = 0.5f,
             };
             _moveTargetSelector = new TargetSelector(float.MaxValue)
             {

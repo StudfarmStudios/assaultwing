@@ -91,7 +91,7 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _thruster.Activate(this);
-            _targetSelector = new TargetSelector(_findTargetRange);
+            _targetSelector = new TargetSelector(_findTargetRange) { AngleWeight = 5 };
             _thrustEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_thrustDuration);
             // Avoid choosing the initial target on the first frame. This helps the case
             // where the rocket was shot from the owner's position (when the owner doesn't

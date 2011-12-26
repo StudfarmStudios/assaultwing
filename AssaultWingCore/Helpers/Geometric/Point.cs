@@ -17,12 +17,9 @@ namespace AW2.Helpers.Geometric
         [SerializedName("location")]
         public Vector2 Location;
 #else
-        Vector2 location;
+        private Vector2 _location;
 
-        /// <summary>
-        /// Gets and sets the location of the point.
-        /// </summary>
-        public Vector2 Location { get { return location; } set { location = value; } }
+        public Vector2 Location { get { return _location; } set { _location = value; } }
 #endif
 
         /// <summary>
@@ -33,38 +30,19 @@ namespace AW2.Helpers.Geometric
 #if TRUSTED_VISIBILITY_BREACH
             Location = Vector2.Zero;
 #else
-            location = Vector2.Zero;
+            _location = Vector2.Zero;
 #endif
         }
 
-        /// <summary>
-        /// Creates an arbitrary point.
-        /// </summary>
-        /// <param name="location">The point's location.</param>
         public Point(Vector2 location)
         {
 #if TRUSTED_VISIBILITY_BREACH
             Location = location;
 #else
-            this.location = location;
+            _location = location;
 #endif
         }
 
-        /// <summary>
-        /// Returns true iff this and the given point are equal in the given error margin.
-        /// </summary>
-        /// <param name="point">The other point.</param>
-        /// <param name="delta">The error margin.</param>
-        /// <returns>True iff this and the given point are equal in the given error margin.</returns>
-        public bool Equals(Point point, float delta)
-        {
-            return MathHelper.Distance(this.Location.X, point.Location.X) < delta
-                && MathHelper.Distance(this.Location.Y, point.Location.Y) < delta;
-        }
-
-        /// <summary>
-        /// Returns a string representation of the point.
-        /// </summary>
         public override string ToString()
         {
             return Location.ToString();
@@ -72,45 +50,30 @@ namespace AW2.Helpers.Geometric
 
         #region IGeomPrimitive Members
 
-        /// <summary>
-        /// A rectangle that contains the geometric primitive.
-        /// </summary>
         public Rectangle BoundingBox
         {
 #if TRUSTED_VISIBILITY_BREACH
             get { return new Rectangle(Location, Location); } 
 #else
-            get { return new Rectangle(location, location); }
+            get { return new Rectangle(_location, _location); }
 #endif
         }
 
-        /// <summary>
-        /// Transforms the geometric primitive by a transformation matrix.
-        /// </summary>
-        /// <param name="transformation">The transformation matrix.</param>
-        /// <returns>The transformed geometric primitive.</returns>
         public IGeomPrimitive Transform(Matrix transformation)
         {
 #if TRUSTED_VISIBILITY_BREACH
             return new Point(Vector2.Transform(Location, transformation));
 #else
-            return new Point(Vector2.Transform(location, transformation));
+            return new Point(Vector2.Transform(_location, transformation));
 #endif
         }
 
-        /// <summary>
-        /// Returns the shortest distance between the geometric primitive
-        /// and a point.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <returns>The shortest distance between the geometric primitive
-        /// and the point.</returns>
         public float DistanceTo(Vector2 point)
         {
 #if TRUSTED_VISIBILITY_BREACH
             return Vector2.Distance(Location, point);
 #else
-            return Vector2.Distance(location, point);
+            return Vector2.Distance(_location, point);
 #endif
         }
 
@@ -118,9 +81,6 @@ namespace AW2.Helpers.Geometric
 
         #region INetworkSerializable Members
 
-        /// <summary>
-        /// Serialises the object to a binary writer.
-        /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING
@@ -131,17 +91,14 @@ namespace AW2.Helpers.Geometric
                 if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
 #if TRUSTED_VISIBILITY_BREACH
-                var location = Location;
+                    var _location = Location;
 #endif
-                    writer.Write((float)location.X);
-                    writer.Write((float)location.Y);
+                    writer.Write((float)_location.X);
+                    writer.Write((float)_location.Y);
                 }
             }
         }
 
-        /// <summary>
-        /// Deserialises the object from a binary writer.
-        /// </summary>
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
@@ -149,9 +106,9 @@ namespace AW2.Helpers.Geometric
 #if TRUSTED_VISIBILITY_BREACH
                 var
 #endif
-                location = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                _location = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
 #if TRUSTED_VISIBILITY_BREACH
-                Location = location;
+                Location = _location;
 #endif
             }
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers.Serialization;
 
@@ -20,19 +21,19 @@ namespace AW2.Helpers.Geometric
             /// <summary>
             /// Index of the first vertex in the strip.
             /// </summary>
-            public int startIndex;
+            public int StartIndex;
 
             /// <summary>
             /// Index of the last vertex in the strip, (inclusive end).
             /// If the strip ends the polygon, then <b>endIndex</b> equals
             /// vertex count + 1 which denotes index 0.
             /// </summary>
-            public int endIndex;
+            public int EndIndex;
 
             /// <summary>
             /// Tight, axis-aligned bounding box for the face strip.
             /// </summary>
-            public Rectangle boundingBox;
+            public Rectangle BoundingBox;
 
             /// <summary>
             /// Creates a face strip for a polygon.
@@ -42,9 +43,9 @@ namespace AW2.Helpers.Geometric
             /// <param name="boundingBox">Bounding box for the face strip.</param>
             public FaceStrip(int startIndex, int endIndex, Rectangle boundingBox)
             {
-                this.startIndex = startIndex;
-                this.endIndex = endIndex;
-                this.boundingBox = boundingBox;
+                StartIndex = startIndex;
+                EndIndex = endIndex;
+                BoundingBox = boundingBox;
             }
         }
 
@@ -57,39 +58,39 @@ namespace AW2.Helpers.Geometric
         /// The vertices of the polygon. Each vertex is listed only once and in order.
         /// </summary>
         [TypeParameter, RuntimeState]
-        Vector2[] vertices;
+        private Vector2[] _vertices;
 
         /// <summary>
         /// A rectangle containing all the vertices.
         /// </summary>
-        Rectangle boundingBox;
+        private Rectangle _boundingBox;
 
         /// <summary>
         /// The polygon's faces separated into strips, for optimisation purposes.
         /// May be <b>null</b>.
         /// </summary>
-        FaceStrip[] faceStrips;
+        private FaceStrip[] _faceStrips;
 
         /// <summary>
         /// Returns the vertices of the polygon.
         /// </summary>
         /// In order to preserve the simplicity of the polygon, the 
         /// vertices should not be modified. Rather, create a new polygon.
-        public Vector2[] Vertices { get { return vertices; } }
+        public Vector2[] Vertices { get { return _vertices; } }
 
         /// <summary>
         /// Grouping of the polygon's faces into small strips.
         /// May be null.
         /// </summary>
         /// Face strips can be used for optimisation purposes.
-        public FaceStrip[] FaceStrips { get { return faceStrips; } }
+        public FaceStrip[] FaceStrips { get { return _faceStrips; } }
 
         /// <summary>
         /// Creates an uninitialised polygon.
         /// </summary>
         public Polygon()
         {
-            vertices = null;
+            _vertices = null;
         }
 
         /// <summary>
@@ -105,10 +106,10 @@ namespace AW2.Helpers.Geometric
             // Make a shallow copy so that outside code cannot alter our data 
             // without us knowing about it. Vector2 is a struct so a deep copy
             // is not needed.
-            this.vertices = (Vector2[])vertices.Clone();
+            _vertices = (Vector2[])vertices.Clone();
 
-            boundingBox = new Rectangle();
-            faceStrips = null;
+            _boundingBox = new Rectangle();
+            _faceStrips = null;
             UpdateBoundingBox();
             UpdateFaceStrips();
 
@@ -146,56 +147,50 @@ namespace AW2.Helpers.Geometric
         /// <returns>True iff the polygon's vertices are in a clockwise sequence.</returns>
         public bool Clockwise()
         {
-            for (int i = 0; i + 2 < vertices.Length; ++i)
-                switch (Geometry.Stand(vertices[i + 2], vertices[i], vertices[i + 1]))
+            for (int i = 0; i + 2 < _vertices.Length; ++i)
+                switch (Geometry.Stand(_vertices[i + 2], _vertices[i], _vertices[i + 1]))
                 {
                     case Geometry.StandType.Left: return false;
                     case Geometry.StandType.Right: return true;
                     case Geometry.StandType.Edge: continue;
                 }
             // We should never get here.
-            throw new Exception("Polygon winding undetermined (" + vertices.Length.ToString()
+            throw new Exception("Polygon winding undetermined (" + _vertices.Length.ToString()
                 + " vertices)");
         }
 
         /// <summary>
         /// Returns a string that represents this polygon.
         /// </summary>
-        /// <returns>A string that represents this polygon.</returns>
         public override string ToString()
         {
-            string[] vertNames = Array.ConvertAll<Vector2, string>(vertices, delegate(Vector2 v)
-            {
-                return v.ToString();
-            });
-            string value = "{" + String.Join(", ", vertNames) + "}";
-            return value;
+            return "{" + String.Join(", ", _vertices.Select(v => v.ToString()).ToArray()) + "}";
         }
 
         /// <summary>
-        /// Updates <b>boundingBox</b>.
+        /// Updates <see cref="_boundingBox"/>>
         /// </summary>
         private void UpdateBoundingBox()
         {
             Vector2 min = new Vector2(Single.MaxValue);
             Vector2 max = new Vector2(Single.MinValue);
-            foreach (Vector2 v in vertices)
+            foreach (Vector2 v in _vertices)
             {
                 min = Vector2.Min(min, v);
                 max = Vector2.Max(max, v);
             }
-            boundingBox = new Rectangle(min, max);
+            _boundingBox = new Rectangle(min, max);
         }
 
         /// <summary>
-        /// Updates <b>faceStrips</b>.
+        /// Updates <see cref="_faceStrips"/>
         /// </summary>
         private void UpdateFaceStrips()
         {
-            faceStrips = null;
+            _faceStrips = null;
 
             // Small polygons won't benefit from extra structures.
-            if (vertices.Length < faceStripSize * 2)
+            if (_vertices.Length < faceStripSize * 2)
                 return;
 
             // Divide faces to maximal strips with no brilliant logic.
@@ -203,54 +198,37 @@ namespace AW2.Helpers.Geometric
             // is one where the total area of bounding boxes is small.
             List<FaceStrip> faceStripList = new List<FaceStrip>();
             int startIndex = 0;
-            while (startIndex < vertices.Length)
+            while (startIndex < _vertices.Length)
             {
-                int endIndex = Math.Min(startIndex + faceStripSize, vertices.Length);
-                Vector2 min = vertices[startIndex];
-                Vector2 max = vertices[startIndex];
+                int endIndex = Math.Min(startIndex + faceStripSize, _vertices.Length);
+                Vector2 min = _vertices[startIndex];
+                Vector2 max = _vertices[startIndex];
                 for (int i = startIndex + 1; i <= endIndex; ++i)
                 {
-                    int realI = i % vertices.Length;
-                    min = Vector2.Min(min, vertices[realI]);
-                    max = Vector2.Max(max, vertices[realI]);
+                    int realI = i % _vertices.Length;
+                    min = Vector2.Min(min, _vertices[realI]);
+                    max = Vector2.Max(max, _vertices[realI]);
                 }
                 faceStripList.Add(new FaceStrip(startIndex, endIndex,
                     new Rectangle(min, max)));
                 startIndex = endIndex;
             }
-            this.faceStrips = faceStripList.ToArray();
+            _faceStrips = faceStripList.ToArray();
         }
 
         #region IGeomPrimitive Members
 
-        /// <summary>
-        /// A rectangle that contains the geometric primitive.
-        /// </summary>
-        public Rectangle BoundingBox { get { return boundingBox; } }
+        public Rectangle BoundingBox { get { return _boundingBox; } }
 
-        /// <summary>
-        /// Transforms the geometric primitive by a transformation matrix.
-        /// </summary>
-        /// <param name="transformation">The transformation matrix.</param>
-        /// <returns>The transformed geometric primitive.</returns>
-        /// If the transformation scales X and Y axes differently, the result
-        /// is undefined.
         public IGeomPrimitive Transform(Matrix transformation)
         {
-            Polygon poly = new Polygon(vertices); // vertices are cloned
-            Vector2.Transform(poly.vertices, ref transformation, poly.vertices);
+            Polygon poly = new Polygon(_vertices); // vertices are cloned
+            Vector2.Transform(poly._vertices, ref transformation, poly._vertices);
             poly.UpdateBoundingBox();
             poly.UpdateFaceStrips();
             return poly;
         }
 
-        /// <summary>
-        /// Returns the shortest distance between the geometric primitive
-        /// and a point.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <returns>The shortest distance between the geometric primitive
-        /// and the point.</returns>
         public float DistanceTo(Vector2 point)
         {
             return Geometry.Distance(new Point(point), this);
@@ -260,13 +238,6 @@ namespace AW2.Helpers.Geometric
 
         #region IEquatable<Polygon> Members
 
-        /// <summary>
-        /// Indicates whether this object defines the same polygon as another object.
-        /// Equality is taken in the geometric sense. In particular, the order 
-        /// of vertices is unimportant.
-        /// </summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns>true if the current object is equal to the other parameter; otherwise, false.</returns>
         public bool Equals(Polygon other)
         {
             if (this.Vertices.Length != other.Vertices.Length)
@@ -305,13 +276,6 @@ namespace AW2.Helpers.Geometric
 
         #region IConsistencyCheckable Members
 
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
         public void MakeConsistent(Type limitationAttribute)
         {
             UpdateBoundingBox();
@@ -329,8 +293,8 @@ namespace AW2.Helpers.Geometric
             {
                 if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
-                    writer.Write((ushort)vertices.Length);
-                    foreach (var vertex in vertices) writer.Write((Vector2)vertex);
+                    writer.Write((ushort)_vertices.Length);
+                    foreach (var vertex in _vertices) writer.Write((Vector2)vertex);
                 }
             }
         }
@@ -340,8 +304,8 @@ namespace AW2.Helpers.Geometric
             if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 int vertexCount = reader.ReadUInt16();
-                vertices = new Vector2[vertexCount];
-                for (int i = 0; i < vertexCount; i++) vertices[i] = reader.ReadVector2();
+                _vertices = new Vector2[vertexCount];
+                for (int i = 0; i < vertexCount; i++) _vertices[i] = reader.ReadVector2();
                 UpdateBoundingBox();
                 UpdateFaceStrips();
             }

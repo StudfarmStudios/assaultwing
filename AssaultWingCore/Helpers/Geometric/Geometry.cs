@@ -1109,7 +1109,7 @@ namespace AW2.Helpers.Geometric
                 for (int stripI = 0; stripI < polygon.FaceStrips.Length; ++stripI)
                 {
                     Polygon.FaceStrip strip = polygon.FaceStrips[stripI];
-                    if (Geometry.Intersect(point, strip.boundingBox))
+                    if (Geometry.Intersect(point, strip.BoundingBox))
                     {
                         stripDistancesSquared[stripI] = 0;
                     }
@@ -1117,13 +1117,13 @@ namespace AW2.Helpers.Geometric
                     {
                         // Seek out the closest face strip of those that don't contain the query point.
                         float[] cornerDistsSquared = new float[4] { 
-                            Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Min.X, strip.boundingBox.Min.Y)),
-                            Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Min.X, strip.boundingBox.Max.Y)),
-                            Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Max.X, strip.boundingBox.Min.Y)),
-                            Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Max.X, strip.boundingBox.Max.Y))
+                            Vector2.DistanceSquared(point.Location, new Vector2(strip.BoundingBox.Min.X, strip.BoundingBox.Min.Y)),
+                            Vector2.DistanceSquared(point.Location, new Vector2(strip.BoundingBox.Min.X, strip.BoundingBox.Max.Y)),
+                            Vector2.DistanceSquared(point.Location, new Vector2(strip.BoundingBox.Max.X, strip.BoundingBox.Min.Y)),
+                            Vector2.DistanceSquared(point.Location, new Vector2(strip.BoundingBox.Max.X, strip.BoundingBox.Max.Y))
                         };
                         Array.Sort(cornerDistsSquared);
-                        stripDistancesSquared[stripI] = DistanceSquared(point, strip.boundingBox);
+                        stripDistancesSquared[stripI] = DistanceSquared(point, strip.BoundingBox);
                         float stripDistanceSquared = cornerDistsSquared[1];
                         if (stripDistanceSquared < bestStripDistanceSquared)
                         {
@@ -1137,8 +1137,8 @@ namespace AW2.Helpers.Geometric
                 for (int stripI = 0; stripI < stripDistancesSquared.Length && stripDistancesSquared[stripI] <= bestStripDistanceSquared; ++stripI)
                 {
                     Polygon.FaceStrip strip = polygon.FaceStrips[stripIs[stripI]];
-                    int oldI = strip.startIndex;
-                    for (int vertI = strip.startIndex + 1; vertI <= strip.endIndex; ++vertI)
+                    int oldI = strip.StartIndex;
+                    for (int vertI = strip.StartIndex + 1; vertI <= strip.EndIndex; ++vertI)
                     {
                         int realI = vertI % vertices.Length;
                         bestDistanceSquared = MathHelper.Min(bestDistanceSquared,

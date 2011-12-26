@@ -40,16 +40,6 @@
           <Y>0</Y>
         </center>
         <radius>130</radius>
-        <boundingBox>
-          <min>
-            <X>0</X>
-            <Y>0</Y>
-          </min>
-          <max>
-            <X>0</X>
-            <Y>0</Y>
-          </max>
-        </boundingBox>
       </area>
     </Item>
   </collisionAreas>
@@ -108,16 +98,6 @@
           <Y>0</Y>
         </center>
         <radius>140</radius>
-        <boundingBox>
-          <min>
-            <X>0</X>
-            <Y>0</Y>
-          </min>
-          <max>
-            <X>0</X>
-            <Y>0</Y>
-          </max>
-        </boundingBox>
       </area>
     </collisionArea>
   </radialFlow>

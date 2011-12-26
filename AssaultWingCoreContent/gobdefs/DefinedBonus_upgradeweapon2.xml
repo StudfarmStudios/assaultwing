@@ -38,16 +38,6 @@
           <Y>0</Y>
         </center>
         <radius>90</radius>
-        <boundingBox>
-          <min>
-            <X>0</X>
-            <Y>0</Y>
-          </min>
-          <max>
-            <X>0</X>
-            <Y>0</Y>
-          </max>
-        </boundingBox>
       </area>
     </Item>
     <Item>
@@ -62,16 +52,6 @@
           <Y>0</Y>
         </center>
         <radius>176</radius>
-        <boundingBox>
-          <min>
-            <X>0</X>
-            <Y>0</Y>
-          </min>
-          <max>
-            <X>0</X>
-            <Y>0</Y>
-          </max>
-        </boundingBox>
       </area>
     </Item>
   </collisionAreas>

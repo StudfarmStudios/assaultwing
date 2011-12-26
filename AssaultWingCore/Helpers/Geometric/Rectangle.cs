@@ -19,19 +19,19 @@ namespace AW2.Helpers.Geometric
         [SerializedName("max")]
         public Vector2 Max;
 #else
-        Vector2 min, max;
+        private Vector2 _min, _max;
 #endif
 
 #if !TRUSTED_VISIBILITY_BREACH
         /// <summary>
         /// The bottom left corner of the rectangle.
         /// </summary>
-        public Vector2 Min { get { return min; } }
+        public Vector2 Min { get { return _min; } }
 
         /// <summary>
         /// The top right corner of the rectangle.
         /// </summary>
-        public Vector2 Max { get { return max; } }
+        public Vector2 Max { get { return _max; } }
 #endif
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace AW2.Helpers.Geometric
 #if TRUSTED_VISIBILITY_BREACH
                 return Max - Min;
 #else
-                return max - min;
+                return _max - _min;
 #endif
             }
         }
@@ -69,8 +69,8 @@ namespace AW2.Helpers.Geometric
             Min = min;
             Max = max;
 #else
-            this.min = min;
-            this.max = max;
+            _min = min;
+            _max = max;
 #endif
         }
 
@@ -89,8 +89,8 @@ namespace AW2.Helpers.Geometric
             Min = new Vector2(minX, minY);
             Max = new Vector2(maxX, maxY);
 #else
-            min = new Vector2(minX, minY);
-            max = new Vector2(maxX, maxY);
+            _min = new Vector2(minX, minY);
+            _max = new Vector2(maxX, maxY);
 #endif
         }
 
@@ -104,39 +104,21 @@ namespace AW2.Helpers.Geometric
 
         #region IGeomPrimitive Members
 
-        /// <summary>
-        /// A rectangle that contains the geometric primitive.
-        /// </summary>
         public Rectangle BoundingBox { get { return this; } }
 
-        /// <summary>
-        /// Transforms the geometric primitive by a transformation matrix.
-        /// The result is a polygon.
-        /// </summary>
-        /// <param name="transformation">The transformation matrix.</param>
-        /// <returns>The transformed geometric primitive.</returns>
-        /// If the transformation rotates around the Z axis, the result
-        /// is undefined.
         public IGeomPrimitive Transform(Matrix transformation)
         {
 #if TRUSTED_VISIBILITY_BREACH
-            var min = Min;
-            var max = Max;
+            var _min = Min;
+            var _max = Max;
 #endif
-            var p1 = Vector2.Transform(min, transformation);
-            var p2 = Vector2.Transform(new Vector2(min.X, max.Y), transformation);
-            var p3 = Vector2.Transform(max, transformation);
-            var p4 = Vector2.Transform(new Vector2(max.X, min.Y), transformation);
+            var p1 = Vector2.Transform(_min, transformation);
+            var p2 = Vector2.Transform(new Vector2(_min.X, _max.Y), transformation);
+            var p3 = Vector2.Transform(_max, transformation);
+            var p4 = Vector2.Transform(new Vector2(_max.X, _min.Y), transformation);
             return new Polygon(new Vector2[] { p1, p2, p3, p4 });
         }
 
-        /// <summary>
-        /// Returns the shortest distance between the geometric primitive
-        /// and a point.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <returns>The shortest distance between the geometric primitive
-        /// and the point.</returns>
         public float DistanceTo(Vector2 point)
         {
             return Geometry.Distance(new Point(point), this);
@@ -146,9 +128,6 @@ namespace AW2.Helpers.Geometric
 
         #region INetworkSerializable Members
 
-        /// <summary>
-        /// Serialises the object to a binary writer.
-        /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING
@@ -158,32 +137,29 @@ namespace AW2.Helpers.Geometric
                 if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
 #if TRUSTED_VISIBILITY_BREACH
-                var min = Min;
-                var max = Max;
+                    var _min = Min;
+                    var _max = Max;
 #endif
-                    writer.Write((float)min.X);
-                    writer.Write((float)min.Y);
-                    writer.Write((float)max.X);
-                    writer.Write((float)max.Y);
+                    writer.Write((float)_min.X);
+                    writer.Write((float)_min.Y);
+                    writer.Write((float)_max.X);
+                    writer.Write((float)_max.Y);
                 }
             }
         }
 
-        /// <summary>
-        /// Deserialises the object from a binary writer.
-        /// </summary>
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
 #if TRUSTED_VISIBILITY_BREACH
-                Vector2 min, max;
+                Vector2 _min, _max;
 #endif
-                min = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
-                max = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                _min = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                _max = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
 #if TRUSTED_VISIBILITY_BREACH
-                Min = min;
-                Max = max;
+                Min = _min;
+                Max = _max;
 #endif
             }
         }

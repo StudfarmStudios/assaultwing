@@ -14,64 +14,68 @@ namespace AW2.Helpers.Geometric
     /// A triangle can also be degenerate, i.e. all the corner points
     /// lie on the same line.
     /// </summary>
+    [LimitedSerialization]
     public class Triangle : IGeomPrimitive, IConsistencyCheckable
     {
 #if TRUSTED_VISIBILITY_BREACH
         /// <summary>First vertex</summary>
-        [SerializedName("p1")]
+        [TypeParameter, SerializedName("p1")]
         public Vector2 P1;
 
         /// <summary>Second vertex</summary>
-        [SerializedName("p2")]
+        [TypeParameter, SerializedName("p2")]
         public Vector2 P2;
 
         /// <summary>Third vertex</summary>
-        [SerializedName("p3")]
+        [TypeParameter, SerializedName("p3")]
         public Vector2 P3;
 #else
-        Vector2 p1, p2, p3;
+        [TypeParameter]
+        private Vector2 _p1, _p2, _p3;
 #endif
-        Vector2 n12, n13, n23;
+        // Unit normals of each face.
+        [TypeParameter]
+        private Vector2 _n12, _n13, _n23;
 
         /// <summary>
         /// A rectangle containing the triangle.
         /// </summary>
-        Rectangle boundingBox;
+        private Rectangle _boundingBox;
 
 #if !TRUSTED_VISIBILITY_BREACH
         /// <summary>
         /// The first corner point.
         /// </summary>
-        public Vector2 P1 { get { return p1; } }
+        public Vector2 P1 { get { return _p1; } }
 
         /// <summary>
         /// The second corner point.
         /// </summary>
-        public Vector2 P2 { get { return p2; } }
+        public Vector2 P2 { get { return _p2; } }
 
         /// <summary>
         /// The third corner point.
         /// </summary>
-        public Vector2 P3 { get { return p3; } }
+        public Vector2 P3 { get { return _p3; } }
 #endif
 
         /// <summary>
         /// The unit normal pointing away from the triangle at the edge
         /// defined by P1 and P2.
         /// </summary>
-        public Vector2 Normal12 { get { return n12; } }
+        public Vector2 Normal12 { get { return _n12; } }
 
         /// <summary>
         /// The unit normal pointing away from the triangle at the edge
         /// defined by P1 and P3.
         /// </summary>
-        public Vector2 Normal13 { get { return n13; } }
+        public Vector2 Normal13 { get { return _n13; } }
 
         /// <summary>
         /// The unit normal pointing away from the triangle at the edge
         /// defined by P2 and P3.
         /// </summary>
-        public Vector2 Normal23 { get { return n23; } }
+        public Vector2 Normal23 { get { return _n23; } }
 
         /// <summary>
         /// Creates a triangle. The corner points will be reordered
@@ -94,13 +98,13 @@ namespace AW2.Helpers.Geometric
                 P2 = p3;
                 P3 = p2;
 #else
-                this.p1 = p1;
-                this.p2 = p3;
-                this.p3 = p2;
+                _p1 = p1;
+                _p2 = p3;
+                _p3 = p2;
 #endif
-                n13 = -e12LeftNormal;
-                n12 = new Vector2(p1.Y - p3.Y, p3.X - p1.X);
-                n23 = new Vector2(p3.Y - p2.Y, p2.X - p3.X);
+                _n13 = -e12LeftNormal;
+                _n12 = new Vector2(p1.Y - p3.Y, p3.X - p1.X);
+                _n23 = new Vector2(p3.Y - p2.Y, p2.X - p3.X);
             }
             else
             {
@@ -109,23 +113,20 @@ namespace AW2.Helpers.Geometric
                 P2 = p2;
                 P3 = p3;
 #else
-                this.p1 = p1;
-                this.p2 = p2;
-                this.p3 = p3;
+                _p1 = p1;
+                _p2 = p2;
+                _p3 = p3;
 #endif
-                n12 = e12LeftNormal;
-                n13 = new Vector2(p3.Y - p1.Y, p1.X - p3.X);
-                n23 = new Vector2(p2.Y - p3.Y, p3.X - p2.X);
+                _n12 = e12LeftNormal;
+                _n13 = new Vector2(p3.Y - p1.Y, p1.X - p3.X);
+                _n23 = new Vector2(p2.Y - p3.Y, p3.X - p2.X);
             }
-            n12.Normalize();
-            n13.Normalize();
-            n23.Normalize();
+            _n12.Normalize();
+            _n13.Normalize();
+            _n23.Normalize();
             UpdateBoundingBox();
         }
 
-        /// <summary>
-        /// Returns a string representation of the triangle.
-        /// </summary>
         public override string ToString()
         {
             return "{" + P1 + ", " + P2 + ", " + P3 + "}";
@@ -134,32 +135,24 @@ namespace AW2.Helpers.Geometric
         void UpdateBoundingBox()
         {
 #if TRUSTED_VISIBILITY_BREACH
-            boundingBox = new Geometric.Rectangle(
+            _boundingBox = new Geometric.Rectangle(
                 Math.Min(P1.X, Math.Min(P2.X, P3.X)),
                 Math.Min(P1.Y, Math.Min(P2.Y, P3.Y)),
                 Math.Max(P1.X, Math.Max(P2.X, P3.X)),
                 Math.Max(P1.Y, Math.Max(P2.Y, P3.Y)));
 #else
-            boundingBox = new Geometric.Rectangle(
-                Math.Min(p1.X, Math.Min(p2.X, p3.X)),
-                Math.Min(p1.Y, Math.Min(p2.Y, p3.Y)),
-                Math.Max(p1.X, Math.Max(p2.X, p3.X)),
-                Math.Max(p1.Y, Math.Max(p2.Y, p3.Y)));
+            _boundingBox = new Geometric.Rectangle(
+                Math.Min(_p1.X, Math.Min(_p2.X, _p3.X)),
+                Math.Min(_p1.Y, Math.Min(_p2.Y, _p3.Y)),
+                Math.Max(_p1.X, Math.Max(_p2.X, _p3.X)),
+                Math.Max(_p1.Y, Math.Max(_p2.Y, _p3.Y)));
 #endif
         }
 
         #region IGeomPrimitive Members
 
-        /// <summary>
-        /// A rectangle that contains the geometric primitive.
-        /// </summary>
-        public Rectangle BoundingBox { get { return boundingBox; } }
+        public Rectangle BoundingBox { get { return _boundingBox; } }
 
-        /// <summary>
-        /// Transforms the geometric primitive by a transformation matrix.
-        /// </summary>
-        /// <param name="transformation">The transformation matrix.</param>
-        /// <returns>The transformed geometric primitive.</returns>
         public IGeomPrimitive Transform(Matrix transformation)
         {
 #if TRUSTED_VISIBILITY_BREACH
@@ -167,19 +160,12 @@ namespace AW2.Helpers.Geometric
                 Vector2.Transform(P2, transformation),
                 Vector2.Transform(P3, transformation));
 #else
-            return new Triangle(Vector2.Transform(p1, transformation),
-                Vector2.Transform(p2, transformation),
-                Vector2.Transform(p3, transformation));
+            return new Triangle(Vector2.Transform(_p1, transformation),
+                Vector2.Transform(_p2, transformation),
+                Vector2.Transform(_p3, transformation));
 #endif
         }
 
-        /// <summary>
-        /// Returns the shortest distance between the geometric primitive
-        /// and a point.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <returns>The shortest distance between the geometric primitive
-        /// and the point.</returns>
         public float DistanceTo(Vector2 point)
         {
             return Geometry.Distance(new Point(point), this);
@@ -189,10 +175,6 @@ namespace AW2.Helpers.Geometric
 
         #region IConsistencyCheckable Members
 
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
         public void MakeConsistent(Type limitationAttribute)
         {
             UpdateBoundingBox();
@@ -202,9 +184,6 @@ namespace AW2.Helpers.Geometric
 
         #region INetworkSerializable Members
 
-        /// <summary>
-        /// Serialises the object to a binary writer.
-        /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING
@@ -214,37 +193,34 @@ namespace AW2.Helpers.Geometric
                 if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
 #if TRUSTED_VISIBILITY_BREACH
-                var p1 = P1;
-                var p2 = P2;
-                var p3 = P3;
+                    var _p1 = P1;
+                    var _p2 = P2;
+                    var _p3 = P3;
 #endif
-                    writer.Write((float)p1.X);
-                    writer.Write((float)p1.Y);
-                    writer.Write((float)p2.X);
-                    writer.Write((float)p2.Y);
-                    writer.Write((float)p3.X);
-                    writer.Write((float)p3.Y);
+                    writer.Write((float)_p1.X);
+                    writer.Write((float)_p1.Y);
+                    writer.Write((float)_p2.X);
+                    writer.Write((float)_p2.Y);
+                    writer.Write((float)_p3.X);
+                    writer.Write((float)_p3.Y);
                 }
             }
         }
 
-        /// <summary>
-        /// Deserialises the object from a binary writer.
-        /// </summary>
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
 #if TRUSTED_VISIBILITY_BREACH
-                Vector2 p1, p2, p3;
+                Vector2 _p1, _p2, _p3;
 #endif
-                p1 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
-                p2 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
-                p3 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                _p1 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                _p2 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                _p3 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
 #if TRUSTED_VISIBILITY_BREACH
-                P1 = p1;
-                P2 = p2;
-                P3 = p3;
+                P1 = _p1;
+                P2 = _p2;
+                P3 = _p3;
 #endif
             }
         }

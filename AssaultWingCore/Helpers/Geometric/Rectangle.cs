@@ -49,6 +49,8 @@ namespace AW2.Helpers.Geometric
             }
         }
 
+        public Vector2 Center { get { return (_min + _max) / 2; } }
+
         /// <summary>
         /// Creates a zero-sized rectangle at the origin.
         /// </summary>

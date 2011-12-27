@@ -16,6 +16,7 @@ namespace AW2.Net.Connections
     /// A connection to a remote host over a network. Communication between 
     /// the local and remote host is done by messages. 
     /// </summary>
+    /// <remarks>
     /// Connection operates asynchronously. Both creation of connections and 
     /// sending messages via connections are done asynchronously. Therefore 
     /// their result is not known by the time the corresponding method call returns. 
@@ -29,6 +30,7 @@ namespace AW2.Net.Connections
     /// (for each connection) and general error conditions (for each connection).
     /// 
     /// This class is thread safe.
+    /// </remarks>
     public abstract class Connection
     {
         #region Fields

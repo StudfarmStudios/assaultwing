@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -60,6 +61,7 @@ namespace AW2.Net
         public override void SendHit(Gob hitter, Gob target, Vector2? pos)
         {
             if (hitter.Owner == null || target.Owner == null) return;
+            var game = hitter.Game;
             Send(new
             {
                 Hit = hitter.TypeName.Value,
@@ -68,6 +70,7 @@ namespace AW2.Net
                 TargetOwner = target.Owner.LoginToken,
                 Pos = pos.HasValue ? pos.Value : hitter.Pos,
                 BirthPos = hitter.BirthPos,
+                Type = game.DataEngine.Minions.Contains(target) ? "Minion" : "Misc",
             });
         }
 

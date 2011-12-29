@@ -13,7 +13,7 @@ class AWConfig
         @config = Document.new(IO.read(@config_file))
     end
 
-    def path; @config_file.to_s end
+    def path; @config_file.to_s.gsub("/", "\\") end
 
     def save
         formatter = Formatters::Pretty.new

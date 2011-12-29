@@ -138,7 +138,7 @@ namespace AW2.Game.GobUtils
 
         private void HandleMinionDeath(BoundDamageInfo info)
         {
-            if (KilledSpectator == null || !KilledSpectator.Minions.Contains(info.Target)) return;
+            if (Game.NetworkMode == NetworkMode.Client || KilledSpectator == null || !KilledSpectator.Minions.Contains(info.Target)) return;
             switch (DeathType)
             {
                 default: throw new ApplicationException("Unexpected DeathType " + DeathType);
@@ -147,8 +147,7 @@ namespace AW2.Game.GobUtils
                 case Coroner.DeathTypeType.Kill:
                     ScoringSpectator.ArenaStatistics.Kills++;
                     ScoringSpectator.ArenaStatistics.KillsWithoutDying++;
-                    if (Game.NetworkMode == NetworkMode.Server)
-                        ScoringSpectator.MustUpdateToClients = true;
+                    ScoringSpectator.MustUpdateToClients = true;
                     break;
             }
             KilledSpectator.ArenaStatistics.Deaths++;

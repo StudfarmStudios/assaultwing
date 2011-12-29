@@ -216,7 +216,6 @@
     <Compile Include="Graphics\WrappedText.cs" />
     <Compile Include="Graphics\WrappedTextList.cs" />
     <Compile Include="Helpers\AbortableThreadPool.cs" />
-    <Compile Include="Helpers\AWPerformanceCounter.cs" />
     <Compile Include="Helpers\CanonicalString.cs" />
     <Compile Include="Helpers\Clonable.cs" />
     <Compile Include="Helpers\Collections\IndexedItemCollection.cs" />
@@ -246,7 +245,6 @@
     <Compile Include="Helpers\MiscHelper.cs" />
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Helpers\AWTimer.cs" />
-    <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
     <Compile Include="Helpers\Serialization\ChangingState.cs" />
     <Compile Include="Helpers\Serialization\ExcludeFromDeepCopyAttribute.cs" />

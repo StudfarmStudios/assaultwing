@@ -156,7 +156,7 @@ namespace AW2.Menu.Main
             }, () =>
             {
                 Game.WebData.UnloginPilots();
-                Game.WebData.LoginPilots();
+                Game.WebData.LoginPilots(reportFailure: true);
             }));
             LoginItems.Add(new MainMenuItem(MenuEngine, () => "Register a New Pilot",
                 () => Game.OpenURL("http://www.assaultwing.com/battlefront/#!/register")));

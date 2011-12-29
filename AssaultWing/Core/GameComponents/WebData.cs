@@ -39,10 +39,15 @@ namespace AW2.Net
             nextScheduledGameRequest.BeginGetResponse(NextScheduledGameRequestDone, nextScheduledGameRequest);
         }
 
-        public void LoginPilots()
+        public void LoginPilots(bool reportFailure = false)
         {
             if (ServicePointManager.ServerCertificateValidationCallback == null)
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) => true;
+            if (reportFailure && Game.Settings.Net.StatsServerAddress == "")
+            {
+                EnqueueLoginError("Login server not specified.", "");
+                return;
+            }
             foreach (var spec in Game.DataEngine.Spectators)
             {
                 if (!string.IsNullOrEmpty(spec.LoginToken)) continue;
@@ -50,7 +55,12 @@ namespace AW2.Net
                 var password = plrs.Player1.Name == spec.Name ? plrs.Player1.Password :
                     spec.Name == AW2.Settings.PlayerSettings.BOTS_NAME ? plrs.BotsPassword :
                     "";
-                BeginRequestPlayerLoginToken(spec.Name, password);
+                if (password == "")
+                {
+                    if (reportFailure) EnqueueLoginError("No password given.", spec.Name);
+                }
+                else
+                    BeginRequestPlayerLoginToken(spec.Name, password);
             }
         }
 
@@ -62,7 +72,6 @@ namespace AW2.Net
         private void BeginRequestPlayerLoginToken(string name, string password)
         {
             var net = Game.Settings.Net;
-            if (net.StatsServerAddress == "") return;
             var loginRequest = WebRequest.Create(new UriBuilder("https", net.StatsServerAddress, net.StatsHttpsPort, "login")
             {
                 Query = string.Format("username={0}&password={1}", name, password)
@@ -85,13 +94,7 @@ namespace AW2.Net
             {
                 var response = JObject.Parse(responseString);
                 var error = response["error"];
-                if (error != null)
-                {
-                    var username = response["data"] != null ? response["data"]["username"] ?? "" : "";
-                    var errorPrelude = "Login error (" + username + ")";
-                    Log.Write("{0}: {1}", errorPrelude, error);
-                    LoginErrors.Do(queue => queue.Enqueue(errorPrelude + "\n" + error));
-                }
+                if (error != null) EnqueueLoginError(error + ".", GetJsonString(response, "data", "username"));
                 var token = response["token"];
                 if (token != null)
                 {
@@ -99,6 +102,27 @@ namespace AW2.Net
                     if (player != null) player.LoginToken = token.ToString();
                 }
             });
+        }
+
+        private string GetJsonString(JObject root, params string[] path)
+        {
+            if (path == null || path.Length == 0) throw new ArgumentException("Invalid JSON path");
+            var element = root[path[0]];
+            if (element == null) return "";
+            foreach (var step in path.Skip(1)){
+                if (element[step] == null) return "";
+                element = element[step];
+            }
+            return element.ToString();
+        }
+
+        private void EnqueueLoginError(string error, string username)
+        {
+            var errorPrelude = username != ""
+                ? "Login error for " + username
+                : "Login error";
+            Log.Write("{0}: {1}", errorPrelude, error);
+            LoginErrors.Do(queue => queue.Enqueue(errorPrelude + ".\n" + error));
         }
 
         private void RequestDone(IAsyncResult result, string requestName, Action<string> handleResponse)

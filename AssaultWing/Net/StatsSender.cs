@@ -91,7 +91,8 @@ namespace AW2.Net
 
         private void ConnectToStatsServer()
         {
-            if (Game.NetworkMode != NetworkMode.Server || _isConnecting || !_connectTimer.IsElapsed) return;
+            if (Game.NetworkMode != NetworkMode.Server || _isConnecting || !_connectTimer.IsElapsed ||
+                Game.Settings.Net.StatsServerAddress == "") return;
             _isConnecting = true;
             try
             {

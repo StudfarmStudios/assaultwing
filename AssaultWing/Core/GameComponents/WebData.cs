@@ -62,6 +62,7 @@ namespace AW2.Net
         private void BeginRequestPlayerLoginToken(string name, string password)
         {
             var net = Game.Settings.Net;
+            if (net.StatsServerAddress == "") return;
             var loginRequest = WebRequest.Create(new UriBuilder("https", net.StatsServerAddress, net.StatsHttpsPort, "login")
             {
                 Query = string.Format("username={0}&password={1}", name, password)

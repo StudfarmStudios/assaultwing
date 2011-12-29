@@ -49,7 +49,17 @@ namespace AW2.Helpers.Geometric
             }
         }
 
-        public Vector2 Center { get { return (_min + _max) / 2; } }
+        public Vector2 Center
+        {
+            get
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                return (Max + Min) / 2;
+#else
+                return (_min + _max) / 2;
+#endif
+            }
+        }
 
         /// <summary>
         /// Creates a zero-sized rectangle at the origin.

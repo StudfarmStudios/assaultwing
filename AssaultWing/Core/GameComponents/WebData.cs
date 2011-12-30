@@ -43,9 +43,9 @@ namespace AW2.Net
         {
             if (ServicePointManager.ServerCertificateValidationCallback == null)
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) => true;
-            if (reportFailure && Game.Settings.Net.StatsServerAddress == "")
+            if (Game.Settings.Net.StatsServerAddress == "")
             {
-                EnqueueLoginError("Login server not specified.", "");
+                if (reportFailure) EnqueueLoginError("Login server not specified.", "");
                 return;
             }
             foreach (var spec in Game.DataEngine.Spectators)

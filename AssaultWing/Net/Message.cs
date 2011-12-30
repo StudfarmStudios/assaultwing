@@ -141,10 +141,11 @@ namespace AW2.Net
         {
             if (headerAndBody.Array == null) throw new ArgumentNullException("headerAndBody.Array");
             if (!IsValidHeader(headerAndBody)) throw new MessageException("Invalid message header");
-            int expectedLength = HEADER_LENGTH + GetBodyLength(headerAndBody);
+            var expectedLength = HEADER_LENGTH + GetBodyLength(headerAndBody);
             if (expectedLength > headerAndBody.Count) throw new ArgumentException("Message length mismatch (" + expectedLength + " expected, " + headerAndBody.Count + " got)");
             var message = (Message)GetMessageSubclass(headerAndBody).GetConstructor(System.Type.EmptyTypes).Invoke(null);
-            message.Deserialize(new NetworkBinaryReader(new MemoryStream(headerAndBody.Array, HEADER_LENGTH, headerAndBody.Count - HEADER_LENGTH, false)));
+            message.Deserialize(new NetworkBinaryReader(new MemoryStream(headerAndBody.Array,
+                headerAndBody.Offset + HEADER_LENGTH, headerAndBody.Count - HEADER_LENGTH, false)));
             message.ConnectionID = AW2.Net.Connections.Connection.INVALID_ID;
             message.CreationTime = creationTime;
             return message;
@@ -152,7 +153,7 @@ namespace AW2.Net
 
         public override string ToString()
         {
-            return Type.ToString();
+            return Type != null ? Type.ToString() : GetType().Name;
         }
 
         #endregion Public interface

@@ -266,11 +266,24 @@ namespace AW2.Net.Connections
             return errorsFound;
         }
 
-        private void HandleMessageBuffer(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint)
+        private int HandleMessageBuffer(ArraySegment<byte> buffer, IPEndPoint remoteEndPoint)
         {
-            var message = Message.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime);
-            message.ConnectionID = ID;
-            HandleMessage(message, remoteEndPoint);
+            if (buffer.Count >= Message.HEADER_LENGTH && !Message.IsValidHeader(buffer))
+            {
+                Dispose();
+                Errors.Do(queue => queue.Enqueue("Connection received an invalid message header [" +
+                    MiscHelper.BytesToString(new ArraySegment<byte>(buffer.Array, 0, Message.HEADER_LENGTH)) + "]"));
+                return buffer.Count;
+            }
+            var messageLength = Message.HEADER_LENGTH + Message.GetBodyLength(buffer);
+            if (buffer.Count >= messageLength)
+            {
+                var message = Message.Deserialize(buffer, Game.GameTime.TotalRealTime);
+                message.ConnectionID = ID;
+                HandleMessage(message, remoteEndPoint);
+                return messageLength;
+            }
+            return 0;
         }
 
         public void HandleMessage(Message message, IPEndPoint remoteEndPoint)

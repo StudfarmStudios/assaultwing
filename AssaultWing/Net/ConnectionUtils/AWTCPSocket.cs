@@ -41,20 +41,18 @@ namespace AW2.Net.ConnectionUtils
                 {
                     CheckSocketError(args);
                     if (args.SocketError != SocketError.Success) break;
-                    if (args.BytesTransferred < args.Count)
-                        args.SetBuffer(args.Offset + args.BytesTransferred, args.Count - args.BytesTransferred);
-                    else if (args.BytesTransferred > args.Count)
+                    var bytesTotal = args.Offset + args.BytesTransferred;
+                    var bytesHandled = 0;
+                    while (true)
                     {
-                        Dispose();
-                        Errors.Do(queue => queue.Enqueue("Socket received too many bytes (" + args.BytesTransferred + "/" + args.Count + ")"));
+                        var bufferSegment = new ArraySegment<byte>(args.Buffer, bytesHandled, bytesTotal - bytesHandled);
+                        var moreBytesHandled = _messageHandler(bufferSegment, (IPEndPoint)args.RemoteEndPoint);
+                        if (moreBytesHandled == 0) break;
+                        bytesHandled += moreBytesHandled;
                     }
-                    else
-                    {
-                        if (args.Offset + args.BytesTransferred == Message.HEADER_LENGTH)
-                            ProcessReceivedHeader(args);
-                        else
-                            ProcessReceivedBody(args);
-                    }
+                    var bytesLeftOver = bytesTotal - bytesHandled;
+                    if (bytesHandled > 0) Array.Copy(args.Buffer, bytesHandled, args.Buffer, 0, bytesLeftOver);
+                    args.SetBuffer(bytesLeftOver, BUFFER_LENGTH - bytesLeftOver);
                     UseSocket(socket => isPending = socket.ReceiveAsync(args));
                 }
                 while (!isPending && !IsDisposed);
@@ -66,27 +64,6 @@ namespace AW2.Net.ConnectionUtils
                 Errors.Do(queue => queue.Enqueue(message));
                 Dispose();
             }
-        }
-
-        private void ProcessReceivedHeader(SocketAsyncEventArgs args)
-        {
-            var buffer = new ArraySegment<byte>(args.Buffer);
-            if (!Message.IsValidHeader(buffer))
-            {
-                Dispose();
-                Errors.Do(queue => queue.Enqueue("Connection received an invalid message header [" +
-                    MiscHelper.BytesToString(new ArraySegment<byte>(args.Buffer, 0, Message.HEADER_LENGTH)) + "]"));
-            }
-            else
-                args.SetBuffer(Message.HEADER_LENGTH, Message.GetBodyLength(buffer));
-        }
-
-        private void ProcessReceivedBody(SocketAsyncEventArgs args)
-        {
-            var bufferSegment = new ArraySegment<byte>(args.Buffer, 0, args.Offset + args.Count);
-            var endPoint = (IPEndPoint)args.RemoteEndPoint;
-            _messageHandler(bufferSegment, endPoint);
-            args.SetBuffer(0, Message.HEADER_LENGTH);
         }
     }
 }

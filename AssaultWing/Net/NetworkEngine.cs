@@ -520,15 +520,16 @@ namespace AW2.Net
             _udpMessagesToHandle.Do(list => list.Clear());
         }
 
-        private void HandleUDPMessage(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint)
+        private int HandleUDPMessage(ArraySegment<byte> buffer, IPEndPoint remoteEndPoint)
         {
             var message = IsConnectedToManagementServer && remoteEndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint)
-                ? ManagementMessage.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime)
-                : Message.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime);
+                ? ManagementMessage.Deserialize(buffer, Game.GameTime.TotalRealTime)
+                : Message.Deserialize(buffer, Game.GameTime.TotalRealTime);
             if (Game.NetworkMode == NetworkMode.Server && message is GameServerHandshakeRequestUDP)
                 HandleGameServerHandshakeRequestUDP((GameServerHandshakeRequestUDP)message, remoteEndPoint);
             else
                 _udpMessagesToHandle.Do(list => list.Add(Tuple.Create(message, remoteEndPoint)));
+            return buffer.Count;
         }
 
         private void HandleGameServerHandshakeRequestUDP(GameServerHandshakeRequestUDP mess, IPEndPoint remoteEndPoint)

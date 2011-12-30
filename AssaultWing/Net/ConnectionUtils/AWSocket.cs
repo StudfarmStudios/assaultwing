@@ -18,7 +18,10 @@ namespace AW2.Net.ConnectionUtils
     /// </summary>
     public abstract class AWSocket
     {
-        public delegate void MessageHandler(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint);
+        /// <summary>
+        /// Returns the number of bytes that were handled. The remaining bytes will be available at the next call.
+        /// </summary>
+        public delegate int MessageHandler(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint);
 
         protected const int BUFFER_LENGTH = 65536;
         private static readonly TimeSpan SEND_TIMEOUT = TimeSpan.FromSeconds(10);
@@ -94,8 +97,9 @@ namespace AW2.Net.ConnectionUtils
             var stream = new MemoryStream(sendArgs.Buffer);
             var writer = NetworkBinaryWriter.Create(stream);
             writeData(writer);
-            DebugPrintSentByteCount(sendArgs.Buffer, (int)writer.GetBaseStream().Position);
-            sendArgs.SetBuffer(0, (int)writer.GetBaseStream().Position);
+            var bytesWritten = (int)writer.GetBaseStream().Position;
+            DebugPrintSentByteCount(sendArgs.Buffer, bytesWritten);
+            sendArgs.SetBuffer(0, bytesWritten);
             UseSocket(socket =>
             {
                 var isPending = socket.SendToAsync(sendArgs);

@@ -43,6 +43,7 @@ namespace AW2.Menu
                     InitializeControlCallbacks();
 
                     ResetItems();
+                    MenuEngine.Game.Settings.ToFile();
                 }
             }
         }
@@ -72,11 +73,31 @@ namespace AW2.Menu
             _currentItem = new ScrollableList(MENU_ITEM_COUNT, () => _currentItems == null ? 0 : _currentItems.Count);
         }
 
-        public void SetItems(MainMenuItemCollection items)
+        public void PushItems(MainMenuItemCollection items)
         {
-            _currentItemsHistory.Push(Tuple.Create(_currentItems, _currentItem.CurrentIndex, _currentItem.TopmostIndex));
+            if (_currentItems != null) _currentItemsHistory.Push(Tuple.Create(_currentItems, _currentItem.CurrentIndex, _currentItem.TopmostIndex));
             _currentItems = items;
             _currentItem.CurrentIndex = 0;
+        }
+
+        private void PopItems()
+        {
+            var oldHistoryCount = _currentItemsHistory.Count;
+            if (_currentItemsHistory.Count > 1)
+            {
+                var old = _currentItemsHistory.Pop();
+                _currentItems = old.Item1;
+                _currentItem.CurrentIndex = old.Item2;
+                _currentItem.TopmostIndex = old.Item3;
+                MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            }
+            if (_currentItemsHistory.Count == 1 && oldHistoryCount > 1)
+            {
+                MenuEngine.Game.Settings.ToFile();
+                MenuEngine.Game.CutNetworkConnections();
+                ApplyGraphicsSettings();
+                ApplyControlsSettings();
+            }
         }
 
         public override void Update()
@@ -129,7 +150,7 @@ namespace AW2.Menu
         private void ResetItems()
         {
             _currentItemsHistory.Clear();
-            SetItems(ItemCollections.StartItems);
+            PushItems(ItemCollections.StartItems);
         }
 
         private void InitializeControlCallbacks()
@@ -150,23 +171,7 @@ namespace AW2.Menu
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () => CurrentItem.Action()));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectLeft, () => CurrentItem.ActionLeft()));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
-            {
-                if (_currentItemsHistory.Count > 1)
-                {
-                    var old = _currentItemsHistory.Pop();
-                    _currentItems = old.Item1;
-                    _currentItem.CurrentIndex = old.Item2;
-                    _currentItem.TopmostIndex = old.Item3;
-                    MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-                }
-                if (_currentItemsHistory.Count == 1)
-                {
-                    MenuEngine.Game.CutNetworkConnections();
-                    ApplyGraphicsSettings();
-                    ApplyControlsSettings();
-                }
-            }));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, PopItems));
         }
 
         private void ApplyGraphicsSettings()

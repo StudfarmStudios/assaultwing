@@ -296,8 +296,6 @@ namespace AW2.Core
         public override void EndRun()
         {
             Log.Write("Assault Wing ends the run");
-            Log.Write("Saving settings to file");
-            Settings.ToFile();
 #if NETWORK_PROFILING
             AW2.Helpers.Serialization.ProfilingNetworkBinaryWriter.DumpStats();
 #endif

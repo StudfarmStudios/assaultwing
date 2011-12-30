@@ -91,7 +91,7 @@ namespace AW2.Menu.Main
                     Game.WebData.RequestData();
                     Game.WebData.LoginPilots();
                     RefreshNetworkItems(force: true);
-                    _menuComponent.SetItems(NetworkItems);
+                    _menuComponent.PushItems(NetworkItems);
                     Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
@@ -101,7 +101,7 @@ namespace AW2.Menu.Main
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Setup",
                 () =>
                 {
-                    _menuComponent.SetItems(SetupItems);
+                    _menuComponent.PushItems(SetupItems);
                     Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Quit",
@@ -175,9 +175,9 @@ namespace AW2.Menu.Main
                     "Are you sure to reset all settings\nto their defaults? (Yes/No)",
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.Settings.Reset),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })))));
-            SetupItems.Add(GetSetupItemBase(() => "Audio setup", () => _menuComponent.SetItems(GetAudioItems())));
-            SetupItems.Add(GetSetupItemBase(() => "Graphics setup", () => _menuComponent.SetItems(GetGraphicsItems())));
-            SetupItems.Add(GetSetupItemBase(() => "Controls setup", () => _menuComponent.SetItems(GetControlsItems())));
+            SetupItems.Add(GetSetupItemBase(() => "Audio setup", () => _menuComponent.PushItems(GetAudioItems())));
+            SetupItems.Add(GetSetupItemBase(() => "Graphics setup", () => _menuComponent.PushItems(GetGraphicsItems())));
+            SetupItems.Add(GetSetupItemBase(() => "Controls setup", () => _menuComponent.PushItems(GetControlsItems())));
             SetupItems.Add(GetSetupItem(
                 () => string.Format("Bots\t\xe{0}", Game.Settings.Players.BotsEnabled ? "Included" : "Excluded"),
                 new[] { false, true },
@@ -210,7 +210,7 @@ namespace AW2.Menu.Main
             if (!force && _lastNetworkItemsUpdate + GAME_SERVER_LIST_REQUEST_INTERVAL > Game.GameTime.TotalRealTime) return;
             _lastNetworkItemsUpdate = Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
-            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Log in with Your Pilot", () => _menuComponent.SetItems(LoginItems)));
+            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Log in with Your Pilot", () => _menuComponent.PushItems(LoginItems)));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => NO_SERVERS_FOUND, () => { }));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Find More in Forums", () => Game.OpenURL("http://www.assaultwing.com/letsplay")));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Create a Server",
@@ -274,9 +274,9 @@ traffic or the server is down.", "No reply from management server");
         {
             var items = new MainMenuItemCollection("Controls");
             items.Add(GetSetupItemBase(() => "Player 1 controls...",
-                () => _menuComponent.SetItems(GetPlayerControlsItems("Player 1", Game.Settings.Controls.Player1))));
+                () => _menuComponent.PushItems(GetPlayerControlsItems("Player 1", Game.Settings.Controls.Player1))));
             items.Add(GetSetupItemBase(() => "Player 2 controls...",
-                () => _menuComponent.SetItems(GetPlayerControlsItems("Player 2", Game.Settings.Controls.Player2))));
+                () => _menuComponent.PushItems(GetPlayerControlsItems("Player 2", Game.Settings.Controls.Player2))));
             items.Add(GetControlsItem("Chat key", () => Game.Settings.Controls.Chat, ctrl => Game.Settings.Controls.Chat = ctrl));
             return items;
         }

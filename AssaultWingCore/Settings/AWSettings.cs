@@ -65,6 +65,7 @@ namespace AW2.Settings
 
         public void ToFile()
         {
+            Log.Write("Saving settings to file");
             TypeLoader.SaveTemplate(this, Filename, typeof(AWSettings), typeof(TypeParameterAttribute));
         }
 

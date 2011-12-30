@@ -233,8 +233,6 @@ namespace AW2.Core
 
         public override void StartArena()
         {
-            Log.Write("Saving settings to file");
-            Settings.ToFile();
             Stats.BasicInfoSent = false;
             if (NetworkMode == NetworkMode.Server)
             {

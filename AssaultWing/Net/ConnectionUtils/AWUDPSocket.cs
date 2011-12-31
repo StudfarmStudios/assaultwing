@@ -11,6 +11,8 @@ namespace AW2.Net.ConnectionUtils
         /// <summary>
         /// Throws SocketException on error.
         /// </summary>
+        /// <param name="messageHandler">Delegate that handles received message data.
+        /// If null then no data will be received. The delegate is called in a background thread.</param>
         public AWUDPSocket(int port, MessageHandler messageHandler)
             : base(CreateSocket(port), messageHandler)
         {

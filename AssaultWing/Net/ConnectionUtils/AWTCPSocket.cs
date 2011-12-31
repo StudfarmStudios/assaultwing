@@ -10,6 +10,8 @@ namespace AW2.Net.ConnectionUtils
     {
         /// <param name="socket">An opened TCP socket to the remote host. This <see cref="AWSocket"/>
         /// instance owns the socket and will dispose of it.</param>
+        /// <param name="messageHandler">Delegate that handles received message data.
+        /// If null then no data will be received. The delegate is called in a background thread.</param>
         public AWTCPSocket(Socket socket, MessageHandler messageHandler)
             : base(socket, messageHandler)
         {

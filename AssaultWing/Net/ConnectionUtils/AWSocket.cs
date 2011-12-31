@@ -70,7 +70,7 @@ namespace AW2.Net.ConnectionUtils
         /// <param name="socket">A socket to the remote host. This <see cref="AWSocket"/>
         /// instance owns the socket and will dispose of it.</param>
         /// <param name="messageHandler">Delegate that handles received message data.
-        /// If null then no data will be received.</param>
+        /// If null then no data will be received. The delegate is called in a background thread.</param>
         protected AWSocket(Socket socket, MessageHandler messageHandler)
         {
             if (socket == null) throw new ArgumentNullException("socket", "Null socket argument");

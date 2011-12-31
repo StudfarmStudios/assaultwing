@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -7,6 +8,7 @@ using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.ConnectionUtils;
+using Newtonsoft.Json;
 
 namespace AW2.Net
 {
@@ -103,6 +105,11 @@ namespace AW2.Net
                 args.Completed += ConnectCompleted;
                 statsDataSocket.ConnectAsync(args);
             }
+            catch (NotSupportedException)
+            {
+                // May happen during Socket.ConnectAsync
+                _isConnecting = false;
+            }
             catch (ArgumentException)
             {
                 // May happen during MiscHelper.ParseIPEndPoint
@@ -121,10 +128,33 @@ namespace AW2.Net
         {
             if (args.SocketError == SocketError.Success)
             {
-                _statsDataSocket = new AWTCPSocket(args.ConnectSocket, null);
+                _statsDataSocket = new AWTCPSocket(args.ConnectSocket, StatsMessageHandler);
                 BasicInfoSent = false;
             }
             _isConnecting = false;
+        }
+
+        private int StatsMessageHandler(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint)
+        {
+            // "\r\n" marks the end of a JSON serialized object.
+            var bytesRead = 0;
+            var startIndex = messageHeaderAndBody.Offset;
+            for (int i = messageHeaderAndBody.Offset; i < messageHeaderAndBody.Offset + messageHeaderAndBody.Count - 1; i++)
+            {
+                if (messageHeaderAndBody.Array[i] != '\r' || messageHeaderAndBody.Array[i + 1] != '\n') continue;
+                var nextStartIndex = i + 2;
+                try
+                {
+                    var str = Encoding.UTF8.GetString(messageHeaderAndBody.Array, startIndex, i - startIndex);
+                    var obj = JsonConvert.DeserializeObject(str);
+                    // TODO: Interpret obj in some way.
+                }
+                catch (ArgumentException) { } // Encoding.GetString failed
+                catch (JsonReaderException) { } // JsonConvert.DeserializeObject failed
+                bytesRead += nextStartIndex - startIndex;
+                startIndex = nextStartIndex;
+            }
+            return bytesRead;
         }
     }
 }

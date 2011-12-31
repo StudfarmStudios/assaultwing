@@ -35,6 +35,8 @@ namespace AW2.Settings
         private int _gamePad;
         private GamePadButtonType _button;
 
+        public GamePadButtonType Button { get { return _button; } }
+
         public GamePadButtonControlType(int gamePad, GamePadButtonType button)
         {
             _gamePad = gamePad;

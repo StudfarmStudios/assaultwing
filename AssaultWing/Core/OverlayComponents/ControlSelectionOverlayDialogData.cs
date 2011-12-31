@@ -19,8 +19,13 @@ namespace AW2.Core.OverlayComponents
             Keys.F7, Keys.F8, Keys.F9, Keys.F10, Keys.F11, Keys.F12,
             Keys.Escape,
         };
+        private static GamePadButtonType[] g_ignoredGamePadButtons = new[]
+        {
+            GamePadButtonType.Start, GamePadButtonType.Back, GamePadButtonType.BigButton,
+        };
 
         private List<Keys> _keysDownSinceEntry;
+        private List<GamePadButtonControlType> _gamePadButtonsDownsinceEntry;
         private Action<IControlType> _returnControl;
         private bool _returned;
 
@@ -29,6 +34,12 @@ namespace AW2.Core.OverlayComponents
         {
             _returnControl = returnControl;
             _keysDownSinceEntry = new List<Keys>(Keyboard.GetState().GetPressedKeys());
+            _gamePadButtonsDownsinceEntry =
+                (from gamePad in Enumerable.Range(0, 4)
+                from button in Enum.GetValues(typeof(GamePadButtonType)).Cast<GamePadButtonType>()
+                let buttonControlType = new GamePadButtonControlType(gamePad, button)
+                where buttonControlType.GetControl().Pulse
+                select buttonControlType).ToList();
         }
 
         public override void Update()
@@ -40,7 +51,7 @@ namespace AW2.Core.OverlayComponents
             for (int gamePad = 0; gamePad < 4; gamePad++)
             {
                 foreach (GamePadButtonType button in Enum.GetValues(typeof(GamePadButtonType)))
-                    TryReturnControl(new GamePadButtonControlType(gamePad, button));
+                    TryReturnGamePadButton(new GamePadButtonControlType(gamePad, button));
                 foreach (GamePadStickType stick in Enum.GetValues(typeof(GamePadStickType)))
                     foreach (GamePadStickDirectionType direction in Enum.GetValues(typeof(GamePadStickDirectionType)))
                         TryReturnControl(new GamePadStickDirectionControlType(gamePad, stick, direction));
@@ -51,6 +62,12 @@ namespace AW2.Core.OverlayComponents
         {
             if (!g_ignoredKeys.Contains(key) && !_keysDownSinceEntry.Contains(key))
                 TryReturnControl(new KeyControlType(key));
+        }
+
+        private void TryReturnGamePadButton(GamePadButtonControlType button)
+        {
+            if (!g_ignoredGamePadButtons.Contains(button.Button) && !_gamePadButtonsDownsinceEntry.Contains(button))
+                TryReturnControl(button);
         }
 
         private void TryReturnControl(IControlType controlType)

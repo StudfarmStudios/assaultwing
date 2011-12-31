@@ -185,14 +185,16 @@ namespace AW2.Menu.Main
                 botsEnabled => Game.Settings.Players.BotsEnabled = botsEnabled));
         }
 
-        private MainMenuItem GetSetupItemBase(Func<string> getName, Action action, Action actionLeft = null)
+        private MainMenuItem GetSetupItemBase(Func<string> getName, Action action, Action actionLeft = null, Action actionRight = null)
         {
             Func<Action, Action> decorateAction = plainAction => () =>
             {
                 plainAction();
                 Game.SoundEngine.PlaySound("MenuChangeItem");
             };
-            return new MainMenuItem(MenuEngine, getName, decorateAction(action), decorateAction(actionLeft ?? (() => { })));
+            return new MainMenuItem(MenuEngine, getName, decorateAction(action),
+                decorateAction(actionLeft ?? (() => { })),
+                decorateAction(actionRight ?? (() => { })));
         }
 
         private MainMenuItem GetSetupItem<T>(Func<string> getName, IEnumerable<T> items, Func<T> get, Action<T> set)
@@ -202,7 +204,7 @@ namespace AW2.Menu.Main
                 var remainingItems = orderedItems.SkipWhile(x => !x.Equals(get())).Skip(1);
                 set(remainingItems.Any() ? remainingItems.First() : orderedItems.Last());
             };
-            return GetSetupItemBase(getName, () => chooseNext(items), () => chooseNext(items.Reverse()));
+            return GetSetupItemBase(getName, () => { }, () => chooseNext(items.Reverse()), () => chooseNext(items));
         }
 
         private void RefreshNetworkItems(bool force = false)

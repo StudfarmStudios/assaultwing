@@ -25,7 +25,7 @@ namespace AW2.Menu.Main
         public Func<string> Name { get; protected set; }
 
         /// <summary>
-        /// Action to perform on triggering the menu item or pressing Right on the menu item.
+        /// Action to perform on triggering the menu item.
         /// </summary>
         public Action Action { get; private set; }
 
@@ -34,19 +34,25 @@ namespace AW2.Menu.Main
         /// </summary>
         public Action ActionLeft { get; private set; }
 
+        /// <summary>
+        /// Action to perform on pressing Right on the menu item.
+        /// </summary>
+        public Action ActionRight { get; private set; }
+
         protected SpriteFont Font { get { return MenuEngine.MenuContent.FontBig; } }
 
         public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action action)
-            : this(menuEngine, getName, action, () => { })
+            : this(menuEngine, getName, action, () => { }, () => { })
         {
         }
 
-        public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action action, Action actionLeft)
+        public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action action, Action actionLeft, Action actionRight)
         {
             MenuEngine = menuEngine;
             Name = getName;
             Action = action;
             ActionLeft = actionLeft;
+            ActionRight = actionRight;
         }
 
         public void Update() { }

@@ -27,7 +27,7 @@ namespace AW2.Menu
         private MainMenuItemCollection _currentItems;
         private ScrollableList _currentItem;
 
-        private Control _controlUp, _controlDown, _controlSelect, _controlSelectLeft, _controlBack;
+        private Control _controlUp, _controlDown, _controlSelect, _controlSelectLeft, _controlSelectRight, _controlBack;
         private TriggeredCallbackCollection _commonCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
 
@@ -171,6 +171,7 @@ namespace AW2.Menu
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () => CurrentItem.Action()));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectLeft, () => CurrentItem.ActionLeft()));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectRight, () => CurrentItem.ActionRight()));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, PopItems));
         }
 
@@ -201,11 +202,46 @@ namespace AW2.Menu
         /// </summary>
         private void InitializeControls()
         {
-            _controlBack = new KeyboardKey(Keys.Escape);
-            _controlUp = new KeyboardKey(Keys.Up);
-            _controlDown = new KeyboardKey(Keys.Down);
-            _controlSelect = new MultiControl { new KeyboardKey(Keys.Enter), new KeyboardKey(Keys.Right) };
-            _controlSelectLeft = new KeyboardKey(Keys.Left);
+            _controlBack = new MultiControl
+            {
+                new KeyboardKey(Keys.Escape),
+                new GamePadButton(0, GamePadButtonType.Back),
+                new GamePadButton(0, GamePadButtonType.B),
+            };
+            _controlUp = new MultiControl
+            {
+                new KeyboardKey(Keys.Up),
+                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Up),
+                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Up),
+                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Up),
+            };
+            _controlDown = new MultiControl
+            {
+                new KeyboardKey(Keys.Down),
+                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Down),
+                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Down),
+                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Down),
+            };
+            _controlSelect = new MultiControl
+            {
+                new KeyboardKey(Keys.Enter),
+                new GamePadButton(0, GamePadButtonType.Start),
+                new GamePadButton(0, GamePadButtonType.A),
+            };
+            _controlSelectLeft = new MultiControl
+            {
+                new KeyboardKey(Keys.Left),
+                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Left),
+                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Left),
+                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Left),
+            };
+            _controlSelectRight = new MultiControl
+            {
+                new KeyboardKey(Keys.Right),
+                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Right),
+                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Right),
+                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Right),
+            };
         }
     }
 }

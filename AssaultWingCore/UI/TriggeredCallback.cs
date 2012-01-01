@@ -13,9 +13,23 @@ namespace AW2.UI
     /// </remarks>
     public class TriggeredCallback
     {
-        public static readonly Control PROCEED_CONTROL = new MultiControl { new KeyboardKey(Keys.Enter), new KeyboardKey(Keys.Escape) };
-        public static readonly Control YES_CONTROL = new KeyboardKey(Keys.Y);
-        public static readonly Control NO_CONTROL = new KeyboardKey(Keys.N);
+        public static readonly Control PROCEED_CONTROL = new MultiControl
+        {
+            new KeyboardKey(Keys.Enter),
+            new KeyboardKey(Keys.Escape),
+            new GamePadButton(0, GamePadButtonType.A),
+            new GamePadButton(0, GamePadButtonType.B),
+        };
+        public static readonly Control YES_CONTROL = new MultiControl
+        {
+            new KeyboardKey(Keys.Y),
+            new GamePadButton(0, GamePadButtonType.A),
+        };
+        public static readonly Control NO_CONTROL = new MultiControl
+        {
+            new KeyboardKey(Keys.N),
+            new GamePadButton(0, GamePadButtonType.B),
+        };
 
         public Control Control { get; private set; }
         private Action _callback;

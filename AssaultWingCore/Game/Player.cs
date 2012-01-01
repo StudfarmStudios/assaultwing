@@ -268,7 +268,6 @@ namespace AW2.Game
                 Thrust = new RemoteControl(),
                 Left = new RemoteControl(),
                 Right = new RemoteControl(),
-                Down = new RemoteControl(),
                 Fire1 = new RemoteControl(),
                 Fire2 = new RemoteControl(),
                 Extra = new RemoteControl()

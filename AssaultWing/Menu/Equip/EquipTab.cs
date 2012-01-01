@@ -129,7 +129,7 @@ namespace AW2.Menu.Equip
                     if (_currentItems[playerI] > minItem)
                         --_currentItems[playerI];
                 });
-                ConditionalPlayerAction(player.Controls.Down.Pulse, playerI, "MenuBrowseItem", () =>
+                ConditionalPlayerAction(player.Controls.Extra.Pulse, playerI, "MenuBrowseItem", () =>
                 {
                     if ((int)_currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
                         ++_currentItems[playerI];

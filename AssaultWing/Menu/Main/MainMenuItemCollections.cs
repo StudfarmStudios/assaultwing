@@ -293,7 +293,6 @@ traffic or the server is down.", "No reply from management server");
             items.Add(GetControlsItem("Thrust", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
             items.Add(GetControlsItem("Left", () => controls.Left, ctrl => controls.Left = ctrl));
             items.Add(GetControlsItem("Right", () => controls.Right, ctrl => controls.Right = ctrl));
-            items.Add(GetControlsItem("Down", () => controls.Down, ctrl => controls.Down = ctrl));
             items.Add(GetControlsItem("Ship mod", () => controls.Extra, ctrl => controls.Extra = ctrl));
             items.Add(GetControlsItem("Weapon 1", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
             items.Add(GetControlsItem("Weapon 2", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));

@@ -21,11 +21,6 @@
         Right,
 
         /// <summary>
-        /// Moves down in a menu.
-        /// </summary>
-        Down,
-
-        /// <summary>
         /// Fires the player's ship's primary weapon, or performs a selected action in a menu.
         /// </summary>
         Fire1,

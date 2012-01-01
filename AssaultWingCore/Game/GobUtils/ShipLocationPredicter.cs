@@ -181,12 +181,11 @@ namespace AW2.Game.GobUtils
         public override string ToString()
         {
             return string.Format("GameTime = {0}, Pos = {1}, Move = {2}, Rotation = {3}, " +
-                "ControlStates = th:{4}, lf:{5}, rg:{6}, dn:{7} w1:{8}, w2:{9}, xt:{10}",
+                "ControlStates = th:{4}, lf:{5}, rg:{6}, w1:{7}, w2:{8}, xt:{9}",
                 GameTime, Pos, Move, Rotation,
                 ControlStates[(int)PlayerControlType.Thrust],
                 ControlStates[(int)PlayerControlType.Left],
                 ControlStates[(int)PlayerControlType.Right],
-                ControlStates[(int)PlayerControlType.Down],
                 ControlStates[(int)PlayerControlType.Fire1],
                 ControlStates[(int)PlayerControlType.Fire2],
                 ControlStates[(int)PlayerControlType.Extra]);

@@ -26,11 +26,6 @@ namespace AW2.UI
         public Control Right;
 
         /// <summary>
-        /// Uses the player's ship modification, or moves down in a menu.
-        /// </summary>
-        public Control Down;
-
-        /// <summary>
         /// Fires the player's ship's primary weapon, or performs a selected action in a menu.
         /// </summary>
         public Control Fire1;
@@ -59,7 +54,6 @@ namespace AW2.UI
                     case PlayerControlType.Thrust: return Thrust;
                     case PlayerControlType.Left: return Left;
                     case PlayerControlType.Right: return Right;
-                    case PlayerControlType.Down: return Down;
                     case PlayerControlType.Fire1: return Fire1;
                     case PlayerControlType.Fire2: return Fire2;
                     case PlayerControlType.Extra: return Extra;
@@ -75,7 +69,6 @@ namespace AW2.UI
                 Thrust = settings.Thrust.GetControl(),
                 Left = settings.Left.GetControl(),
                 Right = settings.Right.GetControl(),
-                Down = settings.Down.GetControl(),
                 Fire1 = settings.Fire1.GetControl(),
                 Fire2 = settings.Fire2.GetControl(),
                 Extra = settings.Extra.GetControl(),

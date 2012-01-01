@@ -83,7 +83,6 @@ namespace AW2.Settings
         private IControlType _thrust;
         private IControlType _left;
         private IControlType _right;
-        private IControlType _down;
         private IControlType _fire1;
         private IControlType _fire2;
         private IControlType _extra;
@@ -91,7 +90,6 @@ namespace AW2.Settings
         public IControlType Thrust { get { return _thrust; } set { _thrust = value; } }
         public IControlType Left { get { return _left; } set { _left = value; } }
         public IControlType Right { get { return _right; } set { _right = value; } }
-        public IControlType Down { get { return _down; } set { _down = value; } }
         public IControlType Fire1 { get { return _fire1; } set { _fire1 = value; } }
         public IControlType Fire2 { get { return _fire2; } set { _fire2 = value; } }
         public IControlType Extra { get { return _extra; } set { _extra = value; } }
@@ -101,7 +99,6 @@ namespace AW2.Settings
             Thrust = other.Thrust;
             Left = other.Left;
             Right = other.Right;
-            Down = other.Down;
             Fire1 = other.Fire1;
             Fire2 = other.Fire2;
             Extra = other.Extra;
@@ -115,7 +112,6 @@ namespace AW2.Settings
             Thrust = new KeyControlType(Keys.Up),
             Left = new KeyControlType(Keys.Left),
             Right = new KeyControlType(Keys.Right),
-            Down = new KeyControlType(Keys.Down),
             Fire1 = new KeyControlType(Keys.RightControl),
             Fire2 = new KeyControlType(Keys.RightShift),
             Extra = new KeyControlType(Keys.Down),
@@ -125,7 +121,6 @@ namespace AW2.Settings
             Thrust = new KeyControlType(Keys.W),
             Left = new KeyControlType(Keys.A),
             Right = new KeyControlType(Keys.D),
-            Down = new KeyControlType(Keys.S),
             Fire1 = new KeyControlType(Keys.LeftControl),
             Fire2 = new KeyControlType(Keys.LeftShift),
             Extra = new KeyControlType(Keys.S),
@@ -135,7 +130,6 @@ namespace AW2.Settings
             Thrust = new GamePadStickDirectionControlType(0, GamePadStickType.DPad, GamePadStickDirectionType.Up),
             Left = new GamePadStickDirectionControlType(0, GamePadStickType.RThumb, GamePadStickDirectionType.Left),
             Right = new GamePadStickDirectionControlType(0, GamePadStickType.RThumb, GamePadStickDirectionType.Right),
-            Down = new GamePadStickDirectionControlType(0, GamePadStickType.DPad, GamePadStickDirectionType.Down),
             Fire1 = new GamePadButtonControlType(0, GamePadButtonType.RShoulder),
             Fire2 = new GamePadButtonControlType(0, GamePadButtonType.LShoulder),
             Extra = new GamePadButtonControlType(0, GamePadButtonType.RTrigger),
@@ -145,7 +139,6 @@ namespace AW2.Settings
             Thrust = new GamePadStickDirectionControlType(1, GamePadStickType.DPad, GamePadStickDirectionType.Up),
             Left = new GamePadStickDirectionControlType(1, GamePadStickType.RThumb, GamePadStickDirectionType.Left),
             Right = new GamePadStickDirectionControlType(1, GamePadStickType.RThumb, GamePadStickDirectionType.Right),
-            Down = new GamePadStickDirectionControlType(1, GamePadStickType.DPad, GamePadStickDirectionType.Down),
             Fire1 = new GamePadButtonControlType(1, GamePadButtonType.RShoulder),
             Fire2 = new GamePadButtonControlType(1, GamePadButtonType.LShoulder),
             Extra = new GamePadButtonControlType(1, GamePadButtonType.RTrigger),

@@ -121,7 +121,7 @@ namespace AW2.Menu.Equip
             {
                 var player = indexedPlayer.Item1;
                 int playerI = indexedPlayer.Item2;
-                ConditionalPlayerAction(player.Controls.Thrust.Pulse, playerI, "MenuBrowseItem", () =>
+                ConditionalPlayerAction(MenuComponent.Controls.EquipPaneControls[playerI].Up.Pulse, playerI, "MenuBrowseItem", () =>
                 {
                     var minItem = MenuEngine.Game.NetworkMode == NetworkMode.Standalone
                         ? EquipMenuItem.Ship
@@ -129,7 +129,7 @@ namespace AW2.Menu.Equip
                     if (_currentItems[playerI] > minItem)
                         --_currentItems[playerI];
                 });
-                ConditionalPlayerAction(player.Controls.Extra.Pulse, playerI, "MenuBrowseItem", () =>
+                ConditionalPlayerAction(MenuComponent.Controls.EquipPaneControls[playerI].Down.Pulse, playerI, "MenuBrowseItem", () =>
                 {
                     if ((int)_currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
                         ++_currentItems[playerI];
@@ -140,9 +140,9 @@ namespace AW2.Menu.Equip
                 else
                 {
                     int selectionChange = 0;
-                    ConditionalPlayerAction(player.Controls.Left.Pulse,
+                    ConditionalPlayerAction(MenuComponent.Controls.EquipPaneControls[playerI].Left.Pulse,
                         playerI, "MenuChangeItem", () => selectionChange = -1);
-                    ConditionalPlayerAction(player.Controls.Fire1.Pulse || player.Controls.Right.Pulse,
+                    ConditionalPlayerAction(MenuComponent.Controls.EquipPaneControls[playerI].Right.Pulse,
                         playerI, "MenuChangeItem", () => selectionChange = 1);
                     if (selectionChange != 0)
                         _equipmentSelectors[playerI, (int)_currentItems[playerI]].CurrentValue += selectionChange;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Core.OverlayComponents;
 using AW2.Game.GobUtils;
@@ -137,14 +138,19 @@ namespace AW2.Menu
 
         private void CheckGeneralControls()
         {
-            if (Controls.Tab.Pulse) ChangeTab();
+            var keys = MenuEngine.Game.UIEngine.InputState.Keyboard;
+            var shiftPressed = keys.IsKeyDown(Keys.LeftShift) || keys.IsKeyDown(Keys.RightShift);
+            var tabForward = (Controls.Tab.Pulse && !shiftPressed) || (Controls.TabBack.Pulse && shiftPressed);
+            var tabBack = (Controls.Tab.Pulse && shiftPressed) || (Controls.TabBack.Pulse && !shiftPressed);
+            if (tabForward) ChangeTab();
+            else if (tabBack) ChangeTab(-1);
             else if (Controls.Back.Pulse) BackToMainMenu();
             else if (Controls.StartGame.Pulse) MenuEngine.IsReadyToStartArena = !MenuEngine.IsReadyToStartArena;
         }
 
-        private void ChangeTab()
+        private void ChangeTab(int step = 1)
         {
-            _tabIndex = (_tabIndex + 1) % _tabs.Count;
+            _tabIndex = (_tabIndex + step).Modulo(_tabs.Count);
             _tab = _tabs[_tabIndex];
             MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;

@@ -97,6 +97,9 @@ namespace AW2
                 : MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
             var logHeader = "\n\n*** Assault Wing run log ***\n\n";
             if (result == DialogResult.Yes) SendMail(report + logHeader + Log.CloseAndGetContents());
+
+            // Raise a Windows event to notify any dedicated server keepalive task to relaunch the server.
+            System.Diagnostics.EventLog.WriteEvent("Application Error", new System.Diagnostics.EventInstance(1000, 2), "AssaultWing.exe");
         }
 
         private static void SendMail(string text)

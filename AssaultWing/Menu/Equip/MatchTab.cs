@@ -26,7 +26,7 @@ namespace AW2.Menu.Equip
 
         public override void Update()
         {
-            int itemIndexDelta = Controls.ListDown.Pulse ? 1 : Controls.ListUp.Pulse ? -1 : 0;
+            int itemIndexDelta = Controls.Dirs.Down.Pulse ? 1 : Controls.Dirs.Up.Pulse ? -1 : 0;
             if (itemIndexDelta != 0)
             {
                 int matchTabItemCount = Enum.GetValues(typeof(MatchTabItem)).Length;

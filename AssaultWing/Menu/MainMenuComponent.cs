@@ -27,7 +27,6 @@ namespace AW2.Menu
         private MainMenuItemCollection _currentItems;
         private ScrollableList _currentItem;
 
-        private Control _controlUp, _controlDown, _controlSelect, _controlSelectLeft, _controlSelectRight, _controlBack;
         private TriggeredCallbackCollection _commonCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
 
@@ -38,10 +37,6 @@ namespace AW2.Menu
                 base.Active = value;
                 if (value)
                 {
-                    // Update our controls to players' possibly changed controls.
-                    InitializeControls();
-                    InitializeControlCallbacks();
-
                     ResetItems();
                     MenuEngine.Game.Settings.ToFile();
                 }
@@ -64,6 +59,7 @@ namespace AW2.Menu
                 return _itemCollections;
             }
         }
+        private MenuControls Controls { get { return MenuEngine.Controls; } }
 
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
@@ -71,6 +67,7 @@ namespace AW2.Menu
             _pos = new Vector2(0, 698);
             _currentItemsHistory = new Stack<Tuple<MainMenuItemCollection, int, int>>();
             _currentItem = new ScrollableList(MENU_ITEM_COUNT, () => _currentItems == null ? 0 : _currentItems.Count);
+            InitializeControlCallbacks();
         }
 
         public void PushItems(MainMenuItemCollection items)
@@ -159,20 +156,20 @@ namespace AW2.Menu
             {
                 TriggeredCallback = MenuEngine.ResetCursorFade
             };
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlUp, () =>
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Up, () =>
             {
                 _currentItem.CurrentIndex--;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Down, () =>
             {
                 _currentItem.CurrentIndex++;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () => CurrentItem.Action()));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectLeft, () => CurrentItem.ActionLeft()));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectRight, () => CurrentItem.ActionRight()));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, PopItems));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Activate, () => CurrentItem.Action()));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Left, () => CurrentItem.ActionLeft()));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Right, () => CurrentItem.ActionRight()));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Back, PopItems));
         }
 
         private void ApplyGraphicsSettings()
@@ -195,53 +192,6 @@ namespace AW2.Menu
             var controls = new[] { MenuEngine.Game.Settings.Controls.Player1, MenuEngine.Game.Settings.Controls.Player2 };
             players.Zip(controls, (plr, ctrls) => plr.Controls = PlayerControls.FromSettings(ctrls)).ToArray();
             MenuEngine.Game.ChatStartControl = MenuEngine.Game.Settings.Controls.Chat.GetControl();
-        }
-
-        /// <summary>
-        /// Sets up the menu component's controls based on players' current control setup.
-        /// </summary>
-        private void InitializeControls()
-        {
-            _controlBack = new MultiControl
-            {
-                new KeyboardKey(Keys.Escape),
-                new GamePadButton(0, GamePadButtonType.Back),
-                new GamePadButton(0, GamePadButtonType.B),
-            };
-            _controlUp = new MultiControl
-            {
-                new KeyboardKey(Keys.Up),
-                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Up),
-                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Up),
-                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Up),
-            };
-            _controlDown = new MultiControl
-            {
-                new KeyboardKey(Keys.Down),
-                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Down),
-                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Down),
-                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Down),
-            };
-            _controlSelect = new MultiControl
-            {
-                new KeyboardKey(Keys.Enter),
-                new GamePadButton(0, GamePadButtonType.Start),
-                new GamePadButton(0, GamePadButtonType.A),
-            };
-            _controlSelectLeft = new MultiControl
-            {
-                new KeyboardKey(Keys.Left),
-                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Left),
-                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Left),
-                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Left),
-            };
-            _controlSelectRight = new MultiControl
-            {
-                new KeyboardKey(Keys.Right),
-                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Right),
-                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Right),
-                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Right),
-            };
         }
     }
 }

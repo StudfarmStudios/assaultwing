@@ -39,7 +39,7 @@ namespace AW2.Menu
         private Texture2D _buttonReadyTexture, _buttonReadyHiliteTexture;
 
         public static Curve CursorFade { get; private set; }
-        public EquipMenuControls Controls { get; private set; }
+        public MenuControls Controls { get { return MenuEngine.Controls; } }
         public TimeSpan ListCursorFadeStartTime { get; set; }
         public bool IsTemporarilyInactive { get; set; }
 
@@ -84,7 +84,6 @@ namespace AW2.Menu
         public EquipMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            Controls = new EquipMenuControls();
             ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             _readyFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;

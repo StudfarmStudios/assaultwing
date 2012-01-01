@@ -15,7 +15,7 @@ namespace AW2.Menu.Equip
         public EquipMenuComponent MenuComponent { get; private set; }
         public MenuEngineImpl MenuEngine { get { return MenuComponent.MenuEngine; } }
         public MenuContent Content { get { return MenuComponent.Content; } }
-        public EquipMenuControls Controls { get { return MenuComponent.Controls; } }
+        public MenuControls Controls { get { return MenuComponent.Controls; } }
         public Vector2 LeftPanePos { get { return MenuComponent.Pos + LEFT_PANE_POS; } }
         public abstract Texture2D TabTexture { get; }
         public abstract string HelpText { get; }

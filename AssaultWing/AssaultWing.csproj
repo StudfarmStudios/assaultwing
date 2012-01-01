@@ -132,7 +132,7 @@
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\Equip\ChatTab.cs" />
-    <Compile Include="Menu\Equip\EquipMenuControls.cs" />
+    <Compile Include="Menu\MenuControls.cs" />
     <Compile Include="Menu\Equip\EquipMenuTab.cs" />
     <Compile Include="Menu\Equip\EquipTab.cs" />
     <Compile Include="Menu\Equip\MatchTab.cs" />

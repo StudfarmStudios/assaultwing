@@ -20,7 +20,6 @@ namespace AW2.Menu
     {
         private const int MENU_ITEM_COUNT = 8; // number of items that fit in the menu at once
 
-        private Control _controlBack, _controlDone, _controlUp, _controlDown;
         private TriggeredCallbackCollection _controlCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
         private Texture2D _backgroundTexture, _cursorTexture, _highlightTexture, _tagTexture, _infoBackgroundTexture;
@@ -37,6 +36,7 @@ namespace AW2.Menu
 
         private ScrollableList _currentArena;
 
+        private MenuControls Controls { get { return MenuEngine.Controls; } }
         private List<ArenaInfo> ArenaInfos { get; set; }
         private Vector2 ArenaPreviewPos { get { return _pos + new Vector2(430, 232); } }
         private Vector2 InfoBoxPos { get { return ArenaPreviewPos + new Vector2(-3, 188); } }
@@ -53,22 +53,13 @@ namespace AW2.Menu
             set
             {
                 base.Active = value;
-                if (value)
-                {
-                    InitializeControls();
-                    InitializeControlCallbacks();
-                    ArenaInfos = MenuEngine.Game.DataEngine.GetTypeTemplates<Arena>().Select(a => a.Info).ToList();
-                }
+                if (value) ArenaInfos = MenuEngine.Game.DataEngine.GetTypeTemplates<Arena>().Select(a => a.Info).ToList();
             }
         }
 
         public override Vector2 Center { get { return _pos + new Vector2(560, 475); } }
         public override string HelpText { get { return "Arrows select, Enter selects, Esc backs out"; } }
 
-        /// <summary>
-        /// Creates an arena selection menu component for a menu system.
-        /// </summary>
-        /// <param name="menuEngine">The menu system.</param>
         public ArenaMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
@@ -80,6 +71,7 @@ namespace AW2.Menu
             _cursorFade.PreLoop = CurveLoopType.Cycle;
             _cursorFade.PostLoop = CurveLoopType.Cycle;
             _currentArena = new ScrollableList(MENU_ITEM_COUNT, () => ArenaInfos.Count);
+            InitializeControlCallbacks();
         }
 
         public override void LoadContent()
@@ -165,12 +157,11 @@ namespace AW2.Menu
             {
                 _cursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             };
-            _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
+            _controlCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Back, () =>
             {
                 MenuEngine.Activate(MenuComponentType.Equip);
             }));
-
-            _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlDone, () =>
+            _controlCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Activate, () =>
             {
                 if (_currentArena.IsCurrentValidIndex)
                 {
@@ -179,14 +170,13 @@ namespace AW2.Menu
                     MenuEngine.Activate(MenuComponentType.Equip);
                 }
             }));
-
-            _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlUp, () =>
+            _controlCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Up, () =>
             {
                 _currentArena.CurrentIndex--;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
 
             }));
-            _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
+            _controlCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Down, () =>
             {
                 _currentArena.CurrentIndex++;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
@@ -196,17 +186,6 @@ namespace AW2.Menu
         private void SelectCurrentArena()
         {
             MenuEngine.Game.SelectedArenaName = ArenaInfos[_currentArena.CurrentIndex].Name;
-        }
-
-        /// <summary>
-        /// Sets up the menu component's controls based on players' current control setup.
-        /// </summary>
-        private void InitializeControls()
-        {
-            _controlDone = new KeyboardKey(Keys.Enter);
-            _controlBack = new KeyboardKey(Keys.Escape);
-            _controlUp = new KeyboardKey(Keys.Up);
-            _controlDown = new KeyboardKey(Keys.Down);
         }
     }
 }

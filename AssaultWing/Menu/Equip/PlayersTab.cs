@@ -22,13 +22,13 @@ namespace AW2.Menu.Equip
 
         public override void Update()
         {
-            if (Controls.ListDown.Pulse)
+            if (Controls.Dirs.Down.Pulse)
             {
                 PlayerList.CurrentIndex++;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
-            if (Controls.ListUp.Pulse)
+            if (Controls.Dirs.Up.Pulse)
             {
                 PlayerList.CurrentIndex--;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");

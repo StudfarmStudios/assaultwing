@@ -51,6 +51,7 @@ namespace AW2.Menu
         public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
         public MenuContent MenuContent { get; private set; }
         public ProgressBar ProgressBar { get; private set; }
+        public MenuControls Controls { get; private set; }
 
         public BackgroundTask ArenaLoadTask { get; private set; }
         public bool IsReadyToStartArena { get; set; }
@@ -72,6 +73,7 @@ namespace AW2.Menu
         public MenuEngineImpl(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
         {
+            Controls = new MenuControls();
             MenuContent = new MenuContent();
             ArenaLoadTask = new BackgroundTask();
             ProgressBar = new ProgressBar

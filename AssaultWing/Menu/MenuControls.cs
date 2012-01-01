@@ -1,36 +1,35 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using AW2.UI;
 
-namespace AW2.Menu.Equip
+namespace AW2.Menu
 {
-    public class EquipMenuControls
+    public class MenuControls
     {
-        public class EquipControls
+        public class Directions
         {
             public Control Up { get; private set; }
             public Control Down { get; private set; }
             public Control Left { get; private set; }
             public Control Right { get; private set; }
-            public EquipControls(Control up, Control down, Control left, Control right)
+            public Directions(Control up, Control down, Control left, Control right)
             {
                 Up = up; Down = down; Left = left; Right = right;
             }
         }
 
-        public EquipControls[] EquipPaneControls { get; private set; }
+        public Directions[] PlayerDirs { get; private set; }
+        public Directions Dirs { get { return PlayerDirs[0]; } }
         public Control Activate { get; private set; }
         public Control Back { get; private set; }
         public Control Tab { get; private set; }
         public Control TabBack { get; private set; }
-        public Control ListUp { get; private set; }
-        public Control ListDown { get; private set; }
         public Control StartGame { get; private set; }
 
-        public EquipMenuControls()
+        public MenuControls()
         {
-            EquipPaneControls = new[]
+            PlayerDirs = new[]
             {
-                new EquipControls(
+                new Directions(
                     up: new MultiControl
                     {
                         new KeyboardKey(Keys.Up),
@@ -59,7 +58,7 @@ namespace AW2.Menu.Equip
                         new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Right),
                         new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Right),
                     }),
-                new EquipControls(
+                new Directions(
                     up: new MultiControl
                     {
                         new KeyboardKey(Keys.W),
@@ -109,20 +108,6 @@ namespace AW2.Menu.Equip
             TabBack = new MultiControl
             {
                 new GamePadButton(0, GamePadButtonType.LShoulder),
-            };
-            ListUp = new MultiControl
-            {
-                new KeyboardKey(Keys.Up),
-                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Up),
-                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Up),
-                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Up),
-            };
-            ListDown = new MultiControl
-            {
-                new KeyboardKey(Keys.Down),
-                new GamePadStickDirection(0, GamePadStickType.DPad, GamePadStickDirectionType.Down),
-                new GamePadStickDirection(0, GamePadStickType.LThumb, GamePadStickDirectionType.Down),
-                new GamePadStickDirection(0, GamePadStickType.RThumb, GamePadStickDirectionType.Down),
             };
             StartGame = new MultiControl
             {

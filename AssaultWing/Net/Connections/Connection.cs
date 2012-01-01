@@ -59,6 +59,8 @@ namespace AW2.Net.Connections
         /// TCP socket to the connected remote host.
         /// </summary>
         private AWTCPSocket _tcpSocket;
+        // FIXME !!! The socket may dispose itself in a background thread at any time e.g. in
+        // AWTCPSocket.ReceiveCompleted. Suggestion: all disposing should happen in the main thread.
 
         private IPEndPoint _remoteUDPEndPoint;
         private object _lock = new object();
@@ -102,7 +104,15 @@ namespace AW2.Net.Connections
             get
             {
                 if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
-                return _tcpSocket.RemoteEndPoint;
+                try
+                {
+                    return _tcpSocket.RemoteEndPoint;
+                }
+                catch (Exception e)
+                {
+                    Errors.Do(queue => queue.Enqueue("Error during RemoteTCPEndPoint: " + e));
+                }
+                return new IPEndPoint(0, 0); // FIXME
             }
         }
 
@@ -118,20 +128,6 @@ namespace AW2.Net.Connections
                 return _remoteUDPEndPoint;
             }
             set { _remoteUDPEndPoint = value; }
-        }
-
-        /// <summary>
-        /// The remote IP address of the connection.
-        /// </summary>
-        public IPAddress RemoteIPAddress
-        {
-            get
-            {
-                if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
-                if (_remoteUDPEndPoint != null)
-                    return _remoteUDPEndPoint.Address;
-                return _tcpSocket.RemoteEndPoint.Address;
-            }
         }
 
         /// <summary>
@@ -215,7 +211,6 @@ namespace AW2.Net.Connections
             {
                 Errors.Do(queue => queue.Enqueue("SocketException in Send: " + e.SocketErrorCode));
             }
-
         }
 
         public T TryDequeueMessage<T>() where T : Message
@@ -243,10 +238,10 @@ namespace AW2.Net.Connections
             if (Errors == null) return;
             bool errorsFound = false;
             errorsFound |= HandleErrorQueue(_tcpSocket.Errors, "Error occurred with TCP socket of ");
-            errorsFound |= HandleErrorQueue(Errors,"Error occurred with ");
+            errorsFound |= HandleErrorQueue(Errors, "Error occurred with ");
             if (errorsFound)
             {
-                AW2.Helpers.Log.Write("Closing " + Name + " due to errors");
+                Log.Write("Closing " + Name + " due to errors");
                 Dispose(true);
             }
         }

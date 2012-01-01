@@ -39,6 +39,7 @@ namespace AW2.Menu.Equip
 
         /// <summary>
         /// Text fields containing editable player names.
+        /// Note: All the elements must eventually be Dispose()d to avoid memory leaks.
         /// </summary>
         private EditableText[] _playerNames;
 
@@ -123,7 +124,7 @@ namespace AW2.Menu.Equip
                 int playerI = indexedPlayer.Item2;
                 ConditionalPlayerAction(MenuComponent.Controls.EquipPaneControls[playerI].Up.Pulse, playerI, "MenuBrowseItem", () =>
                 {
-                    var minItem = MenuEngine.Game.NetworkMode == NetworkMode.Standalone
+                    var minItem = MenuEngine.Game.NetworkMode == NetworkMode.Standalone || player.LoginToken != ""
                         ? EquipMenuItem.Ship
                         : EquipMenuItem.Name;
                     if (_currentItems[playerI] > minItem)
@@ -178,7 +179,7 @@ namespace AW2.Menu.Equip
                     playerI == 1 ? MenuEngine.Game.Settings.Players.Player2 :
                     new AW2.Settings.PlayerSettingsItem();
                 _currentItems[playerI] = EquipMenuItem.Ship;
-                // FIXME !!! Memory leak: _playerNames[playerI] will never be garbage collected because it referenced by the Window.KeyPress event. It should be Dispose()d.
+                if (_playerNames[playerI] != null) _playerNames[playerI].Dispose();
                 _playerNames[playerI] = new EditableText(player.Name, AW2.Settings.PlayerSettings.PLAYER_NAME_MAX_LENGTH, new CharacterSet(Content.FontSmall.Characters), MenuEngine.Game, PlayerNameKeyPressHandler);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, settings, GetShipSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(MenuEngine.Game, player, settings, GetExtraDeviceSelectorPos(playerI));

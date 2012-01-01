@@ -45,7 +45,7 @@ namespace AW2.Net.Messages
         public override string ToString()
         {
             return base.ToString() + " [" + ArenaToPlay + ", " + WallCount + " walls, "
-                + ArenaTimeLeft.ToDurationString("d", "h", "m", "s", usePlurals: false) + " left]";
+                + ArenaTimeLeft.ToDurationString("d", "h", "min", "s", usePlurals: false) + " left]";
         }
     }
 }

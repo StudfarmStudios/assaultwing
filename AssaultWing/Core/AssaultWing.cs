@@ -81,7 +81,12 @@ namespace AW2.Core
             Components.Add(WebData);
             GameState = GameState.Initializing;
             ChatStartControl = Settings.Controls.Chat.GetControl();
-            _escapeControl = new KeyboardKey(Keys.Escape);
+            _escapeControl = new MultiControl
+            {
+                new KeyboardKey(Keys.Escape),
+                new GamePadButton(0, GamePadButtonType.Start),
+                new GamePadButton(0, GamePadButtonType.Back),
+            };
             _screenShotControl = new KeyboardKey(Keys.PrintScreen);
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);

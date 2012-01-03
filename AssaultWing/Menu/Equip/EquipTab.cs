@@ -38,7 +38,7 @@ namespace AW2.Menu.Equip
         private EquipmentSelector[,] _equipmentSelectors;
 
         /// <summary>
-        /// Text fields containing editable player names.
+        /// Text fields containing editable player names. Can be null if player name is not editable.
         /// Note: All the elements must eventually be Dispose()d to avoid memory leaks.
         /// </summary>
         private EditableText[] _playerNames;
@@ -124,9 +124,7 @@ namespace AW2.Menu.Equip
                 int playerI = indexedPlayer.Item2;
                 ConditionalPlayerAction(Controls.PlayerDirs[playerI].Up.Pulse, playerI, "MenuBrowseItem", () =>
                 {
-                    var minItem = MenuEngine.Game.NetworkMode == NetworkMode.Standalone || player.LoginToken != ""
-                        ? EquipMenuItem.Ship
-                        : EquipMenuItem.Name;
+                    var minItem = IsPlayerNameEditable(player) ? EquipMenuItem.Name : EquipMenuItem.Ship;
                     if (_currentItems[playerI] > minItem)
                         --_currentItems[playerI];
                 });
@@ -162,13 +160,18 @@ namespace AW2.Menu.Equip
             DrawNameChangeInfo(view, spriteBatch);
         }
 
+        private bool IsPlayerNameEditable(Player player)
+        {
+            return MenuEngine.Game.NetworkMode != NetworkMode.Standalone && player.LoginToken == "";
+        }
+
         private void UpdateSelectors()
         {
-            if (_playerNames != null && MenuPanePlayers.Count() == _playerNames.Count()) return;
+            if (_playerNames != null && MenuPanePlayers.Count() == _playerNames.Count()) return; // already up to date
             if (MenuPanePlayers.Count() > MAX_MENU_PANES) throw new ApplicationException("Too many players want menu panes");
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
             _equipmentSelectors = new EquipmentSelector[MenuPanePlayers.Count(), aspectCount];
-            if (_playerNames != null) foreach (var name in _playerNames) name.Dispose();
+            if (_playerNames != null) foreach (var name in _playerNames) if (name != null) name.Dispose();
             _playerNames = new EditableText[MenuPanePlayers.Count()];
             foreach (var indexedPlayer in MenuPanePlayers)
             {
@@ -179,8 +182,8 @@ namespace AW2.Menu.Equip
                     playerI == 1 ? MenuEngine.Game.Settings.Players.Player2 :
                     new AW2.Settings.PlayerSettingsItem();
                 _currentItems[playerI] = EquipMenuItem.Ship;
-                if (_playerNames[playerI] != null) _playerNames[playerI].Dispose();
-                _playerNames[playerI] = new EditableText(player.Name, AW2.Settings.PlayerSettings.PLAYER_NAME_MAX_LENGTH, new CharacterSet(Content.FontSmall.Characters), MenuEngine.Game, PlayerNameKeyPressHandler);
+                if (IsPlayerNameEditable(player))
+                    _playerNames[playerI] = new EditableText(player.Name, AW2.Settings.PlayerSettings.PLAYER_NAME_MAX_LENGTH, new CharacterSet(Content.FontSmall.Characters), MenuEngine.Game, PlayerNameKeyPressHandler);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, settings, GetShipSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(MenuEngine.Game, player, settings, GetExtraDeviceSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(MenuEngine.Game, player, settings, GetWeapon2SelectorPos(playerI));

@@ -50,16 +50,10 @@ namespace AW2.Sound
 
         public override void Dispose()
         {
-            if (_music != null)
-            {
-                _music.Dispose();
-                _music = null;
-            }
-            if (_audioEngine != null)
-            {
-                _audioEngine.Dispose();
-                _audioEngine = null;
-            }
+            if (_music != null) _music.Dispose();
+            _music = null;
+            if (_audioEngine != null) _audioEngine.Dispose();
+            _audioEngine = null;
             base.Dispose();
         }
 
@@ -72,6 +66,7 @@ namespace AW2.Sound
             InternalMusicVolume = 1;
             if (changeTrack)
             {
+                if (_music != null) _music.Dispose();
                 _music = new AWMusic(Game.Content, trackName) { Volume = ActualMusicVolume };
                 _music.EnsureIsPlaying();
             }

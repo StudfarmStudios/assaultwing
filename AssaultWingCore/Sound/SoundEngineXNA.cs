@@ -119,6 +119,7 @@ namespace AW2.Sound
                 {
                     if (instance.IsFinished)
                     {
+                        instance.Dispose();
                         _finishedInstances.Add(Tuple.Create(ticks + RELEASE_DELAY, (SoundInstance)instance));
                     }
                 }
@@ -156,11 +157,8 @@ namespace AW2.Sound
         {
             foreach (var sound in _playingInstances) sound.Dispose();
             foreach (var sound in _createdInstances.Select(x => x.Target).Where(x => x != null).Cast<SoundInstance>()) sound.Dispose();
-            if (_music != null)
-            {
-                _music.Dispose();
-                _music = null;
-            }
+            if (_music != null) _music.Dispose();
+            _music = null;
             base.Dispose();
         }
 
@@ -173,6 +171,7 @@ namespace AW2.Sound
             InternalMusicVolume = 1;
             if (changeTrack)
             {
+                if (_music != null) _music.Dispose();
                 _music = new AWMusic(Game.Content, trackName) { Volume = ActualMusicVolume };
                 _music.EnsureIsPlaying();
             }

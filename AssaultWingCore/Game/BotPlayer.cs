@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Game.Gobs;
@@ -40,8 +41,8 @@ namespace AW2.Game
             }
         }
 
-        public BotPlayer(AssaultWingCore game, int connectionID = Spectator.CONNECTION_ID_LOCAL)
-            : base(game, connectionID)
+        public BotPlayer(AssaultWingCore game, int connectionID = Spectator.CONNECTION_ID_LOCAL, IPAddress ipAddress = null)
+            : base(game, connectionID, ipAddress)
         {
             _bots = new List<Gob>();
             Name = AW2.Settings.PlayerSettings.BOTS_NAME;

@@ -1187,7 +1187,7 @@ namespace AW2.Game
         {
             var trackerItem = new GobTrackerItem(gob, null, textureName);
             foreach (var plr in Game.DataEngine.Players)
-                if (!plr.IsRemote) plr.GobTrackerItems.Add(trackerItem);
+                if (plr.IsLocal) plr.GobTrackerItems.Add(trackerItem);
         }
 
         #region Callbacks

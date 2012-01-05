@@ -71,7 +71,7 @@ namespace AW2.Graphics.OverlayComponents
                 var owner = minion.Owner;
                 var posInArena = minion.Pos;
                 var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
-                var shipAlpha = owner.IsRemote && minion.IsHiding ? minion.Alpha : 1;
+                var shipAlpha = !owner.IsLocal && minion.IsHiding ? minion.Alpha : 1;
                 var shipColor = Color.Multiply(_player.ID == owner.ID ? Color.White : owner.Color, shipAlpha);
                 var shipScale = _player.ID == owner.ID ? 0.7f : 0.4f;
                 spriteBatch.Draw(Game.GraphicsEngine.GameContent.ShipOnRadarTexture, posOnRadar, null, shipColor, 0,

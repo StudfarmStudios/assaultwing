@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Helpers.Serialization;
@@ -11,8 +12,9 @@ namespace AW2.Game
     /// <summary>
     /// Someone who is watching the game through a viewport.
     /// </summary>
-    public class Spectator : IDisposable, INetworkSerializable
+    public class Spectator : INetworkSerializable
     {
+        public enum ConnectionStatusType { Local, Remote, Disconnected };
         public enum ServerRegistrationType { No, Requested, Yes };
 
         public const int UNINITIALIZED_ID = -1;
@@ -54,10 +56,25 @@ namespace AW2.Game
         public string LoginToken { get; set; }
 
         /// <summary>
-        /// If <c>true</c> then the spectator lives at a remote game instance.
-        /// If <c>false</c> then the spectator lives at this game instance.
+        /// The last known IP address of the connection of the spectator,
+        /// or null if the spectator is local.
         /// </summary>
-        public bool IsRemote { get { return ConnectionID >= 0; } }
+        public IPAddress IPAddress { get; private set; }
+
+        /// <summary>
+        /// Is the spectator connected from a remote game instance.
+        /// </summary>
+        public bool IsRemote { get { return ConnectionStatus == ConnectionStatusType.Remote; } }
+
+        /// <summary>
+        /// Is the spectator from a remote game instance but currently disconnected.
+        /// </summary>
+        public bool IsDisconnected { get { return ConnectionStatus == ConnectionStatusType.Disconnected; } }
+
+        /// <summary>
+        /// Does the spectator live on the local game instance.
+        /// </summary>
+        public bool IsLocal { get { return ConnectionStatus == ConnectionStatusType.Local; } }
 
         /// <summary>
         /// Does the spectator state need to be updated to the clients.
@@ -87,10 +104,14 @@ namespace AW2.Game
 
         public SpectatorArenaStatistics ArenaStatistics { get; private set; }
 
-        public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL)
+        private ConnectionStatusType ConnectionStatus { get; set; }
+
+        public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL, IPAddress ipAddress = null)
         {
             Game = game;
             ConnectionID = connectionId;
+            ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
+            IPAddress = ipAddress;
             Color = Color.LightGray;
             ArenaStatistics = new SpectatorArenaStatistics();
             LoginToken = "";
@@ -100,6 +121,23 @@ namespace AW2.Game
         public virtual AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
             throw new NotImplementedException("Spectator.CreateViewport is to be implemented in subclasses only");
+        }
+
+        public void Disconnect()
+        {
+            if (ConnectionStatus != ConnectionStatusType.Remote) throw new InvalidOperationException("Cannot disconnect a " + ConnectionStatus + " spectator");
+            ConnectionStatus = ConnectionStatusType.Disconnected;
+        }
+
+        /// <summary>
+        /// Copies connection information from a new instance. Use this method on a game server
+        /// when a spectator on a game client reconnects.
+        /// </summary>
+        public void Reconnect(Spectator newSpectator)
+        {
+            ConnectionID = newSpectator.ConnectionID;
+            ConnectionStatus = ConnectionStatusType.Remote;
+            LoginToken = newSpectator.LoginToken;
         }
 
         /// <summary>
@@ -123,10 +161,6 @@ namespace AW2.Game
             ServerRegistration = ServerRegistrationType.No;
             LocalID = g_nextLocalID++;
             ID = UNINITIALIZED_ID;
-        }
-
-        public virtual void Dispose()
-        {
         }
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

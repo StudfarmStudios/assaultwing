@@ -49,7 +49,7 @@ namespace AW2.Game
 
         public IEnumerable<Gob> Minions { get { return Spectators.SelectMany(spec => spec.Minions); } }
         public IEnumerable<Player> Players { get { return Spectators.OfType<Player>(); } }
-        public Player ChatPlayer { get { return Players.First(plr => !plr.IsRemote); } }
+        public Player ChatPlayer { get { return Players.First(plr => plr.IsLocal); } }
 
         // TODO: Maybe Arena is a more natural place for Devices, alongside Gobs?
         public IndexedItemCollection<ShipDevice> Devices { get; private set; }
@@ -183,12 +183,15 @@ namespace AW2.Game
         /// Data that is generated during a game session and is still relevant 
         /// after the game session is left untouched.
         /// </summary>
+        /// <remarks>
         /// Call this method after the game session has ended.
+        /// </remarks>
         public void ClearGameState()
         {
             if (Arena != null) Arena.Dispose();
             Arena = null;
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
+            Spectators.Remove(spec => spec.IsDisconnected);
             foreach (var player in Spectators) player.ResetForArena();
             Devices.Clear();
         }
@@ -200,9 +203,9 @@ namespace AW2.Game
 
         #endregion miscellaneous
 
-        public void RemoveRemoteSpectators()
+        public void RemoveAllButLocalSpectators()
         {
-            Spectators.Remove(spec => spec.IsRemote);
+            Spectators.Remove(spec => !spec.IsLocal);
         }
 
         #region Private methods
@@ -263,7 +266,6 @@ namespace AW2.Game
 
         private void SpectatorRemovedHandler(Spectator spectator)
         {
-            spectator.Dispose();
             if (SpectatorRemoved != null) SpectatorRemoved(spectator);
         }
 

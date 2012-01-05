@@ -61,7 +61,7 @@ namespace AW2.Game
     {
         public string Name { get; private set; }
         public Color Color { get; private set; }
-        public bool IsRemote { get; private set; }
+        public bool IsLocal { get; private set; }
         public int Score { get; private set; }
         public int Kills { get; private set; }
         public int Deaths { get; private set; }
@@ -72,7 +72,7 @@ namespace AW2.Game
         {
             Name = spec.Name;
             Color = spec.Color;
-            IsRemote = spec.IsRemote;
+            IsLocal = spec.IsLocal;
             Score = score;
             Kills = spec.ArenaStatistics.Kills;
             Deaths = spec.ArenaStatistics.Deaths;

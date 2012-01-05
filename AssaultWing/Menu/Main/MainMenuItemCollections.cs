@@ -138,7 +138,7 @@ namespace AW2.Menu.Main
                 new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game,
                 () =>
                 {
-                    var localPlayer = Game.DataEngine.Spectators.Single(spec => !spec.IsRemote);
+                    var localPlayer = Game.DataEngine.Spectators.Single(spec => spec.IsLocal);
                     localPlayer.Name = Game.Settings.Players.Player1.Name = _loginName.Content;
                 });
             _loginPassword = new EditableText("", PlayerSettings.PLAYER_PASSWORD_MAX_LENGTH, // TODO !!! Show *** instead of text
@@ -150,7 +150,7 @@ namespace AW2.Menu.Main
             LoginItems.Add(loginPasswordItem);
             LoginItems.Add(new MainMenuItem(MenuEngine, () =>
             {
-                var loggedInLocalSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => !spec.IsRemote && spec.LoginToken != "");
+                var loggedInLocalSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.IsLocal && spec.LoginToken != "");
                 return loggedInLocalSpectator == null ? "Log in!"
                     : "Log in! (" + loggedInLocalSpectator.Name + ")";
             }, () =>

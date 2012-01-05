@@ -127,9 +127,9 @@ namespace AW2.Net.MessageHandling
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
             {
-                var newPlayer = CreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromServer);
-                newPlayer.ID = mess.SpectatorID;
-                newPlayer.ServerRegistration = Spectator.ServerRegistrationType.Yes;
+                var newSpectator = CreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromServer);
+                newSpectator.ID = mess.SpectatorID;
+                newSpectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             }
             else if (spectator.IsRemote)
             {
@@ -366,19 +366,27 @@ namespace AW2.Net.MessageHandling
 
         private Spectator CreateAndAddNewSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
+            var ipAddress = Game.NetworkEngine.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address;
             Spectator newSpectator = null;
             switch (mess.Subclass)
             {
                 case SpectatorSettingsRequest.SubclassType.Player:
-                    newSpectator = new Player(Game, "<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID);
+                    newSpectator = new Player(Game, "<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID, ipAddress);
                     break;
                 case SpectatorSettingsRequest.SubclassType.BotPlayer:
-                    newSpectator = new BotPlayer(Game, mess.ConnectionID);
+                    newSpectator = new BotPlayer(Game, mess.ConnectionID, ipAddress);
                     break;
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
             mess.Read(newSpectator, mode, 0);
-            Game.DataEngine.Spectators.Add(newSpectator);
+            var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.IsDisconnected && spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
+            if (oldSpectator == null)
+                Game.DataEngine.Spectators.Add(newSpectator);
+            else
+            {
+                oldSpectator.Reconnect(newSpectator);
+                newSpectator = oldSpectator;
+            }
             Game.Stats.Send(new { AddPlayer = newSpectator.LoginToken });
             return newSpectator;
         }

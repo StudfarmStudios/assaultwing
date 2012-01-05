@@ -258,16 +258,18 @@ namespace AW2.Net
             connection.ConnectionStatus.IsDropped = true;
             _removedClientConnections.Add(connection);
 
-            // Remove the client's players.
             var droppedPlayers = Game.DataEngine.Spectators.Where(plr => plr.ConnectionID == connection.ID);
-            foreach (var plr in droppedPlayers) Game.Stats.Send(new { RemovePlayer = plr.LoginToken });
+            foreach (var plr in droppedPlayers)
+            {
+                plr.Disconnect();
+                Game.Stats.Send(new { RemovePlayer = plr.LoginToken });
+            }
             if (droppedPlayers.Any())
             {
                 var message = string.Join(" and ", droppedPlayers.Select(plr => plr.Name).ToArray()) + " left the game";
-                foreach (var player in Game.DataEngine.Players.Where(plr => !plr.IsRemote))
+                foreach (var player in Game.DataEngine.Players)
                     player.Messages.Add(new PlayerMessage(message, PlayerMessage.DEFAULT_COLOR));
             }
-            Game.DataEngine.Spectators.Remove(player => player.ConnectionID == connection.ID);
         }
 
         public GameClientConnection GetGameClientConnection(int connectionID)

@@ -144,7 +144,7 @@ namespace AW2.Game.Gobs
             get
             {
                 if (LocationPredicter == null) return Rotation;
-                if (Game.NetworkMode == NetworkMode.Client && !Owner.IsRemote) return Rotation;
+                if (Game.NetworkMode == NetworkMode.Client && Owner.IsLocal) return Rotation;
                 return LocationPredicter.GetShipLocation(Game.DataEngine.ArenaTotalTime).Rotation;
             }
         }
@@ -279,7 +279,6 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            if (Game.NetworkMode == NetworkMode.Client && Owner.IsRemote) LocationPredicter = new ShipLocationPredicter(this);
             _thruster.Activate(this);
             _coughEngine.Activate(this);
             CreateGlow();
@@ -290,6 +289,7 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
+            if (Game.NetworkMode == NetworkMode.Client && Owner != null && !Owner.IsLocal && LocationPredicter == null) LocationPredicter = new ShipLocationPredicter(this);
             UpdateRoll();
             base.Update();
             foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
@@ -459,7 +459,7 @@ namespace AW2.Game.Gobs
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
         {
             // Draw player name
-            if (Owner == null || !Owner.IsRemote) return;
+            if (Owner == null || Owner.IsLocal) return;
             var screenPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
             var playerNameSize = PlayerNameFont.MeasureString(Owner.Name);
             var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);

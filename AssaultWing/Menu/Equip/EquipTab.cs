@@ -51,7 +51,7 @@ namespace AW2.Menu.Equip
             get
             {
                 return MenuEngine.Game.DataEngine.Players
-                    .Where(p => !p.IsRemote)
+                    .Where(p => p.IsLocal)
                     .Select((p, i) => Tuple.Create(p, i));
             }
         }

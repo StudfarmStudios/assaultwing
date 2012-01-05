@@ -52,7 +52,7 @@ namespace AW2.Core.OverlayComponents
                 GetScoreCells("Score", "Kills", "Deaths"),
                 (textPos, text) => spriteBatch.DrawString(FontSmall, text, textPos, Color.White));
             AdvanceLine(ref textCenter, FontSmall);
-            var allSpectatorsAreLocal = _standings.All(entry => !entry.IsRemote);
+            var allSpectatorsAreLocal = _standings.All(entry => entry.IsLocal);
             int line = 0;
             foreach (var entry in _standings)
             {
@@ -60,7 +60,7 @@ namespace AW2.Core.OverlayComponents
                 var column1Pos = new Vector2(textLeftX, textCenter.Y);
                 var textColor =
                     allSpectatorsAreLocal ? entry.Color
-                    : entry.IsRemote ? entry.Color
+                    : !entry.IsLocal ? entry.Color
                     : Color.White;
                 GraphicsEngineImpl.DrawFormattedText(column1Pos, enWidth,
                     string.Format("{0}\t\x5{1}{2}", line.ToOrdinalString(), entry.Name, GetScoreCells(entry.Score, entry.Kills, entry.Deaths)),

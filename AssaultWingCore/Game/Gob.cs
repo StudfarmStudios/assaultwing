@@ -436,6 +436,7 @@ namespace AW2.Game
 
         /// <summary>
         /// The player who owns the gob. Can be null for impartial gobs.
+        /// Can also be null on a game client if the owner hasn't been added yet.
         /// </summary>
         public Spectator Owner { get { return OwnerProxy != null ? OwnerProxy.GetValue() : null; } set { OwnerProxy = value; } }
         public LazyProxy<int, Spectator> OwnerProxy { get; set; }
@@ -822,6 +823,7 @@ namespace AW2.Game
         /// </summary>
         public virtual void Dispose()
         {
+            Death = null;
             UnloadContent();
             IsDisposed = true;
             if (ID > 0)

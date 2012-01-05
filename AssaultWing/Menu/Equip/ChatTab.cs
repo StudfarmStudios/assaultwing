@@ -35,7 +35,7 @@ namespace AW2.Menu.Equip
         }
         private ReadOnlyCollection<WrappedTextList.Line> MessageLines { get { return MenuEngine.Game.DataEngine.ChatHistory[CHAT_TEXT_WIDTH]; } }
 
-        private Player ChatPlayer { get { return MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => !plr.IsRemote); } }
+        private Player ChatPlayer { get { return MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal); } }
         private SpriteFont Font { get { return Content.FontChat; } }
         private Vector2 TypingPos { get { return StatusPanePos + new Vector2(30, Content.StatusPaneTexture.Height - 47); } }
         private Vector2 ChatHistoryPos { get { return StatusPanePos + new Vector2(30, 32); } }

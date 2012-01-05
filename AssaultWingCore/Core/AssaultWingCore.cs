@@ -237,7 +237,7 @@ namespace AW2.Core
 
         public void ShowPlayerHelp()
         {
-            foreach (var player in DataEngine.Players.Where(plr => !plr.IsRemote))
+            foreach (var player in DataEngine.Players.Where(plr => plr.IsLocal))
                 foreach (var mess in GetHelpMessages(player))
                     player.Messages.Add(new PlayerMessage("Help>", mess, PlayerMessage.DEFAULT_COLOR));
         }

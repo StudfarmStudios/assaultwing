@@ -285,6 +285,7 @@ namespace AW2.Core
             WebData.LoginPilots();
             try
             {
+                // TODO: Allow rejoin even if there are no free slots.
                 NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result,
                     allowNewConnection: () => DataEngine.Players.Count() < Settings.Net.GameServerMaxPlayers));
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerMenuHandlers());
@@ -309,7 +310,7 @@ namespace AW2.Core
             DeactivateAllMessageHandlers();
             NetworkEngine.StopServer();
             NetworkMode = NetworkMode.Standalone;
-            DataEngine.RemoveRemoteSpectators();
+            DataEngine.RemoveAllButLocalSpectators();
         }
 
         /// <summary>
@@ -339,7 +340,7 @@ namespace AW2.Core
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
             DeactivateAllMessageHandlers();
             NetworkEngine.StopClient();
-            DataEngine.RemoveRemoteSpectators();
+            DataEngine.RemoveAllButLocalSpectators();
             StopGameplay(); // gameplay cannot continue because it's initialized only for a client
             NetworkMode = NetworkMode.Standalone;
             if (errorOrNull != null)
@@ -375,7 +376,7 @@ namespace AW2.Core
                     foreach (var plr in DataEngine.Players) plr.Messages.Add(message);
                     break;
                 case NetworkMode.Client:
-                    foreach (var plr in DataEngine.Players.Where(plr => !plr.IsRemote)) plr.Messages.Add(message);
+                    foreach (var plr in DataEngine.Players.Where(plr => plr.IsLocal)) plr.Messages.Add(message);
                     NetworkEngine.GameServerConnection.Send(new PlayerMessageMessage
                     {
                         PlayerID = -1,
@@ -710,16 +711,17 @@ namespace AW2.Core
         {
             if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
             spectator.ResetForArena();
+            if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;
             if (player == null) return;
-            if (NetworkMode != NetworkMode.Server || !player.IsRemote) return;
-            player.IsAllowedToCreateShip = () => NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
+            player.IsAllowedToCreateShip = () => player.IsRemote && NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
             player.Messages.NewChatMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
             player.Messages.NewCombatLogMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
         }
 
         private void SendPlayerMessageToRemoteSpectator(PlayerMessage message, Player player)
         {
+            if (!player.IsRemote) return;
             try
             {
                 var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Message = message };
@@ -765,7 +767,7 @@ namespace AW2.Core
                         SendPlayerUpdatesOnServer();
                         break;
                     case NetworkMode.Client:
-                        SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && !gob.Owner.IsRemote),
+                        SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
                             SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
                         SendPlayerUpdatesOnClient();
                         break;
@@ -788,7 +790,7 @@ namespace AW2.Core
         private void SendPlayerUpdatesOnClient()
         {
             if (GameState != GameState.Gameplay) return;
-            foreach (var player in DataEngine.Players.Where(plr => !plr.IsRemote && plr.ID != Spectator.UNINITIALIZED_ID))
+            foreach (var player in DataEngine.Players.Where(plr => plr.IsLocal && plr.ID != Spectator.UNINITIALIZED_ID))
             {
                 var message = new PlayerControlsMessage();
                 message.PlayerID = player.ID;
@@ -827,10 +829,10 @@ namespace AW2.Core
             {
                 case NetworkMode.Client:
                     if (NetworkEngine.IsConnectedToGameServer)
-                        SendSpectatorSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
+                        SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
                     break;
                 case NetworkMode.Server:
-                    SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
+                    SendSpectatorSettingsToGameClients(p => !p.IsDisconnected && p.ID != Spectator.UNINITIALIZED_ID);
                     SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
                     break;
             }

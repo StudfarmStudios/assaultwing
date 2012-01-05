@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Game.Gobs;
@@ -99,7 +100,7 @@ namespace AW2.Game
 
         public List<GobTrackerItem> GobTrackerItems { get; private set; }
 
-        public override bool NeedsViewport { get { return !IsRemote; } }
+        public override bool NeedsViewport { get { return IsLocal; } }
         public override IEnumerable<Gob> Minions { get { if (Ship != null) yield return Ship; } }
 
         /// <summary>
@@ -194,7 +195,7 @@ namespace AW2.Game
             get
             {
                 if (!(Ship == null && ArenaStatistics.Lives != 0 && _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)) return false;
-                return !(IsAllowedToCreateShip != null && !IsAllowedToCreateShip());
+                return IsAllowedToCreateShip == null || IsAllowedToCreateShip();
             }
         }
 
@@ -247,7 +248,7 @@ namespace AW2.Game
         /// <param name="controls">Player's in-game controls.</param>
         public Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
             CanonicalString extraDeviceName, PlayerControls controls)
-            : this(game, name, shipTypeName, weapon2Name, extraDeviceName, controls, -1)
+            : this(game, name, shipTypeName, weapon2Name, extraDeviceName, controls, CONNECTION_ID_LOCAL, null)
         {
         }
 
@@ -262,7 +263,7 @@ namespace AW2.Game
         /// at which the player lives.</param>
         /// <see cref="AW2.Net.Connection.ID"/>
         public Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
-            CanonicalString extraDeviceName, int connectionId)
+            CanonicalString extraDeviceName, int connectionId, IPAddress ipAddress)
             : this(game, name, shipTypeName, weapon2Name, extraDeviceName, new PlayerControls
             {
                 Thrust = new RemoteControl(),
@@ -271,13 +272,13 @@ namespace AW2.Game
                 Fire1 = new RemoteControl(),
                 Fire2 = new RemoteControl(),
                 Extra = new RemoteControl()
-            }, connectionId)
+            }, connectionId, ipAddress)
         {
         }
 
         private Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
-            CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
-            : base(game, connectionId)
+            CanonicalString extraDeviceName, PlayerControls controls, int connectionId, IPAddress ipAddress)
+            : base(game, connectionId, ipAddress)
         {
             Name = name;
             ShipName = shipTypeName;
@@ -307,7 +308,7 @@ namespace AW2.Game
             }
             else // otherwise we are a game client
             {
-                if (!IsRemote) ApplyControlsToShip();
+                if (IsLocal) ApplyControlsToShip();
             }
         }
 
@@ -324,12 +325,6 @@ namespace AW2.Game
             _relativeShakeDamage = 0;
             PostprocessEffectNames.Clear();
             Ship = null;
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            if (Ship != null) Ship.Die();
         }
 
         public override string ToString()

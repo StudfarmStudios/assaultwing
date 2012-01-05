@@ -196,7 +196,7 @@
     <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
     <Compile Include="Net\Messages\PlayerDeletionMessage.cs" />
     <Compile Include="Net\Messages\PlayerMessageMessage.cs" />
-    <Compile Include="Net\Messages\PlayerSettingsReply.cs" />
+    <Compile Include="Net\Messages\SpectatorSettingsReply.cs" />
     <Compile Include="Net\Messages\PlayerUpdateMessage.cs" />
     <Compile Include="Net\Messages\SpectatorSettingsRequest.cs" />
     <Compile Include="Net\Messages\StartGameMessage.cs" />

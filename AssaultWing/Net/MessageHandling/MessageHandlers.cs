@@ -49,7 +49,7 @@ namespace AW2.Net.MessageHandling
         {
             yield return new MessageHandler<ConnectionClosingMessage>(MessageHandlerBase.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(MessageHandlerBase.SourceType.Server, HandleStartGameMessage);
-            yield return new MessageHandler<PlayerSettingsReply>(MessageHandlerBase.SourceType.Server, HandlePlayerSettingsReply);
+            yield return new MessageHandler<SpectatorSettingsReply>(MessageHandlerBase.SourceType.Server, HandleSpectatorSettingsReply);
             yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleSpectatorSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new MessageHandler<GameSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleGameSettingsRequest);
@@ -173,12 +173,12 @@ namespace AW2.Net.MessageHandling
                 });
         }
 
-        private void HandlePlayerSettingsReply(PlayerSettingsReply mess)
+        private void HandleSpectatorSettingsReply(SpectatorSettingsReply mess)
         {
-            var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.LocalID == mess.PlayerLocalID);
-            if (player == null) throw new ApplicationException("Cannot find unregistered local player with local ID " + mess.PlayerLocalID);
-            player.ServerRegistration = Spectator.ServerRegistrationType.Yes;
-            player.ID = mess.PlayerID;
+            var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.LocalID == mess.SpectatorLocalID);
+            if (spectator == null) throw new ApplicationException("Cannot find unregistered local spectator with local ID " + mess.SpectatorLocalID);
+            spectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
+            spectator.ID = mess.SpectatorID;
         }
 
         private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
@@ -287,27 +287,27 @@ namespace AW2.Net.MessageHandling
             if (!mess.IsRegisteredToServer)
             {
                 var newSpectator = CreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromClient);
-                var reply = new PlayerSettingsReply
+                var reply = new SpectatorSettingsReply
                 {
-                    PlayerLocalID = mess.SpectatorID,
-                    PlayerID = newSpectator.ID
+                    SpectatorLocalID = mess.SpectatorID,
+                    SpectatorID = newSpectator.ID
                 };
                 clientConn.Send(reply);
             }
             else
             {
-                var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
-                if (player == null) throw new NetworkException("Settings update for unknown spectator ID " + mess.SpectatorID);
-                if (player.ConnectionID != mess.ConnectionID)
+                var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
+                if (spectator == null) throw new NetworkException("Settings update for unknown spectator ID " + mess.SpectatorID);
+                if (spectator.ConnectionID != mess.ConnectionID)
                 {
                     // Silently ignoring update of a player that doesn't live on the client who sent the update.
                 }
                 else
                 {
                     // Be careful not to overwrite the player's color with something silly from the client.
-                    var oldColor = player is Player ? (Color?)((Player)player).Color : null;
-                    mess.Read(player, SerializationModeFlags.ConstantDataFromClient, 0);
-                    if (oldColor.HasValue) ((Player)player).Color = oldColor.Value;
+                    var oldColor = spectator is Player ? (Color?)((Player)spectator).Color : null;
+                    mess.Read(spectator, SerializationModeFlags.ConstantDataFromClient, 0);
+                    if (oldColor.HasValue) ((Player)spectator).Color = oldColor.Value;
                 }
             }
         }

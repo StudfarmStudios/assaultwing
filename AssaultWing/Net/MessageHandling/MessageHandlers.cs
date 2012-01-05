@@ -179,6 +179,9 @@ namespace AW2.Net.MessageHandling
             if (spectator == null) throw new ApplicationException("Cannot find unregistered local spectator with local ID " + mess.SpectatorLocalID);
             spectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             spectator.ID = mess.SpectatorID;
+            // If we just reconnected to the game server, the server may already have sent us
+            // our previous spectator with disconnected status. Merge it with our new spectator.
+            Game.DataEngine.Spectators.Remove(spec => spec != spectator && spec.ID == mess.SpectatorID);
         }
 
         private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)

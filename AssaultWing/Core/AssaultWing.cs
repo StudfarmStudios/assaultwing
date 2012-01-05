@@ -832,7 +832,7 @@ namespace AW2.Core
                         SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
                     break;
                 case NetworkMode.Server:
-                    SendSpectatorSettingsToGameClients(p => !p.IsDisconnected && p.ID != Spectator.UNINITIALIZED_ID);
+                    SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
                     SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
                     break;
             }

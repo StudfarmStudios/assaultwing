@@ -3,7 +3,10 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using AW2.Core;
+
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Timer = System.Windows.Forms.Timer;
+using System.Text;
 
 namespace AW2.UI
 {
@@ -61,6 +64,9 @@ namespace AW2.UI
         private bool _isCursorHidden;
         private bool _isCursorForcedVisible;
 
+        private Timer _logUpdateTimer;
+        private StringBuilder _logCache;
+
         public Rectangle ClientBoundsMin
         {
             get { return new Rectangle(0, 0, MinimumSize.Width, MinimumSize.Height); }
@@ -86,11 +92,9 @@ namespace AW2.UI
 
         public new void Dispose()
         {
-            if (_game != null)
-            {
-                _game.Dispose();
-                _game = null;
-            }
+            if (_game != null) _game.Dispose();
+            _game = null;
+            if (_logUpdateTimer != null) _logUpdateTimer.Dispose();
             AW2.Helpers.Log.Written -= AddToLogView;
             base.Dispose();
         }
@@ -173,7 +177,7 @@ namespace AW2.UI
                 if (!_splitContainer.Panel1Collapsed)
                 {
                     _splitContainer.Panel2Collapsed ^= true;
-                    _logView.Select(_logView.Text.Length - 1, 0);
+                    _logView.Select(Math.Max(0, _logView.Text.Length - 1), 0);
                     _logView.ScrollToCaret();
                 }
             }
@@ -229,6 +233,10 @@ namespace AW2.UI
             _previousWindowedModeParameters = GetCurrentFormParameters();
             _originalIcon = Icon;
             AW2.Helpers.Log.Written += AddToLogView;
+            _logCache = new StringBuilder();
+            _logUpdateTimer = new Timer { Interval = 1000 };
+            _logUpdateTimer.Tick += UpdateLogView;
+            _logUpdateTimer.Start();
 
             // Text entry is handled by WndProcImpl() which is called at a keypress
             // only if this GameForm or _gameView has focus. Initially, this GameForm has
@@ -313,7 +321,17 @@ namespace AW2.UI
         private void AddToLogView(string text)
         {
             if (_logView.IsDisposed) return;
-            BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
+            lock (_logCache) _logCache.Append(text).Append("\r\n");
+        }
+
+        private void UpdateLogView(object sender, EventArgs args)
+        {
+            if (_logCache.Length == 0) return;
+            lock (_logCache)
+            {
+                _logView.AppendText(_logCache.ToString());
+                _logCache.Clear();
+            }
         }
     }
 }

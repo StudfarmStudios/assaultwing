@@ -363,7 +363,7 @@ namespace AW2.Net
             HandleNewConnections();
             HandleUDPMessages();
             HandleClientState();
-            foreach (var conn in AllConnections) conn.UpdatePingInfo();
+            foreach (var conn in AllConnections) conn.Update();
             foreach (var handler in MessageHandlers.ToList()) // enumerate over a copy to allow adding MessageHandlers during enumeration
                 if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();

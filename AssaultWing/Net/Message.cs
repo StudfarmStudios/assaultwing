@@ -124,12 +124,13 @@ namespace AW2.Net
 
         public virtual void Serialize(NetworkBinaryWriter writer)
         {
-                writer.Seek(HEADER_LENGTH, SeekOrigin.Begin);
-                SerializeBody(writer);
-                ushort bodyLength = checked((ushort)(writer.GetBaseStream().Position - HEADER_LENGTH));
-                writer.Seek(0, SeekOrigin.Begin);
-                SerializeHeader(writer, bodyLength);
-                writer.Seek(HEADER_LENGTH + bodyLength, SeekOrigin.Begin);
+            writer.Seek(HEADER_LENGTH, SeekOrigin.Current);
+            var bodyStartPosition = writer.GetBaseStream().Position;
+            SerializeBody(writer);
+            var bodyLength = checked((ushort)(writer.GetBaseStream().Position - bodyStartPosition));
+            writer.Seek(-(HEADER_LENGTH + bodyLength), SeekOrigin.Current);
+            SerializeHeader(writer, bodyLength);
+            writer.Seek(bodyLength, SeekOrigin.Current);
         }
 
         /// <summary>

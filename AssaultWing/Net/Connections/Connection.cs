@@ -184,11 +184,12 @@ namespace AW2.Net.Connections
         }
 
         /// <summary>
-        /// Updates the connection's ping information. Call this every frame.
+        /// Call this every frame.
         /// </summary>
-        public virtual void UpdatePingInfo()
+        public virtual void Update()
         {
             if (IsHandshaken) PingInfo.Update();
+            _tcpSocket.FlushSendBuffer();
         }
 
         /// <summary>
@@ -357,7 +358,7 @@ namespace AW2.Net.Connections
         private void SendViaTCP(Action<NetworkBinaryWriter> writeData)
         {
             if (_tcpSocket == null) throw new InvalidOperationException("Connection has no TCP socket for sending a message");
-            _tcpSocket.Send(writeData);
+            _tcpSocket.AddToSendBuffer(writeData);
         }
 
         /// <summary>

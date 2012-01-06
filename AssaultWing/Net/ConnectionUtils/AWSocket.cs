@@ -32,8 +32,9 @@ namespace AW2.Net.ConnectionUtils
         private static Dictionary<Type, int> g_sentByteCountsByMessageType = new Dictionary<Type, int>();
         private static Stack<SocketAsyncEventArgs> g_sendArgs = new Stack<SocketAsyncEventArgs>();
 
-        private Socket _socket;
         protected MessageHandler _messageHandler;
+        private Socket _socket;
+        private Dictionary<IPEndPoint, Tuple<SocketAsyncEventArgs, NetworkBinaryWriter>> _sendCache;
         private int _isDisposed;
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
@@ -76,35 +77,51 @@ namespace AW2.Net.ConnectionUtils
             if (socket == null) throw new ArgumentNullException("socket", "Null socket argument");
             Application.ApplicationExit += ApplicationExitCallback;
             _socket = socket;
+            _sendCache = new Dictionary<IPEndPoint, Tuple<SocketAsyncEventArgs, NetworkBinaryWriter>>();
             ConfigureSocket(_socket);
             _messageHandler = messageHandler;
             Errors = new ThreadSafeWrapper<Queue<string>>(new Queue<string>());
             if (messageHandler != null) StartReceiving();
         }
 
-        public void Send(Action<NetworkBinaryWriter> writeData)
+        /// <summary>
+        /// Adds raw byte data to the buffer to send to the remote host. Call <see cref="FlushSendBuffer"/> later.
+        /// Use this method for TCP sockets.
+        /// </summary>
+        public void AddToSendBuffer(Action<NetworkBinaryWriter> writeData)
         {
-            Send(writeData, UNSPECIFIED_IP_ENDPOINT);
+            AddToSendBuffer(writeData, UNSPECIFIED_IP_ENDPOINT);
         }
 
         /// <summary>
-        /// Sends raw byte data to the remote host. The data is sent asynchronously,
-        /// so there is no guarantee when the transmission will be finished.
+        /// Sends raw byte data to the remote host. The data is sent asynchronously, so there is
+        /// no guarantee when the transmission will be finished. Use this method for UDP sockets.
         /// </summary>
         public void Send(Action<NetworkBinaryWriter> writeData, IPEndPoint remoteEndPoint)
         {
-            var sendArgs = GetSendArgs(remoteEndPoint);
-            var stream = new MemoryStream(sendArgs.Buffer);
-            var writer = NetworkBinaryWriter.Create(stream);
-            writeData(writer);
-            var bytesWritten = (int)writer.GetBaseStream().Position;
-            DebugPrintSentByteCount(sendArgs.Buffer, bytesWritten);
-            sendArgs.SetBuffer(0, bytesWritten);
-            UseSocket(socket =>
+            AddToSendBuffer(writeData, remoteEndPoint);
+            FlushSendBuffer();
+        }
+
+        /// <summary>
+        /// Sends all data buffered by <see cref="AddToSendBuffer"/> to corresponding remote hosts.
+        /// The data is sent asynchronously, so there is no guarantee when the transmission will be finished.
+        /// </summary>
+        public void FlushSendBuffer()
+        {
+            foreach (var sendArgsAndWriter in _sendCache.Values)
             {
-                var isPending = socket.SendToAsync(sendArgs);
-                if (!isPending) SendToCompleted(socket, sendArgs);
-            });
+                var bytesWritten = (int)sendArgsAndWriter.Item2.GetBaseStream().Position;
+                var sendArgs = sendArgsAndWriter.Item1;
+                DebugPrintSentByteCount(sendArgs.Buffer, bytesWritten);
+                sendArgs.SetBuffer(0, bytesWritten);
+                UseSocket(socket =>
+                {
+                    var isPending = socket.SendToAsync(sendArgs);
+                    if (!isPending) SendToCompleted(socket, sendArgs);
+                });
+            }
+            _sendCache.Clear();
         }
 
         public void Dispose()
@@ -229,6 +246,19 @@ namespace AW2.Net.ConnectionUtils
             // Note: SocketAsyncEventArgs.RemoteEndPoint is ignored by TCP sockets
             sendArgs.RemoteEndPoint = remoteEndPoint;
             return sendArgs;
+        }
+
+        private void AddToSendBuffer(Action<NetworkBinaryWriter> writeData, IPEndPoint remoteEndPoint)
+        {
+            Tuple<SocketAsyncEventArgs, NetworkBinaryWriter> sendArgsAndWriter = null;
+            if (!_sendCache.TryGetValue(remoteEndPoint, out sendArgsAndWriter))
+            {
+                var sendArgs = GetSendArgs(remoteEndPoint);
+                var writer = NetworkBinaryWriter.Create(new MemoryStream(sendArgs.Buffer));
+                sendArgsAndWriter = Tuple.Create(sendArgs, writer);
+                _sendCache[remoteEndPoint] = sendArgsAndWriter;
+            }
+            writeData(sendArgsAndWriter.Item2);
         }
 
         private void SendToCompleted(object sender, SocketAsyncEventArgs args)

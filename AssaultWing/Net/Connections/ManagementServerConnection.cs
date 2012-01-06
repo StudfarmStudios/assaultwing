@@ -38,9 +38,9 @@ namespace AW2.Net.Connections
             Game.NetworkEngine.UDPSocket.Send(managementMessage.Serialize, RemoteUDPEndPoint);
         }
 
-        public override void UpdatePingInfo()
+        public override void Update()
         {
-            // Not updating the ping info that measures lag.
+            // Skip base.Update because we don't need PingInfo nor do we use the TCP socket.
         }
     }
 }

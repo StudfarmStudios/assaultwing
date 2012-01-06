@@ -120,7 +120,7 @@ namespace AW2.Net
         private void SendToStatsServer()
         {
             if (_sendQueue.Length == 0) return;
-            _statsDataSocket.Send(writer => writer.WriteStringWithoutLength(_sendQueue.ToString()));
+            _statsDataSocket.AddToSendBuffer(writer => writer.WriteStringWithoutLength(_sendQueue.ToString()));
             _sendQueue.Clear();
         }
 

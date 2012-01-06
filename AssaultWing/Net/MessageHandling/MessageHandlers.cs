@@ -357,7 +357,7 @@ namespace AW2.Net.MessageHandling
 
         private void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)
         {
-            Game.LogicEngine.GobsToKillOnClient.Add(mess.GobID);
+            Game.LogicEngine.GobsToKillOnClient.AddRange(mess.GobIDs);
         }
 
         #endregion

@@ -1,18 +1,25 @@
-﻿using AW2.Helpers.Serialization;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client notifying
-    /// of the deletion of a gob.
+    /// of the deletion one or more gobs.
     /// </summary>
     [MessageType(0x25, false)]
     public class GobDeletionMessage : GameplayMessage
     {
         /// <summary>
-        /// Identifier of the gob to delete.
+        /// Identifiers of the gobs to delete.
         /// </summary>
-        public int GobID { get; set; }
+        public List<int> GobIDs { get; set; }
+
+        public GobDeletionMessage()
+        {
+            GobIDs = new List<int>();
+        }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
@@ -21,21 +28,26 @@ namespace AW2.Net.Messages
 #endif
             {
                 base.SerializeBody(writer);
-                // Player controls (request) message structure:
-                // short: gob identifier
-                writer.Write((short)GobID);
+                // Gob deletion (request) message structure:
+                // byte: gob count, N
+                // N * short: gob identifiers
+                writer.Write((byte)GobIDs.Count);
+                foreach (var gobID in GobIDs) writer.Write((short)gobID);
             }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            GobID = reader.ReadInt16();
+            var idCount = reader.ReadByte();
+            GobIDs.Clear();
+            GobIDs.Capacity = idCount;
+            for (int i = 0; i < idCount; i++) GobIDs.Add(reader.ReadInt16());
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [GobID " + GobID + "]";
+            return base.ToString() + " [GobIDs: " + string.Join(", ", GobIDs.Select(id => id.ToString()).ToArray()) + "]";
         }
     }
 }

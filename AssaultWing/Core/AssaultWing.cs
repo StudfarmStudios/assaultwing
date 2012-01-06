@@ -27,6 +27,7 @@ namespace AW2.Core
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
         private bool _clearGameDataWhenEnteringMenus;
+        private GobDeletionMessage _pendingGobDeletionMessage;
 
         // Debug keys, used only #if DEBUG
         private Control _frameStepControl;
@@ -242,6 +243,7 @@ namespace AW2.Core
             if (NetworkMode == NetworkMode.Server)
             {
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+                _pendingGobDeletionMessage = new GobDeletionMessage();
                 DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
             }
             if (GameState != GameState.GameAndMenu)
@@ -702,9 +704,7 @@ namespace AW2.Core
         private void GobRemovedFromArenaHandler(Gob gob)
         {
             if (!gob.IsRelevant) return;
-            var message = new GobDeletionMessage();
-            message.GobID = gob.ID;
-            NetworkEngine.SendToGameClients(message);
+            _pendingGobDeletionMessage.GobIDs.Add(gob.ID);
         }
 
         private void SpectatorAddedHandler(Spectator spectator)
@@ -765,6 +765,7 @@ namespace AW2.Core
                         SendGobUpdatesToRemote(DataEngine.Arena.Gobs.GameplayLayer.Gobs,
                             SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
                         SendPlayerUpdatesOnServer();
+                        SendGobDeletionsOnServer();
                         break;
                     case NetworkMode.Client:
                         SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
@@ -773,6 +774,14 @@ namespace AW2.Core
                         break;
                 }
             }
+        }
+
+        private void SendGobDeletionsOnServer()
+        {
+            if ((DataEngine.ArenaFrameCount % 3) != 0) return;
+            if (!_pendingGobDeletionMessage.GobIDs.Any()) return;
+            NetworkEngine.SendToGameClients(_pendingGobDeletionMessage);
+            _pendingGobDeletionMessage = new GobDeletionMessage();
         }
 
         private void SendPlayerUpdatesOnServer()

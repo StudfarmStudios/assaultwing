@@ -802,6 +802,7 @@ namespace AW2.Core
 
         private void SendGobUpdatesToRemote(IEnumerable<Gob> gobs, SerializationModeFlags serializationMode, IEnumerable<Connection> connections)
         {
+            if (serializationMode.HasFlag(SerializationModeFlags.VaryingDataFromServer) && (DataEngine.ArenaFrameCount % 3) != 0) return;
             var now = DataEngine.ArenaTotalTime;
             var gobMessage = new GobUpdateMessage();
             foreach (var gob in gobs)

@@ -483,7 +483,7 @@ namespace AW2.Game
                     _deviceUsages |= DeviceUsages.Weapon1NotReady;
                     break;
             }
-            MustUpdateToClients = true;
+            if (_deviceUsages != DeviceUsages.None) MustUpdateToClients = true;
         }
 
         private void TryFireWeapon2()
@@ -504,7 +504,7 @@ namespace AW2.Game
                     _deviceUsages |= DeviceUsages.Weapon2NotReady;
                     break;
             }
-            MustUpdateToClients = true;
+            if (_deviceUsages != DeviceUsages.None) MustUpdateToClients = true;
         }
 
         private void TryFireExtraDevice()
@@ -524,7 +524,7 @@ namespace AW2.Game
                     _deviceUsages |= DeviceUsages.ExtraDeviceNotReady;
                     break;
             }
-            MustUpdateToClients = true;
+            if (_deviceUsages != DeviceUsages.None) MustUpdateToClients = true;
         }
 
         /// <summary>

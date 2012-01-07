@@ -14,6 +14,8 @@ namespace AW2.Game
     /// </summary>
     public class Spectator : INetworkSerializable
     {
+        [Flags]
+        public enum ClientUpdateType { None = 0x00, ToOwnerOnly = 0x01, ToEveryone = 0x02 };
         public enum ConnectionStatusType { Local, Remote, Disconnected };
         public enum ServerRegistrationType { No, Requested, Yes };
 
@@ -77,10 +79,9 @@ namespace AW2.Game
         public bool IsLocal { get { return ConnectionStatus == ConnectionStatusType.Local; } }
 
         /// <summary>
-        /// Does the spectator state need to be updated to the clients.
         /// For use by game server only.
         /// </summary>
-        public bool MustUpdateToClients { get; set; }
+        public ClientUpdateType ClientUpdateRequest { get; set; }
 
         /// <summary>
         /// The human-readable name of the spectator.
@@ -127,7 +128,7 @@ namespace AW2.Game
         {
             if (ConnectionStatus != ConnectionStatusType.Remote) throw new InvalidOperationException("Cannot disconnect a " + ConnectionStatus + " spectator");
             ConnectionStatus = ConnectionStatusType.Disconnected;
-            MustUpdateToClients = true;
+            ClientUpdateRequest |= ClientUpdateType.ToEveryone;
         }
 
         /// <summary>
@@ -139,7 +140,7 @@ namespace AW2.Game
             ConnectionID = newSpectator.ConnectionID;
             ConnectionStatus = ConnectionStatusType.Remote;
             LoginToken = newSpectator.LoginToken;
-            MustUpdateToClients = true;
+            ClientUpdateRequest |= ClientUpdateType.ToEveryone;
         }
 
         /// <summary>

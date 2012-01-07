@@ -797,13 +797,17 @@ namespace AW2.Core
 
         private void SendPlayerUpdatesOnServer()
         {
-            foreach (var spectator in DataEngine.Spectators.Where(p => p.MustUpdateToClients))
+            foreach (var spectator in DataEngine.Spectators)
             {
-                spectator.MustUpdateToClients = false;
+                if (spectator.ClientUpdateRequest == Spectator.ClientUpdateType.None) continue;
                 var plrMessage = new SpectatorUpdateMessage();
                 plrMessage.SpectatorID = spectator.ID;
                 plrMessage.Write(spectator, SerializationModeFlags.VaryingDataFromServer);
-                NetworkEngine.SendToGameClients(plrMessage);
+                if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToEveryone))
+                    NetworkEngine.SendToGameClients(plrMessage);
+                else if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToOwnerOnly))
+                    NetworkEngine.GetGameClientConnection(spectator.ConnectionID).Send(plrMessage);
+                spectator.ClientUpdateRequest = Spectator.ClientUpdateType.None;
             }
         }
 

@@ -564,6 +564,11 @@ namespace AW2.Helpers
             return time.Ticks / (float)divisor.Ticks;
         }
 
+        public static TimeSpan Min(TimeSpan time1, TimeSpan time2)
+        {
+            return new TimeSpan(Math.Min(time1.Ticks, time2.Ticks));
+        }
+
         public static TimeSpan Max(TimeSpan time1, TimeSpan time2)
         {
             return new TimeSpan(Math.Max(time1.Ticks, time2.Ticks));

@@ -797,12 +797,12 @@ namespace AW2.Core
 
         private void SendPlayerUpdatesOnServer()
         {
-            foreach (var player in DataEngine.Spectators.Where(p => p.MustUpdateToClients))
+            foreach (var spectator in DataEngine.Spectators.Where(p => p.MustUpdateToClients))
             {
-                player.MustUpdateToClients = false;
-                var plrMessage = new PlayerUpdateMessage();
-                plrMessage.PlayerID = player.ID;
-                plrMessage.Write(player, SerializationModeFlags.VaryingDataFromServer);
+                spectator.MustUpdateToClients = false;
+                var plrMessage = new SpectatorUpdateMessage();
+                plrMessage.SpectatorID = spectator.ID;
+                plrMessage.Write(spectator, SerializationModeFlags.VaryingDataFromServer);
                 NetworkEngine.SendToGameClients(plrMessage);
             }
         }

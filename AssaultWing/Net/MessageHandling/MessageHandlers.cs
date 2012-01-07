@@ -60,7 +60,7 @@ namespace AW2.Net.MessageHandling
         public IEnumerable<MessageHandlerBase> GetClientGameplayHandlers()
         {
             var networkEngine = Game.NetworkEngine;
-            yield return new MessageHandler<PlayerUpdateMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerUpdateMessage);
+            yield return new MessageHandler<SpectatorUpdateMessage>(MessageHandlerBase.SourceType.Server, HandleSpectatorUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.HandleGobCreationMessage) { OneMessageAtATime = true };
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
@@ -245,10 +245,10 @@ namespace AW2.Net.MessageHandling
             if (player != null) player.Messages.Add(mess.Message);
         }
 
-        private void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)
+        private void HandleSpectatorUpdateMessage(SpectatorUpdateMessage mess)
         {
             var framesAgo = Game.NetworkEngine.GetMessageAge(mess);
-            var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
+            var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
             if (player == null) return; // Silently ignoring update for an unknown player
             mess.Read(player, SerializationModeFlags.VaryingDataFromServer, framesAgo);
         }

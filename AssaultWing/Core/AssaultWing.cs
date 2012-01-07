@@ -766,6 +766,7 @@ namespace AW2.Core
                             SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
                         SendPlayerUpdatesOnServer();
                         SendGobDeletionsOnServer();
+                        SendArenaStatisticsOnServer();
                         break;
                     case NetworkMode.Client:
                         SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
@@ -774,6 +775,16 @@ namespace AW2.Core
                         break;
                 }
             }
+        }
+
+        private void SendArenaStatisticsOnServer()
+        {
+            if (!DataEngine.NextArenaStatisticsToClients.HasValue) return;
+            if (DataEngine.NextArenaStatisticsToClients.Value > GameTime.TotalRealTime) return;
+            DataEngine.CheckArenaStatisticsToClients();
+            var message = new ArenaStatisticsMessage();
+            foreach (var spec in DataEngine.Spectators) message.AddSpectatorStatistics(spec.ID, spec.ArenaStatistics);
+            NetworkEngine.SendToGameClients(message);
         }
 
         private void SendGobDeletionsOnServer()

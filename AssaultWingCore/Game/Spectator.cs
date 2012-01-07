@@ -127,6 +127,7 @@ namespace AW2.Game
         {
             if (ConnectionStatus != ConnectionStatusType.Remote) throw new InvalidOperationException("Cannot disconnect a " + ConnectionStatus + " spectator");
             ConnectionStatus = ConnectionStatusType.Disconnected;
+            MustUpdateToClients = true;
         }
 
         /// <summary>
@@ -138,6 +139,7 @@ namespace AW2.Game
             ConnectionID = newSpectator.ConnectionID;
             ConnectionStatus = ConnectionStatusType.Remote;
             LoginToken = newSpectator.LoginToken;
+            MustUpdateToClients = true;
         }
 
         /// <summary>
@@ -184,7 +186,6 @@ namespace AW2.Game
                 {
                     writer.Write((bool)IsDisconnected);
                 }
-                ArenaStatistics.Serialize(writer, mode);
             }
         }
 
@@ -204,7 +205,6 @@ namespace AW2.Game
                 var isDisconnected = reader.ReadBoolean();
                 if (IsRemote && isDisconnected) ConnectionStatus = ConnectionStatusType.Disconnected;
             }
-            ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }
     }
 }

@@ -86,6 +86,25 @@ namespace AW2.Game
 
         #region arenas
 
+        /// <summary>
+        /// Time of next update of arena statistics to clients, in real time.
+        /// </summary>
+        public TimeSpan? NextArenaStatisticsToClients { get; private set; }
+
+        public void EnqueueArenaStatisticsToClients()
+        {
+            var sendLatest = Game.GameTime.TotalRealTime + TimeSpan.FromSeconds(1);
+            if (NextArenaStatisticsToClients.HasValue)
+                NextArenaStatisticsToClients = AWMathHelper.Min(NextArenaStatisticsToClients.Value, sendLatest);
+            else
+                NextArenaStatisticsToClients = sendLatest;
+        }
+
+        public void CheckArenaStatisticsToClients()
+        {
+            NextArenaStatisticsToClients = null;
+        }
+
         public void StartArena()
         {
             ArenaSilhouette.Clear();

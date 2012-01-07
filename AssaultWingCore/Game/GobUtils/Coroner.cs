@@ -147,13 +147,12 @@ namespace AW2.Game.GobUtils
                 case Coroner.DeathTypeType.Kill:
                     ScoringSpectator.ArenaStatistics.Kills++;
                     ScoringSpectator.ArenaStatistics.KillsWithoutDying++;
-                    ScoringSpectator.MustUpdateToClients = true;
                     break;
             }
             KilledSpectator.ArenaStatistics.Deaths++;
             KilledSpectator.ArenaStatistics.Lives--;
             KilledSpectator.ArenaStatistics.KillsWithoutDying = 0;
-            KilledSpectator.MustUpdateToClients = true;
+            Game.DataEngine.EnqueueArenaStatisticsToClients();
         }
 
         private string GetMessageFor(RecipientType recipient)

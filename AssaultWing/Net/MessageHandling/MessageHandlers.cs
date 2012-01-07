@@ -65,6 +65,7 @@ namespace AW2.Net.MessageHandling
             yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.HandleGobCreationMessage) { OneMessageAtATime = true };
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
+            yield return new MessageHandler<ArenaStatisticsMessage>(MessageHandlerBase.SourceType.Server, HandleArenaStatisticsMessage);
         }
 
         public IEnumerable<MessageHandlerBase> GetServerMenuHandlers()
@@ -141,6 +142,8 @@ namespace AW2.Net.MessageHandling
                 if (mess.Subclass != SpectatorSettingsRequest.SubclassType.Player) throw new ApplicationException("Unexpected Spectator subclass " + mess.Subclass);
                 // Be careful not to overwrite our most recent name and equipment choices
                 // with something older from the server.
+                // TODO !!! Instead of creating a temp player, serialize only Player.Color when mode is ConstantDataFromServer
+                // and the player lives at a remote client.
                 var tempPlayer = GetTempPlayer();
                 mess.Read(tempPlayer, spectatorSerializationMode, 0);
                 if (spectator is Player) ((Player)spectator).Color = tempPlayer.Color;
@@ -294,6 +297,7 @@ namespace AW2.Net.MessageHandling
                     SpectatorID = newSpectator.ID
                 };
                 clientConn.Send(reply);
+                Game.DataEngine.EnqueueArenaStatisticsToClients();
             }
             else
             {
@@ -306,6 +310,7 @@ namespace AW2.Net.MessageHandling
                 else
                 {
                     // Be careful not to overwrite the player's color with something silly from the client.
+                    // TODO !!! Implement this by Player.Serialize writing everything but the colour when mode is ConstantFromClient.
                     var oldColor = spectator is Player ? (Color?)((Player)spectator).Color : null;
                     mess.Read(spectator, SerializationModeFlags.ConstantDataFromClient, 0);
                     if (oldColor.HasValue) ((Player)spectator).Color = oldColor.Value;
@@ -358,6 +363,15 @@ namespace AW2.Net.MessageHandling
             Game.LogicEngine.GobsToKillOnClient.AddRange(mess.GobIDs);
         }
 
+        private void HandleArenaStatisticsMessage(ArenaStatisticsMessage mess)
+        {
+            mess.ReadSpectatorStatistics(specID =>
+            {
+                var spectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.ID == specID);
+                return spectator == null ? null : spectator.ArenaStatistics;
+            });
+        }
+
         #endregion
 
         private Player GetTempPlayer()
@@ -395,7 +409,6 @@ namespace AW2.Net.MessageHandling
             {
                 Log.Write("Reconnecting spectator {0}", oldSpectator);
                 oldSpectator.Reconnect(newSpectator);
-                oldSpectator.MustUpdateToClients = true; // update ArenaStatistics
                 newSpectator = oldSpectator;
             }
             Game.Stats.Send(new { AddPlayer = newSpectator.LoginToken });

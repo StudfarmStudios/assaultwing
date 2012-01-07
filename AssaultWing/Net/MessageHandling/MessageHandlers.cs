@@ -123,17 +123,18 @@ namespace AW2.Net.MessageHandling
 
         private void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
+            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer;
             var spectator = Game.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
             {
-                var newSpectator = CreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromServer);
+                var newSpectator = CreateAndAddNewSpectator(mess, spectatorSerializationMode);
                 newSpectator.ID = mess.SpectatorID;
                 newSpectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             }
             else if (spectator.IsRemote)
             {
-                mess.Read(spectator, SerializationModeFlags.ConstantDataFromServer, 0);
+                mess.Read(spectator, spectatorSerializationMode, 0);
             }
             else
             {
@@ -141,7 +142,7 @@ namespace AW2.Net.MessageHandling
                 // Be careful not to overwrite our most recent name and equipment choices
                 // with something older from the server.
                 var tempPlayer = GetTempPlayer();
-                mess.Read(tempPlayer, SerializationModeFlags.ConstantDataFromServer, 0);
+                mess.Read(tempPlayer, spectatorSerializationMode, 0);
                 if (spectator is Player) ((Player)spectator).Color = tempPlayer.Color;
             }
         }
@@ -179,9 +180,6 @@ namespace AW2.Net.MessageHandling
             if (spectator == null) throw new ApplicationException("Cannot find unregistered local spectator with local ID " + mess.SpectatorLocalID);
             spectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             spectator.ID = mess.SpectatorID;
-            // If we just reconnected to the game server, the server may already have sent us
-            // our previous spectator with disconnected status. Merge it with our new spectator.
-            Game.DataEngine.Spectators.Remove(spec => spec != spectator && spec.ID == mess.SpectatorID);
         }
 
         private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
@@ -384,10 +382,20 @@ namespace AW2.Net.MessageHandling
             mess.Read(newSpectator, mode, 0);
             var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.IsDisconnected && spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
             if (oldSpectator == null)
-                Game.DataEngine.Spectators.Add(newSpectator);
+            {
+                // Add unless it looks like our old spectator before we disconnected. This may happen on a game client.
+                if (!newSpectator.IsDisconnected ||
+                    !newSpectator.IPAddress.Equals(Game.NetworkEngine.UDPSocket.PrivateLocalEndPoint.Address) ||
+                    !Game.DataEngine.Spectators.Any(spec => spec.IsLocal && spec.Name == newSpectator.Name))
+                {
+                    Game.DataEngine.Spectators.Add(newSpectator);
+                }
+            }
             else
             {
+                Log.Write("Reconnecting spectator {0}", oldSpectator);
                 oldSpectator.Reconnect(newSpectator);
+                oldSpectator.MustUpdateToClients = true; // update ArenaStatistics
                 newSpectator = oldSpectator;
             }
             Game.Stats.Send(new { AddPlayer = newSpectator.LoginToken });

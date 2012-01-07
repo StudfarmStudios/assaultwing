@@ -875,7 +875,8 @@ namespace AW2.Core
                 SpectatorID = spec.ID,
                 Subclass = SpectatorSettingsRequest.GetSubclassType(spec),
             };
-            SendSpectatorSettingsToRemote(SerializationModeFlags.ConstantDataFromServer, sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
+            SendSpectatorSettingsToRemote(SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer,
+                sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
             foreach (var conn in NetworkEngine.GameClientConnections) conn.ConnectionStatus.HasPlayerSettings = true;
         }
 

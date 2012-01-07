@@ -23,7 +23,7 @@ namespace AW2.Game
         private static int g_nextLocalID;
 
         /// <summary>
-        /// Meaningful only for a client's local spectators.
+        /// Meaningful only on a game client.
         /// </summary>
         public ServerRegistrationType ServerRegistration { get; set; }
 
@@ -168,6 +168,7 @@ namespace AW2.Game
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
+            checked
             {
 
                 if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
@@ -178,6 +179,10 @@ namespace AW2.Game
                 if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
                 {
                     writer.Write((string)LoginToken);
+                }
+                if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+                {
+                    writer.Write((bool)IsDisconnected);
                 }
                 ArenaStatistics.Serialize(writer, mode);
             }
@@ -193,6 +198,11 @@ namespace AW2.Game
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
             {
                 LoginToken = reader.ReadString();
+            }
+            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+            {
+                var isDisconnected = reader.ReadBoolean();
+                if (IsRemote && isDisconnected) ConnectionStatus = ConnectionStatusType.Disconnected;
             }
             ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }

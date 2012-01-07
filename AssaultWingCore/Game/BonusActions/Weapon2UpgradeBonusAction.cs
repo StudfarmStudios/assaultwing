@@ -58,7 +58,14 @@ namespace AW2.Game.BonusActions
         public override void Activate()
         {
             base.Activate();
-            UpgradeWeapon();
+            if (Host != null && Host.Owner != null && Host.Weapon2 != null)
+            {
+                // TODO: This may happen on client. A better countermeasure is to delay activation until Host != null etc.
+                // Totally skipping activation like this may result in a client seeing he has a "rockets" upgrade but shooting berserkers.
+                var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName : Host.Weapon2.UpgradeNames[0];
+                Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
+                if (_effectName != "") Host.Owner.PostprocessEffectNames.EnsureContains(_effectName);
+            }
         }
 
         public override void Dispose()
@@ -67,18 +74,6 @@ namespace AW2.Game.BonusActions
                 Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Host.Owner.Weapon2Name);
             if (_effectName != "") Host.Owner.PostprocessEffectNames.Remove(_effectName);
             base.Dispose();
-        }
-
-        private void UpgradeWeapon()
-        {
-            if (Host == null)
-                Die();
-            else
-            {
-                var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName : Host.Weapon2.UpgradeNames[0];
-                Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
-                if (_effectName != "") Host.Owner.PostprocessEffectNames.EnsureContains(_effectName);
-            }
         }
     }
 }

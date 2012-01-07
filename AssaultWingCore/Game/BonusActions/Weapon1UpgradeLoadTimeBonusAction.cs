@@ -31,12 +31,12 @@ namespace AW2.Game.BonusActions
         public override void Activate()
         {
             base.Activate();
-            if (Host != null) Host.Weapon1.LoadTimeMultiplier *= _loadTimeMultiplier;
+            if (Host != null && Host.Owner != null) Host.Weapon1.LoadTimeMultiplier *= _loadTimeMultiplier;
         }
 
         public override void Dispose()
         {
-            if (Host != null) Host.Weapon1.LoadTimeMultiplier = 1;
+            if (Host != null && Host.Owner != null) Host.Weapon1.LoadTimeMultiplier = 1;
             base.Dispose();
         }
     }

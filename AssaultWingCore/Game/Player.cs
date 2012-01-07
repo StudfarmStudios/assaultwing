@@ -320,7 +320,7 @@ namespace AW2.Game
         public override void ResetForArena()
         {
             base.ResetForArena();
-            _shipSpawnTime = MOURNING_DELAY;
+            _shipSpawnTime = Game.DataEngine.ArenaTotalTime + MOURNING_DELAY;
             _shakeUpdateTime = TimeSpan.Zero;
             _relativeShakeDamage = 0;
             PostprocessEffectNames.Clear();

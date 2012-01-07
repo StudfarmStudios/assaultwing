@@ -12,6 +12,7 @@ using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game
 {
+    [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name}")]
     public class BotPlayer : Spectator
     {
         private static CanonicalString[] g_botTypes = new[]

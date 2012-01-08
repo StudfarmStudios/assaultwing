@@ -805,7 +805,7 @@ namespace AW2.Core
                 plrMessage.Write(spectator, SerializationModeFlags.VaryingDataFromServer);
                 if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToEveryone))
                     NetworkEngine.SendToGameClients(plrMessage);
-                else if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToOwnerOnly))
+                else if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToOwnerOnly) && spectator.IsRemote)
                     NetworkEngine.GetGameClientConnection(spectator.ConnectionID).Send(plrMessage);
                 spectator.ClientUpdateRequest = Spectator.ClientUpdateType.None;
             }

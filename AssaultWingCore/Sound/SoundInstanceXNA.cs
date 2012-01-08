@@ -37,8 +37,7 @@ namespace AW2.Sound
 
         public override void SetVolume(float vol)
         {
-            Trace.Assert(!_instance.IsDisposed);
-
+            if (_instance.IsDisposed) return;
             _instance.Volume = _baseVolume * vol * AssaultWingCore.Instance.Settings.Sound.SoundVolume;
         }
 
@@ -55,7 +54,7 @@ namespace AW2.Sound
         }
         public override void Stop()
         {
-            Trace.Assert(!_instance.IsDisposed);
+            if (_instance.IsDisposed) return;
             _instance.Stop();
         }
 

@@ -124,6 +124,7 @@ namespace AW2.UI
         {
             if (_graphicsDeviceService == null) return;
             if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
+            Activate(); // If not active, the Form may get totally lost when going full screen.
             try
             {
                 if (_isFullScreen && width == ClientSize.Width && height == ClientSize.Height) return;

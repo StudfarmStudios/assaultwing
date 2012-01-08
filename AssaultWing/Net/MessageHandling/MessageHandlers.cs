@@ -407,7 +407,7 @@ namespace AW2.Net.MessageHandling
             }
             else
             {
-                Log.Write("Reconnecting spectator {0}", oldSpectator);
+                Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
                 oldSpectator.Reconnect(newSpectator);
                 newSpectator = oldSpectator;
             }

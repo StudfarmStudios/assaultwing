@@ -327,11 +327,6 @@ namespace AW2.Game
             Ship = null;
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
-
         public void NotifyRepairPending()
         {
             if (Game.GameTime.TotalGameTime < _lastRepairPendingNotify + Dock.UNDAMAGED_TIME_REQUIRED) return;

@@ -205,7 +205,13 @@ namespace AW2.Game
             {
                 var isDisconnected = reader.ReadBoolean();
                 if (IsRemote && isDisconnected) ConnectionStatus = ConnectionStatusType.Disconnected;
+                if (IsDisconnected && !isDisconnected) ConnectionStatus = ConnectionStatusType.Remote;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} ({1}, {2})", Name, ID, ConnectionStatus);
         }
     }
 }

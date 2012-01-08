@@ -121,6 +121,7 @@ namespace AW2.Net
         {
             if (_sendQueue.Length == 0) return;
             _statsDataSocket.AddToSendBuffer(writer => writer.WriteStringWithoutLength(_sendQueue.ToString()));
+            _statsDataSocket.FlushSendBuffer();
             _sendQueue.Clear();
         }
 

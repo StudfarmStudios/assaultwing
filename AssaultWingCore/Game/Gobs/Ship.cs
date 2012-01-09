@@ -21,6 +21,28 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Ship : Gob
     {
+        /// <summary>
+        /// It is valid to combine only one of Weapon1*, one of Weapon2* and one of ExtraDevice*
+        /// into one value of DeviceUsages.
+        /// </summary>
+        [Flags]
+        public enum DeviceUsages
+        {
+            None = 0x00,
+            Weapon1Success = 0x01,
+            Weapon1Failure = 0x02,
+            Weapon1NotReady = 0x02 | 0x01,
+            Weapon1Mask = 0x02 | 0x01,
+            Weapon2Success = 0x04,
+            Weapon2Failure = 0x08,
+            Weapon2NotReady = 0x08 | 0x04,
+            Weapon2Mask = 0x08 | 0x04,
+            ExtraDeviceSuccess = 0x10,
+            ExtraDeviceFailure = 0x20,
+            ExtraDeviceNotReady = 0x20 | 0x10,
+            ExtraDeviceMask = 0x20 | 0x10,
+        }
+
         private enum AerodynamicsType
         {
             ThrustTowardsHeading,
@@ -79,6 +101,8 @@ namespace AW2.Game.Gobs
         /// </summary>
         [TypeParameter]
         private float _weapon2ChargeSpeed;
+
+        public DeviceUsages DeviceUsagesToClients { get; set; }
 
         #endregion Ship fields related to weapons
 
@@ -345,6 +369,8 @@ namespace AW2.Game.Gobs
                     serializeDevice(Weapon1);
                     serializeDevice(Weapon2);
                     serializeDevice(ExtraDevice);
+                    writer.Write((byte)DeviceUsagesToClients);
+                    DeviceUsagesToClients = DeviceUsages.None;
                 }
                 if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromClient))
                 {
@@ -402,6 +428,8 @@ namespace AW2.Game.Gobs
                 deserializeDevice(Weapon1);
                 deserializeDevice(Weapon2);
                 deserializeDevice(ExtraDevice);
+                var deviceUsages = (DeviceUsages)reader.ReadByte();
+                ApplyDeviceUsages(deviceUsages);
             }
             if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromClient))
             {
@@ -642,6 +670,39 @@ namespace AW2.Game.Gobs
                 Rotation = Rotation,
                 ControlStates = GetControlStates(),
             });
+        }
+
+        private void ApplyDeviceUsages(DeviceUsages deviceUsages)
+        {
+            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Success)
+            {
+                Weapon1.ExecuteFiring(ShipDevice.FiringResult.Success);
+                Owner.OnWeaponFired();
+            }
+            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Failure)
+                Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1NotReady)
+                Weapon1.ExecuteFiring(ShipDevice.FiringResult.NotReady);
+
+            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Success)
+            {
+                Weapon2.ExecuteFiring(ShipDevice.FiringResult.Success);
+                Owner.OnWeaponFired();
+            }
+            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Failure)
+                Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2NotReady)
+                Weapon2.ExecuteFiring(ShipDevice.FiringResult.NotReady);
+
+            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceSuccess)
+            {
+                ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Success);
+                // Note: Not raising WeaponFired because as of 2011-03-27, only Cloak hooks the event and it wants to know only of Weapon1 and Weapon2.
+            }
+            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceFailure)
+                ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceNotReady)
+                ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.NotReady);
         }
 
         #endregion Private methods

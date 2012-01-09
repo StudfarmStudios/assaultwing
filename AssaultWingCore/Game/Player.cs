@@ -20,28 +20,6 @@ namespace AW2.Game
     public class Player : Spectator
     {
         /// <summary>
-        /// It is valid to combine only one of Weapon1*, one of Weapon2* and one of ExtraDevice*
-        /// into one value of DeviceUsages.
-        /// </summary>
-        [Flags]
-        private enum DeviceUsages
-        {
-            None = 0x00,
-            Weapon1Success = 0x01,
-            Weapon1Failure = 0x02,
-            Weapon1NotReady = 0x02 | 0x01,
-            Weapon1Mask = 0x02 | 0x01,
-            Weapon2Success = 0x04,
-            Weapon2Failure = 0x08,
-            Weapon2NotReady = 0x08 | 0x04,
-            Weapon2Mask = 0x08 | 0x04,
-            ExtraDeviceSuccess = 0x10,
-            ExtraDeviceFailure = 0x20,
-            ExtraDeviceNotReady = 0x20 | 0x10,
-            ExtraDeviceMask = 0x20 | 0x10,
-        }
-
-        /// <summary>
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.
         /// </summary>
@@ -92,7 +70,6 @@ namespace AW2.Game
         private TimeSpan _shakeUpdateTime;
 
         private TimeSpan _lastRepairPendingNotify;
-        private DeviceUsages _deviceUsages;
 
         #endregion Fields
 
@@ -207,6 +184,10 @@ namespace AW2.Game
         /// Called after the primary or secondary weapon of the player's ship is fired.
         /// </summary>
         public event Action WeaponFired;
+        public void OnWeaponFired()
+        {
+            if (WeaponFired != null) WeaponFired();
+        }
 
         #endregion Events
 
@@ -297,10 +278,6 @@ namespace AW2.Game
 
         public override void Update()
         {
-            // Assumption: When _deviceUsages is set, also MustUpdateToClients is set,
-            // and serialization is done during the same frame.
-            _deviceUsages = DeviceUsages.None;
-
             if (Game.NetworkMode != NetworkMode.Client)
             {
                 if (IsTimeToCreateShip) CreateShip();
@@ -363,10 +340,6 @@ namespace AW2.Game
                         writer.Write((CanonicalString)ExtraDeviceName);
                         writer.Write((Color)Color);
                     }
-                    if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
-                    {
-                        writer.Write((byte)_deviceUsages);
-                    }
                 }
             }
         }
@@ -385,49 +358,11 @@ namespace AW2.Game
                 if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
                 if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
             }
-            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
-            {
-                var deviceUsages = (DeviceUsages)reader.ReadByte();
-                if (Ship != null) ApplyDeviceUsages(deviceUsages);
-            }
         }
 
         #endregion Public methods
 
         #region Private methods
-
-        private void ApplyDeviceUsages(DeviceUsages deviceUsages)
-        {
-            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Success)
-            {
-                Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Success);
-                if (WeaponFired != null) WeaponFired();
-            }
-            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Failure)
-                Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
-            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1NotReady)
-                Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.NotReady);
-
-            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Success)
-            {
-                Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Success);
-                if (WeaponFired != null) WeaponFired();
-            }
-            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Failure)
-                Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
-            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2NotReady)
-                Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.NotReady);
-
-            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceSuccess)
-            {
-                Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Success);
-                // Note: Not raising WeaponFired because as of 2011-03-27, only Cloak hooks the event and it wants to know only of Weapon1 and Weapon2.
-            }
-            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceFailure
-                ) Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);
-            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceNotReady)
-                Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.NotReady);
-        }
 
         private void ShipDeathHandler(Coroner coroner)
         {
@@ -467,18 +402,17 @@ namespace AW2.Game
             switch (result)
             {
                 case ShipDevice.FiringResult.Success:
-                    _deviceUsages |= DeviceUsages.Weapon1Success;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon1Success;
                     Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
                     if (WeaponFired != null) WeaponFired();
                     break;
                 case ShipDevice.FiringResult.Failure:
-                    _deviceUsages |= DeviceUsages.Weapon1Failure;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon1Failure;
                     break;
                 case ShipDevice.FiringResult.NotReady:
-                    _deviceUsages |= DeviceUsages.Weapon1NotReady;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon1NotReady;
                     break;
             }
-            if (_deviceUsages != DeviceUsages.None) ClientUpdateRequest |= ClientUpdateType.ToOwnerOnly;
         }
 
         private void TryFireWeapon2()
@@ -488,18 +422,17 @@ namespace AW2.Game
             switch (result)
             {
                 case ShipDevice.FiringResult.Success:
-                    _deviceUsages |= DeviceUsages.Weapon2Success;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon2Success;
                     Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
                     if (WeaponFired != null) WeaponFired();
                     break;
                 case ShipDevice.FiringResult.Failure:
-                    _deviceUsages |= DeviceUsages.Weapon2Failure;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon2Failure;
                     break;
                 case ShipDevice.FiringResult.NotReady:
-                    _deviceUsages |= DeviceUsages.Weapon2NotReady;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon2NotReady;
                     break;
             }
-            if (_deviceUsages != DeviceUsages.None) ClientUpdateRequest |= ClientUpdateType.ToOwnerOnly;
         }
 
         private void TryFireExtraDevice()
@@ -509,17 +442,16 @@ namespace AW2.Game
             switch (result)
             {
                 case ShipDevice.FiringResult.Success:
-                    _deviceUsages |= DeviceUsages.ExtraDeviceSuccess;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.ExtraDeviceSuccess;
                     // Note: Not raising WeaponFired. Only Cloak is hooked to it (2011-03-27) and it needs to know only of Weapon1 and Weapon2.
                     break;
                 case ShipDevice.FiringResult.Failure:
-                    _deviceUsages |= DeviceUsages.ExtraDeviceFailure;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.ExtraDeviceFailure;
                     break;
                 case ShipDevice.FiringResult.NotReady:
-                    _deviceUsages |= DeviceUsages.ExtraDeviceNotReady;
+                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.ExtraDeviceNotReady;
                     break;
             }
-            if (_deviceUsages != DeviceUsages.None) ClientUpdateRequest |= ClientUpdateType.ToOwnerOnly;
         }
 
         /// <summary>

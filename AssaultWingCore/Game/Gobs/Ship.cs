@@ -677,7 +677,7 @@ namespace AW2.Game.Gobs
             if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Success)
             {
                 Weapon1.ExecuteFiring(ShipDevice.FiringResult.Success);
-                Owner.OnWeaponFired();
+                Owner.OnWeaponFired(ShipDevice.OwnerHandleType.PrimaryWeapon);
             }
             if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Failure)
                 Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
@@ -687,7 +687,7 @@ namespace AW2.Game.Gobs
             if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Success)
             {
                 Weapon2.ExecuteFiring(ShipDevice.FiringResult.Success);
-                Owner.OnWeaponFired();
+                Owner.OnWeaponFired(ShipDevice.OwnerHandleType.SecondaryWeapon);
             }
             if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Failure)
                 Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
@@ -697,7 +697,7 @@ namespace AW2.Game.Gobs
             if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceSuccess)
             {
                 ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Success);
-                // Note: Not raising WeaponFired because as of 2011-03-27, only Cloak hooks the event and it wants to know only of Weapon1 and Weapon2.
+                Owner.OnWeaponFired(ShipDevice.OwnerHandleType.ExtraDevice);
             }
             if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceFailure)
                 ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);

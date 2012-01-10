@@ -137,9 +137,9 @@ namespace AW2.Game.Weapons
             Owner.Game.Stats.Send(new { Uncloaked = PlayerOwner.LoginToken, Pos = Owner.Pos });
         }
 
-        private void WeaponFiredHandler()
+        private void WeaponFiredHandler(ShipDevice.OwnerHandleType ownerHandleType)
         {
-            if (!_active) return;
+            if (ownerHandleType == OwnerHandleType.ExtraDevice || !_active) return;
             DeactivateCloak();
             Owner.Game.SoundEngine.PlaySound(_breakOutSoundName, Owner);
         }

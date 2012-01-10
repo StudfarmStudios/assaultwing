@@ -181,12 +181,12 @@ namespace AW2.Game
         #region Events
 
         /// <summary>
-        /// Called after the primary or secondary weapon of the player's ship is fired.
+        /// Called after a ship device of the player's ship is fired.
         /// </summary>
-        public event Action WeaponFired;
-        public void OnWeaponFired()
+        public event Action<ShipDevice.OwnerHandleType> WeaponFired;
+        public void OnWeaponFired(ShipDevice.OwnerHandleType ownerHandleType)
         {
-            if (WeaponFired != null) WeaponFired();
+            if (WeaponFired != null) WeaponFired(ownerHandleType);
         }
 
         #endregion Events
@@ -404,7 +404,7 @@ namespace AW2.Game
                 case ShipDevice.FiringResult.Success:
                     Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon1Success;
                     Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
-                    if (WeaponFired != null) WeaponFired();
+                    OnWeaponFired(ShipDevice.OwnerHandleType.PrimaryWeapon);
                     break;
                 case ShipDevice.FiringResult.Failure:
                     Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon1Failure;
@@ -424,7 +424,7 @@ namespace AW2.Game
                 case ShipDevice.FiringResult.Success:
                     Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon2Success;
                     Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
-                    if (WeaponFired != null) WeaponFired();
+                    OnWeaponFired(ShipDevice.OwnerHandleType.SecondaryWeapon);
                     break;
                 case ShipDevice.FiringResult.Failure:
                     Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon2Failure;
@@ -443,7 +443,7 @@ namespace AW2.Game
             {
                 case ShipDevice.FiringResult.Success:
                     Ship.DeviceUsagesToClients |= Ship.DeviceUsages.ExtraDeviceSuccess;
-                    // Note: Not raising WeaponFired. Only Cloak is hooked to it (2011-03-27) and it needs to know only of Weapon1 and Weapon2.
+                    OnWeaponFired(ShipDevice.OwnerHandleType.ExtraDevice);
                     break;
                 case ShipDevice.FiringResult.Failure:
                     Ship.DeviceUsagesToClients |= Ship.DeviceUsages.ExtraDeviceFailure;

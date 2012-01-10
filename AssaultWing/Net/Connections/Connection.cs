@@ -266,7 +266,6 @@ namespace AW2.Net.Connections
         {
             if (buffer.Count >= Message.HEADER_LENGTH && !Message.IsValidHeader(buffer))
             {
-                Dispose();
                 Errors.Do(queue => queue.Enqueue("Connection received an invalid message header [" +
                     MiscHelper.BytesToString(new ArraySegment<byte>(buffer.Array, 0, Message.HEADER_LENGTH)) + "]"));
                 return buffer.Count;

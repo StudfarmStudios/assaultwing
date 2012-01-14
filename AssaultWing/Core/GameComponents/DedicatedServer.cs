@@ -56,7 +56,7 @@ namespace AW2.Core.GameComponents
             _initialized = true;
             Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetStandaloneMenuHandlers(mess => { }));
             Game.NetworkEngine.EnsureConnectionToManagementServer();
-            if (!Game.StartServer())
+            if (Game.StartServer() != null)
             {
                 AssaultWingProgram.Instance.Exit();
                 _nextEvent = TimeSpan.MaxValue;

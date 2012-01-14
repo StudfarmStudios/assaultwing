@@ -218,8 +218,11 @@ namespace AW2.Menu.Main
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Create a Server",
                 () =>
                 {
-                    if (!Game.StartServer()) return;
-                    _menuComponent.MenuEngine.Activate(MenuComponentType.Equip);
+                    var error = Game.StartServer();
+                    if (error != null)
+                        Game.ShowInfoDialog("Couldn't start game server.\n" + error + ".");
+                    else
+                        _menuComponent.MenuEngine.Activate(MenuComponentType.Equip);
                 }));
             RequestGameServerList();
         }

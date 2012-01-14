@@ -276,9 +276,9 @@ namespace AW2.Core
 
         /// <summary>
         /// Turns this game instance into a game server to whom other game instances
-        /// can connect as game clients. Returns true on success, false on failure.
+        /// can connect as game clients. Returns null on success, short error description on failure.
         /// </summary>
-        public bool StartServer()
+        public string StartServer()
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
@@ -291,14 +291,16 @@ namespace AW2.Core
                 NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result,
                     allowNewConnection: () => DataEngine.Players.Count() < Settings.Net.GameServerMaxPlayers));
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerMenuHandlers());
-                return true;
+                return null;
             }
             catch (Exception e)
             {
                 Log.Write("Could not start server: " + e);
                 NetworkMode = NetworkMode.Standalone;
+                var socketException = e as System.Net.Sockets.SocketException;
+                if (socketException != null) return socketException.SocketErrorCode.ToString(); // TODO !!! Line wrapping and: return socketException.Message;
+                return e.GetType().Name;
             }
-            return false;
         }
 
         /// <summary>

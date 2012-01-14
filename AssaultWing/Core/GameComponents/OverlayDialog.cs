@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -40,8 +41,13 @@ namespace AW2.Core.GameComponents
             Enabled = Visible = true;
         }
 
-        public void Dismiss()
+        /// <summary>
+        /// Dismiss the topmost dialog. If <paramref name="groupName"/> is not null,
+        /// ensures that the topmost dialog matches <paramref name="groupName"/>.
+        /// </summary>
+        public void Dismiss(string groupName = null)
         {
+            if (groupName != null && _data.Peek().GroupName != groupName) throw new ApplicationException("Topmost dialog is in " + _data.Peek().GroupName ?? "<null>" + ", not " + groupName);
             _data.Dequeue();
             Game.UIEngine.PopExclusiveControls();
             if (_data.Any())

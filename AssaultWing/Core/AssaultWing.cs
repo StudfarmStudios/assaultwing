@@ -162,9 +162,9 @@ namespace AW2.Core
                 new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })) { GroupName = groupName });
         }
 
-        public void HideDialog()
+        public void HideDialog(string groupName = null)
         {
-            OverlayDialog.Dismiss();
+            OverlayDialog.Dismiss(groupName);
         }
 
         public void ShowMainMenuAndResetGameplay()

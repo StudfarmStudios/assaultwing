@@ -442,6 +442,7 @@ namespace AW2.Net.MessageHandling
                 };
                 net.GameServerConnection.Send(joinRequest);
                 Game.MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
+                Game.HideDialog("Connecting to server");
             }
         }
     }

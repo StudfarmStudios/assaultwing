@@ -20,6 +20,11 @@ namespace AW2.UI
             new GamePadButton(0, GamePadButtonType.A),
             new GamePadButton(0, GamePadButtonType.B),
         };
+        public static readonly Control CANCEL_CONTROL = new MultiControl
+        {
+            new KeyboardKey(Keys.Escape),
+            new GamePadButton(0, GamePadButtonType.B),
+        };
         public static readonly Control YES_CONTROL = new MultiControl
         {
             new KeyboardKey(Keys.Y),

@@ -218,7 +218,6 @@ namespace AW2.Menu.Main
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Create a Server",
                 () =>
                 {
-                    if (Game.NetworkMode != NetworkMode.Standalone) return;
                     if (!Game.StartServer()) return;
                     _menuComponent.MenuEngine.Activate(MenuComponentType.Equip);
                 }));
@@ -260,8 +259,11 @@ traffic or the server is down.", "No reply from management server");
                         () => menuItemText,
                         () =>
                         {
-                            if (Game.NetworkMode != NetworkMode.Standalone) return;
                             Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
+                            Game.ShowDialog(new CustomOverlayDialogData(Game,
+                                string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName),
+                                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections))
+                                { GroupName = "Connecting to server" });
                         }));
                 }
                 else

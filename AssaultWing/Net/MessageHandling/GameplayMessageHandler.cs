@@ -34,12 +34,12 @@ namespace AW2.Net.MessageHandling
                     _action(message, framesAgo);
                     if (OneMessageAtATime) break;
                 }
-                catch (System.IO.EndOfStreamException e)
+                catch (Exception e)
                 {
                     var errorText = "Error while handling message " + message + " with read buffer " + message.ReadBufferToString();
                     // Note: Print outer exception details to log because the outer exception will be peeled off
                     // by Forms. Only the innermost exception is handed to the Application.ThreadException event.
-                    AW2.Helpers.Log.Write("Details about EndOfStreamException: " + errorText);
+                    AW2.Helpers.Log.Write("Details about {0}: {1}", e.GetType().Name , errorText);
                     throw new NetworkException(errorText, e);
                 }
             }

@@ -228,6 +228,17 @@ namespace AW2.UI
             // Doing nothing here is supposed to avoid flicker.
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null) components.Dispose();
+                _logUpdateTimer.Tick -= UpdateLogView;
+                _logUpdateTimer.Stop();
+            }
+            base.Dispose(disposing);
+        }
+
         private void InitializeGameForm()
         {
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size

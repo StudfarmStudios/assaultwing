@@ -140,6 +140,7 @@ namespace AW2.Menu.Main
                 {
                     var localPlayer = Game.DataEngine.Spectators.Single(spec => spec.IsLocal);
                     localPlayer.Name = Game.Settings.Players.Player1.Name = _loginName.Content;
+                    localPlayer.LoginToken = "";
                 });
             _loginPassword = new EditableText("", PlayerSettings.PLAYER_PASSWORD_MAX_LENGTH, // TODO !!! Show *** instead of text
                 new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game, // TODO !!! Remove char set limit

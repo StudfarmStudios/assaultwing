@@ -201,7 +201,13 @@ namespace AW2.Core
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
             DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage" };
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine" };
-            if (!CommandLineOptions.DedicatedServer) GameState = GameState.Intro;
+            if (CommandLineOptions.DedicatedServer)
+                WebData.Feed("1D");
+            else
+            {
+                WebData.Feed("1");
+                GameState = GameState.Intro;
+            }
             base.BeginRun();
         }
 
@@ -241,6 +247,7 @@ namespace AW2.Core
         public override void StartArena()
         {
             Stats.BasicInfoSent = false;
+            WebData.Feed("2" + (int)NetworkMode);
             if (NetworkMode == NetworkMode.Server)
             {
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());

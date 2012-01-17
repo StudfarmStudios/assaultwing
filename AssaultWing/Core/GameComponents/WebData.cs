@@ -39,10 +39,13 @@ namespace AW2.Net
             nextScheduledGameRequest.BeginGetResponse(NextScheduledGameRequestDone, nextScheduledGameRequest);
         }
 
+        public void Feed(string tag)
+        {
+            RequestFromStats(FeedDone, "feed", "t=" + tag);
+        }
+
         public void LoginPilots(bool reportFailure = false)
         {
-            if (ServicePointManager.ServerCertificateValidationCallback == null)
-                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) => true;
             if (Game.Settings.Net.StatsServerAddress == "")
             {
                 if (reportFailure) EnqueueLoginError("Login server not specified.", "");
@@ -69,14 +72,22 @@ namespace AW2.Net
             foreach (var spec in Game.DataEngine.Spectators) spec.LoginToken = "";
         }
 
+        private void RequestFromStats(AsyncCallback callback, string path, string query = null)
+        {
+            if (Game.Settings.Net.StatsServerAddress == "") return;
+            if (ServicePointManager.ServerCertificateValidationCallback == null)
+                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) => true;
+            var uriBuilder = new UriBuilder("https", Game.Settings.Net.StatsServerAddress, Game.Settings.Net.StatsHttpsPort, path)
+            {
+                Query = query,
+            };
+            var loginRequest = WebRequest.Create(uriBuilder.Uri);
+            loginRequest.BeginGetResponse(callback, loginRequest);
+        }
+
         private void BeginRequestPlayerLoginToken(string name, string password)
         {
-            var net = Game.Settings.Net;
-            var loginRequest = WebRequest.Create(new UriBuilder("https", net.StatsServerAddress, net.StatsHttpsPort, "login")
-            {
-                Query = string.Format("username={0}&password={1}", name, password)
-            }.Uri);
-            loginRequest.BeginGetResponse(LoginRequestDone, loginRequest);
+            RequestFromStats(LoginRequestDone, "login", string.Format("username={0}&password={1}", name, password));
         }
 
         private void NextScheduledGameRequestDone(IAsyncResult result)
@@ -85,6 +96,14 @@ namespace AW2.Net
             {
                 var dateTime = DateTime.Parse(response, CultureInfo.InvariantCulture);
                 NextScheduledGame = dateTime;
+            });
+        }
+
+        private void FeedDone(IAsyncResult result)
+        {
+            RequestDone(result, "feed", responseString =>
+            {
+                // Response is whatever.
             });
         }
 
@@ -109,7 +128,8 @@ namespace AW2.Net
             if (path == null || path.Length == 0) throw new ArgumentException("Invalid JSON path");
             var element = root[path[0]];
             if (element == null) return "";
-            foreach (var step in path.Skip(1)){
+            foreach (var step in path.Skip(1))
+            {
                 if (element[step] == null) return "";
                 element = element[step];
             }

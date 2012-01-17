@@ -36,7 +36,7 @@ namespace AW2.Net.Messages
         /// <param name="framesAgo">How long time ago was the message current.</param>
         public void ReadGobs(Func<int, INetworkSerializable> gobFinder, int framesAgo, SerializationModeFlags serializationMode)
         {
-            var gobTypes = new System.Text.StringBuilder(); // debugging a rare EndOfStreamException
+            var gobTypes = new System.Text.StringBuilder(); // DEBUG for a rare EndOfStreamException
             try
             {
                 for (int i = 0; i < _gobIds.Count; ++i)

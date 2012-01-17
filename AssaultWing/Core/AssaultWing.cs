@@ -28,6 +28,7 @@ namespace AW2.Core
         private byte _nextArenaID;
         private bool _clearGameDataWhenEnteringMenus;
         private GobDeletionMessage _pendingGobDeletionMessage;
+        private byte[] _debugBuffer = new byte[65536]; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
 
         // Debug keys, used only #if DEBUG
         private Control _frameStepControl;
@@ -831,6 +832,9 @@ namespace AW2.Core
             if (serializationMode.HasFlag(SerializationModeFlags.VaryingDataFromServer) && (DataEngine.ArenaFrameCount % 3) != 0) return;
             var now = DataEngine.ArenaTotalTime;
             var gobMessage = new GobUpdateMessage();
+            var debugMessage = gobs.OfType<AW2.Game.Gobs.Wall>().Any(wall => wall.ForcedNetworkUpdate)
+                ? new System.Text.StringBuilder("Gob update ")
+                : null; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
             foreach (var gob in gobs)
             {
                 if (!gob.ForcedNetworkUpdate)
@@ -843,9 +847,18 @@ namespace AW2.Core
                 gob.ForcedNetworkUpdate = false;
                 gob.LastNetworkUpdate = now;
                 gobMessage.AddGob(gob.ID, gob, serializationMode);
+                if (debugMessage != null) debugMessage.AppendFormat("{0} [{1}], ", gob.GetType().Name, gob.TypeName); // DEBUG: catch a rare crash that seems to happen only when serializing walls.
             }
             gobMessage.CollisionEvents = DataEngine.Arena.GetCollisionEvents();
             foreach (var conn in connections) conn.Send(gobMessage);
+
+            if (Settings.Net.HeavyDebugLog && connections.Any() && debugMessage != null) // DEBUG: catch a rare crash that seems to happen only when serializing walls.
+            {
+                var writer = new NetworkBinaryWriter(new System.IO.MemoryStream(_debugBuffer));
+                gobMessage.Serialize(writer);
+                debugMessage.Append(MiscHelper.BytesToString(new ArraySegment<byte>(_debugBuffer, 0, (int)writer.GetBaseStream().Position)));
+                Log.Write(debugMessage.ToString());
+            }
         }
 
         private void SendGameSettings()

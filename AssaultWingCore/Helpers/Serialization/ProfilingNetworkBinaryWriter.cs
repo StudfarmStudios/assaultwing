@@ -76,6 +76,7 @@ namespace AW2.Helpers.Serialization
 
         public static void Reset()
         {
+            if (!AW2.Core.AssaultWingCore.Instance.Settings.Net.HeavyProfileLog) return;
             _currentStack = new Stack<ScopeTreeNode>();
             _rootNode = new ScopeTreeNode("ROOT");
             _currentStack.Push(_rootNode);
@@ -123,7 +124,7 @@ namespace AW2.Helpers.Serialization
         protected override void WriteBytes(byte[] bytes, int index, int count)
         {
             base.WriteBytes(bytes, index, count);
-            if (_currentStack.Peek().Name == null) return;
+            if (_currentStack == null || _currentStack.Peek().Name == null) return;
 
             // Record byte count on current nodes
             foreach (var stackNode in _currentStack)

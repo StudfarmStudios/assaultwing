@@ -446,6 +446,9 @@ namespace AW2.Core
                 _clearGameDataWhenEnteringMenus = true;
                 ShowDialog(new GameOverOverlayDialogData(this, standings) { GroupName = "Game over" });
             }
+#if NETWORK_PROFILING
+            ProfilingNetworkBinaryWriter.DumpStats();
+#endif
         }
 
         protected override void OnExiting(object sender, EventArgs args)

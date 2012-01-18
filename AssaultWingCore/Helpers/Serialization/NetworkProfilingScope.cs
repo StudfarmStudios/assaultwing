@@ -10,11 +10,13 @@ namespace AW2.Helpers.Serialization
     {
         public NetworkProfilingScope(string name)
         {
+            if (!AW2.Core.AssaultWingCore.Instance.Settings.Net.HeavyProfileLog) return;
             ProfilingNetworkBinaryWriter.Push(name);
         }
 
         public NetworkProfilingScope(object obj)
         {
+            if (!AW2.Core.AssaultWingCore.Instance.Settings.Net.HeavyProfileLog) return;
             if (obj == null) throw new ArgumentNullException();
             ProfilingNetworkBinaryWriter.Push(
                 obj is string ? (string)obj :
@@ -24,6 +26,7 @@ namespace AW2.Helpers.Serialization
 
         public void Dispose()
         {
+            if (!AW2.Core.AssaultWingCore.Instance.Settings.Net.HeavyProfileLog) return;
             ProfilingNetworkBinaryWriter.Pop();
         }
     }

@@ -76,6 +76,8 @@ namespace AW2.Helpers.Serialization
 
         public static void Reset()
         {
+            _currentStack = null;
+            _rootNode = null;
             if (!AW2.Core.AssaultWingCore.Instance.Settings.Net.HeavyProfileLog) return;
             _currentStack = new Stack<ScopeTreeNode>();
             _rootNode = new ScopeTreeNode("ROOT");

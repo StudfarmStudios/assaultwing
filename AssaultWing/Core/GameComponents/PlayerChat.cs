@@ -137,24 +137,8 @@ namespace AW2.Core.GameComponents
 
         private void DrawChatHistory()
         {
-            // TODO !!! Combine with ChatTab.DrawChatMessages()
-            var textPos = TopLeftCorner + new Vector2(11, 7);
-            foreach (var line in MessageLines.GetRange(Math.Max(0, MessageLines.Count - VisibleLines - _scrollPosition), Math.Min(VisibleLines, MessageLines.Count)))
-            {
-                if (line.ContainsPretext)
-                {
-                    var splitIndex = line.Text.IndexOf('>');
-                    if (splitIndex < 0) throw new ApplicationException("Pretext char not found");
-                    var pretext = line.Text.Substring(0, splitIndex + 1);
-                    var properText = line.Text.Substring(splitIndex + 1);
-                    ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, pretext, textPos.Round(), PlayerMessage.PRETEXT_COLOR, 1, 1);
-                    var properPos = textPos + new Vector2(ChatFont.MeasureString(pretext).X, 0);
-                    ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, properText, properPos.Round(), line.Color, 1, 1);
-                }
-                else
-                    ModelRenderer.DrawBorderedText(_spriteBatch, ChatFont, line.Text, textPos.Round(), line.Color, 1, 1);
-                textPos.Y += ChatFont.LineSpacing;
-            }
+            var messageLines = MessageLines.GetRange(Math.Max(0, MessageLines.Count - VisibleLines - _scrollPosition), Math.Min(VisibleLines, MessageLines.Count));
+            ModelRenderer.DrawChatLines(_spriteBatch, ChatFont, messageLines, TopLeftCorner + new Vector2(11, 7));
         }
 
         private void DrawTypingBox()

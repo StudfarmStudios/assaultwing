@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using AW2.Core;
+using AW2.Helpers;
 
 namespace AW2.Graphics
 {
@@ -22,6 +23,26 @@ namespace AW2.Graphics
             spriteBatch.DrawString(font, text, pos + new Vector2(-shadowThickness, shadowThickness), shadowColor);
             spriteBatch.DrawString(font, text, pos + new Vector2(shadowThickness, shadowThickness), shadowColor);
             spriteBatch.DrawString(font, text, pos, textColor);
+        }
+
+        public static void DrawChatLines(SpriteBatch spriteBatch, SpriteFont font, IEnumerable<WrappedTextList.Line> messageLines, Vector2 textPos)
+        {
+            foreach (var line in messageLines)
+            {
+                if (line.ContainsPretext)
+                {
+                    var splitIndex = line.Text.IndexOf('>');
+                    if (splitIndex < 0) throw new ApplicationException("Pretext char not found");
+                    var pretext = line.Text.Substring(0, splitIndex + 1);
+                    var properText = line.Text.Substring(splitIndex + 1);
+                    ModelRenderer.DrawBorderedText(spriteBatch, font, pretext, textPos.Round(), AW2.Game.PlayerMessage.PRETEXT_COLOR, 1, 1);
+                    var properPos = textPos + new Vector2(font.MeasureString(pretext).X, 0);
+                    ModelRenderer.DrawBorderedText(spriteBatch, font, properText, properPos.Round(), line.Color, 1, 1);
+                }
+                else
+                    ModelRenderer.DrawBorderedText(spriteBatch, font, line.Text, textPos.Round(), line.Color, 1, 1);
+                textPos.Y += font.LineSpacing;
+            }
         }
 
         public static void Draw(Model model, Matrix world, Matrix view, Matrix projection, Matrix[] modelPartTransforms)

@@ -82,26 +82,9 @@ namespace AW2.Menu.Equip
 
         public void DrawChatMessages(Vector2 view, SpriteBatch spriteBatch, Vector2 topLeftCorner, int height)
         {
-            // TODO !!! Combine with PlayerChat.DrawChatHistory()
             var visibleLines = height / Font.LineSpacing;
-            var lineDelta = new Vector2(0, Font.LineSpacing);
-            var textPos = topLeftCorner - view;
-            foreach (var line in MessageLines.GetRange(MessageLines.Count - visibleLines, visibleLines))
-            {
-                if (line.ContainsPretext)
-                {
-                    var splitIndex = line.Text.IndexOf('>');
-                    if (splitIndex < 0) throw new ApplicationException("Pretext char not found");
-                    var pretext = line.Text.Substring(0, splitIndex + 1);
-                    var properText = line.Text.Substring(splitIndex + 1);
-                    ModelRenderer.DrawBorderedText(spriteBatch, Font, pretext, textPos.Round(), PlayerMessage.PRETEXT_COLOR, 1, 1);
-                    var properPos = textPos + new Vector2(Font.MeasureString(pretext).X, 0);
-                    ModelRenderer.DrawBorderedText(spriteBatch, Font, properText, properPos.Round(), line.Color, 1, 1);
-                }
-                else
-                    ModelRenderer.DrawBorderedText(spriteBatch, Font, line.Text, textPos.Round(), line.Color, 1, 1);
-                textPos += lineDelta;
-            }
+            var messageLines = MessageLines.GetRange(MessageLines.Count - visibleLines, visibleLines);
+            ModelRenderer.DrawChatLines(spriteBatch, Font, messageLines, topLeftCorner - view);
         }
 
         private void DrawChatTextInputBox(Vector2 view, SpriteBatch spriteBatch)

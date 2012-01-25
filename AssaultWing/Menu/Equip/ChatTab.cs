@@ -55,7 +55,6 @@ namespace AW2.Menu.Equip
             : base(menuComponent)
         {
             _sendControl = new KeyboardKey(Keys.Enter);
-            // FIXME !!! Memory leak: _message will never be garbage collected because it is referenced by the Window.KeyPress event.
             _message = new EditableText("", 1000, new CharacterSet(Content.FontChat.Characters), MenuEngine.Game, () => { });
             _messageBeeper = new MessageBeeper(MenuEngine.Game, "PlayerMessage", () => Messages.FirstOrDefault());
             _cursorBlinkStartTime = MenuEngine.Game.GameTime.TotalRealTime;

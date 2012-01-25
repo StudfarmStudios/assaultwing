@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
+using AW2.Helpers;
 
 namespace AW2.UI
 {
@@ -41,7 +42,11 @@ namespace AW2.UI
             _content = new StringBuilder(content, maxLength);
             _game = game;
             _changedCallback = changedCallback;
-            game.Window.KeyPress += KeyPressHandler; // FIXME !!! leaks memory if Dispose() is not called later
+            WeakEventHandler<char>.Register(game.Window,
+                (window, handler) => window.KeyPress += handler,
+                (window, handler) => window.KeyPress -= handler,
+                this,
+                (self, sender, args) => self.KeyPressHandler(sender, args));
         }
 
         /// <summary>
@@ -79,7 +84,7 @@ namespace AW2.UI
             }
         }
 
-        private void KeyPressHandler(char keyChar)
+        private void KeyPressHandler(object sender, char keyChar)
         {
             if (!IsActive && _temporaryActivationTimeout <= _game.GameTime.TotalRealTime) return;
             InterpretKey(keyChar);

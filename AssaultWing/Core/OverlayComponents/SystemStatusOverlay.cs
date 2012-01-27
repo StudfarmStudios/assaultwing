@@ -14,9 +14,12 @@ namespace AW2.Core.GameComponents
     /// </summary>
     public class SystemStatusOverlay : OverlayComponent
     {
+        private const int LINE_COUNT = 2;
+        private const int TEXT_MARGIN = 5;
+
         private AssaultWing _game;
 
-        public override Point Dimensions { get { return new Point(80, 5 + Font.LineSpacing); } }
+        public override Point Dimensions { get { return new Point(TEXT_MARGIN + 80, TEXT_MARGIN + Font.LineSpacing * LINE_COUNT); } }
 
         private GameContent Content { get { return _game.GraphicsEngine.GameContent; } }
         private SpriteFont Font { get { return Content.ConsoleFont; } }
@@ -39,21 +42,21 @@ namespace AW2.Core.GameComponents
             var timeLeft = _game.DataEngine.ArenaFinishTime - _game.GameTime.TotalRealTime;
             if (timeLeft < TimeSpan.Zero) return;
             var timeText = timeLeft.ToDurationString("d", "h", "min", "s", false);
-            DrawText(spriteBatch, 0, timeText);
+            DrawText(spriteBatch, 0, timeText, Color.White);
         }
 
         private void DrawPing(SpriteBatch spriteBatch)
         {
             if (_game.NetworkMode != NetworkMode.Client) return;
             var pingMs = (int)_game.NetworkEngine.GameServerConnection.PingInfo.PingTime.TotalMilliseconds;
-            if (pingMs >= 120) DrawText(spriteBatch, 1, pingMs + " ms lag");
+            if (pingMs >= 120) DrawText(spriteBatch, 1, pingMs + " ms lag", Color.Red);
         }
 
-        private void DrawText(SpriteBatch spriteBatch, int line, string text)
+        private void DrawText(SpriteBatch spriteBatch, int line, string text, Color color)
         {
-            var textSize = Font.MeasureString(text) + new Vector2(5, 0);
-            var textPos = Dimensions.ToVector2() - textSize + new Vector2(0, Font.LineSpacing) * line;
-            ModelRenderer.DrawBorderedText(spriteBatch, Font, text, textPos, Color.White, 1, 1);
+            if (line < 0 || line >= LINE_COUNT) throw new ArgumentOutOfRangeException("line");
+            var textPos = new Vector2(Dimensions.X - TEXT_MARGIN, Font.LineSpacing * (1 + line) + TEXT_MARGIN) - Font.MeasureString(text);
+            ModelRenderer.DrawBorderedText(spriteBatch, Font, text, textPos, color, 1, 1);
         }
     }
 }

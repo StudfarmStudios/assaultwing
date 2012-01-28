@@ -144,12 +144,10 @@ namespace AW2.Menu
         private void DrawPilotLoginStatus(Vector2 view, SpriteBatch spriteBatch)
         {
             var ballPos = _pos - view + new Vector2(790, 355);
-            Texture2D statusBall;
-            statusBall = MenuEngine.MenuContent.PlayerLoginStatusGreen;
-
-            // if player not logged in draw the red ball
-                //statusBall = MenuEngine.MenuContent.PlayerLoginStatusRed
-
+            var localPlayer = MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal);
+            var statusBall = localPlayer != null && localPlayer.IsLoggedIn
+                ? MenuEngine.MenuContent.PlayerLoginStatusGreen
+                : MenuEngine.MenuContent.PlayerLoginStatusRed;
             spriteBatch.Draw(statusBall, ballPos, Color.White);
         }
 

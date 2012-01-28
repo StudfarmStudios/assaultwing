@@ -56,6 +56,7 @@ namespace AW2.Game
         /// Identification token of the logged-in spectator on the statistics server, or the empty string.
         /// </summary>
         public string LoginToken { get; set; }
+        public bool IsLoggedIn { get { return LoginToken != ""; } }
 
         /// <summary>
         /// The last known IP address of the connection of the spectator,

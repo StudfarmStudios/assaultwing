@@ -151,7 +151,7 @@ namespace AW2.Menu.Main
             LoginItems.Add(loginPasswordItem);
             LoginItems.Add(new MainMenuItem(MenuEngine, () =>
             {
-                var loggedInLocalSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.IsLocal && spec.LoginToken != "");
+                var loggedInLocalSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.IsLocal && spec.IsLoggedIn);
                 return loggedInLocalSpectator == null ? "Log in!"
                     : "Log in! (" + loggedInLocalSpectator.Name + ")";
             }, () =>

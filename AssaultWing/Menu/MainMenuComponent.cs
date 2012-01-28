@@ -121,12 +121,27 @@ namespace AW2.Menu
             });
 
             if (_currentItems == ItemCollections.NetworkItems)
+            {
+                DrawPilotLoginStatus(view, spriteBatch);
                 DrawScheduledBattleDisplay(view, spriteBatch);
+            }
 
             var scrollUpPos = _pos - view + new Vector2(653, 260);
             var scrollDownPos = _pos - view + new Vector2(653, 580);
             if (_currentItem.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);
             if (_currentItem.IsScrollableDown) spriteBatch.Draw(Content.ScrollDownTexture, scrollDownPos, Color.White);
+        }
+
+        private void DrawPilotLoginStatus(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var ballPos = _pos - view + new Vector2(790, 355);
+            Texture2D statusBall;
+            statusBall = MenuEngine.MenuContent.PlayerLoginStatusGreen;
+
+            // if player not logged in draw the red ball
+                //statusBall = MenuEngine.MenuContent.PlayerLoginStatusRed
+
+            spriteBatch.Draw(statusBall, ballPos, Color.White);
         }
 
         private void DrawScheduledBattleDisplay(Vector2 view, SpriteBatch spriteBatch)

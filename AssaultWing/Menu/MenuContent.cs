@@ -18,7 +18,10 @@ namespace AW2.Menu
 
         public Texture2D ListCursorTexture { get; private set; }
         public Texture2D ListHiliteTexture { get; private set; }
+
         public Texture2D PlayerNameBackground { get; private set; }
+        public Texture2D PlayerLoginStatusRed { get; private set; }
+        public Texture2D PlayerLoginStatusGreen { get; private set; }
 
         public Texture2D TabEquipmentTexture { get; private set; }
         public Texture2D TabPlayersTexture { get; private set; }
@@ -65,7 +68,10 @@ namespace AW2.Menu
 
             ListCursorTexture = content.Load<Texture2D>("menu_equip_player_name_cursor");
             ListHiliteTexture = content.Load<Texture2D>("menu_equip_player_name_hilite");
+
             PlayerNameBackground = content.Load<Texture2D>("menu_equip_player_name_bg_empty");
+            PlayerLoginStatusGreen = content.Load<Texture2D>("ball_logged_in");
+            PlayerLoginStatusRed = content.Load<Texture2D>("ball_not_logged_in");
 
             TabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
             TabPlayersTexture = content.Load<Texture2D>("menu_equip_tab_players");

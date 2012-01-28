@@ -120,6 +120,9 @@ namespace AW2.Menu
                 _currentItems[realIndex].Draw(spriteBatch, _pos - view, visibleIndex);
             });
 
+            if (_currentItems == ItemCollections.StartItems || _currentItems == ItemCollections.NetworkItems)
+                DrawAdditionalMessageBox(view, spriteBatch);
+
             if (_currentItems == ItemCollections.NetworkItems)
             {
                 DrawPilotLoginStatus(view, spriteBatch);
@@ -130,6 +133,12 @@ namespace AW2.Menu
             var scrollDownPos = _pos - view + new Vector2(653, 580);
             if (_currentItem.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);
             if (_currentItem.IsScrollableDown) spriteBatch.Draw(Content.ScrollDownTexture, scrollDownPos, Color.White);
+        }
+
+        private void DrawAdditionalMessageBox(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var backgroundPos = _pos - view + new Vector2(440, 600);
+            spriteBatch.Draw(MenuEngine.MenuContent.SmallStatusPaneTexture, backgroundPos, Color.White);
         }
 
         private void DrawPilotLoginStatus(Vector2 view, SpriteBatch spriteBatch)
@@ -148,7 +157,6 @@ namespace AW2.Menu
         {
             var backgroundPos = _pos - view + new Vector2(440, 600);
             var textStartPos = (backgroundPos + new Vector2(50, 43)).Round();
-            spriteBatch.Draw(MenuEngine.MenuContent.SmallStatusPaneTexture, backgroundPos, Color.White);
             spriteBatch.DrawString(Content.FontBig, "Next Scheduled Game in:", textStartPos, Color.White);
             spriteBatch.DrawString(Content.FontSmall, "Everybody's Welcome to Join!\n\nYou can find all our Scheduled Games by selecting\n\"Find more in Forums\" in this menu.  (and you are of\ncourse free to play whenever you want)", textStartPos + new Vector2(0, 27), Color.White);
             var currentTime = DateTime.Now;

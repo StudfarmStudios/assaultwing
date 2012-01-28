@@ -38,6 +38,7 @@ namespace AW2.Menu
         private MovementCurve _viewCurve;
         private SoundInstance _menuChangeSound;
         private TimeSpan _cursorFadeStartTime;
+        private TimeSpan _loggedInPlayerAnimationStartTime;
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
         private VertexPositionColor[] _shadowVertexData;
@@ -47,6 +48,7 @@ namespace AW2.Menu
 
         private SpriteBatch _spriteBatch;
         private Texture2D _backgroundTexture;
+        private Texture2D _loggedInPilot;
 
         public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
         public MenuContent MenuContent { get; private set; }
@@ -60,6 +62,8 @@ namespace AW2.Menu
         private bool IsHelpTextVisible { get { return Game.MenuEngine.ProgressBar.IsFinished; } }
         private MenuComponent ActiveComponent { get { return _components[(int)_activeComponentType]; } }
 
+        private static Curve g_loggedInPilot;
+
         static MenuEngineImpl()
         {
             g_cursorFade = new Curve();
@@ -68,6 +72,10 @@ namespace AW2.Menu
             g_cursorFade.Keys.Add(new CurveKey(1, 1, 0, 0, CurveContinuity.Step));
             g_cursorFade.PreLoop = CurveLoopType.Cycle;
             g_cursorFade.PostLoop = CurveLoopType.Cycle;
+
+            g_loggedInPilot = new Curve();
+            g_loggedInPilot.Keys.Add(new CurveKey(0, 0, 0, 0, CurveContinuity.Smooth));
+            g_loggedInPilot.Keys.Add(new CurveKey(1.7f, 1, 0, 0, CurveContinuity.Smooth));
         }
 
         public MenuEngineImpl(AssaultWing game, int updateOrder)
@@ -95,6 +103,17 @@ namespace AW2.Menu
             _cursorFadeStartTime = Game.GameTime.TotalRealTime;
         }
 
+        public void ResetLoggedInPlayerAnimationTime()
+        {
+            _loggedInPlayerAnimationStartTime = Game.GameTime.TotalRealTime;
+        }
+
+        public float GetLoggedInPlayerAnimationMultiplier()
+        {
+            float animationTime = (float)(Game.GameTime.TotalRealTime - _cursorFadeStartTime).TotalSeconds;
+            return g_loggedInPilot.Evaluate(animationTime);
+        }
+
         public override void LoadContent()
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
@@ -107,6 +126,7 @@ namespace AW2.Menu
             _effect.VertexColorEnabled = true;
             _effect.TextureEnabled = false;
             _backgroundTexture = Game.Content.Load<Texture2D>("menu_rustywall_bg");
+            _loggedInPilot = Game.Content.Load<Texture2D>("logged_in_pilot_bg");
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
@@ -142,6 +162,7 @@ namespace AW2.Menu
 
         public override void Initialize()
         {
+            ResetLoggedInPlayerAnimationTime();
             _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
             _components[(int)MenuComponentType.Dummy] = new DummyMenuComponent(this);
             _components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
@@ -242,6 +263,7 @@ namespace AW2.Menu
             DrawShadow();
             if (!ProgressBar.IsFinished) ProgressBar.Draw(_spriteBatch);
             DrawStaticText();
+            DrawLoggedInPilot();
         }
 
         /// <summary>
@@ -357,6 +379,37 @@ namespace AW2.Menu
                 ViewportHeight - MenuContent.FontSmall.LineSpacing);
             _spriteBatch.DrawString(MenuContent.FontSmall, copyrightText, copyrightTextPos.Round(), Color.White);
             _spriteBatch.End();
+        }
+
+        private void DrawLoggedInPilot()
+        {
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+            var playerName = "bluesun";
+            var playerRating = "4561";
+            Point loggedInPilotPos = new Point(ViewportWidth - _loggedInPilot.Width + 4, 0);
+            var nameSize = MenuContent.FontSmall.MeasureString(playerName);
+            var ratingSize = MenuContent.FontBig.MeasureString(playerRating);
+            var yPos = -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier());
+            var namePos = new Vector2(loggedInPilotPos.X + (_loggedInPilot.Width - nameSize.X) / 2 + 12, yPos + 10);
+            var ratingPos = new Vector2(loggedInPilotPos.X + (_loggedInPilot.Width - ratingSize.X) / 2 + 12, yPos + 28);
+
+            _spriteBatch.Draw(_loggedInPilot, new Rectangle(loggedInPilotPos.X, (int)Math.Round(yPos), _loggedInPilot.Width, _loggedInPilot.Height), Color.White);
+            DrawTextStroke(playerName, namePos, MenuContent.FontSmall);
+            _spriteBatch.DrawString(MenuContent.FontSmall, playerName, namePos, Color.White);
+            DrawTextStroke(playerRating, ratingPos, MenuContent.FontBig);
+            _spriteBatch.DrawString(MenuContent.FontBig, playerRating, ratingPos, Color.White);
+
+            _spriteBatch.End();
+        }
+
+        private void DrawTextStroke(String text, Vector2 position, SpriteFont font)
+        {
+            var color = new Color(new Vector4(0f, 0f, 0f, 0.6f));
+            _spriteBatch.DrawString(font, text, position + new Vector2(-1, -1), color);
+            _spriteBatch.DrawString(font, text, position + new Vector2(1, -1), color);
+            _spriteBatch.DrawString(font, text, position + new Vector2(1, 1), color);
+            _spriteBatch.DrawString(font, text, position + new Vector2(-1, 1), color);
         }
     }
 }

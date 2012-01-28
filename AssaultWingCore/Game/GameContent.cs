@@ -15,6 +15,7 @@ namespace AW2.Game
         public Texture2D ShipOnRadarTexture { get; private set; }
         public Texture2D DockOnRadarTexture { get; private set; }
         public Texture2D ScoreBackgroundTexture { get; private set; }
+        public Texture2D SystemStatusOverlayBackgroundTexture { get; private set; }
         public Effect BasicShaders { get; private set; }
         public SpriteBatch OverlaySpriteBatch { get { return ViewportSpriteBatch; } }
         public SpriteBatch ViewportSpriteBatch { get; private set; }
@@ -50,6 +51,7 @@ namespace AW2.Game
             ShipOnRadarTexture = _game.Content.Load<Texture2D>("gui_playerinfo_white_ball");
             DockOnRadarTexture = _game.Content.Load<Texture2D>("p_green_box");
             ScoreBackgroundTexture = _game.Content.Load<Texture2D>("gui_playerlist_bg");
+            SystemStatusOverlayBackgroundTexture = _game.Content.Load<Texture2D>("system_status_overlay_bg");
 
             BasicShaders = _game.Content.Load<Effect>("basicshaders");
             ViewportSpriteBatch = new SpriteBatch(gfx);

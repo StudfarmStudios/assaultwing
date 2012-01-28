@@ -19,7 +19,8 @@ namespace AW2.Core.GameComponents
 
         private AssaultWing _game;
 
-        public override Point Dimensions { get { return new Point(TEXT_MARGIN + 80, TEXT_MARGIN + Font.LineSpacing * LINE_COUNT); } }
+        //public override Point Dimensions { get { return new Point(TEXT_MARGIN + 80, TEXT_MARGIN + Font.LineSpacing * LINE_COUNT); } }
+        public override Point Dimensions { get { return new Point(Content.SystemStatusOverlayBackgroundTexture.Width, Content.SystemStatusOverlayBackgroundTexture.Height); } }
 
         private GameContent Content { get { return _game.GraphicsEngine.GameContent; } }
         private SpriteFont Font { get { return Content.ConsoleFont; } }
@@ -32,6 +33,7 @@ namespace AW2.Core.GameComponents
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
+            spriteBatch.Draw(Content.SystemStatusOverlayBackgroundTexture, Vector2.Zero, Color.White);
             DrawArenaTimeLeft(spriteBatch);
             DrawPing(spriteBatch);
         }
@@ -55,7 +57,7 @@ namespace AW2.Core.GameComponents
         private void DrawText(SpriteBatch spriteBatch, int line, string text, Color color)
         {
             if (line < 0 || line >= LINE_COUNT) throw new ArgumentOutOfRangeException("line");
-            var textPos = new Vector2(Dimensions.X - TEXT_MARGIN, Font.LineSpacing * (1 + line) + TEXT_MARGIN) - Font.MeasureString(text);
+            var textPos = new Vector2(Dimensions.X - TEXT_MARGIN, Font.LineSpacing * (1 + line) + TEXT_MARGIN + (line * 2)) - Font.MeasureString(text);
             ModelRenderer.DrawBorderedText(spriteBatch, Font, text, textPos, color, 1, 1);
         }
     }

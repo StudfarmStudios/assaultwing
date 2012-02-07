@@ -262,7 +262,7 @@ namespace AW2.Net
             foreach (var plr in droppedPlayers)
             {
                 plr.Disconnect();
-                Game.Stats.Send(new { RemovePlayer = plr.LoginToken });
+                Game.Stats.Send(new { RemovePlayer = Game.Stats.GetStatsObject(plr) });
             }
             if (droppedPlayers.Any())
             {

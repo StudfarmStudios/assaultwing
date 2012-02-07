@@ -22,5 +22,6 @@ namespace AW2.Core
 
         public virtual void Send(object obj) { }
         public virtual void SendHit(Gob hitter, Gob target, Vector2? pos = null) { }
+        public virtual object GetStatsObject(Spectator spectator) { return null; }
     }
 }

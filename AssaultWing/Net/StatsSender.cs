@@ -76,6 +76,16 @@ namespace AW2.Net
             });
         }
 
+        public override object GetStatsObject(Spectator spectator)
+        {
+            return new
+            {
+                Name = spectator.Name,
+                LoginToken = spectator.LoginToken,
+                Connected = !spectator.IsDisconnected,
+            };
+        }
+
         private void HandleSocketErrors()
         {
             var errorsFound = false;

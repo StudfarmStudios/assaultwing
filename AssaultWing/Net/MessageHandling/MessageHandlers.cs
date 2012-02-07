@@ -411,7 +411,7 @@ namespace AW2.Net.MessageHandling
                 oldSpectator.Reconnect(newSpectator);
                 newSpectator = oldSpectator;
             }
-            Game.Stats.Send(new { AddPlayer = newSpectator.LoginToken });
+            Game.Stats.Send(new { AddPlayer = Game.Stats.GetStatsObject(newSpectator) });
             return newSpectator;
         }
 

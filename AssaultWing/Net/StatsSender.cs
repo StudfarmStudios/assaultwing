@@ -158,7 +158,9 @@ namespace AW2.Net
                 {
                     var str = Encoding.UTF8.GetString(messageHeaderAndBody.Array, startIndex, i - startIndex);
                     var obj = JsonConvert.DeserializeObject(str);
-                    // TODO: Interpret obj in some way.
+                    // TODO: Interpret obj like this:
+                    // {PlayerDetails: pilot.token, Rating: pilot.rating}
+                    // {NewRating: this.token, Rating: rating}
                 }
                 catch (ArgumentException) { } // Encoding.GetString failed
                 catch (JsonReaderException) { } // JsonConvert.DeserializeObject failed

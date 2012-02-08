@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
@@ -110,7 +111,7 @@ namespace AW2.Menu
 
         public float GetLoggedInPlayerAnimationMultiplier()
         {
-            float animationTime = (float)(Game.GameTime.TotalRealTime - _cursorFadeStartTime).TotalSeconds;
+            float animationTime = (float)(Game.GameTime.TotalRealTime - _loggedInPlayerAnimationStartTime).TotalSeconds;
             return g_loggedInPilot.Evaluate(animationTime);
         }
 
@@ -162,7 +163,6 @@ namespace AW2.Menu
 
         public override void Initialize()
         {
-            ResetLoggedInPlayerAnimationTime();
             _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
             _components[(int)MenuComponentType.Dummy] = new DummyMenuComponent(this);
             _components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
@@ -383,33 +383,19 @@ namespace AW2.Menu
 
         private void DrawLoggedInPilot()
         {
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-
-            var playerName = "bluesun";
-            var playerRating = "4561";
-            Point loggedInPilotPos = new Point(ViewportWidth - _loggedInPilot.Width + 4, 0);
-            var nameSize = MenuContent.FontSmall.MeasureString(playerName);
+            var localPlayer = Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.IsLoggedIn);
+            if (localPlayer == null) return;
+            var playerRating = ""; // TODO
+            var nameSize = MenuContent.FontSmall.MeasureString(localPlayer.Name);
             var ratingSize = MenuContent.FontBig.MeasureString(playerRating);
-            var yPos = -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier());
-            var namePos = new Vector2(loggedInPilotPos.X + (_loggedInPilot.Width - nameSize.X) / 2 + 12, yPos + 10);
-            var ratingPos = new Vector2(loggedInPilotPos.X + (_loggedInPilot.Width - ratingSize.X) / 2 + 12, yPos + 28);
-
-            _spriteBatch.Draw(_loggedInPilot, new Rectangle(loggedInPilotPos.X, (int)Math.Round(yPos), _loggedInPilot.Width, _loggedInPilot.Height), Color.White);
-            DrawTextStroke(playerName, namePos, MenuContent.FontSmall);
-            _spriteBatch.DrawString(MenuContent.FontSmall, playerName, namePos, Color.White);
-            DrawTextStroke(playerRating, ratingPos, MenuContent.FontBig);
-            _spriteBatch.DrawString(MenuContent.FontBig, playerRating, ratingPos, Color.White);
-
+            var backgroundPos = new Vector2(ViewportWidth - _loggedInPilot.Width + 4, -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier()));
+            var namePos = backgroundPos + new Vector2((_loggedInPilot.Width - nameSize.X) / 2 + 12, 10);
+            var ratingPos = backgroundPos + new Vector2((_loggedInPilot.Width - ratingSize.X) / 2 + 12, 28);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            _spriteBatch.Draw(_loggedInPilot, backgroundPos, Color.White);
+            ModelRenderer.DrawBorderedText(_spriteBatch, MenuContent.FontSmall, localPlayer.Name, namePos, Color.White, 1, 1);
+            ModelRenderer.DrawBorderedText(_spriteBatch, MenuContent.FontBig, playerRating, ratingPos, Color.White, 1, 1);
             _spriteBatch.End();
-        }
-
-        private void DrawTextStroke(String text, Vector2 position, SpriteFont font)
-        {
-            var color = new Color(new Vector4(0f, 0f, 0f, 0.6f));
-            _spriteBatch.DrawString(font, text, position + new Vector2(-1, -1), color);
-            _spriteBatch.DrawString(font, text, position + new Vector2(1, -1), color);
-            _spriteBatch.DrawString(font, text, position + new Vector2(1, 1), color);
-            _spriteBatch.DrawString(font, text, position + new Vector2(-1, 1), color);
         }
     }
 }

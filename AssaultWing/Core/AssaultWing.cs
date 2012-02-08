@@ -179,11 +179,8 @@ namespace AW2.Core
 
         public void ShowEquipMenu()
         {
-            if (_clearGameDataWhenEnteringMenus)
-            {
-                _clearGameDataWhenEnteringMenus = false;
-                DataEngine.ClearGameState();
-            }
+            if (_clearGameDataWhenEnteringMenus) DataEngine.ClearGameState();
+            _clearGameDataWhenEnteringMenus = false;
             MenuEngine.Activate(MenuComponentType.Equip);
             GameState = GameState.Menu;
         }

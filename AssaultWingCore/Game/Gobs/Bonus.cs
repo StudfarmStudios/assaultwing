@@ -99,7 +99,7 @@ namespace AW2.Game.Gobs
             if (host.Owner != null) Game.Stats.Send(new
             {
                 Bonus = _bonusActionTypeName.Value,
-                Player = host.Owner.LoginToken,
+                Player = Game.Stats.GetStatsString(host.Owner),
                 Pos = Pos,
                 BirthPos = BirthPos,
             });

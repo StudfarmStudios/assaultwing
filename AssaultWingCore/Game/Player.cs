@@ -472,7 +472,7 @@ namespace AW2.Game
                 Ship = ShipName.Value,
                 Weapon2 = Weapon2Name.Value,
                 Device = ExtraDeviceName.Value,
-                Player = LoginToken,
+                Player = Game.Stats.GetStatsString(this),
                 Pos = Ship.Pos,
             });
         }

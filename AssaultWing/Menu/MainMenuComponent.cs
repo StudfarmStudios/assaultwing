@@ -145,7 +145,7 @@ namespace AW2.Menu
         {
             var ballPos = _pos - view + new Vector2(790, 355);
             var localPlayer = MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal);
-            var statusBall = localPlayer != null && localPlayer.IsLoggedIn
+            var statusBall = localPlayer != null && localPlayer.GetStats().IsLoggedIn
                 ? MenuEngine.MenuContent.PlayerLoginStatusGreen
                 : MenuEngine.MenuContent.PlayerLoginStatusRed;
             spriteBatch.Draw(statusBall, ballPos, Color.White);

@@ -70,7 +70,7 @@ namespace AW2.Game
         public int Kills { get; private set; }
         public int Deaths { get; private set; }
         public int SpectatorID { get; private set; }
-        public string LoginToken { get; private set; }
+        public object StatsData { get; private set; }
 
         public Standing(Spectator spec, int score)
         {
@@ -82,7 +82,7 @@ namespace AW2.Game
             Kills = spec.ArenaStatistics.Kills;
             Deaths = spec.ArenaStatistics.Deaths;
             SpectatorID = spec.ID;
-            LoginToken = spec.LoginToken;
+            StatsData = spec.StatsData;
         }
     }
 

@@ -127,6 +127,7 @@
     <Compile Include="Core\OverlayComponents\OverlayDialogData.cs" />
     <Compile Include="Core\OverlayComponents\ProgressBar.cs" />
     <Compile Include="Core\OverlayComponents\SystemStatusOverlay.cs" />
+    <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\DummyMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Net\MessageTypeAttribute.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
     <Compile Include="Net\NetworkException.cs" />
+    <Compile Include="Net\SpectatorStats.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\StatsSender.cs" />
     <Compile Include="Net\StreamMessage.cs" />

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -383,9 +384,9 @@ namespace AW2.Menu
 
         private void DrawLoggedInPilot()
         {
-            var localPlayer = Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.IsLoggedIn);
+            var localPlayer = Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.GetStats().IsLoggedIn);
             if (localPlayer == null) return;
-            var playerRating = ""; // TODO
+            var playerRating = localPlayer.GetStats().Rating.ToString("f0", CultureInfo.InvariantCulture);
             var nameSize = MenuContent.FontSmall.MeasureString(localPlayer.Name);
             var ratingSize = MenuContent.FontBig.MeasureString(playerRating);
             var backgroundPos = new Vector2(ViewportWidth - _loggedInPilot.Width + 4, -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier()));

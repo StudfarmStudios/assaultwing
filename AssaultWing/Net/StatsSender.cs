@@ -67,9 +67,9 @@ namespace AW2.Net
             Send(new
             {
                 Hit = hitter.TypeName.Value,
-                HitOwner = hitter.Owner.LoginToken,
+                HitOwner = hitter.Owner.GetStats().LoginToken,
                 Target = target.TypeName.Value,
-                TargetOwner = target.Owner.LoginToken,
+                TargetOwner = target.Owner.GetStats().LoginToken,
                 Pos = pos.HasValue ? pos.Value : hitter.Pos,
                 BirthPos = hitter.BirthPos,
                 Type = game.DataEngine.Minions.Contains(target) ? "Minion" : "Misc",
@@ -81,9 +81,14 @@ namespace AW2.Net
             return new
             {
                 Name = spectator.Name,
-                LoginToken = spectator.LoginToken,
+                LoginToken = spectator.GetStats().LoginToken,
                 Connected = !spectator.IsDisconnected,
             };
+        }
+
+        public override string GetStatsString(Spectator spectator)
+        {
+            return spectator.GetStats().LoginToken;
         }
 
         private void HandleSocketErrors()

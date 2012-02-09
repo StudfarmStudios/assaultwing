@@ -162,7 +162,7 @@ namespace AW2.Menu.Equip
 
         private bool IsPlayerNameEditable(Player player)
         {
-            return MenuEngine.Game.NetworkMode != NetworkMode.Standalone && player.LoginToken == "";
+            return MenuEngine.Game.NetworkMode != NetworkMode.Standalone && !player.GetStats().IsLoggedIn;
         }
 
         private void UpdateSelectors()

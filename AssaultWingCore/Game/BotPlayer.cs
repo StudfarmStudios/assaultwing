@@ -89,7 +89,7 @@ namespace AW2.Game
                     Ship = bot.TypeName.Value,
                     Weapon2 = bot.WeaponName.Value,
                     Device = "",
-                    Player = LoginToken,
+                    Player = Game.Stats.GetStatsString(this),
                     Pos = bot.Pos,
                 });
             });

@@ -26,6 +26,8 @@ namespace AW2.Net
         /// </summary>
         public ThreadSafeWrapper<Queue<string>> LoginErrors { get; private set; }
 
+        public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
+
         public WebData(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
@@ -53,7 +55,7 @@ namespace AW2.Net
             }
             foreach (var spec in Game.DataEngine.Spectators)
             {
-                if (!string.IsNullOrEmpty(spec.LoginToken)) continue;
+                if (spec.GetStats().IsLoggedIn) continue;
                 var plrs = Game.Settings.Players;
                 var password = plrs.Player1.Name == spec.Name ? plrs.Player1.Password :
                     spec.Name == AW2.Settings.PlayerSettings.BOTS_NAME ? plrs.BotsPassword :
@@ -69,7 +71,7 @@ namespace AW2.Net
 
         public void UnloginPilots()
         {
-            foreach (var spec in Game.DataEngine.Spectators) spec.LoginToken = "";
+            foreach (var spec in Game.DataEngine.Spectators) spec.GetStats().Logout();
         }
 
         private void RequestFromStats(AsyncCallback callback, string path, string query = null)
@@ -112,14 +114,13 @@ namespace AW2.Net
             RequestDone(result, "pilot login", responseString =>
             {
                 var response = JObject.Parse(responseString);
-                var error = response["error"];
-                if (error != null) EnqueueLoginError(error + ".", GetJsonString(response, "data", "username"));
-                var token = response["token"];
-                if (token != null)
-                {
-                    var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.Name == response["username"].ToString());
-                    if (player != null) player.LoginToken = token.ToString();
-                }
+                if (response["error"] != null) EnqueueLoginError(response["error"] + ".", GetJsonString(response, "data", "username"));
+                var username = GetJsonString(response, "username");
+                if (username == "") return;
+                var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.IsLocal && plr.Name == username);
+                if (player == null) return;
+                if (!player.GetStats().TrySetLoginData(response, Game.GameTime.TotalRealTime)) return;
+                Game.MenuEngine.ResetLoggedInPlayerAnimationTime();
             });
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using Microsoft.Xna.Framework;
 using AW2.Core;
+using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.UI;
 
@@ -53,10 +54,9 @@ namespace AW2.Game
         public int ConnectionID { get; private set; }
 
         /// <summary>
-        /// Identification token of the logged-in spectator on the statistics server, or the empty string.
+        /// Data received from the statistics server.
         /// </summary>
-        public string LoginToken { get; set; }
-        public bool IsLoggedIn { get { return LoginToken != ""; } }
+        public INetworkSerializable StatsData { get; set; }
 
         /// <summary>
         /// The last known IP address of the connection of the spectator,
@@ -116,7 +116,6 @@ namespace AW2.Game
             IPAddress = ipAddress;
             Color = Color.LightGray;
             ArenaStatistics = new SpectatorArenaStatistics();
-            LoginToken = "";
         }
 
         /// <param name="onScreen">Location of the viewport on screen.</param>
@@ -140,7 +139,7 @@ namespace AW2.Game
         {
             ConnectionID = newSpectator.ConnectionID;
             ConnectionStatus = ConnectionStatusType.Remote;
-            LoginToken = newSpectator.LoginToken;
+            StatsData = newSpectator.StatsData;
             ClientUpdateRequest |= ClientUpdateType.ToEveryone;
         }
 
@@ -174,20 +173,16 @@ namespace AW2.Game
 #endif
             checked
             {
-
                 if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
                     mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
                 {
                     writer.Write((string)Name);
                 }
-                if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
-                {
-                    writer.Write((string)LoginToken);
-                }
                 if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                 {
                     writer.Write((bool)IsDisconnected);
                 }
+                StatsData.Serialize(writer, mode);
             }
         }
 
@@ -198,16 +193,13 @@ namespace AW2.Game
             {
                 Name = reader.ReadString();
             }
-            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
-            {
-                LoginToken = reader.ReadString();
-            }
             if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 var isDisconnected = reader.ReadBoolean();
                 if (IsRemote && isDisconnected) ConnectionStatus = ConnectionStatusType.Disconnected;
                 if (IsDisconnected && !isDisconnected) ConnectionStatus = ConnectionStatusType.Remote;
             }
+            StatsData.Deserialize(reader, mode, framesAgo);
         }
 
         public override string ToString()

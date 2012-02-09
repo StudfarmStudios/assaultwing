@@ -431,7 +431,7 @@ namespace AW2.Core
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             EnsureArenaLoadingStopped();
             var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray(); // ToArray takes a copy
-            Stats.Send(new { ArenaFinished = standings.Select(st => new { st.Name, st.LoginToken, st.Score, st.Kills, st.Deaths }).ToArray() });
+            Stats.Send(new { ArenaFinished = standings.Select(st => new { st.Name, ((SpectatorStats)st.StatsData).LoginToken, st.Score, st.Kills, st.Deaths }).ToArray() });
             if (CommandLineOptions.DedicatedServer)
             {
                 DataEngine.ClearGameState();

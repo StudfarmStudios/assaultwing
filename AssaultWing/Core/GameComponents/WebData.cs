@@ -114,27 +114,15 @@ namespace AW2.Net
             RequestDone(result, "pilot login", responseString =>
             {
                 var response = JObject.Parse(responseString);
-                if (response["error"] != null) EnqueueLoginError(response["error"] + ".", GetJsonString(response, "data", "username"));
-                var username = GetJsonString(response, "username");
+                if (response["error"] != null) EnqueueLoginError(response["error"] + ".", response.GetString("data", "username"));
+                var username = response.GetString("username");
                 if (username == "") return;
                 var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.IsLocal && plr.Name == username);
                 if (player == null) return;
-                if (!player.GetStats().TrySetLoginData(response, Game.GameTime.TotalRealTime)) return;
+                player.GetStats().LoginTime = Game.GameTime.TotalRealTime;
+                player.GetStats().Update(response);
                 Game.MenuEngine.ResetLoggedInPlayerAnimationTime();
             });
-        }
-
-        private string GetJsonString(JObject root, params string[] path)
-        {
-            if (path == null || path.Length == 0) throw new ArgumentException("Invalid JSON path");
-            var element = root[path[0]];
-            if (element == null) return "";
-            foreach (var step in path.Skip(1))
-            {
-                if (element[step] == null) return "";
-                element = element[step];
-            }
-            return element.ToString();
         }
 
         private void EnqueueLoginError(string error, string username)

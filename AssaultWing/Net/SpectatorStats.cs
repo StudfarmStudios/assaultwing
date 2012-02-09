@@ -14,38 +14,27 @@ namespace AW2.Net
         /// <summary>
         /// Time of login data reception in real time.
         /// </summary>
-        public TimeSpan LoginTime { get; private set; }
+        public TimeSpan LoginTime { get; set; }
 
+        public string PilotToken { get; private set; }
         public string LoginToken { get; private set; }
         public bool IsLoggedIn { get { return !string.IsNullOrEmpty(LoginToken); } }
-        public float Rating { get { return 123.5f; } }
+        public float Rating { get; private set; }
 
         /// <summary>
         /// Received from web page "pilot/id/.../rankings".
         /// </summary>
         public JObject RankingsData { get; set; }
 
-        /// <summary>
-        /// Returns true on success.
-        /// </summary>
-        public bool TrySetLoginData(JObject loginData, TimeSpan totalRealTime)
+        public void Update(JObject obj)
         {
-            LoginTime = totalRealTime;
-            if (loginData["token"] == null) return false;
-            LoginToken = loginData["token"].ToString();
-            return true;
+            if (obj["token"] != null) LoginToken = (string)obj["token"];
+            if (obj["rating"] != null) Rating = (float)obj["rating"];
         }
 
         public void Logout()
         {
             LoginToken = null;
-        }
-
-        /// <summary>
-        /// To be called when stats server sends a ranking update.
-        /// </summary>
-        public void OnRankingUpdate(JObject obj)
-        {
         }
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

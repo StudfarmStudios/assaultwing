@@ -4,11 +4,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.ConnectionUtils;
-using Newtonsoft.Json;
 
 namespace AW2.Net
 {
@@ -162,10 +163,10 @@ namespace AW2.Net
                 try
                 {
                     var str = Encoding.UTF8.GetString(messageHeaderAndBody.Array, startIndex, i - startIndex);
-                    var obj = JsonConvert.DeserializeObject(str);
-                    // TODO: Interpret obj like this:
-                    // {PlayerDetails: pilot.token, Rating: pilot.rating}
-                    // {NewRating: this.token, Rating: rating}
+                    var obj = JObject.Parse(str);
+                    var loginToken = obj.GetString("token");
+                    var spectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.GetStats().LoginToken == loginToken);
+                    if (spectator != null) spectator.GetStats().Update(obj);
                 }
                 catch (ArgumentException) { } // Encoding.GetString failed
                 catch (JsonReaderException) { } // JsonConvert.DeserializeObject failed

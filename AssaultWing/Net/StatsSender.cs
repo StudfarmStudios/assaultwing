@@ -56,7 +56,7 @@ namespace AW2.Net
 
         public override void Send(object obj)
         {
-            if (Game.NetworkMode != NetworkMode.Server || !Connected) return;
+            if (Game.NetworkMode != NetworkMode.Server || !Connected || !Game.Settings.Net.StatsReportingEnabled) return;
             _sendQueue.Append(Newtonsoft.Json.JsonConvert.SerializeObject(obj)).Append("\r\n");
         }
 

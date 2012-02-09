@@ -9,6 +9,7 @@ namespace AW2.Settings
         private string _statsServerAddress;
         private int _statsHttpsPort;
         private int _statsDataPort;
+        private bool _statsReportingEnabled;
         private string _gameServerName;
         private int _gameServerPort;
         private int _gameServerMaxPlayers;
@@ -24,6 +25,7 @@ namespace AW2.Settings
         public string StatsServerAddress { get { return _statsServerAddress; } set { _statsServerAddress = value; } }
         public int StatsHttpsPort { get { return _statsHttpsPort; } set { _statsHttpsPort = value; } }
         public int StatsDataPort { get { return _statsDataPort; } set { _statsDataPort = value; } }
+        public bool StatsReportingEnabled { get { return _statsReportingEnabled; } set { _statsReportingEnabled = value; } }
         public string GameServerName { get { return _gameServerName; } set { _gameServerName = value; } }
         public int GameServerPort { get { return _gameServerPort; } set { _gameServerPort = value; } }
         public int GameServerMaxPlayers { get { return _gameServerMaxPlayers; } set { _gameServerMaxPlayers = value; } }
@@ -46,6 +48,7 @@ namespace AW2.Settings
             _statsServerAddress = "assaultwing.com";
             _statsHttpsPort = 3002;
             _statsDataPort = 3000;
+            _statsReportingEnabled = true;
             _gameServerName = Environment.MachineName;
             _gameServerPort = 'A' * 256 + 'W';
             _gameServerMaxPlayers = 16;

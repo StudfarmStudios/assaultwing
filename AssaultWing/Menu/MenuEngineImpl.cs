@@ -386,7 +386,9 @@ namespace AW2.Menu
         {
             var localPlayer = Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.GetStats().IsLoggedIn);
             if (localPlayer == null) return;
-            var playerRating = localPlayer.GetStats().Rating.ToString("f0", CultureInfo.InvariantCulture);
+            var playerRating = string.Format(CultureInfo.InvariantCulture, "{0} ({1:f0})",
+                localPlayer.GetStats().RatingRank.ToOrdinalString(),
+                localPlayer.GetStats().Rating.ToString("f0"));
             var nameSize = MenuContent.FontSmall.MeasureString(localPlayer.Name);
             var ratingSize = MenuContent.FontBig.MeasureString(playerRating);
             var backgroundPos = new Vector2(ViewportWidth - _loggedInPilot.Width + 4, -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier()));

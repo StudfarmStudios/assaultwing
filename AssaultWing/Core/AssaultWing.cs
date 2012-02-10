@@ -432,6 +432,7 @@ namespace AW2.Core
             EnsureArenaLoadingStopped();
             var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray(); // ToArray takes a copy
             Stats.Send(new { ArenaFinished = standings.Select(st => new { st.Name, ((SpectatorStats)st.StatsData).LoginToken, st.Score, st.Kills, st.Deaths }).ToArray() });
+            foreach (var spec in DataEngine.Spectators) if (spec.IsLocal) WebData.UpdatePilotRanking(spec);
             if (CommandLineOptions.DedicatedServer)
             {
                 DataEngine.ClearGameState();

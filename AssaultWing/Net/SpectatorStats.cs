@@ -16,10 +16,11 @@ namespace AW2.Net
         /// </summary>
         public TimeSpan LoginTime { get; set; }
 
-        public string PilotToken { get; private set; }
+        public string PilotId { get; private set; }
         public string LoginToken { get; private set; }
         public bool IsLoggedIn { get { return !string.IsNullOrEmpty(LoginToken); } }
         public float Rating { get; private set; }
+        public int RatingRank { get; private set; }
 
         /// <summary>
         /// Received from web page "pilot/id/.../rankings".
@@ -28,8 +29,14 @@ namespace AW2.Net
 
         public void Update(JObject obj)
         {
-            if (obj["token"] != null) LoginToken = (string)obj["token"];
-            if (obj["rating"] != null) Rating = (float)obj["rating"];
+            try
+            {
+                if (obj["_id"] != null) PilotId = (string)obj["_id"];
+                if (obj["token"] != null) LoginToken = (string)obj["token"];
+                if (obj["rating"] != null) Rating = (float)obj["rating"];
+                if (obj["ratingRank"] != null) RatingRank = (int)obj["ratingRank"];
+            }
+            catch (ArgumentException) { } // invalid cast of a JToken value
         }
 
         public void Logout()

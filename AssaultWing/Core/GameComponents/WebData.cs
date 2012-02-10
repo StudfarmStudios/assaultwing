@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using AW2.Core;
+using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.ConnectionUtils;
 using Newtonsoft.Json.Linq;
@@ -69,6 +70,13 @@ namespace AW2.Net
             }
         }
 
+        public void UpdatePilotRanking(Spectator spectator)
+        {
+            if (spectator.GetStats().PilotId == null) return;
+            var requestPath = string.Format("pilot/id/{0}/rankings", spectator.GetStats().PilotId);
+            RequestFromStats(response => PilotRankingsRequestDone(response, spectator), requestPath);
+        }
+
         public void UnloginPilots()
         {
             foreach (var spec in Game.DataEngine.Spectators) spec.GetStats().Logout();
@@ -117,11 +125,22 @@ namespace AW2.Net
                 if (response["error"] != null) EnqueueLoginError(response["error"] + ".", response.GetString("data", "username"));
                 var username = response.GetString("username");
                 if (username == "") return;
-                var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.IsLocal && plr.Name == username);
-                if (player == null) return;
-                player.GetStats().LoginTime = Game.GameTime.TotalRealTime;
-                player.GetStats().Update(response);
+                var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.IsLocal && plr.Name == username);
+                if (spectator == null) return;
+                spectator.GetStats().LoginTime = Game.GameTime.TotalRealTime;
+                spectator.GetStats().Update(response);
                 Game.MenuEngine.ResetLoggedInPlayerAnimationTime();
+                UpdatePilotRanking(spectator);
+            });
+        }
+
+        private void PilotRankingsRequestDone(IAsyncResult result, Spectator spectator)
+        {
+            RequestDone(result, "pilot rankings", responseString =>
+            {
+                var response = JObject.Parse(responseString);
+                if (response["error"] != null) Log.Write("Error in pilot rankings query: {0}", response["error"]);
+                spectator.GetStats().Update(response);
             });
         }
 

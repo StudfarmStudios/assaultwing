@@ -1,0 +1,8 @@
+#!/bin/sh
+# Assault Wing Bug Report Handler
+SERVER_ROOT=/home/ville/ReportServer
+REPORT_DIR=reports
+cd /home/ville/ReportServer
+if [ ! -d $REPORT_DIR ]; then mkdir $REPORT_DIR; fi
+cd $REPORT_DIR
+screen -DR aw-report-server java -Xmx32m -classpath $SERVER_ROOT/bin logreceiver.TCPLogReceiver

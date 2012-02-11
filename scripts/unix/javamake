@@ -1,0 +1,7 @@
+#!/bin/sh
+# Compiles all Java source files under src and puts the class files under bin.
+if [ ! -d src -o ! -d bin ]; then
+    echo Cannot find src or bin, exiting
+    exit 1
+fi
+find src -name *.java -exec javac -d bin '{}' +

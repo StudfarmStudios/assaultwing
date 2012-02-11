@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Sets nextgame to 21:00 on the next Wednesday or Sunday Helsinki time.
+# Change happens after 22:00 on the preceding Wednesday or Sunday.
+
+TZ="Europe/Helsinki"
+export TZ
+OUTPUT=/var/www/nextgame
+
+let weekday=`date -d-22hours +%u`
+if [ $weekday -ge 3 -a $weekday -lt 7 ]
+then
+  GAMEDAY='sunday'
+else
+  GAMEDAY='wednesday'
+fi
+date -dnext-$GAMEDAY +%Y-%m-%dT21:00:00.0000000%:z > $OUTPUT
+
+#echo $OUTPUT updated to `cat $OUTPUT`

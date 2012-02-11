@@ -1,0 +1,6 @@
+#!/bin/sh
+# Assault Wing Management Server for development and testing
+SERVER_PORT=16728
+LOG_DIR=devlogs
+SCREEN_NAME=aw-management-server-dev
+run-aw-management-server $SERVER_PORT $LOG_DIR $SCREEN_NAME

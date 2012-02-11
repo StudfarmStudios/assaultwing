@@ -22,13 +22,15 @@ namespace AW2.Game
         public int Kills { get; set; }
         public int Deaths { get; set; }
         public int KillsWithoutDying { get; set; }
+        public Func<float> Rating { get; set; }
 
         public SpectatorArenaStatistics()
         {
             Lives = -1;
+            Rating = () => 0;
         }
 
-        public SpectatorArenaStatistics(GameplayMode gameplayMode)
+        public void Reset(GameplayMode gameplayMode)
         {
             Lives = gameplayMode.StartLives;
         }
@@ -69,6 +71,7 @@ namespace AW2.Game
         public int Score { get; private set; }
         public int Kills { get; private set; }
         public int Deaths { get; private set; }
+        public float Rating { get; private set; }
         public int SpectatorID { get; private set; }
         public object StatsData { get; private set; }
 
@@ -81,6 +84,7 @@ namespace AW2.Game
             Score = score;
             Kills = spec.ArenaStatistics.Kills;
             Deaths = spec.ArenaStatistics.Deaths;
+            Rating = spec.ArenaStatistics.Rating();
             SpectatorID = spec.ID;
             StatsData = spec.StatsData;
         }

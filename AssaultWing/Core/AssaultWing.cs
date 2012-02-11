@@ -721,6 +721,7 @@ namespace AW2.Core
         private void SpectatorAddedHandler(Spectator spectator)
         {
             if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
+            spectator.ArenaStatistics.Rating = () => spectator.GetStats().Rating;
             spectator.ResetForArena();
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;

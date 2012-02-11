@@ -155,7 +155,7 @@ namespace AW2.Game
         /// </summary>
         public virtual void ResetForArena()
         {
-            ArenaStatistics = new SpectatorArenaStatistics(Game.DataEngine.GameplayMode);
+            ArenaStatistics.Reset(Game.DataEngine.GameplayMode);
         }
 
         public void ResetForClient()

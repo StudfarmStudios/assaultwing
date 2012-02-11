@@ -244,26 +244,23 @@ namespace AW2.Game
 
         private static IEnumerable<Color> GetPlayerColorPalette()
         {
-            while (true)
-            {
-                yield return Color.CornflowerBlue;
-                yield return Color.DeepPink;
-                yield return Color.Orange;
-                yield return Color.Orchid;
-                yield return Color.YellowGreen;
-                yield return Color.MediumSpringGreen;
-                yield return Color.HotPink;
-                yield return Color.Aquamarine;
-                yield return Color.Olive;
-                yield return Color.OrangeRed;
-                yield return Color.Thistle;
-                yield return Color.Violet;
-                yield return Color.Turquoise;
-                yield return Color.Fuchsia;
-                yield return Color.LightSteelBlue;
-                yield return Color.Lime;
-                // 16 unique colours total
-            }
+            yield return new Color(100, 149, 237);
+            yield return new Color(255, 20, 146);
+            yield return new Color(214, 139, 0);
+            yield return new Color(133, 73, 229);
+            yield return new Color(147, 204, 33);
+            yield return new Color(232, 67, 84);
+            yield return new Color(120, 117, 255);
+            yield return new Color(111, 219, 57);
+            yield return new Color(196, 196, 0);
+            yield return new Color(255, 69, 0);
+            yield return new Color(217, 69, 217);
+            yield return new Color(21, 207, 92);
+            yield return new Color(0, 189, 189);
+            yield return new Color(183, 52, 227);
+            yield return new Color(2, 120, 222);
+            yield return new Color(0, 189, 0);
+            // 16 unique colours total
         }
 
         #endregion Private methods

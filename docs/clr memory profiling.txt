@@ -1,0 +1,20 @@
+How to profile CLR memory usage.
+
+0. See http://msdn.microsoft.com/en-us/magazine/cc163528.aspx
+
+1. Install Windows Debugging Tools (x86).
+Try the old versions if the new ones insist on installing x64 only.
+http://msdn.microsoft.com/en-us/windows/hardware/gg463016#E6C
+http://msdn.microsoft.com/en-us/windows/hardware/gg463009.aspx
+
+2. Start WinDbg (x86).
+
+3. Attach to process. Ctrl-Break.
+
+4. .load C:\Windows\microsoft.net\framework\v4.0.30319\sos.dll
+This loads a CLR profiling add-on to WinDbg. See http://msdn.microsoft.com/fi-fi/ms404370.aspx for command help.
+
+5. Try some commands like:
+!dumpheap -stat
+!dumpheap -type System.String -min 150 -max 200
+!gcroot 1875bf74    // get the object address from !dumpheap -type...

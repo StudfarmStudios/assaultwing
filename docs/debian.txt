@@ -1,0 +1,245 @@
+# Configuring Debian 5.0.3 into Assault Wing development server
+# Ville Nurmi 2010-08-09
+# Many of the commands are interactive and some operations are only described in comments.
+
+# http://wooledge.org/~greg/sidfaq.html
+# http://www.pathname.com/fhs/pub/fhs-2.3.html
+
+# Set firewall from server4you.net client pages
+# See net.txt for what ports are used for Assault Wing.
+
+# Kill exim Mail Transfer Agent (process name exim4) because of possible security holes.
+apt-get remove exim4
+rm /etc/init.d/exim4
+
+# Set nano as default editor
+ln -sf /usr/bin/nano /usr/bin/editor
+
+# Give admin group sudo rights
+echo '%admin ALL=(root) ALL' >> /etc/sudoers
+
+groupadd admin
+groupadd cvsd
+groupadd web
+
+adduser ville
+adduser pekka
+adduser orktes
+adduser ruff
+adduser sakari
+adduser burana
+adduser neongoon
+adduser jiippa
+
+adduser ville admin
+adduser ville cvsd
+adduser ville web
+adduser pekka cvsd
+adduser pekka web
+adduser orktes admin
+adduser ruff admin
+adduser sakari cvsd
+adduser burana cvsd
+adduser neongoon cvsd
+adduser jiippa cvsd
+
+
+
+
+apt-get update
+apt-get install emacs
+apt-get install mono-2.0-devel (not necessary as long as Mono doesn't support .NET 4.0 Client Profile)
+apt-get install bzr
+
+
+# If this Bazaar version is too old (< 2.0) then get a newer backport for Debian 5 (Lenny) from
+# http://packages.debian.org/lenny-backports/i386/bzr/download
+cd ~
+mkdir pkg
+cd pkg
+wget http://backports.debian.org/debian-backports/pool/main/b/bzr/bzr_2.0.3-1~bpo50+1_i386.deb
+dpkg -i bzr_2.0.3-1~bpo50+1_i386.deb
+
+# Installing a newer Bazaar like this by hand seems to leave some dependencies unsatisfied.
+apt-get upgrade -f # upgrade and fix broken dependencies
+
+apt-get install sun-java6-jdk
+apt-get autoremove # remove unnecessary packages
+
+mkdir /var/lib/bazaar
+cd /var/lib/bazaar
+# Copy Bazaar contents here (AssaultWing, AW2MasterServer, awserver, aw-site)
+
+# Set Bazaar repository files' mode and group correctly (in case they are messed up)
+chgrp -R cvsd /var/lib/bazaar
+cd ~
+mkdir bzrtempdir
+touch bzrtempfile
+chmod g+s bzrtempdir
+chmod ug+rwx bzrtempdir
+chmod ug+rw bzrtempfile
+chgrp cvsd bzrtempdir
+chgrp cvsd bzrtempfile
+find /var/lib/bazaar -type f -exec chmod --reference=bzrtempfile '{}' +
+find /var/lib/bazaar -type d -exec chmod --reference=bzrtempdir '{}' +
+
+# Set web server files' mode and group correctly (in case they are not correct)
+# You need to run umask 002 every time before creating more files under /var/www
+# Do not set umask 002 in /etc/profile because it may reduce the security of the server
+# For WinSCP, set Preferences -> Transfer -> Upload options -> Set permissions -> 0664
+chgrp -R web /var/www
+cd ~
+mkdir webtempdir
+touch webtempfile
+chmod g+s webtempdir
+chmod ug+rwx webtempdir
+chmod ug+rw webtempfile
+chgrp web webtempdir
+chgrp web webtempfile
+find /var/www -type f -exec chmod --reference=webtempfile '{}' +
+find /var/www -type d -exec chmod --reference=webtempdir '{}' +
+
+# TeamSpeak
+# Download 3.0.0-rc1 or later from http://www.teamspeak.com/?page=downloads
+su ville
+cd ~
+wget http://ftp.4players.de/pub/hosted/ts3/releases/beta-27/teamspeak3-server_linux-x86-3.0.0-rc1.tar.gz
+tar xzf teamspeak3-server_linux-x86-3.0.0-rc1.tar.gz
+teamspeak3-server_linux-x86/ts3server_startscript.sh start
+LASTRULE=`sudo iptables -L -v --line-numbers | grep REJECT | sed 's/\([0-9]*\).*/\1/'`
+sudo iptables --insert allips-INPUT $LASTRULE --jump ACCEPT --proto udp --dport 9987
+unset LASTRULE
+
+
+# Apache
+sudo /etc/init.d/apache2 restart
+sudo chmod g+s /var/www
+sudo chmod ug+rwx /var/www
+sudo chgrp web /var/www
+
+
+# phpBB
+sudo apt-get install phpbb3
+
+# If mysql init for phpbb3 fails because of unknown password, reset it like this:
+# http://dev.mysql.com/doc/refman/5.0/en/resetting-permissions.html#resetting-permissions-unix
+
+# Copy stuff from /etc/phpbb2/apache.conf to /etc/apache2/apache2.conf
+# Remember to change paths in the Alias entries. Then restart Apache:
+/etc/init.d/apache2 restart
+
+# Now login to the forums (e.g. http://www.assaultwing.com/forums/) as admin (pw admin).
+# Change admin password!
+
+
+# IRC
+sudo apt-get install irssi
+~/bin/irc
+# /set term_charset UTF-8
+# /script exec $ENV{'TZ'}='EET';
+# /log open -autoopen -targets #aw-gbf ~/irclogs/aw-gbf-%Y-%m-%d.txt
+# /server irc.fu-berlin.de # or find a server here: http://irc.netsplit.de/servers/de/
+# /save
+# /join aw-gbf
+
+
+
+# Ville settings (lots of them)
+su ville
+
+cat <<EOF >> ~/.bashrc
+. ~/.bash_aliases
+export EDITOR=/usr/bin/nano
+#export LANG="en_US.UTF-8"
+#export LC_ALL="en_US.ISO8859-15"
+EOF
+cat <<EOF >> ~/.bash_aliases
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -CF'
+EOF
+cat <<EOF >> ~/.screenrc
+defutf8 on
+EOF
+
+mkdir ~/backups
+mkdir ~/bin
+
+cat <<EOF > ~/bin/bazaar-backup
+BACKUP=/home/ville/backups/bazaar-backup.tar
+cd /var/lib
+tar cf \$BACKUP.temp bazaar
+if [ \$? = 0 ]; then
+    mv \$BACKUP.temp \$BACKUP
+    echo Bazaar backup saved to \$BACKUP
+else
+    if [ -f \$BACKUP.temp ]; then rm \$BACKUP.temp; fi
+    echo Bazaar backup failed!
+fi
+EOF
+chmod a+x ~/bin/bazaar-backup
+
+cat <<EOF > ~/bin/web-backup
+BACKUP=/home/ville/backups/web-backup.tar
+cd /var
+tar cf \$BACKUP.temp www
+if [ \$? = 0 ]; then
+    mv \$BACKUP.temp \$BACKUP
+    echo Web backup saved to \$BACKUP
+else
+    if [ -f \$BACKUP.temp ]; then rm \$BACKUP.temp; fi
+    echo Web backup failed!
+fi
+EOF
+chmod a+x ~/bin/web-backup
+
+cat <<EOF > ~/bin/irc
+#!/bin/sh
+screen -UDR irssi irssi --connect=irc.belwue.de # OR irc.fu-berlin.de
+EOF
+chmod a+x ~/bin/irc
+
+# PuTTY and Bazaar access without typing password
+ssh-keygen # interactive
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+# copy ~/.ssh/id_rsa to home computer %USERPROFILE%\.ssh\id_rsa
+# run puttygen.exe, import id_rsa, save private key in PuTTY format
+# set PuTTY private key as auth key in PuTTY session settings
+
+# AW version control
+cd ~
+bzr checkout /var/lib/bazaar/AssaultWing/branches/HEAD/ AW
+cat <<EOF >> .profile
+if [ -d "$HOME/AW/scripts/unix" ]; then PATH="$HOME/AW/scripts/unix:$PATH"; fi
+EOF
+
+# weekly Bazaar and web backups; hourly nextgame updates
+crontab -l | (cat; echo "15 1 * * 6 /home/ville/bin/bazaar-backup") | crontab -
+crontab -l | (cat; echo "45 1 * * 6 /home/ville/bin/web-backup") | crontab -
+crontab -l | (cat; echo "0 * * * * /home/ville/AW/scripts/unix/aw-update-nextgame") | crontab -
+
+exit # back to being root
+
+
+
+
+# To run Assault Wing dedicated server (doesn't work)
+sudo apt-get install wine
+sudo apt-get install xvfb
+
+# Install Xming on the Windows where you log on to Debian.
+# It is needed in the interactive install of Mono for Windows in Wine on Debian.
+# http://sourceforge.net/projects/xming/
+
+# Download and install Mono for Windows in Wine on Debian.
+# http://www.go-mono.com/mono-downloads/download.html
+# e.g. http://ftp.novell.com/pub/mono/archive/2.10.2/windows-installer/5/mono-2.10.2-gtksharp-2.12.10-win32-5.exe
+
+# Install XNA in Wine on Debian.
+# Download XNA Framework 4.0 Redistributable from download.microsoft.com
+# e.g. wget `info.aspx?na=41&srcfamilyid=a88c6dec-aeae-42cd-a108-d35c013c3b97&srcdisplaylang=en&u=http:%2F%2Fdownload.microsoft.com%2Fdownload%2FA%2FC%2F2%2FAC2C903B-E6E8-42C2-9FD7-BEBAC362A930%2Fxnafx40_redist.msi' -O xnafx40_redist.msi
+wine start xnafx40_redist.msi
+# ERROR: XNA 4.0 requires at least .NET Framework 4 Client Profile
+# Mono (2011-06-16) doesn't provide it.
+
+# Copy Assault Wing Release build to ~/aw-install

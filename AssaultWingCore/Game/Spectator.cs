@@ -25,6 +25,8 @@ namespace AW2.Game
 
         private static int g_nextLocalID;
 
+        public static Func<INetworkSerializable> CreateStatsData;
+
         /// <summary>
         /// Meaningful only on a game client.
         /// </summary>
@@ -116,6 +118,7 @@ namespace AW2.Game
             IPAddress = ipAddress;
             Color = Color.LightGray;
             ArenaStatistics = new SpectatorArenaStatistics();
+            StatsData = CreateStatsData();
         }
 
         /// <param name="onScreen">Location of the viewport on screen.</param>

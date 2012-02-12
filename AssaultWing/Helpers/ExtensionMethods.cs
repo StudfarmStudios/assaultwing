@@ -12,7 +12,6 @@ namespace AW2.Helpers
     {
         public static SpectatorStats GetStats(this Spectator spectator)
         {
-            if (spectator.StatsData == null) spectator.StatsData = new SpectatorStats();
             return (SpectatorStats)spectator.StatsData;
         }
 

@@ -364,7 +364,7 @@ namespace AW2.Menu
         private void DrawStaticText()
         {
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            var versionText = "Assault Wing " + Game.Version;
+            var versionText = "Assault Wing " + MiscHelper.Version;
             _spriteBatch.DrawString(MenuContent.FontSmall, versionText,
                 new Vector2(10, ViewportHeight - MenuContent.FontSmall.LineSpacing).Round(), Color.White);
             if (IsHelpTextVisible)

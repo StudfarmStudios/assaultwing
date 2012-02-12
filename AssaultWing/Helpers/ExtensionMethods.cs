@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using AW2.Game;
 using AW2.Net;
-using Newtonsoft.Json.Linq;
 
 namespace AW2.Helpers
 {
@@ -26,6 +27,11 @@ namespace AW2.Helpers
                 element = element[step];
             }
             return element.ToString();
+        }
+
+        public static string GetString(this RegistryKey key, string name)
+        {
+            return (string)key.GetValue(name);
         }
     }
 }

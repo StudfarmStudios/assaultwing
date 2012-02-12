@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Deployment.Application;
 using System.Linq;
 using System.Net;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.ObjectModel;
 
 namespace AW2.Helpers
 {
@@ -27,7 +27,24 @@ namespace AW2.Helpers
                 return _isNetworkDeployed.Value;
             }
         }
-
+        public static Version Version
+        {
+            get
+            {
+                return MiscHelper.IsNetworkDeployed
+                    ? ApplicationDeployment.CurrentDeployment.CurrentVersion
+                    : new Version();
+            }
+        }
+        public static string DataDirectory
+        {
+            get
+            {
+                return MiscHelper.IsNetworkDeployed
+                    ? ApplicationDeployment.CurrentDeployment.DataDirectory
+                    : System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            }
+        }
         /// <summary>
         /// Returns the string starting with a capital letter.
         /// </summary>

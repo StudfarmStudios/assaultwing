@@ -46,24 +46,6 @@ namespace AW2.Core
         /// </summary>
         public static AssaultWingCore Instance { get; set; }
 
-        public virtual Version Version
-        {
-            get
-            {
-                return MiscHelper.IsNetworkDeployed
-                    ? ApplicationDeployment.CurrentDeployment.CurrentVersion
-                    : new Version();
-            }
-        }
-        public static string SettingsDirectory
-        {
-            get
-            {
-                return MiscHelper.IsNetworkDeployed
-                    ? ApplicationDeployment.CurrentDeployment.DataDirectory
-                    : System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            }
-        }
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; set; }
         public CommandLineOptions CommandLineOptions { get; private set; }
@@ -94,7 +76,7 @@ namespace AW2.Core
         public Window Window { get; set; }
 
         private static readonly TimeSpan ARGUMENT_FILE_AGE_MAX = TimeSpan.FromHours(1);
-        public static string ArgumentPath { get { return Path.Combine(SettingsDirectory, "arguments.txt"); } }
+        public static string ArgumentPath { get { return Path.Combine(MiscHelper.DataDirectory, "arguments.txt"); } }
         public static string GetArgumentText()
         {
             if (!File.Exists(ArgumentPath)) return "";
@@ -115,11 +97,11 @@ namespace AW2.Core
         public AssaultWingCore(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService)
         {
-            Log.Write("Assault Wing version " + Version);
+            Log.Write("Assault Wing version " + MiscHelper.Version);
             ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             CommandLineOptions = args;
-            Log.Write("Loading settings from " + SettingsDirectory);
-            Settings = AWSettings.FromFile(this, SettingsDirectory);
+            Log.Write("Loading settings from " + MiscHelper.DataDirectory);
+            Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
             InitializeGraphics();
             NetworkMode = NetworkMode.Standalone;
             GameTime = new AWGameTime();

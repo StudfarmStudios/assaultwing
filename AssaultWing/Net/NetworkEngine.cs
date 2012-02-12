@@ -483,7 +483,7 @@ namespace AW2.Net
                 MaxClients = Game.Settings.Net.GameServerMaxPlayers,
                 TCPPort = Game.Settings.Net.GameServerPort,
                 LocalEndPoint = new AWEndPoint(UDPSocket.PrivateLocalEndPoint, Game.Settings.Net.GameServerPort),
-                AWVersion = Game.Version,
+                AWVersion = MiscHelper.Version,
             };
             ManagementServerConnection.Send(message);
         }

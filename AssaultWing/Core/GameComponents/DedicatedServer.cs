@@ -115,7 +115,7 @@ namespace AW2.Core.GameComponents
 
         private void RefreshGameSettings()
         {
-            Game.Settings = AWSettings.FromFile(Game, AssaultWingCore.SettingsDirectory);
+            Game.Settings = AWSettings.FromFile(Game, MiscHelper.DataDirectory);
             if (Game.Settings.Players.BotsEnabled && !Game.DataEngine.Spectators.OfType<BotPlayer>().Any())
             {
                 Game.DataEngine.Spectators.Add(new BotPlayer(Game));

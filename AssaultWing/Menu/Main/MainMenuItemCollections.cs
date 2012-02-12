@@ -254,7 +254,7 @@ traffic or the server is down.", "No reply from management server");
             foreach (var server in mess.GameServers)
             {
                 NetworkItems.RemoveAll(item => item.Name() == NO_SERVERS_FOUND);
-                if (server.AWVersion.IsCompatibleWith(Game.Version))
+                if (server.AWVersion.IsCompatibleWith(MiscHelper.Version))
                 {
                     var shortServerName = server.Name.Substring(0, Math.Min(12, server.Name.Length));
                     var menuItemText = string.Format("Join {0}\t\x10[{1}/{2}]", shortServerName, server.CurrentPlayers, server.MaxPlayers);

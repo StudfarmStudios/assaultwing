@@ -88,7 +88,6 @@
     <Compile Include="Core\GraphicsDeviceService.cs" />
     <Compile Include="Core\StatsBase.cs" />
     <Compile Include="Core\NetworkMode.cs" />
-    <Compile Include="Core\PostInstall.cs" />
     <Compile Include="Core\Waiter.cs" />
     <Compile Include="Core\Window.cs" />
     <Compile Include="Game\ActionGob.cs" />

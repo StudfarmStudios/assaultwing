@@ -127,6 +127,7 @@
     <Compile Include="Core\OverlayComponents\OverlayDialogData.cs" />
     <Compile Include="Core\OverlayComponents\ProgressBar.cs" />
     <Compile Include="Core\OverlayComponents\SystemStatusOverlay.cs" />
+    <Compile Include="Core\PostInstall.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\DummyMenuComponent.cs" />
@@ -227,6 +228,7 @@
     <Content Include="license.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="npAssaultWingLauncher.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AssaultWingCore\AssaultWingCore.csproj">

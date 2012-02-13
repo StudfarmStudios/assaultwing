@@ -37,6 +37,7 @@ adduser ville web
 adduser pekka cvsd
 adduser pekka web
 adduser orktes admin
+adduser orktes cvsd
 adduser ruff admin
 adduser sakari cvsd
 adduser burana cvsd

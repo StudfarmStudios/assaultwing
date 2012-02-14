@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Deployment.Application;
 using System.Diagnostics;
-using System.Linq;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Win32;
 using AW2.Helpers;
@@ -16,11 +17,20 @@ namespace AW2.Core
     public static class PostInstall
     {
         private const string WEB_LAUNCHER_DLL_NAME = "npAssaultWingLauncher.dll";
-        private static string DedicatedServerScriptPath { get { return Path.Combine(ProductStartFolder, "Assault Wing Dedicated Server.cmd"); } }
-        private static string UninstallScriptPath { get { return Path.Combine(ProductStartFolder, "Uninstall Assault Wing.cmd"); } }
+        private static string DedicatedServerScriptPath { get { return Path.Combine(ProductStartFolder, ProductWithFlavour + " Dedicated Server.cmd"); } }
+        private static string UninstallScriptPath { get { return Path.Combine(ProductStartFolder, "Uninstall " + ProductWithFlavour + ".cmd"); } }
         private static string WebLauncherDllPath { get { return Path.Combine(MiscHelper.DataDirectory, WEB_LAUNCHER_DLL_NAME); } }
         private static string Publisher { get { return GetManifestDescriptionElement("asmv2:publisher"); } }
         private static string Product { get { return GetManifestDescriptionElement("asmv2:product"); } }
+        private static string ProductWithFlavour { get { return "Assault Wing" + ProductFlavourSuffix; } }
+        private static string ProductFlavourSuffix
+        {
+            get
+            {
+                var match = Regex.Matches(Product, @"\(.*\)").OfType<Match>().FirstOrDefault();
+                return match == null ? "" : " " + match.Groups[0].Value;
+            }
+        }
         private static string ProductLauncher { get { return Path.Combine(ProductStartFolder, Product + ".appref-ms"); } }
         private static string ProductStartFolder { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), Publisher); } }
         private static string UninstallString { get { return GetMatchingUninstallStrings().SingleOrDefault() ?? ""; } }

@@ -18,7 +18,7 @@ namespace AW2.Net
 
         public string PilotId { get; private set; }
         public string LoginToken { get; private set; }
-        public bool IsLoggedIn { get { return !string.IsNullOrEmpty(LoginToken); } }
+        public bool IsLoggedIn { get { return LoginToken != ""; } }
         public float Rating { get; private set; }
         public int RatingRank { get; private set; }
 
@@ -26,6 +26,11 @@ namespace AW2.Net
         /// Received from web page "pilot/id/.../rankings".
         /// </summary>
         public JObject RankingsData { get; set; }
+
+        public SpectatorStats()
+        {
+            LoginToken = "";
+        }
 
         public void Update(JObject obj)
         {
@@ -41,7 +46,7 @@ namespace AW2.Net
 
         public void Logout()
         {
-            LoginToken = null;
+            LoginToken = "";
         }
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

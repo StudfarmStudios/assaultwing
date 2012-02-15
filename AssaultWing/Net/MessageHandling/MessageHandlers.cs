@@ -10,8 +10,8 @@ using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
-using AW2.UI;
 using AW2.Net.Connections;
+using AW2.UI;
 
 namespace AW2.Net.MessageHandling
 {

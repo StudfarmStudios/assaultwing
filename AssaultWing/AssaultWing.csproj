@@ -57,8 +57,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <AssemblyName>AssaultWing</AssemblyName>
-    <InstallUrl>http://koti.welho.com/vvnurmi/aw2/install/</InstallUrl>
-    <ProductName>Assault Wing - Galactic Battlefront %28dev%29</ProductName>
+    <InstallUrl>http://www.assaultwing.com/install/</InstallUrl>
+    <ProductName>Assault Wing - Galactic Battlefront</ProductName>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>

@@ -8,7 +8,6 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AW2</RootNamespace>
-    <AssemblyName>AssaultWing</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
@@ -29,12 +28,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://www.assaultwing.com/install/</InstallUrl>
-    <ProductName>Assault Wing - Galactic Battlefront</ProductName>
     <PublisherName>Studfarm Studios</PublisherName>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.16.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -43,6 +40,9 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <AssemblyName>AssaultWing</AssemblyName>
+    <InstallUrl>http://www.assaultwing.com/install/</InstallUrl>
+    <ProductName>Assault Wing - Galactic Battlefront</ProductName>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -56,9 +56,27 @@
     <XnaCompressContent>False</XnaCompressContent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <AssemblyName>AssaultWing</AssemblyName>
+    <InstallUrl>http://koti.welho.com/vvnurmi/aw2/install/</InstallUrl>
+    <ProductName>Assault Wing - Galactic Battlefront %28dev%29</ProductName>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>
+    <DefineConstants>TRACE;WINDOWS;NETWORK_PROFILING</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <XnaCompressContent>False</XnaCompressContent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseDev|x86' ">
+    <AssemblyName>AssaultWingDev</AssemblyName>
+    <InstallUrl>http://koti.welho.com/vvnurmi/aw2/install/</InstallUrl>
+    <ProductName>Assault Wing - Galactic Battlefront %28dev%29</ProductName>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x86\ReleaseDev</OutputPath>
     <DefineConstants>TRACE;WINDOWS;NETWORK_PROFILING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

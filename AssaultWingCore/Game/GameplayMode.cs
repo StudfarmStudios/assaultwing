@@ -33,6 +33,9 @@ namespace AW2.Game
         public void Reset(GameplayMode gameplayMode)
         {
             Lives = gameplayMode.StartLives;
+            Kills = 0;
+            Deaths = 0;
+            KillsWithoutDying = 0;
         }
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

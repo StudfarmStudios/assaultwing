@@ -21,8 +21,9 @@ end
 
 if __FILE__ == $PROGRAM_NAME
     if ARGV.length < 2
-        puts "Usage:   ruby aw_config.rb [XPATH] [NEW_VALUE]"
-        puts "Example: ruby aw_config.rb //botsEnabled false"
+        me = Pathname(__FILE__).basename
+        puts "Usage:   ruby #{me} [XPATH] [NEW_VALUE]"
+        puts "Example: ruby #{me} //botsEnabled false"
         puts "The config files are #{AWConfig.filepaths}"
         exit
     end

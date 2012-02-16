@@ -13,11 +13,14 @@ class AWProjectFile < XMLFile
 end
 
 if __FILE__ == $PROGRAM_NAME
-    if ARGV.length < 2
-        puts "Usage:    ruby xml_file.rb [XPATH] [NEW_VALUE]"
-        puts "Examples: ruby xml_file.rb //ApplicationRevision 42"
-        puts "          ruby xml_file.rb //ApplicationVersion 1.69.0.%2a"
-        puts "The config file is #{AWProjectFile.new.path}"
+    if ARGV.length < 1
+        me = Pathname(__FILE__).basename
+        puts "Usage:    ruby #{me} [XPATH] [NEW_VALUE]"
+        puts "Sets NEW_VALUE if given, otherwise shows the current value."
+        puts "Examples: ruby #{me} //ApplicationRevision"
+        puts "          ruby #{me} //ApplicationRevision 42"
+        puts "          ruby #{me} //ApplicationVersion 1.69.0.%2a"
+        puts "The project file is #{AWProjectFile.new.path}"
         exit
     end
     config = AWProjectFile.new

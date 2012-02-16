@@ -6,7 +6,7 @@ echo.
 pause
 SET ROOT=%~dp0%..
 set FLAVOUR=%1
-call msbuild %ROOT%\AssaultWing.sln /target:Publish /p:Configuration=Release%FLAVOUR% /p:Platform=x86
-start %ROOT%\AssaultWing\bin\x86\Release%FLAVOUR%\app.publish
-echo TODO: Increment revision number in AssaultWing.csproj
+call msbuild "%ROOT%\AssaultWing.sln" /target:Publish /p:Configuration=Release%FLAVOUR% /p:Platform=x86
+start "" "%ROOT%\AssaultWing\bin\x86\Release%FLAVOUR%\app.publish"
+ruby "%~dp0%aw_project_file.rb" //ApplicationRevision ++
 pause

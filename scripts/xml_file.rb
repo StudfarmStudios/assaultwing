@@ -35,4 +35,12 @@ class XMLFile
         @file.elements.each(xpath) {|e| values << e.text}
         values
     end
+    
+    def increment(xpath)
+        @file.elements.each(xpath) do |e|
+            next unless e.text =~ /[0-9]+/
+            e.text = (e.text.to_i + 1).to_s
+            puts "#{e.xpath} = #{e.text}" if @verbose
+        end
+    end
 end

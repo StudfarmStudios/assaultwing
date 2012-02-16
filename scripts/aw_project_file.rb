@@ -15,19 +15,25 @@ end
 if __FILE__ == $PROGRAM_NAME
     if ARGV.length < 1
         me = Pathname(__FILE__).basename
-        puts "Usage:    ruby #{me} [XPATH] [NEW_VALUE]"
+        puts "Usage:    ruby #{me} [XPATH] [NEW_VALUE|++]"
         puts "Sets NEW_VALUE if given, otherwise shows the current value."
+        puts "Parameter ++ increments integral values."
         puts "Examples: ruby #{me} //ApplicationRevision"
         puts "          ruby #{me} //ApplicationRevision 42"
+        puts "          ruby #{me} //ApplicationRevision ++"
         puts "          ruby #{me} //ApplicationVersion 1.69.0.%2a"
         puts "The project file is #{AWProjectFile.new.path}"
         exit
     end
     config = AWProjectFile.new
     if ARGV.length < 2
-        puts config.get(*ARGV)
+        puts config.get(ARGV[0])
         exit
     end
-    config.set *ARGV
+    if ARGV[1] == "++"
+        config.increment ARGV[0]
+    else
+        config.set *ARGV
+    end
     config.save
 end

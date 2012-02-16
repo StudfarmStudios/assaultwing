@@ -1,39 +1,13 @@
 require 'english'
-require 'fileutils'
 require 'pathname'
-require 'tempfile'
-require 'rexml/document'
+def include_dir; Pathname(__FILE__).expand_path.dirname end
+require (include_dir + 'xml_file').to_s
 
-class AWConfig
-    include REXML
-
-    def initialize(verbose = true)
-        @verbose = verbose
-        @config_file = find_config_file
-        @config = Document.new(IO.read(@config_file))
-    end
-
-    def path; @config_file.to_s.gsub("/", "\\") end
-
-    def save
-        formatter = Formatters::Pretty.new
-        formatter.compact = true
-        new_file = Tempfile.open(["aw_config", ".xml"])
-        formatter.write(@config, new_file)
-        new_file.close
-        FileUtils.mv(new_file.path, @config_file)
-    end
-
-    def set(xpath, text_value)
-        @config.elements.each(xpath) do |e|
-            puts "#{e.xpath} = #{text_value}" if @verbose
-            e.text = text_value
-        end
-    end
+class AWConfig < XMLFile
 
     private
 
-    def find_config_file
+    def find_filepath
         data_root = Pathname(ENV["APPDATA"]) + ".." + "Local" + "Apps" + "2.0"+ "Data"
         data_dirs = []
         data_root.find {|f| data_dirs << f if f.basename.to_s =~ /assa\.\.tion/ }

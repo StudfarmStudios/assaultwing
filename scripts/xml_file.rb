@@ -6,9 +6,9 @@ require 'rexml/document'
 class XMLFile
     include REXML
 
-    def initialize(verbose = true)
+    def initialize(filepath, verbose = true)
         @verbose = verbose
-        @filepath = find_filepath
+        @filepath = filepath
         @file = Document.new(IO.read(@filepath))
     end
 
@@ -29,9 +29,5 @@ class XMLFile
             e.text = text_value
         end
     end
-    
-    private
-    
-    def find_filepath; raise "Not implemented" end
 
 end

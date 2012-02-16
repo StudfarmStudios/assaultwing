@@ -5,15 +5,17 @@ require (include_dir + 'xml_file').to_s
 
 class AWConfig < XMLFile
 
-    private
+    def self.each; filepaths.each {|filepath| yield new filepath} end
 
-    def find_filepath
-        data_root = Pathname(ENV["APPDATA"]) + ".." + "Local" + "Apps" + "2.0"+ "Data"
-        data_dirs = []
-        data_root.find {|f| data_dirs << f if f.basename.to_s =~ /assa\.\.tion/ }
-        latest_data_dir = data_dirs.sort{|d,e| e.ctime <=> d.ctime}.first
-        latest_data_dir.find{|f| return f.to_s if f.basename.to_s == "AssaultWing_config.xml"}
-        raise "No config file found"
+    def self.filepaths
+        data_root = (Pathname(ENV["APPDATA"]) + ".." + "Local" + "Apps" + "2.0" + "Data").realpath
+        config_files = Pathname.glob(data_root + "**" + "AssaultWing_config.xml").
+            sort_by{|f| f.dirname.ctime}.
+            map{|f| f.to_s}
+        # Note: config_files may contain both a current and a previous version of the public AW and the developer AW.
+        # To distinguish between current and previous, see directory creation date.
+        # To distinguish between public and developer flavours, add some distinguishing file in the dirs at AW FirstRun.
+        config_files
     end
 end
 
@@ -21,10 +23,11 @@ if __FILE__ == $PROGRAM_NAME
     if ARGV.length < 2
         puts "Usage:   ruby aw_config.rb [XPATH] [NEW_VALUE]"
         puts "Example: ruby aw_config.rb //botsEnabled false"
-        puts "The config file is #{AWConfig.new.path}"
+        puts "The config files are #{AWConfig.filepaths}"
         exit
     end
-    config = AWConfig.new
-    config.set *ARGV
-    config.save
+    AWConfig.each do |config|
+        config.set *ARGV
+        config.save
+    end
 end

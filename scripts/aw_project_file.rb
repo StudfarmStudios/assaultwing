@@ -24,6 +24,10 @@ if __FILE__ == $PROGRAM_NAME
         exit
     end
     config = AWProjectFile.new
+    if ARGV.length < 2
+        puts config.get(*ARGV)
+        exit
+    end
     config.set *ARGV
     config.save
 end

@@ -30,4 +30,9 @@ class XMLFile
         end
     end
 
+    def get(xpath)
+        values = []
+        @file.elements.each(xpath) {|e| values << e.text}
+        values
+    end
 end

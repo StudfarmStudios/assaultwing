@@ -5,9 +5,9 @@ require (include_dir + 'xml_file').to_s
 
 class AWProjectFile < XMLFile
 
-    private
+    def initialize; super(self.class.filepath) end
 
-    def find_filepath
+    def self.filepath
         (Pathname(__FILE__).dirname.parent + "AssaultWing" + "AssaultWing.csproj").realpath
     end
 end

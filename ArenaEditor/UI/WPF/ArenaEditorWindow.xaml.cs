@@ -292,7 +292,7 @@ namespace AW2.UI.WPF
 
         private void InitializeGame(string[] args, string argumentText)
         {
-            _game = new AssaultWingCore(_graphicsDeviceService, new CommandLineOptions(args, argumentText));
+            _game = new AssaultWingCore(_graphicsDeviceService, new CommandLineOptions(args, MiscHelper.QueryParams, argumentText));
             _game.Window = new Core.Window(new Core.Window.WindowImpl
             {
                 GetTitle = () => Title,

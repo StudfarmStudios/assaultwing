@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Deployment.Application;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -27,11 +30,20 @@ namespace AW2.Helpers
                 return _isNetworkDeployed.Value;
             }
         }
+        public static NameValueCollection QueryParams
+        {
+            get
+            {
+                return IsNetworkDeployed && ApplicationDeployment.CurrentDeployment.ActivationUri != null
+                    ? ParseQueryString(ApplicationDeployment.CurrentDeployment.ActivationUri.Query)
+                    : new NameValueCollection();
+            }
+        }
         public static Version Version
         {
             get
             {
-                return MiscHelper.IsNetworkDeployed
+                return IsNetworkDeployed
                     ? ApplicationDeployment.CurrentDeployment.CurrentVersion
                     : new Version();
             }
@@ -40,7 +52,7 @@ namespace AW2.Helpers
         {
             get
             {
-                return MiscHelper.IsNetworkDeployed
+                return IsNetworkDeployed
                     ? ApplicationDeployment.CurrentDeployment.DataDirectory
                     : System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }
@@ -105,6 +117,49 @@ namespace AW2.Helpers
             remainingTimeSpan -= TimeSpan.FromSeconds(append(remainingTimeSpan.TotalSeconds, second));
             if (str.Length > 0) str.Remove(str.Length - 1, 1); // remove trailing space
             return str.ToString();
+        }
+
+        /// <summary>
+        /// Like <see cref="System.Web.HttpUtility.ParseQueryString"/> but works with .NET 4.0 Client Profile
+        /// instead of the full .NET 4.0 Framework.
+        /// </summary>
+        public static NameValueCollection ParseQueryString(string queryString)
+        {
+            // Adapted on 2012-02-17 from Scott Dorman's code at http://stackoverflow.com/a/68803.
+            var queryParameters = new NameValueCollection();
+            var querySegments = queryString.TrimStart('?').Split('&');
+            foreach (var segment in querySegments)
+            {
+                var parts = segment.Split('=');
+                if (parts.Length != 2) continue;
+                var key = UrlDecode(parts[0].Trim());
+                var val = UrlDecode(parts[1].Trim());
+                queryParameters.Add(key, val);
+            }
+            return queryParameters;
+        }
+
+        /// <summary>
+        /// Like <see cref="System.Web.HttpUtility.UrlDecode"/> but works with .NET 4.0 Client Profile
+        /// instead of the full .NET 4.0 Framework.
+        /// </summary>
+        public static string UrlDecode(string str)
+        {
+            return Regex.Replace(str, "(%..)+", match =>
+            {
+                var matchStr = match.ToString();
+                try
+                {
+                    var bytes = new byte[matchStr.Length / 3];
+                    for (int i = 0; i < matchStr.Length; i += 3)
+                        bytes[i / 3] = byte.Parse(matchStr.Substring(i + 1, 2), NumberStyles.AllowHexSpecifier);
+                    return Encoding.UTF8.GetString(bytes);
+                }
+                catch
+                {
+                    return matchStr;
+                }
+            });
         }
 
         /// <summary>

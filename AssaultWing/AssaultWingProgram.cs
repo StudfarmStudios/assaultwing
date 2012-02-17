@@ -29,7 +29,7 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), AssaultWingCore.GetArgumentText());
+            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
             PostInstall.EnsureDone();
             AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
             try

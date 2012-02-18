@@ -133,8 +133,8 @@ namespace AW2.Helpers
                 var parts = segment.Split('=');
                 if (parts.Length != 2) continue;
                 var key = UrlDecode(parts[0].Trim());
-                var val = UrlDecode(parts[1].Trim());
-                queryParameters.Add(key, val);
+                var value = UrlDecode(parts[1].Trim());
+                queryParameters.Add(key, value);
             }
             return queryParameters;
         }

@@ -46,9 +46,9 @@ namespace AW2.Core
         public bool DeleteTemplates { get; set; }
         public string ArenaFilename { get; set; }
 
-        public CommandLineOptions(string[] commandLineArgs, NameValueCollection queryStringParams, string argumentText)
+        public CommandLineOptions(string[] commandLineArgs, NameValueCollection queryParams, string argumentText)
         {
-            var args = new ProgramArgs(commandLineArgs, queryStringParams, argumentText);
+            var args = new ProgramArgs(commandLineArgs, queryParams, argumentText);
             DedicatedServer = args.IsSet("dedicated_server");
             SaveTemplates = args.IsSet("save_templates");
             DeleteTemplates = args.IsSet("delete_templates");

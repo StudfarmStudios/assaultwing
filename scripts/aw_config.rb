@@ -1,56 +1,34 @@
 require 'english'
-require 'fileutils'
 require 'pathname'
-require 'tempfile'
-require 'rexml/document'
+def include_dir; Pathname(__FILE__).expand_path.dirname end
+require (include_dir + 'xml_file').to_s
 
-class AWConfig
-    include REXML
+class AWConfig < XMLFile
 
-    def initialize(verbose = true)
-        @verbose = verbose
-        @config_file = find_config_file
-        @config = Document.new(IO.read(@config_file))
-    end
+    def self.each; filepaths.each {|filepath| yield new filepath} end
 
-    def path; @config_file.to_s.gsub("/", "\\") end
-
-    def save
-        formatter = Formatters::Pretty.new
-        formatter.compact = true
-        new_file = Tempfile.open(["aw_config", ".xml"])
-        formatter.write(@config, new_file)
-        new_file.close
-        FileUtils.mv(new_file.path, @config_file)
-    end
-
-    def set(xpath, text_value)
-        @config.elements.each(xpath) do |e|
-            puts "#{e.xpath} = #{text_value}" if @verbose
-            e.text = text_value
-        end
-    end
-
-    private
-
-    def find_config_file
-        data_root = Pathname(ENV["APPDATA"]) + ".." + "Local" + "Apps" + "2.0"+ "Data"
-        data_dirs = []
-        data_root.find {|f| data_dirs << f if f.basename.to_s =~ /assa\.\.tion/ }
-        latest_data_dir = data_dirs.sort{|d,e| e.ctime <=> d.ctime}.first
-        latest_data_dir.find{|f| return f.to_s if f.basename.to_s == "AssaultWing_config.xml"}
-        raise "No config file found"
+    def self.filepaths
+        data_root = (Pathname(ENV["APPDATA"]) + ".." + "Local" + "Apps" + "2.0" + "Data").realpath
+        config_files = Pathname.glob(data_root + "**" + "AssaultWing_config.xml").
+            sort_by{|f| f.dirname.ctime}.
+            map{|f| f.to_s}
+        # Note: config_files may contain both a current and a previous version of the public AW and the developer AW.
+        # To distinguish between current and previous, see directory creation date.
+        # To distinguish between public and developer flavours, add some distinguishing file in the dirs at AW FirstRun.
+        config_files
     end
 end
 
 if __FILE__ == $PROGRAM_NAME
     if ARGV.length < 2
-        puts "Usage:   ruby aw_config.rb [XPATH] [NEW_VALUE]"
-        puts "Example: ruby aw_config.rb //botsEnabled false"
-        puts "The config file is #{AWConfig.new.path}"
+        me = Pathname(__FILE__).basename
+        puts "Usage:   ruby #{me} [XPATH] [NEW_VALUE]"
+        puts "Example: ruby #{me} //botsEnabled false"
+        puts "The config files are #{AWConfig.filepaths}"
         exit
     end
-    config = AWConfig.new
-    config.set *ARGV
-    config.save
+    AWConfig.each do |config|
+        config.set *ARGV
+        config.save
+    end
 end

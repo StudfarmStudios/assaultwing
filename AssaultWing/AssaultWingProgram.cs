@@ -1,4 +1,5 @@
 using System;
+using System.Deployment.Application;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
@@ -29,7 +30,8 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), AssaultWingCore.GetArgumentText());
+            if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
+            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
             PostInstall.EnsureDone();
             AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
             try

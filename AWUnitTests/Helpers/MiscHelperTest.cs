@@ -1,5 +1,7 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
+using System.Collections.Specialized;
+using System.Linq;
+using NUnit.Framework;
 
 namespace AW2.Helpers
 {
@@ -55,6 +57,22 @@ namespace AW2.Helpers
         }
 
         [Test]
+        public void TestParseQueryString()
+        {
+            NameValueCollectionsEqual(new NameValueCollection(), MiscHelper.ParseQueryString("?"));
+            var expected = new NameValueCollection();
+            expected.Add("key", "value");
+            NameValueCollectionsEqual(expected, MiscHelper.ParseQueryString("?key=value"));
+            expected = new NameValueCollection();
+            expected.Add("key", "value,other value");
+            NameValueCollectionsEqual(expected, MiscHelper.ParseQueryString("?key=value&key=other%20value"));
+            expected = new NameValueCollection();
+            expected.Add("+09?", "?1§2?");
+            expected.Add("/foo?", "?other v/ää/ue?");
+            NameValueCollectionsEqual(expected, MiscHelper.ParseQueryString("?\t+09?  = ?1§2? & %2ffoo? = ?other v%2f%c3%A4%c3%A4%2Fue? "));
+        }
+
+        [Test]
         public void TestFirstDifference()
         {
             object a, b;
@@ -101,6 +119,17 @@ namespace AW2.Helpers
             Assert.AreEqual("00,01,02,03", firstFour);
             var lastFour = MiscHelper.BytesToString(new ArraySegment<byte>(bytes, 4, 4));
             Assert.AreEqual("FF,28,80,7F", lastFour);
+        }
+
+        private void NameValueCollectionsEqual(NameValueCollection a, NameValueCollection b)
+        {
+            Assert.AreEqual(a.Count, b.Count, "NameValueCollections are of different size");
+            var aKeys = a.Keys.Cast<string>().OrderBy(aKey => aKey);
+            var bKeys = b.Keys.Cast<string>().OrderBy(bKey => bKey);
+            var aValues = aKeys.Select(aKey => a[aKey]);
+            var bValues = bKeys.Select(bKey => b[bKey]);
+            Assert.AreEqual(aKeys.ToArray(), bKeys.ToArray(), "NameValuecollection keys differ");
+            Assert.AreEqual(aValues.ToArray(), bValues.ToArray(), "NameValuecollection values differ");
         }
     }
 }

@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="ArenaEditorProgram.cs" />
     <Compile Include="Game\MockStats.cs" />
+    <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="UI\WPF\ArenaEditorWindow.xaml.cs">
       <DependentUpon>ArenaEditorWindow.xaml</DependentUpon>
     </Compile>

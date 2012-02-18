@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using AW2.Core;
 using AW2.Helpers;
 using AW2.UI.WPF;
 
@@ -16,10 +15,7 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            using (var program = new ArenaEditorProgram(args))
-            {
-                program.Run();
-            }
+            using (var program = new ArenaEditorProgram(args)) program.Run();
         }
 
         public ArenaEditorProgram(string[] args)
@@ -38,11 +34,8 @@ namespace AW2
 
         public void Dispose()
         {
-            if (_editor != null)
-            {
-                _editor.Dispose();
-                _editor = null;
-            }
+            if (_editor != null) _editor.Dispose();
+            _editor = null;
         }
     }
 }

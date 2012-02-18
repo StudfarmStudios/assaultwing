@@ -184,6 +184,10 @@
       <Project>{1813E562-567E-4D87-BDDF-4E1DE1E47022}</Project>
       <Name>AssaultWingCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UncompressedHost\UncompressedHost.csproj">
+      <Project>{57DE33F4-542D-4FD8-B9B4-A6C776E0D218}</Project>
+      <Name>UncompressedHost</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ArenaEditor.ico" />

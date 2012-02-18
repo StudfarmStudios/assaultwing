@@ -337,7 +337,7 @@ namespace AW2.Graphics
                 var texCenter = GetScale(layer.Z) * CurrentLookAt / _effect.Texture.Dimensions();
                 var texCornerOffset = new Vector2(
                     Viewport.Width / (2f * _effect.Texture.Width) / ZoomRatio,
-                    Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;
+                    Viewport.Height / (2f * _effect.Texture.Height) / ZoomRatio);
                 _vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
                 _vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
                 _vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);

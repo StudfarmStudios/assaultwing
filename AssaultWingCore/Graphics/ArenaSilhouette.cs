@@ -49,6 +49,7 @@ namespace AW2.Graphics
 
         public void EnsureUpdated()
         {
+            if (Game.DataEngine.Arena == null) return;
             if (ArenaRadarSilhouette != null && (!UpdateArenaRadarSilhouette || _lastArenaRadarSilhouetteUpdate.SecondsAgoGameTime() < 0.5f)) return;
             RefreshArenaToRadarTransform();
             RefreshArenaRadarSilhouette();

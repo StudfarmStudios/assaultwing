@@ -29,5 +29,10 @@ namespace AW2.Game
             if (ViewportCreated != null) ViewportCreated(viewport);
             return viewport;
         }
+
+        public override void ResetForArena()
+        {
+            // Do nothing.
+        }
     }
 }

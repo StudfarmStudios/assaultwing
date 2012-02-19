@@ -56,6 +56,7 @@ namespace AW2.Graphics
         private Viewport Viewport { get; set; }
 
         private SpriteBatch SpriteBatch { get { return Game.GraphicsEngine.GameContent.ViewportSpriteBatch; } }
+        private GraphicsDevice GraphicsDevice { get { return Game.GraphicsDeviceService.GraphicsDevice; } }
 
         /// <summary>
         /// The matrix for projecting world coordinates to view coordinates.
@@ -118,9 +119,7 @@ namespace AW2.Graphics
             // Note: Z coordinate in view space is irrelevant because we have
             // an orthogonal projection from game world space to view space.
             var viewPos = new Vector3(pointInViewport, 0f);
-            var view = ViewMatrix;
-            var projection = GetProjectionMatrix(z);
-            var worldPos = Viewport.Unproject(viewPos, projection, view, Matrix.Identity);
+            var worldPos = Viewport.Unproject(viewPos, GetProjectionMatrix(z), ViewMatrix, Matrix.Identity);
             return new Vector2(worldPos.X, worldPos.Y);
         }
 
@@ -138,9 +137,7 @@ namespace AW2.Graphics
             var projection = GetProjectionMatrix(z);
             var nearWorld = Viewport.Unproject(nearView, projection, view, Matrix.Identity);
             var farWorld = Viewport.Unproject(farView, projection, view, Matrix.Identity);
-            var direction = farWorld - nearWorld;
-            direction.Normalize();
-            return new Ray(nearWorld, direction);
+            return new Ray(nearWorld, Vector3.Normalize(farWorld - nearWorld));
         }
 
         public void PrepareForDraw()
@@ -242,16 +239,15 @@ namespace AW2.Graphics
 
         private void RenderGameWorld()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            if (AssaultWingCore.Instance.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
-            int layerIndex = AssaultWingCore.Instance.DataEngine.Arena.Layers.Count();
-            gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
-            foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
+            if (Game.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
+            var layerIndex = Game.DataEngine.Arena.Layers.Count();
+            GraphicsDevice.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
+            foreach (var layer in Game.DataEngine.Arena.Layers)
             {
-                Matrix translationMatrix = Matrix.CreateTranslation(0, 0, -1024 * layerIndex--);
+                var translationMatrix = Matrix.CreateTranslation(0, 0, -1024 * layerIndex--);
                 var view = Matrix.Multiply(ViewMatrix, translationMatrix);
                 if (LayerDrawing != null && !LayerDrawing(layer)) continue;
-                float layerScale = GetScale(layer.Z);
+                var layerScale = GetScale(layer.Z);
                 var projection = GetProjectionMatrix(layer.Z);
                 DrawParallax(layer);
                 Draw3D(layer, ref view, ref projection);
@@ -262,11 +258,10 @@ namespace AW2.Graphics
 
         private void DoInMyViewport(Action action)
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            var oldViewport = gfx.Viewport;
-            gfx.Viewport = Viewport;
+            var oldViewport = GraphicsDevice.Viewport;
+            GraphicsDevice.Viewport = Viewport;
             action();
-            gfx.Viewport = oldViewport;
+            GraphicsDevice.Viewport = oldViewport;
         }
 
         private void Draw3D(ArenaLayer layer, ref Matrix view, ref Matrix projection)
@@ -315,22 +310,20 @@ namespace AW2.Graphics
 
         private void DrawOverlayComponents()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            gfx.Viewport = Viewport;
+            GraphicsDevice.Viewport = Viewport;
             foreach (var component in _overlayComponents) component.Draw(SpriteBatch);
         }
 
         private void DrawParallax(ArenaLayer layer)
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             if (layer.ParallaxName != "")
             {
-                var oldState = gfx.BlendState;
+                var oldState = GraphicsDevice.BlendState;
 
                 // Modify renderstate for parallax.
-                gfx.SamplerStates[0] = SamplerState.LinearWrap;
-                gfx.BlendState = BlendState.AlphaBlend;
-                gfx.DepthStencilState = DepthStencilState.None;
+                GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+                GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                GraphicsDevice.DepthStencilState = DepthStencilState.None;
 
                 // Render looping parallax as two huge triangles.
                 _effect.Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
@@ -343,12 +336,12 @@ namespace AW2.Graphics
                 _vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
                 _vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
                 _effect.CurrentTechnique.Passes[0].Apply();
-                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
+                GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
             }
             // Modify renderstate for 3D graphics.
-            gfx.SamplerStates[0] = SamplerState.LinearWrap;
-            gfx.DepthStencilState = DepthStencilState.Default;
-            gfx.BlendState = BlendState.Opaque;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
         }
     }
 

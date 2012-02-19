@@ -18,8 +18,6 @@ namespace AW2.Game.Gobs
     /// <see cref="AW2.Game.Gobs.Wall"/>
     public class WallModel : Wall
     {
-        #region WallModel Fields
-
         /// <summary>
         /// The name of the 3D model to draw the wall with.
         /// </summary>
@@ -27,33 +25,19 @@ namespace AW2.Game.Gobs
         [RuntimeState]
         private CanonicalString wallModelName;
 
-        #endregion // WallModel Fields
-
-        #region WallModel Properties
-
-        /// <summary>
-        /// Names of all models that this gob type will ever use.
-        /// </summary>
         public override IEnumerable<CanonicalString> ModelNames
         {
             get { return base.ModelNames.Union(new CanonicalString[] { wallModelName }); }
         }
 
-        #endregion // WallModel Properties
-
         /// <summary>
-        /// Creates an uninitialised piece of wall.
+        /// Only for serialisation.
         /// </summary>
-        /// This constructor is only for serialisation.
         public WallModel()
         {
             wallModelName = (CanonicalString)"dummymodel";
         }
 
-        /// <summary>
-        /// Creates a piece of wall.
-        /// </summary>
-        /// <param name="typeName">The type of the wall.</param>
         public WallModel(CanonicalString typeName)
             : base(typeName)
         {
@@ -62,21 +46,12 @@ namespace AW2.Game.Gobs
 
         #region Methods related to gobs' functionality in the game world
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             base.LoadContent();
             Set3DModel();
         }
 
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
-        /// DataEngine will call this method to make the gob do necessary 
-        /// initialisations to make it fully functional on addition to 
-        /// an ongoing play of the game.
         public override void Activate()
         {
             if (!Arena.IsForPlaying) ModelName = wallModelName;

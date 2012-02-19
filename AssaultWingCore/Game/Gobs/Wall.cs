@@ -147,7 +147,6 @@ namespace AW2.Game.Gobs
             Effect.Projection = projection;
             Effect.View = view;
             Effect.Texture = Texture;
-            Effect.TextureEnabled = true;
             Arena.PrepareEffect(Effect);
             foreach (var pass in Effect.CurrentTechnique.Passes)
             {
@@ -164,7 +163,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
-            if (!Arena.IsForPlaying) return; // TODO !!! Lift DrawSilhouette to Gob and remove duplication with Draw3D.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             var silhouetteEffect = Game.GraphicsEngine.GameContent.WallSilhouetteEffect;
             silhouetteEffect.Projection = projection;

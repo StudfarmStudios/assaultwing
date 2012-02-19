@@ -368,6 +368,7 @@ namespace AW2.Game
         /// <summary>
         /// Names of all 3D models that this gob type will ever use.
         /// </summary>
+        // TODO !!! Remove. Just load all available content.
         public virtual IEnumerable<CanonicalString> ModelNames
         {
             get { return new List<CanonicalString> { _modelName }; }
@@ -376,6 +377,7 @@ namespace AW2.Game
         /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
+        // TODO !!! Remove. Just load all available content.
         public virtual IEnumerable<CanonicalString> TextureNames
         {
             get { return new List<CanonicalString>(); }

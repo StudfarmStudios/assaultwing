@@ -264,10 +264,10 @@ namespace AW2.Game.GobUtils
 
         private RemoveTriangleDelegate _removeTriangle;
 
-        public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, VertexPositionNormalTexture[] vertexData, short[] indexData)
+        public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, Vector2[] vertexPositions, short[] indexData)
             : this(removeTriangle, boundingBox)
         {
-            Initialize(vertexData, indexData, boundingBox);
+            Initialize(vertexPositions, indexData, boundingBox);
         }
 
         public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, System.IO.BinaryReader reader)
@@ -338,20 +338,20 @@ namespace AW2.Game.GobUtils
             }
         }
 
-        private static Point PointFromVertex(VertexPositionNormalTexture vertex, Vector2 origin)
+        private static Point Vector2ToPoint(Vector2 vertexPosition, Vector2 origin)
         {
-            return new Point((int)(vertex.Position.X - origin.X), (int)(vertex.Position.Y - origin.Y));
+            return new Point((int)(vertexPosition.X - origin.X), (int)(vertexPosition.Y - origin.Y));
         }
 
-        private void Initialize(VertexPositionNormalTexture[] vertexData, short[] indexData, AWRectangle boundingArea)
+        private void Initialize(Vector2[] vertexPositions, short[] indexData, AWRectangle boundingArea)
         {
             var modelDim = boundingArea.Dimensions;
             _data = new IndexMapData((int)Math.Ceiling(modelDim.X) + 1, (int)Math.Ceiling(modelDim.Y) + 1);
             for (int indexI = 0; indexI < indexData.Length; indexI += 3)
             {
-                var point1 = PointFromVertex(vertexData[indexData[indexI + 0]], boundingArea.Min);
-                var point2 = PointFromVertex(vertexData[indexData[indexI + 1]], boundingArea.Min);
-                var point3 = PointFromVertex(vertexData[indexData[indexI + 2]], boundingArea.Min);
+                var point1 = Vector2ToPoint(vertexPositions[indexData[indexI + 0]], boundingArea.Min);
+                var point2 = Vector2ToPoint(vertexPositions[indexData[indexI + 1]], boundingArea.Min);
+                var point3 = Vector2ToPoint(vertexPositions[indexData[indexI + 2]], boundingArea.Min);
                 AWMathHelper.FillTriangle(point1, point2, point3, (x, y) => _data.Add(x, y, indexI / 3));
             }
             _data.ComputeTriangleCovers(indexData.Length / 3);

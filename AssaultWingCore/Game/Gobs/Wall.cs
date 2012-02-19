@@ -221,7 +221,12 @@ namespace AW2.Game.Gobs
 
         public WallIndexMap CreateIndexMap()
         {
-            var indexMap = new WallIndexMap(_removedTriangleIndices.Add, GetBoundingBox(), _vertexData, _indexData);
+            var transformedVertexPositions = new Vector2[_vertexData.Length];
+            var transformation = Matrix.CreateRotationZ(Rotation);
+            Vector2.Transform(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y)).ToArray(),
+                ref transformation, transformedVertexPositions);
+            var indexMap = new WallIndexMap(_removedTriangleIndices.Add, GetBoundingBox(transformedVertexPositions),
+                transformedVertexPositions, _indexData);
 #if VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
             indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
 #endif
@@ -326,15 +331,15 @@ namespace AW2.Game.Gobs
             }
 
             // Create a collision bounding volume for the whole wall.
-            _collisionAreas[_collisionAreas.Length - 1] = new CollisionArea("Bounding", GetBoundingBox(), this,
-                CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
+            _collisionAreas[_collisionAreas.Length - 1] = new CollisionArea("Bounding",
+                GetBoundingBox(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y))),
+                this, CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
         }
 
-        private Rectangle GetBoundingBox()
+        private Rectangle GetBoundingBox(IEnumerable<Vector2> vertexPositions)
         {
-            var positions = _vertexData.Select(vertex => new Vector2(vertex.Position.X, vertex.Position.Y));
-            var min = positions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
-            var max = positions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
+            var min = vertexPositions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
+            var max = vertexPositions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
             var boundingArea = new Rectangle(min, max);
             return boundingArea;
         }

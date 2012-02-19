@@ -68,7 +68,7 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             base.LoadContent();
-            Set3DModel(); // FIXME !!! Duplicate with Set3DModel() in Activate()?
+            Set3DModel();
         }
 
         /// <summary>
@@ -79,10 +79,7 @@ namespace AW2.Game.Gobs
         /// an ongoing play of the game.
         public override void Activate()
         {
-            if (Arena.IsForPlaying)
-                Set3DModel();
-            else
-                ModelName = wallModelName;
+            if (!Arena.IsForPlaying) ModelName = wallModelName;
             base.Activate();
         }
 

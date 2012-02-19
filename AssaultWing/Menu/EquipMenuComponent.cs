@@ -115,6 +115,7 @@ namespace AW2.Menu
                 ? MenuEngine.Game.IsClientAllowedToStartArena && MenuEngine.IsReadyToStartArena && MenuEngine.ProgressBar.IsFinished
                 : MenuEngine.IsReadyToStartArena;
             if (!okToStart) return;
+            MenuEngine.IsReadyToStartArena = false;
             MenuEngine.Deactivate();
             if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
                 MenuEngine.Game.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
@@ -132,7 +133,6 @@ namespace AW2.Menu
             if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone) _tabs.Add(_chatTab = new ChatTab(this));
             _tabs.Add(new MatchTab(this));
             _tab = _tabs[_tabIndex = 0];
-            MenuEngine.IsReadyToStartArena = false;
         }
 
         private void CheckGeneralControls()

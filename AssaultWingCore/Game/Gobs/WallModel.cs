@@ -68,8 +68,7 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             base.LoadContent();
-            // Replace defaults set by Wall.
-            Set3DModel();
+            Set3DModel(); // FIXME !!! Duplicate with Set3DModel() in Activate()?
         }
 
         /// <summary>
@@ -136,7 +135,7 @@ namespace AW2.Game.Gobs
             if (mesh.MeshParts.Length != 1) throw new ApplicationException("WallModel only supports one MeshPart");
             var worldMatrix = Matrix.Identity;
             for (var bone = mesh.ParentBone; bone != null; bone = bone.Parent) worldMatrix *= bone.Transform;
-            worldMatrix *= AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
+            if (Arena.IsForPlaying) worldMatrix *= AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
             var meshPart = mesh.MeshParts[0];
             var vertices = meshPart.VertexBuffer.Vertices
                 .Select(vertex => new VertexPositionNormalTexture(

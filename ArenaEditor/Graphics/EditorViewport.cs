@@ -42,5 +42,11 @@ namespace AW2.Graphics
             Graphics3D.DebugDraw(new BoundingSphere(new Vector3(gob.Pos, 0), SMALL_GOB_RADIUS), ViewMatrix, projection, Matrix.Identity);
             Graphics3D.DebugDraw(gob.Pos, gob.Pos + SMALL_GOB_RADIUS * AWMathHelper.GetUnitVector2(gob.Rotation), ViewMatrix, projection, Matrix.Identity);
         }
+
+        private void DrawBoundingSphere(Gob gob)
+        {
+            var projection = GetProjectionMatrix(gob.Layer.Z);
+            Graphics3D.DebugDraw(gob.DrawBounds, ViewMatrix, projection, Matrix.Identity);
+        }
     }
 }

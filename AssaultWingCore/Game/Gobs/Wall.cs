@@ -29,7 +29,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The location of the wall's vertices in the game world.
         /// </summary>
-        protected VertexPositionNormalTexture[] _vertexData;
+        private VertexPositionNormalTexture[] _vertexData;
 
         /// <summary>
         /// The index data where every consecutive index triplet signifies
@@ -164,6 +164,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
+            if (!Arena.IsForPlaying) return; // TODO !!! Lift DrawSilhouette to Gob and remove duplication with Draw3D.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             var silhouetteEffect = Game.GraphicsEngine.GameContent.WallSilhouetteEffect;
             silhouetteEffect.Projection = projection;
@@ -260,7 +261,9 @@ namespace AW2.Game.Gobs
 
         protected override BoundingSphere CreateDrawBounds()
         {
-            return BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
+            return Arena.IsForPlaying
+                ? BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position))
+                : base.CreateDrawBounds();
         }
 
         /// <summary>

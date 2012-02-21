@@ -12,16 +12,19 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
 using AW2.Net.Connections;
 using AW2.UI;
+using AW2.Menu;
 
 namespace AW2.Net.MessageHandling
 {
     public class MessageHandlers
     {
         private AssaultWing Game { get; set; }
+        private MenuEngineImpl Menu { get; set; }
 
-        public MessageHandlers(AssaultWing game)
+        public MessageHandlers(AssaultWing game, MenuEngineImpl menu)
         {
             Game = game;
+            Menu = menu;
         }
 
         public void ActivateHandlers(IEnumerable<MessageHandlerBase> handlers)
@@ -153,7 +156,7 @@ namespace AW2.Net.MessageHandling
         private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
             Log.Write("Server is going to close the connection because {0}.", mess.Info);
-            var dialogData = new CustomOverlayDialogData(Game.MenuEngine, "Server closed connection because\n" + mess.Info + ".",
+            var dialogData = new CustomOverlayDialogData(Menu, "Server closed connection because\n" + mess.Info + ".",
                 new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, Game.ShowMainMenuAndResetGameplay));
             Game.ShowDialog(dialogData);
         }
@@ -164,8 +167,8 @@ namespace AW2.Net.MessageHandling
             Game.ShowEquipMenu();
             Game.SelectedArenaName = mess.ArenaToPlay;
             Game.DataEngine.ArenaFinishTime = mess.ArenaTimeLeft == TimeSpan.Zero ? TimeSpan.Zero : mess.ArenaTimeLeft + Game.GameTime.TotalRealTime;
-            Game.MenuEngine.ProgressBar.Start(mess.WallCount);
-            Game.MenuEngine.ProgressBarAction(
+            Menu.ProgressBar.Start(mess.WallCount);
+            Menu.ProgressBarAction(
                 () => Game.PrepareSelectedArena(mess.ArenaID),
                 () =>
                 {
@@ -441,7 +444,7 @@ namespace AW2.Net.MessageHandling
                     GameClientKey = net.GetAssaultWingInstanceKey(),
                 };
                 net.GameServerConnection.Send(joinRequest);
-                Game.MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
+                Menu.Activate(AW2.Menu.MenuComponentType.Equip);
                 Game.HideDialog("Connecting to server");
             }
         }

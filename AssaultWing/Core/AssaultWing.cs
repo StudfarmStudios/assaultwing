@@ -61,7 +61,7 @@ namespace AW2.Core
 
         public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
-        public MenuEngineImpl MenuEngine { get; private set; }
+        private MenuEngineImpl MenuEngine { get; set; }
         private StartupScreen StartupScreen { get; set; }
         private IntroEngine IntroEngine { get; set; }
         private OverlayDialog OverlayDialog { get; set; }
@@ -74,7 +74,7 @@ namespace AW2.Core
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
         {
-            MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
+            MessageHandlers = new Net.MessageHandling.MessageHandlers(this, MenuEngine);
             StartupScreen = new StartupScreen(this, -1);
             NetworkEngine = new NetworkEngine(this, 0);
             WebData = new WebData(this, 21);

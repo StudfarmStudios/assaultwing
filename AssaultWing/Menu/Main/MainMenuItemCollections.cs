@@ -67,6 +67,13 @@ namespace AW2.Menu.Main
             InitializeSetupItems();
         }
 
+        public static void Click_LocalGame(AssaultWing game)
+        {
+            game.MenuEngine.Activate(MenuComponentType.Equip);
+            game.InitializePlayers(2);
+            if (game.Settings.Players.BotsEnabled) game.DataEngine.Spectators.Add(new BotPlayer(game));
+        }
+
         private void EnsureStandaloneMessageHandlersActivated()
         {
             if (Game.NetworkEngine.MessageHandlers.Any()) return; // FIXME: Oversimplified check; are the handlers the right ones?
@@ -76,13 +83,7 @@ namespace AW2.Menu.Main
         private void InitializeStartItems()
         {
             StartItems = new MainMenuItemCollection("Start Menu");
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local",
-                () =>
-                {
-                    _menuComponent.MenuEngine.Activate(MenuComponentType.Equip);
-                    Game.InitializePlayers(2);
-                    if (Game.Settings.Players.BotsEnabled) Game.DataEngine.Spectators.Add(new BotPlayer(Game));
-                }));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", () => Click_LocalGame(Game)));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront",
                 () =>
                 {
@@ -139,8 +140,8 @@ namespace AW2.Menu.Main
                 () =>
                 {
                     var localPlayer = Game.DataEngine.Spectators.Single(spec => spec.IsLocal);
+                    if (localPlayer.Name != _loginName.Content) localPlayer.GetStats().Logout();
                     localPlayer.Name = Game.Settings.Players.Player1.Name = _loginName.Content;
-                    localPlayer.GetStats().Logout();
                 });
             _loginPassword = new EditableText("", PlayerSettings.PLAYER_PASSWORD_MAX_LENGTH, // TODO !!! Show *** instead of text
                 new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game, // TODO !!! Remove char set limit
@@ -266,8 +267,7 @@ traffic or the server is down.", "No reply from management server");
                             Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
                             Game.ShowDialog(new CustomOverlayDialogData(Game,
                                 string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName),
-                                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections))
-                                { GroupName = "Connecting to server" });
+                                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections)) { GroupName = "Connecting to server" });
                         }));
                 }
                 else

@@ -201,6 +201,13 @@ namespace AW2.Core
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine" };
             if (CommandLineOptions.DedicatedServer)
                 WebData.Feed("1D");
+            else if (CommandLineOptions.QuickStart)
+            {
+                WebData.Feed("1Q");
+                GameState = Core.GameState.Menu;
+                AW2.Menu.Main.MainMenuItemCollections.Click_LocalGame(this);
+                MenuEngine.IsReadyToStartArena = true;
+            }
             else
             {
                 WebData.Feed("1");

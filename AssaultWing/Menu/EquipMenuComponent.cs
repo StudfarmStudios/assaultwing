@@ -59,6 +59,15 @@ namespace AW2.Menu
         public override Vector2 Center { get { return Pos + new Vector2(750, 420); } }
         public override string HelpText { get { return _tab.HelpText; } }
 
+        private bool IsPlayButtonPressed
+        {
+            get
+            {
+                return MenuEngine.IsReadyToStartArena ||
+                    (MenuEngine.Game.NetworkMode != NetworkMode.Client && MenuEngine.Game.IsLoadingArena);
+            }
+        }
+
         static EquipMenuComponent()
         {
             CursorFade = new Curve();
@@ -115,6 +124,7 @@ namespace AW2.Menu
                 ? MenuEngine.Game.IsClientAllowedToStartArena && MenuEngine.IsReadyToStartArena && MenuEngine.ProgressBar.IsFinished
                 : MenuEngine.IsReadyToStartArena;
             if (!okToStart) return;
+            MenuEngine.IsReadyToStartArena = false;
             MenuEngine.Deactivate();
             if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
                 MenuEngine.Game.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
@@ -132,7 +142,6 @@ namespace AW2.Menu
             if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone) _tabs.Add(_chatTab = new ChatTab(this));
             _tabs.Add(new MatchTab(this));
             _tab = _tabs[_tabIndex = 0];
-            MenuEngine.IsReadyToStartArena = false;
         }
 
         private void CheckGeneralControls()
@@ -186,7 +195,7 @@ namespace AW2.Menu
 
         private void DrawExtraReadyMessage(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (!MenuEngine.IsReadyToStartArena || MenuEngine.Game.NetworkMode != NetworkMode.Client) return;
+            if (!IsPlayButtonPressed || MenuEngine.Game.NetworkMode != NetworkMode.Client) return;
             var extraReadyMessagePos = Pos - view + new Vector2(844, 103);
             spriteBatch.Draw(_extraReadyMessageTexture, extraReadyMessagePos, Color.White);
         }
@@ -218,7 +227,7 @@ namespace AW2.Menu
             // Draw ready button
             var readyButtonPos = firstTabPos + new Vector2(419, 0);
             spriteBatch.Draw(_buttonReadyTexture, readyButtonPos, Color.White);
-            var highlightAlpha = MenuEngine.IsReadyToStartArena
+            var highlightAlpha = IsPlayButtonPressed
                 ? 1f
                 : g_readyFade.Evaluate((float)(MenuEngine.Game.GameTime.TotalRealTime - _readyFadeStartTime).TotalSeconds);
             spriteBatch.Draw(_buttonReadyHiliteTexture, readyButtonPos, Color.Multiply(Color.White, highlightAlpha));

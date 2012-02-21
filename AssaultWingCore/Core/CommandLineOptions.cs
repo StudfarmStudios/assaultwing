@@ -45,6 +45,7 @@ namespace AW2.Core
         public bool SaveTemplates { get; set; }
         public bool DeleteTemplates { get; set; }
         public string ArenaFilename { get; set; }
+        public bool QuickStart { get; set; } // TESTING !!! Replace this flag with more detailed game start information.
 
         public CommandLineOptions(string[] commandLineArgs, NameValueCollection queryParams, string argumentText)
         {
@@ -53,6 +54,7 @@ namespace AW2.Core
             SaveTemplates = args.IsSet("save_templates");
             DeleteTemplates = args.IsSet("delete_templates");
             ArenaFilename = args.GetValue("arena");
+            QuickStart = args.IsSet("quickstart");
         }
     }
 }

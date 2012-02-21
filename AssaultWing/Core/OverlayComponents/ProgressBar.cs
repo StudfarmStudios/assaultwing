@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Graphics;
 using AW2.Helpers;
+using AW2.Menu;
 
 namespace AW2.Core.OverlayComponents
 {
@@ -29,14 +30,16 @@ namespace AW2.Core.OverlayComponents
         private object _lock;
         private int _subtaskCount, _subtaskCompletedCount;
 
-        public AssaultWing Game { get { return (AssaultWing)Viewport.Game; } }
+        public MenuEngineImpl Menu { get; private set; }
+        public AssaultWing Game { get { return Menu.Game; } }
         public bool IsFinished { get; private set; }
         public override Point Dimensions { get { return new Point(BackgroundTexture.Width, BackgroundTexture.Height); } }
-        private Texture2D BackgroundTexture { get { return Game.MenuEngine.MenuContent.ProgressBarBackgroundTexture; } }
+        private Texture2D BackgroundTexture { get { return Menu.MenuContent.ProgressBarBackgroundTexture; } }
 
-        public ProgressBar()
+        public ProgressBar(MenuEngineImpl menu)
             : base(null, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
+            Menu = menu;
             _lock = new object();
             IsFinished = true;
         }
@@ -72,8 +75,8 @@ namespace AW2.Core.OverlayComponents
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            var barTexture = Game.MenuEngine.MenuContent.ProgressBarBarTexture;
-            var flowTexture = Game.MenuEngine.MenuContent.ProgressBarFlowTexture;
+            var barTexture = Menu.MenuContent.ProgressBarBarTexture;
+            var flowTexture = Menu.MenuContent.ProgressBarFlowTexture;
             spriteBatch.Draw(BackgroundTexture, Vector2.Zero, Color.White);
 
             // Draw fill bar.

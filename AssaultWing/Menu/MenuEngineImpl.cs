@@ -89,7 +89,7 @@ namespace AW2.Menu
             Controls = new MenuControls();
             MenuContent = new MenuContent();
             ArenaLoadTask = new BackgroundTask();
-            ProgressBar = new ProgressBar
+            ProgressBar = new ProgressBar(this)
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom,

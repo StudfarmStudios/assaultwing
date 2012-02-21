@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Core.OverlayComponents;
+using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Sound;
@@ -41,6 +42,7 @@ namespace AW2.Menu
         private SoundInstance _menuChangeSound;
         private TimeSpan _cursorFadeStartTime;
         private TimeSpan _loggedInPlayerAnimationStartTime;
+        private string _previousLoggedInLoginToken;
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
         private VertexPositionColor[] _shadowVertexData;
@@ -63,6 +65,7 @@ namespace AW2.Menu
         private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
         private bool IsHelpTextVisible { get { return Game.MenuEngine.ProgressBar.IsFinished; } }
         private MenuComponent ActiveComponent { get { return _components[(int)_activeComponentType]; } }
+        private Player LocalPlayer { get { return Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.GetStats().IsLoggedIn); } }
 
         private static Curve g_loggedInPilot;
 
@@ -105,14 +108,9 @@ namespace AW2.Menu
             _cursorFadeStartTime = Game.GameTime.TotalRealTime;
         }
 
-        public void ResetLoggedInPlayerAnimationTime()
-        {
-            _loggedInPlayerAnimationStartTime = Game.GameTime.TotalRealTime;
-        }
-
         public float GetLoggedInPlayerAnimationMultiplier()
         {
-            float animationTime = (float)(Game.GameTime.TotalRealTime - _loggedInPlayerAnimationStartTime).TotalSeconds;
+            var animationTime = (float)(Game.GameTime.TotalRealTime - _loggedInPlayerAnimationStartTime).TotalSeconds;
             return g_loggedInPilot.Evaluate(animationTime);
         }
 
@@ -231,6 +229,7 @@ namespace AW2.Menu
 
         public override void Update()
         {
+            UpdateLoggedInBox();
             if (ArenaLoadTask.TaskCompleted)
             {
                 ArenaLoadTask.FinishTask();
@@ -323,6 +322,17 @@ namespace AW2.Menu
             _shadowIndexData = indexData.ToArray();
         }
 
+        private void UpdateLoggedInBox()
+        {
+            if (LocalPlayer == null)
+                _previousLoggedInLoginToken = null;
+            else if (LocalPlayer.GetStats().LoginToken != _previousLoggedInLoginToken)
+            {
+                _previousLoggedInLoginToken = LocalPlayer.GetStats().LoginToken;
+                _loggedInPlayerAnimationStartTime = Game.GameTime.TotalRealTime;
+            }
+        }
+
         private void DrawBackground()
         {
             float yStart = _view.Y < 0
@@ -384,7 +394,7 @@ namespace AW2.Menu
 
         private void DrawLoggedInPilot()
         {
-            var localPlayer = Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.GetStats().IsLoggedIn);
+            var localPlayer = LocalPlayer;
             if (localPlayer == null) return;
             var playerRating = string.Format(CultureInfo.InvariantCulture, "{0} ({1:f0})",
                 localPlayer.GetStats().RatingRank.ToOrdinalString(),

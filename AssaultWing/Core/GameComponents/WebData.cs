@@ -129,7 +129,6 @@ namespace AW2.Net
                 if (spectator == null) return;
                 spectator.GetStats().LoginTime = Game.GameTime.TotalRealTime;
                 spectator.GetStats().Update(response);
-                if (Game.MenuEngine != null) Game.MenuEngine.ResetLoggedInPlayerAnimationTime();
                 UpdatePilotRanking(spectator);
             });
         }

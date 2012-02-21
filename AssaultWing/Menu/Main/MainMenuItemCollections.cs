@@ -67,11 +67,11 @@ namespace AW2.Menu.Main
             InitializeSetupItems();
         }
 
-        public static void Click_LocalGame(AssaultWing game)
+        public static void Click_LocalGame(MenuEngineImpl menu)
         {
-            game.MenuEngine.Activate(MenuComponentType.Equip);
-            game.InitializePlayers(2);
-            if (game.Settings.Players.BotsEnabled) game.DataEngine.Spectators.Add(new BotPlayer(game));
+            menu.Activate(MenuComponentType.Equip);
+            menu.Game.InitializePlayers(2);
+            if (menu.Game.Settings.Players.BotsEnabled) menu.Game.DataEngine.Spectators.Add(new BotPlayer(menu.Game));
         }
 
         private void EnsureStandaloneMessageHandlersActivated()
@@ -83,7 +83,7 @@ namespace AW2.Menu.Main
         private void InitializeStartItems()
         {
             StartItems = new MainMenuItemCollection("Start Menu");
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", () => Click_LocalGame(Game)));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", () => Click_LocalGame(MenuEngine)));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront",
                 () =>
                 {
@@ -173,7 +173,7 @@ namespace AW2.Menu.Main
         {
             SetupItems = new MainMenuItemCollection("General Setup");
             SetupItems.Add(GetSetupItemBase(() => "Reset all settings to defaults",
-                () => Game.ShowDialog(new CustomOverlayDialogData(Game.MenuEngine,
+                () => Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
                     "Are you sure to reset all settings\nto their defaults? (Yes/No)",
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.Settings.Reset),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })))));

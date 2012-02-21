@@ -205,7 +205,7 @@ namespace AW2.Core
             {
                 WebData.Feed("1Q");
                 GameState = Core.GameState.Menu;
-                AW2.Menu.Main.MainMenuItemCollections.Click_LocalGame(this);
+                AW2.Menu.Main.MainMenuItemCollections.Click_LocalGame(MenuEngine);
                 MenuEngine.IsReadyToStartArena = true;
             }
             else

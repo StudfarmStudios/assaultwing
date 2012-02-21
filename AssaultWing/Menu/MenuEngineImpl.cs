@@ -63,7 +63,7 @@ namespace AW2.Menu
         public bool IsReadyToStartArena { get; set; }
         private int ViewportWidth { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width; } }
         private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
-        private bool IsHelpTextVisible { get { return Game.MenuEngine.ProgressBar.IsFinished; } }
+        private bool IsHelpTextVisible { get { return ProgressBar.IsFinished; } }
         private MenuComponent ActiveComponent { get { return _components[(int)_activeComponentType]; } }
         private Player LocalPlayer { get { return Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.GetStats().IsLoggedIn); } }
 
@@ -132,7 +132,7 @@ namespace AW2.Menu
             // contain references to graphics content.
             MenuContent.LoadContent();
             foreach (var component in _components) component.LoadContent();
-            Game.MenuEngine.ProgressBar.LoadContent();
+            ProgressBar.LoadContent();
 
             base.LoadContent();
         }

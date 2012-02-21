@@ -153,7 +153,7 @@ namespace AW2.Net.MessageHandling
         private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
             Log.Write("Server is going to close the connection because {0}.", mess.Info);
-            var dialogData = new CustomOverlayDialogData(Game, "Server closed connection because\n" + mess.Info + ".",
+            var dialogData = new CustomOverlayDialogData(Game.MenuEngine, "Server closed connection because\n" + mess.Info + ".",
                 new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, Game.ShowMainMenuAndResetGameplay));
             Game.ShowDialog(dialogData);
         }

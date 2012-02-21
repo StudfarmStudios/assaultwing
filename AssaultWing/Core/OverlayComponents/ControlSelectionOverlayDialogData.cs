@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
+using AW2.Menu;
 using AW2.Settings;
 using AW2.UI;
 
@@ -29,8 +30,8 @@ namespace AW2.Core.OverlayComponents
         private Action<IControlType> _returnControl;
         private bool _returned;
 
-        public ControlSelectionOverlayDialogData(AssaultWing game, string text, Action<IControlType> returnControl)
-            : base(game, text)
+        public ControlSelectionOverlayDialogData(MenuEngineImpl menu, string text, Action<IControlType> returnControl)
+            : base(menu, text)
         {
             _returnControl = returnControl;
             _keysDownSinceEntry = new List<Keys>(Keyboard.GetState().GetPressedKeys());

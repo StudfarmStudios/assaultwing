@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
+using AW2.Menu;
 using AW2.UI;
 
 namespace AW2.Core.OverlayComponents
@@ -17,16 +18,16 @@ namespace AW2.Core.OverlayComponents
         /// </summary>
         /// <param name="text">The text to display in the dialog.</param>
         /// <param name="actions">The actions to allow in the dialog.</param>
-        public CustomOverlayDialogData(AssaultWing game, string text, params TriggeredCallback[] actions)
-            : base(game, actions)
+        public CustomOverlayDialogData(MenuEngineImpl menu, string text, params TriggeredCallback[] actions)
+            : base(menu, actions)
         {
             _text = text;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            var font = AssaultWing.Instance.MenuEngine.MenuContent.FontBig;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
+            var font = Menu.MenuContent.FontBig;
             var textCenter = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
             var textSize = font.MeasureString(_text);
             spriteBatch.DrawString(font, _text, (textCenter - textSize / 2).Round(), Color.White);

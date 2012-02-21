@@ -29,9 +29,10 @@ namespace AW2.Core.OverlayComponents
         private object _lock;
         private int _subtaskCount, _subtaskCompletedCount;
 
+        public AssaultWing Game { get { return (AssaultWing)Viewport.Game; } }
         public bool IsFinished { get; private set; }
         public override Point Dimensions { get { return new Point(BackgroundTexture.Width, BackgroundTexture.Height); } }
-        private Texture2D BackgroundTexture { get { return AssaultWing.Instance.MenuEngine.MenuContent.ProgressBarBackgroundTexture; } }
+        private Texture2D BackgroundTexture { get { return Game.MenuEngine.MenuContent.ProgressBarBackgroundTexture; } }
 
         public ProgressBar()
             : base(null, HorizontalAlignment.Center, VerticalAlignment.Center)
@@ -71,8 +72,8 @@ namespace AW2.Core.OverlayComponents
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            var barTexture = AssaultWing.Instance.MenuEngine.MenuContent.ProgressBarBarTexture;
-            var flowTexture = AssaultWing.Instance.MenuEngine.MenuContent.ProgressBarFlowTexture;
+            var barTexture = Game.MenuEngine.MenuContent.ProgressBarBarTexture;
+            var flowTexture = Game.MenuEngine.MenuContent.ProgressBarFlowTexture;
             spriteBatch.Draw(BackgroundTexture, Vector2.Zero, Color.White);
 
             // Draw fill bar.
@@ -83,7 +84,7 @@ namespace AW2.Core.OverlayComponents
             // Draw flow pattern.
             float flowSpeed = 45; // flow speed in pixels per second
             float flowPassTime = flowTexture.Width / flowSpeed; // how many seconds it takes to flow one texture width
-            int flowDisplacement = (int)(flowTexture.Width * (AssaultWingCore.Instance.GameTime.TotalRealTime.TotalSeconds % flowPassTime) / flowPassTime);
+            int flowDisplacement = (int)(flowTexture.Width * (Game.GameTime.TotalRealTime.TotalSeconds % flowPassTime) / flowPassTime);
             var flowPos = barPos;
             var flowRectangle = new Rectangle(
                 flowTexture.Width - flowDisplacement,

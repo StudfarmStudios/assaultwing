@@ -173,7 +173,7 @@ namespace AW2.Menu.Main
         {
             SetupItems = new MainMenuItemCollection("General Setup");
             SetupItems.Add(GetSetupItemBase(() => "Reset all settings to defaults",
-                () => Game.ShowDialog(new CustomOverlayDialogData(Game,
+                () => Game.ShowDialog(new CustomOverlayDialogData(Game.MenuEngine,
                     "Are you sure to reset all settings\nto their defaults? (Yes/No)",
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.Settings.Reset),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })))));
@@ -265,7 +265,7 @@ traffic or the server is down.", "No reply from management server");
                         () =>
                         {
                             Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
-                            Game.ShowDialog(new CustomOverlayDialogData(Game,
+                            Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
                                 string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName),
                                 new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections)) { GroupName = "Connecting to server" });
                         }));
@@ -309,7 +309,7 @@ traffic or the server is down.", "No reply from management server");
         {
             return new MainMenuItem(MenuEngine, () => string.Format("{0}\t\x9{1}", name, get()),
                 () => Game.ShowDialog(
-                    new ControlSelectionOverlayDialogData(Game, "Press control for " + name,
+                    new ControlSelectionOverlayDialogData(MenuEngine, "Press control for " + name,
                         control => set(control))));
         }
 

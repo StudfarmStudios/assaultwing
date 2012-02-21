@@ -175,7 +175,7 @@ namespace AW2.Menu
             if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone)
                 backToMainMenuImpl();
             else
-                MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine.Game,
+                MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
                     "Quit network game? (Yes/No)",
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));

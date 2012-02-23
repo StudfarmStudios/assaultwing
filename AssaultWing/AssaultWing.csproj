@@ -132,6 +132,7 @@
   <ItemGroup>
     <Compile Include="AssaultWingProgram.cs" />
     <Compile Include="Core\AssaultWing.cs" />
+    <Compile Include="UI\DedicatedServerLogic.cs" />
     <Compile Include="Core\GameComponents\DedicatedServer.cs" />
     <Compile Include="Core\GameComponents\IntroEngine.cs" />
     <Compile Include="Core\GameComponents\OverlayDialog.cs" />
@@ -237,6 +238,9 @@
     <Compile Include="UI\GameForm.Designer.cs">
       <DependentUpon>GameForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ProgramLogic.cs" />
+    <Compile Include="UI\QuickStartLogic.cs" />
+    <Compile Include="UI\UserControlledLogic.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AssaultWing.ico" />

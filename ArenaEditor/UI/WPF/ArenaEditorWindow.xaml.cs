@@ -310,7 +310,6 @@ namespace AW2.UI.WPF
             });
             AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
             _game.SoundEngine.Enabled = false;
-            _game.AllowDialogs = false;
 
             // Spectators/players can be initialized not until RunBegan because their AWViewports try to LoadContent.
             _game.RunBegan += () =>

@@ -22,7 +22,6 @@ namespace AW2.Core
     public class AssaultWing : AssaultWingCore
     {
         private GameState _gameState;
-        private Control _escapeControl, _screenShotControl;
         private TimeSpan _lastGameSettingsSent;
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
@@ -61,19 +60,30 @@ namespace AW2.Core
 
         public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
-        private MenuEngineImpl MenuEngine { get; set; }
+        private ProgramLogic Logic { get; set; }
         private StartupScreen StartupScreen { get; set; }
-        private IntroEngine IntroEngine { get; set; }
-        private OverlayDialog OverlayDialog { get; set; }
-        private PlayerChat PlayerChat { get; set; }
+        [Obsolete("Remove !!!")]
+        public IntroEngine IntroEngine { private get; set; }
+        [Obsolete("Remove !!!")]
+        public PlayerChat PlayerChat { private get; set; }
+        [Obsolete("Remove !!!")]
+        public MenuEngineImpl MenuEngine { private get; set; }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
         public MessageHandlers MessageHandlers { get; private set; }
         public WebData WebData { get; private set; }
+        public List<Tuple<Control, Action>> CustomControls { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
         {
+            CustomControls = new List<Tuple<Control, Action>>();
+            if (CommandLineOptions.DedicatedServer)
+                Logic = new DedicatedServerLogic(this);
+            else if (CommandLineOptions.QuickStart)
+                Logic = new QuickStartLogic(this);
+            else
+                Logic = new UserControlledLogic(this);
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this, MenuEngine);
             StartupScreen = new StartupScreen(this, -1);
             NetworkEngine = new NetworkEngine(this, 0);
@@ -83,36 +93,12 @@ namespace AW2.Core
             Components.Add(WebData);
             GameState = GameState.Initializing;
             ChatStartControl = Settings.Controls.Chat.GetControl();
-            _escapeControl = new MultiControl
-            {
-                new KeyboardKey(Keys.Escape),
-                new GamePadButton(0, GamePadButtonType.Start),
-                new GamePadButton(0, GamePadButtonType.Back),
-            };
-            _screenShotControl = new KeyboardKey(Keys.PrintScreen);
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
-            if (CommandLineOptions.DedicatedServer)
-            {
-                var dedicatedServer = new DedicatedServer(this, 13);
-                Components.Add(dedicatedServer);
-                dedicatedServer.Enabled = true;
-            }
-            else
-            {
-                MenuEngine = new MenuEngineImpl(this, 10);
-                IntroEngine = new IntroEngine(this, 11);
-                PlayerChat = new PlayerChat(this, 12);
-                OverlayDialog = new OverlayDialog(this, 20);
-                Components.Add(MenuEngine);
-                Components.Add(IntroEngine);
-                Components.Add(PlayerChat);
-                Components.Add(OverlayDialog);
-            }
             AW2.Graphics.PlayerViewport.CustomOverlayCreators.Add(viewport => new SystemStatusOverlay(viewport));
 
             // Replace the dummy StatsBase by a proper StatsSender.
@@ -125,7 +111,7 @@ namespace AW2.Core
         public override void Update(AWGameTime gameTime)
         {
             base.Update(gameTime);
-            UpdateSpecialKeys();
+            UpdateCustomControls();
             UpdateDebugKeys();
             SynchronizeFrameNumber();
             SendGobCreationMessage();
@@ -147,26 +133,11 @@ namespace AW2.Core
             }
         }
 
-        public void ShowDialog(OverlayDialogData dialogData)
-        {
-            if (!AllowDialogs) return;
-            OverlayDialog.Show(dialogData);
-        }
-
-        /// <summary>
-        /// Like calling <see cref="ShowDialog"/> with <see cref="TriggeredCallback.PROCEED_CONTROL"/> that
-        /// doesn't do anything.
-        /// </summary>
-        public void ShowInfoDialog(string text, string groupName = null)
-        {
-            ShowDialog(new CustomOverlayDialogData(MenuEngine, text,
-                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })) { GroupName = groupName });
-        }
-
-        public void HideDialog(string groupName = null)
-        {
-            OverlayDialog.Dismiss(groupName);
-        }
+        // TODO !!! Inline >>>
+        public void ShowDialog(OverlayDialogData dialogData) { Logic.ShowDialog(dialogData); }
+        public void ShowInfoDialog(string text, string groupName = null) { Logic.ShowInfoDialog(text, groupName); }
+        public void HideDialog(string groupName = null) { Logic.HideDialog(groupName); }
+        // TODO !!! Inline <<<
 
         public void ShowMainMenuAndResetGameplay()
         {
@@ -604,43 +575,17 @@ namespace AW2.Core
             }
         }
 
-        private void ShowEquipMenuWhileKeepingGameRunning()
+        public void ShowEquipMenuWhileKeepingGameRunning()
         {
             if (GameState == GameState.Menu) return;
             MenuEngine.Activate(MenuComponentType.Equip);
             GameState = GameState.GameAndMenu;
         }
 
-        private void UpdateSpecialKeys()
+        private void UpdateCustomControls()
         {
-            if (OverlayDialog != null && GameState == GameState.Gameplay && _escapeControl.Pulse && !OverlayDialog.Enabled)
-            {
-                OverlayDialogData dialogData;
-                switch (NetworkMode)
-                {
-                    case NetworkMode.Server:
-                        dialogData = new CustomOverlayDialogData(MenuEngine,
-                            "Finish Arena? (Yes/No)",
-                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, FinishArena),
-                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
-                        break;
-                    case NetworkMode.Client:
-                        dialogData = new CustomOverlayDialogData(MenuEngine,
-                            "Pop by to equip your ship? (Yes/No)",
-                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowEquipMenuWhileKeepingGameRunning),
-                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
-                        break;
-                    case NetworkMode.Standalone:
-                        dialogData = new CustomOverlayDialogData(MenuEngine,
-                            "Quit to Main Menu? (Yes/No)",
-                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMainMenuAndResetGameplay),
-                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
-                        break;
-                    default: throw new ApplicationException();
-                }
-                ShowDialog(dialogData);
-            }
-            if (_screenShotControl.Pulse) TakeScreenShot();
+            foreach (var controlAction in CustomControls)
+                if (controlAction.Item1.Pulse) controlAction.Item2();
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
@@ -663,24 +608,6 @@ namespace AW2.Core
             {
                 LogicEngine.Enabled = PreFrameLogicEngine.Enabled = PostFrameLogicEngine.Enabled = false;
                 _frameStep = true;
-            }
-
-            // Cheat codes during dialog.
-            if (OverlayDialog != null && OverlayDialog.Enabled && (GameState == GameState.Gameplay || GameState == GameState.GameplayStopped))
-            {
-                var keys = Keyboard.GetState();
-                if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
-                {
-                    // K + P = kill players
-                    var ships = DataEngine.Players.Select(p => p.Ship).Where(s => s != null);
-                    foreach (var ship in ships) ship.Die();
-                }
-
-                if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
-                {
-                    // E + A = end arena
-                    if (!IsLoadingArena) FinishArena();
-                }
             }
         }
 

@@ -12,6 +12,9 @@ namespace AW2.UI
 {
     public class UserControlledLogic : ProgramLogic
     {
+        private bool _clearGameDataWhenEnteringMenus;
+
+        private StartupScreen StartupScreen { get; set; }
         private IntroEngine IntroEngine { get; set; }
         protected MenuEngineImpl MenuEngine { get; set; }
         private OverlayDialog OverlayDialog { get; set; }
@@ -20,10 +23,12 @@ namespace AW2.UI
         public UserControlledLogic(AssaultWing game)
             : base(game)
         {
+            StartupScreen = new StartupScreen(Game, -1);
             MenuEngine = new MenuEngineImpl(Game, 10);
             IntroEngine = new IntroEngine(Game, 11);
             PlayerChat = new PlayerChat(Game, 12);
             OverlayDialog = new OverlayDialog(Game, 20);
+            Game.Components.Add(StartupScreen);
             Game.Components.Add(MenuEngine);
             Game.Components.Add(IntroEngine);
             Game.Components.Add(PlayerChat);
@@ -36,6 +41,19 @@ namespace AW2.UI
         public override void Initialize()
         {
             Game.GameState = GameState.Intro;
+        }
+
+        public override void EndRun()
+        {
+            Game.GameState = GameState.Initializing;
+        }
+
+        public override void FinishArena()
+        {
+            Game.StopGameplay();
+            _clearGameDataWhenEnteringMenus = true;
+            var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators).ToArray(); // ToArray takes a copy
+            ShowDialog(new GameOverOverlayDialogData(MenuEngine, standings) { GroupName = "Game over" });
         }
 
         public override void Update()
@@ -51,6 +69,10 @@ namespace AW2.UI
         {
             switch (value)
             {
+                case GameState.Initializing:
+                    StartupScreen.Enabled = true;
+                    StartupScreen.Visible = true;
+                    return true;
                 case GameState.Intro:
                     IntroEngine.Enabled = true;
                     IntroEngine.Visible = true;
@@ -64,6 +86,10 @@ namespace AW2.UI
         {
             switch (value)
             {
+                case GameState.Initializing:
+                    StartupScreen.Enabled = false;
+                    StartupScreen.Visible = false;
+                    return true;
                 case GameState.Intro:
                     IntroEngine.Enabled = false;
                     IntroEngine.Visible = false;
@@ -71,6 +97,14 @@ namespace AW2.UI
                 default:
                     return false;
             }
+        }
+
+        public override void ShowEquipMenu()
+        {
+            if (_clearGameDataWhenEnteringMenus) Game.DataEngine.ClearGameState();
+            _clearGameDataWhenEnteringMenus = false;
+            MenuEngine.Activate(MenuComponentType.Equip);
+            Game.GameState = GameState.Menu;
         }
 
         public override void ShowDialog(OverlayDialogData dialogData)

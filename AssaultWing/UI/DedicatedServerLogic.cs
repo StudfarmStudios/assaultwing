@@ -15,5 +15,33 @@ namespace AW2.UI
             game.Components.Add(dedicatedServer);
             dedicatedServer.Enabled = true;
         }
+
+        public override void FinishArena()
+        {
+            Game.DataEngine.ClearGameState();
+            Game.GameState = GameState.Initializing;
+        }
+
+        public override bool TryEnableGameState(GameState value)
+        {
+            switch (value)
+            {
+                case GameState.Initializing:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public override bool TryDisableGameState(GameState value)
+        {
+            switch (value)
+            {
+                case GameState.Initializing:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

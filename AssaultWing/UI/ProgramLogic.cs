@@ -24,11 +24,15 @@ namespace AW2.UI
 
         public virtual void Initialize() { }
         public virtual void Update() { }
+        public virtual void EndRun() { }
+        public virtual void FinishArena() { }
 
         // TODO !!! Change to void EnableGameState when GameState is fully inside ProgramLogic.
         public virtual bool TryEnableGameState(GameState value) { return false; }
         // TODO !!! Change to void DisableGameState when GameState is fully inside ProgramLogic.
         public virtual bool TryDisableGameState(GameState value) { return false; }
+
+        public virtual void ShowEquipMenu() { }
 
         public virtual void ShowDialog(OverlayDialogData dialogData) { }
 

@@ -25,7 +25,6 @@ namespace AW2.Core
         private TimeSpan _lastGameSettingsSent;
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
-        private bool _clearGameDataWhenEnteringMenus;
         private GobDeletionMessage _pendingGobDeletionMessage;
         private byte[] _debugBuffer = new byte[65536]; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
 
@@ -62,7 +61,6 @@ namespace AW2.Core
         public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
         private ProgramLogic Logic { get; set; }
-        private StartupScreen StartupScreen { get; set; }
         [Obsolete("Remove !!!")]
         public PlayerChat PlayerChat { private get; set; }
         [Obsolete("Remove !!!")]
@@ -84,13 +82,10 @@ namespace AW2.Core
             else
                 Logic = new UserControlledLogic(this);
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this, MenuEngine);
-            StartupScreen = new StartupScreen(this, -1);
             NetworkEngine = new NetworkEngine(this, 0);
             WebData = new WebData(this, 21);
-            Components.Add(StartupScreen);
             Components.Add(NetworkEngine);
             Components.Add(WebData);
-            GameState = GameState.Initializing;
             ChatStartControl = Settings.Controls.Chat.GetControl();
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
@@ -149,12 +144,10 @@ namespace AW2.Core
             GameState = GameState.Menu;
         }
 
+        [Obsolete("Move to Logic")]
         public void ShowEquipMenu()
         {
-            if (_clearGameDataWhenEnteringMenus) DataEngine.ClearGameState();
-            _clearGameDataWhenEnteringMenus = false;
-            MenuEngine.Activate(MenuComponentType.Equip);
-            GameState = GameState.Menu;
+            Logic.ShowEquipMenu();
         }
 
         /// <summary>
@@ -187,7 +180,7 @@ namespace AW2.Core
 
         public override void EndRun()
         {
-            GameState = GameState.Initializing;
+            Logic.EndRun();
             base.EndRun();
         }
 
@@ -410,17 +403,7 @@ namespace AW2.Core
             var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray(); // ToArray takes a copy
             Stats.Send(new { ArenaFinished = standings.Select(st => new { st.Name, ((SpectatorStats)st.StatsData).LoginToken, st.Score, st.Kills, st.Deaths }).ToArray() });
             foreach (var spec in DataEngine.Spectators) if (spec.IsLocal) WebData.UpdatePilotRanking(spec);
-            if (CommandLineOptions.DedicatedServer)
-            {
-                DataEngine.ClearGameState();
-                GameState = GameState.Initializing;
-            }
-            else
-            {
-                StopGameplay();
-                _clearGameDataWhenEnteringMenus = true;
-                ShowDialog(new GameOverOverlayDialogData(MenuEngine, standings) { GroupName = "Game over" });
-            }
+            Logic.FinishArena();
 #if NETWORK_PROFILING
             ProfilingNetworkBinaryWriter.DumpStats();
 #endif
@@ -458,10 +441,6 @@ namespace AW2.Core
             if (Logic.TryEnableGameState(value)) return;
             switch (value)
             {
-                case GameState.Initializing:
-                    StartupScreen.Enabled = true;
-                    StartupScreen.Visible = true;
-                    break;
                 case GameState.Gameplay:
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
@@ -502,10 +481,6 @@ namespace AW2.Core
             if (Logic.TryDisableGameState(_gameState)) return;
             switch (_gameState)
             {
-                case GameState.Initializing:
-                    StartupScreen.Enabled = false;
-                    StartupScreen.Visible = false;
-                    break;
                 case GameState.Gameplay:
                     LogicEngine.Enabled = false;
                     PreFrameLogicEngine.Enabled = false;
@@ -559,7 +534,8 @@ namespace AW2.Core
             arena.Reset(); // this usually takes several seconds
         }
 
-        private void StopGameplay()
+        [Obsolete("Move to Logic")]
+        public void StopGameplay()
         {
             switch (GameState)
             {

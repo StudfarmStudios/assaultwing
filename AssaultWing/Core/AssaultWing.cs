@@ -39,10 +39,11 @@ namespace AW2.Core
         /// </summary>
         public static new AssaultWing Instance { get { return (AssaultWing)AssaultWingCore.Instance; } }
 
+        [Obsolete("Move to Logic")]
         public GameState GameState
         {
             get { return _gameState; }
-            private set
+            set
             {
                 DisableCurrentGameState();
                 EnableGameState(value);
@@ -62,8 +63,6 @@ namespace AW2.Core
         public string SelectedArenaName { get; set; }
         private ProgramLogic Logic { get; set; }
         private StartupScreen StartupScreen { get; set; }
-        [Obsolete("Remove !!!")]
-        public IntroEngine IntroEngine { private get; set; }
         [Obsolete("Remove !!!")]
         public PlayerChat PlayerChat { private get; set; }
         [Obsolete("Remove !!!")]
@@ -106,11 +105,13 @@ namespace AW2.Core
             Stats = new StatsSender(this, 7);
             Components.Add(Stats);
             Stats.Enabled = true;
+
         }
 
         public override void Update(AWGameTime gameTime)
         {
             base.Update(gameTime);
+            Logic.Update();
             UpdateCustomControls();
             UpdateDebugKeys();
             SynchronizeFrameNumber();
@@ -175,15 +176,12 @@ namespace AW2.Core
             else if (CommandLineOptions.QuickStart)
             {
                 WebData.Feed("1Q");
-                GameState = Core.GameState.Menu;
-                AW2.Menu.Main.MainMenuItemCollections.Click_LocalGame(MenuEngine);
-                MenuEngine.IsReadyToStartArena = true;
             }
             else
             {
                 WebData.Feed("1");
-                GameState = GameState.Intro;
             }
+            Logic.Initialize();
             base.BeginRun();
         }
 
@@ -454,17 +452,15 @@ namespace AW2.Core
                 Window.Impl.SetWindowed();
         }
 
+        [Obsolete("Move all GameState stuff into Logic")]
         private void EnableGameState(GameState value)
         {
+            if (Logic.TryEnableGameState(value)) return;
             switch (value)
             {
                 case GameState.Initializing:
                     StartupScreen.Enabled = true;
                     StartupScreen.Visible = true;
-                    break;
-                case GameState.Intro:
-                    IntroEngine.Enabled = true;
-                    IntroEngine.Visible = true;
                     break;
                 case GameState.Gameplay:
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
@@ -503,15 +499,12 @@ namespace AW2.Core
 
         private void DisableCurrentGameState()
         {
+            if (Logic.TryDisableGameState(_gameState)) return;
             switch (_gameState)
             {
                 case GameState.Initializing:
                     StartupScreen.Enabled = false;
                     StartupScreen.Visible = false;
-                    break;
-                case GameState.Intro:
-                    IntroEngine.Enabled = false;
-                    IntroEngine.Visible = false;
                     break;
                 case GameState.Gameplay:
                     LogicEngine.Enabled = false;

@@ -5,12 +5,19 @@ using AW2.Core;
 
 namespace AW2.UI
 {
-    public class QuickStartLogic : ProgramLogic
+    public class QuickStartLogic : UserControlledLogic
     {
         public QuickStartLogic(AssaultWing game)
             : base(game)
         {
-            throw new NotImplementedException();
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            Game.GameState = GameState.Menu;
+            AW2.Menu.Main.MainMenuItemCollections.Click_LocalGame(MenuEngine);
+            MenuEngine.IsReadyToStartArena = true;
         }
     }
 }

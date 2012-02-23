@@ -1,36 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Core.GameComponents;
 using AW2.Core.OverlayComponents;
 using AW2.Menu;
-using Microsoft.Xna.Framework.Input;
+using AW2.Helpers;
 
 namespace AW2.UI
 {
     public class UserControlledLogic : ProgramLogic
     {
         private IntroEngine IntroEngine { get; set; }
-        private MenuEngineImpl MenuEngine { get; set; }
+        protected MenuEngineImpl MenuEngine { get; set; }
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
 
         public UserControlledLogic(AssaultWing game)
             : base(game)
         {
-            MenuEngine = new MenuEngineImpl(game, 10);
-            IntroEngine = new IntroEngine(game, 11);
-            PlayerChat = new PlayerChat(game, 12);
-            OverlayDialog = new OverlayDialog(game, 20);
-            game.Components.Add(MenuEngine);
-            game.Components.Add(IntroEngine);
-            game.Components.Add(PlayerChat);
-            game.Components.Add(OverlayDialog);
-            game.MenuEngine = MenuEngine;
-            game.PlayerChat = PlayerChat;
-            game.IntroEngine = IntroEngine;
-            CreateCustomControls(game);
+            MenuEngine = new MenuEngineImpl(Game, 10);
+            IntroEngine = new IntroEngine(Game, 11);
+            PlayerChat = new PlayerChat(Game, 12);
+            OverlayDialog = new OverlayDialog(Game, 20);
+            Game.Components.Add(MenuEngine);
+            Game.Components.Add(IntroEngine);
+            Game.Components.Add(PlayerChat);
+            Game.Components.Add(OverlayDialog);
+            Game.MenuEngine = MenuEngine;
+            Game.PlayerChat = PlayerChat;
+            CreateCustomControls(Game);
+        }
+
+        public override void Initialize()
+        {
+            Game.GameState = GameState.Intro;
+        }
+
+        public override void Update()
+        {
+            if (Game.GameState == GameState.Intro && IntroEngine.Mode == Core.GameComponents.IntroEngine.ModeType.Finished)
+            {
+                Log.Write("Entering menus");
+                Game.ShowMainMenuAndResetGameplay();
+            }
+        }
+
+        public override bool TryEnableGameState(GameState value)
+        {
+            switch (value)
+            {
+                case GameState.Intro:
+                    IntroEngine.Enabled = true;
+                    IntroEngine.Visible = true;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public override bool TryDisableGameState(GameState value)
+        {
+            switch (value)
+            {
+                case GameState.Intro:
+                    IntroEngine.Enabled = false;
+                    IntroEngine.Visible = false;
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         public override void ShowDialog(OverlayDialogData dialogData)
@@ -38,10 +78,6 @@ namespace AW2.UI
             OverlayDialog.Show(dialogData);
         }
 
-        /// <summary>
-        /// Like calling <see cref="ShowDialog"/> with <see cref="TriggeredCallback.PROCEED_CONTROL"/> that
-        /// doesn't do anything.
-        /// </summary>
         public override void ShowInfoDialog(string text, string groupName = null)
         {
             ShowDialog(new CustomOverlayDialogData(MenuEngine, text,

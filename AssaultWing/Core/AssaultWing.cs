@@ -178,6 +178,7 @@ namespace AW2.Core
 
         public override void EndRun()
         {
+            EnsureArenaLoadingStopped();
             Logic.EndRun();
             base.EndRun();
         }
@@ -405,12 +406,6 @@ namespace AW2.Core
 #if NETWORK_PROFILING
             ProfilingNetworkBinaryWriter.DumpStats();
 #endif
-        }
-
-        protected override void OnExiting(object sender, EventArgs args)
-        {
-            EnsureArenaLoadingStopped();
-            base.OnExiting(sender, args);
         }
 
         private void EnsureArenaLoadingStopped()

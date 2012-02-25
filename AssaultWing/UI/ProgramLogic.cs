@@ -32,6 +32,8 @@ namespace AW2.UI
         // TODO !!! Change to void DisableGameState when GameState is fully inside ProgramLogic.
         public virtual bool TryDisableGameState(GameState value) { return false; }
 
+        // TODO !!! Make private
+        public virtual void ShowMainMenuAndResetGameplay() { }
         public virtual void ShowEquipMenu() { }
 
         public virtual void ShowDialog(OverlayDialogData dialogData) { }

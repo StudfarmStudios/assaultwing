@@ -133,13 +133,10 @@ namespace AW2.Core
         public void HideDialog(string groupName = null) { Logic.HideDialog(groupName); }
         // TODO !!! Inline <<<
 
+        [Obsolete("Move to Logic")]
         public void ShowMainMenuAndResetGameplay()
         {
-            CutNetworkConnections();
-            EnsureArenaLoadingStopped();
-            DataEngine.ClearGameState();
-            MenuEngine.Activate(MenuComponentType.Main);
-            GameState = GameState.Menu;
+            Logic.ShowMainMenuAndResetGameplay();
         }
 
         [Obsolete("Move to Logic")]
@@ -178,7 +175,6 @@ namespace AW2.Core
 
         public override void EndRun()
         {
-            EnsureArenaLoadingStopped();
             Logic.EndRun();
             base.EndRun();
         }
@@ -398,7 +394,6 @@ namespace AW2.Core
             IsClientAllowedToStartArena = false;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            EnsureArenaLoadingStopped();
             var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray(); // ToArray takes a copy
             Stats.Send(new { ArenaFinished = standings.Select(st => new { st.Name, ((SpectatorStats)st.StatsData).LoginToken, st.Score, st.Kills, st.Deaths }).ToArray() });
             foreach (var spec in DataEngine.Spectators) if (spec.IsLocal) WebData.UpdatePilotRanking(spec);
@@ -406,13 +401,6 @@ namespace AW2.Core
 #if NETWORK_PROFILING
             ProfilingNetworkBinaryWriter.DumpStats();
 #endif
-        }
-
-        private void EnsureArenaLoadingStopped()
-        {
-            if (CommandLineOptions.DedicatedServer) return;
-            if (IsLoadingArena) MenuEngine.ArenaLoadTask.AbortTask();
-            MenuEngine.ProgressBar.SkipRemainingSubtasks();
         }
 
         private void ApplyInGameGraphicsSettings()

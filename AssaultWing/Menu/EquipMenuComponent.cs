@@ -144,7 +144,6 @@ namespace AW2.Menu
             _tab = _tabs[_tabIndex = 0];
         }
 
-        [Obsolete("Move to Logic")]
         private void CheckGeneralControls()
         {
             var keys = MenuEngine.Game.UIEngine.InputState.Keyboard;

@@ -44,11 +44,13 @@ namespace AW2.UI
 
         public override void EndRun()
         {
+            EnsureArenaLoadingStopped();
             Game.GameState = GameState.Initializing;
         }
 
         public override void FinishArena()
         {
+            EnsureArenaLoadingStopped();
             Game.StopGameplay();
             _clearGameDataWhenEnteringMenus = true;
             var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators).ToArray(); // ToArray takes a copy
@@ -125,6 +127,15 @@ namespace AW2.UI
             }
         }
 
+        public override void ShowMainMenuAndResetGameplay()
+        {
+            Game.CutNetworkConnections();
+            EnsureArenaLoadingStopped();
+            Game.DataEngine.ClearGameState();
+            MenuEngine.Activate(MenuComponentType.Main);
+            Game.GameState = GameState.Menu;
+        }
+
         public override void ShowEquipMenu()
         {
             if (_clearGameDataWhenEnteringMenus) Game.DataEngine.ClearGameState();
@@ -161,6 +172,12 @@ namespace AW2.UI
             game.CustomControls.Add(Tuple.Create<Control, Action>(escapeControl, Click_EscapeControl));
             game.CustomControls.Add(Tuple.Create<Control, Action>(screenShotControl, Game.TakeScreenShot));
             game.CustomControls.Add(Tuple.Create<Control,Action>(MenuEngine.Controls.Back, Click_MenuBackControl));
+        }
+
+        private void EnsureArenaLoadingStopped()
+        {
+            if (Game.IsLoadingArena) MenuEngine.ArenaLoadTask.AbortTask();
+            MenuEngine.ProgressBar.SkipRemainingSubtasks();
         }
 
         private void Click_EscapeControl()
@@ -210,6 +227,5 @@ namespace AW2.UI
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));
         }
-
     }
 }

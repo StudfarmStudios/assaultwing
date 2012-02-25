@@ -62,8 +62,6 @@ namespace AW2.Core
         public string SelectedArenaName { get; set; }
         private ProgramLogic Logic { get; set; }
         [Obsolete("Remove !!!")]
-        public PlayerChat PlayerChat { private get; set; }
-        [Obsolete("Remove !!!")]
         public MenuEngineImpl MenuEngine { private get; set; }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
@@ -441,23 +439,6 @@ namespace AW2.Core
             if (Logic.TryEnableGameState(value)) return;
             switch (value)
             {
-                case GameState.Gameplay:
-                    LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    if (!CommandLineOptions.DedicatedServer)
-                    {
-                        GraphicsEngine.Enabled = true;
-                        GraphicsEngine.Visible = true;
-                        if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
-                        SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
-                    }
-                    break;
-                case GameState.GameplayStopped:
-                    GraphicsEngine.Enabled = true;
-                    GraphicsEngine.Visible = true;
-                    if (NetworkMode != NetworkMode.Standalone) PlayerChat.Visible = true;
-                    break;
                 case GameState.GameAndMenu:
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
@@ -481,25 +462,6 @@ namespace AW2.Core
             if (Logic.TryDisableGameState(_gameState)) return;
             switch (_gameState)
             {
-                case GameState.Gameplay:
-                    LogicEngine.Enabled = false;
-                    PreFrameLogicEngine.Enabled = false;
-                    PostFrameLogicEngine.Enabled = false;
-                    if (!CommandLineOptions.DedicatedServer)
-                    {
-                        GraphicsEngine.Enabled = false;
-                        GraphicsEngine.Visible = false;
-                        PlayerChat.Enabled = PlayerChat.Visible = false;
-                    }
-                    break;
-                case GameState.GameplayStopped:
-                    if (!CommandLineOptions.DedicatedServer)
-                    {
-                        GraphicsEngine.Enabled = false;
-                        GraphicsEngine.Visible = false;
-                        PlayerChat.Visible = false;
-                    }
-                    break;
                 case GameState.GameAndMenu:
                     LogicEngine.Enabled = false;
                     PreFrameLogicEngine.Enabled = false;

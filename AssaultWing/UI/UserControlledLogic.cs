@@ -34,7 +34,6 @@ namespace AW2.UI
             Game.Components.Add(PlayerChat);
             Game.Components.Add(OverlayDialog);
             Game.MenuEngine = MenuEngine;
-            Game.PlayerChat = PlayerChat;
             CreateCustomControls(Game);
         }
 
@@ -77,6 +76,20 @@ namespace AW2.UI
                     IntroEngine.Enabled = true;
                     IntroEngine.Visible = true;
                     return true;
+                case GameState.Gameplay:
+                    Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.GraphicsEngine.Enabled = true;
+                    Game.GraphicsEngine.Visible = true;
+                    if (Game.NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
+                    Game.SoundEngine.PlayMusic(Game.DataEngine.Arena.BackgroundMusic.FileName, Game.DataEngine.Arena.BackgroundMusic.Volume);
+                    return true;
+                case GameState.GameplayStopped:
+                    Game.GraphicsEngine.Enabled = true;
+                    Game.GraphicsEngine.Visible = true;
+                    if (Game.NetworkMode != NetworkMode.Standalone) PlayerChat.Visible = true;
+                    return true;
                 default:
                     return false;
             }
@@ -93,6 +106,19 @@ namespace AW2.UI
                 case GameState.Intro:
                     IntroEngine.Enabled = false;
                     IntroEngine.Visible = false;
+                    return true;
+                case GameState.Gameplay:
+                    Game.LogicEngine.Enabled = false;
+                    Game.PreFrameLogicEngine.Enabled = false;
+                    Game.PostFrameLogicEngine.Enabled = false;
+                    Game.GraphicsEngine.Enabled = false;
+                    Game.GraphicsEngine.Visible = false;
+                    PlayerChat.Enabled = PlayerChat.Visible = false;
+                    return true;
+                case GameState.GameplayStopped:
+                    Game.GraphicsEngine.Enabled = false;
+                    Game.GraphicsEngine.Visible = false;
+                    PlayerChat.Visible = false;
                     return true;
                 default:
                     return false;

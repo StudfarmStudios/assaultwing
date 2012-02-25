@@ -28,6 +28,11 @@ namespace AW2.UI
             {
                 case GameState.Initializing:
                     return true;
+                case GameState.Gameplay:
+                    Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    return true;
                 default:
                     return false;
             }
@@ -38,6 +43,11 @@ namespace AW2.UI
             switch (value)
             {
                 case GameState.Initializing:
+                    return true;
+                case GameState.Gameplay:
+                    Game.LogicEngine.Enabled = false;
+                    Game.PreFrameLogicEngine.Enabled = false;
+                    Game.PostFrameLogicEngine.Enabled = false;
                     return true;
                 default:
                     return false;

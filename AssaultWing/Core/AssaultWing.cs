@@ -190,7 +190,19 @@ namespace AW2.Core
             var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)SelectedArenaName);
             // Note: Must create a new Arena instance and not use the existing template
             // because playing an arena will modify it.
-            InitializeFromArena(arenaTemplate.Info.FileName, arenaIDOnClient.HasValue ? arenaIDOnClient.Value : _nextArenaID++);
+            var arena = Arena.FromFile(this, arenaTemplate.Info.FileName);
+            arena.ID = arenaIDOnClient.HasValue ? arenaIDOnClient.Value : _nextArenaID++;
+            arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
+            arena.IsForPlaying = true;
+            // Note: Client starts progressbar when receiving StartGameMessage.
+            if (NetworkMode != NetworkMode.Client && !CommandLineOptions.DedicatedServer)
+            {
+                AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
+                MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count(), () => AW2.Game.Gobs.Wall.WallActivatedCounter);
+            }
+            foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
+            DataEngine.Arena = arena;
+            arena.Reset(); // this usually takes several seconds
         }
 
         public void StartArenaButStayInMenu()
@@ -432,27 +444,6 @@ namespace AW2.Core
                 default:
                     throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
             }
-        }
-
-        /// <summary>
-        /// Prepares the game data for playing an arena.
-        /// When the playing really should start, call <see cref="StartArena"/>.
-        /// </summary>
-        private void InitializeFromArena(string arenaFilename, byte arenaID)
-        {
-            var arena = Arena.FromFile(this, arenaFilename);
-            arena.ID = arenaID;
-            arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
-            arena.IsForPlaying = true;
-            // Note: Client starts progressbar when receiving StartGameMessage.
-            if (NetworkMode != NetworkMode.Client && !CommandLineOptions.DedicatedServer)
-            {
-                AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
-                MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count(), () => AW2.Game.Gobs.Wall.WallActivatedCounter);
-            }
-            foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
-            DataEngine.Arena = arena;
-            arena.Reset(); // this usually takes several seconds
         }
 
         [Obsolete("Move to Logic")]

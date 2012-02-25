@@ -115,23 +115,6 @@ namespace AW2.Menu
             if (!Active) return;
             _tab.Update();
             CheckGeneralControls();
-            CheckArenaStart();
-        }
-
-        private void CheckArenaStart()
-        {
-            bool okToStart = MenuEngine.Game.NetworkMode == NetworkMode.Client
-                ? MenuEngine.Game.IsClientAllowedToStartArena && MenuEngine.IsReadyToStartArena && MenuEngine.ProgressBar.IsFinished
-                : MenuEngine.IsReadyToStartArena;
-            if (!okToStart) return;
-            MenuEngine.IsReadyToStartArena = false;
-            MenuEngine.Deactivate();
-            if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
-                MenuEngine.Game.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
-            else
-                MenuEngine.ProgressBarAction(
-                    () => MenuEngine.Game.PrepareSelectedArena(),
-                    MenuEngine.Game.StartArena);
         }
 
         private void ResetEquipMenu()

@@ -20,6 +20,16 @@ namespace AW2.UI
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
 
+        private bool EquipMenuActive
+        {
+            get
+            {
+                return (Game.GameState == GameState.Menu || Game.GameState == GameState.GameAndMenu)
+                    && MenuEngine.EquipMenu.Active;
+            }
+        }
+
+
         public UserControlledLogic(AssaultWing game)
             : base(game)
         {
@@ -59,11 +69,8 @@ namespace AW2.UI
 
         public override void Update()
         {
-            if (Game.GameState == GameState.Intro && IntroEngine.Mode == Core.GameComponents.IntroEngine.ModeType.Finished)
-            {
-                Log.Write("Entering menus");
-                Game.ShowMainMenuAndResetGameplay();
-            }
+            if (Game.GameState == GameState.Intro && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
+            if (EquipMenuActive) CheckArenaStart();
         }
 
         public override bool TryEnableGameState(GameState value)
@@ -157,6 +164,7 @@ namespace AW2.UI
 
         public override void ShowMainMenuAndResetGameplay()
         {
+            Log.Write("Entering menus");
             Game.CutNetworkConnections();
             EnsureArenaLoadingStopped();
             Game.DataEngine.ClearGameState();
@@ -202,6 +210,20 @@ namespace AW2.UI
             game.CustomControls.Add(Tuple.Create<Control,Action>(MenuEngine.Controls.Back, Click_MenuBackControl));
         }
 
+        private void CheckArenaStart()
+        {
+            bool okToStart = Game.NetworkMode == NetworkMode.Client
+                ? Game.IsClientAllowedToStartArena && MenuEngine.IsReadyToStartArena && MenuEngine.ProgressBar.IsFinished
+                : MenuEngine.IsReadyToStartArena;
+            if (!okToStart) return;
+            MenuEngine.IsReadyToStartArena = false;
+            MenuEngine.Deactivate();
+            if (Game.NetworkMode == NetworkMode.Client)
+                Game.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
+            else
+                MenuEngine.ProgressBarAction(() => Game.PrepareSelectedArena(), Game.StartArena);
+        }
+
         private void EnsureArenaLoadingStopped()
         {
             if (Game.IsLoadingArena) MenuEngine.ArenaLoadTask.AbortTask();
@@ -229,7 +251,7 @@ namespace AW2.UI
                 case NetworkMode.Standalone:
                     dialogData = new CustomOverlayDialogData(MenuEngine,
                         "Quit to Main Menu? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.ShowMainMenuAndResetGameplay),
+                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMainMenuAndResetGameplay),
                         new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
                     break;
                 default: throw new ApplicationException();
@@ -239,15 +261,14 @@ namespace AW2.UI
 
         private void Click_MenuBackControl()
         {
-            if (Game.GameState != GameState.Menu && Game.GameState != GameState.GameAndMenu) return;
-            if (!MenuEngine.EquipMenu.Active) return;
+            if (!EquipMenuActive) return;
             Action backToMainMenuImpl = () =>
             {
                 MenuEngine.IsReadyToStartArena = false;
                 if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
-                MenuEngine.Game.ShowMainMenuAndResetGameplay();
+                ShowMainMenuAndResetGameplay();
             };
-            if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone)
+            if (Game.NetworkMode == NetworkMode.Standalone)
                 backToMainMenuImpl();
             else
                 MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,

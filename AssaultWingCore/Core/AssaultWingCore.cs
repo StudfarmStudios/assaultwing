@@ -235,8 +235,6 @@ namespace AW2.Core
             if (GraphicsEngine != null) GraphicsEngine.LoadArenaContent(arena);
         }
 
-        public virtual void ProgressBarSubtaskCompleted() { }
-
         #endregion Methods for game components
 
         #region Overridden Game methods

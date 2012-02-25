@@ -201,11 +201,6 @@ namespace AW2.Core
             GameState = GameState.GameAndMenu;
         }
 
-        public override void ProgressBarSubtaskCompleted()
-        {
-            if (MenuEngine != null) MenuEngine.ProgressBar.SubtaskCompleted();
-        }
-
         public override void StartArena()
         {
             Stats.BasicInfoSent = false;
@@ -473,7 +468,10 @@ namespace AW2.Core
             arena.IsForPlaying = true;
             // Note: Client starts progressbar when receiving StartGameMessage.
             if (NetworkMode != NetworkMode.Client && !CommandLineOptions.DedicatedServer)
-                MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
+            {
+                AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
+                MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count(), () => AW2.Game.Gobs.Wall.WallActivatedCounter);
+            }
             foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
             DataEngine.Arena = arena;
             arena.Reset(); // this usually takes several seconds

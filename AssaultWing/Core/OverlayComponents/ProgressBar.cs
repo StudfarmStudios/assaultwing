@@ -28,7 +28,8 @@ namespace AW2.Core.OverlayComponents
     public class ProgressBar : OverlayComponent
     {
         private object _lock;
-        private int _subtaskCount, _subtaskCompletedCount;
+        private int _subtaskCount;
+        private Func<int> _subtaskCompletedCount;
 
         public MenuEngineImpl Menu { get; private set; }
         public AssaultWing Game { get { return Menu.Game; } }
@@ -44,24 +45,14 @@ namespace AW2.Core.OverlayComponents
             IsFinished = true;
         }
 
-        public void Start(int subtaskCount)
+        public void Start(int subtaskCount, Func<int> subtaskCompletedCount)
         {
             if (subtaskCount <= 0) throw new ArgumentException("Subtask count must be positive, not " + subtaskCount);
+            _subtaskCompletedCount = subtaskCompletedCount;
             lock (_lock)
             {
                 IsFinished = false;
                 _subtaskCount = subtaskCount;
-                _subtaskCompletedCount = 0;
-            }
-        }
-
-        public void SubtaskCompleted()
-        {
-            lock (_lock)
-            {
-                if (IsFinished) throw new InvalidOperationException("Cannot complete subtask when task is already finished");
-                _subtaskCompletedCount++;
-                if (_subtaskCompletedCount == _subtaskCount) IsFinished = true;
             }
         }
 
@@ -75,6 +66,8 @@ namespace AW2.Core.OverlayComponents
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
+            if (_subtaskCompletedCount() == _subtaskCount) IsFinished = true; // TODO !!! Move to some kind of Update method.
+
             var barTexture = Menu.MenuContent.ProgressBarBarTexture;
             var flowTexture = Menu.MenuContent.ProgressBarFlowTexture;
             spriteBatch.Draw(BackgroundTexture, Vector2.Zero, Color.White);
@@ -112,8 +105,8 @@ namespace AW2.Core.OverlayComponents
             {
                 if (_subtaskCount == 0) throw new InvalidOperationException("No task set yet");
                 if (IsFinished) return 1;
-                if (_subtaskCompletedCount >= _subtaskCount) return 1;
-                return (float)_subtaskCompletedCount / _subtaskCount;
+                if (_subtaskCompletedCount() >= _subtaskCount) return 1;
+                return (float)_subtaskCompletedCount() / _subtaskCount;
             }
         }
     }

@@ -167,7 +167,8 @@ namespace AW2.Net.MessageHandling
             Game.ShowEquipMenu();
             Game.SelectedArenaName = mess.ArenaToPlay;
             Game.DataEngine.ArenaFinishTime = mess.ArenaTimeLeft == TimeSpan.Zero ? TimeSpan.Zero : mess.ArenaTimeLeft + Game.GameTime.TotalRealTime;
-            Menu.ProgressBar.Start(mess.WallCount);
+            AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
+            Menu.ProgressBar.Start(mess.WallCount, () => AW2.Game.Gobs.Wall.WallActivatedCounter);
             Menu.ProgressBarAction(
                 () => Game.PrepareSelectedArena(mess.ArenaID),
                 () =>

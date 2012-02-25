@@ -3,6 +3,7 @@
     /// <summary>
     /// Type of menu component, one for each subclass of <see cref="MenuComponent"/>.
     /// </summary>
+    // TODO !!! Remove this enum. Refer to components by they object references.
     public enum MenuComponentType
     {
         /// <summary>

@@ -144,6 +144,7 @@ namespace AW2.Menu
             _tab = _tabs[_tabIndex = 0];
         }
 
+        [Obsolete("Move to Logic")]
         private void CheckGeneralControls()
         {
             var keys = MenuEngine.Game.UIEngine.InputState.Keyboard;
@@ -152,7 +153,6 @@ namespace AW2.Menu
             var tabBack = (Controls.Tab.Pulse && shiftPressed) || (Controls.TabBack.Pulse && !shiftPressed);
             if (tabForward) ChangeTab();
             else if (tabBack) ChangeTab(-1);
-            else if (Controls.Back.Pulse) BackToMainMenu();
             else if (Controls.StartGame.Pulse) MenuEngine.IsReadyToStartArena = !MenuEngine.IsReadyToStartArena;
         }
 
@@ -162,23 +162,6 @@ namespace AW2.Menu
             _tab = _tabs[_tabIndex];
             MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
-        }
-
-        private void BackToMainMenu()
-        {
-            Action backToMainMenuImpl = () =>
-            {
-                MenuEngine.IsReadyToStartArena = false;
-                if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
-                MenuEngine.Game.ShowMainMenuAndResetGameplay();
-            };
-            if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone)
-                backToMainMenuImpl();
-            else
-                MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
-                    "Quit network game? (Yes/No)",
-                    new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
-                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));
         }
 
         #region Drawing methods

@@ -160,6 +160,7 @@ namespace AW2.UI
             var screenShotControl = new KeyboardKey(Keys.PrintScreen);
             game.CustomControls.Add(Tuple.Create<Control, Action>(escapeControl, Click_EscapeControl));
             game.CustomControls.Add(Tuple.Create<Control, Action>(screenShotControl, Game.TakeScreenShot));
+            game.CustomControls.Add(Tuple.Create<Control,Action>(MenuEngine.Controls.Back, Click_MenuBackControl));
         }
 
         private void Click_EscapeControl()
@@ -190,5 +191,25 @@ namespace AW2.UI
             }
             ShowDialog(dialogData);
         }
+
+        private void Click_MenuBackControl()
+        {
+            if (Game.GameState != GameState.Menu && Game.GameState != GameState.GameAndMenu) return;
+            if (!MenuEngine.EquipMenu.Active) return;
+            Action backToMainMenuImpl = () =>
+            {
+                MenuEngine.IsReadyToStartArena = false;
+                if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
+                MenuEngine.Game.ShowMainMenuAndResetGameplay();
+            };
+            if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone)
+                backToMainMenuImpl();
+            else
+                MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
+                    "Quit network game? (Yes/No)",
+                    new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
+                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));
+        }
+
     }
 }

@@ -35,7 +35,6 @@ namespace AW2.Menu
         private MenuComponentType _activeComponentType;
         private MenuComponent[] _components;
         private bool _activeComponentActivatedOnce, _activeComponentSoundPlayedOnce;
-        private Action _arenaLoadTaskFinishAction;
         private Vector2 _view; // center of menu view in menu system coordinates
         private Vector2 _viewTarget;
         private MovementCurve _viewCurve;
@@ -135,7 +134,6 @@ namespace AW2.Menu
             // contain references to graphics content.
             MenuContent.LoadContent();
             foreach (var component in _components) component.LoadContent();
-            ProgressBar.LoadContent();
 
             base.LoadContent();
         }
@@ -158,7 +156,6 @@ namespace AW2.Menu
             // contain references to graphics content.
             foreach (var component in _components)
                 if (component != null) component.UnloadContent();
-            ProgressBar.UnloadContent();
 
             base.UnloadContent();
         }
@@ -217,28 +214,9 @@ namespace AW2.Menu
                     _components[component].Active = false;
         }
 
-        /// <summary>
-        /// Performs an action asynchronously, visualising progress with the progress bar.
-        /// </summary>
-        /// This method is provided as a helpful service for menu components.
-        /// <param name="asyncAction">The action to perform asynchronously.</param>
-        /// <param name="finishAction">Action to perform synchronously
-        /// when the asynchronous action completes.</param>
-        public void ProgressBarAction(Action asyncAction, Action finishAction)
-        {
-            _arenaLoadTaskFinishAction = finishAction;
-            ArenaLoadTask.StartTask(asyncAction);
-        }
-
         public override void Update()
         {
             UpdateLoggedInBox();
-            if (ArenaLoadTask.TaskCompleted)
-            {
-                ArenaLoadTask.FinishTask();
-                if (_arenaLoadTaskFinishAction != null) _arenaLoadTaskFinishAction();
-                _arenaLoadTaskFinishAction = null;
-            }
             _view = _viewCurve.Evaluate(Game.GameTime.TotalRealTime);
 
             // Activate 'activeComponent' if the view has just come close enough to its center.

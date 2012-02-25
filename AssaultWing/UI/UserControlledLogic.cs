@@ -71,6 +71,18 @@ namespace AW2.UI
         {
             if (Game.GameState == GameState.Intro && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
             if (EquipMenuActive) CheckArenaStart();
+            if (MenuEngine.ArenaLoadTask.TaskCompleted)
+            {
+                MenuEngine.ArenaLoadTask.FinishTask();
+                if (Game.NetworkMode == NetworkMode.Client)
+                {
+                    Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetClientGameplayHandlers());
+                    Game.IsClientAllowedToStartArena = true;
+                    Game.StartArenaButStayInMenu();
+                }
+                else
+                    Game.StartArena();
+            }
         }
 
         public override bool TryEnableGameState(GameState value)
@@ -148,6 +160,7 @@ namespace AW2.UI
         {
             if (Game.NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + Game.NetworkMode);
+            EnsureArenaLoadingStopped();
             Game.NetworkEngine.MessageHandlers.Clear();
             Game.NetworkEngine.StopClient();
             Game.DataEngine.RemoveAllButLocalSpectators();
@@ -160,6 +173,14 @@ namespace AW2.UI
                     new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
                 ShowDialog(dialogData);
             }
+        }
+
+        public override void PrepareArena()
+        {
+            AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
+            foreach (var conn in Game.NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
+            MenuEngine.ProgressBar.Start(Game.DataEngine.Arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count(), () => AW2.Game.Gobs.Wall.WallActivatedCounter);
+            MenuEngine.ArenaLoadTask.StartTask(Game.DataEngine.Arena.Reset);
         }
 
         public override void ShowMainMenuAndResetGameplay()
@@ -221,7 +242,10 @@ namespace AW2.UI
             if (Game.NetworkMode == NetworkMode.Client)
                 Game.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
             else
-                MenuEngine.ProgressBarAction(() => Game.PrepareSelectedArena(), Game.StartArena);
+            {
+                Game.LoadSelectedArena();
+                PrepareArena();
+            }
         }
 
         private void EnsureArenaLoadingStopped()

@@ -165,20 +165,9 @@ namespace AW2.Net.MessageHandling
         {
             if (Game.IsLoadingArena) return;
             Game.ShowEquipMenu();
-            Game.SelectedArenaName = mess.ArenaToPlay;
             Game.DataEngine.ArenaFinishTime = mess.ArenaTimeLeft == TimeSpan.Zero ? TimeSpan.Zero : mess.ArenaTimeLeft + Game.GameTime.TotalRealTime;
-            AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
-            Menu.ProgressBar.Start(mess.WallCount, () => AW2.Game.Gobs.Wall.WallActivatedCounter);
-            Menu.ProgressBarAction(
-                () => Game.PrepareSelectedArena(mess.ArenaID),
-                () =>
-                {
-                    // The network connection may have been cut during arena loading.
-                    if (Game.NetworkMode != NetworkMode.Client) return;
-                    ActivateHandlers(GetClientGameplayHandlers());
-                    Game.IsClientAllowedToStartArena = true;
-                    Game.StartArenaButStayInMenu();
-                });
+            // FIXME: mess.WallCount is not used. Remove it. Client is assumed to have the same arena as the server. Enforce that?
+            Game.PrepareArena(mess.ArenaToPlay, mess.ArenaID);
         }
 
         private void HandleSpectatorSettingsReply(SpectatorSettingsReply mess)

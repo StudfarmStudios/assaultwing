@@ -179,13 +179,20 @@ namespace AW2.Core
             base.EndRun();
         }
 
+        public void PrepareArena(string arenaName, byte arenaIDOnClient)
+        {
+            SelectedArenaName = arenaName;
+            LoadSelectedArena(arenaIDOnClient);
+            Logic.PrepareArena();
+        }
+
         /// <summary>
         /// Prepares a new play session to start from the arena called <see cref="SelectedArenaName"/>.
         /// Call <see cref="StartArena"/> after this method returns to start playing the arena.
         /// This method usually takes a long time to run. It's therefore a good
         /// idea to make it run in a background thread.
         /// </summary>
-        public void PrepareSelectedArena(byte? arenaIDOnClient = null)
+        public void LoadSelectedArena(byte? arenaIDOnClient = null)
         {
             var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)SelectedArenaName);
             // Note: Must create a new Arena instance and not use the existing template
@@ -194,15 +201,7 @@ namespace AW2.Core
             arena.ID = arenaIDOnClient.HasValue ? arenaIDOnClient.Value : _nextArenaID++;
             arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
             arena.IsForPlaying = true;
-            // Note: Client starts progressbar when receiving StartGameMessage.
-            if (NetworkMode != NetworkMode.Client && !CommandLineOptions.DedicatedServer)
-            {
-                AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
-                MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count(), () => AW2.Game.Gobs.Wall.WallActivatedCounter);
-            }
-            foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
             DataEngine.Arena = arena;
-            arena.Reset(); // this usually takes several seconds
         }
 
         public void StartArenaButStayInMenu()

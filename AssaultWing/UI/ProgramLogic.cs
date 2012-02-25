@@ -33,6 +33,8 @@ namespace AW2.UI
         public virtual bool TryDisableGameState(GameState value) { return false; }
 
         // TODO !!! Make private
+        public virtual void StopServer() { }
+        public virtual void StopClient(string errorOrNull) { }
         public virtual void ShowMainMenuAndResetGameplay() { }
         public virtual void ShowEquipMenu() { }
 

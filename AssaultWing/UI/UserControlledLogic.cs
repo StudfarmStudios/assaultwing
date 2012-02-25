@@ -127,6 +127,34 @@ namespace AW2.UI
             }
         }
 
+        public override void StopServer()
+        {
+            if (Game.NetworkMode != NetworkMode.Server)
+                throw new InvalidOperationException("Cannot stop server while in mode " + Game.NetworkMode);
+            Game.NetworkEngine.MessageHandlers.Clear();
+            Game.NetworkEngine.StopServer();
+            Game.NetworkMode = NetworkMode.Standalone;
+            Game.DataEngine.RemoveAllButLocalSpectators();
+        }
+
+        public override void StopClient(string errorOrNull)
+        {
+            if (Game.NetworkMode != NetworkMode.Client)
+                throw new InvalidOperationException("Cannot stop client while in mode " + Game.NetworkMode);
+            Game.NetworkEngine.MessageHandlers.Clear();
+            Game.NetworkEngine.StopClient();
+            Game.DataEngine.RemoveAllButLocalSpectators();
+            Game.StopGameplay(); // gameplay cannot continue because it's initialized only for a client
+            Game.NetworkMode = NetworkMode.Standalone;
+            if (errorOrNull != null)
+            {
+                var dialogData = new CustomOverlayDialogData(MenuEngine,
+                    errorOrNull + "\nPress Enter to return to Main Menu.",
+                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
+                ShowDialog(dialogData);
+            }
+        }
+
         public override void ShowMainMenuAndResetGameplay()
         {
             Game.CutNetworkConnections();

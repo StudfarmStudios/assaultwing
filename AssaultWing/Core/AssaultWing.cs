@@ -268,18 +268,9 @@ namespace AW2.Core
             }
         }
 
-        /// <summary>
-        /// Turns this game server into a standalone game instance and disposes of
-        /// any connections to game clients.
-        /// </summary>
         public void StopServer()
         {
-            if (NetworkMode != NetworkMode.Server)
-                throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
-            DeactivateAllMessageHandlers();
-            NetworkEngine.StopServer();
-            NetworkMode = NetworkMode.Standalone;
-            DataEngine.RemoveAllButLocalSpectators();
+            Logic.StopServer();
         }
 
         /// <summary>
@@ -305,20 +296,7 @@ namespace AW2.Core
 
         public void StopClient(string errorOrNull)
         {
-            if (NetworkMode != NetworkMode.Client)
-                throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
-            DeactivateAllMessageHandlers();
-            NetworkEngine.StopClient();
-            DataEngine.RemoveAllButLocalSpectators();
-            StopGameplay(); // gameplay cannot continue because it's initialized only for a client
-            NetworkMode = NetworkMode.Standalone;
-            if (errorOrNull != null)
-            {
-                var dialogData = new CustomOverlayDialogData(MenuEngine,
-                    errorOrNull + "\nPress Enter to return to Main Menu.",
-                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
-                ShowDialog(dialogData);
-            }
+            Logic.StopClient(errorOrNull);
         }
 
         public void CutNetworkConnections()
@@ -552,11 +530,6 @@ namespace AW2.Core
                 }
                 conn.Send(message);
             }
-        }
-
-        private void DeactivateAllMessageHandlers()
-        {
-            NetworkEngine.MessageHandlers.Clear();
         }
 
         private void GobRemovedFromArenaHandler(Gob gob)

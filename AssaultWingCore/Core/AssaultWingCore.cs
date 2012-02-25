@@ -61,7 +61,8 @@ namespace AW2.Core
         /// <summary>
         /// The current mode of network operation of the game.
         /// </summary>
-        public NetworkMode NetworkMode { get; protected set; }
+        [Obsolete("Move to Logic")]
+        public NetworkMode NetworkMode { get; set; }
 
         /// <summary>
         /// The game time on this frame.

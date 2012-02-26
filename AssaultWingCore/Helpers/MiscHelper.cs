@@ -69,9 +69,9 @@ namespace AW2.Helpers
 
         public static string ToOrdinalString(this int value)
         {
-            if (value < 0 || value >= 100) throw new ArgumentOutOfRangeException();
+            if (value < 0) throw new ArgumentOutOfRangeException();
             var unitDigit = value % 10;
-            var tensDigit = value / 10;
+            var tensDigit = (value % 100) / 10;
             var suffix =
                 tensDigit == 1 ? "th" :
                 unitDigit == 1 ? "st" :

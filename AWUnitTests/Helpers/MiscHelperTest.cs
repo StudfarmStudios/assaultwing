@@ -73,6 +73,36 @@ namespace AW2.Helpers
         }
 
         [Test]
+        public void TestToOrdinalString()
+        {
+            Assert.AreEqual("0th", 0.ToOrdinalString());
+            Assert.AreEqual("1st", 1.ToOrdinalString());
+            Assert.AreEqual("2nd", 2.ToOrdinalString());
+            Assert.AreEqual("3rd", 3.ToOrdinalString());
+            Assert.AreEqual("4th", 4.ToOrdinalString());
+            Assert.AreEqual("9th", 9.ToOrdinalString());
+            Assert.AreEqual("10th", 10.ToOrdinalString());
+            Assert.AreEqual("11th", 11.ToOrdinalString());
+            Assert.AreEqual("12th", 12.ToOrdinalString());
+            Assert.AreEqual("13th", 13.ToOrdinalString());
+            Assert.AreEqual("19th", 19.ToOrdinalString());
+            Assert.AreEqual("20th", 20.ToOrdinalString());
+            Assert.AreEqual("21st", 21.ToOrdinalString());
+            Assert.AreEqual("22nd", 22.ToOrdinalString());
+            Assert.AreEqual("23rd", 23.ToOrdinalString());
+            Assert.AreEqual("24th", 24.ToOrdinalString());
+            Assert.AreEqual("99th", 99.ToOrdinalString());
+            Assert.AreEqual("100th", 100.ToOrdinalString());
+            Assert.AreEqual("101st", 101.ToOrdinalString());
+            Assert.AreEqual("102nd", 102.ToOrdinalString());
+            Assert.AreEqual("103rd", 103.ToOrdinalString());
+            Assert.AreEqual("104th", 104.ToOrdinalString());
+            Assert.AreEqual("6662nd", 6662.ToOrdinalString());
+            Assert.AreEqual("100001st", 100001.ToOrdinalString());
+            Assert.Throws<ArgumentOutOfRangeException>(() => (-1).ToOrdinalString());
+        }
+
+        [Test]
         public void TestFirstDifference()
         {
             object a, b;

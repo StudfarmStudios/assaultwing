@@ -63,7 +63,7 @@ namespace AW2.Menu
         {
             get
             {
-                return MenuEngine.IsReadyToStartArena ||
+                return MenuEngine.Game.IsReadyToStartArena ||
                     (MenuEngine.Game.NetworkMode != NetworkMode.Client && MenuEngine.Game.ArenaLoadTask.TaskRunning);
             }
         }
@@ -135,7 +135,7 @@ namespace AW2.Menu
             var tabBack = (Controls.Tab.Pulse && shiftPressed) || (Controls.TabBack.Pulse && !shiftPressed);
             if (tabForward) ChangeTab();
             else if (tabBack) ChangeTab(-1);
-            else if (Controls.StartGame.Pulse) MenuEngine.IsReadyToStartArena = !MenuEngine.IsReadyToStartArena;
+            else if (Controls.StartGame.Pulse) MenuEngine.Game.IsReadyToStartArena = !MenuEngine.Game.IsReadyToStartArena;
         }
 
         private void ChangeTab(int step = 1)

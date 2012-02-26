@@ -68,6 +68,7 @@ namespace AW2.Core
         public WebData WebData { get; private set; }
         public List<Tuple<Control, Action>> CustomControls { get; private set; }
         public BackgroundTask ArenaLoadTask { get; private set; }
+        public bool IsReadyToStartArena { get; set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
@@ -697,8 +698,8 @@ namespace AW2.Core
             Func<Spectator, SpectatorSettingsRequest> newPlayerSettingsRequest = spec => new SpectatorSettingsRequest
             {
                 IsRegisteredToServer = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes,
-                IsGameClientPlayingArena = GameState == Core.GameState.Gameplay,
-                IsGameClientReadyToStartArena = MenuEngine.IsReadyToStartArena,
+                IsGameClientPlayingArena = GameState == GameState.Gameplay,
+                IsGameClientReadyToStartArena = IsReadyToStartArena,
                 SpectatorID = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes ? spec.ID : spec.LocalID,
                 Subclass = SpectatorSettingsRequest.GetSubclassType(spec),
             };

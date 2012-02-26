@@ -20,6 +20,7 @@ namespace AW2.UI
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
 
+        private bool MainMenuActive { get { return Game.GameState == GameState.Menu && MenuEngine.MainMenu.Active; } }
         private bool EquipMenuActive
         {
             get
@@ -28,7 +29,6 @@ namespace AW2.UI
                     && MenuEngine.EquipMenu.Active;
             }
         }
-
 
         public UserControlledLogic(AssaultWing game)
             : base(game)
@@ -85,6 +85,7 @@ namespace AW2.UI
                 else
                     Game.StartArena();
             }
+            if (MainMenuActive && Game.NetworkEngine.GameServerConnection != null) MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
         }
 
         public override bool TryEnableGameState(GameState value)
@@ -243,10 +244,10 @@ namespace AW2.UI
         private void CheckArenaStart()
         {
             bool okToStart = Game.NetworkMode == NetworkMode.Client
-                ? Game.IsClientAllowedToStartArena && MenuEngine.IsReadyToStartArena && MenuEngine.ProgressBar.IsFinished
-                : MenuEngine.IsReadyToStartArena;
+                ? Game.IsClientAllowedToStartArena && Game.IsReadyToStartArena && MenuEngine.ProgressBar.IsFinished
+                : Game.IsReadyToStartArena;
             if (!okToStart) return;
-            MenuEngine.IsReadyToStartArena = false;
+            Game.IsReadyToStartArena = false;
             MenuEngine.Deactivate();
             if (Game.NetworkMode == NetworkMode.Client)
                 Game.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
@@ -297,7 +298,7 @@ namespace AW2.UI
             if (!EquipMenuActive) return;
             Action backToMainMenuImpl = () =>
             {
-                MenuEngine.IsReadyToStartArena = false;
+                Game.IsReadyToStartArena = false;
                 if (Game.ArenaLoadTask.TaskRunning) Game.ArenaLoadTask.AbortTask();
                 ShowMainMenuAndResetGameplay();
             };

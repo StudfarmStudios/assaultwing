@@ -17,7 +17,7 @@ namespace AW2.UI
             base.Initialize();
             Game.GameState = GameState.Menu;
             AW2.Menu.Main.MainMenuItemCollections.Click_LocalGame(MenuEngine);
-            MenuEngine.IsReadyToStartArena = true;
+            Game.IsReadyToStartArena = true;
         }
     }
 }

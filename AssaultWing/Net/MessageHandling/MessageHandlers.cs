@@ -433,7 +433,6 @@ namespace AW2.Net.MessageHandling
                     GameClientKey = net.GetAssaultWingInstanceKey(),
                 };
                 net.GameServerConnection.Send(joinRequest);
-                Menu.Activate(AW2.Menu.MenuComponentType.Equip);
                 Game.HideDialog("Connecting to server");
             }
         }

@@ -64,7 +64,7 @@ namespace AW2.Menu
             get
             {
                 return MenuEngine.IsReadyToStartArena ||
-                    (MenuEngine.Game.NetworkMode != NetworkMode.Client && MenuEngine.Game.IsLoadingArena);
+                    (MenuEngine.Game.NetworkMode != NetworkMode.Client && MenuEngine.Game.ArenaLoadTask.TaskRunning);
             }
         }
 

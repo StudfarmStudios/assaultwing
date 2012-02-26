@@ -55,7 +55,6 @@ namespace AW2.Core
             }
         }
         public bool IsClientAllowedToStartArena { get; set; }
-        public bool IsLoadingArena { get { return !CommandLineOptions.DedicatedServer && MenuEngine.ArenaLoadTask.TaskRunning; } }
         public Control ChatStartControl { get; set; }
 
         public event Action<GameState> GameStateChanged;
@@ -68,6 +67,7 @@ namespace AW2.Core
         public MessageHandlers MessageHandlers { get; private set; }
         public WebData WebData { get; private set; }
         public List<Tuple<Control, Action>> CustomControls { get; private set; }
+        public BackgroundTask ArenaLoadTask { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
@@ -79,6 +79,7 @@ namespace AW2.Core
                 Logic = new QuickStartLogic(this);
             else
                 Logic = new UserControlledLogic(this);
+            ArenaLoadTask = new BackgroundTask();
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this, MenuEngine);
             NetworkEngine = new NetworkEngine(this, 0);
             WebData = new WebData(this, 21);
@@ -494,7 +495,7 @@ namespace AW2.Core
         private void SendGobCreationMessage()
         {
             if (NetworkMode != NetworkMode.Server) return;
-            if (IsLoadingArena) return; // wait for arena load completion
+            if (ArenaLoadTask.TaskRunning) return; // wait for arena load completion
             if (DataEngine.Arena == null) return; // happens if gobs are created on the frame the arena ends
             foreach (var conn in NetworkEngine.GameClientConnections)
             {

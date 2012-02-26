@@ -73,9 +73,9 @@ namespace AW2.UI
         {
             if (Game.GameState == GameState.Intro && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
             if (EquipMenuActive) CheckArenaStart();
-            if (MenuEngine.ArenaLoadTask.TaskCompleted)
+            if (Game.ArenaLoadTask.TaskCompleted)
             {
-                MenuEngine.ArenaLoadTask.FinishTask();
+                Game.ArenaLoadTask.FinishTask();
                 if (Game.NetworkMode == NetworkMode.Client)
                 {
                     Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetClientGameplayHandlers());
@@ -182,7 +182,7 @@ namespace AW2.UI
             AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
             foreach (var conn in Game.NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
             MenuEngine.ProgressBar.Start(Game.DataEngine.Arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count(), () => AW2.Game.Gobs.Wall.WallActivatedCounter);
-            MenuEngine.ArenaLoadTask.StartTask(Game.DataEngine.Arena.Reset);
+            Game.ArenaLoadTask.StartTask(Game.DataEngine.Arena.Reset);
         }
 
         public override void ShowMainMenuAndResetGameplay()
@@ -259,7 +259,7 @@ namespace AW2.UI
 
         private void EnsureArenaLoadingStopped()
         {
-            if (Game.IsLoadingArena) MenuEngine.ArenaLoadTask.AbortTask();
+            if (Game.ArenaLoadTask.TaskRunning) Game.ArenaLoadTask.AbortTask();
             MenuEngine.ProgressBar.SkipRemainingSubtasks();
         }
 
@@ -298,7 +298,7 @@ namespace AW2.UI
             Action backToMainMenuImpl = () =>
             {
                 MenuEngine.IsReadyToStartArena = false;
-                if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
+                if (Game.ArenaLoadTask.TaskRunning) Game.ArenaLoadTask.AbortTask();
                 ShowMainMenuAndResetGameplay();
             };
             if (Game.NetworkMode == NetworkMode.Standalone)

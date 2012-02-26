@@ -58,7 +58,6 @@ namespace AW2.Menu
         public ProgressBar ProgressBar { get; private set; }
         public MenuControls Controls { get; private set; }
 
-        public BackgroundTask ArenaLoadTask { get; private set; }
         public bool IsReadyToStartArena { get; set; }
         private int ViewportWidth { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width; } }
         private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
@@ -90,7 +89,6 @@ namespace AW2.Menu
         {
             Controls = new MenuControls();
             MenuContent = new MenuContent();
-            ArenaLoadTask = new BackgroundTask();
             ProgressBar = new ProgressBar(this)
             {
                 HorizontalAlignment = HorizontalAlignment.Center,

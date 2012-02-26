@@ -139,12 +139,6 @@ namespace AW2.Core
             Logic.ShowMainMenuAndResetGameplay();
         }
 
-        [Obsolete("Move to Logic")]
-        public void ShowEquipMenu()
-        {
-            Logic.ShowEquipMenu();
-        }
-
         /// <summary>
         /// Called after all components are initialized but before the first update in the game loop. 
         /// </summary>
@@ -182,6 +176,7 @@ namespace AW2.Core
         public void PrepareArena(string arenaName, byte arenaIDOnClient)
         {
             SelectedArenaName = arenaName;
+            Logic.ShowEquipMenu();
             LoadSelectedArena(arenaIDOnClient);
             Logic.PrepareArena();
         }
@@ -453,13 +448,6 @@ namespace AW2.Core
                 case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
                 case GameState.GameAndMenu: GameState = GameState.Menu; break;
             }
-        }
-
-        public void ShowEquipMenuWhileKeepingGameRunning()
-        {
-            if (GameState == GameState.Menu) return;
-            MenuEngine.Activate(MenuComponentType.Equip);
-            GameState = GameState.GameAndMenu;
         }
 
         private void UpdateCustomControls()

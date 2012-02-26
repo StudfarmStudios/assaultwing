@@ -64,7 +64,9 @@ namespace AW2.UI
             Game.StopGameplay();
             _clearGameDataWhenEnteringMenus = true;
             var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators).ToArray(); // ToArray takes a copy
-            ShowDialog(new GameOverOverlayDialogData(MenuEngine, standings) { GroupName = "Game over" });
+            var callback = new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL,
+                () => { if (Game.GameState == GameState.GameplayStopped) ShowEquipMenu(); });
+            ShowDialog(new GameOverOverlayDialogData(MenuEngine, standings, callback) { GroupName = "Game over" });
         }
 
         public override void Update()
@@ -201,6 +203,13 @@ namespace AW2.UI
             Game.GameState = GameState.Menu;
         }
 
+        private void ShowEquipMenuWhileKeepingGameRunning()
+        {
+            if (Game.GameState == GameState.Menu) return;
+            MenuEngine.Activate(MenuComponentType.Equip);
+            Game.GameState = GameState.GameAndMenu;
+        }
+
         public override void ShowDialog(OverlayDialogData dialogData)
         {
             OverlayDialog.Show(dialogData);
@@ -228,7 +237,7 @@ namespace AW2.UI
             var screenShotControl = new KeyboardKey(Keys.PrintScreen);
             game.CustomControls.Add(Tuple.Create<Control, Action>(escapeControl, Click_EscapeControl));
             game.CustomControls.Add(Tuple.Create<Control, Action>(screenShotControl, Game.TakeScreenShot));
-            game.CustomControls.Add(Tuple.Create<Control,Action>(MenuEngine.Controls.Back, Click_MenuBackControl));
+            game.CustomControls.Add(Tuple.Create<Control, Action>(MenuEngine.Controls.Back, Click_MenuBackControl));
         }
 
         private void CheckArenaStart()
@@ -269,7 +278,7 @@ namespace AW2.UI
                 case NetworkMode.Client:
                     dialogData = new CustomOverlayDialogData(MenuEngine,
                         "Pop by to equip your ship? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.ShowEquipMenuWhileKeepingGameRunning),
+                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowEquipMenuWhileKeepingGameRunning),
                         new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
                     break;
                 case NetworkMode.Standalone:

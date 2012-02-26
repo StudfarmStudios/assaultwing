@@ -164,7 +164,6 @@ namespace AW2.Net.MessageHandling
         private void HandleStartGameMessage(StartGameMessage mess)
         {
             if (Game.IsLoadingArena) return;
-            Game.ShowEquipMenu();
             Game.DataEngine.ArenaFinishTime = mess.ArenaTimeLeft == TimeSpan.Zero ? TimeSpan.Zero : mess.ArenaTimeLeft + Game.GameTime.TotalRealTime;
             // FIXME: mess.WallCount is not used. Remove it. Client is assumed to have the same arena as the server. Enforce that?
             Game.PrepareArena(mess.ArenaToPlay, mess.ArenaID);

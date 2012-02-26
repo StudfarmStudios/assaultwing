@@ -21,8 +21,8 @@ namespace AW2.Core.OverlayComponents
         private SpriteFont FontHuge { get { return Menu.MenuContent.FontHuge; } }
         private SpriteFont FontSmall { get { return Menu.MenuContent.FontSmall; } }
 
-        public GameOverOverlayDialogData(MenuEngineImpl menu, IEnumerable<Standing> standings)
-            : base(menu, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { if (menu.Game.GameState == GameState.GameplayStopped) menu.Game.ShowEquipMenu(); }))
+        public GameOverOverlayDialogData(MenuEngineImpl menu, IEnumerable<Standing> standings, params TriggeredCallback[] actions)
+            : base(menu, actions)
         {
             _standings = standings;
         }

@@ -74,6 +74,7 @@ namespace AW2.Core
             : base(graphicsDeviceService, args)
         {
             CustomControls = new List<Tuple<Control, Action>>();
+            MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
             if (CommandLineOptions.DedicatedServer)
                 Logic = new DedicatedServerLogic(this);
             else if (CommandLineOptions.QuickStart)
@@ -81,7 +82,7 @@ namespace AW2.Core
             else
                 Logic = new UserControlledLogic(this);
             ArenaLoadTask = new BackgroundTask();
-            MessageHandlers = new Net.MessageHandling.MessageHandlers(this, MenuEngine);
+
             NetworkEngine = new NetworkEngine(this, 0);
             WebData = new WebData(this, 21);
             Components.Add(NetworkEngine);
@@ -100,7 +101,6 @@ namespace AW2.Core
             Stats = new StatsSender(this, 7);
             Components.Add(Stats);
             Stats.Enabled = true;
-
         }
 
         public override void Update(AWGameTime gameTime)

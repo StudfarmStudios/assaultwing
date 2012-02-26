@@ -18,13 +18,13 @@ namespace AW2.Net.MessageHandling
 {
     public class MessageHandlers
     {
-        private AssaultWing Game { get; set; }
-        private MenuEngineImpl Menu { get; set; }
+        public event Action<string> GameServerConnectionClosing; // parameter is info
 
-        public MessageHandlers(AssaultWing game, MenuEngineImpl menu)
+        private AssaultWing Game { get; set; }
+
+        public MessageHandlers(AssaultWing game)
         {
             Game = game;
-            Menu = menu;
         }
 
         public void ActivateHandlers(IEnumerable<MessageHandlerBase> handlers)
@@ -155,10 +155,7 @@ namespace AW2.Net.MessageHandling
 
         private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
-            Log.Write("Server is going to close the connection because {0}.", mess.Info);
-            var dialogData = new CustomOverlayDialogData(Menu, "Server closed connection because\n" + mess.Info + ".",
-                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, Game.ShowMainMenuAndResetGameplay));
-            Game.ShowDialog(dialogData);
+            GameServerConnectionClosing(mess.Info);
         }
 
         private void HandleStartGameMessage(StartGameMessage mess)

@@ -45,6 +45,7 @@ namespace AW2.UI
             Game.Components.Add(OverlayDialog);
             Game.MenuEngine = MenuEngine;
             CreateCustomControls(Game);
+            Game.MessageHandlers.GameServerConnectionClosing += Handle_GameServerConnectionClosing;
         }
 
         public override void Initialize()
@@ -309,6 +310,14 @@ namespace AW2.UI
                     "Quit network game? (Yes/No)",
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));
+        }
+
+        private void Handle_GameServerConnectionClosing(string info)
+        {
+            Log.Write("Server is going to close the connection because {0}.", info);
+            var dialogData = new CustomOverlayDialogData(MenuEngine, "Server closed connection because\n" + info + ".",
+                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
+            ShowDialog(dialogData);
         }
     }
 }

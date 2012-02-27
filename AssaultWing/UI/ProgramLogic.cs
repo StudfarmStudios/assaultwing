@@ -27,10 +27,8 @@ namespace AW2.UI
         public virtual void EndRun() { }
         public virtual void FinishArena() { }
 
-        // TODO !!! Change to void EnableGameState when GameState is fully inside ProgramLogic.
-        public virtual bool TryEnableGameState(GameState value) { return false; }
-        // TODO !!! Change to void DisableGameState when GameState is fully inside ProgramLogic.
-        public virtual bool TryDisableGameState(GameState value) { return false; }
+        public virtual void EnableGameState(GameState value) { }
+        public virtual void DisableGameState(GameState value) { }
 
         // TODO !!! Make private
         public virtual void PrepareArena() { }

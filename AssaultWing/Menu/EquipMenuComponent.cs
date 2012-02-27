@@ -223,7 +223,7 @@ namespace AW2.Menu
                     }
                 case NetworkMode.Client:
                     drawInfo(2, "Ping", GetPingTextAndColor().Item1, Color.White, GetPingTextAndColor().Item2);
-                    drawInfo(4, MenuEngine.Game.GameState == GameState.GameAndMenu ? "Press F10 to play" : "Waiting for server",
+                    drawInfo(4, IsPlayButtonPressed ? "Waiting for server" : "Press F10 to play",
                         "", Color.GreenYellow, Color.GreenYellow);
                     break;
             }

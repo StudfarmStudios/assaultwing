@@ -22,35 +22,35 @@ namespace AW2.UI
             Game.GameState = GameState.Initializing;
         }
 
-        public override bool TryEnableGameState(GameState value)
+        public override void EnableGameState(GameState value)
         {
             switch (value)
             {
                 case GameState.Initializing:
-                    return true;
+                    break;
                 case GameState.Gameplay:
                     Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
                     Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
                     Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
-                    return true;
+                    break;
                 default:
-                    return false;
+                    throw new ApplicationException("Unexpected game state " + value);
             }
         }
 
-        public override bool TryDisableGameState(GameState value)
+        public override void DisableGameState(GameState value)
         {
             switch (value)
             {
                 case GameState.Initializing:
-                    return true;
+                    break;
                 case GameState.Gameplay:
                     Game.LogicEngine.Enabled = false;
                     Game.PreFrameLogicEngine.Enabled = false;
                     Game.PostFrameLogicEngine.Enabled = false;
-                    return true;
+                    break;
                 default:
-                    return false;
+                    throw new ApplicationException("Unexpected game state " + value);
             }
         }
     }

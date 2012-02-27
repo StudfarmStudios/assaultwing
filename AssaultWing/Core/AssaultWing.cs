@@ -44,8 +44,8 @@ namespace AW2.Core
             get { return _gameState; }
             set
             {
-                DisableCurrentGameState();
-                EnableGameState(value);
+                Logic.DisableGameState(GameState);
+                Logic.EnableGameState(value);
                 var oldState = _gameState;
                 _gameState = value;
                 if (value == GameState.Gameplay || value == GameState.GameplayStopped)
@@ -395,51 +395,6 @@ namespace AW2.Core
                 Window.Impl.SetFullScreen(Settings.Graphics.FullscreenWidth, Settings.Graphics.FullscreenHeight);
             else
                 Window.Impl.SetWindowed();
-        }
-
-        [Obsolete("Move all GameState stuff into Logic")]
-        private void EnableGameState(GameState value)
-        {
-            if (Logic.TryEnableGameState(value)) return;
-            switch (value)
-            {
-                case GameState.GameAndMenu:
-                    LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    MenuEngine.Enabled = true;
-                    MenuEngine.Visible = true;
-                    SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
-                    break;
-                case GameState.Menu:
-                    MenuEngine.Enabled = true;
-                    MenuEngine.Visible = true;
-                    SoundEngine.PlayMusic("menu music", 1);
-                    break;
-                default:
-                    throw new ApplicationException("Cannot change to unexpected game state " + value);
-            }
-        }
-
-        private void DisableCurrentGameState()
-        {
-            if (Logic.TryDisableGameState(_gameState)) return;
-            switch (_gameState)
-            {
-                case GameState.GameAndMenu:
-                    LogicEngine.Enabled = false;
-                    PreFrameLogicEngine.Enabled = false;
-                    PostFrameLogicEngine.Enabled = false;
-                    MenuEngine.Enabled = false;
-                    MenuEngine.Visible = false;
-                    break;
-                case GameState.Menu:
-                    MenuEngine.Enabled = false;
-                    MenuEngine.Visible = false;
-                    break;
-                default:
-                    throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
-            }
         }
 
         [Obsolete("Move to Logic")]

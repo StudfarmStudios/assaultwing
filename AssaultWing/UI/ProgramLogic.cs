@@ -25,6 +25,7 @@ namespace AW2.UI
         public virtual void Initialize() { }
         public virtual void Update() { }
         public virtual void EndRun() { }
+        public virtual void StartArena() { }
         public virtual void FinishArena() { }
 
         public virtual void EnableGameState(GameState value) { }

@@ -20,12 +20,13 @@ namespace AW2.UI
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
 
-        private bool MainMenuActive { get { return Game.GameState == GameState.Menu && MenuEngine.MainMenu.Active; } }
+        private GameState GameState { get { return Game.GameState; } set { Game.GameState = value; } }
+        private bool MainMenuActive { get { return GameState == GameState.Menu && MenuEngine.MainMenu.Active; } }
         private bool EquipMenuActive
         {
             get
             {
-                return (Game.GameState == GameState.Menu || Game.GameState == GameState.GameAndMenu)
+                return (GameState == GameState.Menu || GameState == GameState.GameAndMenu)
                     && MenuEngine.EquipMenu.Active;
             }
         }
@@ -43,50 +44,44 @@ namespace AW2.UI
             Game.Components.Add(IntroEngine);
             Game.Components.Add(PlayerChat);
             Game.Components.Add(OverlayDialog);
-            Game.MenuEngine = MenuEngine;
             CreateCustomControls(Game);
             Game.MessageHandlers.GameServerConnectionClosing += Handle_GameServerConnectionClosing;
         }
 
         public override void Initialize()
         {
-            Game.GameState = GameState.Intro;
+            GameState = GameState.Intro;
         }
 
         public override void EndRun()
         {
             EnsureArenaLoadingStopped();
-            Game.GameState = GameState.Initializing;
+            GameState = GameState.Initializing;
         }
 
         public override void FinishArena()
         {
             EnsureArenaLoadingStopped();
-            Game.StopGameplay();
+            StopGameplay();
             _clearGameDataWhenEnteringMenus = true;
             var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators).ToArray(); // ToArray takes a copy
             var callback = new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL,
-                () => { if (Game.GameState == GameState.GameplayStopped) ShowEquipMenu(); });
+                () => { if (GameState == GameState.GameplayStopped) ShowEquipMenu(); });
             ShowDialog(new GameOverOverlayDialogData(MenuEngine, standings, callback) { GroupName = "Game over" });
         }
 
         public override void Update()
         {
-            if (Game.GameState == GameState.Intro && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
+            if (GameState == GameState.Intro && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
             if (EquipMenuActive) CheckArenaStart();
-            if (Game.ArenaLoadTask.TaskCompleted)
-            {
-                Game.ArenaLoadTask.FinishTask();
-                if (Game.NetworkMode == NetworkMode.Client)
-                {
-                    Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetClientGameplayHandlers());
-                    Game.IsClientAllowedToStartArena = true;
-                    Game.StartArenaButStayInMenu();
-                }
-                else
-                    Game.StartArena();
-            }
+            if (Game.ArenaLoadTask.TaskCompleted) Handle_ArenaLoadingFinished();
             if (MainMenuActive && Game.NetworkEngine.GameServerConnection != null) MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
+        }
+
+        public override void StartArena()
+        {
+            if (GameState != GameState.GameAndMenu) Game.StartArenaBase();
+            GameState = GameState.Gameplay;
         }
 
         public override void EnableGameState(GameState value)
@@ -192,7 +187,7 @@ namespace AW2.UI
             Game.NetworkEngine.MessageHandlers.Clear();
             Game.NetworkEngine.StopClient();
             Game.DataEngine.RemoveAllButLocalSpectators();
-            Game.StopGameplay(); // gameplay cannot continue because it's initialized only for a client
+            StopGameplay(); // gameplay cannot continue because it's initialized only for a client
             Game.NetworkMode = NetworkMode.Standalone;
             if (errorOrNull != null)
             {
@@ -218,7 +213,7 @@ namespace AW2.UI
             EnsureArenaLoadingStopped();
             Game.DataEngine.ClearGameState();
             MenuEngine.Activate(MenuComponentType.Main);
-            Game.GameState = GameState.Menu;
+            GameState = GameState.Menu;
         }
 
         public override void ShowEquipMenu()
@@ -226,14 +221,14 @@ namespace AW2.UI
             if (_clearGameDataWhenEnteringMenus) Game.DataEngine.ClearGameState();
             _clearGameDataWhenEnteringMenus = false;
             MenuEngine.Activate(MenuComponentType.Equip);
-            Game.GameState = GameState.Menu;
+            GameState = GameState.Menu;
         }
 
         private void ShowEquipMenuWhileKeepingGameRunning()
         {
-            if (Game.GameState == GameState.Menu) return;
+            if (GameState == GameState.Menu) return;
             MenuEngine.Activate(MenuComponentType.Equip);
-            Game.GameState = GameState.GameAndMenu;
+            GameState = GameState.GameAndMenu;
         }
 
         public override void ShowDialog(OverlayDialogData dialogData)
@@ -250,6 +245,11 @@ namespace AW2.UI
         public override void HideDialog(string groupName = null)
         {
             OverlayDialog.Dismiss(groupName);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", Game.NetworkMode, GameState);
         }
 
         private void CreateCustomControls(AssaultWing game)
@@ -283,6 +283,15 @@ namespace AW2.UI
             }
         }
 
+        private void StopGameplay()
+        {
+            switch (GameState)
+            {
+                case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
+                case GameState.GameAndMenu: GameState = GameState.Menu; break;
+            }
+        }
+
         private void EnsureArenaLoadingStopped()
         {
             if (Game.ArenaLoadTask.TaskRunning) Game.ArenaLoadTask.AbortTask();
@@ -291,7 +300,7 @@ namespace AW2.UI
 
         private void Click_EscapeControl()
         {
-            if (Game.GameState != GameState.Gameplay || OverlayDialog.Enabled) return;
+            if (GameState != GameState.Gameplay || OverlayDialog.Enabled) return;
             OverlayDialogData dialogData;
             switch (Game.NetworkMode)
             {
@@ -334,6 +343,20 @@ namespace AW2.UI
                     "Quit network game? (Yes/No)",
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));
+        }
+
+        private void Handle_ArenaLoadingFinished()
+        {
+            Game.ArenaLoadTask.FinishTask();
+            if (Game.NetworkMode == NetworkMode.Client)
+            {
+                Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetClientGameplayHandlers());
+                Game.IsClientAllowedToStartArena = true;
+                Game.StartArenaBase();
+                GameState = GameState.GameAndMenu;
+            }
+            else
+                Game.StartArena();
         }
 
         private void Handle_GameServerConnectionClosing(string info)

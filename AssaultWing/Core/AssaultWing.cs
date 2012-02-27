@@ -18,7 +18,7 @@ using AW2.Graphics;
 
 namespace AW2.Core
 {
-    [System.Diagnostics.DebuggerDisplay("AssaultWing {NetworkMode} {GameState}")]
+    [System.Diagnostics.DebuggerDisplay("AssaultWing {Logic}")]
     public class AssaultWing : AssaultWingCore
     {
         private GameState _gameState;
@@ -60,8 +60,6 @@ namespace AW2.Core
         public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
         private ProgramLogic Logic { get; set; }
-        [Obsolete("Remove !!!")]
-        public MenuEngineImpl MenuEngine { private get; set; }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
         public MessageHandlers MessageHandlers { get; private set; }
@@ -201,12 +199,10 @@ namespace AW2.Core
             DataEngine.Arena = arena;
         }
 
-        public void StartArenaButStayInMenu()
+        public void StartArenaBase() // TODO !!! Figure out a better name.
         {
-            if (NetworkMode != NetworkMode.Client) throw new InvalidOperationException("Only client can start arena on background");
             base.StartArena();
             PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
-            GameState = GameState.GameAndMenu;
         }
 
         public override void StartArena()
@@ -219,12 +215,7 @@ namespace AW2.Core
                 _pendingGobDeletionMessage = new GobDeletionMessage();
                 DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
             }
-            if (GameState != GameState.GameAndMenu)
-            {
-                base.StartArena();
-                PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
-            }
-            GameState = GameState.Gameplay;
+            Logic.StartArena();
         }
 
         public void InitializePlayers(int count)
@@ -395,16 +386,6 @@ namespace AW2.Core
                 Window.Impl.SetFullScreen(Settings.Graphics.FullscreenWidth, Settings.Graphics.FullscreenHeight);
             else
                 Window.Impl.SetWindowed();
-        }
-
-        [Obsolete("Move to Logic")]
-        public void StopGameplay()
-        {
-            switch (GameState)
-            {
-                case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
-                case GameState.GameAndMenu: GameState = GameState.Menu; break;
-            }
         }
 
         private void UpdateCustomControls()

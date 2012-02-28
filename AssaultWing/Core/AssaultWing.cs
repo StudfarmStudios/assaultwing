@@ -107,7 +107,6 @@ namespace AW2.Core
             Logic.Update();
             UpdateCustomControls();
             UpdateDebugKeys();
-            SynchronizeFrameNumber();
             SendGobCreationMessage();
             SendGameSettings();
         }
@@ -423,7 +422,6 @@ namespace AW2.Core
             if (!NetworkEngine.IsConnectedToGameServer) return;
             if (_lastFrameNumberSynchronization + TimeSpan.FromSeconds(1) > GameTime.TotalRealTime) return;
             _lastFrameNumberSynchronization = GameTime.TotalRealTime;
-            if (GameState != GameState.Gameplay && GameState != GameState.GameAndMenu) return;
             var remoteFrameNumberOffset = NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
             DataEngine.Arena.FrameNumber -= remoteFrameNumberOffset;
             NetworkEngine.GameServerConnection.PingInfo.AdjustRemoteFrameNumberOffset(remoteFrameNumberOffset);
@@ -483,12 +481,10 @@ namespace AW2.Core
 
         private void SpectatorRemovedHandler(Spectator spectator)
         {
-            if (NetworkMode == NetworkMode.Server)
-            {
-                UpdateGameServerInfoToManagementServer();
-                var clientMessage = new PlayerDeletionMessage { PlayerID = spectator.ID };
-                NetworkEngine.SendToGameClients(clientMessage);
-            }
+            if (NetworkMode != NetworkMode.Server) return;
+            UpdateGameServerInfoToManagementServer();
+            var clientMessage = new PlayerDeletionMessage { PlayerID = spectator.ID };
+            NetworkEngine.SendToGameClients(clientMessage);
         }
 
         public void UpdateGameServerInfoToManagementServer()
@@ -500,29 +496,32 @@ namespace AW2.Core
         private void AfterEveryFrame()
         {
 #if NETWORK_PROFILING
-            if (DataEngine.Arena.FrameNumber == 1)
-            {
-                ProfilingNetworkBinaryWriter.Reset();
-            }
-            using(new NetworkProfilingScope(string.Format("Frame {0:0000}", DataEngine.Arena.FrameNumber)))
+            if (DataEngine.Arena.FrameNumber == 1) ProfilingNetworkBinaryWriter.Reset();
+            using (new NetworkProfilingScope(string.Format("Frame {0:0000}", DataEngine.Arena.FrameNumber)))
 #endif
             {
-                switch (NetworkMode)
-                {
-                    case NetworkMode.Server:
-                        SendGobUpdatesToRemote(DataEngine.Arena.Gobs.GameplayLayer.Gobs,
-                            SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
-                        SendPlayerUpdatesOnServer();
-                        SendGobDeletionsOnServer();
-                        SendArenaStatisticsOnServer();
-                        break;
-                    case NetworkMode.Client:
-                        SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
-                            SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
-                        SendPlayerUpdatesOnClient();
-                        break;
-                }
+                SendMessagesOnServer();
+                SendMessagesOnClient();
             }
+            SynchronizeFrameNumber();
+        }
+
+        private void SendMessagesOnServer()
+        {
+            if (NetworkMode != NetworkMode.Server) return;
+            SendGobUpdatesToRemote(DataEngine.Arena.Gobs.GameplayLayer.Gobs,
+                SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
+            SendPlayerUpdatesOnServer();
+            SendGobDeletionsOnServer();
+            SendArenaStatisticsOnServer();
+        }
+
+        private void SendMessagesOnClient()
+        {
+            if (NetworkMode != NetworkMode.Client) return;
+            SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
+                SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
+            SendPlayerUpdatesOnClient();
         }
 
         private void SendArenaStatisticsOnServer()

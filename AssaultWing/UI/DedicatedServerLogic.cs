@@ -16,6 +16,12 @@ namespace AW2.UI
             dedicatedServer.Enabled = true;
         }
 
+        public override void StartArena()
+        {
+            Game.StartArenaBase();
+            Game.GameState = GameState.Gameplay;
+        }
+
         public override void FinishArena()
         {
             Game.DataEngine.ClearGameState();

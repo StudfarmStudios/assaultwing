@@ -67,6 +67,7 @@ namespace AW2.Core
         public List<Tuple<Control, Action>> CustomControls { get; private set; }
         public BackgroundTask ArenaLoadTask { get; private set; }
         public bool IsReadyToStartArena { get; set; }
+        public override bool IsShipControlsEnabled { get { return Logic.IsShipControlsEnabled; } }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
@@ -560,7 +561,7 @@ namespace AW2.Core
 
         private void SendPlayerUpdatesOnClient()
         {
-            if (GameState != GameState.Gameplay) return;
+            if (!IsShipControlsEnabled) return;
             foreach (var player in DataEngine.Players.Where(plr => plr.IsLocal && plr.ID != Spectator.UNINITIALIZED_ID))
             {
                 var message = new PlayerControlsMessage();

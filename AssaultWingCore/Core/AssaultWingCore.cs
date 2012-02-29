@@ -69,6 +69,7 @@ namespace AW2.Core
         /// </summary>
         public AWGameTime GameTime { get; private set; }
 
+        public virtual bool IsShipControlsEnabled { get { return true; } }
         public Window Window { get; set; }
 
         private static readonly TimeSpan ARGUMENT_FILE_AGE_MAX = TimeSpan.FromHours(1);

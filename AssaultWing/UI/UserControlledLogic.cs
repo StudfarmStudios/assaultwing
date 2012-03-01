@@ -12,6 +12,7 @@ namespace AW2.UI
 {
     public class UserControlledLogic : ProgramLogic
     {
+        private GameState _gameState;
         private bool _clearGameDataWhenEnteringMenus;
 
         public override bool IsGameplay { get { return GameState == GameState.Gameplay; } }
@@ -22,7 +23,19 @@ namespace AW2.UI
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
 
-        private GameState GameState { get { return Game.GameState; } set { Game.GameState = value; } }
+        protected GameState GameState
+        {
+            get { return _gameState; }
+            set
+            {
+                DisableGameState(GameState);
+                _gameState = value;
+                EnableGameState(value);
+                if (value == GameState.Gameplay || value == GameState.GameplayStopped)
+                    Game.ApplyInGameGraphicsSettings();
+            }
+        }
+
         private bool MainMenuActive { get { return GameState == GameState.Menu && MenuEngine.MainMenu.Active; } }
         private bool EquipMenuActive
         {
@@ -84,91 +97,6 @@ namespace AW2.UI
         {
             if (GameState != GameState.GameAndMenu) Game.StartArenaBase();
             GameState = GameState.Gameplay;
-        }
-
-        public override void EnableGameState(GameState value)
-        {
-            switch (value)
-            {
-                case GameState.Initializing:
-                    StartupScreen.Enabled = true;
-                    StartupScreen.Visible = true;
-                    break;
-                case GameState.Intro:
-                    IntroEngine.Enabled = true;
-                    IntroEngine.Visible = true;
-                    break;
-                case GameState.Gameplay:
-                    Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
-                    Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
-                    Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
-                    Game.GraphicsEngine.Enabled = true;
-                    Game.GraphicsEngine.Visible = true;
-                    if (Game.NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
-                    Game.SoundEngine.PlayMusic(Game.DataEngine.Arena.BackgroundMusic.FileName, Game.DataEngine.Arena.BackgroundMusic.Volume);
-                    break;
-                case GameState.GameplayStopped:
-                    Game.GraphicsEngine.Enabled = true;
-                    Game.GraphicsEngine.Visible = true;
-                    if (Game.NetworkMode != NetworkMode.Standalone) PlayerChat.Visible = true;
-                    break;
-                case GameState.GameAndMenu:
-                    Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
-                    Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
-                    Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
-                    MenuEngine.Enabled = true;
-                    MenuEngine.Visible = true;
-                    Game.SoundEngine.PlayMusic(Game.DataEngine.Arena.BackgroundMusic.FileName, Game.DataEngine.Arena.BackgroundMusic.Volume);
-                    break;
-                case GameState.Menu:
-                    MenuEngine.Enabled = true;
-                    MenuEngine.Visible = true;
-                    Game.SoundEngine.PlayMusic("menu music", 1);
-                    break;
-                default:
-                    throw new ApplicationException("Unexpected game state " + value);
-            }
-        }
-
-        public override void DisableGameState(GameState value)
-        {
-            switch (value)
-            {
-                case GameState.Initializing:
-                    StartupScreen.Enabled = false;
-                    StartupScreen.Visible = false;
-                    break;
-                case GameState.Intro:
-                    IntroEngine.Enabled = false;
-                    IntroEngine.Visible = false;
-                    break;
-                case GameState.Gameplay:
-                    Game.LogicEngine.Enabled = false;
-                    Game.PreFrameLogicEngine.Enabled = false;
-                    Game.PostFrameLogicEngine.Enabled = false;
-                    Game.GraphicsEngine.Enabled = false;
-                    Game.GraphicsEngine.Visible = false;
-                    PlayerChat.Enabled = PlayerChat.Visible = false;
-                    break;
-                case GameState.GameplayStopped:
-                    Game.GraphicsEngine.Enabled = false;
-                    Game.GraphicsEngine.Visible = false;
-                    PlayerChat.Visible = false;
-                    break;
-                case GameState.GameAndMenu:
-                    Game.LogicEngine.Enabled = false;
-                    Game.PreFrameLogicEngine.Enabled = false;
-                    Game.PostFrameLogicEngine.Enabled = false;
-                    MenuEngine.Enabled = false;
-                    MenuEngine.Visible = false;
-                    break;
-                case GameState.Menu:
-                    MenuEngine.Enabled = false;
-                    MenuEngine.Visible = false;
-                    break;
-                default:
-                    throw new ApplicationException("Unexpected game state " + value);
-            }
         }
 
         public override void StopServer()
@@ -266,6 +194,91 @@ namespace AW2.UI
             game.CustomControls.Add(Tuple.Create<Control, Action>(escapeControl, Click_EscapeControl));
             game.CustomControls.Add(Tuple.Create<Control, Action>(screenShotControl, Game.TakeScreenShot));
             game.CustomControls.Add(Tuple.Create<Control, Action>(MenuEngine.Controls.Back, Click_MenuBackControl));
+        }
+
+        private void EnableGameState(GameState value)
+        {
+            switch (value)
+            {
+                case GameState.Initializing:
+                    StartupScreen.Enabled = true;
+                    StartupScreen.Visible = true;
+                    break;
+                case GameState.Intro:
+                    IntroEngine.Enabled = true;
+                    IntroEngine.Visible = true;
+                    break;
+                case GameState.Gameplay:
+                    Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.GraphicsEngine.Enabled = true;
+                    Game.GraphicsEngine.Visible = true;
+                    if (Game.NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
+                    Game.SoundEngine.PlayMusic(Game.DataEngine.Arena.BackgroundMusic.FileName, Game.DataEngine.Arena.BackgroundMusic.Volume);
+                    break;
+                case GameState.GameplayStopped:
+                    Game.GraphicsEngine.Enabled = true;
+                    Game.GraphicsEngine.Visible = true;
+                    if (Game.NetworkMode != NetworkMode.Standalone) PlayerChat.Visible = true;
+                    break;
+                case GameState.GameAndMenu:
+                    Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
+                    MenuEngine.Enabled = true;
+                    MenuEngine.Visible = true;
+                    Game.SoundEngine.PlayMusic(Game.DataEngine.Arena.BackgroundMusic.FileName, Game.DataEngine.Arena.BackgroundMusic.Volume);
+                    break;
+                case GameState.Menu:
+                    MenuEngine.Enabled = true;
+                    MenuEngine.Visible = true;
+                    Game.SoundEngine.PlayMusic("menu music", 1);
+                    break;
+                default:
+                    throw new ApplicationException("Unexpected game state " + value);
+            }
+        }
+
+        private void DisableGameState(GameState value)
+        {
+            switch (value)
+            {
+                case GameState.Initializing:
+                    StartupScreen.Enabled = false;
+                    StartupScreen.Visible = false;
+                    break;
+                case GameState.Intro:
+                    IntroEngine.Enabled = false;
+                    IntroEngine.Visible = false;
+                    break;
+                case GameState.Gameplay:
+                    Game.LogicEngine.Enabled = false;
+                    Game.PreFrameLogicEngine.Enabled = false;
+                    Game.PostFrameLogicEngine.Enabled = false;
+                    Game.GraphicsEngine.Enabled = false;
+                    Game.GraphicsEngine.Visible = false;
+                    PlayerChat.Enabled = PlayerChat.Visible = false;
+                    break;
+                case GameState.GameplayStopped:
+                    Game.GraphicsEngine.Enabled = false;
+                    Game.GraphicsEngine.Visible = false;
+                    PlayerChat.Visible = false;
+                    break;
+                case GameState.GameAndMenu:
+                    Game.LogicEngine.Enabled = false;
+                    Game.PreFrameLogicEngine.Enabled = false;
+                    Game.PostFrameLogicEngine.Enabled = false;
+                    MenuEngine.Enabled = false;
+                    MenuEngine.Visible = false;
+                    break;
+                case GameState.Menu:
+                    MenuEngine.Enabled = false;
+                    MenuEngine.Visible = false;
+                    break;
+                default:
+                    throw new ApplicationException("Unexpected game state " + value);
+            }
         }
 
         private void CheckArenaStart()

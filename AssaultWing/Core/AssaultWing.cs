@@ -21,7 +21,6 @@ namespace AW2.Core
     [System.Diagnostics.DebuggerDisplay("AssaultWing {Logic}")]
     public class AssaultWing : AssaultWingCore
     {
-        private GameState _gameState;
         private TimeSpan _lastGameSettingsSent;
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
@@ -37,27 +36,9 @@ namespace AW2.Core
         /// The AssaultWing instance. Avoid using this remnant of the old times.
         /// </summary>
         public static new AssaultWing Instance { get { return (AssaultWing)AssaultWingCore.Instance; } }
-
-        [Obsolete("Move to Logic")]
-        public GameState GameState
-        {
-            get { return _gameState; }
-            set
-            {
-                Logic.DisableGameState(GameState);
-                Logic.EnableGameState(value);
-                var oldState = _gameState;
-                _gameState = value;
-                if (value == GameState.Gameplay || value == GameState.GameplayStopped)
-                    ApplyInGameGraphicsSettings();
-                if (GameStateChanged != null && _gameState != oldState)
-                    GameStateChanged(_gameState);
-            }
-        }
         public bool IsClientAllowedToStartArena { get; set; }
         public Control ChatStartControl { get; set; }
 
-        public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
         private ProgramLogic Logic { get; set; }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
@@ -375,9 +356,9 @@ namespace AW2.Core
 #endif
         }
 
-        private void ApplyInGameGraphicsSettings()
+        public void ApplyInGameGraphicsSettings()
         {
-            if (Window == null || CommandLineOptions.DedicatedServer) return;
+            if (Window == null) return;
             if (Settings.Graphics.IsVerticalSynced)
                 Window.Impl.EnableVerticalSync();
             else

@@ -29,9 +29,6 @@ namespace AW2.UI
         public virtual void StartArena() { }
         public virtual void FinishArena() { }
 
-        public virtual void EnableGameState(GameState value) { }
-        public virtual void DisableGameState(GameState value) { }
-
         // TODO !!! Make private
         public virtual void PrepareArena() { }
         public virtual void StopServer() { }

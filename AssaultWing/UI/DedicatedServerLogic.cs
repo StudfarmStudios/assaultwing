@@ -8,6 +8,20 @@ namespace AW2.UI
 {
     public class DedicatedServerLogic : ProgramLogic
     {
+        private enum GameStateType { Initializing, Gameplay }
+
+        private GameStateType _gameState;
+        private GameStateType GameState
+        {
+            get { return _gameState; }
+            set
+            {
+                DisableGameState(_gameState);
+                _gameState = value;
+                EnableGameState(value);
+            }
+        }
+
         public DedicatedServerLogic(AssaultWing game)
             : base(game)
         {
@@ -19,22 +33,22 @@ namespace AW2.UI
         public override void StartArena()
         {
             Game.StartArenaBase();
-            Game.GameState = GameState.Gameplay;
+            GameState = GameStateType.Gameplay;
         }
 
         public override void FinishArena()
         {
             Game.DataEngine.ClearGameState();
-            Game.GameState = GameState.Initializing;
+            GameState = GameStateType.Initializing;
         }
 
-        public override void EnableGameState(GameState value)
+        private void EnableGameState(GameStateType value)
         {
             switch (value)
             {
-                case GameState.Initializing:
+                case GameStateType.Initializing:
                     break;
-                case GameState.Gameplay:
+                case GameStateType.Gameplay:
                     Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
                     Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
                     Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
@@ -44,13 +58,13 @@ namespace AW2.UI
             }
         }
 
-        public override void DisableGameState(GameState value)
+        private void DisableGameState(GameStateType value)
         {
             switch (value)
             {
-                case GameState.Initializing:
+                case GameStateType.Initializing:
                     break;
-                case GameState.Gameplay:
+                case GameStateType.Gameplay:
                     Game.LogicEngine.Enabled = false;
                     Game.PreFrameLogicEngine.Enabled = false;
                     Game.PostFrameLogicEngine.Enabled = false;

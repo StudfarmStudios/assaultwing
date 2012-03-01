@@ -16,7 +16,7 @@ namespace AW2.UI
     public abstract class ProgramLogic
     {
         public AssaultWing Game { get; private set; }
-        public virtual bool IsShipControlsEnabled { get { return true; } }
+        public virtual bool IsGameplay { get { return true; } }
 
         public ProgramLogic(AssaultWing game)
         {

@@ -14,10 +14,10 @@
         public bool IsRunningArena { get { return CurrentArenaName != ""; } }
 
         /// <summary>
-        /// Is the game client playing the current arena or hanging out in menus.
-        /// This property is maintained by the game client.
+        /// If true, the game client requests to spawn his ship. If the client already has a ship,
+        /// the value of this flag has no effect.
         /// </summary>
-        public bool IsPlayingArena { get; set; }
+        public bool IsRequestingSpawn { get; set; }
 
         /// <summary>
         /// Is the game client ready to start the next arena.

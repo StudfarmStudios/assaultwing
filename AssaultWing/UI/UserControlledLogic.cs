@@ -14,7 +14,7 @@ namespace AW2.UI
     {
         private bool _clearGameDataWhenEnteringMenus;
 
-        public override bool IsShipControlsEnabled { get { return GameState == GameState.Gameplay; } }
+        public override bool IsGameplay { get { return GameState == GameState.Gameplay; } }
 
         private StartupScreen StartupScreen { get; set; }
         private IntroEngine IntroEngine { get; set; }

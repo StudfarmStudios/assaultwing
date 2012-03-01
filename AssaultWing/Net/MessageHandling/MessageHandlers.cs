@@ -275,7 +275,7 @@ namespace AW2.Net.MessageHandling
         {
             var clientConn = Game.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
             if (clientConn.ConnectionStatus.IsDropped) return;
-            clientConn.ConnectionStatus.IsPlayingArena = mess.IsGameClientPlayingArena;
+            clientConn.ConnectionStatus.IsRequestingSpawn = mess.IsRequestingSpawn;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)
             {

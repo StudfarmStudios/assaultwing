@@ -67,7 +67,7 @@ namespace AW2.Core
         public List<Tuple<Control, Action>> CustomControls { get; private set; }
         public BackgroundTask ArenaLoadTask { get; private set; }
         public bool IsReadyToStartArena { get; set; }
-        public override bool IsShipControlsEnabled { get { return Logic.IsShipControlsEnabled; } }
+        public override bool IsShipControlsEnabled { get { return Logic.IsGameplay; } }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
@@ -461,7 +461,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;
             if (player == null) return;
-            player.IsAllowedToCreateShip = () => player.IsRemote && NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
+            player.IsAllowedToCreateShip = () => player.IsRemote && NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsRequestingSpawn;
             player.Messages.NewChatMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
             player.Messages.NewCombatLogMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
         }
@@ -634,7 +634,7 @@ namespace AW2.Core
             Func<Spectator, SpectatorSettingsRequest> newPlayerSettingsRequest = spec => new SpectatorSettingsRequest
             {
                 IsRegisteredToServer = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes,
-                IsGameClientPlayingArena = GameState == GameState.Gameplay,
+                IsRequestingSpawn = Logic.IsGameplay,
                 IsGameClientReadyToStartArena = IsReadyToStartArena,
                 SpectatorID = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes ? spec.ID : spec.LocalID,
                 Subclass = SpectatorSettingsRequest.GetSubclassType(spec),

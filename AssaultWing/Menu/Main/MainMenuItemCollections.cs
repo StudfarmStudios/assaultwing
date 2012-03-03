@@ -80,6 +80,7 @@ namespace AW2.Menu.Main
             if (!TryConnectToManagementServer()) return;
             Game.WebData.RequestData();
             Game.WebData.LoginPilots();
+            RefreshNetworkItems(force: true);
             _menuComponent.PushItems(NetworkItems);
             Game.SoundEngine.PlaySound("MenuChangeItem");
         }

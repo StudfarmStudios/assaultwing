@@ -47,7 +47,7 @@ namespace AW2.Menu
         public override string HelpText { get { return "Arrows move, Enter proceeds, Esc cancels"; } }
 
         public MainMenuItem CurrentItem { get { return _currentItems[_currentItem.CurrentIndex]; } }
-        private MainMenuItemCollections ItemCollections
+        public MainMenuItemCollections ItemCollections
         {
             get
             {

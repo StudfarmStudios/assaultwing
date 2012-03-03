@@ -67,11 +67,30 @@ namespace AW2.Menu.Main
             InitializeSetupItems();
         }
 
-        public static void Click_LocalGame(MenuEngineImpl menu)
+        public void Click_LocalGame()
         {
-            menu.Activate(MenuComponentType.Equip);
-            menu.Game.InitializePlayers(2);
-            if (menu.Game.Settings.Players.BotsEnabled) menu.Game.DataEngine.Spectators.Add(new BotPlayer(menu.Game));
+            MenuEngine.Activate(MenuComponentType.Equip);
+            Game.InitializePlayers(2);
+            if (Game.Settings.Players.BotsEnabled) Game.DataEngine.Spectators.Add(new BotPlayer(Game));
+        }
+
+        public void Click_NetworkGame()
+        {
+            Game.InitializePlayers(1);
+            if (!TryConnectToManagementServer()) return;
+            Game.WebData.RequestData();
+            Game.WebData.LoginPilots();
+            _menuComponent.PushItems(NetworkItems);
+            Game.SoundEngine.PlaySound("MenuChangeItem");
+        }
+
+        public void Click_ConnectToGameServer(int gameServerManagementID, string shortServerName)
+        {
+            var joinRequest = new JoinGameServerRequest { GameServerManagementID = gameServerManagementID };
+            Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
+            Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
+                string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName),
+                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections)) { GroupName = "Connecting to server" });
         }
 
         private void EnsureStandaloneMessageHandlersActivated()
@@ -83,18 +102,8 @@ namespace AW2.Menu.Main
         private void InitializeStartItems()
         {
             StartItems = new MainMenuItemCollection("Start Menu");
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", () => Click_LocalGame(MenuEngine)));
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront",
-                () =>
-                {
-                    Game.InitializePlayers(1);
-                    if (!TryConnectToManagementServer()) return;
-                    Game.WebData.RequestData();
-                    Game.WebData.LoginPilots();
-                    RefreshNetworkItems(force: true);
-                    _menuComponent.PushItems(NetworkItems);
-                    Game.SoundEngine.PlaySound("MenuChangeItem");
-                }));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", Click_LocalGame));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", Click_NetworkGame));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
                 () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
@@ -259,16 +268,9 @@ traffic or the server is down.", "No reply from management server");
                 {
                     var shortServerName = server.Name.Substring(0, Math.Min(12, server.Name.Length));
                     var menuItemText = string.Format("Join {0}\t\x10[{1}/{2}]", shortServerName, server.CurrentPlayers, server.MaxPlayers);
-                    var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
                     NetworkItems.Insert(1, new MainMenuItem(MenuEngine,
                         () => menuItemText,
-                        () =>
-                        {
-                            Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
-                            Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
-                                string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName),
-                                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections)) { GroupName = "Connecting to server" });
-                        }));
+                        () => Click_ConnectToGameServer(server.ManagementID, shortServerName)));
                 }
                 else
                 {

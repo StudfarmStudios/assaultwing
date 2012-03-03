@@ -61,7 +61,6 @@ namespace AW2.Core
         /// <summary>
         /// The current mode of network operation of the game.
         /// </summary>
-        [Obsolete("Move to Logic")]
         public NetworkMode NetworkMode { get; set; }
 
         /// <summary>

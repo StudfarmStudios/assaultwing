@@ -139,7 +139,6 @@
     <Compile Include="Core\GameComponents\PlayerChat.cs" />
     <Compile Include="Core\GameComponents\StartupScreen.cs" />
     <Compile Include="Core\GameComponents\WebData.cs" />
-    <Compile Include="Core\GameState.cs" />
     <Compile Include="Core\OverlayComponents\CustomOverlayDialogData.cs" />
     <Compile Include="Core\OverlayComponents\GameOverOverlayDialogData.cs" />
     <Compile Include="Core\OverlayComponents\ControlSelectionOverlayDialogData.cs" />

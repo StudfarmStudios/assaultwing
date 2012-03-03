@@ -15,6 +15,18 @@ namespace AW2.UI
     /// </summary>
     public abstract class ProgramLogic
     {
+        private int _gameState;
+        protected int GameState
+        {
+            get { return _gameState; }
+            set
+            {
+                DisableGameState(_gameState);
+                _gameState = value;
+                EnableGameState(value);
+            }
+        }
+
         public AssaultWing Game { get; private set; }
         public virtual bool IsGameplay { get { return true; } }
 
@@ -45,5 +57,8 @@ namespace AW2.UI
         public virtual void ShowInfoDialog(string text, string groupName = null) { }
 
         public virtual void HideDialog(string groupName = null) { }
+
+        protected virtual void EnableGameState(int value) { }
+        protected virtual void DisableGameState(int value) { }
     }
 }

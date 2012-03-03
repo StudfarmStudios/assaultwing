@@ -5,17 +5,23 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Core.GameComponents;
 using AW2.Core.OverlayComponents;
-using AW2.Menu;
 using AW2.Helpers;
+using AW2.Menu;
 
 namespace AW2.UI
 {
     public class UserControlledLogic : ProgramLogic
     {
-        private GameState _gameState;
+        private const int GAMESTATE_INITIALIZING = 0;
+        private const int GAMESTATE_INTRO = 1;
+        private const int GAMESTATE_GAMEPLAY = 2;
+        private const int GAMESTATE_GAMEPLAY_STOPPED = 3;
+        protected const int GAMESTATE_MENU = 4;
+        private const int GAMESTATE_GAME_AND_MENU = 5;
+
         private bool _clearGameDataWhenEnteringMenus;
 
-        public override bool IsGameplay { get { return GameState == GameState.Gameplay; } }
+        public override bool IsGameplay { get { return GameState == GAMESTATE_GAMEPLAY; } }
 
         private StartupScreen StartupScreen { get; set; }
         private IntroEngine IntroEngine { get; set; }
@@ -23,25 +29,12 @@ namespace AW2.UI
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
 
-        protected GameState GameState
-        {
-            get { return _gameState; }
-            set
-            {
-                DisableGameState(GameState);
-                _gameState = value;
-                EnableGameState(value);
-                if (value == GameState.Gameplay || value == GameState.GameplayStopped)
-                    Game.ApplyInGameGraphicsSettings();
-            }
-        }
-
-        private bool MainMenuActive { get { return GameState == GameState.Menu && MenuEngine.MainMenu.Active; } }
+        private bool MainMenuActive { get { return GameState == GAMESTATE_MENU && MenuEngine.MainMenu.Active; } }
         private bool EquipMenuActive
         {
             get
             {
-                return (GameState == GameState.Menu || GameState == GameState.GameAndMenu)
+                return (GameState == GAMESTATE_MENU || GameState == GAMESTATE_GAME_AND_MENU)
                     && MenuEngine.EquipMenu.Active;
             }
         }
@@ -65,13 +58,13 @@ namespace AW2.UI
 
         public override void Initialize()
         {
-            GameState = GameState.Intro;
+            GameState = GAMESTATE_INTRO;
         }
 
         public override void EndRun()
         {
             EnsureArenaLoadingStopped();
-            GameState = GameState.Initializing;
+            GameState = GAMESTATE_INITIALIZING;
         }
 
         public override void FinishArena()
@@ -81,13 +74,13 @@ namespace AW2.UI
             _clearGameDataWhenEnteringMenus = true;
             var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators).ToArray(); // ToArray takes a copy
             var callback = new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL,
-                () => { if (GameState == GameState.GameplayStopped) ShowEquipMenu(); });
+                () => { if (GameState == GAMESTATE_GAMEPLAY_STOPPED) ShowEquipMenu(); });
             ShowDialog(new GameOverOverlayDialogData(MenuEngine, standings, callback) { GroupName = "Game over" });
         }
 
         public override void Update()
         {
-            if (GameState == GameState.Intro && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
+            if (GameState == GAMESTATE_INTRO && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
             if (EquipMenuActive) CheckArenaStart();
             if (Game.ArenaLoadTask.TaskCompleted) Handle_ArenaLoadingFinished();
             if (MainMenuActive && Game.NetworkEngine.GameServerConnection != null) MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
@@ -95,8 +88,8 @@ namespace AW2.UI
 
         public override void StartArena()
         {
-            if (GameState != GameState.GameAndMenu) Game.StartArenaBase();
-            GameState = GameState.Gameplay;
+            if (GameState != GAMESTATE_GAME_AND_MENU) Game.StartArenaBase();
+            GameState = GAMESTATE_GAMEPLAY;
         }
 
         public override void StopServer()
@@ -143,7 +136,7 @@ namespace AW2.UI
             EnsureArenaLoadingStopped();
             Game.DataEngine.ClearGameState();
             MenuEngine.Activate(MenuComponentType.Main);
-            GameState = GameState.Menu;
+            GameState = GAMESTATE_MENU;
         }
 
         public override void ShowEquipMenu()
@@ -151,14 +144,14 @@ namespace AW2.UI
             if (_clearGameDataWhenEnteringMenus) Game.DataEngine.ClearGameState();
             _clearGameDataWhenEnteringMenus = false;
             MenuEngine.Activate(MenuComponentType.Equip);
-            GameState = GameState.Menu;
+            GameState = GAMESTATE_MENU;
         }
 
         private void ShowEquipMenuWhileKeepingGameRunning()
         {
-            if (GameState == GameState.Menu) return;
+            if (GameState == GAMESTATE_MENU) return;
             MenuEngine.Activate(MenuComponentType.Equip);
-            GameState = GameState.GameAndMenu;
+            GameState = GAMESTATE_GAME_AND_MENU;
         }
 
         public override void ShowDialog(OverlayDialogData dialogData)
@@ -196,19 +189,19 @@ namespace AW2.UI
             game.CustomControls.Add(Tuple.Create<Control, Action>(MenuEngine.Controls.Back, Click_MenuBackControl));
         }
 
-        private void EnableGameState(GameState value)
+        protected override void EnableGameState(int value)
         {
             switch (value)
             {
-                case GameState.Initializing:
+                case GAMESTATE_INITIALIZING:
                     StartupScreen.Enabled = true;
                     StartupScreen.Visible = true;
                     break;
-                case GameState.Intro:
+                case GAMESTATE_INTRO:
                     IntroEngine.Enabled = true;
                     IntroEngine.Visible = true;
                     break;
-                case GameState.Gameplay:
+                case GAMESTATE_GAMEPLAY:
                     Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
                     Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
                     Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
@@ -216,13 +209,15 @@ namespace AW2.UI
                     Game.GraphicsEngine.Visible = true;
                     if (Game.NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
                     Game.SoundEngine.PlayMusic(Game.DataEngine.Arena.BackgroundMusic.FileName, Game.DataEngine.Arena.BackgroundMusic.Volume);
+                    Game.ApplyInGameGraphicsSettings();
                     break;
-                case GameState.GameplayStopped:
+                case GAMESTATE_GAMEPLAY_STOPPED:
                     Game.GraphicsEngine.Enabled = true;
                     Game.GraphicsEngine.Visible = true;
                     if (Game.NetworkMode != NetworkMode.Standalone) PlayerChat.Visible = true;
+                    Game.ApplyInGameGraphicsSettings();
                     break;
-                case GameState.GameAndMenu:
+                case GAMESTATE_GAME_AND_MENU:
                     Game.LogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
                     Game.PreFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
                     Game.PostFrameLogicEngine.Enabled = Game.DataEngine.Arena.IsForPlaying;
@@ -230,7 +225,7 @@ namespace AW2.UI
                     MenuEngine.Visible = true;
                     Game.SoundEngine.PlayMusic(Game.DataEngine.Arena.BackgroundMusic.FileName, Game.DataEngine.Arena.BackgroundMusic.Volume);
                     break;
-                case GameState.Menu:
+                case GAMESTATE_MENU:
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
                     Game.SoundEngine.PlayMusic("menu music", 1);
@@ -240,19 +235,19 @@ namespace AW2.UI
             }
         }
 
-        private void DisableGameState(GameState value)
+        protected override void DisableGameState(int value)
         {
             switch (value)
             {
-                case GameState.Initializing:
+                case GAMESTATE_INITIALIZING:
                     StartupScreen.Enabled = false;
                     StartupScreen.Visible = false;
                     break;
-                case GameState.Intro:
+                case GAMESTATE_INTRO:
                     IntroEngine.Enabled = false;
                     IntroEngine.Visible = false;
                     break;
-                case GameState.Gameplay:
+                case GAMESTATE_GAMEPLAY:
                     Game.LogicEngine.Enabled = false;
                     Game.PreFrameLogicEngine.Enabled = false;
                     Game.PostFrameLogicEngine.Enabled = false;
@@ -260,19 +255,19 @@ namespace AW2.UI
                     Game.GraphicsEngine.Visible = false;
                     PlayerChat.Enabled = PlayerChat.Visible = false;
                     break;
-                case GameState.GameplayStopped:
+                case GAMESTATE_GAMEPLAY_STOPPED:
                     Game.GraphicsEngine.Enabled = false;
                     Game.GraphicsEngine.Visible = false;
                     PlayerChat.Visible = false;
                     break;
-                case GameState.GameAndMenu:
+                case GAMESTATE_GAME_AND_MENU:
                     Game.LogicEngine.Enabled = false;
                     Game.PreFrameLogicEngine.Enabled = false;
                     Game.PostFrameLogicEngine.Enabled = false;
                     MenuEngine.Enabled = false;
                     MenuEngine.Visible = false;
                     break;
-                case GameState.Menu:
+                case GAMESTATE_MENU:
                     MenuEngine.Enabled = false;
                     MenuEngine.Visible = false;
                     break;
@@ -302,8 +297,8 @@ namespace AW2.UI
         {
             switch (GameState)
             {
-                case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
-                case GameState.GameAndMenu: GameState = GameState.Menu; break;
+                case GAMESTATE_GAMEPLAY: GameState = GAMESTATE_GAMEPLAY_STOPPED; break;
+                case GAMESTATE_GAME_AND_MENU: GameState = GAMESTATE_MENU; break;
             }
         }
 
@@ -315,7 +310,7 @@ namespace AW2.UI
 
         private void Click_EscapeControl()
         {
-            if (GameState != GameState.Gameplay || OverlayDialog.Enabled) return;
+            if (GameState != GAMESTATE_GAMEPLAY || OverlayDialog.Enabled) return;
             OverlayDialogData dialogData;
             switch (Game.NetworkMode)
             {
@@ -368,7 +363,7 @@ namespace AW2.UI
                 Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetClientGameplayHandlers());
                 Game.IsClientAllowedToStartArena = true;
                 Game.StartArenaBase();
-                GameState = GameState.GameAndMenu;
+                GameState = GAMESTATE_GAME_AND_MENU;
             }
             else
                 Game.StartArena();

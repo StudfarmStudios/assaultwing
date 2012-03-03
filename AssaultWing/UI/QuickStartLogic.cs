@@ -15,7 +15,7 @@ namespace AW2.UI
         public override void Initialize()
         {
             base.Initialize();
-            GameState = GameState.Menu;
+            GameState = GAMESTATE_MENU;
             AW2.Menu.Main.MainMenuItemCollections.Click_LocalGame(MenuEngine);
             Game.IsReadyToStartArena = true;
         }

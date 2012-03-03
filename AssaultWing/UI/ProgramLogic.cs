@@ -49,6 +49,7 @@ namespace AW2.UI
         public virtual void ShowEquipMenu() { }
 
         public virtual void ShowDialog(OverlayDialogData dialogData) { }
+        public virtual void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions) { }
 
         /// <summary>
         /// Like calling <see cref="ShowDialog"/> with <see cref="TriggeredCallback.PROCEED_CONTROL"/> that

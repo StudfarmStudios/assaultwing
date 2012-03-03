@@ -114,6 +114,11 @@ namespace AW2.Core
         public void HideDialog(string groupName = null) { Logic.HideDialog(groupName); }
         // TODO !!! Inline <<<
 
+        public void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions)
+        {
+            Logic.ShowCustomDialog(text, groupName, actions);
+        }
+
         [Obsolete("Move to Logic")]
         public void ShowMainMenuAndResetGameplay()
         {

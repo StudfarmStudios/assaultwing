@@ -113,12 +113,8 @@ namespace AW2.UI
             StopGameplay(); // gameplay cannot continue because it's initialized only for a client
             Game.NetworkMode = NetworkMode.Standalone;
             if (errorOrNull != null)
-            {
-                var dialogData = new CustomOverlayDialogData(MenuEngine,
-                    errorOrNull + "\nPress Enter to return to Main Menu.",
+                ShowCustomDialog(errorOrNull + "\nPress Enter to return to Main Menu.", null,
                     new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
-                ShowDialog(dialogData);
-            }
         }
 
         public override void PrepareArena()
@@ -159,10 +155,14 @@ namespace AW2.UI
             OverlayDialog.Show(dialogData);
         }
 
+        public override void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions)
+        {
+            ShowDialog(new CustomOverlayDialogData(MenuEngine, text, actions) { GroupName = groupName });
+        }
+
         public override void ShowInfoDialog(string text, string groupName = null)
         {
-            ShowDialog(new CustomOverlayDialogData(MenuEngine, text,
-                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })) { GroupName = groupName });
+            ShowCustomDialog(text, groupName, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { }));
         }
 
         public override void HideDialog(string groupName = null)
@@ -311,30 +311,27 @@ namespace AW2.UI
         private void Click_EscapeControl()
         {
             if (GameState != GAMESTATE_GAMEPLAY || OverlayDialog.Enabled) return;
-            OverlayDialogData dialogData;
+            string dialogText;
+            Action yesCallback;
             switch (Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    dialogData = new CustomOverlayDialogData(MenuEngine,
-                        "Finish Arena? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.FinishArena),
-                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
+                    dialogText = "Finish Arena? (Yes/No)";
+                    yesCallback = Game.FinishArena;
                     break;
                 case NetworkMode.Client:
-                    dialogData = new CustomOverlayDialogData(MenuEngine,
-                        "Pop by to equip your ship? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowEquipMenuWhileKeepingGameRunning),
-                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
+                    dialogText = "Pop by to equip your ship? (Yes/No)";
+                    yesCallback = ShowEquipMenuWhileKeepingGameRunning;
                     break;
                 case NetworkMode.Standalone:
-                    dialogData = new CustomOverlayDialogData(MenuEngine,
-                        "Quit to Main Menu? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMainMenuAndResetGameplay),
-                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
+                    dialogText = "Quit to Main Menu? (Yes/No)";
+                    yesCallback = ShowMainMenuAndResetGameplay;
                     break;
                 default: throw new ApplicationException();
             }
-            ShowDialog(dialogData);
+            ShowCustomDialog(dialogText, null,
+                new TriggeredCallback(TriggeredCallback.YES_CONTROL, yesCallback),
+                new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
         }
 
         private void Click_MenuBackControl()
@@ -349,10 +346,9 @@ namespace AW2.UI
             if (Game.NetworkMode == NetworkMode.Standalone)
                 backToMainMenuImpl();
             else
-                MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
-                    "Quit network game? (Yes/No)",
+                ShowCustomDialog("Quit network game? (Yes/No)", null,
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
-                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));
+                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
         }
 
         private void Handle_ArenaLoadingFinished()
@@ -372,9 +368,8 @@ namespace AW2.UI
         private void Handle_GameServerConnectionClosing(string info)
         {
             Log.Write("Server is going to close the connection because {0}.", info);
-            var dialogData = new CustomOverlayDialogData(MenuEngine, "Server closed connection because\n" + info + ".",
+            ShowCustomDialog("Server closed connection because\n" + info + ".", null,
                 new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
-            ShowDialog(dialogData);
         }
     }
 }

@@ -89,9 +89,8 @@ namespace AW2.Menu.Main
         {
             var joinRequest = new JoinGameServerRequest { GameServerManagementID = gameServerManagementID };
             Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
-            Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
-                string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName),
-                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections)) { GroupName = "Connecting to server" });
+            Game.ShowCustomDialog(string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName), "Connecting to server",
+                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections));
         }
 
         private void EnsureStandaloneMessageHandlersActivated()
@@ -183,10 +182,9 @@ namespace AW2.Menu.Main
         {
             SetupItems = new MainMenuItemCollection("General Setup");
             SetupItems.Add(GetSetupItemBase(() => "Reset all settings to defaults",
-                () => Game.ShowDialog(new CustomOverlayDialogData(MenuEngine,
-                    "Are you sure to reset all settings\nto their defaults? (Yes/No)",
+                () => Game.ShowCustomDialog("Are you sure to reset all settings\nto their defaults? (Yes/No)", null,
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.Settings.Reset),
-                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })))));
+                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }))));
             SetupItems.Add(GetSetupItemBase(() => "Audio setup", () => _menuComponent.PushItems(GetAudioItems())));
             SetupItems.Add(GetSetupItemBase(() => "Graphics setup", () => _menuComponent.PushItems(GetGraphicsItems())));
             SetupItems.Add(GetSetupItemBase(() => "Controls setup", () => _menuComponent.PushItems(GetControlsItems())));

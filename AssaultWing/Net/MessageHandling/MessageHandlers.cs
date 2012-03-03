@@ -110,7 +110,7 @@ namespace AW2.Net.MessageHandling
             if (mess.Success)
             {
                 Game.SoundEngine.PlaySound("MenuChangeItem");
-                Game.StartClient(mess.GameServerEndPoints, ConnectionResultOnClientCallback);
+                Game.StartClient(mess.GameServerEndPoints);
             }
             else
             {
@@ -402,36 +402,6 @@ namespace AW2.Net.MessageHandling
             }
             Game.Stats.Send(new { AddPlayer = newSpectator.GetStats().LoginToken, Name = newSpectator.Name });
             return newSpectator;
-        }
-
-        private void ConnectionResultOnClientCallback(Result<Connection> result)
-        {
-            var net = Game.NetworkEngine;
-            if (net.GameServerConnection != null)
-            {
-                // Silently ignore extra server connection attempts.
-                if (result.Successful) result.Value.Dispose();
-                return;
-            }
-
-            if (!result.Successful)
-            {
-                Log.Write("Failed to connect to server: " + result.Error);
-                Game.StopClient("Failed to connect to server.");
-            }
-            else
-            {
-                DeactivateHandlers(GetStandaloneMenuHandlers(null));
-                net.GameServerConnection = result.Value;
-                ActivateHandlers(GetClientMenuHandlers());
-                var joinRequest = new GameServerHandshakeRequestTCP
-                {
-                    CanonicalStrings = CanonicalString.CanonicalForms,
-                    GameClientKey = net.GetAssaultWingInstanceKey(),
-                };
-                net.GameServerConnection.Send(joinRequest);
-                Game.HideDialog("Connecting to server");
-            }
         }
     }
 }

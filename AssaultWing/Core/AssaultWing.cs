@@ -256,7 +256,7 @@ namespace AW2.Core
         /// <summary>
         /// Turns this game instance into a game client by connecting to a game server.
         /// </summary>
-        public void StartClient(AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
+        public void StartClient(AWEndPoint[] serverEndPoints)
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
@@ -264,7 +264,7 @@ namespace AW2.Core
             IsClientAllowedToStartArena = false;
             try
             {
-                NetworkEngine.StartClient(this, serverEndPoints, connectionHandler);
+                NetworkEngine.StartClient(this, serverEndPoints, ConnectionResultOnClientCallback);
                 foreach (var spectator in DataEngine.Spectators) spectator.ResetForClient();
             }
             catch (System.Net.Sockets.SocketException e)
@@ -467,6 +467,35 @@ namespace AW2.Core
             UpdateGameServerInfoToManagementServer();
             var clientMessage = new PlayerDeletionMessage { PlayerID = spectator.ID };
             NetworkEngine.SendToGameClients(clientMessage);
+        }
+
+        private void ConnectionResultOnClientCallback(Result<Connection> result)
+        {
+            if (NetworkEngine.GameServerConnection != null)
+            {
+                // Silently ignore extra server connection attempts.
+                if (result.Successful) result.Value.Dispose();
+                return;
+            }
+
+            if (!result.Successful)
+            {
+                Log.Write("Failed to connect to server: " + result.Error);
+                StopClient("Failed to connect to server.");
+            }
+            else
+            {
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null));
+                NetworkEngine.GameServerConnection = result.Value;
+                MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
+                var joinRequest = new GameServerHandshakeRequestTCP
+                {
+                    CanonicalStrings = CanonicalString.CanonicalForms,
+                    GameClientKey = NetworkEngine.GetAssaultWingInstanceKey(),
+                };
+                NetworkEngine.GameServerConnection.Send(joinRequest);
+                HideDialog("Connecting to server");
+            }
         }
 
         public void UpdateGameServerInfoToManagementServer()

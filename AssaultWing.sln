@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaEditor", "ArenaEditor\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UncompressedHost", "UncompressedHost\UncompressedHost.csproj", "{57DE33F4-542D-4FD8-B9B4-A6C776E0D218}"
 EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "NoContent", "NoContent\NoContent.contentproj", "{21210413-028F-41FD-BB17-F2421279FBF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,12 @@ Global
 		{57DE33F4-542D-4FD8-B9B4-A6C776E0D218}.ReleaseDev|Any CPU.ActiveCfg = Release|x86
 		{57DE33F4-542D-4FD8-B9B4-A6C776E0D218}.ReleaseDev|x86.ActiveCfg = Release|x86
 		{57DE33F4-542D-4FD8-B9B4-A6C776E0D218}.ReleaseDev|x86.Build.0 = Release|x86
+		{21210413-028F-41FD-BB17-F2421279FBF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21210413-028F-41FD-BB17-F2421279FBF6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{21210413-028F-41FD-BB17-F2421279FBF6}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{21210413-028F-41FD-BB17-F2421279FBF6}.Release|x86.ActiveCfg = Debug|Any CPU
+		{21210413-028F-41FD-BB17-F2421279FBF6}.ReleaseDev|Any CPU.ActiveCfg = Debug|Any CPU
+		{21210413-028F-41FD-BB17-F2421279FBF6}.ReleaseDev|x86.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

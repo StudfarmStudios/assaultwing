@@ -131,6 +131,14 @@ namespace AW2.Net.Connections
         }
 
         /// <summary>
+        /// Null or an alternative remote UDP end point where messages may come from. This is a workaround for routers
+        /// that show their public UDP port in connections they established (e.g. game server to management server)
+        /// but show their private UDP port for connections that the remote host established (e.g. game server
+        /// to game client when a TCP connection has already been established).
+        /// </summary>
+        public IPEndPoint RemoteUDPEndPointAlternative { get; set; }
+
+        /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
         public ThreadSafeWrapper<ITypedQueue<Message>> Messages { get; private set; }
@@ -403,6 +411,9 @@ namespace AW2.Net.Connections
                 socket.EndConnect(asyncResult);
                 var connection = new GameServerConnection(state.Game, socket);
                 connection.RemoteUDPEndPoint = remoteEndPoint.UDPEndPoint;
+                // On 2012-03-04 there were always two remote end points. If this changes, upgrade RemoteUDPPortAlternative to List<int>.
+                if (state.RemoteEndPoints.Length == 2)
+                    connection.RemoteUDPEndPointAlternative = new IPEndPoint(connection.RemoteUDPEndPoint.Address, state.RemoteEndPoints[1 - index].UDPEndPoint.Port);
                 return connection;
             }
             catch (Exception)

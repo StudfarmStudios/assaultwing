@@ -574,7 +574,8 @@ namespace AW2.Net
         private Connection GetConnection(IPEndPoint remoteUDPEndPoint)
         {
             return AllConnections.FirstOrDefault(conn =>
-                conn.RemoteUDPEndPoint != null && conn.RemoteUDPEndPoint.Equals(remoteUDPEndPoint));
+                conn.RemoteUDPEndPoint != null && (conn.RemoteUDPEndPoint.Equals(remoteUDPEndPoint) ||
+                (conn.RemoteUDPEndPointAlternative != null && conn.RemoteUDPEndPointAlternative.Equals(remoteUDPEndPoint))));
         }
 
         private void HandleClientState()

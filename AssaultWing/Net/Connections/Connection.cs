@@ -401,7 +401,7 @@ namespace AW2.Net.Connections
             try
             {
                 socket.EndConnect(asyncResult);
-                var connection = new GameServerConnection(state.Game, socket, remoteEndPoint.UDPEndPoint);
+                var connection = new GameServerConnection(state.Game, socket);
                 connection.RemoteUDPEndPoint = remoteEndPoint.UDPEndPoint;
                 return connection;
             }

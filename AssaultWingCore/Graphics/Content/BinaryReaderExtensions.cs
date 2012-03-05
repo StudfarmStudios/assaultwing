@@ -28,7 +28,7 @@ namespace AW2.Graphics.Content
         {
             var actual = Enumerable.Range(0, expected.Length).Select(i => readOne()).ToArray();
             if (!Enumerable.SequenceEqual(expected.Cast<object>(), actual))
-                throw new InvalidDataException(string.Format("{0} ({1} expected; was {2})", errorMessage, string.Join(", ", expected), string.Join(", ", actual)));
+                throw new InvalidDataException(string.Format("{0} ({1} expected; was {2})", errorMessage, string.Join(", ", expected.Cast<object>()), string.Join(", ", actual)));
         }
 
         public static int Read7BitEncodedInt(this BinaryReader reader)

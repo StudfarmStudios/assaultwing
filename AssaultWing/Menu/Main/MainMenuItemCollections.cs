@@ -89,8 +89,7 @@ namespace AW2.Menu.Main
         {
             var joinRequest = new JoinGameServerRequest { GameServerManagementID = gameServerManagementID };
             Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
-            Game.ShowCustomDialog(string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName), "Connecting to server",
-                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections));
+            Game.ShowConnectingToGameServerDialog(shortServerName);
         }
 
         private void EnsureStandaloneMessageHandlersActivated()

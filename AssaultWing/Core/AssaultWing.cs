@@ -110,13 +110,15 @@ namespace AW2.Core
 
         // TODO !!! Inline >>>
         public void ShowDialog(OverlayDialogData dialogData) { Logic.ShowDialog(dialogData); }
+        public void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions) { Logic.ShowCustomDialog(text, groupName, actions); }
         public void ShowInfoDialog(string text, string groupName = null) { Logic.ShowInfoDialog(text, groupName); }
         public void HideDialog(string groupName = null) { Logic.HideDialog(groupName); }
         // TODO !!! Inline <<<
 
-        public void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions)
+        public void ShowConnectingToGameServerDialog(string shortServerName)
         {
-            Logic.ShowCustomDialog(text, groupName, actions);
+            ShowCustomDialog(string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName), "Connecting to server",
+                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, CutNetworkConnections));
         }
 
         [Obsolete("Move to Logic")]

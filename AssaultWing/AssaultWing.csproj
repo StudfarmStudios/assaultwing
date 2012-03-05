@@ -32,7 +32,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>9</ApplicationRevision>
     <ApplicationVersion>1.16.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -255,6 +255,11 @@
     <ProjectReference Include="..\AssaultWingCore\AssaultWingCore.csproj">
       <Project>{1813E562-567E-4D87-BDDF-4E1DE1E47022}</Project>
       <Name>AssaultWingCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NoContent\NoContent.contentproj">
+      <Project>{21210413-028F-41FD-BB17-F2421279FBF6}</Project>
+      <Name>NoContent</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
     </ProjectReference>
     <ProjectReference Include="..\UncompressedHost\UncompressedHost.csproj">
       <Project>{57DE33F4-542D-4FD8-B9B4-A6C776E0D218}</Project>

@@ -133,7 +133,7 @@ namespace AW2.Core
         public override void BeginRun()
         {
             Log.Write("Assault Wing begins to run");
-            Spectator.CreateStatsData = () => new SpectatorStats();
+            Spectator.CreateStatsData = spectator => new SpectatorStats(spectator);
             var arenas = DataEngine.GetTypeTemplates<Arena>();
             if (!arenas.Any()) throw new ApplicationException("No arenas found");
             SelectedArenaName = arenas.First().Info.Name;

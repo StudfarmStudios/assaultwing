@@ -64,9 +64,16 @@ namespace AW2.Menu
         private MenuComponent ActiveComponent { get { return _components[(int)_activeComponentType]; } }
         public MainMenuComponent MainMenu { get { return (MainMenuComponent)_components[(int)MenuComponentType.Main]; } }
         public EquipMenuComponent EquipMenu { get { return (EquipMenuComponent)_components[(int)MenuComponentType.Equip]; } }
-        public ArenaMenuComponent ArenaMenu { get { return (ArenaMenuComponent )_components[(int)MenuComponentType.Arena]; } }
-        private Player LocalPlayer { get { return Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.GetStats().IsLoggedIn); } }
-
+        public ArenaMenuComponent ArenaMenu { get { return (ArenaMenuComponent)_components[(int)MenuComponentType.Arena]; } }
+        private Player LocalPlayer
+        {
+            get
+            {
+                var localPlayer = Game.DataEngine.LocalPlayer;
+                if (localPlayer == null || !localPlayer.GetStats().IsLoggedIn) return null;
+                return localPlayer;
+            }
+        }
         private static Curve g_loggedInPilot;
 
         static MenuEngineImpl()

@@ -81,7 +81,7 @@ namespace AW2.UI.WPF
                 InitializeGraphicsDeviceService();
                 InitializeGame(args, AssaultWingCore.GetArgumentText());
                 InitializeArenaView();
-                AW2.Game.Spectator.CreateStatsData = () => new MockStats();
+                AW2.Game.Spectator.CreateStatsData = spectator => new MockStats();
             };
             Closed += (sender, eventArgs) => _runner.Exit();
         }

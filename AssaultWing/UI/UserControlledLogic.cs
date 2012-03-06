@@ -30,7 +30,8 @@ namespace AW2.UI
         private PlayerChat PlayerChat { get; set; }
 
         protected bool MainMenuActive { get { return GameState == GAMESTATE_MENU && MenuEngine.MainMenu.Active; } }
-        private bool EquipMenuActive
+        protected bool MainMenuNetworkItemsActive { get { return MainMenuActive && MenuEngine.MainMenu.IsActive(MenuEngine.MainMenu.ItemCollections.NetworkItems); } }
+        protected bool EquipMenuActive
         {
             get
             {

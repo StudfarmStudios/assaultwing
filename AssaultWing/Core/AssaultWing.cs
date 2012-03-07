@@ -58,7 +58,8 @@ namespace AW2.Core
             if (CommandLineOptions.DedicatedServer)
                 Logic = new DedicatedServerLogic(this);
             else if (CommandLineOptions.QuickStart)
-                Logic = new QuickStartLogic(this);
+                Logic = new QuickStartLogic(this, CommandLineOptions.GameServerEndPoints, CommandLineOptions.GameServerName,
+                    CommandLineOptions.LoginToken);
             else
                 Logic = new UserControlledLogic(this);
             ArenaLoadTask = new BackgroundTask();

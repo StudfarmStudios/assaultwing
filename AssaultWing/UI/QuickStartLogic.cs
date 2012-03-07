@@ -12,10 +12,16 @@ namespace AW2.UI
         private enum StateType { StartMenuEngine, OpenBattlefrontMenu, UpdatePilotData, ConnectToGameServer, StartGameplay, Idle }
 
         private StateType _state;
+        private AWEndPoint[] _gameServerEndPoints;
+        private string _gameServerName;
+        private string _loginToken;
 
-        public QuickStartLogic(AssaultWing game)
+        public QuickStartLogic(AssaultWing game, string[] gameServerEndPoints, string gameServerName, string loginToken)
             : base(game)
         {
+            _gameServerEndPoints = gameServerEndPoints.Select(str => AWEndPoint.Parse(str)).ToArray();
+            _gameServerName = gameServerName;
+            _loginToken = loginToken;
         }
 
         public override void Initialize()
@@ -40,8 +46,7 @@ namespace AW2.UI
                     break;
                 case StateType.UpdatePilotData:
                     if (!MainMenuNetworkItemsActive) break;
-                    var loginToken = "4f3aadd688f9babf2d00042c"; // !!! hardcoded
-                    Game.WebData.UpdatePilotData(Game.DataEngine.LocalPlayer, loginToken);
+                    Game.WebData.UpdatePilotData(Game.DataEngine.LocalPlayer, _loginToken);
                     ShowInfoDialog("Fetching pilot record...", "Update pilot data");
                     _state = StateType.ConnectToGameServer;
                     break;
@@ -65,14 +70,9 @@ namespace AW2.UI
 
         private void ConnectToGameServer()
         {
-            var gameServerName = "Some Server"; // !!! hardcoded
-            var gameServerEndPoints = new[] // !!! hardcoded
-            {
-                new AWEndPoint(new System.Net.IPEndPoint(new System.Net.IPAddress(new byte[] { 192, 168, 11, 2 }), 16727), 16727),
-            };
             Game.WebData.UpdatePilotRanking(Game.DataEngine.LocalPlayer);
-            Game.StartClient(gameServerEndPoints);
-            Game.ShowConnectingToGameServerDialog(gameServerName);
+            Game.StartClient(_gameServerEndPoints);
+            Game.ShowConnectingToGameServerDialog(_gameServerName);
         }
     }
 }

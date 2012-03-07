@@ -81,7 +81,7 @@ namespace AW2.UI.WPF
                 InitializeGraphicsDeviceService();
                 InitializeGame(args, AssaultWingCore.GetArgumentText());
                 InitializeArenaView();
-                AW2.Game.Spectator.CreateStatsData = () => new MockStats();
+                AW2.Game.Spectator.CreateStatsData = spectator => new MockStats();
             };
             Closed += (sender, eventArgs) => _runner.Exit();
         }
@@ -310,7 +310,6 @@ namespace AW2.UI.WPF
             });
             AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
             _game.SoundEngine.Enabled = false;
-            _game.AllowDialogs = false;
 
             // Spectators/players can be initialized not until RunBegan because their AWViewports try to LoadContent.
             _game.RunBegan += () =>

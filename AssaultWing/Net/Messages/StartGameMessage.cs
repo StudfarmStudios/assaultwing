@@ -14,6 +14,7 @@ namespace AW2.Net.Messages
         public byte ArenaID { get; set; }
         public string ArenaToPlay { get; set; }
         public TimeSpan ArenaTimeLeft { get; set; }
+        [Obsolete("Ensure that client and server have the same arena before starting to load it on client.")]
         public int WallCount { get; set; }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)

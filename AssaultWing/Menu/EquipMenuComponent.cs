@@ -63,8 +63,8 @@ namespace AW2.Menu
         {
             get
             {
-                return MenuEngine.IsReadyToStartArena ||
-                    (MenuEngine.Game.NetworkMode != NetworkMode.Client && MenuEngine.Game.IsLoadingArena);
+                return MenuEngine.Game.IsReadyToStartArena ||
+                    (MenuEngine.Game.NetworkMode != NetworkMode.Client && MenuEngine.Game.ArenaLoadTask.TaskRunning);
             }
         }
 
@@ -115,23 +115,6 @@ namespace AW2.Menu
             if (!Active) return;
             _tab.Update();
             CheckGeneralControls();
-            CheckArenaStart();
-        }
-
-        private void CheckArenaStart()
-        {
-            bool okToStart = MenuEngine.Game.NetworkMode == NetworkMode.Client
-                ? MenuEngine.Game.IsClientAllowedToStartArena && MenuEngine.IsReadyToStartArena && MenuEngine.ProgressBar.IsFinished
-                : MenuEngine.IsReadyToStartArena;
-            if (!okToStart) return;
-            MenuEngine.IsReadyToStartArena = false;
-            MenuEngine.Deactivate();
-            if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
-                MenuEngine.Game.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
-            else
-                MenuEngine.ProgressBarAction(
-                    () => MenuEngine.Game.PrepareSelectedArena(),
-                    MenuEngine.Game.StartArena);
         }
 
         private void ResetEquipMenu()
@@ -152,8 +135,7 @@ namespace AW2.Menu
             var tabBack = (Controls.Tab.Pulse && shiftPressed) || (Controls.TabBack.Pulse && !shiftPressed);
             if (tabForward) ChangeTab();
             else if (tabBack) ChangeTab(-1);
-            else if (Controls.Back.Pulse) BackToMainMenu();
-            else if (Controls.StartGame.Pulse) MenuEngine.IsReadyToStartArena = !MenuEngine.IsReadyToStartArena;
+            else if (Controls.StartGame.Pulse) MenuEngine.Game.IsReadyToStartArena = !MenuEngine.Game.IsReadyToStartArena;
         }
 
         private void ChangeTab(int step = 1)
@@ -162,23 +144,6 @@ namespace AW2.Menu
             _tab = _tabs[_tabIndex];
             MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
-        }
-
-        private void BackToMainMenu()
-        {
-            Action backToMainMenuImpl = () =>
-            {
-                MenuEngine.IsReadyToStartArena = false;
-                if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
-                MenuEngine.Game.ShowMainMenuAndResetGameplay();
-            };
-            if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone)
-                backToMainMenuImpl();
-            else
-                MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine.Game,
-                    "Quit network game? (Yes/No)",
-                    new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
-                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));
         }
 
         #region Drawing methods
@@ -258,7 +223,7 @@ namespace AW2.Menu
                     }
                 case NetworkMode.Client:
                     drawInfo(2, "Ping", GetPingTextAndColor().Item1, Color.White, GetPingTextAndColor().Item2);
-                    drawInfo(4, MenuEngine.Game.GameState == GameState.GameAndMenu ? "Press F10 to play" : "Waiting for server",
+                    drawInfo(4, IsPlayButtonPressed ? "Waiting for server" : "Press F10 to play",
                         "", Color.GreenYellow, Color.GreenYellow);
                     break;
             }

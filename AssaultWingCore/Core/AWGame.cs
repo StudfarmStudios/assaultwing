@@ -22,8 +22,6 @@ namespace AW2.Core
         public TimeSpan TargetElapsedTime { get { return TimeSpan.FromSeconds(1f / TargetFPS); } }
         public int TargetFPS { get; set; }
 
-        public event EventHandler Exiting;
-
         private bool _takeScreenShot;
         private AutoRenderTarget2D _screenshotRenderTarget;
 
@@ -103,15 +101,6 @@ namespace AW2.Core
         /// </summary>
         public virtual void EndRun()
         {
-            OnExiting(this, new EventArgs());
-        }
-
-        /// <summary>
-        /// Raises an Exiting event.
-        /// </summary>
-        protected virtual void OnExiting(object sender, EventArgs args)
-        {
-            if (Exiting != null) Exiting(sender, args);
         }
 
         private string GetScreenshotPath()

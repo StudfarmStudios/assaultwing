@@ -51,7 +51,7 @@ namespace AW2.Core.GameComponents
         private Color ChatBackgroundColor { get { return IsTyping ? Color.White : Color.Multiply(Color.White, 0.7f); } }
         private Color ArrowUpColor { get { return CanScrollUp ? Color.White : Color.Multiply(Color.White, 0.2f); } }
         private Color ArrowDownColor { get { return CanScrollDown ? Color.White : Color.Multiply(Color.White, 0.2f); } }
-        private Player ChatPlayer { get { return Game.DataEngine.ChatPlayer; } }
+        private Player ChatPlayer { get { return Game.DataEngine.LocalPlayer; } }
         private IEnumerable<MessageContainer.Item> Messages { get { return ChatPlayer.Messages.ReversedChat(); } }
         private ReadOnlyCollection<WrappedTextList.Line> MessageLines { get { return _game.DataEngine.ChatHistory[ChatTextWidth]; } }
 

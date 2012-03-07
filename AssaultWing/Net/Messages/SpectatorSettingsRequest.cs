@@ -40,10 +40,10 @@ namespace AW2.Net.Messages
         public int SpectatorID { get; set; }
 
         /// <summary>
-        /// As <see cref="GameClientStatus.IsPlayingArena"/>.
+        /// As <see cref="GameClientStatus.IsRequestingSpawn"/>.
         /// Used only in messages from a game client to a game server.
         /// </summary>
-        public bool IsGameClientPlayingArena { get; set; }
+        public bool IsRequestingSpawn { get; set; }
 
         /// <summary>
         /// Is the client in menus, ready to start playing an arena.
@@ -68,7 +68,7 @@ namespace AW2.Net.Messages
                     // word: data length N
                     // N bytes: serialised data of the spectator
                     writer.Write((bool)IsRegisteredToServer);
-                    writer.Write((bool)IsGameClientPlayingArena);
+                    writer.Write((bool)IsRequestingSpawn);
                     writer.Write((bool)IsGameClientReadyToStartArena);
                     writer.Write((byte)SpectatorID);
                     writer.Write((byte)Subclass);
@@ -81,7 +81,7 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             IsRegisteredToServer = reader.ReadBoolean();
-            IsGameClientPlayingArena = reader.ReadBoolean();
+            IsRequestingSpawn = reader.ReadBoolean();
             IsGameClientReadyToStartArena = reader.ReadBoolean();
             SpectatorID = reader.ReadByte();
             Subclass = (SubclassType)reader.ReadByte();

@@ -61,6 +61,8 @@ namespace AW2.Game.Gobs
 
         #region Properties
 
+        public static int WallActivatedCounter { get; set; }
+
         public override Matrix WorldMatrix
         {
             get
@@ -124,7 +126,7 @@ namespace AW2.Game.Gobs
                 RemoveVerySmallTrianglesFromCollisionAreas();
 #endif
             }
-            Game.ProgressBarSubtaskCompleted();
+            WallActivatedCounter++;
         }
 
         public override void Update()

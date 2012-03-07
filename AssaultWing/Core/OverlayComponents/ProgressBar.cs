@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Graphics;
 using AW2.Helpers;
+using AW2.Menu;
 
 namespace AW2.Core.OverlayComponents
 {
@@ -27,37 +28,31 @@ namespace AW2.Core.OverlayComponents
     public class ProgressBar : OverlayComponent
     {
         private object _lock;
-        private int _subtaskCount, _subtaskCompletedCount;
+        private int _subtaskCount;
+        private Func<int> _subtaskCompletedCount;
 
+        public MenuEngineImpl Menu { get; private set; }
+        public AssaultWing Game { get { return Menu.Game; } }
         public bool IsFinished { get; private set; }
         public override Point Dimensions { get { return new Point(BackgroundTexture.Width, BackgroundTexture.Height); } }
-        private Texture2D BackgroundTexture { get { return AssaultWing.Instance.MenuEngine.MenuContent.ProgressBarBackgroundTexture; } }
+        private Texture2D BackgroundTexture { get { return Menu.MenuContent.ProgressBarBackgroundTexture; } }
 
-        public ProgressBar()
+        public ProgressBar(MenuEngineImpl menu)
             : base(null, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
+            Menu = menu;
             _lock = new object();
             IsFinished = true;
         }
 
-        public void Start(int subtaskCount)
+        public void Start(int subtaskCount, Func<int> subtaskCompletedCount)
         {
             if (subtaskCount <= 0) throw new ArgumentException("Subtask count must be positive, not " + subtaskCount);
+            _subtaskCompletedCount = subtaskCompletedCount;
             lock (_lock)
             {
                 IsFinished = false;
                 _subtaskCount = subtaskCount;
-                _subtaskCompletedCount = 0;
-            }
-        }
-
-        public void SubtaskCompleted()
-        {
-            lock (_lock)
-            {
-                if (IsFinished) throw new InvalidOperationException("Cannot complete subtask when task is already finished");
-                _subtaskCompletedCount++;
-                if (_subtaskCompletedCount == _subtaskCount) IsFinished = true;
             }
         }
 
@@ -71,8 +66,10 @@ namespace AW2.Core.OverlayComponents
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            var barTexture = AssaultWing.Instance.MenuEngine.MenuContent.ProgressBarBarTexture;
-            var flowTexture = AssaultWing.Instance.MenuEngine.MenuContent.ProgressBarFlowTexture;
+            if (_subtaskCompletedCount() == _subtaskCount) IsFinished = true; // TODO !!! Move to some kind of Update method.
+
+            var barTexture = Menu.MenuContent.ProgressBarBarTexture;
+            var flowTexture = Menu.MenuContent.ProgressBarFlowTexture;
             spriteBatch.Draw(BackgroundTexture, Vector2.Zero, Color.White);
 
             // Draw fill bar.
@@ -83,7 +80,7 @@ namespace AW2.Core.OverlayComponents
             // Draw flow pattern.
             float flowSpeed = 45; // flow speed in pixels per second
             float flowPassTime = flowTexture.Width / flowSpeed; // how many seconds it takes to flow one texture width
-            int flowDisplacement = (int)(flowTexture.Width * (AssaultWingCore.Instance.GameTime.TotalRealTime.TotalSeconds % flowPassTime) / flowPassTime);
+            int flowDisplacement = (int)(flowTexture.Width * (Game.GameTime.TotalRealTime.TotalSeconds % flowPassTime) / flowPassTime);
             var flowPos = barPos;
             var flowRectangle = new Rectangle(
                 flowTexture.Width - flowDisplacement,
@@ -108,8 +105,8 @@ namespace AW2.Core.OverlayComponents
             {
                 if (_subtaskCount == 0) throw new InvalidOperationException("No task set yet");
                 if (IsFinished) return 1;
-                if (_subtaskCompletedCount >= _subtaskCount) return 1;
-                return (float)_subtaskCompletedCount / _subtaskCount;
+                if (_subtaskCompletedCount() >= _subtaskCount) return 1;
+                return (float)_subtaskCompletedCount() / _subtaskCount;
             }
         }
     }

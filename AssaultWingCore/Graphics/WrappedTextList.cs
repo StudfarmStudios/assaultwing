@@ -45,7 +45,7 @@ namespace AW2.Graphics
             }
         }
 
-        private Player ChatPlayer { get { return _game.DataEngine.ChatPlayer; } }
+        private Player ChatPlayer { get { return _game.DataEngine.LocalPlayer; } }
 
         public WrappedTextList(AssaultWingCore game)
         {

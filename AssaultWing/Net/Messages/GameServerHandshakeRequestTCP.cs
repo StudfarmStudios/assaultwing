@@ -29,7 +29,7 @@ namespace AW2.Net.Messages
             using (new NetworkProfilingScope(this))
 #endif
             {
-                // Ga,e server handshake (TCP) request structure:
+                // Game server handshake (TCP) request structure:
                 // int: number of canonical strings, K
                 // repeat K - 1 (all but the zero-indexed canonical string)
                 //   length-prefixed string: string value

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
+using AW2.Menu;
 using AW2.UI;
 
 namespace AW2.Core.OverlayComponents
@@ -17,11 +18,11 @@ namespace AW2.Core.OverlayComponents
     {
         private IEnumerable<Standing> _standings;
 
-        private SpriteFont FontHuge { get { return Game.MenuEngine.MenuContent.FontHuge; } }
-        private SpriteFont FontSmall { get { return Game.MenuEngine.MenuContent.FontSmall; } }
+        private SpriteFont FontHuge { get { return Menu.MenuContent.FontHuge; } }
+        private SpriteFont FontSmall { get { return Menu.MenuContent.FontSmall; } }
 
-        public GameOverOverlayDialogData(AssaultWing game, IEnumerable<Standing> standings)
-            : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { if (game.GameState == GameState.GameplayStopped) game.ShowEquipMenu(); }))
+        public GameOverOverlayDialogData(MenuEngineImpl menu, IEnumerable<Standing> standings, params TriggeredCallback[] actions)
+            : base(menu, actions)
         {
             _standings = standings;
         }
@@ -46,7 +47,7 @@ namespace AW2.Core.OverlayComponents
 
         private Vector2 DrawStandings(SpriteBatch spriteBatch, ref Vector2 textCenter)
         {
-            var enWidth = Game.MenuEngine.MenuContent.FontSmallEnWidth;
+            var enWidth = Menu.MenuContent.FontSmallEnWidth;
             var textLeftX = 50f;
             GraphicsEngineImpl.DrawFormattedText(new Vector2(textLeftX, textCenter.Y), enWidth,
                 GetScoreCells("Score", "Kills", "Deaths"),

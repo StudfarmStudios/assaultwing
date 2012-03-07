@@ -99,7 +99,8 @@ namespace AW2.Core.GameComponents
                     var arenaFinishTime = Now + Settings.DedicatedServerArenaTimeout;
                     _nextEvent = arenaFinishTime;
                     _nextEventType = EventType.ARENA_FINISH;
-                    Game.PrepareSelectedArena();
+                    Game.LoadSelectedArena();
+                    Game.DataEngine.Arena.Reset();
                     Game.StartArena();
                     Game.DataEngine.ArenaFinishTime = arenaFinishTime;
                     _arenaTimeoutMessages = (

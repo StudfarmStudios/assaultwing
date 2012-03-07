@@ -39,13 +39,23 @@ namespace AW2.Core
                 if (match.Success) return match.Groups[2].Captures[0].Value;
                 return null;
             }
+
+            public string[] GetValues(string key)
+            {
+                var catenated = GetValue(key);
+                if (catenated == null) return new string[0];
+                return catenated.Split(',');
+            }
         }
 
-        public bool DedicatedServer { get; set; }
-        public bool SaveTemplates { get; set; }
-        public bool DeleteTemplates { get; set; }
-        public string ArenaFilename { get; set; }
-        public bool QuickStart { get; set; } // TESTING !!! Replace this flag with more detailed game start information.
+        public bool DedicatedServer { get; private set; }
+        public bool SaveTemplates { get; private set; }
+        public bool DeleteTemplates { get; private set; }
+        public string ArenaFilename { get; private set; }
+        public bool QuickStart { get; private set; } // TESTING !!! Replace this flag with more detailed game start information.
+        public string[] GameServerEndPoints { get; private set; }
+        public string GameServerName { get; private set; }
+        public string LoginToken { get; private set; }
 
         public CommandLineOptions(string[] commandLineArgs, NameValueCollection queryParams, string argumentText)
         {
@@ -55,6 +65,9 @@ namespace AW2.Core
             DeleteTemplates = args.IsSet("delete_templates");
             ArenaFilename = args.GetValue("arena");
             QuickStart = args.IsSet("quickstart");
+            GameServerEndPoints = args.GetValues("server");
+            GameServerName = args.GetValue("server_name") ?? "Some Server";
+            LoginToken = args.GetValue("login_token");
         }
     }
 }

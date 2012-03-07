@@ -61,18 +61,14 @@ namespace AW2.Core
         /// <summary>
         /// The current mode of network operation of the game.
         /// </summary>
-        public NetworkMode NetworkMode { get; protected set; }
+        public NetworkMode NetworkMode { get; set; }
 
         /// <summary>
         /// The game time on this frame.
         /// </summary>
         public AWGameTime GameTime { get; private set; }
 
-        /// <summary>
-        /// Are overlay dialogs allowed.
-        /// </summary>
-        public bool AllowDialogs { get; set; }
-
+        public virtual bool IsShipControlsEnabled { get { return true; } }
         public Window Window { get; set; }
 
         private static readonly TimeSpan ARGUMENT_FILE_AGE_MAX = TimeSpan.FromHours(1);
@@ -102,18 +98,12 @@ namespace AW2.Core
             CommandLineOptions = args;
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
-            InitializeGraphics();
             NetworkMode = NetworkMode.Standalone;
             GameTime = new AWGameTime();
             InitializeComponents();
         }
 
         #region AssaultWing private methods
-
-        private void InitializeGraphics()
-        {
-            AllowDialogs = !CommandLineOptions.DedicatedServer;
-        }
 
         private void InitializeComponents()
         {
@@ -245,8 +235,6 @@ namespace AW2.Core
         {
             if (GraphicsEngine != null) GraphicsEngine.LoadArenaContent(arena);
         }
-
-        public virtual void ProgressBarSubtaskCompleted() { }
 
         #endregion Methods for game components
 

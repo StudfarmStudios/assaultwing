@@ -70,11 +70,17 @@ namespace AW2.Net
             }
         }
 
+        public void UpdatePilotData(Spectator spectator, string loginToken)
+        {
+            var requestPath = string.Format("pilot/token/{0}", loginToken);
+            RequestFromStats(response => PilotDataRequestDone(response, spectator, "pilot data"), requestPath);
+        }
+
         public void UpdatePilotRanking(Spectator spectator)
         {
             if (spectator.GetStats().PilotId == null) return;
             var requestPath = string.Format("pilot/id/{0}/rankings", spectator.GetStats().PilotId);
-            RequestFromStats(response => PilotRankingsRequestDone(response, spectator), requestPath);
+            RequestFromStats(response => PilotDataRequestDone(response, spectator, "pilot ranking"), requestPath);
         }
 
         public void UnloginPilots()
@@ -129,17 +135,16 @@ namespace AW2.Net
                 if (spectator == null) return;
                 spectator.GetStats().LoginTime = Game.GameTime.TotalRealTime;
                 spectator.GetStats().Update(response);
-                if (Game.MenuEngine != null) Game.MenuEngine.ResetLoggedInPlayerAnimationTime();
                 UpdatePilotRanking(spectator);
             });
         }
 
-        private void PilotRankingsRequestDone(IAsyncResult result, Spectator spectator)
+        private void PilotDataRequestDone(IAsyncResult result, Spectator spectator, string requestName)
         {
-            RequestDone(result, "pilot rankings", responseString =>
+            RequestDone(result, requestName, responseString =>
             {
                 var response = JObject.Parse(responseString);
-                if (response["error"] != null) Log.Write("Error in pilot rankings query: {0}", response["error"]);
+                if (response["error"] != null) Log.Write("Error in {0} query: {1}", requestName, response["error"]);
                 spectator.GetStats().Update(response);
             });
         }

@@ -376,7 +376,7 @@ namespace AW2.Game
         /// </summary>
         private void ApplyControlsToShip()
         {
-            if (Ship == null || Ship.IsDisposed) return;
+            if (!Game.IsShipControlsEnabled || Ship == null || Ship.IsDisposed) return;
             if (Ship.LocationPredicter != null)
             {
                 Ship.LocationPredicter.StoreControlStates(Controls.GetStates(), Game.GameTime.TotalGameTime);

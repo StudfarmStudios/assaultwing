@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Core.OverlayComponents;
+using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Sound;
@@ -34,13 +35,13 @@ namespace AW2.Menu
         private MenuComponentType _activeComponentType;
         private MenuComponent[] _components;
         private bool _activeComponentActivatedOnce, _activeComponentSoundPlayedOnce;
-        private Action _arenaLoadTaskFinishAction;
         private Vector2 _view; // center of menu view in menu system coordinates
         private Vector2 _viewTarget;
         private MovementCurve _viewCurve;
         private SoundInstance _menuChangeSound;
         private TimeSpan _cursorFadeStartTime;
         private TimeSpan _loggedInPlayerAnimationStartTime;
+        private string _previousLoggedInLoginToken;
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
         private VertexPositionColor[] _shadowVertexData;
@@ -57,13 +58,22 @@ namespace AW2.Menu
         public ProgressBar ProgressBar { get; private set; }
         public MenuControls Controls { get; private set; }
 
-        public BackgroundTask ArenaLoadTask { get; private set; }
-        public bool IsReadyToStartArena { get; set; }
         private int ViewportWidth { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width; } }
         private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
-        private bool IsHelpTextVisible { get { return Game.MenuEngine.ProgressBar.IsFinished; } }
+        private bool IsHelpTextVisible { get { return ProgressBar.IsFinished; } }
         private MenuComponent ActiveComponent { get { return _components[(int)_activeComponentType]; } }
-
+        public MainMenuComponent MainMenu { get { return (MainMenuComponent)_components[(int)MenuComponentType.Main]; } }
+        public EquipMenuComponent EquipMenu { get { return (EquipMenuComponent)_components[(int)MenuComponentType.Equip]; } }
+        public ArenaMenuComponent ArenaMenu { get { return (ArenaMenuComponent)_components[(int)MenuComponentType.Arena]; } }
+        private Player LocalPlayer
+        {
+            get
+            {
+                var localPlayer = Game.DataEngine.LocalPlayer;
+                if (localPlayer == null || !localPlayer.GetStats().IsLoggedIn) return null;
+                return localPlayer;
+            }
+        }
         private static Curve g_loggedInPilot;
 
         static MenuEngineImpl()
@@ -85,8 +95,7 @@ namespace AW2.Menu
         {
             Controls = new MenuControls();
             MenuContent = new MenuContent();
-            ArenaLoadTask = new BackgroundTask();
-            ProgressBar = new ProgressBar
+            ProgressBar = new ProgressBar(this)
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom,
@@ -105,14 +114,9 @@ namespace AW2.Menu
             _cursorFadeStartTime = Game.GameTime.TotalRealTime;
         }
 
-        public void ResetLoggedInPlayerAnimationTime()
-        {
-            _loggedInPlayerAnimationStartTime = Game.GameTime.TotalRealTime;
-        }
-
         public float GetLoggedInPlayerAnimationMultiplier()
         {
-            float animationTime = (float)(Game.GameTime.TotalRealTime - _loggedInPlayerAnimationStartTime).TotalSeconds;
+            var animationTime = (float)(Game.GameTime.TotalRealTime - _loggedInPlayerAnimationStartTime).TotalSeconds;
             return g_loggedInPilot.Evaluate(animationTime);
         }
 
@@ -134,7 +138,6 @@ namespace AW2.Menu
             // contain references to graphics content.
             MenuContent.LoadContent();
             foreach (var component in _components) component.LoadContent();
-            Game.MenuEngine.ProgressBar.LoadContent();
 
             base.LoadContent();
         }
@@ -157,7 +160,6 @@ namespace AW2.Menu
             // contain references to graphics content.
             foreach (var component in _components)
                 if (component != null) component.UnloadContent();
-            ProgressBar.UnloadContent();
 
             base.UnloadContent();
         }
@@ -216,27 +218,9 @@ namespace AW2.Menu
                     _components[component].Active = false;
         }
 
-        /// <summary>
-        /// Performs an action asynchronously, visualising progress with the progress bar.
-        /// </summary>
-        /// This method is provided as a helpful service for menu components.
-        /// <param name="asyncAction">The action to perform asynchronously.</param>
-        /// <param name="finishAction">Action to perform synchronously
-        /// when the asynchronous action completes.</param>
-        public void ProgressBarAction(Action asyncAction, Action finishAction)
-        {
-            _arenaLoadTaskFinishAction = finishAction;
-            ArenaLoadTask.StartTask(asyncAction);
-        }
-
         public override void Update()
         {
-            if (ArenaLoadTask.TaskCompleted)
-            {
-                ArenaLoadTask.FinishTask();
-                if (_arenaLoadTaskFinishAction != null) _arenaLoadTaskFinishAction();
-                _arenaLoadTaskFinishAction = null;
-            }
+            UpdateLoggedInBox();
             _view = _viewCurve.Evaluate(Game.GameTime.TotalRealTime);
 
             // Activate 'activeComponent' if the view has just come close enough to its center.
@@ -323,6 +307,17 @@ namespace AW2.Menu
             _shadowIndexData = indexData.ToArray();
         }
 
+        private void UpdateLoggedInBox()
+        {
+            if (LocalPlayer == null)
+                _previousLoggedInLoginToken = null;
+            else if (LocalPlayer.GetStats().LoginToken != _previousLoggedInLoginToken)
+            {
+                _previousLoggedInLoginToken = LocalPlayer.GetStats().LoginToken;
+                _loggedInPlayerAnimationStartTime = Game.GameTime.TotalRealTime;
+            }
+        }
+
         private void DrawBackground()
         {
             float yStart = _view.Y < 0
@@ -384,7 +379,7 @@ namespace AW2.Menu
 
         private void DrawLoggedInPilot()
         {
-            var localPlayer = Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal && plr.GetStats().IsLoggedIn);
+            var localPlayer = LocalPlayer;
             if (localPlayer == null) return;
             var playerRating = string.Format(CultureInfo.InvariantCulture, "{0} ({1:f0})",
                 localPlayer.GetStats().RatingRank.ToOrdinalString(),

@@ -18,15 +18,12 @@ using AW2.Graphics;
 
 namespace AW2.Core
 {
-    [System.Diagnostics.DebuggerDisplay("AssaultWing {NetworkMode} {GameState}")]
+    [System.Diagnostics.DebuggerDisplay("AssaultWing {Logic}")]
     public class AssaultWing : AssaultWingCore
     {
-        private GameState _gameState;
-        private Control _escapeControl, _screenShotControl;
         private TimeSpan _lastGameSettingsSent;
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
-        private bool _clearGameDataWhenEnteringMenus;
         private GobDeletionMessage _pendingGobDeletionMessage;
         private byte[] _debugBuffer = new byte[65536]; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
 
@@ -39,80 +36,45 @@ namespace AW2.Core
         /// The AssaultWing instance. Avoid using this remnant of the old times.
         /// </summary>
         public static new AssaultWing Instance { get { return (AssaultWing)AssaultWingCore.Instance; } }
-
-        public GameState GameState
-        {
-            get { return _gameState; }
-            private set
-            {
-                DisableCurrentGameState();
-                EnableGameState(value);
-                var oldState = _gameState;
-                _gameState = value;
-                if (value == GameState.Gameplay || value == GameState.GameplayStopped)
-                    ApplyInGameGraphicsSettings();
-                if (GameStateChanged != null && _gameState != oldState)
-                    GameStateChanged(_gameState);
-            }
-        }
         public bool IsClientAllowedToStartArena { get; set; }
-        public bool IsLoadingArena { get { return !CommandLineOptions.DedicatedServer && MenuEngine.ArenaLoadTask.TaskRunning; } }
         public Control ChatStartControl { get; set; }
 
-        public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
-        public MenuEngineImpl MenuEngine { get; private set; }
-        private StartupScreen StartupScreen { get; set; }
-        private IntroEngine IntroEngine { get; set; }
-        private OverlayDialog OverlayDialog { get; set; }
-        private PlayerChat PlayerChat { get; set; }
+        private ProgramLogic Logic { get; set; }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
         public MessageHandlers MessageHandlers { get; private set; }
         public WebData WebData { get; private set; }
+        public List<Tuple<Control, Action>> CustomControls { get; private set; }
+        public BackgroundTask ArenaLoadTask { get; private set; }
+        public bool IsReadyToStartArena { get; set; }
+        public override bool IsShipControlsEnabled { get { return Logic.IsGameplay; } }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
         {
+            CustomControls = new List<Tuple<Control, Action>>();
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
-            StartupScreen = new StartupScreen(this, -1);
+            if (CommandLineOptions.DedicatedServer)
+                Logic = new DedicatedServerLogic(this);
+            else if (CommandLineOptions.QuickStart)
+                Logic = new QuickStartLogic(this, CommandLineOptions.GameServerEndPoints, CommandLineOptions.GameServerName,
+                    CommandLineOptions.LoginToken);
+            else
+                Logic = new UserControlledLogic(this);
+            ArenaLoadTask = new BackgroundTask();
+
             NetworkEngine = new NetworkEngine(this, 0);
             WebData = new WebData(this, 21);
-            Components.Add(StartupScreen);
             Components.Add(NetworkEngine);
             Components.Add(WebData);
-            GameState = GameState.Initializing;
             ChatStartControl = Settings.Controls.Chat.GetControl();
-            _escapeControl = new MultiControl
-            {
-                new KeyboardKey(Keys.Escape),
-                new GamePadButton(0, GamePadButtonType.Start),
-                new GamePadButton(0, GamePadButtonType.Back),
-            };
-            _screenShotControl = new KeyboardKey(Keys.PrintScreen);
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
-            if (CommandLineOptions.DedicatedServer)
-            {
-                var dedicatedServer = new DedicatedServer(this, 13);
-                Components.Add(dedicatedServer);
-                dedicatedServer.Enabled = true;
-            }
-            else
-            {
-                MenuEngine = new MenuEngineImpl(this, 10);
-                IntroEngine = new IntroEngine(this, 11);
-                PlayerChat = new PlayerChat(this, 12);
-                OverlayDialog = new OverlayDialog(this, 20);
-                Components.Add(MenuEngine);
-                Components.Add(IntroEngine);
-                Components.Add(PlayerChat);
-                Components.Add(OverlayDialog);
-            }
             AW2.Graphics.PlayerViewport.CustomOverlayCreators.Add(viewport => new SystemStatusOverlay(viewport));
 
             // Replace the dummy StatsBase by a proper StatsSender.
@@ -125,9 +87,9 @@ namespace AW2.Core
         public override void Update(AWGameTime gameTime)
         {
             base.Update(gameTime);
-            UpdateSpecialKeys();
+            Logic.Update();
+            UpdateCustomControls();
             UpdateDebugKeys();
-            SynchronizeFrameNumber();
             SendGobCreationMessage();
             SendGameSettings();
         }
@@ -147,42 +109,23 @@ namespace AW2.Core
             }
         }
 
-        public void ShowDialog(OverlayDialogData dialogData)
+        // TODO !!! Inline >>>
+        public void ShowDialog(OverlayDialogData dialogData) { Logic.ShowDialog(dialogData); }
+        public void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions) { Logic.ShowCustomDialog(text, groupName, actions); }
+        public void ShowInfoDialog(string text, string groupName = null) { Logic.ShowInfoDialog(text, groupName); }
+        public void HideDialog(string groupName = null) { Logic.HideDialog(groupName); }
+        // TODO !!! Inline <<<
+
+        public void ShowConnectingToGameServerDialog(string shortServerName)
         {
-            if (!AllowDialogs) return;
-            OverlayDialog.Show(dialogData);
+            ShowCustomDialog(string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName), "Connecting to server",
+                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, CutNetworkConnections));
         }
 
-        /// <summary>
-        /// Like calling <see cref="ShowDialog"/> with <see cref="TriggeredCallback.PROCEED_CONTROL"/> that
-        /// doesn't do anything.
-        /// </summary>
-        public void ShowInfoDialog(string text, string groupName = null)
-        {
-            ShowDialog(new CustomOverlayDialogData(this, text,
-                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { })) { GroupName = groupName });
-        }
-
-        public void HideDialog(string groupName = null)
-        {
-            OverlayDialog.Dismiss(groupName);
-        }
-
+        [Obsolete("Move to Logic")]
         public void ShowMainMenuAndResetGameplay()
         {
-            CutNetworkConnections();
-            EnsureArenaLoadingStopped();
-            DataEngine.ClearGameState();
-            MenuEngine.Activate(MenuComponentType.Main);
-            GameState = GameState.Menu;
-        }
-
-        public void ShowEquipMenu()
-        {
-            if (_clearGameDataWhenEnteringMenus) DataEngine.ClearGameState();
-            _clearGameDataWhenEnteringMenus = false;
-            MenuEngine.Activate(MenuComponentType.Equip);
-            GameState = GameState.Menu;
+            Logic.ShowMainMenuAndResetGameplay();
         }
 
         /// <summary>
@@ -191,7 +134,7 @@ namespace AW2.Core
         public override void BeginRun()
         {
             Log.Write("Assault Wing begins to run");
-            Spectator.CreateStatsData = () => new SpectatorStats();
+            Spectator.CreateStatsData = spectator => new SpectatorStats(spectator);
             var arenas = DataEngine.GetTypeTemplates<Arena>();
             if (!arenas.Any()) throw new ApplicationException("No arenas found");
             SelectedArenaName = arenas.First().Info.Name;
@@ -204,22 +147,27 @@ namespace AW2.Core
             else if (CommandLineOptions.QuickStart)
             {
                 WebData.Feed("1Q");
-                GameState = Core.GameState.Menu;
-                AW2.Menu.Main.MainMenuItemCollections.Click_LocalGame(this);
-                MenuEngine.IsReadyToStartArena = true;
             }
             else
             {
                 WebData.Feed("1");
-                GameState = GameState.Intro;
             }
+            Logic.Initialize();
             base.BeginRun();
         }
 
         public override void EndRun()
         {
-            GameState = GameState.Initializing;
+            Logic.EndRun();
             base.EndRun();
+        }
+
+        public void PrepareArena(string arenaName, byte arenaIDOnClient)
+        {
+            SelectedArenaName = arenaName;
+            Logic.ShowEquipMenu();
+            LoadSelectedArena(arenaIDOnClient);
+            Logic.PrepareArena();
         }
 
         /// <summary>
@@ -228,25 +176,22 @@ namespace AW2.Core
         /// This method usually takes a long time to run. It's therefore a good
         /// idea to make it run in a background thread.
         /// </summary>
-        public void PrepareSelectedArena(byte? arenaIDOnClient = null)
+        public void LoadSelectedArena(byte? arenaIDOnClient = null)
         {
             var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)SelectedArenaName);
             // Note: Must create a new Arena instance and not use the existing template
             // because playing an arena will modify it.
-            InitializeFromArena(arenaTemplate.Info.FileName, arenaIDOnClient.HasValue ? arenaIDOnClient.Value : _nextArenaID++);
+            var arena = Arena.FromFile(this, arenaTemplate.Info.FileName);
+            arena.ID = arenaIDOnClient.HasValue ? arenaIDOnClient.Value : _nextArenaID++;
+            arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
+            arena.IsForPlaying = true;
+            DataEngine.Arena = arena;
         }
 
-        public void StartArenaButStayInMenu()
+        public void StartArenaBase() // TODO !!! Figure out a better name.
         {
-            if (NetworkMode != NetworkMode.Client) throw new InvalidOperationException("Only client can start arena on background");
             base.StartArena();
             PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
-            GameState = GameState.GameAndMenu;
-        }
-
-        public override void ProgressBarSubtaskCompleted()
-        {
-            if (MenuEngine != null) MenuEngine.ProgressBar.SubtaskCompleted();
         }
 
         public override void StartArena()
@@ -259,12 +204,7 @@ namespace AW2.Core
                 _pendingGobDeletionMessage = new GobDeletionMessage();
                 DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
             }
-            if (GameState != GameState.GameAndMenu)
-            {
-                base.StartArena();
-                PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
-            }
-            GameState = GameState.Gameplay;
+            Logic.StartArena();
         }
 
         public void InitializePlayers(int count)
@@ -316,24 +256,15 @@ namespace AW2.Core
             }
         }
 
-        /// <summary>
-        /// Turns this game server into a standalone game instance and disposes of
-        /// any connections to game clients.
-        /// </summary>
         public void StopServer()
         {
-            if (NetworkMode != NetworkMode.Server)
-                throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
-            DeactivateAllMessageHandlers();
-            NetworkEngine.StopServer();
-            NetworkMode = NetworkMode.Standalone;
-            DataEngine.RemoveAllButLocalSpectators();
+            Logic.StopServer();
         }
 
         /// <summary>
         /// Turns this game instance into a game client by connecting to a game server.
         /// </summary>
-        public void StartClient(AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
+        public void StartClient(AWEndPoint[] serverEndPoints)
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
@@ -341,7 +272,7 @@ namespace AW2.Core
             IsClientAllowedToStartArena = false;
             try
             {
-                NetworkEngine.StartClient(this, serverEndPoints, connectionHandler);
+                NetworkEngine.StartClient(this, serverEndPoints, ConnectionResultOnClientCallback);
                 foreach (var spectator in DataEngine.Spectators) spectator.ResetForClient();
             }
             catch (System.Net.Sockets.SocketException e)
@@ -353,20 +284,7 @@ namespace AW2.Core
 
         public void StopClient(string errorOrNull)
         {
-            if (NetworkMode != NetworkMode.Client)
-                throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
-            DeactivateAllMessageHandlers();
-            NetworkEngine.StopClient();
-            DataEngine.RemoveAllButLocalSpectators();
-            StopGameplay(); // gameplay cannot continue because it's initialized only for a client
-            NetworkMode = NetworkMode.Standalone;
-            if (errorOrNull != null)
-            {
-                var dialogData = new CustomOverlayDialogData(this,
-                    errorOrNull + "\nPress Enter to return to Main Menu.",
-                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
-                ShowDialog(dialogData);
-            }
+            Logic.StopClient(errorOrNull);
         }
 
         public void CutNetworkConnections()
@@ -437,42 +355,18 @@ namespace AW2.Core
             IsClientAllowedToStartArena = false;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            EnsureArenaLoadingStopped();
             var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray(); // ToArray takes a copy
             Stats.Send(new { ArenaFinished = standings.Select(st => new { st.Name, ((SpectatorStats)st.StatsData).LoginToken, st.Score, st.Kills, st.Deaths }).ToArray() });
             foreach (var spec in DataEngine.Spectators) if (spec.IsLocal) WebData.UpdatePilotRanking(spec);
-            if (CommandLineOptions.DedicatedServer)
-            {
-                DataEngine.ClearGameState();
-                GameState = GameState.Initializing;
-            }
-            else
-            {
-                StopGameplay();
-                _clearGameDataWhenEnteringMenus = true;
-                ShowDialog(new GameOverOverlayDialogData(this, standings) { GroupName = "Game over" });
-            }
+            Logic.FinishArena();
 #if NETWORK_PROFILING
             ProfilingNetworkBinaryWriter.DumpStats();
 #endif
         }
 
-        protected override void OnExiting(object sender, EventArgs args)
+        public void ApplyInGameGraphicsSettings()
         {
-            EnsureArenaLoadingStopped();
-            base.OnExiting(sender, args);
-        }
-
-        private void EnsureArenaLoadingStopped()
-        {
-            if (CommandLineOptions.DedicatedServer) return;
-            if (IsLoadingArena) MenuEngine.ArenaLoadTask.AbortTask();
-            MenuEngine.ProgressBar.SkipRemainingSubtasks();
-        }
-
-        private void ApplyInGameGraphicsSettings()
-        {
-            if (Window == null || CommandLineOptions.DedicatedServer) return;
+            if (Window == null) return;
             if (Settings.Graphics.IsVerticalSynced)
                 Window.Impl.EnableVerticalSync();
             else
@@ -483,164 +377,10 @@ namespace AW2.Core
                 Window.Impl.SetWindowed();
         }
 
-        private void EnableGameState(GameState value)
+        private void UpdateCustomControls()
         {
-            switch (value)
-            {
-                case GameState.Initializing:
-                    StartupScreen.Enabled = true;
-                    StartupScreen.Visible = true;
-                    break;
-                case GameState.Intro:
-                    IntroEngine.Enabled = true;
-                    IntroEngine.Visible = true;
-                    break;
-                case GameState.Gameplay:
-                    LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    if (!CommandLineOptions.DedicatedServer)
-                    {
-                        GraphicsEngine.Enabled = true;
-                        GraphicsEngine.Visible = true;
-                        if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
-                        SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
-                    }
-                    break;
-                case GameState.GameplayStopped:
-                    GraphicsEngine.Enabled = true;
-                    GraphicsEngine.Visible = true;
-                    if (NetworkMode != NetworkMode.Standalone) PlayerChat.Visible = true;
-                    break;
-                case GameState.GameAndMenu:
-                    LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    MenuEngine.Enabled = true;
-                    MenuEngine.Visible = true;
-                    SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic.FileName, DataEngine.Arena.BackgroundMusic.Volume);
-                    break;
-                case GameState.Menu:
-                    MenuEngine.Enabled = true;
-                    MenuEngine.Visible = true;
-                    SoundEngine.PlayMusic("menu music", 1);
-                    break;
-                default:
-                    throw new ApplicationException("Cannot change to unexpected game state " + value);
-            }
-        }
-
-        private void DisableCurrentGameState()
-        {
-            switch (_gameState)
-            {
-                case GameState.Initializing:
-                    StartupScreen.Enabled = false;
-                    StartupScreen.Visible = false;
-                    break;
-                case GameState.Intro:
-                    IntroEngine.Enabled = false;
-                    IntroEngine.Visible = false;
-                    break;
-                case GameState.Gameplay:
-                    LogicEngine.Enabled = false;
-                    PreFrameLogicEngine.Enabled = false;
-                    PostFrameLogicEngine.Enabled = false;
-                    if (!CommandLineOptions.DedicatedServer)
-                    {
-                        GraphicsEngine.Enabled = false;
-                        GraphicsEngine.Visible = false;
-                        PlayerChat.Enabled = PlayerChat.Visible = false;
-                    }
-                    break;
-                case GameState.GameplayStopped:
-                    if (!CommandLineOptions.DedicatedServer)
-                    {
-                        GraphicsEngine.Enabled = false;
-                        GraphicsEngine.Visible = false;
-                        PlayerChat.Visible = false;
-                    }
-                    break;
-                case GameState.GameAndMenu:
-                    LogicEngine.Enabled = false;
-                    PreFrameLogicEngine.Enabled = false;
-                    PostFrameLogicEngine.Enabled = false;
-                    MenuEngine.Enabled = false;
-                    MenuEngine.Visible = false;
-                    break;
-                case GameState.Menu:
-                    MenuEngine.Enabled = false;
-                    MenuEngine.Visible = false;
-                    break;
-                default:
-                    throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
-            }
-        }
-
-        /// <summary>
-        /// Prepares the game data for playing an arena.
-        /// When the playing really should start, call <see cref="StartArena"/>.
-        /// </summary>
-        private void InitializeFromArena(string arenaFilename, byte arenaID)
-        {
-            var arena = Arena.FromFile(this, arenaFilename);
-            arena.ID = arenaID;
-            arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
-            arena.IsForPlaying = true;
-            // Note: Client starts progressbar when receiving StartGameMessage.
-            if (NetworkMode != NetworkMode.Client && !CommandLineOptions.DedicatedServer)
-                MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
-            foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
-            DataEngine.Arena = arena;
-            arena.Reset(); // this usually takes several seconds
-        }
-
-        private void StopGameplay()
-        {
-            switch (GameState)
-            {
-                case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
-                case GameState.GameAndMenu: GameState = GameState.Menu; break;
-            }
-        }
-
-        private void ShowEquipMenuWhileKeepingGameRunning()
-        {
-            if (GameState == GameState.Menu) return;
-            MenuEngine.Activate(MenuComponentType.Equip);
-            GameState = GameState.GameAndMenu;
-        }
-
-        private void UpdateSpecialKeys()
-        {
-            if (OverlayDialog != null && GameState == GameState.Gameplay && _escapeControl.Pulse && !OverlayDialog.Enabled)
-            {
-                OverlayDialogData dialogData;
-                switch (NetworkMode)
-                {
-                    case NetworkMode.Server:
-                        dialogData = new CustomOverlayDialogData(this,
-                            "Finish Arena? (Yes/No)",
-                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, FinishArena),
-                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
-                        break;
-                    case NetworkMode.Client:
-                        dialogData = new CustomOverlayDialogData(this,
-                            "Pop by to equip your ship? (Yes/No)",
-                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowEquipMenuWhileKeepingGameRunning),
-                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
-                        break;
-                    case NetworkMode.Standalone:
-                        dialogData = new CustomOverlayDialogData(this,
-                            "Quit to Main Menu? (Yes/No)",
-                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMainMenuAndResetGameplay),
-                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
-                        break;
-                    default: throw new ApplicationException();
-                }
-                ShowDialog(dialogData);
-            }
-            if (_screenShotControl.Pulse) TakeScreenShot();
+            foreach (var controlAction in CustomControls)
+                if (controlAction.Item1.Pulse) controlAction.Item2();
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
@@ -664,24 +404,6 @@ namespace AW2.Core
                 LogicEngine.Enabled = PreFrameLogicEngine.Enabled = PostFrameLogicEngine.Enabled = false;
                 _frameStep = true;
             }
-
-            // Cheat codes during dialog.
-            if (OverlayDialog != null && OverlayDialog.Enabled && (GameState == GameState.Gameplay || GameState == GameState.GameplayStopped))
-            {
-                var keys = Keyboard.GetState();
-                if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
-                {
-                    // K + P = kill players
-                    var ships = DataEngine.Players.Select(p => p.Ship).Where(s => s != null);
-                    foreach (var ship in ships) ship.Die();
-                }
-
-                if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
-                {
-                    // E + A = end arena
-                    if (!IsLoadingArena) FinishArena();
-                }
-            }
         }
 
         private void SynchronizeFrameNumber()
@@ -690,7 +412,6 @@ namespace AW2.Core
             if (!NetworkEngine.IsConnectedToGameServer) return;
             if (_lastFrameNumberSynchronization + TimeSpan.FromSeconds(1) > GameTime.TotalRealTime) return;
             _lastFrameNumberSynchronization = GameTime.TotalRealTime;
-            if (GameState != GameState.Gameplay && GameState != GameState.GameAndMenu) return;
             var remoteFrameNumberOffset = NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
             DataEngine.Arena.FrameNumber -= remoteFrameNumberOffset;
             NetworkEngine.GameServerConnection.PingInfo.AdjustRemoteFrameNumberOffset(remoteFrameNumberOffset);
@@ -699,7 +420,7 @@ namespace AW2.Core
         private void SendGobCreationMessage()
         {
             if (NetworkMode != NetworkMode.Server) return;
-            if (IsLoadingArena) return; // wait for arena load completion
+            if (ArenaLoadTask.TaskRunning) return; // wait for arena load completion
             if (DataEngine.Arena == null) return; // happens if gobs are created on the frame the arena ends
             foreach (var conn in NetworkEngine.GameClientConnections)
             {
@@ -713,11 +434,6 @@ namespace AW2.Core
                 }
                 conn.Send(message);
             }
-        }
-
-        private void DeactivateAllMessageHandlers()
-        {
-            NetworkEngine.MessageHandlers.Clear();
         }
 
         private void GobRemovedFromArenaHandler(Gob gob)
@@ -734,7 +450,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;
             if (player == null) return;
-            player.IsAllowedToCreateShip = () => player.IsRemote && NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
+            player.IsAllowedToCreateShip = () => player.IsRemote && NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsRequestingSpawn;
             player.Messages.NewChatMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
             player.Messages.NewCombatLogMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
         }
@@ -755,11 +471,38 @@ namespace AW2.Core
 
         private void SpectatorRemovedHandler(Spectator spectator)
         {
-            if (NetworkMode == NetworkMode.Server)
+            if (NetworkMode != NetworkMode.Server) return;
+            UpdateGameServerInfoToManagementServer();
+            var clientMessage = new PlayerDeletionMessage { PlayerID = spectator.ID };
+            NetworkEngine.SendToGameClients(clientMessage);
+        }
+
+        private void ConnectionResultOnClientCallback(Result<Connection> result)
+        {
+            if (NetworkEngine.GameServerConnection != null)
             {
-                UpdateGameServerInfoToManagementServer();
-                var clientMessage = new PlayerDeletionMessage { PlayerID = spectator.ID };
-                NetworkEngine.SendToGameClients(clientMessage);
+                // Silently ignore extra server connection attempts.
+                if (result.Successful) result.Value.Dispose();
+                return;
+            }
+
+            if (!result.Successful)
+            {
+                Log.Write("Failed to connect to server: " + result.Error);
+                StopClient("Failed to connect to server.");
+            }
+            else
+            {
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null));
+                NetworkEngine.GameServerConnection = result.Value;
+                MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
+                var joinRequest = new GameServerHandshakeRequestTCP
+                {
+                    CanonicalStrings = CanonicalString.CanonicalForms,
+                    GameClientKey = NetworkEngine.GetAssaultWingInstanceKey(),
+                };
+                NetworkEngine.GameServerConnection.Send(joinRequest);
+                HideDialog("Connecting to server");
             }
         }
 
@@ -772,29 +515,32 @@ namespace AW2.Core
         private void AfterEveryFrame()
         {
 #if NETWORK_PROFILING
-            if (DataEngine.Arena.FrameNumber == 1)
-            {
-                ProfilingNetworkBinaryWriter.Reset();
-            }
-            using(new NetworkProfilingScope(string.Format("Frame {0:0000}", DataEngine.Arena.FrameNumber)))
+            if (DataEngine.Arena.FrameNumber == 1) ProfilingNetworkBinaryWriter.Reset();
+            using (new NetworkProfilingScope(string.Format("Frame {0:0000}", DataEngine.Arena.FrameNumber)))
 #endif
             {
-                switch (NetworkMode)
-                {
-                    case NetworkMode.Server:
-                        SendGobUpdatesToRemote(DataEngine.Arena.Gobs.GameplayLayer.Gobs,
-                            SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
-                        SendPlayerUpdatesOnServer();
-                        SendGobDeletionsOnServer();
-                        SendArenaStatisticsOnServer();
-                        break;
-                    case NetworkMode.Client:
-                        SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
-                            SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
-                        SendPlayerUpdatesOnClient();
-                        break;
-                }
+                SendMessagesOnServer();
+                SendMessagesOnClient();
             }
+            SynchronizeFrameNumber();
+        }
+
+        private void SendMessagesOnServer()
+        {
+            if (NetworkMode != NetworkMode.Server) return;
+            SendGobUpdatesToRemote(DataEngine.Arena.Gobs.GameplayLayer.Gobs,
+                SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
+            SendPlayerUpdatesOnServer();
+            SendGobDeletionsOnServer();
+            SendArenaStatisticsOnServer();
+        }
+
+        private void SendMessagesOnClient()
+        {
+            if (NetworkMode != NetworkMode.Client) return;
+            SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
+                SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
+            SendPlayerUpdatesOnClient();
         }
 
         private void SendArenaStatisticsOnServer()
@@ -833,7 +579,7 @@ namespace AW2.Core
 
         private void SendPlayerUpdatesOnClient()
         {
-            if (GameState != GameState.Gameplay) return;
+            if (!IsShipControlsEnabled) return;
             foreach (var player in DataEngine.Players.Where(plr => plr.IsLocal && plr.ID != Spectator.UNINITIALIZED_ID))
             {
                 var message = new PlayerControlsMessage();
@@ -906,8 +652,8 @@ namespace AW2.Core
             Func<Spectator, SpectatorSettingsRequest> newPlayerSettingsRequest = spec => new SpectatorSettingsRequest
             {
                 IsRegisteredToServer = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes,
-                IsGameClientPlayingArena = GameState == Core.GameState.Gameplay,
-                IsGameClientReadyToStartArena = MenuEngine.IsReadyToStartArena,
+                IsRequestingSpawn = Logic.IsGameplay,
+                IsGameClientReadyToStartArena = IsReadyToStartArena,
                 SpectatorID = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes ? spec.ID : spec.LocalID,
                 Subclass = SpectatorSettingsRequest.GetSubclassType(spec),
             };

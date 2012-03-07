@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Graphics;
+using AW2.Menu;
 using AW2.UI;
 
 namespace AW2.Core.OverlayComponents
@@ -17,7 +18,8 @@ namespace AW2.Core.OverlayComponents
         private TriggeredCallback[] _actions;
         private TimeSpan _firstUpdate;
 
-        public AssaultWing Game { get; private set; }
+        public AssaultWing Game { get { return Menu.Game; } }
+        public MenuEngineImpl Menu { get; private set; }
 
         /// <summary>
         /// Dimensions are meaningless because our alignments are Stretch.
@@ -39,10 +41,10 @@ namespace AW2.Core.OverlayComponents
 
         private bool IsCheckingActions { get { return _firstUpdate != TimeSpan.Zero && _firstUpdate + ACTION_WARMUP_TIME < Game.GameTime.TotalRealTime; } }
 
-        public OverlayDialogData(AssaultWing game, params TriggeredCallback[] actions)
+        public OverlayDialogData(MenuEngineImpl menu, params TriggeredCallback[] actions)
             : base(null, HorizontalAlignment.Stretch, VerticalAlignment.Stretch)
         {
-            Game = game;
+            Menu = menu;
             _actions = actions;
         }
 

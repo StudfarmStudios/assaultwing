@@ -52,6 +52,16 @@ namespace AW2.Menu.Main
         /// </summary>
         public MainMenuItemCollection SetupItems { get; private set; }
 
+        private string InitialLoginName
+        {
+            get
+            {
+                return Game.DataEngine.LocalPlayer != null
+                    ? Game.DataEngine.LocalPlayer.Name
+                    : Game.Settings.Players.Player1.Name;
+            }
+        }
+
         public MainMenuItemCollections(MainMenuComponent menuComponent)
         {
             _menuComponent = menuComponent;
@@ -67,11 +77,29 @@ namespace AW2.Menu.Main
             InitializeSetupItems();
         }
 
-        public static void Click_LocalGame(AssaultWing game)
+        public void Click_LocalGame()
         {
-            game.MenuEngine.Activate(MenuComponentType.Equip);
-            game.InitializePlayers(2);
-            if (game.Settings.Players.BotsEnabled) game.DataEngine.Spectators.Add(new BotPlayer(game));
+            MenuEngine.Activate(MenuComponentType.Equip);
+            Game.InitializePlayers(2);
+            if (Game.Settings.Players.BotsEnabled) Game.DataEngine.Spectators.Add(new BotPlayer(Game));
+        }
+
+        public void Click_NetworkGame(bool loginPilots)
+        {
+            Game.InitializePlayers(1);
+            if (!TryConnectToManagementServer()) return;
+            Game.WebData.RequestData();
+            if (loginPilots) Game.WebData.LoginPilots();
+            RefreshNetworkItems(force: true);
+            _menuComponent.PushItems(NetworkItems);
+            Game.SoundEngine.PlaySound("MenuChangeItem");
+        }
+
+        public void Click_ConnectToGameServer(int gameServerManagementID, string shortServerName)
+        {
+            var joinRequest = new JoinGameServerRequest { GameServerManagementID = gameServerManagementID };
+            Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
+            Game.ShowConnectingToGameServerDialog(shortServerName);
         }
 
         private void EnsureStandaloneMessageHandlersActivated()
@@ -83,18 +111,8 @@ namespace AW2.Menu.Main
         private void InitializeStartItems()
         {
             StartItems = new MainMenuItemCollection("Start Menu");
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", () => Click_LocalGame(Game)));
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront",
-                () =>
-                {
-                    Game.InitializePlayers(1);
-                    if (!TryConnectToManagementServer()) return;
-                    Game.WebData.RequestData();
-                    Game.WebData.LoginPilots();
-                    RefreshNetworkItems(force: true);
-                    _menuComponent.PushItems(NetworkItems);
-                    Game.SoundEngine.PlaySound("MenuChangeItem");
-                }));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", Click_LocalGame));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", () => Click_NetworkGame(loginPilots: true)));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
                 () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
@@ -135,13 +153,12 @@ namespace AW2.Menu.Main
         private void InitializeLoginItems()
         {
             LoginItems = new MainMenuItemCollection("Pilot Login");
-            _loginName = new EditableText(Game.Settings.Players.Player1.Name, PlayerSettings.PLAYER_NAME_MAX_LENGTH,
+            _loginName = new EditableText(InitialLoginName, PlayerSettings.PLAYER_NAME_MAX_LENGTH,
                 new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game,
                 () =>
                 {
-                    var localPlayer = Game.DataEngine.Spectators.Single(spec => spec.IsLocal);
-                    if (localPlayer.Name != _loginName.Content) localPlayer.GetStats().Logout();
-                    localPlayer.Name = Game.Settings.Players.Player1.Name = _loginName.Content;
+                    if (Game.DataEngine.LocalPlayer.Name != _loginName.Content) Game.DataEngine.LocalPlayer.GetStats().Logout();
+                    Game.DataEngine.LocalPlayer.Name = Game.Settings.Players.Player1.Name = _loginName.Content;
                 });
             _loginPassword = new EditableText("", PlayerSettings.PLAYER_PASSWORD_MAX_LENGTH, // TODO !!! Show *** instead of text
                 new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game, // TODO !!! Remove char set limit
@@ -173,10 +190,9 @@ namespace AW2.Menu.Main
         {
             SetupItems = new MainMenuItemCollection("General Setup");
             SetupItems.Add(GetSetupItemBase(() => "Reset all settings to defaults",
-                () => Game.ShowDialog(new CustomOverlayDialogData(Game,
-                    "Are you sure to reset all settings\nto their defaults? (Yes/No)",
+                () => Game.ShowCustomDialog("Are you sure to reset all settings\nto their defaults? (Yes/No)", null,
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.Settings.Reset),
-                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })))));
+                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }))));
             SetupItems.Add(GetSetupItemBase(() => "Audio setup", () => _menuComponent.PushItems(GetAudioItems())));
             SetupItems.Add(GetSetupItemBase(() => "Graphics setup", () => _menuComponent.PushItems(GetGraphicsItems())));
             SetupItems.Add(GetSetupItemBase(() => "Controls setup", () => _menuComponent.PushItems(GetControlsItems())));
@@ -214,7 +230,12 @@ namespace AW2.Menu.Main
             if (!force && _lastNetworkItemsUpdate + GAME_SERVER_LIST_REQUEST_INTERVAL > Game.GameTime.TotalRealTime) return;
             _lastNetworkItemsUpdate = Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
-            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Log in with Your Pilot", () => _menuComponent.PushItems(LoginItems)));
+            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Log in with Your Pilot",
+                () =>
+                {
+                    _loginName.Content = InitialLoginName;
+                    _menuComponent.PushItems(LoginItems);
+                }));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => NO_SERVERS_FOUND, () => { }));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Find More in Forums", () => Game.OpenURL("http://www.assaultwing.com/letsplay")));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Create a Server",
@@ -259,16 +280,9 @@ traffic or the server is down.", "No reply from management server");
                 {
                     var shortServerName = server.Name.Substring(0, Math.Min(12, server.Name.Length));
                     var menuItemText = string.Format("Join {0}\t\x10[{1}/{2}]", shortServerName, server.CurrentPlayers, server.MaxPlayers);
-                    var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
                     NetworkItems.Insert(1, new MainMenuItem(MenuEngine,
                         () => menuItemText,
-                        () =>
-                        {
-                            Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
-                            Game.ShowDialog(new CustomOverlayDialogData(Game,
-                                string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName),
-                                new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, Game.CutNetworkConnections)) { GroupName = "Connecting to server" });
-                        }));
+                        () => Click_ConnectToGameServer(server.ManagementID, shortServerName)));
                 }
                 else
                 {
@@ -309,7 +323,7 @@ traffic or the server is down.", "No reply from management server");
         {
             return new MainMenuItem(MenuEngine, () => string.Format("{0}\t\x9{1}", name, get()),
                 () => Game.ShowDialog(
-                    new ControlSelectionOverlayDialogData(Game, "Press control for " + name,
+                    new ControlSelectionOverlayDialogData(MenuEngine, "Press control for " + name,
                         control => set(control))));
         }
 

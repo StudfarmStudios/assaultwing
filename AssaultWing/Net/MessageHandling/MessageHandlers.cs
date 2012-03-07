@@ -12,11 +12,14 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
 using AW2.Net.Connections;
 using AW2.UI;
+using AW2.Menu;
 
 namespace AW2.Net.MessageHandling
 {
     public class MessageHandlers
     {
+        public event Action<string> GameServerConnectionClosing; // parameter is info
+
         private AssaultWing Game { get; set; }
 
         public MessageHandlers(AssaultWing game)
@@ -107,7 +110,7 @@ namespace AW2.Net.MessageHandling
             if (mess.Success)
             {
                 Game.SoundEngine.PlaySound("MenuChangeItem");
-                Game.StartClient(mess.GameServerEndPoints, ConnectionResultOnClientCallback);
+                Game.StartClient(mess.GameServerEndPoints);
             }
             else
             {
@@ -152,29 +155,15 @@ namespace AW2.Net.MessageHandling
 
         private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
-            Log.Write("Server is going to close the connection because {0}.", mess.Info);
-            var dialogData = new CustomOverlayDialogData(Game, "Server closed connection because\n" + mess.Info + ".",
-                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, Game.ShowMainMenuAndResetGameplay));
-            Game.ShowDialog(dialogData);
+            GameServerConnectionClosing(mess.Info);
         }
 
         private void HandleStartGameMessage(StartGameMessage mess)
         {
-            if (Game.IsLoadingArena) return;
-            Game.ShowEquipMenu();
-            Game.SelectedArenaName = mess.ArenaToPlay;
+            if (Game.DataEngine.Arena != null && Game.DataEngine.Arena.ID == mess.ArenaID) return;
             Game.DataEngine.ArenaFinishTime = mess.ArenaTimeLeft == TimeSpan.Zero ? TimeSpan.Zero : mess.ArenaTimeLeft + Game.GameTime.TotalRealTime;
-            Game.MenuEngine.ProgressBar.Start(mess.WallCount);
-            Game.MenuEngine.ProgressBarAction(
-                () => Game.PrepareSelectedArena(mess.ArenaID),
-                () =>
-                {
-                    // The network connection may have been cut during arena loading.
-                    if (Game.NetworkMode != NetworkMode.Client) return;
-                    ActivateHandlers(GetClientGameplayHandlers());
-                    Game.IsClientAllowedToStartArena = true;
-                    Game.StartArenaButStayInMenu();
-                });
+            // FIXME: mess.WallCount is not used. Remove it. Client is assumed to have the same arena as the server. Enforce that?
+            Game.PrepareArena(mess.ArenaToPlay, mess.ArenaID);
         }
 
         private void HandleSpectatorSettingsReply(SpectatorSettingsReply mess)
@@ -286,7 +275,7 @@ namespace AW2.Net.MessageHandling
         {
             var clientConn = Game.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
             if (clientConn.ConnectionStatus.IsDropped) return;
-            clientConn.ConnectionStatus.IsPlayingArena = mess.IsGameClientPlayingArena;
+            clientConn.ConnectionStatus.IsRequestingSpawn = mess.IsRequestingSpawn;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)
             {
@@ -413,37 +402,6 @@ namespace AW2.Net.MessageHandling
             }
             Game.Stats.Send(new { AddPlayer = newSpectator.GetStats().LoginToken, Name = newSpectator.Name });
             return newSpectator;
-        }
-
-        private void ConnectionResultOnClientCallback(Result<Connection> result)
-        {
-            var net = Game.NetworkEngine;
-            if (net.GameServerConnection != null)
-            {
-                // Silently ignore extra server connection attempts.
-                if (result.Successful) result.Value.Dispose();
-                return;
-            }
-
-            if (!result.Successful)
-            {
-                Log.Write("Failed to connect to server: " + result.Error);
-                Game.StopClient("Failed to connect to server.");
-            }
-            else
-            {
-                DeactivateHandlers(GetStandaloneMenuHandlers(null));
-                net.GameServerConnection = result.Value;
-                ActivateHandlers(GetClientMenuHandlers());
-                var joinRequest = new GameServerHandshakeRequestTCP
-                {
-                    CanonicalStrings = CanonicalString.CanonicalForms,
-                    GameClientKey = net.GetAssaultWingInstanceKey(),
-                };
-                net.GameServerConnection.Send(joinRequest);
-                Game.MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
-                Game.HideDialog("Connecting to server");
-            }
         }
     }
 }

@@ -13,10 +13,11 @@ namespace AW2.Core.GameComponents
     /// </summary>
     public class IntroEngine : AWGameComponent
     {
+        public enum ModeType { NotStarted, Playing, Finished };
+        public ModeType Mode { get; private set; }
         private Control _skipControl;
         private AWVideo _introVideo;
         private SpriteBatch _spriteBatch;
-        private bool _introPlaying;
 
         public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
 
@@ -31,7 +32,7 @@ namespace AW2.Core.GameComponents
             try
             {
                 _introVideo.Play();
-                _introPlaying = true;
+                Mode = ModeType.Playing;
             }
             catch (InvalidOperationException)
             {
@@ -44,13 +45,8 @@ namespace AW2.Core.GameComponents
 
         private void EndIntro()
         {
-            if (_introPlaying)
-            {
-                _introVideo.Stop();
-                _introPlaying = false;
-            }
-            Log.Write("Entering menus");
-            Game.ShowMainMenuAndResetGameplay();
+            if (Mode == ModeType.Playing) _introVideo.Stop();
+            Mode = ModeType.Finished;
         }
 
         public override void Initialize()
@@ -89,7 +85,7 @@ namespace AW2.Core.GameComponents
 
         public override void Draw()
         {
-            if (!_introPlaying) BeginIntro();
+            if (Mode == ModeType.NotStarted) BeginIntro();
             Game.GraphicsDeviceService.GraphicsDevice.Clear(Color.Black);
             var videoFrame = _introVideo.GetTexture();
             if (videoFrame != null)

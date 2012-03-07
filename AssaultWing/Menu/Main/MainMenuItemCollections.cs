@@ -52,6 +52,16 @@ namespace AW2.Menu.Main
         /// </summary>
         public MainMenuItemCollection SetupItems { get; private set; }
 
+        private string InitialLoginName
+        {
+            get
+            {
+                return Game.DataEngine.LocalPlayer != null
+                    ? Game.DataEngine.LocalPlayer.Name
+                    : Game.Settings.Players.Player1.Name;
+            }
+        }
+
         public MainMenuItemCollections(MainMenuComponent menuComponent)
         {
             _menuComponent = menuComponent;
@@ -74,12 +84,12 @@ namespace AW2.Menu.Main
             if (Game.Settings.Players.BotsEnabled) Game.DataEngine.Spectators.Add(new BotPlayer(Game));
         }
 
-        public void Click_NetworkGame()
+        public void Click_NetworkGame(bool loginPilots)
         {
             Game.InitializePlayers(1);
             if (!TryConnectToManagementServer()) return;
             Game.WebData.RequestData();
-            Game.WebData.LoginPilots();
+            if (loginPilots) Game.WebData.LoginPilots();
             RefreshNetworkItems(force: true);
             _menuComponent.PushItems(NetworkItems);
             Game.SoundEngine.PlaySound("MenuChangeItem");
@@ -102,7 +112,7 @@ namespace AW2.Menu.Main
         {
             StartItems = new MainMenuItemCollection("Start Menu");
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", Click_LocalGame));
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", Click_NetworkGame));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", () => Click_NetworkGame(loginPilots: true)));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
                 () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
@@ -143,13 +153,12 @@ namespace AW2.Menu.Main
         private void InitializeLoginItems()
         {
             LoginItems = new MainMenuItemCollection("Pilot Login");
-            _loginName = new EditableText(Game.Settings.Players.Player1.Name, PlayerSettings.PLAYER_NAME_MAX_LENGTH,
+            _loginName = new EditableText(InitialLoginName, PlayerSettings.PLAYER_NAME_MAX_LENGTH,
                 new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game,
                 () =>
                 {
-                    var localPlayer = Game.DataEngine.Spectators.Single(spec => spec.IsLocal);
-                    if (localPlayer.Name != _loginName.Content) localPlayer.GetStats().Logout();
-                    localPlayer.Name = Game.Settings.Players.Player1.Name = _loginName.Content;
+                    if (Game.DataEngine.LocalPlayer.Name != _loginName.Content) Game.DataEngine.LocalPlayer.GetStats().Logout();
+                    Game.DataEngine.LocalPlayer.Name = Game.Settings.Players.Player1.Name = _loginName.Content;
                 });
             _loginPassword = new EditableText("", PlayerSettings.PLAYER_PASSWORD_MAX_LENGTH, // TODO !!! Show *** instead of text
                 new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game, // TODO !!! Remove char set limit
@@ -221,7 +230,12 @@ namespace AW2.Menu.Main
             if (!force && _lastNetworkItemsUpdate + GAME_SERVER_LIST_REQUEST_INTERVAL > Game.GameTime.TotalRealTime) return;
             _lastNetworkItemsUpdate = Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
-            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Log in with Your Pilot", () => _menuComponent.PushItems(LoginItems)));
+            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Log in with Your Pilot",
+                () =>
+                {
+                    _loginName.Content = InitialLoginName;
+                    _menuComponent.PushItems(LoginItems);
+                }));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => NO_SERVERS_FOUND, () => { }));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Find More in Forums", () => Game.OpenURL("http://www.assaultwing.com/letsplay")));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Create a Server",

@@ -41,7 +41,7 @@ namespace AW2.UI
                     break;
                 case StateType.OpenBattlefrontMenu:
                     if (!MainMenuActive) break;
-                    MenuEngine.MainMenu.ItemCollections.Click_NetworkGame();
+                    MenuEngine.MainMenu.ItemCollections.Click_NetworkGame(loginPilots: false);
                     _state = StateType.UpdatePilotData;
                     break;
                 case StateType.UpdatePilotData:
@@ -51,10 +51,9 @@ namespace AW2.UI
                     _state = StateType.ConnectToGameServer;
                     break;
                 case StateType.ConnectToGameServer:
-                    if (!MainMenuNetworkItemsActive) { _state = StateType.Idle; break; } // Cancel quickstart
+                    if (!MainMenuNetworkItemsActive) { _state = StateType.Idle; break; } // Cancel quickstart FIXME !!! If user Escapes server connection dialog, we should cancel. Doesn't happen now!
                     if (!Game.DataEngine.LocalPlayer.GetStats().IsLoggedIn) break;
                     HideDialog("Update pilot data");
-                    // UNDONE for testing !!! Game.Settings.ToFile(); // Save pilot name
                     ConnectToGameServer();
                     _state = StateType.StartGameplay;
                     break;

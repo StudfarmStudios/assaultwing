@@ -66,7 +66,7 @@ namespace AW2.Menu.Equip
             if (_sendControl.Pulse && ChatPlayer != null)
             {
                 MenuEngine.Game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
-                _message.Clear();
+                _message.Content = "";
             }
             _messageBeeper.BeepOnNewMessage();
         }

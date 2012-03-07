@@ -24,7 +24,7 @@ namespace AW2.UI
         /// <summary>
         /// The current text content.
         /// </summary>
-        public string Content { get { return _content.ToString(); } }
+        public string Content { get { return _content.ToString(); } set { _content.Clear(); _content.Append(value); } }
 
         /// <summary>
         /// Are keypresses handled or not.
@@ -56,11 +56,6 @@ namespace AW2.UI
         public void ActivateTemporarily()
         {
             _temporaryActivationTimeout = _game.GameTime.TotalRealTime + TemporaryActivationInterval;
-        }
-
-        public void Clear()
-        {
-            _content.Clear();
         }
 
         public void Dispose()

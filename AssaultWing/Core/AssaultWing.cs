@@ -57,9 +57,8 @@ namespace AW2.Core
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
             if (CommandLineOptions.DedicatedServer)
                 Logic = new DedicatedServerLogic(this);
-            else if (CommandLineOptions.QuickStart)
-                Logic = new QuickStartLogic(this, CommandLineOptions.GameServerEndPoints, CommandLineOptions.GameServerName,
-                    CommandLineOptions.LoginToken);
+            else if (CommandLineOptions.QuickStart != null)
+                Logic = new QuickStartLogic(this, CommandLineOptions.QuickStart);
             else
                 Logic = new UserControlledLogic(this);
             ArenaLoadTask = new BackgroundTask();
@@ -144,7 +143,7 @@ namespace AW2.Core
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine" };
             if (CommandLineOptions.DedicatedServer)
                 WebData.Feed("1D");
-            else if (CommandLineOptions.QuickStart)
+            else if (CommandLineOptions.QuickStart != null)
             {
                 WebData.Feed("1Q");
             }

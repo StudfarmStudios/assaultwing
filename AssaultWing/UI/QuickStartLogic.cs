@@ -12,16 +12,12 @@ namespace AW2.UI
         private enum StateType { StartMenuEngine, OpenBattlefrontMenu, UpdatePilotData, ConnectToGameServer, StartGameplay, Idle }
 
         private StateType _state;
-        private AWEndPoint[] _gameServerEndPoints;
-        private string _gameServerName;
-        private string _loginToken;
+        private CommandLineOptions.QuickStartOptions _options;
 
-        public QuickStartLogic(AssaultWing game, string[] gameServerEndPoints, string gameServerName, string loginToken)
+        public QuickStartLogic(AssaultWing game, CommandLineOptions.QuickStartOptions options)
             : base(game)
         {
-            _gameServerEndPoints = gameServerEndPoints.Select(str => AWEndPoint.Parse(str)).ToArray();
-            _gameServerName = gameServerName;
-            _loginToken = loginToken;
+            _options = options;
         }
 
         public override void Initialize()
@@ -46,7 +42,10 @@ namespace AW2.UI
                     break;
                 case StateType.UpdatePilotData:
                     if (!MainMenuNetworkItemsActive) break;
-                    Game.WebData.UpdatePilotData(Game.DataEngine.LocalPlayer, _loginToken);
+                    if (CanonicalString.IsRegistered(_options.ShipName)) Game.DataEngine.LocalPlayer.ShipName = (CanonicalString)_options.ShipName;
+                    if (CanonicalString.IsRegistered(_options.Weapon2Name)) Game.DataEngine.LocalPlayer.Weapon2Name = (CanonicalString)_options.Weapon2Name;
+                    if (CanonicalString.IsRegistered(_options.ExtraDeviceName)) Game.DataEngine.LocalPlayer.ExtraDeviceName = (CanonicalString)_options.ExtraDeviceName;
+                    Game.WebData.UpdatePilotData(Game.DataEngine.LocalPlayer, _options.LoginToken);
                     ShowInfoDialog("Fetching pilot record...", "Update pilot data");
                     _state = StateType.ConnectToGameServer;
                     break;
@@ -70,8 +69,8 @@ namespace AW2.UI
         private void ConnectToGameServer()
         {
             Game.WebData.UpdatePilotRanking(Game.DataEngine.LocalPlayer);
-            Game.StartClient(_gameServerEndPoints);
-            Game.ShowConnectingToGameServerDialog(_gameServerName);
+            Game.StartClient(_options.GameServerEndPoints.Select(str => AWEndPoint.Parse(str)).ToArray());
+            Game.ShowConnectingToGameServerDialog(_options.GameServerName);
         }
     }
 }

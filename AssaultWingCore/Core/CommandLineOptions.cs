@@ -10,6 +10,16 @@ namespace AW2.Core
     /// </summary>
     public class CommandLineOptions
     {
+        public class QuickStartOptions
+        {
+            public string[] GameServerEndPoints { get; set; }
+            public string GameServerName { get; set; }
+            public string LoginToken { get; set; }
+            public string ShipName { get; set; }
+            public string WeaponName { get; set; }
+            public string ShipModName { get; set; }
+        }
+
         private class ProgramArgs
         {
             private string[] _commandLineArgs;
@@ -52,10 +62,11 @@ namespace AW2.Core
         public bool SaveTemplates { get; private set; }
         public bool DeleteTemplates { get; private set; }
         public string ArenaFilename { get; private set; }
-        public bool QuickStart { get; private set; } // TESTING !!! Replace this flag with more detailed game start information.
-        public string[] GameServerEndPoints { get; private set; }
-        public string GameServerName { get; private set; }
-        public string LoginToken { get; private set; }
+
+        /// <summary>
+        /// Null or options for quick start.
+        /// </summary>
+        public QuickStartOptions QuickStart { get; private set; }
 
         public CommandLineOptions(string[] commandLineArgs, NameValueCollection queryParams, string argumentText)
         {
@@ -64,10 +75,15 @@ namespace AW2.Core
             SaveTemplates = args.IsSet("save_templates");
             DeleteTemplates = args.IsSet("delete_templates");
             ArenaFilename = args.GetValue("arena");
-            QuickStart = args.IsSet("quickstart");
-            GameServerEndPoints = args.GetValues("server");
-            GameServerName = args.GetValue("server_name") ?? "Some Server";
-            LoginToken = args.GetValue("login_token");
+            if (args.IsSet("quickstart")) QuickStart = new QuickStartOptions
+            {
+                GameServerEndPoints = args.GetValues("server"),
+                GameServerName = args.GetValue("server_name") ?? "Some Server",
+                LoginToken = args.GetValue("login_token"),
+                ShipName = args.GetValue("ship"),
+                WeaponName = args.GetValue("weapon"),
+                ShipModName = args.GetValue("mod"),
+            };
         }
     }
 }

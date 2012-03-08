@@ -127,13 +127,13 @@ namespace AW2.Helpers
         {
             // Adapted on 2012-02-17 from Scott Dorman's code at http://stackoverflow.com/a/68803.
             var queryParameters = new NameValueCollection();
-            var querySegments = queryString.TrimStart('?').Split('&');
+            var querySegments = UrlDecode(queryString).TrimStart('?').Split('&');
             foreach (var segment in querySegments)
             {
                 var parts = segment.Split('=');
                 if (parts.Length != 2) continue;
-                var key = UrlDecode(parts[0].Trim());
-                var value = UrlDecode(parts[1].Trim());
+                var key = parts[0].Trim();
+                var value = parts[1].Trim();
                 queryParameters.Add(key, value);
             }
             return queryParameters;

@@ -16,8 +16,8 @@ namespace AW2.Core
             public string GameServerName { get; set; }
             public string LoginToken { get; set; }
             public string ShipName { get; set; }
-            public string WeaponName { get; set; }
-            public string ShipModName { get; set; }
+            public string Weapon2Name { get; set; }
+            public string ExtraDeviceName { get; set; }
         }
 
         private class ProgramArgs
@@ -81,8 +81,8 @@ namespace AW2.Core
                 GameServerName = args.GetValue("server_name") ?? "Some Server",
                 LoginToken = args.GetValue("login_token"),
                 ShipName = args.GetValue("ship"),
-                WeaponName = args.GetValue("weapon"),
-                ShipModName = args.GetValue("mod"),
+                Weapon2Name = args.GetValue("weapon"),
+                ExtraDeviceName = args.GetValue("mod"),
             };
         }
     }

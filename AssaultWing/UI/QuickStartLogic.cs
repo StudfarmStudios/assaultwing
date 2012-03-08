@@ -42,6 +42,9 @@ namespace AW2.UI
                     break;
                 case StateType.UpdatePilotData:
                     if (!MainMenuNetworkItemsActive) break;
+                    if (CanonicalString.IsRegistered(_options.ShipName)) Game.DataEngine.LocalPlayer.ShipName = (CanonicalString)_options.ShipName;
+                    if (CanonicalString.IsRegistered(_options.Weapon2Name)) Game.DataEngine.LocalPlayer.Weapon2Name = (CanonicalString)_options.Weapon2Name;
+                    if (CanonicalString.IsRegistered(_options.ExtraDeviceName)) Game.DataEngine.LocalPlayer.ExtraDeviceName = (CanonicalString)_options.ExtraDeviceName;
                     Game.WebData.UpdatePilotData(Game.DataEngine.LocalPlayer, _options.LoginToken);
                     ShowInfoDialog("Fetching pilot record...", "Update pilot data");
                     _state = StateType.ConnectToGameServer;

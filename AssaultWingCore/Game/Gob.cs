@@ -962,7 +962,7 @@ namespace AW2.Game
             {
                 var oldRotation = _rotation;
                 byte rotationAndFlags = reader.ReadByte();
-                var fullUpdate = (rotationAndFlags & 0x80) != 0;
+                var fullUpdate = true; // UNDONE !!! (rotationAndFlags & 0x80) != 0;
                 _rotation = (rotationAndFlags & 0x7f) * MathHelper.TwoPi / 128;
                 DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - _rotation);
                 if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)

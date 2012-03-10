@@ -9,7 +9,7 @@ using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Settings;
 
-namespace AW2.Menu
+namespace AW2.Menu.Equip
 {
     /// <summary>
     /// Selector of some aspect of a player's equipment.

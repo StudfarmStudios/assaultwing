@@ -149,7 +149,7 @@
     <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\DummyMenuComponent.cs" />
-    <Compile Include="Menu\EquipmentSelector.cs" />
+    <Compile Include="Menu\Equip\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\Equip\ChatTab.cs" />
     <Compile Include="Menu\MenuControls.cs" />

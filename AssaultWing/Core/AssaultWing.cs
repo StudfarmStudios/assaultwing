@@ -478,6 +478,7 @@ namespace AW2.Core
 
         private void ConnectionResultOnClientCallback(Result<Connection> result)
         {
+            HideDialog("Connecting to server");
             if (NetworkEngine.GameServerConnection != null)
             {
                 // Silently ignore extra server connection attempts.
@@ -501,7 +502,6 @@ namespace AW2.Core
                     GameClientKey = NetworkEngine.GetAssaultWingInstanceKey(),
                 };
                 NetworkEngine.GameServerConnection.Send(joinRequest);
-                HideDialog("Connecting to server");
             }
         }
 

@@ -42,12 +42,12 @@ namespace AW2.Core.GameComponents
         }
 
         /// <summary>
-        /// Dismiss the topmost dialog. If <paramref name="groupName"/> is not null,
-        /// ensures that the topmost dialog matches <paramref name="groupName"/>.
+        /// Dismiss the topmost dialog.
+        /// <param name="groupName">If not null, dismiss only if the dialog matches <paramref name="groupName"/>.
         /// </summary>
         public void Dismiss(string groupName = null)
         {
-            if (groupName != null && _data.Peek().GroupName != groupName) throw new ApplicationException("Topmost dialog is in " + _data.Peek().GroupName ?? "<null>" + ", not " + groupName);
+            if (groupName != null && (_data.Count == 0 || _data.Peek().GroupName != groupName)) return; // Nothing to dismiss
             _data.Dequeue();
             Game.UIEngine.PopExclusiveControls();
             if (_data.Any())

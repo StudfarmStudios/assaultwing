@@ -42,19 +42,21 @@ namespace AW2.UI
                     break;
                 case StateType.UpdatePilotData:
                     if (!MainMenuNetworkItemsActive) break;
-                    if (CanonicalString.IsRegistered(_options.ShipName)) Game.DataEngine.LocalPlayer.ShipName = (CanonicalString)_options.ShipName;
-                    if (CanonicalString.IsRegistered(_options.Weapon2Name)) Game.DataEngine.LocalPlayer.Weapon2Name = (CanonicalString)_options.Weapon2Name;
-                    if (CanonicalString.IsRegistered(_options.ExtraDeviceName)) Game.DataEngine.LocalPlayer.ExtraDeviceName = (CanonicalString)_options.ExtraDeviceName;
                     Game.WebData.UpdatePilotData(Game.DataEngine.LocalPlayer, _options.LoginToken);
                     ShowInfoDialog("Fetching pilot record...", "Update pilot data");
                     _state = StateType.ConnectToGameServer;
                     break;
                 case StateType.ConnectToGameServer:
-                    if (!MainMenuNetworkItemsActive) { _state = StateType.Idle; break; } // Cancel quickstart FIXME !!! If user Escapes server connection dialog, we should cancel. Doesn't happen now!
+                    // Cancel quickstart FIXME !!! If user Escapes server connection dialog, we should cancel. Doesn't happen now!
+                    if (!MainMenuNetworkItemsActive) { _state = StateType.Idle; break; }
+
                     if (!Game.DataEngine.LocalPlayer.GetStats().IsLoggedIn) break;
                     HideDialog("Update pilot data");
-                    ConnectToGameServer();
-                    _state = StateType.StartGameplay;
+                    SetPlayerSettings();
+                    if (TryConnectToGameServer())
+                        _state = StateType.StartGameplay;
+                    else
+                        _state = StateType.Idle;
                     break;
                 case StateType.StartGameplay:
                     if (!Game.NetworkEngine.IsConnectedToGameServer) break;
@@ -66,11 +68,35 @@ namespace AW2.UI
             }
         }
 
-        private void ConnectToGameServer()
+        private void SetPlayerSettings()
+        {
+            var player = Game.DataEngine.LocalPlayer;
+            var settings = Game.Settings.Players.Player1;
+            if (CanonicalString.IsRegistered(_options.ShipName))
+                settings.ShipName = player.ShipName = (CanonicalString)_options.ShipName;
+            if (CanonicalString.IsRegistered(_options.Weapon2Name))
+                settings.Weapon2Name = player.Weapon2Name = (CanonicalString)_options.Weapon2Name;
+            if (CanonicalString.IsRegistered(_options.ExtraDeviceName))
+                settings.ExtraDeviceName = player.ExtraDeviceName = (CanonicalString)_options.ExtraDeviceName;
+            Game.Settings.ToFile();
+        }
+
+        private bool TryConnectToGameServer()
         {
             Game.WebData.UpdatePilotRanking(Game.DataEngine.LocalPlayer);
-            Game.StartClient(_options.GameServerEndPoints.Select(str => AWEndPoint.Parse(str)).ToArray());
+            var gameServerEndPoints = new AWEndPoint[0];
+            try
+            {
+                gameServerEndPoints = _options.GameServerEndPoints.Select(str => AWEndPoint.Parse(str)).ToArray();
+            }
+            catch
+            {
+                ShowInfoDialog("Error in game server address.");
+                return false;
+            }
+            Game.StartClient(gameServerEndPoints);
             Game.ShowConnectingToGameServerDialog(_options.GameServerName);
+            return true;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace AW2.Sound
     /// <summary>
     /// Sound engine based on XNA's <see cref="SoundEffect"/>.
     /// </summary>
-    public class SoundEngineXNA : SoundEngine
+    public class SoundEngineXNA : AWGameComponent
     {
         public class SoundCue
         {
@@ -47,6 +47,25 @@ namespace AW2.Sound
         private object _lock = new object();
         private AudioListener _listener = new AudioListener();
         private AWMusic _music;
+
+        /// <summary>
+        /// Music volume of current track relative to other tracks, as set by sound engineer, between 0 and 1.
+        /// </summary>
+        public float RelativeMusicVolume { get; set; }
+
+        /// <summary>
+        /// Internal music volume, as set by program logic, between 0 and 1.
+        /// </summary>
+        protected float InternalMusicVolume { get; set; }
+
+        private float ActualMusicVolume
+        {
+            get
+            {
+                float userMusicVolume = Game.Settings.Sound.MusicVolume;
+                return userMusicVolume * RelativeMusicVolume * InternalMusicVolume;
+            }
+        }
 
         public SoundEngineXNA(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
@@ -162,7 +181,7 @@ namespace AW2.Sound
             base.Dispose();
         }
 
-        public override void PlayMusic(string trackName, float trackVolume)
+        public void PlayMusic(string trackName, float trackVolume)
         {
             if (!Enabled) return;
             var changeTrack = _music == null || _music.TrackName != trackName;
@@ -177,7 +196,7 @@ namespace AW2.Sound
             }
         }
 
-        public override void StopMusic()
+        public void StopMusic()
         {
             if (!Enabled) return;
             if (_music == null) return;
@@ -199,7 +218,7 @@ namespace AW2.Sound
             return new SoundInstanceXNA(instance, parentGob, cue._volume, cue._distanceScale);
         }
 
-        public override SoundInstance CreateSound(string soundName, Gob parentGob)
+        public SoundInstance CreateSound(string soundName, Gob parentGob)
         {
             lock (_lock)
             {
@@ -209,7 +228,7 @@ namespace AW2.Sound
             }
         }
 
-        public override SoundInstance PlaySound(string soundName, Gob parentGob)
+        public SoundInstance PlaySound(string soundName, Gob parentGob)
         {
             lock (_lock)
             {
@@ -218,6 +237,16 @@ namespace AW2.Sound
                 _playingInstances.Add(instance);
                 return instance;
             }
+        }
+
+        public SoundInstance CreateSound(string soundName)
+        {
+            return CreateSound(soundName, null);
+        }
+
+        public SoundInstance PlaySound(string soundName)
+        {
+            return PlaySound(soundName, null);
         }
     }
 }

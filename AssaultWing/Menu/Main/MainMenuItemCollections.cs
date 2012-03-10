@@ -340,12 +340,6 @@ traffic or the server is down.", "No reply from management server");
             items.Add(getVolumeSetupItem("Sound volume",
                 () => Game.Settings.Sound.SoundVolume,
                 volume => Game.Settings.Sound.SoundVolume = volume));
-            items.Add(GetSetupItem(
-                () => string.Format("Audio engine\t\xf{0}", Game.Settings.Sound.AudioEngineType.ToString()),
-                Enum.GetValues(typeof(SoundSettings.EngineType)).Cast<SoundSettings.EngineType>(),
-                () => Game.Settings.Sound.AudioEngineType,
-                audioEngine => Game.Settings.Sound.AudioEngineType = audioEngine));
-            items.Add(new MainMenuItem(MenuEngine, () => "Restart to change engine.", () => { }));
             return items;
         }
 

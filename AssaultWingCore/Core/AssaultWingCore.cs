@@ -55,7 +55,7 @@ namespace AW2.Core
         public LogicEngine LogicEngine { get; private set; }
         public PostFrameLogicEngine PostFrameLogicEngine { get; private set; }
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
-        public SoundEngine SoundEngine { get; private set; }
+        public SoundEngineXNA SoundEngine { get; private set; }
         public StatsBase Stats { get; set; }
 
         /// <summary>
@@ -114,18 +114,7 @@ namespace AW2.Core
             PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
             _uiEngine = new UIEngineImpl(this, 1);
             Stats = new StatsBase(this, 7);
-            // TODO: Create a dummy SoundEngine for dedicated server
-            switch (Settings.Sound.AudioEngineType)
-            {
-                case SoundSettings.EngineType.XNA:
-                    SoundEngine = new SoundEngineXNA(this, 5);
-                    break;
-                case SoundSettings.EngineType.XACT:
-                    SoundEngine = new SoundEngineXACT(this, 5);
-                    break;
-                default: throw new ApplicationException("Unknown audio engine " + Settings.Sound.AudioEngineType);
-            }
-
+            SoundEngine = new SoundEngineXNA(this, 5);
             Components.Add(PreFrameLogicEngine);
             Components.Add(LogicEngine);
             Components.Add(PostFrameLogicEngine);

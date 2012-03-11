@@ -78,6 +78,7 @@ namespace AW2.UI
                 settings.Weapon2Name = player.Weapon2Name = (CanonicalString)_options.Weapon2Name;
             if (CanonicalString.IsRegistered(_options.ExtraDeviceName))
                 settings.ExtraDeviceName = player.ExtraDeviceName = (CanonicalString)_options.ExtraDeviceName;
+            settings.Name = player.Name;
             Game.Settings.ToFile();
         }
 

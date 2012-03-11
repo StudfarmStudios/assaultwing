@@ -225,6 +225,16 @@ namespace AW2.Core
             if (GraphicsEngine != null) GraphicsEngine.LoadArenaContent(arena);
         }
 
+        public virtual void RefreshGameSettings()
+        {
+            Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
+            var wantBots = Settings.Players.BotsEnabled && NetworkMode != Core.NetworkMode.Client;
+            if (wantBots && !DataEngine.Spectators.OfType<BotPlayer>().Any())
+                DataEngine.Spectators.Add(new BotPlayer(this));
+            if (!wantBots)
+                DataEngine.Spectators.Remove(spec => spec is BotPlayer);
+        }
+
         #endregion Methods for game components
 
         #region Overridden Game methods

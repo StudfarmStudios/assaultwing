@@ -81,7 +81,7 @@ namespace AW2.Menu.Main
         {
             MenuEngine.Activate(MenuComponentType.Equip);
             Game.InitializePlayers(2);
-            if (Game.Settings.Players.BotsEnabled) Game.DataEngine.Spectators.Add(new BotPlayer(Game));
+            Game.RefreshGameSettings();
         }
 
         public void Click_NetworkGame(bool loginPilots)

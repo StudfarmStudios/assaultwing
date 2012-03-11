@@ -206,6 +206,12 @@ namespace AW2.Core
             Logic.StartArena();
         }
 
+        public override void RefreshGameSettings()
+        {
+            base.RefreshGameSettings();
+            WebData.LoginPilots();
+        }
+
         public void InitializePlayers(int count)
         {
             Settings.Players.Validate(this);
@@ -235,8 +241,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
-            if (Settings.Players.BotsEnabled) DataEngine.Spectators.Add(new BotPlayer(this));
-            WebData.LoginPilots();
+            RefreshGameSettings();
             try
             {
                 // TODO: Allow rejoin even if there are no free slots.
@@ -268,6 +273,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Client;
+            RefreshGameSettings();
             IsClientAllowedToStartArena = false;
             try
             {

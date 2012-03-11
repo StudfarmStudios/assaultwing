@@ -247,9 +247,9 @@ namespace AW2.Game
             yield return new Color(100, 149, 237);
             yield return new Color(255, 20, 146);
             yield return new Color(214, 139, 0);
-            yield return new Color(133, 73, 229);
+            yield return new Color(159, 115, 229);
             yield return new Color(147, 204, 33);
-            yield return new Color(232, 67, 84);
+            yield return new Color(232, 104, 117);
             yield return new Color(120, 117, 255);
             yield return new Color(111, 219, 57);
             yield return new Color(196, 196, 0);

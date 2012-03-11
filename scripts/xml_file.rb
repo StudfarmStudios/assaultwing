@@ -11,8 +11,9 @@ class CustomXMLDecl < REXML::XMLDecl
     end
 end
 
-# A writer that skips the first space. It just happens to be an extra space after the XML declaration.
-# Visual Studio doesn't write it, so neither will we.
+# A custom writer that formats XML like Visual Studio:
+# - Skips the first space. It just happens to be an extra space after the XML declaration.
+# - Writes DOS line endings. Be sure to save as binary so that Ruby doesn't screw the endings!
 class CustomOut
     def initialize(writer)
         @writer = writer
@@ -23,7 +24,7 @@ class CustomOut
             @first_space = true
             return self
         end
-        @writer << value 
+        @writer << value.gsub("\n", "\r\n")
     end
 end
 
@@ -42,10 +43,13 @@ class XMLFile
     def save
         formatter = Formatters::Pretty.new( 2, true ) # indent 2 and add a space before />
         formatter.compact = true
-        new_file = Tempfile.open(["xml_file_save_temp", ".xml"])
-        formatter.write(@file, CustomOut.new(new_file))
-        new_file.close
-        FileUtils.mv(new_file.path, @filepath)
+        new_file_path = nil
+        Tempfile.open(["xml_file_save_temp", ".xml"]) do |f|
+            f.binmode # Preserve DOS line endings
+            new_file_path = f.path
+            formatter.write(@file, CustomOut.new(f))
+        end
+        FileUtils.mv(new_file_path, @filepath)
     end
 
     def set(xpath, text_value)

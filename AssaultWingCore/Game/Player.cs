@@ -387,7 +387,7 @@ namespace AW2.Game
                 Ship.TurnLeft(Controls.Left.Force, Game.GameTime.ElapsedGameTime);
             if (Controls.Right.Force > 0)
                 Ship.TurnRight(Controls.Right.Force, Game.GameTime.ElapsedGameTime);
-            if (Game.NetworkMode != NetworkMode.Client) // client shoots only when the server says so
+            if (!Ship.IsNewborn && Game.NetworkMode != NetworkMode.Client) // client shoots only when the server says so
             {
                 TryFireWeapon1();
                 TryFireWeapon2();

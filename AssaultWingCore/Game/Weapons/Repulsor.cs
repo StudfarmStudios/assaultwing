@@ -8,7 +8,7 @@ namespace AW2.Game.Weapons
     /// <summary>
     /// Repels gobs away from the shooter.
     /// </summary>
-    public class Repulsor : Weapon
+    public class Repulsor : ShipDevice
     {
         [TypeParameter]
         private RadialFlow _radialFlow;

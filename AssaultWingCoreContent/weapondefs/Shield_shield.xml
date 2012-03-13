@@ -29,6 +29,7 @@
   <loadTime>2.5</loadTime>
   <protectionTime>1.5</protectionTime>
   <receivedDamageMultiplier>0.1</receivedDamageMultiplier>
+  <chargeUsageMultiplier>1</chargeUsageMultiplier>
   <fireCharge>200</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <shotCount>1</shotCount>

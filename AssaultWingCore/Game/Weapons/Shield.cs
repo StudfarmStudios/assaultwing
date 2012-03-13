@@ -14,6 +14,8 @@ namespace AW2.Game.Weapons
         private TimeSpan _protectionTime;
         [TypeParameter]
         private float _receivedDamageMultiplier;
+        [TypeParameter]
+        private float _chargeUsageMultiplier;
         [TypeParameter, ShallowCopy]
         private CanonicalString[] _particleEngineNames;
 
@@ -31,6 +33,7 @@ namespace AW2.Game.Weapons
         {
             _protectionTime = TimeSpan.FromSeconds(1);
             _receivedDamageMultiplier = 0.1f;
+            _chargeUsageMultiplier = 1;
             _particleEngineNames = new[] { (CanonicalString)"dummypeng" };
         }
 
@@ -57,8 +60,10 @@ namespace AW2.Game.Weapons
 
         private float ReceivingDamageHandler(float damageAmount, DamageInfo cause)
         {
-            var multiplier = _inactivationTime <= Owner.Game.GameTime.TotalGameTime ? 1 : _receivedDamageMultiplier;
-            return multiplier * damageAmount;
+            var requiredCharge = _chargeUsageMultiplier * damageAmount;
+            if (_inactivationTime <= Owner.Game.GameTime.TotalGameTime || Charge < requiredCharge) return damageAmount;
+            Charge -= requiredCharge;
+            return _receivedDamageMultiplier * damageAmount;
         }
     }
 }

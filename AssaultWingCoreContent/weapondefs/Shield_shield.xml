@@ -19,9 +19,15 @@
   </deviceInfo>
 
   <typeName>shield</typeName>
-  <particleEngineNames>
+  <activationPengs>
     <Item>electric shockwave</Item>
-  </particleEngineNames>
+  </activationPengs>
+  <blockFailPengs>
+    <Item>blink fail target</Item>
+  </blockFailPengs>
+  <blockSuccessPengs>
+    <Item>bonus collect flash</Item>
+  </blockSuccessPengs>
   <fireSound>DropMines</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>

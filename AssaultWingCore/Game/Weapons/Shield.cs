@@ -11,7 +11,9 @@ namespace AW2.Game.Weapons
     public class Shield : ShipDevice
     {
         [TypeParameter]
-        private TimeSpan _activeTime;
+        private TimeSpan _protectionTime;
+        [TypeParameter]
+        private float _receivedDamageMultiplier;
         [TypeParameter, ShallowCopy]
         private CanonicalString[] _particleEngineNames;
 
@@ -27,7 +29,8 @@ namespace AW2.Game.Weapons
         /// </summary>
         public Shield()
         {
-            _activeTime = TimeSpan.FromSeconds(1);
+            _protectionTime = TimeSpan.FromSeconds(1);
+            _receivedDamageMultiplier = 0.1f;
             _particleEngineNames = new[] { (CanonicalString)"dummypeng" };
         }
 
@@ -44,7 +47,7 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            _inactivationTime = Owner.Game.GameTime.TotalGameTime + _activeTime;
+            _inactivationTime = Owner.Game.GameTime.TotalGameTime + _protectionTime;
         }
 
         protected override void CreateVisuals()
@@ -54,7 +57,8 @@ namespace AW2.Game.Weapons
 
         private float ReceivingDamageHandler(float damageAmount, DamageInfo cause)
         {
-            return _inactivationTime <= Owner.Game.GameTime.TotalGameTime ? damageAmount : 0;
+            var multiplier = _inactivationTime <= Owner.Game.GameTime.TotalGameTime ? 1 : _receivedDamageMultiplier;
+            return multiplier * damageAmount;
         }
     }
 }

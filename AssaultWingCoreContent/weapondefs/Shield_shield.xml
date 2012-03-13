@@ -27,7 +27,8 @@
   <fireEffectType>Once</fireEffectType>
   <iconName>menu_equip_mod_blink</iconName>
   <loadTime>2.5</loadTime>
-  <activeTime>1.5</activeTime>
+  <protectionTime>1.5</protectionTime>
+  <receivedDamageMultiplier>0.1</receivedDamageMultiplier>
   <fireCharge>200</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <shotCount>1</shotCount>

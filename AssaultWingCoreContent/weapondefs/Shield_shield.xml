@@ -20,13 +20,14 @@
 
   <typeName>shield</typeName>
   <activationPengs>
-    <Item>electric shockwave</Item>
+    <Item>hexagon bubble</Item>
+    <Item>bubble reflection</Item>
   </activationPengs>
   <blockFailPengs>
-    <Item>blink fail target</Item>
+    <Item>shield fail</Item>
   </blockFailPengs>
   <blockSuccessPengs>
-    <Item>bonus collect flash</Item>
+    <Item>shield block</Item>
   </blockSuccessPengs>
   <fireSound>DropMines</fireSound>
   <fireSoundType>Once</fireSoundType>

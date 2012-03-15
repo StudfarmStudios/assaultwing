@@ -4,7 +4,7 @@
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
   <networkUpdatePeriod>1</networkUpdatePeriod>
-  <depthLayer2D>0.13</depthLayer2D>
+  <depthLayer2D>0.03</depthLayer2D>
   <drawMode2D>
     <type>Additive</type>
   </drawMode2D>
@@ -30,7 +30,7 @@
     <areParticlesImmortal>false</areParticlesImmortal>
     <drag>0.0</drag>
     <particleAge type="AW2.Game.Pengs.ExpectedValue">
-      <expected>0.35</expected>
+      <expected>0.4</expected>
       <variance>0</variance>
     </particleAge>
     <accelerationInputScale>0</accelerationInputScale>
@@ -112,14 +112,14 @@
                 </Item>
                 <Item>
                   <position>0.15</position>
-                  <internalValue>0.4</internalValue>
+                  <internalValue>0.5</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>
                 </Item>
                 <Item>
-                  <position>0.8</position>
-                  <internalValue>0.75</internalValue>
+                  <position>0.5</position>
+                  <internalValue>0.85</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>

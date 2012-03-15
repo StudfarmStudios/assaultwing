@@ -3,7 +3,7 @@
 namespace AW2.Net.ManagementMessages
 {
     /// <summary>
-    /// A ping reply from a management server to a game server.
+    /// A ping reply from a game server to a management server.
     /// </summary>
     [ManagementMessage("pong")]
     public class PongMessage : ManagementMessage

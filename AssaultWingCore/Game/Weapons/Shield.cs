@@ -10,7 +10,7 @@ namespace AW2.Game.Weapons
 {
     public class Shield : ShipDevice
     {
-        private static readonly TimeSpan BLOCK_EFFECT_INTERVAL_MIN = TimeSpan.FromSeconds(0.5);
+        private static readonly TimeSpan BLOCK_EFFECT_INTERVAL_MIN = TimeSpan.FromSeconds(0.2);
         [TypeParameter]
         private TimeSpan _protectionTime;
         [TypeParameter]

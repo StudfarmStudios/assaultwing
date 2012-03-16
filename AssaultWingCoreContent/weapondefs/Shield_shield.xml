@@ -2,8 +2,8 @@
 <ShipDeviceType type="AW2.Game.Weapons.Shield">
 
   <deviceInfo>
-    <pictureName>menu_equip_devicepicture_blink</pictureName>
-    <titlePictureName>menu_equip_devicename_blink</titlePictureName>
+    <pictureName>menu_equip_devicepicture_shield</pictureName>
+    <titlePictureName>menu_equip_devicename_shield</titlePictureName>
     <infoText>
       Hostile particles are pushed into a
       stable mid-phase of certain extremely
@@ -15,7 +15,7 @@
     <reloadSpeed>High</reloadSpeed>
     <energyUsage>High</energyUsage>
     <usageType>Single</usageType>
-    <iconEquipName>menu_equip_mod_blink</iconEquipName>
+    <iconEquipName>menu_equip_mod_shield</iconEquipName>
   </deviceInfo>
 
   <typeName>shield</typeName>
@@ -32,7 +32,7 @@
   <fireSound>DropMines</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
-  <iconName>menu_equip_mod_blink</iconName>
+  <iconName>menu_equip_mod_shield</iconName>
   <loadTime>2.5</loadTime>
   <protectionTime>1.5</protectionTime>
   <receivedDamageMultiplier>0.1</receivedDamageMultiplier>

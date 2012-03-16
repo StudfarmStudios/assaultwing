@@ -32,7 +32,7 @@ namespace AW2.Net.ManagementMessages
                     Name = line["name"],
                     CurrentPlayers = int.Parse(line["currentclients"]),
                     MaxPlayers = int.Parse(line["maxclients"]),
-                    ManagementID = int.Parse(line["id"]),
+                    ManagementID = line["id"],
                     AWVersion = Version.Parse(line["awversion"]),
                 };
             }

@@ -10,7 +10,7 @@ namespace AW2.Net.ManagementMessages
     [ManagementMessage("joinserver")]
     public class JoinGameServerRequest : ManagementMessage
     {
-        public int GameServerManagementID { get; set; }
+        public string GameServerManagementID { get; set; }
 
         protected override string[] Parameters
         {

@@ -60,11 +60,16 @@ namespace AW2.Game.BonusActions
             base.Activate();
             if (Host != null && Host.Owner != null && Host.Weapon2 != null)
             {
-                // TODO: This may happen on client. A better countermeasure is to delay activation until Host != null etc.
+                // FIXME: A client might never run this. A better countermeasure is to delay activation until Host != null etc.
                 // Totally skipping activation like this may result in a client seeing he has a "rockets" upgrade but shooting berserkers.
-                var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName : Host.Weapon2.UpgradeNames[0];
-                Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
-                if (_effectName != "") Host.Owner.PostprocessEffectNames.EnsureContains(_effectName);
+                var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName
+                    : Host.Weapon2.UpgradeNames.Length > 0 ? Host.Weapon2.UpgradeNames[0]
+                    : CanonicalString.Null;
+                if (upgradeName != CanonicalString.Null)
+                {
+                    Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
+                    if (_effectName != "") Host.Owner.PostprocessEffectNames.EnsureContains(_effectName);
+                }
             }
         }
 

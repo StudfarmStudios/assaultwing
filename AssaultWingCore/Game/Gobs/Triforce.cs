@@ -88,7 +88,7 @@ namespace AW2.Game.Gobs
             base.Update();
             var damage = _damagePerSecond * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
             foreach (var gob in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
-                gob.InflictDamage(damage, new GobUtils.DamageInfo(this));
+                if (gob != Host) gob.InflictDamage(damage, new GobUtils.DamageInfo(this));
         }
 
         public override void Draw3D(Matrix view, Matrix projection, Player viewer)

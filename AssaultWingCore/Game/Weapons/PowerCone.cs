@@ -5,20 +5,32 @@ using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
+using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Weapons
 {
     /// <summary>
-    /// Deals damage across a conic area and around the shooter.
+    /// Deals damage across a conic area and across an area surrounding the shooter.
     /// </summary>
     public class PowerCone : Weapon
     {
+        [TypeParameter]
+        private CanonicalString[] _surroundEffects;
+        [TypeParameter]
+        private CollisionArea _surroundArea;
+        [TypeParameter]
+        private float _surroundDamage;
+
         /// <summary>
         /// Only for serialization.
         /// </summary>
         public PowerCone()
         {
+            _surroundEffects = new[] { (CanonicalString)"dummypeng" };
+            _surroundArea = new CollisionArea("Hit", new Circle(Vector2.Zero, 100), null, CollisionAreaType.Receptor,
+                CollisionAreaType.PhysicalDamageable, CollisionAreaType.None, CollisionMaterialType.Regular);
+            _surroundDamage = 500;
         }
 
         public PowerCone(CanonicalString typeName)
@@ -26,21 +38,38 @@ namespace AW2.Game.Weapons
         {
         }
 
-        protected override void ShootImpl()
+        public override void Activate()
         {
-            ForEachShipBarrel(ShipBarrelTypes.Middle, CreateShot);
+            base.Activate();
         }
 
-        private void CreateShot(int barrelBoneIndex, float barrelRotation)
+        protected override void ShootImpl()
         {
-            var birthPos = Owner.GetNamedPosition(barrelBoneIndex);
+            var surroundHost = CreateShot();
+            if (surroundHost != null) CreateSurroundingBlow(surroundHost);
+        }
+
+        private Gob CreateShot()
+        {
+            Gob createdShot = null;
             Gob.CreateGob<Triforce>(Owner.Game, _shotTypeName, shot =>
             {
-                shot.ResetPos(birthPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
+                shot.ResetPos(Owner.Pos, Vector2.Zero, Owner.Rotation);
                 shot.Owner = PlayerOwner;
                 shot.Host = Owner;
                 Arena.Gobs.Add(shot);
+                createdShot = shot;
             });
+            return createdShot;
+        }
+
+        private void CreateSurroundingBlow(Gob host)
+        {
+            GobHelper.CreatePengs(_surroundEffects, Owner);
+            _surroundArea.Owner = host;
+            foreach (var victim in Arena.GetOverlappingGobs(_surroundArea, _surroundArea.CollidesAgainst))
+                if (victim != Owner) victim.InflictDamage(_surroundDamage, new DamageInfo(Owner));
+            _surroundArea.Owner = null;
         }
     }
 }

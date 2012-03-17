@@ -37,8 +37,26 @@
   <shotTypeName>neutron jet</shotTypeName>
   <recoilMomentum>0</recoilMomentum>
   <loadTime>2.5</loadTime>
-  <fireCharge>250</fireCharge>
+  <fireCharge>300</fireCharge>
   <fireChargePerSecond>350</fireChargePerSecond>
   <shotCount>1</shotCount>
   <shotSpacing>1</shotSpacing>
+  <surroundDamage>350</surroundDamage>
+  <surroundEffects>
+    <Item>selfdestruct strokes</Item>
+  </surroundEffects>
+  <surroundArea>
+    <type>Receptor</type>
+    <collidesAgainst>PhysicalDamageable</collidesAgainst>
+    <cannotOverlap>None</cannotOverlap>
+    <collisionMaterial>Regular</collisionMaterial>
+    <name>Hit</name>
+    <area type="AW2.Helpers.Geometric.Circle">
+      <center>
+        <X>0</X>
+        <Y>0</Y>
+      </center>
+      <radius>50</radius>
+    </area>
+  </surroundArea>
 </ShipDeviceType>

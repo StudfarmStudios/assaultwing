@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Triforce">
+  <typeName>neutron jet</typeName>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <movable>true</movable>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1.0</scale>
+  <maxDamage>100</maxDamage>
+  <birthGobTypes>
+  </birthGobTypes>
+  <deathGobTypes>
+  </deathGobTypes>
+  <collisionAreas>
+  </collisionAreas>
+  <damagePerSecond>600</damagePerSecond>
+  <lifetime>1</lifetime>
+  <triHeight>500</triHeight>
+  <triWidth>300</triWidth>
+  <textureName>lightning_3</textureName>
+</GobType>

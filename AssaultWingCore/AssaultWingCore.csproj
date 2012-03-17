@@ -143,6 +143,7 @@
     <Compile Include="Game\Gobs\SnakeShip.cs" />
     <Compile Include="Game\Gobs\SpawnGob.cs" />
     <Compile Include="Game\Gobs\SpawnPlayer.cs" />
+    <Compile Include="Game\Gobs\Triforce.cs" />
     <Compile Include="Game\Gobs\VenomDrop.cs" />
     <Compile Include="Game\Gobs\Wall.cs" />
     <Compile Include="Game\Gobs\WallModel.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Game\Weapons\Cloak.cs" />
     <Compile Include="Game\Weapons\ForwardShot.cs" />
     <Compile Include="Game\Weapons\LightningGun.cs" />
+    <Compile Include="Game\Weapons\PowerCone.cs" />
     <Compile Include="Game\Weapons\Repulsor.cs" />
     <Compile Include="Game\Weapons\SelfDestruct.cs" />
     <Compile Include="Game\Weapons\Shield.cs" />

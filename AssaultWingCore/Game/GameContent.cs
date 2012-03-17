@@ -11,6 +11,7 @@ namespace AW2.Game
 
         public BasicEffect WallSilhouetteEffect { get; private set; }
         public BasicEffect LightningEffect { get; private set; }
+        public BasicEffect TriforceEffect { get; private set; }
         public Texture2D RadarDisplayTexture { get; private set; }
         public Texture2D ShipOnRadarTexture { get; private set; }
         public Texture2D DockOnRadarTexture { get; private set; }
@@ -40,12 +41,19 @@ namespace AW2.Game
             WallSilhouetteEffect.TextureEnabled = false;
             WallSilhouetteEffect.FogEnabled = false;
 
-            LightningEffect = LightningEffect ?? new BasicEffect(gfx);
+            LightningEffect = new BasicEffect(gfx);
             LightningEffect.World = Matrix.Identity;
             LightningEffect.TextureEnabled = true;
             LightningEffect.VertexColorEnabled = false;
             LightningEffect.LightingEnabled = false;
             LightningEffect.FogEnabled = false;
+
+            TriforceEffect = new BasicEffect(gfx);
+            TriforceEffect.World = Matrix.Identity;
+            TriforceEffect.TextureEnabled = true;
+            TriforceEffect.VertexColorEnabled = false;
+            TriforceEffect.LightingEnabled = false;
+            TriforceEffect.FogEnabled = false;
 
             RadarDisplayTexture = _game.Content.Load<Texture2D>("gui_radar_bg");
             ShipOnRadarTexture = _game.Content.Load<Texture2D>("gui_playerinfo_white_ball");
@@ -65,21 +73,16 @@ namespace AW2.Game
 
         public void UnloadContent()
         {
-            if (WallSilhouetteEffect != null)
-            {
-                WallSilhouetteEffect.Dispose();
-                WallSilhouetteEffect = null;
-            }
-            if (ViewportSpriteBatch != null)
-            {
-                ViewportSpriteBatch.Dispose();
-                ViewportSpriteBatch = null;
-            }
-            if (RadarSilhouetteSpriteBatch != null)
-            {
-                RadarSilhouetteSpriteBatch.Dispose();
-                RadarSilhouetteSpriteBatch = null;
-            }
+            if (WallSilhouetteEffect != null) WallSilhouetteEffect.Dispose();
+            WallSilhouetteEffect = null;
+            if (LightningEffect != null) LightningEffect.Dispose();
+            LightningEffect = null;
+            if (TriforceEffect != null) TriforceEffect.Dispose();
+            TriforceEffect = null;
+            if (ViewportSpriteBatch != null) ViewportSpriteBatch.Dispose();
+            ViewportSpriteBatch = null;
+            if (RadarSilhouetteSpriteBatch != null) RadarSilhouetteSpriteBatch.Dispose();
+            RadarSilhouetteSpriteBatch = null;
         }
     }
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.PowerCone">
+
+  <deviceInfo>
+    <pictureName>menu_equip_devicepicture_repulsor</pictureName>
+    <titlePictureName>menu_equip_devicename_repulsor</titlePictureName>
+    <infoText>
+      Violent protium fusion spreads a wide and
+      instant neutron jet, tearing apart the
+      atomic structure of most materials. Heavy
+      interaction with atmospheric particles
+      weaken the jet in medium distance. The
+      fusion reaction causes intense radiation
+      all around your ship, so if you're close
+      you don't need to aim.
+    </infoText>
+    <reloadSpeed>High</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>menu_equip_mod_repulsor</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>High</shotSpeed>
+    <recoilMomentum>Low</recoilMomentum>
+  </weaponInfo>
+
+  <upgradeNames>
+  </upgradeNames>
+
+  <typeName>power cone</typeName>
+  <fireSound>DropMines</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
+  <iconName>dummytexture</iconName>
+  <shotTypeName>neutron jet</shotTypeName>
+  <recoilMomentum>0</recoilMomentum>
+  <loadTime>2.5</loadTime>
+  <fireCharge>250</fireCharge>
+  <fireChargePerSecond>350</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>1</shotSpacing>
+</ShipDeviceType>

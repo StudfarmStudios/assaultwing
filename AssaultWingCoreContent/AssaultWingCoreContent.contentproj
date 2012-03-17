@@ -2535,11 +2535,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng_hexagon_bubble.xml">
-      <Name>Peng_hexagon_bubble</Name>
+    <None Include="weapondefs\PowerCone_power cone.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PowerCone_power cone</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -2557,6 +2557,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="particledefs\Peng_hexagon_bubble.xml">
+      <Name>Peng_hexagon_bubble</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="particledefs\Peng_bubble_reflection.xml">
       <Name>Peng_bubble_reflection</Name>
       <Importer>XmlImporter</Importer>
@@ -2596,6 +2602,14 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gobdefs\Triforce_neutron jet.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Triforce_neutron jet</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

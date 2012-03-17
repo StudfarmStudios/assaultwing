@@ -77,7 +77,6 @@ namespace AW2.Game.Gobs
             _isRotating = false;
             _rotationSpeed = 5;
             _thruster = new Thruster();
-            DeathTime = new TimeSpan(0, 1, 2);
         }
 
         public Bullet(CanonicalString typeName)

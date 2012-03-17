@@ -31,6 +31,7 @@ namespace AW2.Game.Gobs
 
         private CollisionArea _damageArea;
         private Texture2D _texture;
+        private VertexPositionTexture[] _vertexData;
         private TimeSpan _deathTime;
 
         public override Matrix WorldMatrix
@@ -63,6 +64,12 @@ namespace AW2.Game.Gobs
         {
             base.LoadContent();
             _texture = Game.Content.Load<Texture2D>(_textureName);
+            _vertexData = new[]
+            {
+                new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
+                new VertexPositionTexture(new Vector3(_triHeight, _triWidth / 2, 0), new Vector2(0, 1)),
+                new VertexPositionTexture(new Vector3(_triHeight, -_triWidth / 2, 0), new Vector2(1, 0)),
+            };
         }
 
         public override void Activate()
@@ -94,22 +101,11 @@ namespace AW2.Game.Gobs
             effect.View = view;
             effect.Alpha = Alpha;
             effect.Texture = _texture;
-            var vertexData = CreateMesh();
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vertexData, 0, vertexData.Length - 2);
+                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, _vertexData.Length - 2);
             }
-        }
-
-        private VertexPositionTexture[] CreateMesh()
-        {
-            return new[]
-            {
-                new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
-                new VertexPositionTexture(new Vector3(_triHeight, _triWidth / 2, 0), new Vector2(0, 1)),
-                new VertexPositionTexture(new Vector3(_triHeight, -_triWidth / 2, 0), new Vector2(1, 0)),
-            };
         }
     }
 }

@@ -6,6 +6,7 @@ using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Helpers.Geometric;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Game.GobUtils;
 
 namespace AW2.Game.Gobs
 {
@@ -32,6 +33,8 @@ namespace AW2.Game.Gobs
         /// </summary>
         [TypeParameter]
         private CanonicalString _textureName;
+        [TypeParameter, ShallowCopy]
+        private CanonicalString[] _hitEffects;
 
         private CollisionArea _damageArea;
         private Texture2D _texture;
@@ -61,6 +64,7 @@ namespace AW2.Game.Gobs
             _hitInterval = TimeSpan.FromSeconds(0.3);
             _lifetime = TimeSpan.FromSeconds(1.1);
             _textureName = (CanonicalString)"dummytexture";
+            _hitEffects = new[] { (CanonicalString)"dummypeng" };
         }
 
         public Triforce(CanonicalString typeName)
@@ -119,8 +123,12 @@ namespace AW2.Game.Gobs
         {
             if (Dead || _nextHitTime > Arena.TotalTime) return;
             _nextHitTime += _hitInterval;
-            foreach (var gob in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
-                if (gob != Host) gob.InflictDamage(_damagePerHit, new GobUtils.DamageInfo(this));
+            foreach (var victim in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
+                if (victim != Host)
+                {
+                    victim.InflictDamage(_damagePerHit, new GobUtils.DamageInfo(this));
+                    GobHelper.CreatePengs(_hitEffects, victim);
+                }
         }
     }
 }

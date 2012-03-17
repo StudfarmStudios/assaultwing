@@ -25,4 +25,7 @@
   <triHeight>500</triHeight>
   <triWidth>300</triWidth>
   <textureName>lightning_3</textureName>
+  <hitEffects>
+    <Item>explo white flash</Item>
+  </hitEffects>
 </GobType>

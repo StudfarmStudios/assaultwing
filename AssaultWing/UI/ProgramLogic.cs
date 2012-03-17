@@ -42,7 +42,7 @@ namespace AW2.UI
         public virtual void FinishArena() { }
 
         // TODO !!! Make private
-        public virtual void PrepareArena() { }
+        public virtual void PrepareArena(int wallCount) { }
         public virtual void StopServer() { }
         public virtual void StopClient(string errorOrNull) { }
         public virtual void ShowMainMenuAndResetGameplay() { }

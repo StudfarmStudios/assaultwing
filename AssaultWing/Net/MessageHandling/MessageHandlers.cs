@@ -162,8 +162,7 @@ namespace AW2.Net.MessageHandling
         {
             if (Game.DataEngine.Arena != null && Game.DataEngine.Arena.ID == mess.ArenaID) return;
             Game.DataEngine.ArenaFinishTime = mess.ArenaTimeLeft == TimeSpan.Zero ? TimeSpan.Zero : mess.ArenaTimeLeft + Game.GameTime.TotalRealTime;
-            // FIXME: mess.WallCount is not used. Remove it. Client is assumed to have the same arena as the server. Enforce that?
-            Game.PrepareArena(mess.ArenaToPlay, mess.ArenaID);
+            Game.PrepareArena(mess.ArenaToPlay, mess.ArenaID, mess.WallCount);
         }
 
         private void HandleSpectatorSettingsReply(SpectatorSettingsReply mess)

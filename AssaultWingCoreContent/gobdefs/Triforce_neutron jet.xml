@@ -18,8 +18,10 @@
   </deathGobTypes>
   <collisionAreas>
   </collisionAreas>
-  <damagePerSecond>600</damagePerSecond>
-  <lifetime>1</lifetime>
+  <damagePerHit>100</damagePerHit>
+  <firstHitDelay>0.1</firstHitDelay>
+  <hitInterval>0.3</hitInterval>
+  <lifetime>1.1</lifetime>
   <triHeight>500</triHeight>
   <triWidth>300</triWidth>
   <textureName>lightning_3</textureName>

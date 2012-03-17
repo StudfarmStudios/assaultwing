@@ -19,7 +19,11 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _triWidth;
         [TypeParameter]
-        private float _damagePerSecond;
+        private float _damagePerHit;
+        [TypeParameter]
+        private TimeSpan _firstHitDelay;
+        [TypeParameter]
+        private TimeSpan _hitInterval;
         [TypeParameter]
         private TimeSpan _lifetime;
 
@@ -33,6 +37,7 @@ namespace AW2.Game.Gobs
         private Texture2D _texture;
         private VertexPositionTexture[] _vertexData;
         private TimeSpan _deathTime;
+        private TimeSpan _nextHitTime;
 
         public override Matrix WorldMatrix
         {
@@ -51,7 +56,10 @@ namespace AW2.Game.Gobs
         {
             _triHeight = 500;
             _triWidth = 200;
-            _damagePerSecond = 200;
+            _damagePerHit = 200;
+            _firstHitDelay = TimeSpan.FromSeconds(0.1);
+            _hitInterval = TimeSpan.FromSeconds(0.3);
+            _lifetime = TimeSpan.FromSeconds(1.1);
             _textureName = (CanonicalString)"dummytexture";
         }
 
@@ -76,6 +84,7 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _deathTime = Arena.TotalTime + _lifetime;
+            _nextHitTime = Arena.TotalTime + _firstHitDelay;
             _damageArea = new CollisionArea("damage",
                 new Triangle(Vector2.Zero, new Vector2(_triHeight, _triWidth / 2), new Vector2(_triHeight, -_triWidth / 2)),
                 owner: this, type: CollisionAreaType.Receptor, collidesAgainst: CollisionAreaType.PhysicalDamageable,
@@ -108,10 +117,10 @@ namespace AW2.Game.Gobs
 
         private void HitGobs()
         {
-            if (Dead) return;
-            var damage = _damagePerSecond * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            if (Dead || _nextHitTime > Arena.TotalTime) return;
+            _nextHitTime += _hitInterval;
             foreach (var gob in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
-                if (gob != Host) gob.InflictDamage(damage, new GobUtils.DamageInfo(this));
+                if (gob != Host) gob.InflictDamage(_damagePerHit, new GobUtils.DamageInfo(this));
         }
     }
 }

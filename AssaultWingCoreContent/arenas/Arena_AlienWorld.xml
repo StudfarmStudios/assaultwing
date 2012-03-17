@@ -9,6 +9,12 @@
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
+      <z>-3400</z>
+      <parallaxName>alienworld_parallax_dust_small</parallaxName>
+      <gobs />
+    </Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>false</isGameplayLayer>
       <z>-2000</z>
       <parallaxName>alienworld_parallax_dust</parallaxName>
       <gobs />

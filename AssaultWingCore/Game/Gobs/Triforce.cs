@@ -85,10 +85,8 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             if (Arena.TotalTime >= _deathTime) Die();
-            base.Update();
-            var damage = _damagePerSecond * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-            foreach (var gob in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
-                if (gob != Host) gob.InflictDamage(damage, new GobUtils.DamageInfo(this));
+            if (Host != null && Host.Dead) Die();
+            HitGobs();
         }
 
         public override void Draw3D(Matrix view, Matrix projection, Player viewer)
@@ -106,6 +104,14 @@ namespace AW2.Game.Gobs
                 pass.Apply();
                 gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, _vertexData.Length - 2);
             }
+        }
+
+        private void HitGobs()
+        {
+            if (Dead) return;
+            var damage = _damagePerSecond * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            foreach (var gob in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
+                if (gob != Host) gob.InflictDamage(damage, new GobUtils.DamageInfo(this));
         }
     }
 }

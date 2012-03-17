@@ -6,6 +6,7 @@ using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Helpers.Geometric;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Game.GobUtils;
 
 namespace AW2.Game.Gobs
 {
@@ -19,7 +20,11 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _triWidth;
         [TypeParameter]
-        private float _damagePerSecond;
+        private float _damagePerHit;
+        [TypeParameter]
+        private TimeSpan _firstHitDelay;
+        [TypeParameter]
+        private TimeSpan _hitInterval;
         [TypeParameter]
         private TimeSpan _lifetime;
 
@@ -28,10 +33,14 @@ namespace AW2.Game.Gobs
         /// </summary>
         [TypeParameter]
         private CanonicalString _textureName;
+        [TypeParameter, ShallowCopy]
+        private CanonicalString[] _hitEffects;
 
         private CollisionArea _damageArea;
         private Texture2D _texture;
+        private VertexPositionTexture[] _vertexData;
         private TimeSpan _deathTime;
+        private TimeSpan _nextHitTime;
 
         public override Matrix WorldMatrix
         {
@@ -50,8 +59,12 @@ namespace AW2.Game.Gobs
         {
             _triHeight = 500;
             _triWidth = 200;
-            _damagePerSecond = 200;
+            _damagePerHit = 200;
+            _firstHitDelay = TimeSpan.FromSeconds(0.1);
+            _hitInterval = TimeSpan.FromSeconds(0.3);
+            _lifetime = TimeSpan.FromSeconds(1.1);
             _textureName = (CanonicalString)"dummytexture";
+            _hitEffects = new[] { (CanonicalString)"dummypeng" };
         }
 
         public Triforce(CanonicalString typeName)
@@ -63,12 +76,19 @@ namespace AW2.Game.Gobs
         {
             base.LoadContent();
             _texture = Game.Content.Load<Texture2D>(_textureName);
+            _vertexData = new[]
+            {
+                new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
+                new VertexPositionTexture(new Vector3(_triHeight, _triWidth / 2, 0), new Vector2(0, 1)),
+                new VertexPositionTexture(new Vector3(_triHeight, -_triWidth / 2, 0), new Vector2(1, 0)),
+            };
         }
 
         public override void Activate()
         {
             base.Activate();
             _deathTime = Arena.TotalTime + _lifetime;
+            _nextHitTime = Arena.TotalTime + _firstHitDelay;
             _damageArea = new CollisionArea("damage",
                 new Triangle(Vector2.Zero, new Vector2(_triHeight, _triWidth / 2), new Vector2(_triHeight, -_triWidth / 2)),
                 owner: this, type: CollisionAreaType.Receptor, collidesAgainst: CollisionAreaType.PhysicalDamageable,
@@ -78,10 +98,8 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             if (Arena.TotalTime >= _deathTime) Die();
-            base.Update();
-            var damage = _damagePerSecond * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-            foreach (var gob in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
-                gob.InflictDamage(damage, new GobUtils.DamageInfo(this));
+            if (Host != null && Host.Dead) Die();
+            HitGobs();
         }
 
         public override void Draw3D(Matrix view, Matrix projection, Player viewer)
@@ -94,22 +112,23 @@ namespace AW2.Game.Gobs
             effect.View = view;
             effect.Alpha = Alpha;
             effect.Texture = _texture;
-            var vertexData = CreateMesh();
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vertexData, 0, vertexData.Length - 2);
+                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, _vertexData.Length - 2);
             }
         }
 
-        private VertexPositionTexture[] CreateMesh()
+        private void HitGobs()
         {
-            return new[]
-            {
-                new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
-                new VertexPositionTexture(new Vector3(_triHeight, _triWidth / 2, 0), new Vector2(0, 1)),
-                new VertexPositionTexture(new Vector3(_triHeight, -_triWidth / 2, 0), new Vector2(1, 0)),
-            };
+            if (Dead || _nextHitTime > Arena.TotalTime) return;
+            _nextHitTime += _hitInterval;
+            foreach (var victim in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
+                if (victim != Host)
+                {
+                    victim.InflictDamage(_damagePerHit, new GobUtils.DamageInfo(this));
+                    GobHelper.CreatePengs(_hitEffects, victim);
+                }
         }
     }
 }

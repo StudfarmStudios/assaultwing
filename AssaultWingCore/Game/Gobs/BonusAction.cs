@@ -132,5 +132,10 @@ namespace AW2.Game.Gobs
                 ForcedNetworkUpdate = true;
             }
         }
+
+        public void TimeOut()
+        {
+            EndTime = Arena.TotalTime;
+        }
     }
 }

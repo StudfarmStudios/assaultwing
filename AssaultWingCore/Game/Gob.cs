@@ -82,7 +82,7 @@ namespace AW2.Game
         /// Time, in seconds, for a gob to stop being cold.
         /// </summary>
         /// <see cref="Gob.Cold"/>
-        private const float WARM_UP_TIME = 0.2f;
+        private static readonly TimeSpan WARM_UP_TIME = TimeSpan.FromSeconds(0.2);
 
         /// <summary>
         /// Maximum gob displacement that is not interpreted by the draw position
@@ -476,6 +476,7 @@ namespace AW2.Game
         public bool IsHiding { get; set; }
 
         public float AgeInGameSeconds { get { return _birthTime.SecondsAgoGameTime(); } }
+        public TimeSpan Age { get { return Game.DataEngine.ArenaTotalTime - _birthTime; } }
         public Vector2 BirthPos { get; private set; }
 
         /// <summary>
@@ -536,7 +537,7 @@ namespace AW2.Game
         /// All gobs are born <b>cold</b>. If a gob is cold, it won't
         /// collide with other gobs that have the same owner. This works around
         /// the problem of bullets hitting the firing ship immediately at birth.
-        public virtual bool Cold { get { return _birthTime.SecondsAgoGameTime() < WARM_UP_TIME; } }
+        public virtual bool Cold { get { return Age < WARM_UP_TIME; } }
 
         /// <summary>
         /// Is the gob dead, i.e. has Die been called for this gob.

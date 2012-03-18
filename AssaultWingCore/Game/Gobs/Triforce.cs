@@ -60,6 +60,8 @@ namespace AW2.Game.Gobs
             }
         }
         public Gob Host { get { return _hostProxy != null ? _hostProxy.GetValue() : null; } set { _hostProxy = value; } }
+        private TimeSpan FadeTime { get { return _firstHitDelay; } }
+        private bool IsFadingOut { get { return Arena.TotalTime + FadeTime >= _deathTime; } }
 
         /// <summary>
         /// Only for serialization.
@@ -100,7 +102,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _deathTime = Arena.TotalTime + _lifetime;
+            _deathTime = Arena.TotalTime + _lifetime + FadeTime;
             _nextHitTime = Arena.TotalTime + _firstHitDelay;
             _damageArea = new CollisionArea("damage",
                 new Triangle(Vector2.Zero, new Vector2(_triHeightForDamage, _triWidth / 2), new Vector2(_triHeightForDamage, -_triWidth / 2)),
@@ -111,7 +113,8 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             if (Arena.TotalTime >= _deathTime) Die();
-            if (Host != null && Host.Dead) Die();
+            if (IsFadingOut) return;
+            if (Host != null && Host.Dead) _deathTime = Arena.TotalTime + FadeTime;
             HitPeriodically();
         }
 
@@ -123,7 +126,7 @@ namespace AW2.Game.Gobs
             effect.Projection = projection;
             effect.World = WorldMatrix;
             effect.View = view;
-            effect.Alpha = Alpha;
+            effect.Alpha = Alpha * GetAlphaByAge();
             effect.Texture = _texture;
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
@@ -161,7 +164,7 @@ namespace AW2.Game.Gobs
 
         private void HitPeriodically()
         {
-            if (Dead || _nextHitTime > Arena.TotalTime) return;
+            if (IsFadingOut || _nextHitTime > Arena.TotalTime) return;
             _nextHitTime += _hitInterval;
             HitGobs();
             PunchWalls();
@@ -198,6 +201,15 @@ namespace AW2.Game.Gobs
                 else
                     distance += _wallPunchRadius * 2.5f;
             }
+        }
+
+        private float GetAlphaByAge()
+        {
+            var fadeSeconds = (float)_firstHitDelay.TotalSeconds;
+            var lifeSeconds = (float)_lifetime.TotalSeconds;
+            if (Age < FadeTime) return Age.Divide(FadeTime);
+            if (IsFadingOut) return Math.Max(0, (_deathTime - Arena.TotalTime).Divide(FadeTime));
+            return 1;
         }
     }
 }

@@ -284,11 +284,20 @@ namespace AW2.Game.GobUtils
             WallToIndexMapTransform = Matrix.CreateTranslation(-minCorner.X, -minCorner.Y, 0);
         }
 
-        public void Remove(int x, int y)
+        /// <summary>
+        /// Returns true if something was removed.
+        /// </summary>
+        public bool Remove(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= Width || y >= Height) return;
+            if (x < 0 || y < 0 || x >= Width || y >= Height) return false;
+            var success = false;
             foreach (TriInt index in _data.Get(x, y))
-                if (--_triangleCovers[index] == 0) _removeTriangle(index);
+            {
+                var coverLeft = --_triangleCovers[index];
+                success |= coverLeft >= 0;
+                if (coverLeft == 0) _removeTriangle(index);
+            }
+            return success;
         }
 
         /// <summary>

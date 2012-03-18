@@ -237,21 +237,25 @@ namespace AW2.Game.Gobs
 
         /// <summary>
         /// Removes a round area from this wall, i.e. makes a hole.
+        /// Returns the number of pixels removed
         /// </summary>
         /// <param name="holePos">Center of the hole, in world coordinates.</param>
         /// <param name="holeRadius">Radius of the hole, in meters.</param>
-        public void MakeHole(Vector2 holePos, float holeRadius)
+        public int MakeHole(Vector2 holePos, float holeRadius)
         {
-            if (!_destructible || holeRadius <= 0) return;
-            if (Game.NetworkMode == NetworkMode.Client) return;
+            if (!_destructible || holeRadius <= 0) return 0;
+            if (Game.NetworkMode == NetworkMode.Client) return 0;
             var posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
-            AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius), _indexMap.Remove);
+            var removeCount = 0;
+            AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius),
+                (x, y) => { if (_indexMap.Remove(x, y)) removeCount++; });
             if (Game.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {
                 _removedTriangleIndicesToSerialize.AddRange(_removedTriangleIndices);
                 _removedTriangleIndicesOfAllTime.AddRange(_removedTriangleIndices);
                 ForcedNetworkUpdate = true;
             }
+            return removeCount;
         }
 
         /// <summary>

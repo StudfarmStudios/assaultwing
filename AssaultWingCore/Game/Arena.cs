@@ -752,14 +752,18 @@ namespace AW2.Game
             return result;
         }
 
-        public void MakeHole(Vector2 holePos, float holeRadius)
+        /// <summary>
+        /// Returns the number of pixels removed.
+        /// </summary>
+        public int MakeHole(Vector2 holePos, float holeRadius)
         {
-            if (holeRadius <= 0) return;
+            if (holeRadius <= 0) return 0;
             var boundingBox = new Rectangle(holePos.X - holeRadius, holePos.Y - holeRadius,
                 holePos.X + holeRadius, holePos.Y + holeRadius);
             int wallBoundsIndex = AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds);
-            foreach (var area in _collisionAreas[wallBoundsIndex].GetElements(boundingBox))
-                ((Gobs.Wall)area.Owner).MakeHole(holePos, holeRadius);
+            return _collisionAreas[wallBoundsIndex].GetElements(boundingBox)
+                .Select(area => (Gobs.Wall)area.Owner)
+                .Sum((wall => wall.MakeHole(holePos, holeRadius)));
         }
 
         public void PrepareEffect(BasicEffect effect)

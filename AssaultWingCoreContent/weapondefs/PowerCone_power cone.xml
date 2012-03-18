@@ -7,12 +7,12 @@
     <infoText>
       Violent protium fusion spreads a wide and
       instant neutron jet, tearing apart the
-      atomic structure of most materials. Heavy
-      interaction with atmospheric particles
-      weaken the jet in medium distance. The
-      fusion reaction causes intense radiation
-      all around your ship, so if you're close
-      you don't need to aim.
+      atomic structure of most materials including
+      solid walls. The jet fades out in medium
+      distance. Intense short-range radiation
+      bursts out of your ship in all directions
+      which can be lethal to that guy who just
+      rammed you against a wall.
     </infoText>
     <reloadSpeed>High</reloadSpeed>
     <energyUsage>Average</energyUsage>

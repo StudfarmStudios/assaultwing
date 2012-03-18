@@ -38,11 +38,6 @@ namespace AW2.Game.Weapons
         {
         }
 
-        public override void Activate()
-        {
-            base.Activate();
-        }
-
         protected override void ShootImpl()
         {
             var surroundHost = CreateShot();

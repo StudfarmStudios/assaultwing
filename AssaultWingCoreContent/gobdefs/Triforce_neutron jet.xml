@@ -22,10 +22,16 @@
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.3</hitInterval>
   <lifetime>1.1</lifetime>
-  <triHeight>500</triHeight>
+  <triHeightForDamage>500</triHeightForDamage>
+  <triHeightForWallPunches>150</triHeightForWallPunches>
   <triWidth>300</triWidth>
+  <wallPunchRadius>14</wallPunchRadius>
+  <wallPunchesPerHit>3</wallPunchesPerHit>
   <textureName>lightning_3</textureName>
   <hitEffects>
     <Item>explo white flash</Item>
   </hitEffects>
+  <wallPunchEffects>
+    <Item>fragment explo</Item>
+  </wallPunchEffects>
 </GobType>

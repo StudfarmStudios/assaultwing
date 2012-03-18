@@ -29,19 +29,19 @@
   <upgradeNames>
   </upgradeNames>
 
-  <typeName>power cone</typeName>
+  <typeName>antimatter cone</typeName>
   <fireSound>DropMines</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>
   <iconName>dummytexture</iconName>
-  <shotTypeName>neutron jet</shotTypeName>
+  <shotTypeName>antimatter jet</shotTypeName>
   <recoilMomentum>0</recoilMomentum>
   <loadTime>2.5</loadTime>
-  <fireCharge>300</fireCharge>
+  <fireCharge>350</fireCharge>
   <fireChargePerSecond>350</fireChargePerSecond>
   <shotCount>1</shotCount>
   <shotSpacing>1</shotSpacing>
-  <surroundDamage>350</surroundDamage>
+  <surroundDamage>400</surroundDamage>
   <surroundEffects>
     <Item>selfdestruct strokes</Item>
   </surroundEffects>
@@ -56,7 +56,7 @@
         <X>0</X>
         <Y>0</Y>
       </center>
-      <radius>50</radius>
+      <radius>60</radius>
     </area>
   </surroundArea>
 </ShipDeviceType>

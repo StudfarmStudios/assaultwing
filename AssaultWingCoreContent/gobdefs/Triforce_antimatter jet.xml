@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Triforce">
-  <typeName>neutron jet</typeName>
+  <typeName>antimatter jet</typeName>
   <networkUpdatePeriod>2</networkUpdatePeriod>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
@@ -18,15 +18,15 @@
   </deathGobTypes>
   <collisionAreas>
   </collisionAreas>
-  <damagePerHit>100</damagePerHit>
+  <damagePerHit>110</damagePerHit>
   <firstHitDelay>0.1</firstHitDelay>
-  <hitInterval>0.3</hitInterval>
-  <lifetime>1.1</lifetime>
-  <triHeightForDamage>500</triHeightForDamage>
-  <triHeightForWallPunches>150</triHeightForWallPunches>
-  <triWidth>300</triWidth>
-  <wallPunchRadius>14</wallPunchRadius>
-  <wallPunchesPerHit>3</wallPunchesPerHit>
+  <hitInterval>0.25</hitInterval>
+  <lifetime>1.2</lifetime>
+  <triHeightForDamage>400</triHeightForDamage>
+  <triHeightForWallPunches>180</triHeightForWallPunches>
+  <triWidth>370</triWidth>
+  <wallPunchRadius>16</wallPunchRadius>
+  <wallPunchesPerHit>4</wallPunchesPerHit>
   <textureName>lightning_3</textureName>
   <hitEffects>
     <Item>explo white flash</Item>

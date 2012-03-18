@@ -2535,9 +2535,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\PowerCone_power cone.xml">
+    <None Include="weapondefs\PowerCone_fusion cone.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>PowerCone_power cone</Name>
+      <Name>PowerCone_fusion cone</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
@@ -2604,9 +2604,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Triforce_neutron jet.xml">
+    <None Include="gobdefs\Triforce_fusion jet.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Triforce_neutron jet</Name>
+      <Name>Triforce_fusion jet</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
@@ -2634,6 +2634,22 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gobdefs\Triforce_antimatter jet.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Triforce_antimatter jet</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="weapondefs\PowerCone_antimatter cone.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PowerCone_antimatter cone</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

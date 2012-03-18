@@ -307,6 +307,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="gobdefs\Explosion_ship explosion.xml">
       <Name>Explosion_ship explosion</Name>
@@ -2371,6 +2372,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="weapondefs\ForwardShot_talon swoop.xml">
       <Name>ForwardShot_talon swoop</Name>
@@ -2532,6 +2534,7 @@
       <Name>Shield_shield</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -22,9 +22,9 @@
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.3</hitInterval>
   <lifetime>1.1</lifetime>
-  <triHeightForDamage>360</triHeightForDamage>
+  <triHeightForDamage>330</triHeightForDamage>
   <triHeightForWallPunches>150</triHeightForWallPunches>
-  <triWidth>300</triWidth>
+  <triWidth>270</triWidth>
   <wallPunchRadius>14</wallPunchRadius>
   <wallPunchesPerHit>3</wallPunchesPerHit>
   <textureName>lightning_2</textureName>

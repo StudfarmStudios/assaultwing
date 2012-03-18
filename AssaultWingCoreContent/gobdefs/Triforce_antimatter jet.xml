@@ -18,13 +18,13 @@
   </deathGobTypes>
   <collisionAreas>
   </collisionAreas>
-  <damagePerHit>110</damagePerHit>
+  <damagePerHit>115</damagePerHit>
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.25</hitInterval>
   <lifetime>1.2</lifetime>
-  <triHeightForDamage>400</triHeightForDamage>
+  <triHeightForDamage>390</triHeightForDamage>
   <triHeightForWallPunches>180</triHeightForWallPunches>
-  <triWidth>370</triWidth>
+  <triWidth>340</triWidth>
   <wallPunchRadius>16</wallPunchRadius>
   <wallPunchesPerHit>4</wallPunchesPerHit>
   <textureName>lightning_3</textureName>

@@ -37,7 +37,7 @@
   <iconName>dummytexture</iconName>
   <shotTypeName>fusion jet</shotTypeName>
   <recoilMomentum>0</recoilMomentum>
-  <loadTime>2.5</loadTime>
+  <loadTime>2.9</loadTime>
   <fireCharge>300</fireCharge>
   <fireChargePerSecond>350</fireChargePerSecond>
   <shotCount>1</shotCount>

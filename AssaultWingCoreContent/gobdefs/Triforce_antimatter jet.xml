@@ -6,7 +6,7 @@
   <drawMode2D>
     <type>None</type>
   </drawMode2D>
-  <layerPreference>Front</layerPreference>
+  <layerPreference>Overlay</layerPreference>
   <movable>true</movable>
   <mass>1</mass>
   <modelName>dummymodel</modelName>

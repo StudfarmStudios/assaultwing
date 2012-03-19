@@ -93,9 +93,9 @@ namespace AW2.Game.Gobs
             _texture = Game.Content.Load<Texture2D>(_textureName);
             _vertexData = new[]
             {
-                new VertexPositionTexture(new Vector3(0, 0, 500), new Vector2(0, 0)),
-                new VertexPositionTexture(new Vector3(_triHeightForDamage, _triWidth / 2, 500), new Vector2(0, 1)),
-                new VertexPositionTexture(new Vector3(_triHeightForDamage, -_triWidth / 2, 500), new Vector2(1, 0)),
+                new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
+                new VertexPositionTexture(new Vector3(_triHeightForDamage, _triWidth / 2, 0), new Vector2(0, 1)),
+                new VertexPositionTexture(new Vector3(_triHeightForDamage, -_triWidth / 2, 0), new Vector2(1, 0)),
             };
         }
 

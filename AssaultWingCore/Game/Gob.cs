@@ -55,14 +55,19 @@ namespace AW2.Game
         public enum LayerPreferenceType
         {
             /// <summary>
-            /// Place gob to the gameplay layer.
+            /// Place the gob to the gameplay layer.
             /// </summary>
             Front,
 
             /// <summary>
-            /// Place gob to the gameplay backlayer.
+            /// Place the gob to the gameplay backlayer.
             /// </summary>
             Back,
+
+            /// <summary>
+            /// Place the gob to the gameplay overlay layer.
+            /// </summary>
+            Overlay,
         }
 
         #region Fields for all gobs

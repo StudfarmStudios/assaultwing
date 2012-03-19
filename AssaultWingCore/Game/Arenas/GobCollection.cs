@@ -31,6 +31,12 @@ namespace AW2.Game.Arenas
         public ArenaLayer GameplayBackLayer { get; set; }
 
         /// <summary>
+        /// The arena layer right in front of the gameplay layer.
+        /// </summary>
+        /// <seealso cref="GameplayLayer"/>
+        public ArenaLayer GameplayOverlayLayer { get; set; }
+
+        /// <summary>
         /// Creates a new gob collection that reflects the gobs on some arena layers.
         /// </summary>
         public GobCollection(IList<ArenaLayer> arenaLayers)
@@ -101,9 +107,13 @@ namespace AW2.Game.Arenas
         public void Add(Gob gob)
         {
             if (gob.Layer == null)
-                gob.Layer = gob.LayerPreference == Gob.LayerPreferenceType.Front
-                    ? GameplayLayer
-                    : GameplayBackLayer;
+                switch (gob.LayerPreference)
+                {
+                    case Gob.LayerPreferenceType.Front: gob.Layer = GameplayLayer; break;
+                    case Gob.LayerPreferenceType.Back: gob.Layer = GameplayBackLayer; break;
+                    case Gob.LayerPreferenceType.Overlay: gob.Layer = GameplayOverlayLayer; break;
+                    default: throw new ApplicationException("Unexpected layer preference " + gob.LayerPreference);
+                }
             gob.Layer.Gobs.Add(gob);
         }
 

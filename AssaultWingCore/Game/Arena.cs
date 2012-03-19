@@ -1133,7 +1133,7 @@ namespace AW2.Game
         /// the parameterless constructor that doesn't properly initialise all fields.
         private void InitializeGobs()
         {
-            FindGameplayLayer(); // makes sure there is a gameplay backlayer
+            InitializeSpecialLayers();
             var oldLayers = _layers;
             _layers = new List<ArenaLayer>();
             foreach (var layer in oldLayers)
@@ -1143,7 +1143,7 @@ namespace AW2.Game
                     gob.Layer = layer;
             }
             Gobs = new GobCollection(_layers);
-            FindGameplayLayer();
+            InitializeSpecialLayers();
             foreach (var gob in new GobCollection(oldLayers))
                 Gob.CreateGob(Game, gob, gobb =>
                 {
@@ -1168,23 +1168,24 @@ namespace AW2.Game
             _collisionAreaMayCollide.Initialize();
         }
 
-        /// <summary>
-        /// Initialises <see cref="GameplayLayer"/> and <see cref="GameplayBackLayer"/>
-        /// for the current <see cref="Layers"/>.
-        /// </summary>
-        private void FindGameplayLayer()
+        private void InitializeSpecialLayers()
         {
             int gameplayLayerIndex = Layers.FindIndex(layer => layer.IsGameplayLayer);
             if (gameplayLayerIndex == -1)
                 throw new ArgumentException("Arena " + Info.Name + " doesn't have a gameplay layer");
             Gobs.GameplayLayer = Layers[gameplayLayerIndex];
 
+            // Make sure the gameplay backlayer is located right after the gameplay layer.
+            // Use a suitable layer if one is defined in the arena, otherwise create a new one.
+            if (gameplayLayerIndex == Layers.Count - 1 || Layers[gameplayLayerIndex + 1].Z != 0)
+                Layers.Insert(gameplayLayerIndex + 1, new ArenaLayer(false, 0, ""));
+            Gobs.GameplayOverlayLayer = Layers[gameplayLayerIndex + 1];
+
             // Make sure the gameplay backlayer is located right before the gameplay layer.
             // Use a suitable layer if one is defined in the arena, otherwise create a new one.
             if (gameplayLayerIndex == 0 || Layers[gameplayLayerIndex - 1].Z != 0)
-                Layers.Insert(gameplayLayerIndex, Gobs.GameplayBackLayer = new ArenaLayer(false, 0, ""));
-            else
-                Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
+                Layers.Insert(gameplayLayerIndex, new ArenaLayer(false, 0, ""));
+            Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
         }
 
         private void AddGobTrackerToViewports(Gob gob, string textureName)

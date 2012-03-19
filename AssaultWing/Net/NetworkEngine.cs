@@ -677,7 +677,7 @@ namespace AW2.Net
             {
                 foreach (var conn in GameClientConnections)
                     if (conn.IsDisposed)
-                        foreach (var gob in Game.DataEngine.Arena.Gobs.GameplayLayer.Gobs)
+                        foreach (var gob in Game.DataEngine.Arena.GobsInRelevantLayers)
                             gob.ClientStatus[1 << conn.ID] = false;
             }
             GameClientConnections.RemoveAll(c => c.IsDisposed);

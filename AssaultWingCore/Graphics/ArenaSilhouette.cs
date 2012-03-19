@@ -96,7 +96,7 @@ namespace AW2.Graphics
 
             // Draw the arena's walls.
             Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch.Begin();
-            foreach (var wall in Game.DataEngine.Arena.Gobs.GameplayLayer.Gobs.OfType<AW2.Game.Gobs.Wall>())
+            foreach (var wall in Game.DataEngine.Arena.GobsInRelevantLayers.OfType<AW2.Game.Gobs.Wall>())
                 wall.DrawSilhouette(view, projection, Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch);
             Game.GraphicsEngine.GameContent.RadarSilhouetteSpriteBatch.End();
 

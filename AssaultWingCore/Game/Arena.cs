@@ -362,6 +362,7 @@ namespace AW2.Game
                 _gobs.Removed += GobRemovedHandler;
             }
         }
+        public IEnumerable<Gob> GobsInRelevantLayers { get { return Gobs.GameplayLayer.Gobs.Union(Gobs.GameplayOverlayLayer.Gobs); } }
 
         public BackgroundMusic BackgroundMusic { get { return _backgroundMusic; } }
 

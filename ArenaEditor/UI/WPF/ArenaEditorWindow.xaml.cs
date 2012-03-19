@@ -369,7 +369,7 @@ namespace AW2.UI.WPF
         private static void UpdateArenaBin(Arena arena)
         {
             arena.Bin.Clear();
-            foreach (var gob in arena.Gobs.GameplayLayer.Gobs)
+            foreach (var gob in arena.GobsInRelevantLayers)
                 if (gob is Wall)
                 {
                     gob.StaticID = gob.ID;

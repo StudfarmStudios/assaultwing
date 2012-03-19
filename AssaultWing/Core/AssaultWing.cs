@@ -89,8 +89,6 @@ namespace AW2.Core
             Logic.Update();
             UpdateCustomControls();
             UpdateDebugKeys();
-            SendGobCreationMessage();
-            SendGameSettings();
         }
 
         /// <summary>
@@ -422,25 +420,6 @@ namespace AW2.Core
             NetworkEngine.GameServerConnection.PingInfo.AdjustRemoteFrameNumberOffset(remoteFrameNumberOffset);
         }
 
-        private void SendGobCreationMessage()
-        {
-            if (NetworkMode != NetworkMode.Server) return;
-            if (ArenaLoadTask.TaskRunning) return; // wait for arena load completion
-            if (DataEngine.Arena == null) return; // happens if gobs are created on the frame the arena ends
-            foreach (var conn in NetworkEngine.GameClientConnections)
-            {
-                var gobsToSend = DataEngine.Arena.Gobs.GameplayLayer.Gobs.Where(gob => gob.IsRelevant && !gob.ClientStatus[1 << conn.ID]);
-                if (!gobsToSend.Any()) continue;
-                var message = new GobCreationMessage { ArenaID = DataEngine.Arena.ID };
-                foreach (var gob in gobsToSend.Take(10)) // Avoid sending lots of gobs in one frame.
-                {
-                    message.AddGob(gob);
-                    gob.ClientStatus[1 << conn.ID] = true;
-                }
-                conn.Send(message);
-            }
-        }
-
         private void GobRemovedFromArenaHandler(Gob gob)
         {
             if (!gob.IsRelevant) return;
@@ -533,8 +512,9 @@ namespace AW2.Core
         private void SendMessagesOnServer()
         {
             if (NetworkMode != NetworkMode.Server) return;
-            SendGobUpdatesToRemote(DataEngine.Arena.Gobs.GameplayLayer.Gobs,
-                SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
+            SendGobCreationMessageOnServer();
+            SendGameSettingsOnServer();
+            SendGobUpdatesToRemote(DataEngine.Arena.GobsInRelevantLayers, SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
             SendPlayerUpdatesOnServer();
             SendGobDeletionsOnServer();
             SendArenaStatisticsOnServer();
@@ -543,6 +523,7 @@ namespace AW2.Core
         private void SendMessagesOnClient()
         {
             if (NetworkMode != NetworkMode.Client) return;
+            SendGameSettingsOnClient();
             SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
                 SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
             SendPlayerUpdatesOnClient();
@@ -595,6 +576,24 @@ namespace AW2.Core
             }
         }
 
+        private void SendGobCreationMessageOnServer()
+        {
+            if (ArenaLoadTask.TaskRunning) return; // wait for arena load completion
+            if (DataEngine.Arena == null) return; // happens if gobs are created on the frame the arena ends
+            foreach (var conn in NetworkEngine.GameClientConnections)
+            {
+                var gobsToSend = DataEngine.Arena.GobsInRelevantLayers.Where(gob => gob.IsRelevant && !gob.ClientStatus[1 << conn.ID]);
+                if (!gobsToSend.Any()) continue;
+                var message = new GobCreationMessage { ArenaID = DataEngine.Arena.ID };
+                foreach (var gob in gobsToSend.Take(10)) // Avoid sending lots of gobs in one frame.
+                {
+                    message.AddGob(gob);
+                    gob.ClientStatus[1 << conn.ID] = true;
+                }
+                conn.Send(message);
+            }
+        }
+
         private void SendGobUpdatesToRemote(IEnumerable<Gob> gobs, SerializationModeFlags serializationMode, IEnumerable<Connection> connections)
         {
             if (serializationMode.HasFlag(SerializationModeFlags.VaryingDataFromServer) && (DataEngine.ArenaFrameCount % 3) != 0) return;
@@ -629,21 +628,20 @@ namespace AW2.Core
             }
         }
 
-        private void SendGameSettings()
+        private void SendGameSettingsOnServer()
         {
             if (_lastGameSettingsSent.SecondsAgoRealTime() < 1) return;
             _lastGameSettingsSent = GameTime.TotalRealTime;
-            switch (NetworkMode)
-            {
-                case NetworkMode.Client:
-                    if (NetworkEngine.IsConnectedToGameServer)
-                        SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
-                    break;
-                case NetworkMode.Server:
-                    SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
-                    SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
-                    break;
-            }
+            SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
+            SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
+        }
+
+        private void SendGameSettingsOnClient()
+        {
+            if (_lastGameSettingsSent.SecondsAgoRealTime() < 1) return;
+            _lastGameSettingsSent = GameTime.TotalRealTime;
+            if (NetworkEngine.IsConnectedToGameServer)
+                SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
         }
 
         private void SendGameSettingsToRemote(IEnumerable<Connection> connections)

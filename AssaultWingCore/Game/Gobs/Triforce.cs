@@ -50,6 +50,7 @@ namespace AW2.Game.Gobs
         private TimeSpan _deathTime;
         private TimeSpan _nextHitTime;
         private LazyProxy<int, Gob> _hostProxy;
+        private List<Vector2> _wallPunchPosesForClient;
 
         public override Matrix WorldMatrix
         {
@@ -108,6 +109,7 @@ namespace AW2.Game.Gobs
                 new Triangle(Vector2.Zero, new Vector2(_triHeightForDamage, _triWidth / 2), new Vector2(_triHeightForDamage, -_triWidth / 2)),
                 owner: this, type: CollisionAreaType.Receptor, collidesAgainst: CollisionAreaType.PhysicalDamageable,
                 cannotOverlap: CollisionAreaType.None, collisionMaterial: CollisionMaterialType.Regular);
+            _wallPunchPosesForClient = new List<Vector2>();
         }
 
         public override void Update()
@@ -147,6 +149,10 @@ namespace AW2.Game.Gobs
                 {
                     var hostID = Host != null ? Host.ID : Gob.INVALID_ID;
                     writer.Write((short)hostID);
+                    writer.Write((byte)_wallPunchPosesForClient.Count);
+                    foreach (var wallPunchPos in _wallPunchPosesForClient)
+                        writer.WriteHalf(wallPunchPos);
+                    _wallPunchPosesForClient.Clear();
                 }
             }
         }
@@ -159,6 +165,9 @@ namespace AW2.Game.Gobs
                 int hostID = reader.ReadInt16();
                 _hostProxy = new LazyProxy<int, Gob>(FindGob);
                 _hostProxy.SetData(hostID);
+                int wallPunchCount = reader.ReadByte();
+                for (int i = 0; i < wallPunchCount; i++)
+                    GobHelper.CreateGobs(_wallPunchEffects, Arena, reader.ReadHalfVector2());
             }
         }
 
@@ -196,6 +205,11 @@ namespace AW2.Game.Gobs
                 {
                     punches++;
                     GobHelper.CreateGobs(_wallPunchEffects, Arena, punchCenter);
+                    if (Game.NetworkMode == Core.NetworkMode.Server)
+                    {
+                        _wallPunchPosesForClient.Add(punchCenter);
+                        ForcedNetworkUpdate = true;
+                    }
                     distance += _wallPunchRadius;
                 }
                 else

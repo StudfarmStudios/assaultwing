@@ -175,8 +175,23 @@ namespace AW2.Net
                     }
                     var obj = JObject.Parse(str);
                     var loginToken = obj.GetString("token");
-                    var spectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.GetStats().LoginToken == loginToken);
-                    if (spectator != null) spectator.GetStats().Update(obj);
+                    var announcement = obj.GetString("announcement");
+                    if (loginToken != "")
+                    {
+                        var spectator = GetSpectatorOrNull(loginToken);
+                        if (spectator != null) spectator.GetStats().Update(obj);
+                    }
+                    else if (announcement != "")
+                    {
+                        var message = new PlayerMessage(obj.GetString("announcement"), PlayerMessage.DEFAULT_COLOR);
+                        if (obj.GetString("all") == "true")
+                            foreach (var plr in Game.DataEngine.Players) plr.Messages.Add(message);
+                        else
+                        {
+                            var plr = GetSpectatorOrNull(obj.GetString("to")) as Player;
+                            if (plr != null) plr.Messages.Add(message);
+                        }
+                    }
                 }
                 catch (ArgumentException) { } // Encoding.GetString failed
                 catch (JsonReaderException) { } // JsonConvert.DeserializeObject failed
@@ -193,6 +208,11 @@ namespace AW2.Net
                 if (messageHeaderAndBody.Array[messageHeaderAndBody.Offset + i] != STATS_NOT_ALLOWED_MESSAGE[i])
                     return false;
             return true;
+        }
+
+        private Spectator GetSpectatorOrNull(string loginToken)
+        {
+            return Game.DataEngine.Spectators.FirstOrDefault(spec => spec.GetStats().LoginToken == loginToken);
         }
     }
 }

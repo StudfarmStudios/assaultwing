@@ -15,6 +15,10 @@ namespace AW2.Helpers
             return (SpectatorStats)spectator.StatsData;
         }
 
+        /// <summary>
+        /// Returns a string value from a JObject, or the empty string if some part of
+        /// the path to the value doesn't exist.
+        /// </summary>
         public static string GetString(this JObject root, params string[] path)
         {
             if (path == null || path.Length == 0) throw new ArgumentException("Invalid JSON path");

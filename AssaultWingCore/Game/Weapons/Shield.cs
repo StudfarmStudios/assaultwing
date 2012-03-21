@@ -23,6 +23,10 @@ namespace AW2.Game.Weapons
         private CanonicalString[] _blockFailPengs;
         [TypeParameter, ShallowCopy]
         private CanonicalString[] _blockSuccessPengs;
+        [TypeParameter]
+        private string _blockSuccessSound;
+        [TypeParameter]
+        private string _blockFailSound;
 
         /// <summary>
         /// Time from which on the shield is inactive, in game time.
@@ -75,10 +79,12 @@ namespace AW2.Game.Weapons
             if (Charge < requiredCharge)
             {
                 ShowBlockEffect(_blockFailPengs, ref _lastFailEffectTime);
+                Owner.Game.SoundEngine.PlaySound(_blockFailSound, Owner);
                 return damageAmount;
             }
             Charge -= requiredCharge;
             ShowBlockEffect(_blockSuccessPengs, ref _lastSuccessEffectTime);
+            Owner.Game.SoundEngine.PlaySound(_blockSuccessSound, Owner);
             return _receivedDamageMultiplier * damageAmount;
         }
 

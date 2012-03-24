@@ -17,23 +17,24 @@ class AWConfig < XMLFile
         # To distinguish between public and developer flavours, add some distinguishing file in the dirs at AW FirstRun.
         config_files
     end
+
+    private
+
+    def self.help_inserts_get; "//managementServerAddress" end
+    def self.help_inserts_set; "//botsEnabled false" end
+    def self.help_inserts_addchild; "//dedicatedServerArenaNames Item" end
+    def self.help_inserts_remove; "//dedicatedServerArenaNames/Item[1]" end
 end
 
 if __FILE__ == $PROGRAM_NAME
-    if ARGV.length < 1
-        me = Pathname(__FILE__).basename
-        puts "Usage:   ruby #{me} [XPATH] [NEW_VALUE]"
-        puts "Example: ruby #{me} //managementServerAddress"
-        puts "Example: ruby #{me} //botsEnabled false"
-        puts "The config files are #{AWConfig.filepaths}"
-        exit
-    end
-    AWConfig.each do |config|
-        if ARGV.length < 2
-            puts config.get(ARGV[0])
+    begin
+        if ARGV.length == 0
+            AWConfig.show_help Pathname(__FILE__).basename
+            puts "The config files are #{AWConfig.filepaths}"
         else
-            config.set *ARGV
-            config.save
+            AWConfig.each {|config| config.operate ARGV}
         end
+    rescue Exception => e
+        puts "Error: #{e}"
     end
 end

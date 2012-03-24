@@ -31,6 +31,16 @@ end
 class XMLFile
     include REXML
 
+    def self.show_help(me)
+        puts "Usage: ruby #{me} OPERATION XPATH [PARAMETER]"
+        puts "Examples:"
+        puts_example "  ruby #{me} get", help_inserts_get
+        puts_example "  ruby #{me} set", help_inserts_set
+        puts_example "  ruby #{me} inc", help_inserts_inc
+        puts_example "  ruby #{me} addchild", help_inserts_addchild
+        puts_example "  ruby #{me} remove", help_inserts_remove
+    end
+
     def initialize(filepath, verbose = true)
         @verbose = verbose
         @filepath = filepath
@@ -50,6 +60,21 @@ class XMLFile
             formatter.write(@file, CustomOut.new(f))
         end
         FileUtils.mv(new_file_path, @filepath)
+    end
+
+    def operate(args)
+        must_save = true
+        args = args.clone
+        operation = args.shift
+        case operation
+        when "get" then puts get(*args); must_save = false
+        when "set" then set *args
+        when "inc" then increment *args
+        when "addchild" then add_child *args
+        when "remove" then remove *args
+        else raise "Unknown operation #{operation}"
+        end
+        save if must_save
     end
 
     def set(xpath, text_value)
@@ -72,4 +97,26 @@ class XMLFile
             puts "#{e.xpath} = #{e.text}" if @verbose
         end
     end
+
+    def add_child(xpath, child_name)
+        @file.elements.each(xpath) do |e|
+            Element.new(child_name, e)
+        end
+    end
+
+    def remove(xpath)
+        @file.delete_element(xpath)
+    end
+
+    private
+
+    def self.puts_example(head, tails)
+        [tails].flatten.each {|tail| puts "#{head} #{tail}"}
+    end
+
+    def self.help_inserts_get; "//element" end
+    def self.help_inserts_set; "//element value" end
+    def self.help_inserts_inc; "//integralElement" end
+    def self.help_inserts_addchild; "//element child" end
+    def self.help_inserts_remove; "//element" end
 end

@@ -13,9 +13,9 @@ class AWProjectFile < XMLFile
 
     private
 
-    def self.help_inserts_get; "//ApplicationRevision" end
-    def self.help_inserts_set; ["//ApplicationRevision 42", "//ApplicationVersion 1.69.0.%2a"] end
-    def self.help_inserts_inc; "//ApplicationRevision" end
+    def self.help_example_get; "//ApplicationRevision" end
+    def self.help_example_set; ["//ApplicationRevision 42", "//ApplicationVersion 1.69.0.%2a"] end
+    def self.help_example_inc; "//ApplicationRevision" end
 end
 
 if __FILE__ == $PROGRAM_NAME

@@ -20,10 +20,10 @@ class AWConfig < XMLFile
 
     private
 
-    def self.help_inserts_get; "//managementServerAddress" end
-    def self.help_inserts_set; "//botsEnabled false" end
-    def self.help_inserts_addchild; "//dedicatedServerArenaNames Item" end
-    def self.help_inserts_remove; "//dedicatedServerArenaNames/Item[1]" end
+    def self.help_example_get; "//managementServerAddress" end
+    def self.help_example_set; "//botsEnabled false" end
+    def self.help_example_addchild; "//dedicatedServerArenaNames Item" end
+    def self.help_example_remove; "//dedicatedServerArenaNames/Item[1]" end
 end
 
 if __FILE__ == $PROGRAM_NAME

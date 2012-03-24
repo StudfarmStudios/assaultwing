@@ -34,11 +34,10 @@ class XMLFile
     def self.show_help(me)
         puts "Usage: ruby #{me} OPERATION XPATH [PARAMETER]"
         puts "Examples:"
-        puts_example "  ruby #{me} get", help_inserts_get
-        puts_example "  ruby #{me} set", help_inserts_set
-        puts_example "  ruby #{me} inc", help_inserts_inc
-        puts_example "  ruby #{me} addchild", help_inserts_addchild
-        puts_example "  ruby #{me} remove", help_inserts_remove
+        methods.each do |m|
+            next unless m.to_s =~ /^help_example_(.*)/
+            [send(m)].flatten.each {|tail| puts "  ruby #{me} #{$1} #{tail}"}
+        end
     end
 
     def initialize(filepath, verbose = true)
@@ -63,60 +62,56 @@ class XMLFile
     end
 
     def operate(args)
-        must_save = true
-        args = args.clone
-        operation = args.shift
-        case operation
-        when "get" then puts get(*args); must_save = false
-        when "set" then set *args
-        when "inc" then increment *args
-        when "addchild" then add_child *args
-        when "remove" then remove *args
-        else raise "Unknown operation #{operation}"
+        method = "op_#{args[0]}"
+        raise "Unknown operation #{args[0]}" unless respond_to? method
+        output = send method, *args[1..-1]
+        if output.nil?
+            save
+        else
+            puts output
         end
-        save if must_save
     end
 
-    def set(xpath, text_value)
+    def op_set(xpath, text_value)
         @file.elements.each(xpath) do |e|
             puts "#{e.xpath} = #{text_value}" if @verbose
             e.text = text_value
         end
+        nil
     end
 
-    def get(xpath)
+    def op_get(xpath)
         values = []
         @file.elements.each(xpath) {|e| values << e.text}
         values
     end
     
-    def increment(xpath)
+    def op_inc(xpath)
         @file.elements.each(xpath) do |e|
             next unless e.text =~ /[0-9]+/
             e.text = (e.text.to_i + 1).to_s
             puts "#{e.xpath} = #{e.text}" if @verbose
         end
+        nil
     end
 
-    def add_child(xpath, child_name)
+    def op_addchild(xpath, child_name)
         @file.elements.each(xpath) do |e|
             Element.new(child_name, e)
         end
+        nil
     end
 
-    def remove(xpath)
+    def op_remove(xpath)
         @file.delete_element(xpath)
+        nil
     end
 
     private
 
-    def self.puts_example(head, tails)
-        [tails].flatten.each {|tail| puts "#{head} #{tail}"}
-    end
-
-    def self.help_inserts_get; "//element" end
-    def self.help_inserts_set; "//element value" end
-    def self.help_inserts_inc; "//integralElement" end
-    def self.help_inserts_addchild; "//element child" end
-    def self.help_inserts_remove; "//element" end
+    def self.help_example_get; "//element" end
+    def self.help_example_set; "//element value" end
+    def self.help_example_inc; "//integralElement" end
+    def self.help_example_addchild; "//element child" end
+    def self.help_example_remove; "//element" end
 end

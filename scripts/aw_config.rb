@@ -20,15 +20,20 @@ class AWConfig < XMLFile
 end
 
 if __FILE__ == $PROGRAM_NAME
-    if ARGV.length < 2
+    if ARGV.length < 1
         me = Pathname(__FILE__).basename
         puts "Usage:   ruby #{me} [XPATH] [NEW_VALUE]"
+        puts "Example: ruby #{me} //managementServerAddress"
         puts "Example: ruby #{me} //botsEnabled false"
         puts "The config files are #{AWConfig.filepaths}"
         exit
     end
     AWConfig.each do |config|
-        config.set *ARGV
-        config.save
+        if ARGV.length < 2
+            puts config.get(ARGV[0])
+        else
+            config.set *ARGV
+            config.save
+        end
     end
 end

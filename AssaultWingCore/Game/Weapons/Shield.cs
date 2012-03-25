@@ -49,6 +49,8 @@ namespace AW2.Game.Weapons
             _activationPengs = new[] { (CanonicalString)"dummypeng" };
             _blockFailPengs = new[] { (CanonicalString)"dummypeng" };
             _blockSuccessPengs = new[] { (CanonicalString)"dummypeng" };
+            _blockSuccessSound = "dummysound";
+            _blockFailSound = "dummysound";
         }
 
         public Shield(CanonicalString typeName)

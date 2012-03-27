@@ -65,6 +65,16 @@ namespace AW2.Net
                 .ToList();
         }
 
+        protected static int? GetInt(Dictionary<string, string> line, string key)
+        {
+            try
+            {
+                if (line.ContainsKey(key)) return int.Parse(line[key]);
+            }
+            catch { }
+            return null;
+        }
+
         public new static ManagementMessage Deserialize(ArraySegment<byte> data, TimeSpan creationTime)
         {
             var text = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);

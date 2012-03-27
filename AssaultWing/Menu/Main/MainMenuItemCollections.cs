@@ -279,7 +279,8 @@ traffic or the server is down.", "No reply from management server");
                 if (server.AWVersion.IsCompatibleWith(MiscHelper.Version))
                 {
                     var shortServerName = server.Name.Substring(0, Math.Min(12, server.Name.Length));
-                    var menuItemText = string.Format("Join {0}\t\x10[{1}/{2}]", shortServerName, server.CurrentPlayers, server.MaxPlayers);
+                    var menuItemText = string.Format("Join {0}\t\x10[{1}{2}/{3}]", shortServerName, server.CurrentPlayers,
+                        server.WaitingPlayers == 0 ? "" : "+" + server.WaitingPlayers, server.MaxPlayers);
                     NetworkItems.Insert(1, new MainMenuItem(MenuEngine,
                         () => menuItemText,
                         () => Click_ConnectToGameServer(server.ManagementID, shortServerName)));

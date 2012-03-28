@@ -53,11 +53,7 @@ namespace AW2.Menu
         {
             get
             {
-                if (_itemCollections == null)
-                {
-                    _itemCollections = new MainMenuItemCollections(this);
-                    ResetItems();
-                }
+                if (_itemCollections == null) _itemCollections = new MainMenuItemCollections(this);
                 return _itemCollections;
             }
         }
@@ -81,16 +77,16 @@ namespace AW2.Menu
 
         private void PopItems()
         {
-            if (_currentItemsHistory.Count == 2 || _currentItems == _itemCollections.LoginItems)
+            if (_currentItemsHistory.Count == 1 || _currentItems == _itemCollections.LoginItems)
                 MenuEngine.Game.Settings.ToFile();
-            if (_currentItemsHistory.Count == 2)
+            if (_currentItemsHistory.Count == 1)
             {
                 // Returning to top level.
                 MenuEngine.Game.CutNetworkConnections();
                 ApplyGraphicsSettings();
                 ApplyControlsSettings();
             }
-            if (_currentItemsHistory.Count > 1)
+            if (_currentItemsHistory.Count > 0)
             {
                 // Wasn't at top level already.
                 var old = _currentItemsHistory.Pop();
@@ -175,6 +171,7 @@ namespace AW2.Menu
 
         private void ResetItems()
         {
+            _currentItems = null;
             _currentItemsHistory.Clear();
             PushItems(ItemCollections.StartItems);
         }

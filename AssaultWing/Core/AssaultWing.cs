@@ -49,6 +49,7 @@ namespace AW2.Core
         public BackgroundTask ArenaLoadTask { get; private set; }
         public bool IsReadyToStartArena { get; set; }
         public override bool IsShipControlsEnabled { get { return Logic.IsGameplay; } }
+        public Guid GameServerGUID { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
@@ -86,6 +87,7 @@ namespace AW2.Core
         public override void Update(AWGameTime gameTime)
         {
             base.Update(gameTime);
+            SendServerStateToStats();
             Logic.Update();
             UpdateCustomControls();
             UpdateDebugKeys();
@@ -240,6 +242,7 @@ namespace AW2.Core
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
             RefreshGameSettings();
+            GameServerGUID = Guid.NewGuid();
             try
             {
                 // TODO: Allow rejoin even if there are no free slots.
@@ -260,6 +263,7 @@ namespace AW2.Core
 
         public void StopServer()
         {
+            GameServerGUID = Guid.Empty;
             Logic.StopServer();
         }
 
@@ -686,6 +690,18 @@ namespace AW2.Core
                     spectator.ServerRegistration = Spectator.ServerRegistrationType.Requested;
                 foreach (var conn in connections) conn.Send(mess);
             }
+        }
+
+        private void SendServerStateToStats()
+        {
+            if (NetworkMode != Core.NetworkMode.Server || Stats.BasicInfoSent || DataEngine.Arena == null) return;
+            Stats.Send(new { Server = Settings.Net.GameServerName, PID = GameServerGUID });
+            Stats.Send(new
+            {
+                Arena = new { Name = DataEngine.Arena.Info.Name.Value, Size = DataEngine.Arena.Info.Dimensions },
+                Players = DataEngine.Spectators.Select(Stats.GetStatsObject),
+            });
+            Stats.BasicInfoSent = true;
         }
     }
 }

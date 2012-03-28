@@ -130,16 +130,12 @@ namespace AW2.Menu
                 if (isSelected) _currentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);
                 _currentItems[realIndex].Draw(spriteBatch, _pos - view, visibleIndex);
             });
-
-            if (_currentItems == ItemCollections.StartItems || _currentItems == ItemCollections.NetworkItems)
-                DrawAdditionalMessageBox(view, spriteBatch);
-
             if (_currentItems == ItemCollections.NetworkItems)
             {
+                DrawAdditionalMessageBox(view, spriteBatch);
                 DrawPilotLoginStatus(view, spriteBatch);
                 DrawScheduledBattleDisplay(view, spriteBatch);
             }
-
             var scrollUpPos = _pos - view + new Vector2(653, 260);
             var scrollDownPos = _pos - view + new Vector2(653, 580);
             if (_currentItem.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);

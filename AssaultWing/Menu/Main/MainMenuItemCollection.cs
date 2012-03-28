@@ -21,7 +21,7 @@ namespace AW2.Menu.Main
 
         public MainMenuItemCollection(string name)
         {
-            if (name == null || name == "") throw new ArgumentNullException("Null or empty menu mode name");
+            if (name == null) throw new ArgumentNullException("Null or empty menu mode name");
             Name = name;
             Update = () => { };
             _menuItems = new List<MainMenuItem>();

@@ -66,7 +66,7 @@ namespace AW2.Menu.Main
         {
             _menuComponent = menuComponent;
             InitializeStartItems();
-            NetworkItems = new MainMenuItemCollection("Play at the Battlefront");
+            NetworkItems = new MainMenuItemCollection("Battlefront");
             NetworkItems.Update = () =>
             {
                 EnsureStandaloneMessageHandlersActivated();
@@ -110,7 +110,7 @@ namespace AW2.Menu.Main
 
         private void InitializeStartItems()
         {
-            StartItems = new MainMenuItemCollection("Start Menu");
+            StartItems = new MainMenuItemCollection("");
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", Click_LocalGame));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", () => Click_NetworkGame(loginPilots: true)));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
@@ -152,7 +152,7 @@ namespace AW2.Menu.Main
 
         private void InitializeLoginItems()
         {
-            LoginItems = new MainMenuItemCollection("Pilot Login");
+            LoginItems = new MainMenuItemCollection("Login");
             _loginName = new EditableText(InitialLoginName, PlayerSettings.PLAYER_NAME_MAX_LENGTH,
                 new CharacterSet(MenuEngine.MenuContent.FontSmall.Characters), Game,
                 () =>
@@ -188,14 +188,14 @@ namespace AW2.Menu.Main
 
         private void InitializeSetupItems()
         {
-            SetupItems = new MainMenuItemCollection("General Setup");
-            SetupItems.Add(GetSetupItemBase(() => "Reset all settings to defaults",
+            SetupItems = new MainMenuItemCollection("Setup");
+            SetupItems.Add(GetSetupItemBase(() => "Reset All Settings to Defaults",
                 () => Game.ShowCustomDialog("Are you sure to reset all settings\nto their defaults? (Yes/No)", null,
                     new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.Settings.Reset),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }))));
-            SetupItems.Add(GetSetupItemBase(() => "Audio setup", () => _menuComponent.PushItems(GetAudioItems())));
-            SetupItems.Add(GetSetupItemBase(() => "Graphics setup", () => _menuComponent.PushItems(GetGraphicsItems())));
-            SetupItems.Add(GetSetupItemBase(() => "Controls setup", () => _menuComponent.PushItems(GetControlsItems())));
+            SetupItems.Add(GetSetupItemBase(() => "Audio Setup", () => _menuComponent.PushItems(GetAudioItems())));
+            SetupItems.Add(GetSetupItemBase(() => "Graphics Setup", () => _menuComponent.PushItems(GetGraphicsItems())));
+            SetupItems.Add(GetSetupItemBase(() => "Controls Setup", () => _menuComponent.PushItems(GetControlsItems())));
             SetupItems.Add(GetSetupItem(
                 () => string.Format("Bots\t\xe{0}", Game.Settings.Players.BotsEnabled ? "Included" : "Excluded"),
                 new[] { false, true },
@@ -296,25 +296,25 @@ traffic or the server is down.", "No reply from management server");
         private MainMenuItemCollection GetControlsItems()
         {
             var items = new MainMenuItemCollection("Controls");
-            items.Add(GetSetupItemBase(() => "Player 1 controls...",
+            items.Add(GetSetupItemBase(() => "Player 1 Controls...",
                 () => _menuComponent.PushItems(GetPlayerControlsItems("Player 1", Game.Settings.Controls.Player1))));
-            items.Add(GetSetupItemBase(() => "Player 2 controls...",
+            items.Add(GetSetupItemBase(() => "Player 2 Controls...",
                 () => _menuComponent.PushItems(GetPlayerControlsItems("Player 2", Game.Settings.Controls.Player2))));
-            items.Add(GetControlsItem("Chat key", () => Game.Settings.Controls.Chat, ctrl => Game.Settings.Controls.Chat = ctrl));
+            items.Add(GetControlsItem("Chat Key", () => Game.Settings.Controls.Chat, ctrl => Game.Settings.Controls.Chat = ctrl));
             return items;
         }
 
         private MainMenuItemCollection GetPlayerControlsItems(string collectionName, PlayerControlsSettings controls)
         {
             var items = new MainMenuItemCollection(collectionName);
-            items.Add(GetSetupItemBase(() => "Preset keyboard right", () => controls.CopyFrom(ControlsSettings.PRESET_KEYBOARD_RIGHT)));
-            items.Add(GetSetupItemBase(() => "Preset keyboard left", () => controls.CopyFrom(ControlsSettings.PRESET_KEYBOARD_LEFT)));
-            items.Add(GetSetupItemBase(() => "Preset game pad 1", () => controls.CopyFrom(ControlsSettings.PRESET_GAMEPAD1)));
-            items.Add(GetSetupItemBase(() => "Preset game pad 2", () => controls.CopyFrom(ControlsSettings.PRESET_GAMEPAD2)));
+            items.Add(GetSetupItemBase(() => "Preset Keyboard Right", () => controls.CopyFrom(ControlsSettings.PRESET_KEYBOARD_RIGHT)));
+            items.Add(GetSetupItemBase(() => "Preset Keyboard Left", () => controls.CopyFrom(ControlsSettings.PRESET_KEYBOARD_LEFT)));
+            items.Add(GetSetupItemBase(() => "Preset Game Pad 1", () => controls.CopyFrom(ControlsSettings.PRESET_GAMEPAD1)));
+            items.Add(GetSetupItemBase(() => "Preset Game Pad 2", () => controls.CopyFrom(ControlsSettings.PRESET_GAMEPAD2)));
             items.Add(GetControlsItem("Thrust", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
             items.Add(GetControlsItem("Left", () => controls.Left, ctrl => controls.Left = ctrl));
             items.Add(GetControlsItem("Right", () => controls.Right, ctrl => controls.Right = ctrl));
-            items.Add(GetControlsItem("Ship mod", () => controls.Extra, ctrl => controls.Extra = ctrl));
+            items.Add(GetControlsItem("Ship Mod", () => controls.Extra, ctrl => controls.Extra = ctrl));
             items.Add(GetControlsItem("Weapon 1", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
             items.Add(GetControlsItem("Weapon 2", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
             return items;
@@ -330,15 +330,15 @@ traffic or the server is down.", "No reply from management server");
 
         private MainMenuItemCollection GetAudioItems()
         {
-            var items = new MainMenuItemCollection("Audio Setup");
+            var items = new MainMenuItemCollection("Audio");
             Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => GetSetupItem(
                 () => string.Format("{0}\t\xf{1:0} %", name, get() * 100),
                 Enumerable.Range(0, 21).Select(x => x * 0.05f),
                 get, set);
-            items.Add(getVolumeSetupItem("Music volume",
+            items.Add(getVolumeSetupItem("Music Volume",
                 () => Game.Settings.Sound.MusicVolume,
                 volume => Game.Settings.Sound.MusicVolume = volume));
-            items.Add(getVolumeSetupItem("Sound volume",
+            items.Add(getVolumeSetupItem("Sound Volume",
                 () => Game.Settings.Sound.SoundVolume,
                 volume => Game.Settings.Sound.SoundVolume = volume));
             return items;
@@ -346,7 +346,7 @@ traffic or the server is down.", "No reply from management server");
 
         private MainMenuItemCollection GetGraphicsItems()
         {
-            var items = new MainMenuItemCollection("Graphics Setup");
+            var items = new MainMenuItemCollection("Graphics");
             Func<int> curWidth = () => Game.Settings.Graphics.FullscreenWidth;
             Func<int> curHeight = () => Game.Settings.Graphics.FullscreenHeight;
             items.Add(GetSetupItem(
@@ -364,7 +364,7 @@ traffic or the server is down.", "No reply from management server");
                     Game.Settings.Graphics.FullscreenHeight = size.Item2;
                 }));
             items.Add(GetSetupItem(
-                () => string.Format("Vertical sync\t\xc{0}", Game.Settings.Graphics.IsVerticalSynced ? "Enabled" : "Disabled"),
+                () => string.Format("Vertical Sync\t\xc{0}", Game.Settings.Graphics.IsVerticalSynced ? "Enabled" : "Disabled"),
                 new[] { false, true },
                 () => Game.Settings.Graphics.IsVerticalSynced,
                 vsync => Game.Settings.Graphics.IsVerticalSynced = vsync));

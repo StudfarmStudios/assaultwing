@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
+using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Menu.Main;
 using AW2.UI;
@@ -117,6 +118,13 @@ namespace AW2.Menu
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
+            var titlePos = _pos - view + new Vector2(585, 320);
+            var title = string.Join("",
+                (from items in _currentItemsHistory.Reverse()
+                 let name = items.Item1.Name
+                 where name != ""
+                 select name + " > ").ToArray()) + _currentItems.Name;
+            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, title, titlePos.Round(), Color.LightGray);
             _currentItem.ForEachVisible((realIndex, visibleIndex, isSelected) =>
             {
                 if (isSelected) _currentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);

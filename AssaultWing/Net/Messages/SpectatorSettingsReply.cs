@@ -1,4 +1,5 @@
 ﻿using System;
+using AW2.Game;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
@@ -16,9 +17,24 @@ namespace AW2.Net.Messages
         public int SpectatorLocalID { get; set; }
 
         /// <summary>
-        /// New (non-local) identifier of the spectator.
+        /// New (non-local) identifier of the spectator, or <see cref="Spectator.UNINITIALIZED_ID"/>.
         /// </summary>
         public int SpectatorID { get; set; }
+
+        /// <summary>
+        /// True if adding the new spectator succeeded.
+        /// </summary>
+        public bool Success { get { return FailMessage == ""; } }
+
+        /// <summary>
+        /// The empty string, or an explanation of why adding the spectator failed.
+        /// </summary>
+        public string FailMessage { get; set; }
+
+        public SpectatorSettingsReply()
+        {
+            FailMessage = "";
+        }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
@@ -26,11 +42,13 @@ namespace AW2.Net.Messages
             using (new NetworkProfilingScope(this))
 #endif
             {
-                // Spectator update reply structure:
+                // Spectator settings reply structure:
                 // byte: local spectator identifier
                 // byte: non-local spectator identifier
+                // string: fail explanation or the empty string
                 writer.Write((byte)SpectatorLocalID);
                 writer.Write((byte)SpectatorID);
+                writer.Write((string)FailMessage);
             }
         }
 
@@ -38,6 +56,7 @@ namespace AW2.Net.Messages
         {
             SpectatorLocalID = reader.ReadByte();
             SpectatorID = reader.ReadByte();
+            FailMessage = reader.ReadString();
         }
 
         public override string ToString()

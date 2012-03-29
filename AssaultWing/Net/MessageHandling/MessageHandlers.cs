@@ -4,15 +4,13 @@ using System.Linq;
 using System.Net;
 using Microsoft.Xna.Framework;
 using AW2.Core;
-using AW2.Core.OverlayComponents;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
+using AW2.Net.Connections;
 using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
-using AW2.Net.Connections;
 using AW2.UI;
-using AW2.Menu;
 
 namespace AW2.Net.MessageHandling
 {
@@ -114,8 +112,10 @@ namespace AW2.Net.MessageHandling
             }
             else
             {
+                // TODO !!! Extract method Game.NetworkExit
                 Log.Write("Couldn't connect to server: " + mess.FailMessage);
                 Game.ShowInfoDialog("Couldn't connect to server:\n" + mess.FailMessage); // TODO: Proper line wrapping in dialogs
+                Game.ShowMainMenuAndResetGameplay();
             }
         }
 
@@ -132,7 +132,7 @@ namespace AW2.Net.MessageHandling
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
             {
-                var newSpectator = CreateAndAddNewSpectator(mess, spectatorSerializationMode);
+                var newSpectator = TryCreateAndAddNewSpectator(mess, spectatorSerializationMode);
                 newSpectator.ID = mess.SpectatorID;
                 newSpectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             }
@@ -169,10 +169,20 @@ namespace AW2.Net.MessageHandling
         {
             var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.LocalID == mess.SpectatorLocalID);
             if (spectator == null) throw new ApplicationException("Cannot find unregistered local spectator with local ID " + mess.SpectatorLocalID);
-            spectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
-            spectator.ID = mess.SpectatorID;
-            // If we reconnected, remove the duplicate spectator that was sent by the server earlier.
-            Game.DataEngine.Spectators.Remove(spec => spec.ID == spectator.ID && spec != spectator);
+            if (mess.Success)
+            {
+                spectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
+                spectator.ID = mess.SpectatorID;
+                // If we reconnected, remove the duplicate spectator that was sent by the server earlier.
+                Game.DataEngine.Spectators.Remove(spec => spec.ID == spectator.ID && spec != spectator);
+            }
+            else
+            {
+                // TODO !!! Extract method Game.NetworkExit
+                Log.Write("Server refused {0}: {1}", spectator.Name, mess.FailMessage);
+                Game.ShowInfoDialog(string.Format("Server refused {0}:\n{1}", spectator.Name, mess.FailMessage)); // TODO: Proper line wrapping in dialogs
+                Game.ShowMainMenuAndResetGameplay();
+            }
         }
 
         private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
@@ -280,11 +290,12 @@ namespace AW2.Net.MessageHandling
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)
             {
-                var newSpectator = CreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromClient);
+                var newSpectator = TryCreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromClient);
                 var reply = new SpectatorSettingsReply
                 {
                     SpectatorLocalID = mess.SpectatorID,
-                    SpectatorID = newSpectator.ID
+                    SpectatorID = newSpectator != null ? newSpectator.ID : Spectator.UNINITIALIZED_ID,
+                    FailMessage = newSpectator != null ? "" : "Pilot already in game",
                 };
                 clientConn.Send(reply);
                 Game.DataEngine.EnqueueArenaStatisticsToClients();
@@ -292,10 +303,10 @@ namespace AW2.Net.MessageHandling
             else
             {
                 var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
-                if (spectator == null) throw new NetworkException("Settings update for unknown spectator ID " + mess.SpectatorID);
-                if (spectator.ConnectionID != mess.ConnectionID)
+                if (spectator == null || spectator.ConnectionID != mess.ConnectionID)
                 {
-                    // Silently ignoring update of a player that doesn't live on the client who sent the update.
+                    // Silently ignoring update of an unknown spectator or
+                    // a spectator that doesn't live on the client who sent the update.
                 }
                 else
                 {
@@ -369,7 +380,7 @@ namespace AW2.Net.MessageHandling
             return new Player(Game, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
         }
 
-        private Spectator CreateAndAddNewSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
+        private Spectator TryCreateAndAddNewSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
             var ipAddress = Game.NetworkEngine.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address;
             Spectator newSpectator = null;
@@ -384,6 +395,12 @@ namespace AW2.Net.MessageHandling
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
             mess.Read(newSpectator, mode, 0);
+            if (newSpectator.GetStats().IsLoggedIn && Game.DataEngine.Spectators.Any(
+                spec => spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == newSpectator.GetStats().PilotId))
+            {
+                Log.Write("Refusing spectator {0} because he's already logged in", newSpectator.Name);
+                return null;
+            }
             var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.IsDisconnected && spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
             if (oldSpectator == null)

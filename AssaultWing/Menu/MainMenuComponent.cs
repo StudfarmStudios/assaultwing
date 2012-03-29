@@ -105,6 +105,7 @@ namespace AW2.Menu
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
+            if (!_currentItemsHistory.Any()) return;
             var titlePos = _pos - view + new Vector2(585, 320);
             var title = string.Join(" > ",
                 (from items in _currentItemsHistory.Reverse()

@@ -6,6 +6,7 @@ namespace AW2.Menu.Main
     /// <summary>
     /// A list of menu items, pluggable into <see cref="MainMenuComponent"/>.
     /// </summary>
+    [System.Diagnostics.DebuggerDisplay("'{Name}' with {Count} items")]
     public class MainMenuItemCollection : IEnumerable<MainMenuItem>
     {
         private List<MainMenuItem> _menuItems;

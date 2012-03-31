@@ -20,7 +20,7 @@ namespace AW2.Net.Connections
         public GameServerConnection(AssaultWing game, Socket tcpSocket)
             : base(game, tcpSocket)
         {
-            Name = "Game Server Connection " + ID;
+            Name = string.Format("Game Server {0} ({1})", ID, RemoteTCPEndPoint.Address);
         }
 
         protected override void DisposeImpl(bool error)

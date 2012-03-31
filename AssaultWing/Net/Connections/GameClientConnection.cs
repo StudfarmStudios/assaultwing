@@ -20,7 +20,7 @@ namespace AW2.Net.Connections
         public GameClientConnection(AssaultWing game, Socket tcpSocket)
             : base(game, tcpSocket)
         {
-            Name = "Game Client Connection " + ID;
+            Name = string.Format("Game Client {0} ({1})", ID, RemoteTCPEndPoint.Address);
             ConnectionStatus = new GameClientStatus();
         }
 

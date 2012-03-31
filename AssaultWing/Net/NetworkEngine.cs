@@ -412,9 +412,9 @@ namespace AW2.Net
                             _startServerConnectionHandler(result);
                             break;
                         default:
-                            // HACK: This happens when client connects to two server end points and both fail.
-                            // The first failure returns to NetworkMode.Standalone and the second failure comes here.
-                            Log.Write("Invalid NetworkMode for accepting connections: " + Game.NetworkMode);
+                            // This happens when client connects to two server end points and both fail.
+                            // The first failure reverts the client into a standalone game instance,
+                            // and the second failure ends up here.
                             break;
                     }
                 }

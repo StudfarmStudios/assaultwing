@@ -174,7 +174,7 @@ namespace AW2.Net.Connections
         {
             var sockets = new Socket[remoteEndPoints.Length];
             var asyncState = new ConnectAsyncState(game, sockets, remoteEndPoints);
-            g_connectAsyncStates.Add(asyncState);
+            lock (g_connectAsyncStates) g_connectAsyncStates.Add(asyncState);
             for (int i = 0; i < remoteEndPoints.Length; i++)
             {
                 int index = i;
@@ -188,7 +188,7 @@ namespace AW2.Net.Connections
         /// </summary>
         public static void CancelConnect()
         {
-            foreach (var state in g_connectAsyncStates) state.Cancel();
+            lock (g_connectAsyncStates) foreach (var state in g_connectAsyncStates) state.Cancel();
         }
 
         /// <summary>
@@ -396,7 +396,7 @@ namespace AW2.Net.Connections
         /// <param name="index">Index of the connection attempt in <c>asyncResult.AsyncState</c></param>
         private static void ConnectCallback(IAsyncResult asyncResult, int index)
         {
-            g_connectAsyncStates.Remove((ConnectAsyncState)asyncResult.AsyncState);
+            lock (g_connectAsyncStates) g_connectAsyncStates.Remove((ConnectAsyncState)asyncResult.AsyncState);
             var result = ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateServerConnection(asyncResult, index));
             HandleNewConnection(result);
         }

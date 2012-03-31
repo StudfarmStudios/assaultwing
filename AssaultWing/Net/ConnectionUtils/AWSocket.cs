@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
@@ -37,6 +38,7 @@ namespace AW2.Net.ConnectionUtils
         private Dictionary<IPEndPoint, Tuple<SocketAsyncEventArgs, NetworkBinaryWriter>> _sendCache;
         private int _isDisposed;
         private IPEndPoint _privateLocalEndPoint;
+        private byte[] _macAddress;
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
@@ -55,6 +57,15 @@ namespace AW2.Net.ConnectionUtils
                     _privateLocalEndPoint = new IPEndPoint(localIPAddress, ((IPEndPoint)_socket.LocalEndPoint).Port);
                 }
                 return _privateLocalEndPoint;
+            }
+        }
+
+        public byte[] MACAddress
+        {
+            get
+            {
+                if (_macAddress == null) _macAddress = GetMACAddress();
+                return _macAddress;
             }
         }
 
@@ -264,6 +275,16 @@ namespace AW2.Net.ConnectionUtils
                 _sendCache[remoteEndPoint] = sendArgsAndWriter;
             }
             writeData(sendArgsAndWriter.Item2);
+        }
+
+        private byte[] GetMACAddress()
+        {
+            var nicIP = PrivateLocalEndPoint.Address;
+            var addresses =
+                from nic in NetworkInterface.GetAllNetworkInterfaces()
+                where nic.GetIPProperties().UnicastAddresses.Any(addr => addr.Address.Equals(nicIP))
+                select nic.GetPhysicalAddress().GetAddressBytes();
+            return addresses.First();
         }
 
         private void SendToCompleted(object sender, SocketAsyncEventArgs args)

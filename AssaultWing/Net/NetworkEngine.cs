@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using AW2.Core;
 using AW2.Game;
@@ -150,25 +149,15 @@ namespace AW2.Net
         /// </summary>
         public AWUDPSocket UDPSocket { get; private set; }
 
-        public byte[] GetMACAddress(IPAddress nicIP)
-        {
-            var addresses =
-                from nic in NetworkInterface.GetAllNetworkInterfaces()
-                where nic.GetIPProperties().UnicastAddresses.Any(addr => addr.Address.Equals(nicIP))
-                select nic.GetPhysicalAddress().GetAddressBytes();
-            return addresses.First();
-        }
-
         public byte[] GetAssaultWingInstanceKey()
         {
             // Mix MAC address with local UDP port to get a unique ID across different computers
             // and across different Assault Wing instances running on the same computer.
-            var macAddress = GetMACAddress(UDPSocket.PrivateLocalEndPoint.Address);
             var port = UDPSocket.PrivateLocalEndPoint.Port;
-            var clientKey = new byte[macAddress.Length + 2];
+            var clientKey = new byte[UDPSocket.MACAddress.Length + 2];
             clientKey[0] = (byte)port;
             clientKey[1] = (byte)(port >> 8);
-            Array.Copy(macAddress, 0, clientKey, 2, macAddress.Length);
+            Array.Copy(UDPSocket.MACAddress, 0, clientKey, 2, UDPSocket.MACAddress.Length);
             return clientKey;
         }
 

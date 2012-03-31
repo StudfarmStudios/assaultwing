@@ -36,6 +36,7 @@ namespace AW2.Net.ConnectionUtils
         private Socket _socket;
         private Dictionary<IPEndPoint, Tuple<SocketAsyncEventArgs, NetworkBinaryWriter>> _sendCache;
         private int _isDisposed;
+        private IPEndPoint _privateLocalEndPoint;
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
@@ -47,9 +48,13 @@ namespace AW2.Net.ConnectionUtils
         {
             get
             {
-                var addresses = Dns.GetHostAddresses(Dns.GetHostName());
-                var localIPAddress = addresses.First(address => address.AddressFamily == AddressFamily.InterNetwork); // IPv4 address
-                return new IPEndPoint(localIPAddress, ((IPEndPoint)_socket.LocalEndPoint).Port);
+                if (_privateLocalEndPoint == null)
+                {
+                    var addresses = Dns.GetHostAddresses(Dns.GetHostName());
+                    var localIPAddress = addresses.First(address => address.AddressFamily == AddressFamily.InterNetwork); // IPv4 address
+                    _privateLocalEndPoint = new IPEndPoint(localIPAddress, ((IPEndPoint)_socket.LocalEndPoint).Port);
+                }
+                return _privateLocalEndPoint;
             }
         }
 

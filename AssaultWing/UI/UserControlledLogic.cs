@@ -81,10 +81,23 @@ namespace AW2.UI
 
         public override void Update()
         {
+            HandleNetworkingErrors();
             if (GameState == GAMESTATE_INTRO && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
             if (EquipMenuActive) CheckArenaStart();
             if (Game.ArenaLoadTask.TaskCompleted) Handle_ArenaLoadingFinished();
             if (MainMenuActive && Game.NetworkEngine.GameServerConnection != null) MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
+        }
+
+        private void HandleNetworkingErrors()
+        {
+            if (!Game.NetworkingErrors.Any()) return;
+            ShowMainMenuAndResetGameplay();
+            while (Game.NetworkingErrors.Any())
+            {
+                var info = Game.NetworkingErrors.Dequeue();
+                Log.Write(info);
+                ShowInfoDialog(info);
+            }
         }
 
         public override void StartArena()

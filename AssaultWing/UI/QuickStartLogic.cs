@@ -28,6 +28,7 @@ namespace AW2.UI
 
         public override void Update()
         {
+            if (Game.NetworkingErrors.Any()) ResetState();
             base.Update();
             switch (_state)
             {
@@ -66,6 +67,12 @@ namespace AW2.UI
                 case StateType.Idle: break;
                 default: throw new ApplicationException("Unexpected state " + _state);
             }
+        }
+
+        private void ResetState()
+        {
+            _state = StateType.Idle;
+            Game.IsReadyToStartArena = false;
         }
 
         private void SetPlayerSettings()

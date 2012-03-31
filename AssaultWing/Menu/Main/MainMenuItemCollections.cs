@@ -144,8 +144,7 @@ namespace AW2.Menu.Main
             catch (ArgumentException e)
             {
                 var infoText = e.Message.Replace(" '", "\n'"); // TODO: Generic line wrapping in the dialog
-                Game.ShowInfoDialog(infoText);
-                Game.ShowMainMenuAndResetGameplay();
+                Game.NetworkingErrors.Enqueue(infoText);
                 return false;
             }
         }
@@ -243,7 +242,7 @@ namespace AW2.Menu.Main
                 {
                     var error = Game.StartServer();
                     if (error != null)
-                        Game.ShowInfoDialog("Couldn't start game server.\n" + error + ".");
+                        Game.NetworkingErrors.Enqueue("Couldn't start game server.\n" + error + ".");
                     else
                         _menuComponent.MenuEngine.Activate(MenuComponentType.Equip);
                 }));
@@ -261,12 +260,11 @@ namespace AW2.Menu.Main
         {
             if (!_gameServerListReplyDeadline.HasValue) return;
             if (Game.GameTime.TotalRealTime <= _gameServerListReplyDeadline.Value) return;
-            Game.ShowInfoDialog(
+            Game.NetworkingErrors.Enqueue(
 @"No reply from management server.
 Cannot refresh game server list.
 Either your firewall blocks the
-traffic or the server is down.", "No reply from management server");
-            Game.ShowMainMenuAndResetGameplay();
+traffic or the server is down.");
             _gameServerListReplyDeadline = null;
         }
 

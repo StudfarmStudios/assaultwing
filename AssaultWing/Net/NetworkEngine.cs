@@ -428,7 +428,6 @@ namespace AW2.Net
                 {
                     Log.Write("Closing {0} because of not replying to pings", conn.Name);
                     conn.Dispose();
-                    if (conn is GameServerConnection) _game.StopClient("Game server not responding.");
                 }
         }
 

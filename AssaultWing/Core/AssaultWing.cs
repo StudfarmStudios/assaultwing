@@ -51,6 +51,12 @@ namespace AW2.Core
         public override bool IsShipControlsEnabled { get { return Logic.IsGameplay; } }
         public Guid GameServerGUID { get; private set; }
 
+        /// <summary>
+        /// Errors that occurred when establishing or maintaining a network game instance.
+        /// These errors are eventually reported to the user and game state is reset out of networking.
+        /// </summary>
+        public Queue<string> NetworkingErrors { get; private set; }
+
         public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService, args)
         {
@@ -63,8 +69,9 @@ namespace AW2.Core
             else
                 Logic = new UserControlledLogic(this);
             ArenaLoadTask = new BackgroundTask();
+            NetworkingErrors = new Queue<string>();
 
-            NetworkEngine = new NetworkEngine(this, 0);
+            NetworkEngine = new NetworkEngine(this, 30);
             WebData = new WebData(this, 21);
             Components.Add(NetworkEngine);
             Components.Add(WebData);
@@ -117,7 +124,7 @@ namespace AW2.Core
 
         public void ShowConnectingToGameServerDialog(string shortServerName)
         {
-            ShowCustomDialog(string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName), "Connecting to server",
+            Logic.ShowCustomDialog(string.Format("Connecting to {0}...\nPress Esc to cancel.", shortServerName), "Connecting to server",
                 new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, CutNetworkConnections));
         }
 
@@ -467,7 +474,7 @@ namespace AW2.Core
 
         private void ConnectionResultOnClientCallback(Result<Connection> result)
         {
-            HideDialog("Connecting to server");
+            Logic.HideDialog("Connecting to server");
             if (NetworkEngine.GameServerConnection != null)
             {
                 // Silently ignore extra server connection attempts.

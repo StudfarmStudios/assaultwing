@@ -43,6 +43,11 @@ namespace AW2.Net.ConnectionUtils
                 {
                     CheckSocketError(args);
                     if (args.SocketError != SocketError.Success) break;
+                    if (args.BytesTransferred == 0)
+                    {
+                        Errors.Do(queue => queue.Enqueue("Connection closed"));
+                        break;
+                    }
                     var bytesTotal = args.Offset + args.BytesTransferred;
                     var bytesHandled = 0;
                     while (true)

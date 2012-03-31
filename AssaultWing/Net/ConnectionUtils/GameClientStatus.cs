@@ -1,8 +1,10 @@
 ﻿namespace AW2.Net.ConnectionUtils
 {
-    [System.Diagnostics.DebuggerDisplay("Arena {CurrentArenaName}, Playing {IsPlayingArena}")]
+    [System.Diagnostics.DebuggerDisplay("{State}, Arena={CurrentArenaName}, Running={IsRunningArena}")]
     public class GameClientStatus
     {
+        public enum StateType { Initializing, Active, Dropped };
+
         private string _currentArenaName;
 
         /// <summary>
@@ -31,6 +33,6 @@
         public byte[] ClientKey { get; set; }
 
         public bool HasPlayerSettings { get; set; }
-        public bool IsDropped { get; set; }
+        public StateType State { get; set; }
     }
 }

@@ -24,6 +24,12 @@ namespace AW2.Net.Connections
             ConnectionStatus = new GameClientStatus();
         }
 
+        public override void Send(Message message)
+        {
+            if (ConnectionStatus.State == GameClientStatus.StateType.Active)
+                base.Send(message);
+        }
+
         protected override void DisposeImpl(bool error)
         {
             Game.NetworkEngine.DropClient(ID);

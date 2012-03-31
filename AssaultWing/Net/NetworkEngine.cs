@@ -255,7 +255,7 @@ namespace AW2.Net
             var connection = GetGameClientConnection(connectionID);
             if (_removedClientConnections.Contains(connection)) return;
             Log.Write("Dropping " + connection.Name);
-            connection.ConnectionStatus.IsDropped = true;
+            connection.ConnectionStatus.State = GameClientStatus.StateType.Dropped;
             _removedClientConnections.Add(connection);
 
             var droppedPlayers = Game.DataEngine.Spectators.Where(plr => plr.ConnectionID == connection.ID);

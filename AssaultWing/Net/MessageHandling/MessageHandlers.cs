@@ -274,6 +274,7 @@ namespace AW2.Net.MessageHandling
             else
             {
                 connection.ConnectionStatus.ClientKey = mess.GameClientKey;
+                connection.ConnectionStatus.State = ConnectionUtils.GameClientStatus.StateType.Active;
                 // Send dummy UDP packets to probable UDP end points of the client to increase
                 // probability of our NAT forwarding UDP packets from the client to us.
                 var ping = new PingRequestMessage();
@@ -285,7 +286,7 @@ namespace AW2.Net.MessageHandling
         private void HandleSpectatorSettingsRequestOnServer(SpectatorSettingsRequest mess)
         {
             var clientConn = Game.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
-            if (clientConn.ConnectionStatus.IsDropped) return;
+            if (clientConn.ConnectionStatus.State == ConnectionUtils.GameClientStatus.StateType.Dropped) return;
             clientConn.ConnectionStatus.IsRequestingSpawn = mess.IsRequestingSpawn;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)

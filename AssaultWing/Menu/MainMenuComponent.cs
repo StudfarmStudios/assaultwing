@@ -80,21 +80,23 @@ namespace AW2.Menu
 
         private void PopItems()
         {
-            var oldHistoryCount = _currentItemsHistory.Count;
+            if (_currentItemsHistory.Count == 2 || _currentItems == _itemCollections.LoginItems)
+                MenuEngine.Game.Settings.ToFile();
+            if (_currentItemsHistory.Count == 2)
+            {
+                // Returning to top level.
+                MenuEngine.Game.CutNetworkConnections();
+                ApplyGraphicsSettings();
+                ApplyControlsSettings();
+            }
             if (_currentItemsHistory.Count > 1)
             {
+                // Wasn't at top level already.
                 var old = _currentItemsHistory.Pop();
                 _currentItems = old.Item1;
                 _currentItem.CurrentIndex = old.Item2;
                 _currentItem.TopmostIndex = old.Item3;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-            }
-            if (_currentItemsHistory.Count == 1 && oldHistoryCount > 1)
-            {
-                MenuEngine.Game.Settings.ToFile();
-                MenuEngine.Game.CutNetworkConnections();
-                ApplyGraphicsSettings();
-                ApplyControlsSettings();
             }
         }
 

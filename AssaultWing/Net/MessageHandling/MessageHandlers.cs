@@ -171,6 +171,8 @@ namespace AW2.Net.MessageHandling
             if (spectator == null) throw new ApplicationException("Cannot find unregistered local spectator with local ID " + mess.SpectatorLocalID);
             spectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             spectator.ID = mess.SpectatorID;
+            // If we reconnected, remove the duplicate spectator that was sent by the server earlier.
+            Game.DataEngine.Spectators.Remove(spec => spec.ID == spectator.ID && spec != spectator);
         }
 
         private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
@@ -382,19 +384,15 @@ namespace AW2.Net.MessageHandling
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
             mess.Read(newSpectator, mode, 0);
-            var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.IsDisconnected && spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
+            var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(
+                spec => spec.IsDisconnected && spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
             if (oldSpectator == null)
             {
-                // Add unless it looks like our old spectator before we disconnected. This may happen on a game client.
-                if (!newSpectator.IsDisconnected ||
-                    !newSpectator.IPAddress.Equals(Game.NetworkEngine.UDPSocket.PrivateLocalEndPoint.Address) ||
-                    !Game.DataEngine.Spectators.Any(spec => spec.IsLocal && spec.Name == newSpectator.Name))
-                {
-                    Game.DataEngine.Spectators.Add(newSpectator);
-                }
+                Game.DataEngine.Spectators.Add(newSpectator);
             }
             else
             {
+                // This can happen only on a game server.
                 Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
                 oldSpectator.Reconnect(newSpectator);
                 newSpectator = oldSpectator;

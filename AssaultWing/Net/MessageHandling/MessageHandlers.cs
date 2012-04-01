@@ -111,12 +111,7 @@ namespace AW2.Net.MessageHandling
                 Game.StartClient(mess.GameServerEndPoints);
             }
             else
-            {
-                // TODO !!! Extract method Game.NetworkExit
-                Log.Write("Couldn't connect to server: " + mess.FailMessage);
-                Game.ShowInfoDialog("Couldn't connect to server:\n" + mess.FailMessage); // TODO: Proper line wrapping in dialogs
-                Game.ShowMainMenuAndResetGameplay();
-            }
+                Game.NetworkingErrors.Enqueue("Couldn't connect to server:\n" + mess.FailMessage); // TODO: Proper line wrapping in dialogs
         }
 
         private void HandlePingMessage(PingMessage mess)
@@ -177,12 +172,7 @@ namespace AW2.Net.MessageHandling
                 Game.DataEngine.Spectators.Remove(spec => spec.ID == spectator.ID && spec != spectator);
             }
             else
-            {
-                // TODO !!! Extract method Game.NetworkExit
-                Log.Write("Server refused {0}: {1}", spectator.Name, mess.FailMessage);
-                Game.ShowInfoDialog(string.Format("Server refused {0}:\n{1}", spectator.Name, mess.FailMessage)); // TODO: Proper line wrapping in dialogs
-                Game.ShowMainMenuAndResetGameplay();
-            }
+                Game.NetworkingErrors.Enqueue(string.Format("Server refused {0}:\n{1}", spectator.Name, mess.FailMessage)); // TODO: Proper line wrapping in dialogs
         }
 
         private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
@@ -274,6 +264,7 @@ namespace AW2.Net.MessageHandling
             else
             {
                 connection.ConnectionStatus.ClientKey = mess.GameClientKey;
+                connection.ConnectionStatus.State = ConnectionUtils.GameClientStatus.StateType.Active;
                 // Send dummy UDP packets to probable UDP end points of the client to increase
                 // probability of our NAT forwarding UDP packets from the client to us.
                 var ping = new PingRequestMessage();
@@ -285,7 +276,7 @@ namespace AW2.Net.MessageHandling
         private void HandleSpectatorSettingsRequestOnServer(SpectatorSettingsRequest mess)
         {
             var clientConn = Game.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
-            if (clientConn.ConnectionStatus.IsDropped) return;
+            if (clientConn.ConnectionStatus.State == ConnectionUtils.GameClientStatus.StateType.Dropped) return;
             clientConn.ConnectionStatus.IsRequestingSpawn = mess.IsRequestingSpawn;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)

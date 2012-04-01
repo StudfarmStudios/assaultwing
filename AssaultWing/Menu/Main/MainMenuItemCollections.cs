@@ -95,7 +95,7 @@ namespace AW2.Menu.Main
             Game.SoundEngine.PlaySound("MenuChangeItem");
         }
 
-        public void Click_ConnectToGameServer(int gameServerManagementID, string shortServerName)
+        public void Click_ConnectToGameServer(string gameServerManagementID, string shortServerName)
         {
             var joinRequest = new JoinGameServerRequest { GameServerManagementID = gameServerManagementID };
             Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);

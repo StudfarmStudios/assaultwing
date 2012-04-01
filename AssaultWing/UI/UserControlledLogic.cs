@@ -118,11 +118,11 @@ namespace AW2.UI
                     new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
         }
 
-        public override void PrepareArena()
+        public override void PrepareArena(int wallCount)
         {
             AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
             foreach (var conn in Game.NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
-            MenuEngine.ProgressBar.Start(Game.DataEngine.Arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count(), () => AW2.Game.Gobs.Wall.WallActivatedCounter);
+            MenuEngine.ProgressBar.Start(wallCount, () => AW2.Game.Gobs.Wall.WallActivatedCounter);
             Game.ArenaLoadTask.StartTask(Game.DataEngine.Arena.Reset);
         }
 
@@ -290,7 +290,7 @@ namespace AW2.UI
             else
             {
                 Game.LoadSelectedArena();
-                PrepareArena();
+                PrepareArena(Game.DataEngine.Arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
             }
         }
 

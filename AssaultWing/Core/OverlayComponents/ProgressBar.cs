@@ -47,7 +47,7 @@ namespace AW2.Core.OverlayComponents
 
         public void Start(int subtaskCount, Func<int> subtaskCompletedCount)
         {
-            if (subtaskCount <= 0) throw new ArgumentException("Subtask count must be positive, not " + subtaskCount);
+            if (subtaskCount < 0) throw new ArgumentException("Subtask count must be non-negative, not " + subtaskCount);
             _subtaskCompletedCount = subtaskCompletedCount;
             lock (_lock)
             {
@@ -103,7 +103,6 @@ namespace AW2.Core.OverlayComponents
         {
             lock (_lock)
             {
-                if (_subtaskCount == 0) throw new InvalidOperationException("No task set yet");
                 if (IsFinished) return 1;
                 if (_subtaskCompletedCount() >= _subtaskCount) return 1;
                 return (float)_subtaskCompletedCount() / _subtaskCount;

@@ -161,12 +161,12 @@ namespace AW2.Core
             base.EndRun();
         }
 
-        public void PrepareArena(string arenaName, byte arenaIDOnClient)
+        public void PrepareArena(string arenaName, byte arenaIDOnClient, int wallCount)
         {
             SelectedArenaName = arenaName;
             Logic.ShowEquipMenu();
             LoadSelectedArena(arenaIDOnClient);
-            Logic.PrepareArena();
+            Logic.PrepareArena(wallCount);
         }
 
         /// <summary>

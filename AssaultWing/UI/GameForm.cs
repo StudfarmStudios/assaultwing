@@ -7,6 +7,7 @@ using AW2.Core;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Timer = System.Windows.Forms.Timer;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace AW2.UI
 {
@@ -59,12 +60,13 @@ namespace AW2.UI
 
         private bool _isFullScreen;
         private int _isChangingFullScreen;
+        private Tuple<int, int> _pendingFullScreenSize;
         private FormParameters _previousWindowedModeParameters;
         private Icon _originalIcon;
         private bool _isCursorHidden;
         private bool _isCursorForcedVisible;
 
-        private Timer _logUpdateTimer;
+        private Timer _updateTimer;
         private StringBuilder _logCache;
 
         public Rectangle ClientBoundsMin
@@ -94,7 +96,7 @@ namespace AW2.UI
         {
             if (_game != null) _game.Dispose();
             _game = null;
-            if (_logUpdateTimer != null) _logUpdateTimer.Dispose();
+            if (_updateTimer != null) _updateTimer.Dispose();
             AW2.Helpers.Log.Written -= AddToLogView;
             base.Dispose();
         }
@@ -124,10 +126,15 @@ namespace AW2.UI
         {
             if (_graphicsDeviceService == null) return;
             if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
-            Activate(); // If not active, the Form may get totally lost when going full screen.
             try
             {
                 if (_isFullScreen && width == ClientSize.Width && height == ClientSize.Height) return;
+                if (!Focused)
+                {
+                    // without focus we may lose the window completely. Wait for GotFocus event.
+                    _pendingFullScreenSize = Tuple.Create(width, height);
+                    return;
+                }
                 _runner.Pause();
                 Application.DoEvents();
                 if (!_isFullScreen) _previousWindowedModeParameters = GetCurrentFormParameters();
@@ -233,8 +240,8 @@ namespace AW2.UI
             if (disposing)
             {
                 if (components != null) components.Dispose();
-                _logUpdateTimer.Tick -= UpdateLogView;
-                _logUpdateTimer.Stop();
+                _updateTimer.Tick -= Update;
+                _updateTimer.Stop();
             }
             base.Dispose(disposing);
         }
@@ -246,9 +253,9 @@ namespace AW2.UI
             _originalIcon = Icon;
             AW2.Helpers.Log.Written += AddToLogView;
             _logCache = new StringBuilder();
-            _logUpdateTimer = new Timer { Interval = 1000 };
-            _logUpdateTimer.Tick += UpdateLogView;
-            _logUpdateTimer.Start();
+            _updateTimer = new Timer { Interval = 1000 };
+            _updateTimer.Tick += Update;
+            _updateTimer.Start();
 
             // Text entry is handled by WndProcImpl() which is called at a keypress
             // only if this GameForm or _gameView has focus. Initially, this GameForm has
@@ -336,7 +343,22 @@ namespace AW2.UI
             lock (_logCache) _logCache.Append(text).Append("\r\n");
         }
 
-        private void UpdateLogView(object sender, EventArgs args)
+        private void Update(object sender, EventArgs args)
+        {
+            FinishPendingFullScreen();
+            UpdateLogView();
+        }
+
+        private void FinishPendingFullScreen()
+        {
+            if (_pendingFullScreenSize == null || !Focused) return;
+            var width = _pendingFullScreenSize.Item1;
+            var height = _pendingFullScreenSize.Item2;
+            _pendingFullScreenSize = null;
+            SetFullScreen(width, height);
+        }
+
+        private void UpdateLogView()
         {
             if (_logCache.Length == 0) return;
             lock (_logCache)

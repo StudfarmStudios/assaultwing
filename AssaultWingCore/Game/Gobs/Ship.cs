@@ -147,8 +147,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         private List<Gob> _temporarilyDisabledGobs; // TODO: Move to physics engine
 
-        private bool _isBirthFlashing;
-
         #endregion Ship fields related to other things
 
         #region Ship fields for signalling visual things over the network
@@ -160,6 +158,10 @@ namespace AW2.Game.Gobs
 
         #region Ship properties
 
+        /// <summary>
+        /// A newborn ship cannot shoot and cannot be shot.
+        /// </summary>
+        public bool IsNewborn { get; private set; }
         public TimeSpan LastDamageTakenTime { get; set; }
         public TimeSpan LastWeaponFiredTime { get; set; }
 
@@ -306,8 +308,7 @@ namespace AW2.Game.Gobs
             _thruster.Activate(this);
             _coughEngine.Activate(this);
             CreateGlow();
-            Disable(); // re-enabled in Update()
-            _isBirthFlashing = true;
+            IsNewborn = true;
             Game.SoundEngine.PlaySound(SHIP_BIRTH_SOUND, this);
         }
 
@@ -515,6 +516,7 @@ namespace AW2.Game.Gobs
         {
             if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
             if (damageAmount == 0) return;
+            if (IsNewborn) return;
             LastDamageTakenTime = Game.DataEngine.ArenaTotalTime;
             if (Owner != null) Owner.IncreaseShake(damageAmount);
             base.InflictDamage(damageAmount, cause);
@@ -652,11 +654,10 @@ namespace AW2.Game.Gobs
 
         private void UpdateFlashing()
         {
-            if (!_isBirthFlashing) return;
+            if (!IsNewborn) return;
             Alpha = _birthAlpha.Evaluate(AgeInGameSeconds);
             if (AgeInGameSeconds < _birthAlpha.Keys[_birthAlpha.Keys.Count - 1].Position) return;
-            Enable();
-            _isBirthFlashing = false;
+            IsNewborn = false;
         }
 
         private void StoreCurrentShipLocation()

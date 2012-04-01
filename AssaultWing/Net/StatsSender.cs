@@ -18,6 +18,8 @@ namespace AW2.Net
     /// </summary>
     public class StatsSender : StatsBase
     {
+        private static readonly byte[] STATS_NOT_ALLOWED_MESSAGE = Encoding.UTF8.GetBytes("NOT ALLOWED");
+
         // TODO !!! Investigate using class Connection to handle the connection to the stats server.
         private bool _disposed;
         private AWTCPSocket _statsDataSocket;
@@ -25,6 +27,7 @@ namespace AW2.Net
         private AWTimer _sendTimer;
         private AWTimer _connectTimer;
         private bool _isConnecting;
+        private bool _statsNotAllowed;
 
         private bool Connected { get { return _statsDataSocket != null && !_statsDataSocket.IsDisposed; } }
 
@@ -109,7 +112,7 @@ namespace AW2.Net
 
         private void ConnectToStatsServer()
         {
-            if (Game.NetworkMode != NetworkMode.Server || _isConnecting || !_connectTimer.IsElapsed ||
+            if (Game.NetworkMode != NetworkMode.Server || _statsNotAllowed || _isConnecting || !_connectTimer.IsElapsed ||
                 Game.Settings.Net.StatsServerAddress == "") return;
             _isConnecting = true;
             try
@@ -163,6 +166,13 @@ namespace AW2.Net
                 try
                 {
                     var str = Encoding.UTF8.GetString(messageHeaderAndBody.Array, startIndex, i - startIndex);
+                    if (StatsNotAllowed(messageHeaderAndBody))
+                    {
+                        Log.Write("Battlefront statistics won't be collected from this server.");
+                        _statsDataSocket.Dispose();
+                        _statsNotAllowed = true;
+                        return messageHeaderAndBody.Count;
+                    }
                     var obj = JObject.Parse(str);
                     var loginToken = obj.GetString("token");
                     var spectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.GetStats().LoginToken == loginToken);
@@ -174,6 +184,15 @@ namespace AW2.Net
                 startIndex = nextStartIndex;
             }
             return bytesRead;
+        }
+
+        private bool StatsNotAllowed(ArraySegment<byte> messageHeaderAndBody)
+        {
+            if (messageHeaderAndBody.Count < STATS_NOT_ALLOWED_MESSAGE.Length) return false;
+            for (int i = 0; i < STATS_NOT_ALLOWED_MESSAGE.Length; i++)
+                if (messageHeaderAndBody.Array[messageHeaderAndBody.Offset + i] != STATS_NOT_ALLOWED_MESSAGE[i])
+                    return false;
+            return true;
         }
     }
 }

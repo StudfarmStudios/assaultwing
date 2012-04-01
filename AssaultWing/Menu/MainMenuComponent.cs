@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
+using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Menu.Main;
 using AW2.UI;
@@ -23,9 +24,9 @@ namespace AW2.Menu
         /// </summary>
         private MainMenuItemCollections _itemCollections;
 
-        private Stack<Tuple<MainMenuItemCollection, int, int>> _currentItemsHistory; // items, currentIndex, topmostIndex
-        private MainMenuItemCollection _currentItems;
-        private ScrollableList _currentItem;
+        private Stack<Tuple<MainMenuItemCollection, ScrollableList>> _currentItemsHistory; // CurrentItems, CurrentItemIndexer
+        private MainMenuItemCollection CurrentItems { get { return _currentItemsHistory.Any() ? _currentItemsHistory.Peek().Item1 : null; } }
+        private ScrollableList CurrentItemIndexer { get { return _currentItemsHistory.Any() ? _currentItemsHistory.Peek().Item2 : null; } }
 
         private TriggeredCallbackCollection _commonCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
@@ -46,17 +47,13 @@ namespace AW2.Menu
         public override Vector2 Center { get { return _pos + new Vector2(700, 455); } }
         public override string HelpText { get { return "Arrows move, Enter proceeds, Esc cancels"; } }
 
-        public MainMenuItem CurrentItem { get { return _currentItems[_currentItem.CurrentIndex]; } }
-        public bool IsActive(MainMenuItemCollection items) { return _currentItems == items; }
+        public MainMenuItem CurrentItem { get { return CurrentItems[CurrentItemIndexer.CurrentIndex]; } }
+        public bool IsActive(MainMenuItemCollection items) { return CurrentItems == items; }
         public MainMenuItemCollections ItemCollections
         {
             get
             {
-                if (_itemCollections == null)
-                {
-                    _itemCollections = new MainMenuItemCollections(this);
-                    ResetItems();
-                }
+                if (_itemCollections == null) _itemCollections = new MainMenuItemCollections(this);
                 return _itemCollections;
             }
         }
@@ -66,21 +63,19 @@ namespace AW2.Menu
             : base(menuEngine)
         {
             _pos = new Vector2(0, 698);
-            _currentItemsHistory = new Stack<Tuple<MainMenuItemCollection, int, int>>();
-            _currentItem = new ScrollableList(MENU_ITEM_COUNT, () => _currentItems == null ? 0 : _currentItems.Count);
+            _currentItemsHistory = new Stack<Tuple<MainMenuItemCollection, ScrollableList>>();
             InitializeControlCallbacks();
         }
 
         public void PushItems(MainMenuItemCollection items)
         {
-            if (_currentItems != null) _currentItemsHistory.Push(Tuple.Create(_currentItems, _currentItem.CurrentIndex, _currentItem.TopmostIndex));
-            _currentItems = items;
-            _currentItem.CurrentIndex = 0;
+            _currentItemsHistory.Push(Tuple.Create(items, new ScrollableList(MENU_ITEM_COUNT, () => items.Count)));
         }
 
         private void PopItems()
         {
-            if (_currentItemsHistory.Count == 2 || _currentItems == _itemCollections.LoginItems)
+            if (_currentItemsHistory.Count == 1) return; // Already at top level.
+            if (CurrentItems == _itemCollections.LoginItems || CurrentItems == _itemCollections.SetupItems)
                 MenuEngine.Game.Settings.ToFile();
             if (_currentItemsHistory.Count == 2)
             {
@@ -89,15 +84,8 @@ namespace AW2.Menu
                 ApplyGraphicsSettings();
                 ApplyControlsSettings();
             }
-            if (_currentItemsHistory.Count > 1)
-            {
-                // Wasn't at top level already.
-                var old = _currentItemsHistory.Pop();
-                _currentItems = old.Item1;
-                _currentItem.CurrentIndex = old.Item2;
-                _currentItem.TopmostIndex = old.Item3;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-            }
+            _currentItemsHistory.Pop();
+            MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
         }
 
         public override void Update()
@@ -107,35 +95,39 @@ namespace AW2.Menu
             {
                 while (queue.Any()) MenuEngine.Game.ShowInfoDialog(queue.Dequeue());
             });
-            if (_currentItems != ItemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
-                throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode + " in " + _currentItems.Name);
+            if (CurrentItems != ItemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
+                throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode + " in " + CurrentItems.Name);
             _commonCallbacks.Update();
-            foreach (var menuItem in _currentItems) menuItem.Update();
-            _currentItems.Update();
+            foreach (var menuItem in CurrentItems) menuItem.Update();
+            CurrentItems.Update();
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
-            _currentItem.ForEachVisible((realIndex, visibleIndex, isSelected) =>
+            if (!_currentItemsHistory.Any()) return;
+            var titlePos = _pos - view + new Vector2(585, 320);
+            var title = string.Join(" > ",
+                (from items in _currentItemsHistory.Reverse()
+                 let name = items.Item1.Name
+                 where name != ""
+                 select name).ToArray());
+            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, title, titlePos.Round(), Color.LightGray);
+            CurrentItemIndexer.ForEachVisible((realIndex, visibleIndex, isSelected) =>
             {
-                if (isSelected) _currentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);
-                _currentItems[realIndex].Draw(spriteBatch, _pos - view, visibleIndex);
+                if (isSelected) CurrentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);
+                CurrentItems[realIndex].Draw(spriteBatch, _pos - view, visibleIndex);
             });
-
-            if (_currentItems == ItemCollections.StartItems || _currentItems == ItemCollections.NetworkItems)
-                DrawAdditionalMessageBox(view, spriteBatch);
-
-            if (_currentItems == ItemCollections.NetworkItems)
+            if (CurrentItems == ItemCollections.NetworkItems)
             {
+                DrawAdditionalMessageBox(view, spriteBatch);
                 DrawPilotLoginStatus(view, spriteBatch);
                 DrawScheduledBattleDisplay(view, spriteBatch);
             }
-
             var scrollUpPos = _pos - view + new Vector2(653, 260);
             var scrollDownPos = _pos - view + new Vector2(653, 580);
-            if (_currentItem.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);
-            if (_currentItem.IsScrollableDown) spriteBatch.Draw(Content.ScrollDownTexture, scrollDownPos, Color.White);
+            if (CurrentItemIndexer.IsScrollableUp) spriteBatch.Draw(Content.ScrollUpTexture, scrollUpPos, Color.White);
+            if (CurrentItemIndexer.IsScrollableDown) spriteBatch.Draw(Content.ScrollDownTexture, scrollDownPos, Color.White);
         }
 
         private void DrawAdditionalMessageBox(Vector2 view, SpriteBatch spriteBatch)
@@ -183,12 +175,12 @@ namespace AW2.Menu
             };
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Up, () =>
             {
-                _currentItem.CurrentIndex--;
+                CurrentItemIndexer.CurrentIndex--;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Down, () =>
             {
-                _currentItem.CurrentIndex++;
+                CurrentItemIndexer.CurrentIndex++;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Activate, () => CurrentItem.Action()));

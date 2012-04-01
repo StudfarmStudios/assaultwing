@@ -6,6 +6,7 @@ namespace AW2.Menu.Main
     /// <summary>
     /// A list of menu items, pluggable into <see cref="MainMenuComponent"/>.
     /// </summary>
+    [System.Diagnostics.DebuggerDisplay("'{Name}' with {Count} items")]
     public class MainMenuItemCollection : IEnumerable<MainMenuItem>
     {
         private List<MainMenuItem> _menuItems;
@@ -21,7 +22,7 @@ namespace AW2.Menu.Main
 
         public MainMenuItemCollection(string name)
         {
-            if (name == null || name == "") throw new ArgumentNullException("Null or empty menu mode name");
+            if (name == null) throw new ArgumentNullException("Null or empty menu mode name");
             Name = name;
             Update = () => { };
             _menuItems = new List<MainMenuItem>();

@@ -10,6 +10,7 @@ namespace AW2.Net
         public string Name { get; set; }
         public int MaxPlayers { get; set; }
         public int CurrentPlayers { get; set; }
+        public int WaitingPlayers { get; set; }
 
         /// <summary>
         /// Identifier given by the management server.

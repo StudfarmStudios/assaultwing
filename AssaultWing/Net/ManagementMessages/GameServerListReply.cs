@@ -30,8 +30,9 @@ namespace AW2.Net.ManagementMessages
                 return new GameServerInfo
                 {
                     Name = line["name"],
-                    CurrentPlayers = int.Parse(line["currentclients"]),
-                    MaxPlayers = int.Parse(line["maxclients"]),
+                    CurrentPlayers = GetInt(line, "currentclients") ?? 0,
+                    WaitingPlayers = GetInt(line, "waitingclients") ?? 0,
+                    MaxPlayers = GetInt(line, "maxclients") ?? 0,
                     ManagementID = line["id"],
                     AWVersion = Version.Parse(line["awversion"]),
                 };

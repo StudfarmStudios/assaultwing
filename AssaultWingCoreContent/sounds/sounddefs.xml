@@ -44,4 +44,7 @@
   <sound name="meow" volume="1.0"/>
   <sound name="purpur" loop="true" volume="1.0"/>
   <sound name="angry" volume="1.0"/>
+  <sound name="shieldActivate" volume="0.4"/>
+  <sound name="shieldBlock" volume="0.35"/>
+  <sound name="shieldFail" volume="0.5"/>
 </group>

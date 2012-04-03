@@ -29,7 +29,9 @@
   <blockSuccessPengs>
     <Item>shield block</Item>
   </blockSuccessPengs>
-  <fireSound>DropMines</fireSound>
+  <blockSuccessSound>ShieldBlock</blockSuccessSound>
+  <blockFailSound>ShieldFail</blockFailSound>
+  <fireSound>ShieldActivate</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <iconName>menu_equip_mod_shield</iconName>

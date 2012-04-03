@@ -192,6 +192,7 @@
     <Compile Include="Game\Weapons\LightningGun.cs" />
     <Compile Include="Game\Weapons\Repulsor.cs" />
     <Compile Include="Game\Weapons\SelfDestruct.cs" />
+    <Compile Include="Game\Weapons\Shield.cs" />
     <Compile Include="Game\Weapons\ShipBarrelTypes.cs" />
     <Compile Include="Graphics\ArenaSilhouette.cs" />
     <Compile Include="Graphics\AutoRenderTarget2D.cs" />

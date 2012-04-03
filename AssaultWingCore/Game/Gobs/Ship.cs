@@ -21,6 +21,8 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Ship : Gob
     {
+        public delegate float ReceivingDamageEvent(float damageAmount, DamageInfo cause);
+
         /// <summary>
         /// It is valid to combine only one of Weapon1*, one of Weapon2* and one of ExtraDevice*
         /// into one value of DeviceUsages.
@@ -249,6 +251,7 @@ namespace AW2.Game.Gobs
         }
 
         public event Action<Gob> PhysicalCollidedInto;
+        public event ReceivingDamageEvent ReceivingDamage;
 
         private SpriteFont PlayerNameFont { get { return Game.GraphicsEngine.GameContent.ConsoleFont; } }
 
@@ -517,6 +520,8 @@ namespace AW2.Game.Gobs
             if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
             if (damageAmount == 0) return;
             if (IsNewborn) return;
+            if (ReceivingDamage != null) damageAmount = ReceivingDamage(damageAmount, cause);
+            if (damageAmount == 0) return;
             LastDamageTakenTime = Game.DataEngine.ArenaTotalTime;
             if (Owner != null) Owner.IncreaseShake(damageAmount);
             base.InflictDamage(damageAmount, cause);

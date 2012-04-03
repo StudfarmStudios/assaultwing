@@ -141,7 +141,7 @@ namespace AW2.Core
             SelectedArenaName = arenas.First().Info.Name;
             DataEngine.GameplayMode = new GameplayMode();
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
-            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage" };
+            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage", "shield" };
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine" };
             if (CommandLineOptions.DedicatedServer)
                 WebData.Feed("1D");

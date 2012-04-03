@@ -33,11 +33,11 @@
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <iconName>menu_equip_mod_shield</iconName>
-  <loadTime>2.5</loadTime>
+  <loadTime>3.5</loadTime>
   <protectionTime>1.5</protectionTime>
-  <receivedDamageMultiplier>0.1</receivedDamageMultiplier>
+  <receivedDamageMultiplier>0.13</receivedDamageMultiplier>
   <chargeUsageMultiplier>0.5</chargeUsageMultiplier>
-  <fireCharge>200</fireCharge>
+  <fireCharge>300</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <shotCount>1</shotCount>
   <shotSpacing>1</shotSpacing>

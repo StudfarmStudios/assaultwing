@@ -56,16 +56,23 @@
     <keys>
       <Item>
         <position>0</position>
-        <internalValue>2000</internalValue>
-        <tangentOut>0</tangentOut>
+        <internalValue>1800</internalValue>
         <tangentIn>0</tangentIn>
+        <tangentOut>0</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>200</position>
+        <internalValue>1000</internalValue>
+        <tangentIn>-1200</tangentIn>
+        <tangentOut>-600</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
         <position>300</position>
         <internalValue>0</internalValue>
+        <tangentIn>-1000</tangentIn>
         <tangentOut>0</tangentOut>
-        <tangentIn>-2000</tangentIn>
         <continuity>Smooth</continuity>
       </Item>
     </keys>

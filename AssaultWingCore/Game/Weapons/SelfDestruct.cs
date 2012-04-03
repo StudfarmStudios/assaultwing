@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.BonusActions;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -24,14 +26,9 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            Owner.InflictDamage(Owner.MaxDamageLevel - Owner.DamageLevel + 1, new DamageInfo(Owner, ignoreLastDamager: true));
-            foreach (var gobType in deathGobTypes)
-                Gob.CreateGob<Gob>(Owner.Game, gobType, gob =>
-                {
-                    gob.ResetPos(Owner.Pos, Vector2.Zero, Owner.Rotation);
-                    gob.Owner = SpectatorOwner;
-                    Arena.Gobs.Add(gob);
-                });
+            GobHelper.CreateGobs(deathGobTypes, Arena, Owner.Pos, gob => gob.Owner = PlayerOwner);
+            var suicideBomberBonus = Owner.BonusActions.FirstOrDefault(act => act is Weapon2UpgradeBonusAction);
+            if (suicideBomberBonus != null) suicideBomberBonus.TimeOut();
         }
     }
 }

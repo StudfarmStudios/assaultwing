@@ -70,7 +70,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             Game.SoundEngine.PlaySound(_sound, this);
-            GobHelper.CreateGobs(_particleEngineNames, Arena, Pos);
+            GobHelper.CreateGobs(_particleEngineNames, Arena, Pos, gob => gob.Owner = Owner);
             _radialFlow.Activate(this, Arena.TotalTime);
             Arena.MakeHole(Pos, _impactHoleRadius);
             base.Activate();

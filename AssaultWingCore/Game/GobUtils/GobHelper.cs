@@ -2,18 +2,20 @@
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Helpers;
+using System;
 
 namespace AW2.Game.GobUtils
 {
     public static class GobHelper
     {
-        public static void CreateGobs(IEnumerable<CanonicalString> typeNames, Arena arena, Vector2 pos)
+        public static void CreateGobs(IEnumerable<CanonicalString> typeNames, Arena arena, Vector2 pos, Action<Gob> init = null)
         {
             foreach (var typeName in typeNames)
             {
                 Gob.CreateGob<Gob>(arena.Game, typeName, gob =>
                 {
                     gob.ResetPos(pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
+                    if (init != null) init(gob);
                     arena.Gobs.Add(gob);
                 });
             }

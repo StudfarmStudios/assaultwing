@@ -80,21 +80,20 @@ namespace AW2.Game.Weapons
             if (_inactivationTime <= Owner.Game.GameTime.TotalGameTime) return damageAmount;
             if (Charge < requiredCharge)
             {
-                ShowBlockEffect(_blockFailPengs, ref _lastFailEffectTime);
-                Owner.Game.SoundEngine.PlaySound(_blockFailSound, Owner);
+                CreateBlockEffect(_blockFailSound, _blockFailPengs, ref _lastFailEffectTime);
                 return damageAmount;
             }
             Charge -= requiredCharge;
-            ShowBlockEffect(_blockSuccessPengs, ref _lastSuccessEffectTime);
-            Owner.Game.SoundEngine.PlaySound(_blockSuccessSound, Owner);
+            CreateBlockEffect(_blockSuccessSound, _blockSuccessPengs, ref _lastSuccessEffectTime);
             return _receivedDamageMultiplier * damageAmount;
         }
 
-        private void ShowBlockEffect(CanonicalString[] pengs, ref TimeSpan lastEffectTime)
+        private void CreateBlockEffect(string sound, CanonicalString[] pengs, ref TimeSpan lastEffectTime)
         {
             if (lastEffectTime + BLOCK_EFFECT_INTERVAL_MIN > Owner.Game.GameTime.TotalGameTime) return;
             lastEffectTime = Owner.Game.GameTime.TotalGameTime;
             GobHelper.CreatePengs(pengs, Owner);
+            Owner.Game.SoundEngine.PlaySound(sound, Owner);
         }
     }
 }

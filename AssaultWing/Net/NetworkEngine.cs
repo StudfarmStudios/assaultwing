@@ -248,11 +248,7 @@ namespace AW2.Net
             _removedClientConnections.Add(connection);
 
             var droppedPlayers = Game.DataEngine.Spectators.Where(plr => plr.ConnectionID == connection.ID);
-            foreach (var plr in droppedPlayers)
-            {
-                plr.Disconnect();
-                Game.Stats.Send(new { RemovePlayer = plr.GetStats().LoginToken, Name = plr.Name });
-            }
+            foreach (var plr in droppedPlayers) plr.Disconnect();
             if (droppedPlayers.Any())
             {
                 var message = string.Join(" and ", droppedPlayers.Select(plr => plr.Name).ToArray()) + " left the game";

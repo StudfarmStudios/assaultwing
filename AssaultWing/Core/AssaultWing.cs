@@ -467,9 +467,9 @@ namespace AW2.Core
         private void SpectatorRemovedHandler(Spectator spectator)
         {
             if (NetworkMode != NetworkMode.Server) return;
+            Stats.Send(new { RemovePlayer = spectator.GetStats().LoginToken, Name = spectator.Name });
             UpdateGameServerInfoToManagementServer();
-            var clientMessage = new PlayerDeletionMessage { PlayerID = spectator.ID };
-            NetworkEngine.SendToGameClients(clientMessage);
+            NetworkEngine.SendToGameClients(new PlayerDeletionMessage { PlayerID = spectator.ID });
         }
 
         private void ConnectionResultOnClientCallback(Result<Connection> result)

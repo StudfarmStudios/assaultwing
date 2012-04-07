@@ -386,27 +386,40 @@ namespace AW2.Net.MessageHandling
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
             mess.Read(newSpectator, mode, 0);
-            if (newSpectator.GetStats().IsLoggedIn && Game.DataEngine.Spectators.Any(
-                spec => spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == newSpectator.GetStats().PilotId))
-            {
-                Log.Write("Refusing spectator {0} because he's already logged in", newSpectator.Name);
-                return null;
-            }
-            var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(
-                spec => spec.IsDisconnected && spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
-            if (oldSpectator == null)
+            Func<Spectator> addNewSpectator = () =>
             {
                 Game.DataEngine.Spectators.Add(newSpectator);
+                return newSpectator;
+            };
+            Func<Spectator, Spectator> reconnectNewSpectator = oldSpectator =>
+            {
+                Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
+                oldSpectator.Reconnect(newSpectator);
+                return newSpectator = oldSpectator;
+            };
+            Func<Spectator, Spectator> refuseNewSpectator = oldSpectator =>
+            {
+                Log.Write("Refusing spectator {0} from {1} because he's already logged in from {2}.",
+                    newSpectator.Name, ipAddress, (object)oldSpectator.IPAddress ?? "the local host");
+                return null;
+            };
+            var newStats = newSpectator.GetStats();
+            if (newStats.IsLoggedIn)
+            {
+                var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec =>
+                    spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == newStats.PilotId);
+                if (oldSpectator == null) return addNewSpectator();
+                if (oldSpectator.IsDisconnected) return reconnectNewSpectator(oldSpectator);
+                return refuseNewSpectator(oldSpectator);
             }
             else
             {
-                // This can happen only on a game server.
-                Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
-                oldSpectator.Reconnect(newSpectator);
-                newSpectator = oldSpectator;
+                var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec =>
+                    spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
+                if (oldSpectator == null) return addNewSpectator();
+                if (oldSpectator.IsDisconnected) reconnectNewSpectator(oldSpectator);
+                return addNewSpectator();
             }
-            Game.Stats.Send(new { AddPlayer = newSpectator.GetStats().LoginToken, Name = newSpectator.Name });
-            return newSpectator;
         }
     }
 }

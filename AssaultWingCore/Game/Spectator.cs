@@ -61,8 +61,7 @@ namespace AW2.Game
         public INetworkSerializable StatsData { get; set; }
 
         /// <summary>
-        /// The last known IP address of the connection of the spectator,
-        /// or null if the spectator is local.
+        /// The last known IP address of the connection of the spectator. For local players it's 127.0.0.1.
         /// </summary>
         public IPAddress IPAddress { get; private set; }
 
@@ -115,7 +114,7 @@ namespace AW2.Game
             Game = game;
             ConnectionID = connectionId;
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
-            IPAddress = ipAddress;
+            IPAddress = ipAddress ?? IPAddress.Loopback;
             Color = Color.LightGray;
             ArenaStatistics = new SpectatorArenaStatistics();
             StatsData = CreateStatsData(this);

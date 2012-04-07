@@ -61,8 +61,7 @@ namespace AW2.Game
         public INetworkSerializable StatsData { get; set; }
 
         /// <summary>
-        /// The last known IP address of the connection of the spectator,
-        /// or null if the spectator is local.
+        /// The last known IP address of the connection of the spectator. For local players it's 127.0.0.1.
         /// </summary>
         public IPAddress IPAddress { get; private set; }
 
@@ -108,6 +107,11 @@ namespace AW2.Game
 
         public SpectatorArenaStatistics ArenaStatistics { get; private set; }
 
+        /// <summary>
+        /// In real time.
+        /// </summary>
+        public TimeSpan LastDisconnectTime { get; private set; }
+
         private ConnectionStatusType ConnectionStatus { get; set; }
 
         public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL, IPAddress ipAddress = null)
@@ -115,7 +119,7 @@ namespace AW2.Game
             Game = game;
             ConnectionID = connectionId;
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
-            IPAddress = ipAddress;
+            IPAddress = ipAddress ?? IPAddress.Loopback;
             Color = Color.LightGray;
             ArenaStatistics = new SpectatorArenaStatistics();
             StatsData = CreateStatsData(this);
@@ -130,6 +134,7 @@ namespace AW2.Game
         public void Disconnect()
         {
             if (ConnectionStatus != ConnectionStatusType.Remote) throw new InvalidOperationException("Cannot disconnect a " + ConnectionStatus + " spectator");
+            LastDisconnectTime = Game.GameTime.TotalRealTime;
             ConnectionStatus = ConnectionStatusType.Disconnected;
             ClientUpdateRequest |= ClientUpdateType.ToEveryone;
         }

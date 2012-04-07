@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
@@ -15,6 +16,8 @@ namespace AW2.Game
     /// </summary>
     public class LogicEngine : AWGameComponent
     {
+        private static readonly TimeSpan PLAYER_DISCONNECT_DROP_DELAY = TimeSpan.FromMinutes(3);
+
         private Control _helpControl;
 #if DEBUG
         private Control _showOnlyPlayer1Control, _showOnlyPlayer2Control, _showEverybodyControl;
@@ -75,6 +78,7 @@ namespace AW2.Game
 
             Game.DataEngine.Arena.PerformNonphysicalCollisions(allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
             KillGobsOnClient();
+            RemoveInactivePlayers();
 
             // Check for arena end. Network games end when the game server presses Esc.
             if (Game.NetworkMode == NetworkMode.Standalone)
@@ -104,6 +108,12 @@ namespace AW2.Game
                 _unfoundGobsToDeleteOnClientReportLimit *= 2;
             }
 #endif
+        }
+
+        private void RemoveInactivePlayers()
+        {
+            if (Game.NetworkMode != NetworkMode.Server) return;
+            Game.DataEngine.Spectators.Remove(spec => spec.IsDisconnected && spec.LastDisconnectTime + PLAYER_DISCONNECT_DROP_DELAY < Game.GameTime.TotalRealTime);
         }
 
         /// <summary>

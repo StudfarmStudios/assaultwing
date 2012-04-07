@@ -533,7 +533,7 @@ namespace AW2.Core
 
         private void SendMessagesOnClient()
         {
-            if (NetworkMode != NetworkMode.Client) return;
+            if (NetworkMode != NetworkMode.Client || !NetworkEngine.IsConnectedToGameServer) return;
             SendGameSettingsOnClient();
             SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
                 SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
@@ -651,8 +651,7 @@ namespace AW2.Core
         {
             if (_lastGameSettingsSent.SecondsAgoRealTime() < 1) return;
             _lastGameSettingsSent = GameTime.TotalRealTime;
-            if (NetworkEngine.IsConnectedToGameServer)
-                SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
+            SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
         }
 
         private void SendGameSettingsToRemote(IEnumerable<Connection> connections)

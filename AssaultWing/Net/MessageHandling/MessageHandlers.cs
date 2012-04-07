@@ -417,7 +417,7 @@ namespace AW2.Net.MessageHandling
                 var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec =>
                     spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
                 if (oldSpectator == null) return addNewSpectator();
-                if (oldSpectator.IsDisconnected) reconnectNewSpectator(oldSpectator);
+                if (oldSpectator.IsDisconnected) return reconnectNewSpectator(oldSpectator);
                 return addNewSpectator();
             }
         }

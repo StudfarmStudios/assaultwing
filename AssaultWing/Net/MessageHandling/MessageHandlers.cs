@@ -177,7 +177,7 @@ namespace AW2.Net.MessageHandling
 
         private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
         {
-            Game.DataEngine.Spectators.Remove(spec => spec.IsRemote && spec.ID == mess.PlayerID);
+            Game.DataEngine.Spectators.Remove(spec => !spec.IsLocal && spec.ID == mess.PlayerID);
         }
 
         private void HandleGameSettingsRequest(GameSettingsRequest mess)
@@ -406,6 +406,8 @@ namespace AW2.Net.MessageHandling
             var newStats = newSpectator.GetStats();
             if (newStats.IsLoggedIn)
             {
+                // FIXME !!! newStats.PilotId is always null because it has not yet been fetched from the stats server.
+                // This bug allows the same logged-in pilot to enter the game many times at once.
                 var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec =>
                     spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == newStats.PilotId);
                 if (oldSpectator == null) return addNewSpectator();

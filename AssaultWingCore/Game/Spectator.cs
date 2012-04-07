@@ -107,6 +107,11 @@ namespace AW2.Game
 
         public SpectatorArenaStatistics ArenaStatistics { get; private set; }
 
+        /// <summary>
+        /// In real time.
+        /// </summary>
+        public TimeSpan LastDisconnectTime { get; private set; }
+
         private ConnectionStatusType ConnectionStatus { get; set; }
 
         public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL, IPAddress ipAddress = null)
@@ -129,6 +134,7 @@ namespace AW2.Game
         public void Disconnect()
         {
             if (ConnectionStatus != ConnectionStatusType.Remote) throw new InvalidOperationException("Cannot disconnect a " + ConnectionStatus + " spectator");
+            LastDisconnectTime = Game.GameTime.TotalRealTime;
             ConnectionStatus = ConnectionStatusType.Disconnected;
             ClientUpdateRequest |= ClientUpdateType.ToEveryone;
         }

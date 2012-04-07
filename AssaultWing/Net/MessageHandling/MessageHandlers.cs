@@ -203,11 +203,6 @@ namespace AW2.Net.MessageHandling
                 (control, state) => control.SetControlState(state.Force, state.Pulse);
             foreach (PlayerControlType control in System.Enum.GetValues(typeof(PlayerControlType)))
                 setRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
-            if (Game.DataEngine.ArenaFrameCount % 100 == 0) // !!!
-            {
-                setRemoteControlState((RemoteControl)player.Controls[PlayerControlType.Fire1], new ControlState(1, true)); // !!!
-                setRemoteControlState((RemoteControl)player.Controls[PlayerControlType.Fire2], new ControlState(1, true)); // !!!
-            }
             var playerPlayer = player as Player;
             if (playerPlayer != null && playerPlayer.Ship != null && playerPlayer.Ship.LocationPredicter != null)
                 playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, Game.NetworkEngine.GetMessageGameTime(mess));

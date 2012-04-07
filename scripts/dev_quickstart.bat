@@ -34,7 +34,7 @@ if %i% EQU 13 set login_token=4f7f099cb42ade8c5c000027
 if %i% EQU 14 set login_token=4f7f09c0b42ade8c5c000028
 if %i% EQU 15 set login_token=4f7f09d1b42ade8c5c000029
 if %i% EQU 16 set login_token=4f7f1369b42ade8c5c00002b
-%SystemRoot%\system32\presentationhost.exe -launchapplication "http://koti.welho.com/vvnurmi/aw2/install/AssaultWingDev.application?quickstart=&server_name=Test%20Server&server=62.75.224.66:16728:16728&login_token=%login_token%&ship=Plissken&weapon=rockets&mod=repulsor"
+%SystemRoot%\system32\presentationhost.exe -launchapplication "http://koti.welho.com/vvnurmi/aw2/install/AssaultWingDev.application?quickstart=&server_name=Test%%20Server&server=62.75.224.66:16728:16728&login_token=%login_token%&ship=Plissken&weapon=rockets&mod=repulsor"
 timeout /t 5
 set /a i=i+1
 goto :loop

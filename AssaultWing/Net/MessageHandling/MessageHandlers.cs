@@ -388,14 +388,17 @@ namespace AW2.Net.MessageHandling
             mess.Read(newSpectator, mode, 0);
             Func<Spectator> addNewSpectator = () =>
             {
+                Log.Write("Adding spectator {0}", newSpectator.Name);
                 Game.DataEngine.Spectators.Add(newSpectator);
+                Game.Stats.Send(new { AddPlayer = newSpectator.GetStats().LoginToken, Name = newSpectator.Name });
                 return newSpectator;
             };
             Func<Spectator, Spectator> reconnectNewSpectator = oldSpectator =>
             {
                 Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
                 oldSpectator.Reconnect(newSpectator);
-                return newSpectator = oldSpectator;
+                Game.Stats.Send(new { AddPlayer = oldSpectator.GetStats().LoginToken, Name = oldSpectator.Name });
+                return oldSpectator;
             };
             Func<Spectator, Spectator> refuseNewSpectator = oldSpectator =>
             {
@@ -408,6 +411,7 @@ namespace AW2.Net.MessageHandling
             {
                 // FIXME !!! newStats.PilotId is always null because it has not yet been fetched from the stats server.
                 // This bug allows the same logged-in pilot to enter the game many times at once.
+                // FIXME too !!! PilotId stays null even dozens of seconds. Why?
                 var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec =>
                     spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == newStats.PilotId);
                 if (oldSpectator == null) return addNewSpectator();

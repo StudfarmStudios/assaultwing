@@ -85,7 +85,7 @@ namespace AW2.UI
             if (GameState == GAMESTATE_INTRO && IntroEngine.Mode == IntroEngine.ModeType.Finished) ShowMainMenuAndResetGameplay();
             if (EquipMenuActive) CheckArenaStart();
             if (Game.ArenaLoadTask.TaskCompleted) Handle_ArenaLoadingFinished();
-            if (MainMenuActive && Game.NetworkEngine.GameServerConnection != null) MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
+            if (MainMenuActive && Game.NetworkEngine.IsConnectedToGameServer) MenuEngine.Activate(AW2.Menu.MenuComponentType.Equip);
         }
 
         private void HandleNetworkingErrors()

@@ -475,7 +475,7 @@ namespace AW2.Core
         private void ConnectionResultOnClientCallback(Result<Connection> result)
         {
             Logic.HideDialog("Connecting to server");
-            if (NetworkEngine.GameServerConnection != null)
+            if (NetworkEngine.IsConnectedToGameServer)
             {
                 // Silently ignore extra server connection attempts.
                 if (result.Successful) result.Value.Dispose();

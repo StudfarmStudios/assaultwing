@@ -40,10 +40,10 @@ namespace AW2.Net.MessageHandling
                         foreach (var conn in net.GameClientConnections) yield return conn;
                     break;
                 case SourceType.Server:
-                    if (net.GameServerConnection != null) yield return net.GameServerConnection;
+                    if (net.IsConnectedToGameServer) yield return net.GameServerConnection;
                     break;
                 case SourceType.Management:
-                    if (net.ManagementServerConnection != null) yield return net.ManagementServerConnection;
+                    if (net.IsConnectedToManagementServer) yield return net.ManagementServerConnection;
                     break;
                 default: throw new ApplicationException("Invalid SourceType " + source);
             }

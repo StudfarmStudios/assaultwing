@@ -285,7 +285,7 @@ namespace AW2.Net
         {
             get
             {
-                if (GameServerConnection == null)
+                if (!IsConnectedToGameServer)
                     throw new InvalidOperationException("Cannot ping server without connection");
                 return GameServerConnection.PingInfo.PingTime;
             }
@@ -362,7 +362,7 @@ namespace AW2.Net
                     HandleConnectionHandshakingOnClient();
                     break;
             }
-            CloseSilentConnections();
+            DetectSilentConnections();
             HandleErrors();
             RemoveClosedConnections();
             PurgeUnhandledMessages();
@@ -383,9 +383,9 @@ namespace AW2.Net
         {
             get
             {
-                if (_managementServerConnection != null)
+                if (IsConnectedToManagementServer)
                     yield return _managementServerConnection;
-                if (GameServerConnection != null)
+                if (IsConnectedToGameServer)
                     yield return GameServerConnection;
                 if (GameClientConnections != null)
                     foreach (var conn in GameClientConnections) yield return conn;
@@ -417,14 +417,11 @@ namespace AW2.Net
             });
         }
 
-        private void CloseSilentConnections()
+        private void DetectSilentConnections()
         {
             foreach (var conn in AllConnections)
                 if (conn.PingInfo.IsMissingReplies)
-                {
-                    Log.Write("Closing {0} because of not replying to pings", conn.Name);
-                    conn.Dispose();
-                }
+                    conn.Errors.Do(queue => queue.Enqueue("Ping replies missing."));
         }
 
         private void HandleErrors()
@@ -448,7 +445,7 @@ namespace AW2.Net
 
         private void DisposeGameServerConnection()
         {
-            if (GameServerConnection == null) return;
+            if (!IsConnectedToGameServer) return;
             GameServerConnection.Dispose();
             GameServerConnection = null;
         }
@@ -633,7 +630,7 @@ namespace AW2.Net
 
         private void HandleConnectionHandshakingOnClient()
         {
-            if (GameServerConnection == null) return;
+            if (!IsConnectedToGameServer) return;
             if (GameServerConnection.PreviousHandshakeAttempt == TimeSpan.Zero)
                 GameServerConnection.FirstHandshakeAttempt = GameServerConnection.PreviousHandshakeAttempt = Game.GameTime.TotalRealTime;
             if (Game.GameTime.TotalRealTime > GameServerConnection.FirstHandshakeAttempt + HANDSHAKE_TIMEOUT) return;

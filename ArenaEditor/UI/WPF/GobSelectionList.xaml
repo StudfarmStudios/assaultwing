@@ -1,0 +1,9 @@
+﻿<ListBox x:Class="AW2.UI.WPF.GobSelectionList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ListBox.ItemTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding TypeName.Value}"/>
+        </DataTemplate>
+    </ListBox.ItemTemplate>
+</ListBox>

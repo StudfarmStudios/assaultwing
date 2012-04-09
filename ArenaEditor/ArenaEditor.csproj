@@ -99,8 +99,8 @@
     <Compile Include="UI\WPF\ArenaEditorWindow.xaml.cs">
       <DependentUpon>ArenaEditorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\WPF\GobSelectionPopup.xaml.cs">
-      <DependentUpon>GobSelectionPopup.xaml</DependentUpon>
+    <Compile Include="UI\WPF\GobSelectionList.xaml.cs">
+      <DependentUpon>GobSelectionList.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\WPF\LayerList.xaml.cs">
       <DependentUpon>LayerList.xaml</DependentUpon>
@@ -118,7 +118,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\WPF\GobSelectionPopup.xaml">
+    <Page Include="UI\WPF\GobSelectionList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

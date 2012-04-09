@@ -61,6 +61,9 @@
             </GroupBox>
 
             <TextBlock x:Name="CursorCoordinates" DockPanel.Dock="Bottom">X: ??? Y: ???</TextBlock>
+            <GroupBox Header="Gobs Nearby" DockPanel.Dock="Bottom">
+                <ui:GobSelectionList x:Name="GobList" ItemsSource="{Binding Gobs, ElementName=GobList}"/>
+            </GroupBox>
         </DockPanel>
         <WindowsFormsHost x:Name="ArenaViewHost" SizeChanged="ApplyViewSettings">
             <aw:GraphicsDeviceControl x:Name="ArenaView"

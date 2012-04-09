@@ -24,6 +24,10 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="arenas\Arena_AlienWorld.bin">
+      <Name>Arena_AlienWorld</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="arenas\Arena_Amazonas.bin">
       <Name>Arena_Amazonas</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2677,6 +2681,14 @@
       <Processor>SoundEffectProcessor</Processor>
       <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="arenas\Arena_AlienWorld.xml">
+      <Name>Arena_AlienWorld</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,6 +4,7 @@ require (include_dir + 'aw_config').to_s
 
 def bots_enabled; !Time.now.wednesday? || !(19..21).include?(Time.now.hour) end
 
-config = AWConfig.new
-config.set "//botsEnabled", bots_enabled
-config.save
+AWConfig.each do |config|
+    config.op_set "//botsEnabled", bots_enabled
+    config.save
+end

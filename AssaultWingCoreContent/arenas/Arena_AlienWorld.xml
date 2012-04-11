@@ -22,10 +22,10 @@
           <propModelName>alienworld_pillar</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>301.399963</X>
-            <Y>-30.8000183</Y>
+            <X>-112.200439</X>
+            <Y>-145.199951</Y>
           </pos>
-          <rotation>5.897508</rotation>
+          <rotation>3.92875457</rotation>
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel">
@@ -42,660 +42,155 @@
           <propModelName>alienworld_pillar</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>214.403122</X>
-            <Y>1182.39648</Y>
+            <X>746.803162</X>
+            <Y>1846.792</Y>
           </pos>
-          <rotation>0.331777</rotation>
+          <rotation>5.44431</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_stairs</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2033.80042</X>
+            <Y>1543.19775</Y>
+          </pos>
+          <rotation>0.538537145</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_stairs</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>233.6004</X>
+            <Y>1450.19775</Y>
+          </pos>
+          <rotation>1.72953141</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_stairs</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>228.600357</X>
+            <Y>43.7982559</Y>
+          </pos>
+          <rotation>3.70487618</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_pillar</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2487.00122</X>
+            <Y>2013.99744</Y>
+          </pos>
+          <rotation>0.929198563</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_pillar</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>-160.196625</X>
+            <Y>2528.19238</Y>
+          </pos>
+          <rotation>3.27282929</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_altar</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>715.4048</X>
+            <Y>655.9924</Y>
+          </pos>
+          <rotation>0.06715162</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_altar</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>-374.1961</X>
+            <Y>-691.0085</Y>
+          </pos>
+          <rotation>3.561691</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_altar</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>1457.80469</X>
+            <Y>3534.5918</Y>
+          </pos>
+          <rotation>5.97785473</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_pillar</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>1527.20154</X>
+            <Y>2882.39722</Y>
+          </pos>
+          <rotation>0.0239232127</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_stairs</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>1577.80029</X>
+            <Y>2264.198</Y>
+          </pos>
+          <rotation>2.84574771</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_altar</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2538.60474</X>
+            <Y>2245.99219</Y>
+          </pos>
+          <rotation>2.15172958</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_altar</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>-245.595428</X>
+            <Y>3181.992</Y>
+          </pos>
+          <rotation>4.43895245</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel">
+          <propModelName>alienworld_stairs</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>-966.6003</X>
+            <Y>725.1988</Y>
+          </pos>
+          <rotation>5.17562342</rotation>
           <typeName>prop model</typeName>
         </Item>
       </gobs>
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
-      <z>-1000</z>
+      <z>-800</z>
       <parallaxName>alienworld_parallax_dust</parallaxName>
       <gobs />
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
-      <z>-900.303</z>
+      <z>-550.303</z>
       <parallaxName>alienworld_parallax_greenhaze</parallaxName>
       <gobs />
-    </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer">
-      <isGameplayLayer>false</isGameplayLayer>
-      <z>-500.581421</z>
-      <parallaxName></parallaxName>
-      <gobs />
-    </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer">
-      <isGameplayLayer>false</isGameplayLayer>
-      <z>-500</z>
-      <parallaxName></parallaxName>
-      <gobs />
-    </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer">
-      <isGameplayLayer>false</isGameplayLayer>
-      <z>0</z>
-      <parallaxName></parallaxName>
-      <gobs>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect occupied</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>NaN</X>
-            <Y>NaN</Y>
-          </pos>
-          <rotation>NaN</rotation>
-          <typeName>dockeffect</typeName>
-        </Item>
-      </gobs>
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>true</isGameplayLayer>
@@ -723,8 +218,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
-          <destructible>true</destructible>
-          <staticID>57</staticID>
+          <destructible>false</destructible>
+          <staticID>28</staticID>
           <pos>
             <X>5003</X>
             <Y>1831</Y>
@@ -734,8 +229,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
-          <destructible>true</destructible>
-          <staticID>58</staticID>
+          <destructible>false</destructible>
+          <staticID>29</staticID>
           <pos>
             <X>-34.99999</X>
             <Y>662</Y>
@@ -746,7 +241,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>59</staticID>
+          <staticID>30</staticID>
           <pos>
             <X>-1037</X>
             <Y>1114</Y>
@@ -756,8 +251,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>60</staticID>
+          <destructible>false</destructible>
+          <staticID>31</staticID>
           <pos>
             <X>1512</X>
             <Y>-100.9998</Y>
@@ -768,7 +263,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>61</staticID>
+          <staticID>32</staticID>
           <pos>
             <X>1081</X>
             <Y>1555</Y>
@@ -778,8 +273,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
-          <destructible>true</destructible>
-          <staticID>62</staticID>
+          <destructible>false</destructible>
+          <staticID>33</staticID>
           <pos>
             <X>944.0001</X>
             <Y>20.0000038</Y>
@@ -790,7 +285,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>63</staticID>
+          <staticID>34</staticID>
           <pos>
             <X>-875</X>
             <Y>428.999939</Y>
@@ -801,7 +296,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>64</staticID>
+          <staticID>35</staticID>
           <pos>
             <X>3494</X>
             <Y>3721</Y>
@@ -812,7 +307,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>65</staticID>
+          <staticID>36</staticID>
           <pos>
             <X>4984</X>
             <Y>3493</Y>
@@ -823,7 +318,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>66</staticID>
+          <staticID>37</staticID>
           <pos>
             <X>3411</X>
             <Y>771</Y>
@@ -834,7 +329,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>67</staticID>
+          <staticID>38</staticID>
           <pos>
             <X>2660</X>
             <Y>1190</Y>
@@ -845,7 +340,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>68</staticID>
+          <staticID>39</staticID>
           <pos>
             <X>1101</X>
             <Y>119.999893</Y>
@@ -856,7 +351,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>69</staticID>
+          <staticID>40</staticID>
           <pos>
             <X>1656</X>
             <Y>551</Y>
@@ -867,7 +362,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>70</staticID>
+          <staticID>41</staticID>
           <pos>
             <X>729.9999</X>
             <Y>1464.99988</Y>
@@ -878,7 +373,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>71</staticID>
+          <staticID>42</staticID>
           <pos>
             <X>2191</X>
             <Y>1167.99976</Y>
@@ -889,7 +384,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>72</staticID>
+          <staticID>43</staticID>
           <pos>
             <X>3794</X>
             <Y>2339</Y>
@@ -900,7 +395,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>73</staticID>
+          <staticID>44</staticID>
           <pos>
             <X>3053</X>
             <Y>4042</Y>
@@ -911,7 +406,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>74</staticID>
+          <staticID>45</staticID>
           <pos>
             <X>3691.99927</X>
             <Y>4610</Y>
@@ -922,7 +417,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>75</staticID>
+          <staticID>46</staticID>
           <pos>
             <X>4043.99951</X>
             <Y>4445</Y>
@@ -933,7 +428,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>76</staticID>
+          <staticID>47</staticID>
           <pos>
             <X>1248.99927</X>
             <Y>6954</Y>
@@ -944,7 +439,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>77</staticID>
+          <staticID>48</staticID>
           <pos>
             <X>1541.99963</X>
             <Y>4787</Y>
@@ -955,7 +450,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>78</staticID>
+          <staticID>49</staticID>
           <pos>
             <X>181.999939</X>
             <Y>6119</Y>
@@ -966,7 +461,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>79</staticID>
+          <staticID>50</staticID>
           <pos>
             <X>4032.99976</X>
             <Y>98.0000153</Y>
@@ -977,7 +472,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>80</staticID>
+          <staticID>51</staticID>
           <pos>
             <X>1502.99963</X>
             <Y>509.000183</Y>
@@ -988,7 +483,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>81</staticID>
+          <staticID>52</staticID>
           <pos>
             <X>4825</X>
             <Y>1155.00012</Y>
@@ -999,7 +494,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>82</staticID>
+          <staticID>53</staticID>
           <pos>
             <X>4166.00049</X>
             <Y>1508</Y>
@@ -1010,7 +505,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>83</staticID>
+          <staticID>54</staticID>
           <pos>
             <X>4887.999</X>
             <Y>6009</Y>
@@ -1019,20 +514,9 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
-          <wallModelName>alienworld_wall_4</wallModelName>
-          <destructible>true</destructible>
-          <staticID>84</staticID>
-          <pos>
-            <X>2519.99878</X>
-            <Y>3406</Y>
-          </pos>
-          <rotation>5.92946529</rotation>
-          <typeName>wall model</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
-          <destructible>true</destructible>
-          <staticID>85</staticID>
+          <destructible>false</destructible>
+          <staticID>55</staticID>
           <pos>
             <X>99.00014</X>
             <Y>108.999908</Y>
@@ -1042,8 +526,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>86</staticID>
+          <destructible>false</destructible>
+          <staticID>56</staticID>
           <pos>
             <X>525.999939</X>
             <Y>-11.0000486</Y>
@@ -1054,7 +538,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>87</staticID>
+          <staticID>57</staticID>
           <pos>
             <X>-1334</X>
             <Y>293.999939</Y>
@@ -1064,8 +548,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
-          <destructible>true</destructible>
-          <staticID>88</staticID>
+          <destructible>false</destructible>
+          <staticID>58</staticID>
           <pos>
             <X>2495</X>
             <Y>33.0000458</Y>
@@ -1075,8 +559,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
-          <destructible>true</destructible>
-          <staticID>89</staticID>
+          <destructible>false</destructible>
+          <staticID>59</staticID>
           <pos>
             <X>1925</X>
             <Y>13.0000153</Y>
@@ -1086,8 +570,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
-          <destructible>true</destructible>
-          <staticID>90</staticID>
+          <destructible>false</destructible>
+          <staticID>60</staticID>
           <pos>
             <X>1199</X>
             <Y>10.0000114</Y>
@@ -1098,7 +582,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>91</staticID>
+          <staticID>61</staticID>
           <pos>
             <X>564.0001</X>
             <Y>1203.99988</Y>
@@ -1109,7 +593,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>92</staticID>
+          <staticID>62</staticID>
           <pos>
             <X>1826.99988</X>
             <Y>783</Y>
@@ -1120,7 +604,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>93</staticID>
+          <staticID>63</staticID>
           <pos>
             <X>1422.99988</X>
             <Y>1903.00012</Y>
@@ -1131,7 +615,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>94</staticID>
+          <staticID>64</staticID>
           <pos>
             <X>-1421.00024</X>
             <Y>1112</Y>
@@ -1141,8 +625,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>95</staticID>
+          <destructible>false</destructible>
+          <staticID>65</staticID>
           <pos>
             <X>4975.99951</X>
             <Y>114.999985</Y>
@@ -1153,7 +637,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>96</staticID>
+          <staticID>66</staticID>
           <pos>
             <X>-1984.99988</X>
             <Y>317.000244</Y>
@@ -1164,7 +648,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>97</staticID>
+          <staticID>67</staticID>
           <pos>
             <X>792.9999</X>
             <Y>2774.00024</Y>
@@ -1175,7 +659,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>98</staticID>
+          <staticID>68</staticID>
           <pos>
             <X>-2570</X>
             <Y>417.0002</Y>
@@ -1186,7 +670,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>99</staticID>
+          <staticID>69</staticID>
           <pos>
             <X>2007.99976</X>
             <Y>1063.00024</Y>
@@ -1197,7 +681,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>100</staticID>
+          <staticID>70</staticID>
           <pos>
             <X>2468</X>
             <Y>1252</Y>
@@ -1208,7 +692,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>101</staticID>
+          <staticID>71</staticID>
           <pos>
             <X>2470</X>
             <Y>1243</Y>
@@ -1219,7 +703,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>102</staticID>
+          <staticID>72</staticID>
           <pos>
             <X>2948</X>
             <Y>1003.99994</Y>
@@ -1230,7 +714,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>103</staticID>
+          <staticID>73</staticID>
           <pos>
             <X>3369</X>
             <Y>727.000244</Y>
@@ -1241,7 +725,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>104</staticID>
+          <staticID>74</staticID>
           <pos>
             <X>3590</X>
             <Y>410.999939</Y>
@@ -1251,8 +735,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>105</staticID>
+          <destructible>false</destructible>
+          <staticID>75</staticID>
           <pos>
             <X>3019.99951</X>
             <Y>-7.999996</Y>
@@ -1262,8 +746,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>106</staticID>
+          <destructible>false</destructible>
+          <staticID>76</staticID>
           <pos>
             <X>3500</X>
             <Y>-28.99987</Y>
@@ -1273,8 +757,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
-          <destructible>true</destructible>
-          <staticID>107</staticID>
+          <destructible>false</destructible>
+          <staticID>77</staticID>
           <pos>
             <X>3971.00024</X>
             <Y>4.00000048</Y>
@@ -1284,8 +768,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
-          <destructible>true</destructible>
-          <staticID>108</staticID>
+          <destructible>false</destructible>
+          <staticID>78</staticID>
           <pos>
             <X>4537</X>
             <Y>-52.9999237</Y>
@@ -1296,7 +780,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>109</staticID>
+          <staticID>79</staticID>
           <pos>
             <X>-2460</X>
             <Y>1097</Y>
@@ -1307,7 +791,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>110</staticID>
+          <staticID>80</staticID>
           <pos>
             <X>1537.00024</X>
             <Y>455.999939</Y>
@@ -1318,7 +802,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>111</staticID>
+          <staticID>81</staticID>
           <pos>
             <X>1408</X>
             <Y>2176</Y>
@@ -1329,7 +813,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>112</staticID>
+          <staticID>82</staticID>
           <pos>
             <X>1474</X>
             <Y>2150</Y>
@@ -1340,7 +824,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>113</staticID>
+          <staticID>83</staticID>
           <pos>
             <X>424.0001</X>
             <Y>3247.00024</Y>
@@ -1351,10 +835,10 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>114</staticID>
+          <staticID>84</staticID>
           <pos>
             <X>163.9997</X>
-            <Y>3357</Y>
+            <Y>3358</Y>
           </pos>
           <rotation>2.243968</rotation>
           <typeName>wall model</typeName>
@@ -1362,7 +846,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>115</staticID>
+          <staticID>85</staticID>
           <pos>
             <X>388.999939</X>
             <Y>3901</Y>
@@ -1373,7 +857,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>116</staticID>
+          <staticID>86</staticID>
           <pos>
             <X>747.000244</X>
             <Y>4168.00049</Y>
@@ -1383,8 +867,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>117</staticID>
+          <destructible>false</destructible>
+          <staticID>87</staticID>
           <pos>
             <X>-9.00004</X>
             <Y>3758</Y>
@@ -1395,7 +879,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>118</staticID>
+          <staticID>88</staticID>
           <pos>
             <X>976.000061</X>
             <Y>4397</Y>
@@ -1406,7 +890,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>119</staticID>
+          <staticID>89</staticID>
           <pos>
             <X>1063</X>
             <Y>4384</Y>
@@ -1417,7 +901,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>120</staticID>
+          <staticID>90</staticID>
           <pos>
             <X>1640</X>
             <Y>5039</Y>
@@ -1428,7 +912,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>121</staticID>
+          <staticID>91</staticID>
           <pos>
             <X>1514.00012</X>
             <Y>4819</Y>
@@ -1439,7 +923,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>122</staticID>
+          <staticID>92</staticID>
           <pos>
             <X>2569</X>
             <Y>2675.00024</Y>
@@ -1450,7 +934,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>123</staticID>
+          <staticID>93</staticID>
           <pos>
             <X>1619</X>
             <Y>3500.00024</Y>
@@ -1461,7 +945,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>124</staticID>
+          <staticID>94</staticID>
           <pos>
             <X>2895</X>
             <Y>2831</Y>
@@ -1472,7 +956,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>125</staticID>
+          <staticID>95</staticID>
           <pos>
             <X>3588.00024</X>
             <Y>3547.00024</Y>
@@ -1483,7 +967,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>126</staticID>
+          <staticID>96</staticID>
           <pos>
             <X>2748.99976</X>
             <Y>4362</Y>
@@ -1494,7 +978,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>127</staticID>
+          <staticID>97</staticID>
           <pos>
             <X>3501</X>
             <Y>3237</Y>
@@ -1505,7 +989,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>128</staticID>
+          <staticID>98</staticID>
           <pos>
             <X>2414</X>
             <Y>4198</Y>
@@ -1516,7 +1000,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>129</staticID>
+          <staticID>99</staticID>
           <pos>
             <X>3416</X>
             <Y>3182</Y>
@@ -1527,7 +1011,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>130</staticID>
+          <staticID>100</staticID>
           <pos>
             <X>1748</X>
             <Y>3751.00024</Y>
@@ -1538,7 +1022,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>131</staticID>
+          <staticID>101</staticID>
           <pos>
             <X>1813</X>
             <Y>3906.00024</Y>
@@ -1549,7 +1033,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>132</staticID>
+          <staticID>102</staticID>
           <pos>
             <X>2337</X>
             <Y>4248</Y>
@@ -1560,7 +1044,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>133</staticID>
+          <staticID>103</staticID>
           <pos>
             <X>3580</X>
             <Y>3729.00024</Y>
@@ -1571,7 +1055,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>134</staticID>
+          <staticID>104</staticID>
           <pos>
             <X>3417</X>
             <Y>3774.00024</Y>
@@ -1582,7 +1066,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>135</staticID>
+          <staticID>105</staticID>
           <pos>
             <X>4859</X>
             <Y>3502.00024</Y>
@@ -1593,7 +1077,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>136</staticID>
+          <staticID>106</staticID>
           <pos>
             <X>1757.00012</X>
             <Y>3286</Y>
@@ -1604,7 +1088,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>137</staticID>
+          <staticID>107</staticID>
           <pos>
             <X>2264</X>
             <Y>2760</Y>
@@ -1615,7 +1099,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>138</staticID>
+          <staticID>108</staticID>
           <pos>
             <X>2604</X>
             <Y>2834</Y>
@@ -1625,8 +1109,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
-          <destructible>true</destructible>
-          <staticID>139</staticID>
+          <destructible>false</destructible>
+          <staticID>109</staticID>
           <pos>
             <X>35.99976</X>
             <Y>4362.99951</Y>
@@ -1636,8 +1120,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
-          <destructible>true</destructible>
-          <staticID>140</staticID>
+          <destructible>false</destructible>
+          <staticID>110</staticID>
           <pos>
             <X>4979</X>
             <Y>511</Y>
@@ -1647,8 +1131,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
-          <destructible>true</destructible>
-          <staticID>141</staticID>
+          <destructible>false</destructible>
+          <staticID>111</staticID>
           <pos>
             <X>-16.9998436</X>
             <Y>1217</Y>
@@ -1658,8 +1142,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>142</staticID>
+          <destructible>false</destructible>
+          <staticID>112</staticID>
           <pos>
             <X>-15.999815</X>
             <Y>1613.00024</Y>
@@ -1669,8 +1153,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>143</staticID>
+          <destructible>false</destructible>
+          <staticID>113</staticID>
           <pos>
             <X>-2.99998665</X>
             <Y>2104</Y>
@@ -1680,8 +1164,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
-          <destructible>true</destructible>
-          <staticID>144</staticID>
+          <destructible>false</destructible>
+          <staticID>114</staticID>
           <pos>
             <X>-107</X>
             <Y>2479.00024</Y>
@@ -1691,8 +1175,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
-          <destructible>true</destructible>
-          <staticID>145</staticID>
+          <destructible>false</destructible>
+          <staticID>115</staticID>
           <pos>
             <X>15.9998894</X>
             <Y>2948</Y>
@@ -1702,8 +1186,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
-          <destructible>true</destructible>
-          <staticID>146</staticID>
+          <destructible>false</destructible>
+          <staticID>116</staticID>
           <pos>
             <X>1.00031185</X>
             <Y>3344</Y>
@@ -1713,8 +1197,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
-          <destructible>true</destructible>
-          <staticID>147</staticID>
+          <destructible>false</destructible>
+          <staticID>117</staticID>
           <pos>
             <X>-17.99989</X>
             <Y>4925.99951</Y>
@@ -1724,8 +1208,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>148</staticID>
+          <destructible>false</destructible>
+          <staticID>118</staticID>
           <pos>
             <X>-71.0000458</X>
             <Y>5390</Y>
@@ -1735,8 +1219,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>149</staticID>
+          <destructible>false</destructible>
+          <staticID>119</staticID>
           <pos>
             <X>-20.99998</X>
             <Y>5743</Y>
@@ -1746,8 +1230,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
-          <destructible>true</destructible>
-          <staticID>150</staticID>
+          <destructible>false</destructible>
+          <staticID>120</staticID>
           <pos>
             <X>-62.9999466</X>
             <Y>6141</Y>
@@ -1757,8 +1241,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
-          <destructible>true</destructible>
-          <staticID>151</staticID>
+          <destructible>false</destructible>
+          <staticID>121</staticID>
           <pos>
             <X>108.000183</X>
             <Y>6892</Y>
@@ -1768,8 +1252,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
-          <destructible>true</destructible>
-          <staticID>152</staticID>
+          <destructible>false</destructible>
+          <staticID>122</staticID>
           <pos>
             <X>-4.999784</X>
             <Y>6525</Y>
@@ -1779,8 +1263,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
-          <destructible>true</destructible>
-          <staticID>153</staticID>
+          <destructible>false</destructible>
+          <staticID>123</staticID>
           <pos>
             <X>766.9999</X>
             <Y>6970</Y>
@@ -1790,8 +1274,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>154</staticID>
+          <destructible>false</destructible>
+          <staticID>124</staticID>
           <pos>
             <X>1283</X>
             <Y>7055</Y>
@@ -1801,8 +1285,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>155</staticID>
+          <destructible>false</destructible>
+          <staticID>125</staticID>
           <pos>
             <X>1572</X>
             <Y>7093</Y>
@@ -1812,8 +1296,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
-          <destructible>true</destructible>
-          <staticID>156</staticID>
+          <destructible>false</destructible>
+          <staticID>126</staticID>
           <pos>
             <X>2068</X>
             <Y>6976.99951</Y>
@@ -1823,8 +1307,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
-          <destructible>true</destructible>
-          <staticID>157</staticID>
+          <destructible>false</destructible>
+          <staticID>127</staticID>
           <pos>
             <X>2458</X>
             <Y>7003</Y>
@@ -1834,8 +1318,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
-          <destructible>true</destructible>
-          <staticID>158</staticID>
+          <destructible>false</destructible>
+          <staticID>128</staticID>
           <pos>
             <X>3013</X>
             <Y>7028</Y>
@@ -1845,8 +1329,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
-          <destructible>true</destructible>
-          <staticID>159</staticID>
+          <destructible>false</destructible>
+          <staticID>129</staticID>
           <pos>
             <X>3641</X>
             <Y>7002</Y>
@@ -1856,8 +1340,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>160</staticID>
+          <destructible>false</destructible>
+          <staticID>130</staticID>
           <pos>
             <X>3954</X>
             <Y>7023</Y>
@@ -1867,8 +1351,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>161</staticID>
+          <destructible>false</destructible>
+          <staticID>131</staticID>
           <pos>
             <X>4280</X>
             <Y>6993</Y>
@@ -1878,8 +1362,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
-          <destructible>true</destructible>
-          <staticID>162</staticID>
+          <destructible>false</destructible>
+          <staticID>132</staticID>
           <pos>
             <X>4887</X>
             <Y>6960</Y>
@@ -1889,8 +1373,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
-          <destructible>true</destructible>
-          <staticID>163</staticID>
+          <destructible>false</destructible>
+          <staticID>133</staticID>
           <pos>
             <X>4697</X>
             <Y>6997</Y>
@@ -1900,8 +1384,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
-          <destructible>true</destructible>
-          <staticID>164</staticID>
+          <destructible>false</destructible>
+          <staticID>134</staticID>
           <pos>
             <X>4969</X>
             <Y>6369</Y>
@@ -1911,8 +1395,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
-          <destructible>true</destructible>
-          <staticID>165</staticID>
+          <destructible>false</destructible>
+          <staticID>135</staticID>
           <pos>
             <X>4993</X>
             <Y>5778.99951</Y>
@@ -1922,8 +1406,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>166</staticID>
+          <destructible>false</destructible>
+          <staticID>136</staticID>
           <pos>
             <X>4977</X>
             <Y>5449</Y>
@@ -1933,8 +1417,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>167</staticID>
+          <destructible>false</destructible>
+          <staticID>137</staticID>
           <pos>
             <X>4996</X>
             <Y>4995</Y>
@@ -1944,8 +1428,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
-          <destructible>true</destructible>
-          <staticID>168</staticID>
+          <destructible>false</destructible>
+          <staticID>138</staticID>
           <pos>
             <X>4960</X>
             <Y>4662</Y>
@@ -1955,8 +1439,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
-          <destructible>true</destructible>
-          <staticID>169</staticID>
+          <destructible>false</destructible>
+          <staticID>139</staticID>
           <pos>
             <X>5035</X>
             <Y>4170</Y>
@@ -1966,8 +1450,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
-          <destructible>true</destructible>
-          <staticID>170</staticID>
+          <destructible>false</destructible>
+          <staticID>140</staticID>
           <pos>
             <X>4999</X>
             <Y>3540</Y>
@@ -1977,8 +1461,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>171</staticID>
+          <destructible>false</destructible>
+          <staticID>141</staticID>
           <pos>
             <X>5007</X>
             <Y>3077</Y>
@@ -1988,8 +1472,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
-          <destructible>true</destructible>
-          <staticID>172</staticID>
+          <destructible>false</destructible>
+          <staticID>142</staticID>
           <pos>
             <X>5012</X>
             <Y>2695</Y>
@@ -1999,8 +1483,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
-          <destructible>true</destructible>
-          <staticID>173</staticID>
+          <destructible>false</destructible>
+          <staticID>143</staticID>
           <pos>
             <X>4983</X>
             <Y>2246</Y>
@@ -2011,7 +1495,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>174</staticID>
+          <staticID>144</staticID>
           <pos>
             <X>-1815.99988</X>
             <Y>1132</Y>
@@ -2021,8 +1505,8 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>175</staticID>
+          <destructible>false</destructible>
+          <staticID>145</staticID>
           <pos>
             <X>5021</X>
             <Y>1363.00024</Y>
@@ -2032,11 +1516,11 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
-          <destructible>true</destructible>
-          <staticID>176</staticID>
+          <destructible>false</destructible>
+          <staticID>146</staticID>
           <pos>
-            <X>5042</X>
-            <Y>979</Y>
+            <X>5039</X>
+            <Y>977</Y>
           </pos>
           <rotation>2.40496516</rotation>
           <typeName>wall model</typeName>
@@ -2044,7 +1528,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>177</staticID>
+          <staticID>147</staticID>
           <pos>
             <X>1392.00024</X>
             <Y>5323.99951</Y>
@@ -2055,7 +1539,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>178</staticID>
+          <staticID>148</staticID>
           <pos>
             <X>1097.00024</X>
             <Y>5560.00049</Y>
@@ -2066,7 +1550,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>179</staticID>
+          <staticID>149</staticID>
           <pos>
             <X>714.000061</X>
             <Y>5849</Y>
@@ -2077,7 +1561,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>180</staticID>
+          <staticID>150</staticID>
           <pos>
             <X>763.000061</X>
             <Y>5840</Y>
@@ -2088,7 +1572,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>181</staticID>
+          <staticID>151</staticID>
           <pos>
             <X>123.999924</X>
             <Y>6045</Y>
@@ -2097,31 +1581,9 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
-          <wallModelName>alienworld_wall_5</wallModelName>
-          <destructible>true</destructible>
-          <staticID>182</staticID>
-          <pos>
-            <X>2416</X>
-            <Y>3504.00024</Y>
-          </pos>
-          <rotation>1.82427156</rotation>
-          <typeName>wall model</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.WallModel">
-          <wallModelName>alienworld_wall_8</wallModelName>
-          <destructible>true</destructible>
-          <staticID>183</staticID>
-          <pos>
-            <X>2808</X>
-            <Y>3521</Y>
-          </pos>
-          <rotation>0.36118412</rotation>
-          <typeName>wall model</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>184</staticID>
+          <staticID>152</staticID>
           <pos>
             <X>2297.99976</X>
             <Y>5896.99951</Y>
@@ -2132,7 +1594,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>185</staticID>
+          <staticID>153</staticID>
           <pos>
             <X>1870.99988</X>
             <Y>6255</Y>
@@ -2143,7 +1605,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>186</staticID>
+          <staticID>154</staticID>
           <pos>
             <X>1549</X>
             <Y>6501</Y>
@@ -2154,7 +1616,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>187</staticID>
+          <staticID>155</staticID>
           <pos>
             <X>1295.99976</X>
             <Y>6833</Y>
@@ -2165,7 +1627,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>188</staticID>
+          <staticID>156</staticID>
           <pos>
             <X>2865.00024</X>
             <Y>5811.00049</Y>
@@ -2176,7 +1638,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>189</staticID>
+          <staticID>157</staticID>
           <pos>
             <X>3719.99976</X>
             <Y>5222.99951</Y>
@@ -2187,7 +1649,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>190</staticID>
+          <staticID>158</staticID>
           <pos>
             <X>3266</X>
             <Y>6089</Y>
@@ -2198,7 +1660,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>191</staticID>
+          <staticID>159</staticID>
           <pos>
             <X>3591</X>
             <Y>6335</Y>
@@ -2209,7 +1671,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>192</staticID>
+          <staticID>160</staticID>
           <pos>
             <X>3709</X>
             <Y>6456</Y>
@@ -2220,7 +1682,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>193</staticID>
+          <staticID>161</staticID>
           <pos>
             <X>3617</X>
             <Y>6318</Y>
@@ -2231,7 +1693,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>194</staticID>
+          <staticID>162</staticID>
           <pos>
             <X>4589</X>
             <Y>3881</Y>
@@ -2242,7 +1704,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>195</staticID>
+          <staticID>163</staticID>
           <pos>
             <X>4246.00049</X>
             <Y>5560</Y>
@@ -2253,7 +1715,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>196</staticID>
+          <staticID>164</staticID>
           <pos>
             <X>4387</X>
             <Y>5754</Y>
@@ -2264,7 +1726,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>197</staticID>
+          <staticID>165</staticID>
           <pos>
             <X>4255.00049</X>
             <Y>4165.00049</Y>
@@ -2275,7 +1737,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>198</staticID>
+          <staticID>166</staticID>
           <pos>
             <X>3670</X>
             <Y>4753</Y>
@@ -2286,7 +1748,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>199</staticID>
+          <staticID>167</staticID>
           <pos>
             <X>3639</X>
             <Y>2122</Y>
@@ -2297,7 +1759,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>200</staticID>
+          <staticID>168</staticID>
           <pos>
             <X>3875</X>
             <Y>1744.00012</Y>
@@ -2308,7 +1770,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>201</staticID>
+          <staticID>169</staticID>
           <pos>
             <X>4359</X>
             <Y>1446</Y>
@@ -2319,7 +1781,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>202</staticID>
+          <staticID>170</staticID>
           <pos>
             <X>3980</X>
             <Y>1612</Y>
@@ -2330,7 +1792,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>203</staticID>
+          <staticID>171</staticID>
           <pos>
             <X>4539</X>
             <Y>3171.00024</Y>
@@ -2341,7 +1803,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>204</staticID>
+          <staticID>172</staticID>
           <pos>
             <X>4276</X>
             <Y>2807.00024</Y>
@@ -2352,7 +1814,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>205</staticID>
+          <staticID>173</staticID>
           <pos>
             <X>4185.00049</X>
             <Y>2672</Y>
@@ -2363,7 +1825,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>206</staticID>
+          <staticID>174</staticID>
           <pos>
             <X>4238</X>
             <Y>2683</Y>
@@ -2374,7 +1836,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
           <destructible>true</destructible>
-          <staticID>207</staticID>
+          <staticID>175</staticID>
           <pos>
             <X>100</X>
             <Y>77.99992</Y>
@@ -2385,7 +1847,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
           <destructible>true</destructible>
-          <staticID>208</staticID>
+          <staticID>176</staticID>
           <pos>
             <X>1511</X>
             <Y>617</Y>
@@ -2396,7 +1858,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
           <destructible>true</destructible>
-          <staticID>209</staticID>
+          <staticID>177</staticID>
           <pos>
             <X>2460.00024</X>
             <Y>1345</Y>
@@ -2407,7 +1869,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
           <destructible>true</destructible>
-          <staticID>210</staticID>
+          <staticID>178</staticID>
           <pos>
             <X>859.999939</X>
             <Y>1388</Y>
@@ -2418,7 +1880,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_eye</wallModelName>
           <destructible>true</destructible>
-          <staticID>211</staticID>
+          <staticID>179</staticID>
           <pos>
             <X>767</X>
             <Y>221.999939</Y>
@@ -2429,7 +1891,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_eye</wallModelName>
           <destructible>true</destructible>
-          <staticID>212</staticID>
+          <staticID>180</staticID>
           <pos>
             <X>1520</X>
             <Y>3189</Y>
@@ -2440,7 +1902,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_eye</wallModelName>
           <destructible>true</destructible>
-          <staticID>213</staticID>
+          <staticID>181</staticID>
           <pos>
             <X>3051.00024</X>
             <Y>2644</Y>
@@ -2451,7 +1913,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
           <destructible>true</destructible>
-          <staticID>214</staticID>
+          <staticID>182</staticID>
           <pos>
             <X>3598.00024</X>
             <Y>2256</Y>
@@ -2462,7 +1924,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
           <destructible>true</destructible>
-          <staticID>215</staticID>
+          <staticID>183</staticID>
           <pos>
             <X>3083.00024</X>
             <Y>2741</Y>
@@ -2473,7 +1935,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>216</staticID>
+          <staticID>184</staticID>
           <pos>
             <X>2313</X>
             <Y>2810</Y>
@@ -2484,7 +1946,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>217</staticID>
+          <staticID>185</staticID>
           <pos>
             <X>2481</X>
             <Y>790.9999</Y>
@@ -2504,18 +1966,18 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>221</staticID>
+          <staticID>189</staticID>
           <pos>
-            <X>2515</X>
-            <Y>551.999756</Y>
+            <X>2517</X>
+            <Y>553.999756</Y>
           </pos>
           <rotation>2.956892</rotation>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
-          <destructible>true</destructible>
-          <staticID>222</staticID>
+          <destructible>false</destructible>
+          <staticID>190</staticID>
           <pos>
             <X>2537</X>
             <Y>212.999969</Y>
@@ -2526,7 +1988,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>223</staticID>
+          <staticID>191</staticID>
           <pos>
             <X>3063</X>
             <Y>647.9999</Y>
@@ -2537,7 +1999,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_eye</wallModelName>
           <destructible>true</destructible>
-          <staticID>224</staticID>
+          <staticID>192</staticID>
           <pos>
             <X>2037</X>
             <Y>573</Y>
@@ -2548,7 +2010,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>225</staticID>
+          <staticID>193</staticID>
           <pos>
             <X>1899</X>
             <Y>692.999756</Y>
@@ -2559,7 +2021,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_eye</wallModelName>
           <destructible>true</destructible>
-          <staticID>226</staticID>
+          <staticID>194</staticID>
           <pos>
             <X>3277</X>
             <Y>1067</Y>
@@ -2570,7 +2032,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
           <destructible>true</destructible>
-          <staticID>227</staticID>
+          <staticID>195</staticID>
           <pos>
             <X>1496.00024</X>
             <Y>3301</Y>
@@ -2581,7 +2043,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_eye</wallModelName>
           <destructible>true</destructible>
-          <staticID>228</staticID>
+          <staticID>196</staticID>
           <pos>
             <X>694.000244</X>
             <Y>1622</Y>
@@ -2601,7 +2063,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>232</staticID>
+          <staticID>200</staticID>
           <pos>
             <X>1048.00012</X>
             <Y>1733.99976</Y>
@@ -2612,9 +2074,9 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>233</staticID>
+          <staticID>201</staticID>
           <pos>
-            <X>900.9995</X>
+            <X>900.9996</X>
             <Y>2143.00024</Y>
           </pos>
           <rotation>5.549473</rotation>
@@ -2623,7 +2085,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>234</staticID>
+          <staticID>202</staticID>
           <pos>
             <X>231.000122</X>
             <Y>2479</Y>
@@ -2634,7 +2096,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>235</staticID>
+          <staticID>203</staticID>
           <pos>
             <X>384.000122</X>
             <Y>2851.99976</Y>
@@ -2645,7 +2107,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_leaf1</wallModelName>
           <destructible>true</destructible>
-          <staticID>236</staticID>
+          <staticID>204</staticID>
           <pos>
             <X>399.999939</X>
             <Y>258</Y>
@@ -2656,7 +2118,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_leaf2</wallModelName>
           <destructible>true</destructible>
-          <staticID>237</staticID>
+          <staticID>205</staticID>
           <pos>
             <X>520.999939</X>
             <Y>142.000092</Y>
@@ -2667,7 +2129,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_leaf1</wallModelName>
           <destructible>true</destructible>
-          <staticID>238</staticID>
+          <staticID>206</staticID>
           <pos>
             <X>1589</X>
             <Y>420</Y>
@@ -2678,7 +2140,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_leaf2</wallModelName>
           <destructible>true</destructible>
-          <staticID>239</staticID>
+          <staticID>207</staticID>
           <pos>
             <X>1936</X>
             <Y>895.9999</Y>
@@ -2689,7 +2151,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_leaf1</wallModelName>
           <destructible>true</destructible>
-          <staticID>240</staticID>
+          <staticID>208</staticID>
           <pos>
             <X>2356</X>
             <Y>1428</Y>
@@ -2700,7 +2162,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_leaf2</wallModelName>
           <destructible>true</destructible>
-          <staticID>241</staticID>
+          <staticID>209</staticID>
           <pos>
             <X>2593</X>
             <Y>1261</Y>
@@ -2711,7 +2173,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_leaf1</wallModelName>
           <destructible>true</destructible>
-          <staticID>242</staticID>
+          <staticID>210</staticID>
           <pos>
             <X>3555</X>
             <Y>581</Y>
@@ -2722,7 +2184,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_leaf2</wallModelName>
           <destructible>true</destructible>
-          <staticID>243</staticID>
+          <staticID>211</staticID>
           <pos>
             <X>3424</X>
             <Y>635</Y>
@@ -2733,7 +2195,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_worm</wallModelName>
           <destructible>true</destructible>
-          <staticID>244</staticID>
+          <staticID>212</staticID>
           <pos>
             <X>50.9998856</X>
             <Y>617.999939</Y>
@@ -2744,9 +2206,9 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_worm</wallModelName>
           <destructible>true</destructible>
-          <staticID>245</staticID>
+          <staticID>213</staticID>
           <pos>
-            <X>1552.99976</X>
+            <X>1584.99976</X>
             <Y>2055</Y>
           </pos>
           <rotation>3.084743</rotation>
@@ -2755,7 +2217,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_worm</wallModelName>
           <destructible>true</destructible>
-          <staticID>246</staticID>
+          <staticID>214</staticID>
           <pos>
             <X>1778.99976</X>
             <Y>674</Y>
@@ -2766,10 +2228,10 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_worm</wallModelName>
           <destructible>true</destructible>
-          <staticID>247</staticID>
+          <staticID>215</staticID>
           <pos>
-            <X>2828.99976</X>
-            <Y>2679</Y>
+            <X>2736.99976</X>
+            <Y>2575</Y>
           </pos>
           <rotation>1.51988983</rotation>
           <typeName>wall model</typeName>
@@ -2777,10 +2239,10 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_worm</wallModelName>
           <destructible>true</destructible>
-          <staticID>248</staticID>
+          <staticID>216</staticID>
           <pos>
-            <X>2531</X>
-            <Y>4561.001</Y>
+            <X>2567</X>
+            <Y>4555.001</Y>
           </pos>
           <rotation>4.80190754</rotation>
           <typeName>wall model</typeName>
@@ -2788,7 +2250,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_egg</wallModelName>
           <destructible>true</destructible>
-          <staticID>249</staticID>
+          <staticID>217</staticID>
           <pos>
             <X>238.000519</X>
             <Y>4362</Y>
@@ -2799,7 +2261,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_brain</wallModelName>
           <destructible>true</destructible>
-          <staticID>250</staticID>
+          <staticID>218</staticID>
           <pos>
             <X>42.0000153</X>
             <Y>340.999969</Y>
@@ -2810,7 +2272,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_brain</wallModelName>
           <destructible>true</destructible>
-          <staticID>251</staticID>
+          <staticID>219</staticID>
           <pos>
             <X>1904</X>
             <Y>1152.00012</Y>
@@ -2821,7 +2283,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_brain</wallModelName>
           <destructible>true</destructible>
-          <staticID>252</staticID>
+          <staticID>220</staticID>
           <pos>
             <X>2242</X>
             <Y>2845</Y>
@@ -2832,7 +2294,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_brain</wallModelName>
           <destructible>true</destructible>
-          <staticID>253</staticID>
+          <staticID>221</staticID>
           <pos>
             <X>606.000061</X>
             <Y>3219</Y>
@@ -2843,7 +2305,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_brain</wallModelName>
           <destructible>true</destructible>
-          <staticID>254</staticID>
+          <staticID>222</staticID>
           <pos>
             <X>3364</X>
             <Y>877.000244</Y>
@@ -2854,7 +2316,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_pole</wallModelName>
           <destructible>true</destructible>
-          <staticID>255</staticID>
+          <staticID>223</staticID>
           <pos>
             <X>301.000122</X>
             <Y>103.000015</Y>
@@ -2865,7 +2327,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_pole</wallModelName>
           <destructible>true</destructible>
-          <staticID>256</staticID>
+          <staticID>224</staticID>
           <pos>
             <X>2729</X>
             <Y>1149.99988</Y>
@@ -2876,7 +2338,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_pole</wallModelName>
           <destructible>true</destructible>
-          <staticID>257</staticID>
+          <staticID>225</staticID>
           <pos>
             <X>676.0001</X>
             <Y>1281</Y>
@@ -2887,7 +2349,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_pole</wallModelName>
           <destructible>true</destructible>
-          <staticID>258</staticID>
+          <staticID>226</staticID>
           <pos>
             <X>2361.00024</X>
             <Y>2672</Y>
@@ -2898,7 +2360,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_probe</wallModelName>
           <destructible>true</destructible>
-          <staticID>259</staticID>
+          <staticID>227</staticID>
           <pos>
             <X>622.000244</X>
             <Y>1129.99988</Y>
@@ -2909,7 +2371,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_probe</wallModelName>
           <destructible>true</destructible>
-          <staticID>260</staticID>
+          <staticID>228</staticID>
           <pos>
             <X>3689.00024</X>
             <Y>483</Y>
@@ -2920,12 +2382,1214 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_probe</wallModelName>
           <destructible>true</destructible>
-          <staticID>261</staticID>
+          <staticID>229</staticID>
           <pos>
             <X>684.0001</X>
             <Y>2990</Y>
           </pos>
           <rotation>5.34087038</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>230</staticID>
+          <pos>
+            <X>1617.00024</X>
+            <Y>-65.00001</Y>
+          </pos>
+          <rotation>6.210407</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>231</staticID>
+          <pos>
+            <X>2391</X>
+            <Y>95.00004</Y>
+          </pos>
+          <rotation>6.24179</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>232</staticID>
+          <pos>
+            <X>2643</X>
+            <Y>77.00009</Y>
+          </pos>
+          <rotation>5.24158573</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>233</staticID>
+          <pos>
+            <X>4529</X>
+            <Y>156</Y>
+          </pos>
+          <rotation>0.450275749</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>234</staticID>
+          <pos>
+            <X>3038.99976</X>
+            <Y>9.15527344E-05</Y>
+          </pos>
+          <rotation>4.0506897</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Dock">
+          <staticID>0</staticID>
+          <pos>
+            <X>4201.99951</X>
+            <Y>1626.99988</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>dock</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_8</wallModelName>
+          <destructible>true</destructible>
+          <staticID>238</staticID>
+          <pos>
+            <X>4354</X>
+            <Y>2039.00024</Y>
+          </pos>
+          <rotation>5.871847</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>239</staticID>
+          <pos>
+            <X>3706</X>
+            <Y>2039.00024</Y>
+          </pos>
+          <rotation>1.06900442</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>240</staticID>
+          <pos>
+            <X>4405</X>
+            <Y>2130</Y>
+          </pos>
+          <rotation>5.7142</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>241</staticID>
+          <pos>
+            <X>4251</X>
+            <Y>2875</Y>
+          </pos>
+          <rotation>0.9686422</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_eye</wallModelName>
+          <destructible>true</destructible>
+          <staticID>242</staticID>
+          <pos>
+            <X>4943</X>
+            <Y>1606</Y>
+          </pos>
+          <rotation>0.253374249</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>243</staticID>
+          <pos>
+            <X>4544</X>
+            <Y>2999</Y>
+          </pos>
+          <rotation>4.81722927</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>244</staticID>
+          <pos>
+            <X>4423.00049</X>
+            <Y>2677</Y>
+          </pos>
+          <rotation>5.65278864</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>245</staticID>
+          <pos>
+            <X>3729</X>
+            <Y>1793</Y>
+          </pos>
+          <rotation>1.507771</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>246</staticID>
+          <pos>
+            <X>3728</X>
+            <Y>1871</Y>
+          </pos>
+          <rotation>0.8408216</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>247</staticID>
+          <pos>
+            <X>4847</X>
+            <Y>2755</Y>
+          </pos>
+          <rotation>0.417254269</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>248</staticID>
+          <pos>
+            <X>4914</X>
+            <Y>2559</Y>
+          </pos>
+          <rotation>2.08917165</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>249</staticID>
+          <pos>
+            <X>4269</X>
+            <Y>1572</Y>
+          </pos>
+          <rotation>2.848851</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>250</staticID>
+          <pos>
+            <X>4892</X>
+            <Y>142.999939</Y>
+          </pos>
+          <rotation>2.804694</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>251</staticID>
+          <pos>
+            <X>4915</X>
+            <Y>603.9999</Y>
+          </pos>
+          <rotation>1.38143635</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>252</staticID>
+          <pos>
+            <X>3772</X>
+            <Y>1674</Y>
+          </pos>
+          <rotation>2.186313</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>253</staticID>
+          <pos>
+            <X>3687.00024</X>
+            <Y>3614</Y>
+          </pos>
+          <rotation>6.05168724</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>254</staticID>
+          <pos>
+            <X>2885.00049</X>
+            <Y>4318.99951</Y>
+          </pos>
+          <rotation>1.57537687</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>255</staticID>
+          <pos>
+            <X>723.9998</X>
+            <Y>2156.99976</Y>
+          </pos>
+          <rotation>1.09052193</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>256</staticID>
+          <pos>
+            <X>757.999939</X>
+            <Y>2225.99976</Y>
+          </pos>
+          <rotation>0.575403333</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>257</staticID>
+          <pos>
+            <X>117.999954</X>
+            <Y>2022.00012</Y>
+          </pos>
+          <rotation>5.28226137</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_eye</wallModelName>
+          <destructible>true</destructible>
+          <staticID>258</staticID>
+          <pos>
+            <X>2698</X>
+            <Y>4145</Y>
+          </pos>
+          <rotation>3.340223</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>259</staticID>
+          <pos>
+            <X>1831.00024</X>
+            <Y>3744</Y>
+          </pos>
+          <rotation>4.193339</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>260</staticID>
+          <pos>
+            <X>3349.00024</X>
+            <Y>3581</Y>
+          </pos>
+          <rotation>1.75733721</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>261</staticID>
+          <pos>
+            <X>2730</X>
+            <Y>2958</Y>
+          </pos>
+          <rotation>0.2360707</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>262</staticID>
+          <pos>
+            <X>1927</X>
+            <Y>3325</Y>
+          </pos>
+          <rotation>4.692512</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>263</staticID>
+          <pos>
+            <X>1900</X>
+            <Y>3239</Y>
+          </pos>
+          <rotation>3.790848</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>264</staticID>
+          <pos>
+            <X>3372.99976</X>
+            <Y>3790</Y>
+          </pos>
+          <rotation>0.52266717</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>265</staticID>
+          <pos>
+            <X>1685</X>
+            <Y>3836</Y>
+          </pos>
+          <rotation>1.51410711</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>266</staticID>
+          <pos>
+            <X>239.999924</X>
+            <Y>3394</Y>
+          </pos>
+          <rotation>3.530227</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>267</staticID>
+          <pos>
+            <X>102.000076</X>
+            <Y>2534</Y>
+          </pos>
+          <rotation>6.08155775</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>268</staticID>
+          <pos>
+            <X>1707</X>
+            <Y>5040</Y>
+          </pos>
+          <rotation>5.520016</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>269</staticID>
+          <pos>
+            <X>89.9994659</X>
+            <Y>1482.99976</Y>
+          </pos>
+          <rotation>3.835928</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>270</staticID>
+          <pos>
+            <X>62.00011</X>
+            <Y>1352</Y>
+          </pos>
+          <rotation>3.202503</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>271</staticID>
+          <pos>
+            <X>4946</X>
+            <Y>880.999939</Y>
+          </pos>
+          <rotation>0.3701186</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>272</staticID>
+          <pos>
+            <X>4921</X>
+            <Y>729.999939</Y>
+          </pos>
+          <rotation>1.79182565</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>273</staticID>
+          <pos>
+            <X>3317</X>
+            <Y>6050</Y>
+          </pos>
+          <rotation>3.68912625</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>274</staticID>
+          <pos>
+            <X>4035</X>
+            <Y>1381</Y>
+          </pos>
+          <rotation>3.508297</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>275</staticID>
+          <pos>
+            <X>3546</X>
+            <Y>2051</Y>
+          </pos>
+          <rotation>1.77508879</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>276</staticID>
+          <pos>
+            <X>536.000244</X>
+            <Y>4078</Y>
+          </pos>
+          <rotation>1.13117981</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>277</staticID>
+          <pos>
+            <X>770.000061</X>
+            <Y>4356.99951</Y>
+          </pos>
+          <rotation>1.15429449</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>278</staticID>
+          <pos>
+            <X>14.9998665</X>
+            <Y>6170</Y>
+          </pos>
+          <rotation>5.25621462</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>279</staticID>
+          <pos>
+            <X>232.999817</X>
+            <Y>4662</Y>
+          </pos>
+          <rotation>2.93899822</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>280</staticID>
+          <pos>
+            <X>189.000092</X>
+            <Y>4799</Y>
+          </pos>
+          <rotation>5.378278</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>281</staticID>
+          <pos>
+            <X>90</X>
+            <Y>4829</Y>
+          </pos>
+          <rotation>5.89353228</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Dock">
+          <staticID>0</staticID>
+          <pos>
+            <X>666.0002</X>
+            <Y>5103</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>dock</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Dock">
+          <staticID>0</staticID>
+          <pos>
+            <X>4448.99951</X>
+            <Y>5001</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>dock</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_8</wallModelName>
+          <destructible>false</destructible>
+          <staticID>289</staticID>
+          <pos>
+            <X>4287.001</X>
+            <Y>5086</Y>
+          </pos>
+          <rotation>2.711544</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_5</wallModelName>
+          <destructible>false</destructible>
+          <staticID>290</staticID>
+          <pos>
+            <X>800.9999</X>
+            <Y>5251</Y>
+          </pos>
+          <rotation>6.149769</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>false</destructible>
+          <staticID>291</staticID>
+          <pos>
+            <X>2575.00024</X>
+            <Y>6526</Y>
+          </pos>
+          <rotation>0.0904708058</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>292</staticID>
+          <pos>
+            <X>4270.99951</X>
+            <Y>5035.001</Y>
+          </pos>
+          <rotation>0.5553194</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>293</staticID>
+          <pos>
+            <X>717.0005</X>
+            <Y>5346.001</Y>
+          </pos>
+          <rotation>5.871847</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>294</staticID>
+          <pos>
+            <X>151.999939</X>
+            <Y>3495</Y>
+          </pos>
+          <rotation>5.914705</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>295</staticID>
+          <pos>
+            <X>1626.00073</X>
+            <Y>5285</Y>
+          </pos>
+          <rotation>5.987833</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>296</staticID>
+          <pos>
+            <X>1801</X>
+            <Y>6160.001</Y>
+          </pos>
+          <rotation>1.36567116</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>297</staticID>
+          <pos>
+            <X>1729</X>
+            <Y>6326</Y>
+          </pos>
+          <rotation>2.12209034</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>298</staticID>
+          <pos>
+            <X>2154.99976</X>
+            <Y>5914.99951</Y>
+          </pos>
+          <rotation>3.79289818</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>299</staticID>
+          <pos>
+            <X>4779</X>
+            <Y>4473</Y>
+          </pos>
+          <rotation>2.0351944</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>300</staticID>
+          <pos>
+            <X>4930</X>
+            <Y>3745</Y>
+          </pos>
+          <rotation>6.222679</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>301</staticID>
+          <pos>
+            <X>5003</X>
+            <Y>3857</Y>
+          </pos>
+          <rotation>5.87436867</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>302</staticID>
+          <pos>
+            <X>172.00061</X>
+            <Y>6980.001</Y>
+          </pos>
+          <rotation>2.23680234</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>false</destructible>
+          <staticID>303</staticID>
+          <pos>
+            <X>725.0001</X>
+            <Y>6749</Y>
+          </pos>
+          <rotation>3.19787526</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>304</staticID>
+          <pos>
+            <X>-5.722046E-06</X>
+            <Y>6569</Y>
+          </pos>
+          <rotation>4.443362</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_eye</wallModelName>
+          <destructible>true</destructible>
+          <staticID>305</staticID>
+          <pos>
+            <X>894.9998</X>
+            <Y>5778</Y>
+          </pos>
+          <rotation>5.99482775</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_eye</wallModelName>
+          <destructible>true</destructible>
+          <staticID>306</staticID>
+          <pos>
+            <X>853.9999</X>
+            <Y>4532</Y>
+          </pos>
+          <rotation>0.517095745</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>307</staticID>
+          <pos>
+            <X>107.999725</X>
+            <Y>5972.99951</Y>
+          </pos>
+          <rotation>5.727985</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>308</staticID>
+          <pos>
+            <X>1186.99976</X>
+            <Y>6858.99951</Y>
+          </pos>
+          <rotation>3.111697</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>309</staticID>
+          <pos>
+            <X>1594</X>
+            <Y>4852</Y>
+          </pos>
+          <rotation>3.10968447</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>310</staticID>
+          <pos>
+            <X>1287</X>
+            <Y>5201</Y>
+          </pos>
+          <rotation>1.59952521</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>311</staticID>
+          <pos>
+            <X>1444</X>
+            <Y>5163</Y>
+          </pos>
+          <rotation>2.57908</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>312</staticID>
+          <pos>
+            <X>3457</X>
+            <Y>5034</Y>
+          </pos>
+          <rotation>1.43332982</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>313</staticID>
+          <pos>
+            <X>3655.00049</X>
+            <Y>4964.99951</Y>
+          </pos>
+          <rotation>4.746022</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_brain</wallModelName>
+          <destructible>true</destructible>
+          <staticID>314</staticID>
+          <pos>
+            <X>3425.00049</X>
+            <Y>6121.99951</Y>
+          </pos>
+          <rotation>5.44520426</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_eye</wallModelName>
+          <destructible>true</destructible>
+          <staticID>315</staticID>
+          <pos>
+            <X>2600</X>
+            <Y>5615</Y>
+          </pos>
+          <rotation>3.80710959</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_eye</wallModelName>
+          <destructible>true</destructible>
+          <staticID>316</staticID>
+          <pos>
+            <X>4294.00049</X>
+            <Y>5849</Y>
+          </pos>
+          <rotation>0.791950941</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>317</staticID>
+          <pos>
+            <X>4330.99951</X>
+            <Y>6942.001</Y>
+          </pos>
+          <rotation>2.284281</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>318</staticID>
+          <pos>
+            <X>3809</X>
+            <Y>6399</Y>
+          </pos>
+          <rotation>4.457945</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>319</staticID>
+          <pos>
+            <X>192.000443</X>
+            <Y>5684</Y>
+          </pos>
+          <rotation>5.337701</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>320</staticID>
+          <pos>
+            <X>3568</X>
+            <Y>4692</Y>
+          </pos>
+          <rotation>2.79877663</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>321</staticID>
+          <pos>
+            <X>3621</X>
+            <Y>5387</Y>
+          </pos>
+          <rotation>0.467001557</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>322</staticID>
+          <pos>
+            <X>3554</X>
+            <Y>5305</Y>
+          </pos>
+          <rotation>1.40762115</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>323</staticID>
+          <pos>
+            <X>4923</X>
+            <Y>6960</Y>
+          </pos>
+          <rotation>2.33649087</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>324</staticID>
+          <pos>
+            <X>2443</X>
+            <Y>4445</Y>
+          </pos>
+          <rotation>1.02814913</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>325</staticID>
+          <pos>
+            <X>2704</X>
+            <Y>5663</Y>
+          </pos>
+          <rotation>3.497618</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_eye</wallModelName>
+          <destructible>true</destructible>
+          <staticID>326</staticID>
+          <pos>
+            <X>4524</X>
+            <Y>4055</Y>
+          </pos>
+          <rotation>0.542407453</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>327</staticID>
+          <pos>
+            <X>988</X>
+            <Y>4199.99951</Y>
+          </pos>
+          <rotation>4.025357</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_worm</wallModelName>
+          <destructible>true</destructible>
+          <staticID>328</staticID>
+          <pos>
+            <X>3193</X>
+            <Y>6101.001</Y>
+          </pos>
+          <rotation>5.175181</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>329</staticID>
+          <pos>
+            <X>6.000168</X>
+            <Y>5200</Y>
+          </pos>
+          <rotation>4.65786076</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>330</staticID>
+          <pos>
+            <X>4787</X>
+            <Y>6429</Y>
+          </pos>
+          <rotation>1.46895874</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>331</staticID>
+          <pos>
+            <X>4952</X>
+            <Y>6487</Y>
+          </pos>
+          <rotation>5.51090336</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>332</staticID>
+          <pos>
+            <X>4751</X>
+            <Y>7000</Y>
+          </pos>
+          <rotation>2.56756282</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>333</staticID>
+          <pos>
+            <X>3385</X>
+            <Y>5139</Y>
+          </pos>
+          <rotation>0.8338462</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>334</staticID>
+          <pos>
+            <X>3321</X>
+            <Y>3247</Y>
+          </pos>
+          <rotation>0.84962523</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>335</staticID>
+          <pos>
+            <X>3597</X>
+            <Y>3110</Y>
+          </pos>
+          <rotation>3.86001635</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Dock">
+          <staticID>0</staticID>
+          <pos>
+            <X>2549</X>
+            <Y>6648</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>dock</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>339</staticID>
+          <pos>
+            <X>4959</X>
+            <Y>5268</Y>
+          </pos>
+          <rotation>1.22989321</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_egg</wallModelName>
+          <destructible>true</destructible>
+          <staticID>340</staticID>
+          <pos>
+            <X>4827</X>
+            <Y>6097</Y>
+          </pos>
+          <rotation>1.533032</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_eye</wallModelName>
+          <destructible>true</destructible>
+          <staticID>341</staticID>
+          <pos>
+            <X>2880.00049</X>
+            <Y>6884</Y>
+          </pos>
+          <rotation>4.014922</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_probe</wallModelName>
+          <destructible>true</destructible>
+          <staticID>342</staticID>
+          <pos>
+            <X>2096</X>
+            <Y>6962</Y>
+          </pos>
+          <rotation>2.40362954</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_6</wallModelName>
+          <destructible>true</destructible>
+          <staticID>343</staticID>
+          <pos>
+            <X>2669</X>
+            <Y>6264</Y>
+          </pos>
+          <rotation>2.03495455</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_4</wallModelName>
+          <destructible>true</destructible>
+          <staticID>344</staticID>
+          <pos>
+            <X>2713</X>
+            <Y>6106</Y>
+          </pos>
+          <rotation>6.12440062</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>345</staticID>
+          <pos>
+            <X>2492</X>
+            <Y>6302</Y>
+          </pos>
+          <rotation>2.26711845</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>346</staticID>
+          <pos>
+            <X>2368</X>
+            <Y>6375</Y>
+          </pos>
+          <rotation>1.66388559</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_pole</wallModelName>
+          <destructible>true</destructible>
+          <staticID>347</staticID>
+          <pos>
+            <X>3405</X>
+            <Y>6982</Y>
+          </pos>
+          <rotation>3.31872034</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_leaf1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>348</staticID>
+          <pos>
+            <X>3268</X>
+            <Y>6308</Y>
+          </pos>
+          <rotation>0.0904708058</rotation>
           <typeName>wall model</typeName>
         </Item>
       </gobs>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArenaType>
+  <layers>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>false</isGameplayLayer>
+      <z>-4882.353</z>
+      <parallaxName>alienworld_parallax_background</parallaxName>
+      <gobs />
+    </Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>false</isGameplayLayer>
+      <z>-3400</z>
+      <parallaxName>alienworld_parallax_dust_small</parallaxName>
+      <gobs />
+    </Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>false</isGameplayLayer>
+      <z>-2000</z>
+      <parallaxName>alienworld_parallax_dust</parallaxName>
+      <gobs />
+    </Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>false</isGameplayLayer>
+      <z>-900.303</z>
+      <parallaxName>alienworld_parallax_greenhaze</parallaxName>
+      <gobs />
+    </Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>false</isGameplayLayer>
+      <z>-500.581421</z>
+      <parallaxName></parallaxName>
+      <gobs />
+    </Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>false</isGameplayLayer>
+      <z>-500</z>
+      <parallaxName></parallaxName>
+      <gobs />
+    </Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>false</isGameplayLayer>
+      <z>0</z>
+      <parallaxName></parallaxName>
+      <gobs />
+    </Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
+      <isGameplayLayer>true</isGameplayLayer>
+      <z>0</z>
+      <parallaxName></parallaxName>
+      <gobs>
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>340</X>
+              <Y>80</Y>
+            </min>
+            <max>
+              <X>650</X>
+              <Y>150</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+      </gobs>
+    </Item>
+  </layers>
+  <info>
+    <name>Alien World</name>
+    <dimensions>
+      <X>6000</X>
+      <Y>6000</Y>
+    </dimensions>
+    <docks>2</docks>
+    <previewName>preview_arena_annalunta</previewName>
+    <infoText>The Truth is Out There.</infoText>
+    <idealPlayers>8-16</idealPlayers>
+    <size>Large</size>
+    <bonusAmount>Average</bonusAmount>
+    <flightEasiness>Average</flightEasiness>
+  </info>
+  <backgroundMusic>
+    <fileName>BG_Amazon</fileName>
+    <volume>0.4</volume>
+  </backgroundMusic>
+  <binFilename>Arena_AlienWorld.bin</binFilename>
+  <lighting>
+    <light0DiffuseColor>
+      <X>1</X>
+      <Y>1</Y>
+      <Z>1</Z>
+    </light0DiffuseColor>
+    <light0Direction>
+      <X>-0.4082483</X>
+      <Y>-0.4082483</Y>
+      <Z>-0.8164966</Z>
+    </light0Direction>
+    <light0Enabled>true</light0Enabled>
+    <light0SpecularColor>
+      <X>0.956862748</X>
+      <Y>0.8627451</Y>
+      <Z>0.494117647</Z>
+    </light0SpecularColor>
+    <light1DiffuseColor>
+      <X>0</X>
+      <Y>0.2</Y>
+      <Z>0.6</Z>
+    </light1DiffuseColor>
+    <light1Direction>
+      <X>0.4082483</X>
+      <Y>-0.4082483</Y>
+      <Z>-0.8164966</Z>
+    </light1Direction>
+    <light1Enabled>true</light1Enabled>
+    <light1SpecularColor>
+      <X>0</X>
+      <Y>0.2</Y>
+      <Z>0.6</Z>
+    </light1SpecularColor>
+    <light2DiffuseColor>
+      <X>0</X>
+      <Y>0.5</Y>
+      <Z>0.9</Z>
+    </light2DiffuseColor>
+    <light2Direction>
+      <X>0.4082483</X>
+      <Y>0.4082483</Y>
+      <Z>0.8164966</Z>
+    </light2Direction>
+    <light2Enabled>false</light2Enabled>
+    <light2SpecularColor>
+      <X>0</X>
+      <Y>0.5</Y>
+      <Z>0.9</Z>
+    </light2SpecularColor>
+  </lighting>
+  <gravity>
+    <X>0</X>
+    <Y>-30</Y>
+  </gravity>
+</ArenaType>

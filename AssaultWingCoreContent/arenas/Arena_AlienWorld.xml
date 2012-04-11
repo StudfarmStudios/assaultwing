@@ -48,6 +48,17 @@
       <z>0</z>
       <parallaxName></parallaxName>
       <gobs>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>144</staticID>
+          <pos>
+            <X>46.00003</X>
+            <Y>12.9999962</Y>
+          </pos>
+          <rotation>2.8</rotation>
+          <typeName>wall model</typeName>
+        </Item>
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
@@ -66,6 +77,61 @@
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>146</staticID>
+          <pos>
+            <X>382</X>
+            <Y>-19.9999523</Y>
+          </pos>
+          <rotation>5.55426073</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_1</wallModelName>
+          <destructible>true</destructible>
+          <staticID>147</staticID>
+          <pos>
+            <X>-10.00005</X>
+            <Y>307.999969</Y>
+          </pos>
+          <rotation>4.51734</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>148</staticID>
+          <pos>
+            <X>714</X>
+            <Y>43.999958</Y>
+          </pos>
+          <rotation>0.2935698</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>149</staticID>
+          <pos>
+            <X>10.0000124</X>
+            <Y>743.0001</Y>
+          </pos>
+          <rotation>4.77107239</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>alienworld_wall_2</wallModelName>
+          <destructible>true</destructible>
+          <staticID>150</staticID>
+          <pos>
+            <X>474</X>
+            <Y>604</Y>
+          </pos>
+          <rotation>1.38049054</rotation>
+          <typeName>wall model</typeName>
         </Item>
       </gobs>
     </Item>
@@ -102,14 +168,14 @@
     </light0Direction>
     <light0Enabled>true</light0Enabled>
     <light0SpecularColor>
-      <X>0.956862748</X>
-      <Y>0.8627451</Y>
-      <Z>0.494117647</Z>
+      <X>0.456862748</X>
+      <Y>0.9627451</Y>
+      <Z>0.854117632</Z>
     </light0SpecularColor>
     <light1DiffuseColor>
       <X>0</X>
-      <Y>0.2</Y>
-      <Z>0.6</Z>
+      <Y>0.6</Y>
+      <Z>0.4</Z>
     </light1DiffuseColor>
     <light1Direction>
       <X>0.4082483</X>
@@ -119,13 +185,13 @@
     <light1Enabled>true</light1Enabled>
     <light1SpecularColor>
       <X>0</X>
-      <Y>0.2</Y>
-      <Z>0.6</Z>
+      <Y>0.6</Y>
+      <Z>0.4</Z>
     </light1SpecularColor>
     <light2DiffuseColor>
       <X>0</X>
-      <Y>0.5</Y>
-      <Z>0.9</Z>
+      <Y>0.9</Y>
+      <Z>0.65</Z>
     </light2DiffuseColor>
     <light2Direction>
       <X>0.4082483</X>
@@ -135,8 +201,8 @@
     <light2Enabled>false</light2Enabled>
     <light2SpecularColor>
       <X>0</X>
-      <Y>0.5</Y>
-      <Z>0.9</Z>
+      <Y>0.9</Y>
+      <Z>0.65</Z>
     </light2SpecularColor>
   </lighting>
   <gravity>

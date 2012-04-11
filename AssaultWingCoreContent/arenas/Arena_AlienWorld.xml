@@ -1824,11 +1824,23 @@
               </Item>
             </vertices>
           </spawnArea>
-          <spawnInterval>15</spawnInterval>
+          <spawnInterval>14</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType">
-              <weight>4</weight>
+              <weight>7</weight>
               <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>kamikaze</spawnTypeName>
             </Item>
           </spawnTypes>
           <staticID>0</staticID>
@@ -1839,6 +1851,513 @@
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
         </Item>
+		
+		<Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Polygon">
+            <vertices>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>267</X>
+                <Y>4181</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>305</X>
+                <Y>4205</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>437</X>
+                <Y>4183</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>524</X>
+                <Y>4249</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>633</X>
+                <Y>4165</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>728</X>
+                <Y>4158</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>752</X>
+                <Y>4211</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>594</X>
+                <Y>4342</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>648</X>
+                <Y>4470</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>317</X>
+                <Y>4560</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>257</X>
+                <Y>4621</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>143</X>
+                <Y>4653</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>100</X>
+                <Y>4598</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>275</X>
+                <Y>4530</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>279</X>
+                <Y>4456</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>359</X>
+                <Y>4434</Y>
+              </Item>			  
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>370</X>
+                <Y>4381</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>262</X>
+                <Y>4246</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>262</X>
+                <Y>4246</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>54</X>
+                <Y>4279</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>95</X>
+                <Y>4192</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>142</X>
+                <Y>4161</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>112</X>
+                <Y>4116</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>145</X>
+                <Y>4084</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>201</X>
+                <Y>4069</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>149</X>
+                <Y>4013</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>85</X>
+                <Y>3969</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>21</X>
+                <Y>3959</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>25</X>
+                <Y>3889</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>69</X>
+                <Y>3855</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>109</X>
+                <Y>3886</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>121</X>
+                <Y>3931</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>222</X>
+                <Y>3955</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>236</X>
+                <Y>4027</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>236</X>
+                <Y>4027</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>304</X>
+                <Y>4063</Y>
+              </Item>
+            </vertices>
+          </spawnArea>
+          <spawnInterval>14</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>7</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>kamikaze</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>
+		
+
+		<Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Polygon">
+            <vertices>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4346</X>
+                <Y>4454</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4225</X>
+                <Y>4259</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4281</X>
+                <Y>4101</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4550</X>
+                <Y>4314</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4635</X>
+                <Y>4267</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4630</X>
+                <Y>4168</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4559</X>
+                <Y>4114</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4723</X>
+                <Y>4028</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4664</X>
+                <Y>3969</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4802</X>
+                <Y>3916</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4706</X>
+                <Y>3809</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4857</X>
+                <Y>3808</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4917</X>
+                <Y>3979</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4786</X>
+                <Y>4007</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4760</X>
+                <Y>4230</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4858</X>
+                <Y>4327</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4966</X>
+                <Y>4360</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4927</X>
+                <Y>4436</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4819</X>
+                <Y>4356</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4655</X>
+                <Y>4417</Y>
+              </Item>
+            </vertices>
+          </spawnArea>
+          <spawnInterval>14</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>7</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>kamikaze</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>
+
+		<Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Polygon">
+            <vertices>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4680</X>
+                <Y>2823</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4940</X>
+                <Y>2885</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4800</X>
+                <Y>2949</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4959</X>
+                <Y>3215</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4915</X>
+                <Y>3334</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4759</X>
+                <Y>3147</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4485</X>
+                <Y>3224</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4473</X>
+                <Y>3105</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4677</X>
+                <Y>3053</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4653</X>
+                <Y>2965</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4528</X>
+                <Y>2943</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>4479</X>
+                <Y>2780</Y>
+              </Item>
+            </vertices>
+          </spawnArea>
+          <spawnInterval>14</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>7</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>kamikaze</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>
+
+		<Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Polygon">
+            <vertices>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2108</X>
+                <Y>827</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2284</X>
+                <Y>864</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2523</X>
+                <Y>1015</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2675</X>
+                <Y>782</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2836</X>
+                <Y>878</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2548</X>
+                <Y>1131</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2252</X>
+                <Y>1095</Y>
+              </Item>
+            </vertices>
+          </spawnArea>
+          <spawnInterval>14</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>7</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>kamikaze</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>	
+		
+		<Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Polygon">
+            <vertices>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2919</X>
+                <Y>6242</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2693</X>
+                <Y>5951</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2586</X>
+                <Y>6113</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2728</X>
+                <Y>6298</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2634</X>
+                <Y>6348</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2466</X>
+                <Y>6149</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2391</X>
+                <Y>6286</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2366</X>
+                <Y>6018</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2916</X>
+                <Y>5774</Y>
+              </Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
+                <X>2960</X>
+                <Y>6160</Y>
+              </Item>
+            </vertices>
+          </spawnArea>
+          <spawnInterval>14</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>7</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>kamikaze</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>	
+		
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>alienworld_wall_2</wallModelName>
           <destructible>false</destructible>
@@ -5681,12 +6200,15 @@
       <X>5000</X>
       <Y>7000</Y>
     </dimensions>
-    <docks>2</docks>
-    <previewName>preview_arena_annalunta</previewName>
-    <infoText>The Truth is Out There.</infoText>
+    <docks>6</docks>
+    <previewName>preview_arena_alienworld</previewName>
+    <infoText>Some mysterious giant
+advanced unknown race used
+to live here, but left their
+research behind.</infoText>
     <idealPlayers>8-16</idealPlayers>
     <size>Large</size>
-    <bonusAmount>Average</bonusAmount>
+    <bonusAmount>Good</bonusAmount>
     <flightEasiness>Average</flightEasiness>
   </info>
   <backgroundMusic>

@@ -896,7 +896,6 @@
       <Name>Peng_trizooka glow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="particledefs\Peng_venom explo.xml">
       <Name>Peng_venom explo</Name>

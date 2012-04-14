@@ -26,6 +26,7 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
+            Owner.ResetLastDamager();
             GobHelper.CreateGobs(deathGobTypes, Arena, Owner.Pos, gob => gob.Owner = PlayerOwner);
             var suicideBomberBonus = Owner.BonusActions.FirstOrDefault(act => act is Weapon2UpgradeBonusAction);
             if (suicideBomberBonus != null) suicideBomberBonus.TimeOut();

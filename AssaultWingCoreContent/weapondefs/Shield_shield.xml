@@ -37,8 +37,8 @@
   <iconName>menu_equip_mod_shield</iconName>
   <loadTime>3.5</loadTime>
   <protectionTime>1.5</protectionTime>
-  <receivedDamageMultiplier>0.13</receivedDamageMultiplier>
-  <chargeUsageMultiplier>0.5</chargeUsageMultiplier>
+  <receivedDamageMultiplier>0.1515</receivedDamageMultiplier>
+  <chargeUsageMultiplier>0.429</chargeUsageMultiplier>
   <fireCharge>300</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <shotCount>1</shotCount>

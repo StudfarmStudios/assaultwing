@@ -1238,6 +1238,11 @@ namespace AW2.Game
             DamageLevel = Math.Max(0, DamageLevel - repairAmount);
         }
 
+        public void ResetLastDamager()
+        {
+            LastDamagerTimeout = Arena.TotalTime;
+        }
+
         #endregion Damage methods
 
         #region Private methods

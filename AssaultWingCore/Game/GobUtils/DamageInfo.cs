@@ -10,7 +10,6 @@ namespace AW2.Game.GobUtils
         public static DamageInfo Unspecified { get; private set; }
 
         public Gob Cause { get; private set; }
-        public bool IgnoreLastDamager { get; private set; }
 
         static DamageInfo()
         {
@@ -18,19 +17,13 @@ namespace AW2.Game.GobUtils
         }
 
         public DamageInfo(DamageInfo info)
-            : this(info.Cause, info.IgnoreLastDamager)
+            : this(info.Cause)
         {
         }
 
         public DamageInfo(Gob cause)
         {
             Cause = cause;
-        }
-
-        public DamageInfo(Gob cause, bool ignoreLastDamager)
-            : this(cause)
-        {
-            IgnoreLastDamager = ignoreLastDamager;
         }
 
         private DamageInfo() { }

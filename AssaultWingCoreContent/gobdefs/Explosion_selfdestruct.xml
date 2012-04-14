@@ -50,28 +50,33 @@
       </area>
     </Item>
   </collisionAreas>
+  <!--
+  Suicide bomber damage is adjusted so that a Bugger with Shield has a chance to survive
+  a suicide bomber if it has full shipmod energy when triggering the shield and it waits
+  for a second with shields on before triggering the suicide bomber.
+  -->
   <inflictDamage>
     <preLoop>Constant</preLoop>
     <postLoop>Constant</postLoop>
     <keys>
       <Item>
         <position>0</position>
-        <internalValue>1800</internalValue>
+        <internalValue>2100</internalValue>
         <tangentIn>0</tangentIn>
         <tangentOut>0</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
-        <position>200</position>
-        <internalValue>1000</internalValue>
-        <tangentIn>-1200</tangentIn>
-        <tangentOut>-600</tangentOut>
+        <position>147.774</position>
+        <internalValue>1512.638</internalValue>
+        <tangentIn>-1034.418</tangentIn>
+        <tangentOut>-1065.582</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
         <position>300</position>
         <internalValue>0</internalValue>
-        <tangentIn>-1000</tangentIn>
+        <tangentIn>-1512.638</tangentIn>
         <tangentOut>0</tangentOut>
         <continuity>Smooth</continuity>
       </Item>

@@ -15,6 +15,7 @@ namespace AW2.Helpers
         private TimeSpan _currentInterval;
         private TimeSpan _currentStart;
 
+        public bool SkipPastIntervals { get; set; }
         private bool IsIntervalFinished { get { return _getTime() >= _currentStart + _currentInterval; } }
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace AW2.Helpers
             get
             {
                 if (!IsIntervalFinished) return false;
-                _currentStart = _currentStart + _currentInterval;
+                _currentStart = SkipPastIntervals ? _getTime() : _currentStart + _currentInterval;
                 _currentInterval = _regularInterval;
                 return true;
             }

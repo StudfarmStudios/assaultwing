@@ -34,8 +34,8 @@ namespace AW2.Net
         public StatsSender(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
-            _connectTimer = new AWTimer(game, TimeSpan.FromSeconds(5));
-            _sendTimer = new AWTimer(game, TimeSpan.FromSeconds(1));
+            _connectTimer = new AWTimer(() => game.GameTime.TotalGameTime, TimeSpan.FromSeconds(5));
+            _sendTimer = new AWTimer(() => game.GameTime.TotalGameTime, TimeSpan.FromSeconds(1));
             _sendQueue = new StringBuilder(2048);
         }
 

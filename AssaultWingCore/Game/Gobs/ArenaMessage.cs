@@ -12,10 +12,7 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class ArenaMessage : Gob
     {
-        private static readonly CanonicalString g_iconBackgroundName = (CanonicalString)"gui_bonuscollect_bg";
         private Texture2D _icon;
-        private Texture2D _iconBackground;
-        private SpriteFont _messageFont;
 
         /// <summary>
         /// Visual scaling factor of the message as a function of seconds of game time since message birth.
@@ -46,17 +43,12 @@ namespace AW2.Game.Gobs
         public Color DrawColor { set; get; }
 
         /// <summary>
-        /// Names of all textures that this gob type will ever use.
-        /// </summary>
-        public override IEnumerable<CanonicalString> TextureNames
-        {
-            get { return base.TextureNames.Concat(new CanonicalString[] { g_iconBackgroundName }); }
-        }
-
-        /// <summary>
         /// Bounding volume of the 3D visuals of the gob, in world coordinates.
         /// </summary>
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+
+        private Texture2D IconBackground { get { return Game.GraphicsEngine.GameContent.ArenaMessageBackgroundTexture; } }
+        private SpriteFont Font { get { return Game.GraphicsEngine.GameContent.ConsoleFont; } }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -88,23 +80,23 @@ namespace AW2.Game.Gobs
 
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
         {
-            Vector2 backgroundPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
-            float finalScale = _scaleCurve.Evaluate(AgeInGameSeconds) * scale;
-            Vector2 origin = new Vector2(_iconBackground.Width, _iconBackground.Height) / 2;
-            Vector2 iconPos = backgroundPos + new Vector2(-origin.X + 6, -_icon.Height / 2 - 1) * finalScale;
-            Vector2 textPos = backgroundPos + new Vector2(_icon.Width + 1, 0) / 2 * finalScale;
-            Vector2 textOrigin = _messageFont.MeasureString(Message) / 2;
+            var backgroundPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
+            var finalScale = _scaleCurve.Evaluate(AgeInGameSeconds) * scale;
+            var origin = new Vector2(IconBackground.Width, IconBackground.Height) / 2;
+            var iconPos = backgroundPos + new Vector2(-origin.X + 6, -_icon.Height / 2 - 1) * finalScale;
+            var textPos = backgroundPos + new Vector2(_icon.Width + 1, 0) / 2 * finalScale;
+            var textOrigin = Font.MeasureString(Message) / 2;
             var drawColor = Color.Multiply(DrawColor, _alphaCurve.Evaluate(AgeInGameSeconds));
             if (AgeInGameSeconds > _scaleCurve.Keys.Last().Position)
             {
                 textPos = textPos.Round();
                 textOrigin = textOrigin.Round();
             }
-            spriteBatch.Draw(_iconBackground, backgroundPos, null, drawColor,
+            spriteBatch.Draw(IconBackground, backgroundPos, null, drawColor,
                 0, origin, finalScale, SpriteEffects.None, 0.2f);
             spriteBatch.Draw(_icon, iconPos, null, drawColor,
                 0, Vector2.Zero, finalScale, SpriteEffects.None, 0.1f);
-            spriteBatch.DrawString(_messageFont, Message, textPos, drawColor, 0f, textOrigin, finalScale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Font, Message, textPos, drawColor, 0f, textOrigin, finalScale, SpriteEffects.None, 0f);
         }
 
         public override void Update()
@@ -118,8 +110,6 @@ namespace AW2.Game.Gobs
         {
             base.LoadContent();
             _icon = Game.Content.Load<Texture2D>(IconName);
-            _iconBackground = Game.Content.Load<Texture2D>(g_iconBackgroundName);
-            _messageFont = Game.Content.Load<SpriteFont>("ConsoleFont");
         }
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

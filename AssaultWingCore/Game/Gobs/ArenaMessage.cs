@@ -92,10 +92,11 @@ namespace AW2.Game.Gobs
                 textPos = textPos.Round();
                 textOrigin = textOrigin.Round();
             }
+            var spriteDepth = 0.1f + (0.1f * ID) / Gob.MAX_ID; // Between 0.1 and 0.2
             spriteBatch.Draw(IconBackground, backgroundPos, null, drawColor,
-                0, origin, finalScale, SpriteEffects.None, 0.2f);
+                0, origin, finalScale, SpriteEffects.None, spriteDepth + 1E-7f);
             spriteBatch.Draw(_icon, iconPos, null, drawColor,
-                0, Vector2.Zero, finalScale, SpriteEffects.None, 0.1f);
+                0, Vector2.Zero, finalScale, SpriteEffects.None, spriteDepth);
             spriteBatch.DrawString(Font, Message, textPos, drawColor, 0f, textOrigin, finalScale, SpriteEffects.None, 0f);
         }
 

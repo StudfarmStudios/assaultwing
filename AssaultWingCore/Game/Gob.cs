@@ -79,6 +79,11 @@ namespace AW2.Game
         public const int INVALID_ID = 0;
 
         /// <summary>
+        /// The largest possible gob ID.
+        /// </summary>
+        public const int MAX_ID = short.MaxValue;
+
+        /// <summary>
         /// Default rotation of gobs. Points up in the game world.
         /// </summary>
         public const float DEFAULT_ROTATION = MathHelper.PiOver2;
@@ -609,8 +614,8 @@ namespace AW2.Game
 
         static Gob()
         {
-            g_unusedRelevantIDs = new Queue<int>(Enumerable.Range(1, short.MaxValue - 1));
-            g_unusedIrrelevantIDs = new Queue<int>(Enumerable.Range(short.MinValue, -1 - short.MinValue));
+            g_unusedRelevantIDs = new Queue<int>(Enumerable.Range(1, MAX_ID - 1));
+            g_unusedIrrelevantIDs = new Queue<int>(Enumerable.Range(-MAX_ID, -1 - (-MAX_ID)));
             g_bleachCurve = new Curve();
             g_bleachCurve.PreLoop = CurveLoopType.Constant;
             g_bleachCurve.PostLoop = CurveLoopType.Constant;

@@ -48,7 +48,7 @@ namespace AW2.Game.Gobs
         private Texture2D _texture;
         private VertexPositionTexture[] _vertexData;
         private TimeSpan _deathTime;
-        private TimeSpan _nextHitTime;
+        private AWTimer _nextHitTimer;
         private LazyProxy<int, Gob> _hostProxy;
         private List<Vector2> _wallPunchPosesForClient;
 
@@ -104,7 +104,8 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _deathTime = Arena.TotalTime + _lifetime + FadeTime;
-            _nextHitTime = Arena.TotalTime + _firstHitDelay;
+            _nextHitTimer = new AWTimer(() => Arena.TotalTime, _hitInterval);
+            _nextHitTimer.SetCurrentInterval(_firstHitDelay);
             _damageArea = new CollisionArea("damage",
                 new Triangle(Vector2.Zero, new Vector2(_triHeightForDamage, _triWidth / 2), new Vector2(_triHeightForDamage, -_triWidth / 2)),
                 owner: this, type: CollisionAreaType.Receptor, collidesAgainst: CollisionAreaType.PhysicalDamageable,
@@ -173,8 +174,7 @@ namespace AW2.Game.Gobs
 
         private void HitPeriodically()
         {
-            if (IsFadingOut || _nextHitTime > Arena.TotalTime) return;
-            _nextHitTime += _hitInterval;
+            if (IsFadingOut || !_nextHitTimer.IsElapsed) return;
             HitGobs();
             PunchWalls();
         }

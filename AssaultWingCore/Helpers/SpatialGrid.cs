@@ -127,13 +127,13 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Returns elements that intersect a rectangular area.
+        /// Returns elements whose bounding boxes intersect an area.
         /// </summary>
-        public IEnumerable<T> GetElements(Rectangle area)
+        public IEnumerable<T> GetElements(IGeomPrimitive area)
         {
             int gridMinX, gridMinY, gridMaxX, gridMaxY;
             bool outOfBounds;
-            ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+            ConvertArea(area.BoundingBox, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
 
             if (outOfBounds)
                 for (int i = _outerCell.Count - 1; i >= 0; i--)

@@ -866,7 +866,7 @@ namespace AW2.Game
         /// <summary>
         /// Returns collision areas of certain types that overlap a collision area.
         /// </summary>
-        private IEnumerable<CollisionArea> GetOverlappers(CollisionArea area, CollisionAreaType types)
+        public IEnumerable<CollisionArea> GetOverlappers(CollisionArea area, CollisionAreaType types)
         {
             var areaArea = area.Area;
             var boundingBox = areaArea.BoundingBox;

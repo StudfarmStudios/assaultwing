@@ -200,7 +200,7 @@ namespace AW2.Game
             _cannotOverlap = CollisionAreaType.None;
             _name = "dummyarea";
             _collisionMaterial = CollisionMaterialType.Regular;
-            _area = new Everything();
+            _area = new Circle(Vector2.Zero, 10);
             _transformedArea = null;
             _oldWorldMatrix = 0 * Matrix.Identity;
             _owner = null;

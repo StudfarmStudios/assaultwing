@@ -31,7 +31,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public SpawnPlayer()
         {
-            _spawnArea = new Everything();
+            _spawnArea = new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, new Vector2(1000, 1000));
         }
 
         public SpawnPlayer(CanonicalString typeName)

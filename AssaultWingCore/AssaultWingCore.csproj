@@ -241,7 +241,6 @@
     <Compile Include="Helpers\Collections\TypedQueue.cs" />
     <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Geometric\Circle.cs" />
-    <Compile Include="Helpers\Geometric\Everything.cs" />
     <Compile Include="Helpers\Geometric\Geometry.cs" />
     <Compile Include="Helpers\Geometric\IGeomPrimitive.cs" />
     <Compile Include="Helpers\Geometric\Point.cs" />

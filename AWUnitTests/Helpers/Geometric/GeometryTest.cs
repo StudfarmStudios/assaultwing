@@ -29,16 +29,6 @@ namespace AW2.Helpers.Geometric
             var poly1 = new Polygon(new[] { q1, q2, q3, q4, q5 });
             var poly2 = new Polygon(new[] { q6, q7, q8 });
             var poly3 = new Polygon(new[] { q9, q10, q11 });
-            var e1 = new Everything();
-
-            // Everything vs. anything
-            Assert.IsTrue(Geometry.Intersect((IGeomPrimitive)e1, (IGeomPrimitive)e1));
-            Assert.IsTrue(Geometry.Intersect((IGeomPrimitive)e1, (IGeomPrimitive)p1));
-            Assert.IsTrue(Geometry.Intersect((IGeomPrimitive)p2, (IGeomPrimitive)e1));
-            Assert.IsTrue(Geometry.Intersect((IGeomPrimitive)e1, (IGeomPrimitive)c1));
-            Assert.IsTrue(Geometry.Intersect((IGeomPrimitive)c2, (IGeomPrimitive)e1));
-            Assert.IsTrue(Geometry.Intersect((IGeomPrimitive)e1, (IGeomPrimitive)poly1));
-            Assert.IsTrue(Geometry.Intersect((IGeomPrimitive)poly2, (IGeomPrimitive)e1));
 
             // Point-point
             Assert.IsTrue(Geometry.Intersect((IGeomPrimitive)p1, (IGeomPrimitive)p1));
@@ -428,7 +418,6 @@ namespace AW2.Helpers.Geometric
         {
             var prims = new IGeomPrimitive[]
             {
-                new Everything(),
                 new Point(new Vector2(10, 20)),
                 new Circle(new Vector2(30, 40), 50),
                 new Rectangle(60, 70, 80, 90),

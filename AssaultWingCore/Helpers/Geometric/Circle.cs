@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Factories;
+using FarseerPhysics.Collision.Shapes;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -62,9 +61,9 @@ namespace AW2.Helpers.Geometric
             return Math.Max(distance, 0);
         }
 
-        public Body GetBody(World world)
+        public Shape GetShape()
         {
-            return BodyFactory.CreateCircle(world, _radius, 1, _center);
+            return new CircleShape(_radius, 1) { Position = _center };
         }
 
         #endregion IGeomPrimitive Members

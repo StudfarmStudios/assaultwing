@@ -1,6 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
-using FarseerPhysics.Dynamics;
+using FarseerPhysics.Collision.Shapes;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -31,6 +31,6 @@ namespace AW2.Helpers.Geometric
         /// and the point.</returns>
         float DistanceTo(Vector2 point);
 
-        Body GetBody(World world);
+        Shape GetShape();
     }
 }

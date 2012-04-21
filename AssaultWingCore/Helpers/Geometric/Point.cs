@@ -4,8 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Factories;
+using FarseerPhysics.Collision.Shapes;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -79,9 +78,9 @@ namespace AW2.Helpers.Geometric
 #endif
         }
 
-        public Body GetBody(World world)
+        public Shape GetShape()
         {
-            return BodyFactory.CreateEdge(world, Location, Location);
+            return new CircleShape(0.05f, 1) { Position = Location };
         }
 
         #endregion IGeomPrimitive Members

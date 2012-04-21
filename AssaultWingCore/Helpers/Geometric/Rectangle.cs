@@ -4,9 +4,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Common;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Factories;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -139,9 +138,9 @@ namespace AW2.Helpers.Geometric
             return Geometry.Distance(new Point(point), this);
         }
 
-        public Body GetBody(World world)
+        public Shape GetShape()
         {
-            return BodyFactory.CreatePolygon(world, new Vertices(new[] { Min, new Vector2(Min.X, Max.Y), Max, new Vector2(Max.X, Min.Y) }), 1);
+            return new PolygonShape(new Vertices(new[] { Min, new Vector2(Min.X, Max.Y), Max, new Vector2(Max.X, Min.Y) }), 1);
         }
 
         #endregion

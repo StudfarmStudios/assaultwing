@@ -180,6 +180,8 @@ namespace AW2.Game.Gobs
 
         private void UpdateGeometry()
         {
+            throw new NotImplementedException("Rewrite using Farseer raycasting");
+#if false // !!!
             var potentialObstacles = Arena.GetOverlappers(_fullDamageArea, CollisionAreaType.PhysicalWall).ToArray();
             var rayCount = 4;
             var rayStep = _wallPunchRadius;
@@ -196,6 +198,7 @@ namespace AW2.Game.Gobs
             var polygonVertices = CreateDamagePolygonVertices(relativeLengths);
             _vertexData = CreateVertexData(relativeLengths, polygonVertices);
             _damageArea = CreateCollisionArea(CreateDamageArea(polygonVertices));
+#endif
         }
 
         private void HitPeriodically()

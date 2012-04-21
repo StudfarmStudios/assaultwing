@@ -662,7 +662,7 @@ namespace AW2.Game
                 var isPhysicalArea = area.CannotOverlap != CollisionAreaType.None;
                 if (isPhysicalArea && area.CollidesAgainst != CollisionAreaType.None)
                     throw new ApplicationException("A physical collision area cannot act as a receptor");
-                var fixture = body.CreateFixture(area.Area.GetShape(), area);
+                var fixture = body.CreateFixture(area.AreaGob.GetShape(), area);
                 fixture.Friction = area.Friction;
                 fixture.Restitution = area.Elasticity;
                 fixture.IsSensor = !isPhysicalArea;
@@ -875,37 +875,19 @@ namespace AW2.Game
             return startPos + move * (float)moveTime.TotalSeconds;
         }
 
+        [Obsolete]
         private IEnumerable<CollisionArea> GetPhysicalColliders(CollisionArea gobPhysical)
         {
-            return GetOverlappers(gobPhysical, gobPhysical.CannotOverlap);
+            throw new ApplicationException();
         }
 
         /// <summary>
         /// Returns collision areas of certain types that overlap a collision area.
         /// </summary>
+        [Obsolete]
         public IEnumerable<CollisionArea> GetOverlappers(CollisionArea area, CollisionAreaType types)
         {
-            var areaArea = area.Area;
-            var boundingBox = areaArea.BoundingBox;
-            var areaOwner = area.Owner;
-            var areaOwnerCold = areaOwner != null && areaOwner.Cold;
-            var areaOwnerOwner = areaOwner == null ? null : areaOwner.Owner;
-            for (int typeBit = 0; typeBit < _collisionAreas.Length; ++typeBit)
-            {
-                if (((1 << typeBit) & (int)types) == 0) continue;
-                foreach (var area2 in _collisionAreas[typeBit].GetElements(boundingBox))
-                {
-                    if (!Geometry.Intersect(areaArea, area2.Area)) continue;
-                    Gob area2Owner = area2.Owner;
-                    if (areaOwner == area2Owner) continue;
-                    if (area2Owner.Disabled) continue;
-                    if ((areaOwnerCold || area2Owner.Cold) &&
-                        areaOwnerOwner != null &&
-                        areaOwnerOwner == area2Owner.Owner)
-                        continue;
-                    yield return area2;
-                }
-            }
+            throw new ApplicationException();
         }
 
         /// <summary>
@@ -917,6 +899,7 @@ namespace AW2.Game
         /// <param name="area2">The overlapping collision area of the other gob.</param>
         /// <param name="allowSideEffects">Should effects other than changing the gob's
         /// position and movement be allowed.</param>
+        [Obsolete]
         private CollisionSoundTypes PerformCollision(CollisionArea area1, CollisionArea area2, bool allowSideEffects)
         {
             // At least one area must be from a movable gob, lest there be no collision.
@@ -934,49 +917,12 @@ namespace AW2.Game
         /// <param name="unmovableArea">The overlapping collision area of the unmovable gob.</param>
         /// <param name="allowSideEffects">Should effects other than changing the movable gob's
         /// position and movement be allowed.</param>
+        [Obsolete]
         private CollisionSoundTypes PerformCollisionMovableUnmovable(CollisionArea movableArea, CollisionArea unmovableArea, bool allowSideEffects)
         {
-            Gob movableGob = movableArea.Owner;
-            Gob unmovableGob = unmovableArea.Owner;
-
-            // Turn the coordinate axes so that both gobs are on the X-axis, unmovable gob on the left;
-            // 'xUnit' and 'yUnit' will be the unit vectors of this system represented in game world coordinates;
-            // 'move1' will be the movement vector of gob1 in this system (and gob2 stays put);
-            // 'move1after' will be the resulting movement vector of gob1 in this system.
-            Vector2 xUnit = Geometry.GetNormal(unmovableArea.Area, movableArea.Area);
-            Vector2 yUnit = new Vector2(-xUnit.Y, xUnit.X);
-            Vector2 move1 = new Vector2(Vector2.Dot(movableGob.Move, xUnit),
-                                        Vector2.Dot(movableGob.Move, yUnit));
-
-            // Only perform physical collision if the gobs are actually closing in on each other.
-            if (move1.X >= 0)
-            {
-                // To work around rounding errors when the movable gob is sliding
-                // almost parallel to the unmovable gob's area surface, 
-                // adjust the movable gob to go a bit more towards the unmovable.
-                if (move1.X < 0.08f)
-                    move1.X -= 0.08f;
-            }
-            if (move1.X < 0)
-            {
-                // Elasticity factor is between 0 and 1. It is used for linear interpolation
-                // between the perfectly elastic collision and the perfectly inelastic collision.
-                // Friction factor is from 0 and up. In real life, friction force
-                // is the product of the friction factor and the head-on component
-                // of the force that pushes the colliding movable gob away. Here, we 
-                // imitate that force by the change of the head-on component of
-                // gob movement vector.
-                float elasticity = Math.Min(1, movableArea.Elasticity * unmovableArea.Elasticity);
-                float friction = movableArea.Friction * unmovableArea.Friction;
-                float damageMultiplier = movableArea.Damage * unmovableArea.Damage;
-                Vector2 move1afterElastic = new Vector2(-move1.X, move1.Y);
-                // move1afterInelastic = Vector2.Zero
-                Vector2 move1after;
-                move1after.X = MathHelper.Lerp(0, move1afterElastic.X, elasticity);
-                move1after.Y = AWMathHelper.InterpolateTowards(move1afterElastic.Y, 0, friction * (move1after.X - move1.X));
-                movableGob.Move = xUnit * move1after.X + yUnit * move1after.Y;
-                Vector2 move1Delta = move1 - move1after;
-
+            throw new ApplicationException();
+#if false
+            if (collision) {
                 if (allowSideEffects && move1Delta.LengthSquared() >= MINIMUM_COLLISION_DELTA * MINIMUM_COLLISION_DELTA)
                 {
                     // Inflict damage to damageable gobs.
@@ -990,6 +936,7 @@ namespace AW2.Game
                 }
             }
             return CollisionSoundTypes.None;
+#endif
         }
 
         /// <summary>
@@ -999,6 +946,7 @@ namespace AW2.Game
         /// <param name="movableArea2">The overlapping collision area of the other movable gob.</param>
         /// <param name="allowSideEffects">Should effects other than changing the first movable gob's
         /// position and movement be allowed.</param>
+        [Obsolete]
         private CollisionSoundTypes PerformCollisionMovableMovable(CollisionArea movableArea1, CollisionArea movableArea2, bool allowSideEffects)
         {
             Gob gob1 = movableArea1.Owner;

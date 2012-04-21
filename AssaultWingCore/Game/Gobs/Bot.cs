@@ -209,6 +209,8 @@ namespace AW2.Game.Gobs
 
         private void MoveAround()
         {
+            throw new NotImplementedException("Rewrite using Farseer raycasting");
+#if false // !!!
             if (Target == null || Target.IsHidden) return;
             var trip = Vector2.Normalize(Target.Pos - Pos);
             _thrustController.Compute();
@@ -220,12 +222,13 @@ namespace AW2.Game.Gobs
                 .Select(area => Vector2.Normalize(Pos - area.Area.BoundingBox.Center));
             if (navDirs.Any())
             {
-                trip *= proportionalThrust * 0.5f; // Avoiding walls has higher priority and reaching shooting distance
+                trip *= proportionalThrust * 0.5f; // Avoiding walls has higher priority than reaching shooting distance.
                 proportionalThrust = 1;
                 foreach (var dir in navDirs) trip += dir;
             }
 
             _thruster.Thrust(proportionalThrust, trip);
+#endif
         }
 
         private void Aim()

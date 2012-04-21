@@ -88,7 +88,7 @@ namespace AW2.Game.Gobs
             if (_damageTime.HasValue && _damageTime.Value != Game.GameTime.TotalGameTime) return;
             Game.Stats.SendHit(this, theirArea.Owner);
             _damageTime = Game.GameTime.TotalGameTime;
-            float distance = theirArea.Area.DistanceTo(Pos);
+            float distance = 100; // !!! theirArea.Area.DistanceTo(Pos);
             float damage = _inflictDamage.Evaluate(distance);
             theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
             myArea.Disable();

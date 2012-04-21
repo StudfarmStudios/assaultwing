@@ -119,7 +119,7 @@ namespace AW2.Game.Gobs
             {
                 Prepare3DModel();
                 var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
-                var boundingBox = CollisionAreas.Single(area => area.Name == "Bounding").Area.BoundingBox;
+                var boundingBox = CollisionAreas.Single(area => area.Name == "Bounding").AreaGob.BoundingBox;
                 _indexMap = new WallIndexMap(_removedTriangleIndices.Add, boundingBox, binReader);
                 binReader.Close();
 #if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE

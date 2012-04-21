@@ -121,25 +121,6 @@ namespace AW2.Game
         public float Damage { get { return g_collisionMaterials[(int)_collisionMaterial].Damage; } }
 
         /// <summary>
-        /// The geometric area for overlap testing, in game world coordinates,
-        /// transformed according to the hosting gob's world matrix.
-        /// </summary>
-        public IGeomPrimitive Area
-        {
-            get
-            {
-                if (_owner == null || !_owner.Movable)
-                    return _area;
-                if (!_owner.WorldMatrix.Equals(_oldWorldMatrix))
-                {
-                    _oldWorldMatrix = _owner.WorldMatrix;
-                    _transformedArea = _area.Transform(_oldWorldMatrix);
-                }
-                return _transformedArea;
-            }
-        }
-
-        /// <summary>
         /// The geometric area for overlap testing, in hosting gob coordinates if the gob is movable,
         /// in world coordinates if the gob is unmovable.
         /// </summary>
@@ -226,8 +207,8 @@ namespace AW2.Game
 
         public void Disable()
         {
-            _collidesAgainst = CollisionAreaType.None;
-            _cannotOverlap = CollisionAreaType.None;
+            Fixture.CollidesWith = Category.None;
+            Fixture.CollisionCategories = Category.None;
         }
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

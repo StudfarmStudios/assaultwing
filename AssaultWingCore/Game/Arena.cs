@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using FarseerPhysics.Dynamics;
 using AW2.Core;
 using AW2.Game.Arenas;
 using AW2.Game.GobUtils;
@@ -9,9 +12,10 @@ using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
+using FarseerPhysics.Collision;
+using FarseerPhysics.Factories;
+using FarseerPhysics.Common;
 
 namespace AW2.Game
 {
@@ -186,6 +190,7 @@ namespace AW2.Game
 
         private AssaultWingCore _game;
         private GobCollection _gobs;
+        private World _world;
 
         /// <summary>
         /// Layers of the arena.
@@ -448,6 +453,7 @@ namespace AW2.Game
         {
             TotalTime = TimeSpan.Zero;
             FrameNumber = 0;
+            InitializeWorld();
             InitializeCollisionAreas();
             InitializeGobs();
             InitializeAmbientSounds();
@@ -492,11 +498,17 @@ namespace AW2.Game
             foreach (var sound in _ambientSounds) sound.Play();
         }
 
+        public void Update()
+        {
+            _world.Step((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
+        }
+
         /// <summary>
         /// Moves the given gob and performs physical collisions in order to
         /// maintain overlap consistency as specified in <b>CollisionArea.CannotOverlap</b>
         /// of the moving gob's physical collision area.
         /// </summary>
+        [Obsolete]
         public void Move(Gob gob, int frameCount, bool allowIrreversibleSideEffects)
         {
             Move(gob, Game.TargetElapsedTime.Multiply(frameCount), allowIrreversibleSideEffects);
@@ -505,6 +517,7 @@ namespace AW2.Game
         /// <summary>
         /// As <see cref="Move(Gob, int, bool)"/> but time delta is specified in game time.
         /// </summary>
+        [Obsolete]
         public void Move(Gob gob, TimeSpan moveTime, bool allowIrreversibleSideEffects)
         {
             if (!gob.Movable) return;
@@ -613,30 +626,25 @@ namespace AW2.Game
 
         private bool IsRegistered(CollisionArea area)
         {
-            return area.CollisionData != null;
+            return area.Fixture != null;
         }
 
         /// <summary>
         /// Registers a collision area for collisions.
         /// </summary>
+        [Obsolete]
         private void Register(CollisionArea area)
         {
-            if (IsRegistered(area)) throw new InvalidOperationException("Collision area is already registered");
-            int bitIndex = AWMathHelper.LogTwo((int)area.Type);
-            area.CollisionData = _collisionAreas[bitIndex].Add(area, area.Area.BoundingBox);
-            if (area.CollidesAgainst != CollisionAreaType.None)
-                _collisionAreaMayCollide[bitIndex] = true;
+            throw new ApplicationException();
         }
 
         /// <summary>
         /// Removes a previously registered collision area from having collisions.
         /// </summary>
+        [Obsolete]
         public void Unregister(CollisionArea area)
         {
-            SpatialGridElement<CollisionArea> element = (SpatialGridElement<CollisionArea>)area.CollisionData;
-            if (element == null) return;
-            _collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Remove(element);
-            area.CollisionData = null;
+            area.Fixture.Dispose();
         }
 
         /// <summary>
@@ -644,7 +652,24 @@ namespace AW2.Game
         /// </summary>
         private void Register(Gob gob)
         {
-            foreach (var area in gob.CollisionAreas) Register(area);
+            var body = BodyFactory.CreateBody(_world, gob.Pos, gob);
+            body.IsStatic = !gob.Movable;
+            body.IgnoreGravity = !gob.Gravitating;
+            body.Mass = gob.Mass;
+            gob.Body = body;
+            foreach (var area in gob.CollisionAreas)
+            {
+                var isPhysicalArea = area.CannotOverlap != CollisionAreaType.None;
+                if (isPhysicalArea && area.CollidesAgainst != CollisionAreaType.None)
+                    throw new ApplicationException("A physical collision area cannot act as a receptor");
+                var fixture = body.CreateFixture(area.Area.GetShape(), area);
+                fixture.Friction = area.Friction;
+                fixture.Restitution = area.Elasticity;
+                fixture.IsSensor = !isPhysicalArea;
+                fixture.CollisionCategories = (Category)area.Type;
+                fixture.CollidesWith = isPhysicalArea ? (Category)area.CannotOverlap : (Category)area.CollidesAgainst;
+                area.Fixture = fixture;
+            }
         }
 
         /// <summary>
@@ -652,8 +677,10 @@ namespace AW2.Game
         /// </summary>
         private void Unregister(Gob gob)
         {
-            if (gob.CollisionAreas == null) return;
-            foreach (var area in gob.CollisionAreas) Unregister(area);
+            if (gob.Body == null) return;
+            _world.RemoveBody(gob.Body);
+            gob.Body = null;
+            foreach (var area in gob.CollisionAreas) area.Fixture = null;
         }
 
         /// <summary>
@@ -776,17 +803,6 @@ namespace AW2.Game
         #endregion Public methods
 
         #region Collision and moving methods
-
-        /// <summary>
-        /// Registers a gob's physical collision areas for collisions.
-        /// </summary>
-        /// <seealso cref="Register(Gob)"/>
-        private void RegisterPhysical(Gob gob)
-        {
-            foreach (var area in gob.CollisionAreas)
-                if ((area.Type & CollisionAreaType.Physical) != 0)
-                    Register(area);
-        }
 
         /// <summary>
         /// Tries to move a gob, stopping it at the first physical collision 
@@ -1167,6 +1183,12 @@ namespace AW2.Game
                     _collisionAreas[i] = new SpatialGrid<CollisionArea>(COLLISION_AREA_CELL_SIZE[i],
                         -areaExcess, arrayDimensions - areaExcess);
             _collisionAreaMayCollide.Initialize();
+        }
+
+        private void InitializeWorld()
+        {
+            var outerBoundaryThickness = new Vector2(ARENA_OUTER_BOUNDARY_THICKNESS);
+            _world = new World(_gravity, new AABB(-outerBoundaryThickness, Dimensions + outerBoundaryThickness));
         }
 
         private void InitializeSpecialLayers()

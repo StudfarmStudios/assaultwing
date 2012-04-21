@@ -299,7 +299,7 @@ namespace AW2.Game.Gobs
         private void RemoveTriangle(int index)
         {
             if (_collisionAreas[index] == null) return; // triangle already removed earlier this frame
-            Arena.Unregister(_collisionAreas[index]);
+            _collisionAreas[index].Fixture.Dispose();
             _collisionAreas[index] = null;
             --TriangleCount;
 

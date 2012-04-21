@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Dynamics;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 
@@ -78,8 +79,6 @@ namespace AW2.Game
         [ExcludeFromDeepCopy]
         private Gob _owner;
 
-        private object _collisionData;
-
         /// <summary>
         /// Collision area name; either "General" for general collision
         /// checking (including physical collisions), or something else
@@ -151,10 +150,7 @@ namespace AW2.Game
         /// </summary>
         public Gob Owner { get { return _owner; } set { _owner = value; } }
 
-        /// <summary>
-        /// Data storage for PhysicsEngine.
-        /// </summary>
-        public object CollisionData { get { return _collisionData; } set { _collisionData = value; } }
+        public Fixture Fixture { get; set; }
 
         static CollisionArea()
         {
@@ -204,7 +200,6 @@ namespace AW2.Game
             _transformedArea = null;
             _oldWorldMatrix = 0 * Matrix.Identity;
             _owner = null;
-            _collisionData = null;
         }
 
         /// <param name="name">Collision area name.</param>
@@ -227,7 +222,6 @@ namespace AW2.Game
             _transformedArea = null;
             _oldWorldMatrix = 0 * Matrix.Identity;
             _owner = owner;
-            _collisionData = null;
         }
 
         public void Disable()

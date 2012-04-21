@@ -213,22 +213,11 @@ namespace AW2.Game
         [TypeParameter]
         private Vector2 _gravity;
 
+        private List<SoundInstance> _ambientSounds = new List<SoundInstance>();
+
         #endregion General fields
 
         #region Collision related fields
-
-        /// <summary>
-        /// Registered collision areas by type. The array element for index <c>i</c>
-        /// holds the collision areas for <c>(CollisionAreaType)(2 &lt;&lt; i)</c>.
-        /// </summary>
-        private SpatialGrid<CollisionArea>[] _collisionAreas;
-
-        /// <summary>
-        /// Marks which collision area types may collide, i.e.
-        /// have <see cref="CollisionArea.CollidesAgainst"/> set to something
-        /// else than <see cref="CollisionAreaType.None"/>.
-        /// </summary>
-        private bool[] _collisionAreaMayCollide;
 
         /// <summary>
         /// Distance outside the arena boundaries that we still allow some gobs to stay alive.
@@ -236,44 +225,9 @@ namespace AW2.Game
         public const float ARENA_OUTER_BOUNDARY_THICKNESS = 1000;
 
         /// <summary>
-        /// Accuracy of finding the point of collision. Measured in game time.
-        /// </summary>
-        /// Exactly, when a collision occurs, the moving gob's point of collision
-        /// will be no more than <see cref="COLLISION_ACCURACY"/>'s time of movement
-        /// away from the actual point of collision.
-        private readonly TimeSpan COLLISION_ACCURACY = TimeSpan.FromSeconds(0.01);
-
-        /// <summary>
-        /// Accuracy to which movement of a gob in a frame is done. 
-        /// Measured in game time.
-        /// </summary>
-        /// This constant is to work around rounding errors.
-        private readonly TimeSpan MOVEMENT_ACCURACY = TimeSpan.FromSeconds(0.00001666);
-
-        /// <summary>
-        /// The maximum number of times to try to move a gob in one frame.
-        /// Each movement attempt ends either in success or a collision.
-        /// </summary>
-        /// Higher number means more accurate and responsive collisions
-        /// but requires more CPU power in complex situations.
-        /// Low numbers may result in "lazy" collisions.
-        private const int MOVE_TRY_MAXIMUM = 4;
-
-        /// <summary>
-        /// Maximum length to move a gob at one time, in meters.
-        /// </summary>
-        /// Small values give better collision precision but require more computation.
-        private const float MOVE_LENGTH_MAXIMUM = 10;
-
-        /// <summary>
         /// The maximum number of attempts to find a free position for a gob.
         /// </summary>
         private const int FREE_POS_MAX_ATTEMPTS = 50;
-
-        /// <summary>
-        /// Radius in meters to check when determining if a position is free for a gob.
-        /// </summary>
-        private const float FREE_POS_CHECK_RADIUS_MIN = 15;
 
         /// <summary>
         /// Minimum change of gob speed in a collision to cause damage and a sound effect.
@@ -281,20 +235,6 @@ namespace AW2.Game
         private const float MINIMUM_COLLISION_DELTA = 20;
         private const float MOVABLE_MOVABLE_COLLISION_SOUND_TRESHOLD = 40;
 
-        /// <summary>
-        /// Excess area to cover by the spatial index of wall triangles,
-        /// in addition to arena boundaries.
-        /// </summary>
-        private const float WALL_TRIANGLE_ARENA_EXCESS = 1000;
-
-        /// <summary>
-        /// Cell sizes of each type of collision area, or 
-        /// a negative value if the type is not in use.
-        /// </summary>
-        /// Indexed by bit indices of <see cref="CollisionAreaType"/>.
-        private static readonly float[] COLLISION_AREA_CELL_SIZE;
-
-        private List<SoundInstance> _ambientSounds = new List<SoundInstance>();
         private List<CollisionEvent> _collisionEvents = new List<CollisionEvent>();
 
         #endregion Collision related fields
@@ -378,25 +318,6 @@ namespace AW2.Game
 
         #endregion // Arena properties
 
-        static Arena()
-        {
-            COLLISION_AREA_CELL_SIZE = new float[CollisionArea.COLLISION_AREA_TYPE_COUNT];
-            for (int i = 0; i < CollisionArea.COLLISION_AREA_TYPE_COUNT; ++i)
-                COLLISION_AREA_CELL_SIZE[i] = -1;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.Receptor)] = float.MaxValue;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.Force)] = float.MaxValue;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds)] = 500;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalShip)] = 100;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalShot)] = 100;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalWall)] = 20;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalWater)] = 100;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalGas)] = 100;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherUndamageableUnmovable)] = 100;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherDamageableUnmovable)] = 100;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherUndamageableMovable)] = 100;
-            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherDamageableMovable)] = 100;
-        }
-
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
@@ -439,11 +360,8 @@ namespace AW2.Game
         {
             UninitializeAmbientSounds();
             UnloadContent();
-
             foreach (var gob in Gobs) gob.Dispose();
             Gobs.Clear();
-            for (int i = 0; i < _collisionAreas.Length; ++i)
-                _collisionAreas[i] = null;
         }
 
         /// <summary>
@@ -454,7 +372,6 @@ namespace AW2.Game
             TotalTime = TimeSpan.Zero;
             FrameNumber = 0;
             InitializeWorld();
-            InitializeCollisionAreas();
             InitializeGobs();
             InitializeAmbientSounds();
         }
@@ -537,11 +454,11 @@ namespace AW2.Game
             int attempts = 0;
             var moveTimeLeft = moveTime;
             var soundsToPlay = CollisionSoundTypes.None;
-            while (moveTimeLeft > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
+            while (moveTimeLeft > TimeSpan.FromSeconds(0.00001666) && attempts < 4)
             {
                 var oldMove = gob.Move;
                 var gobFrameMove = gob.Move * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-                int moveChunkCount = (int)Math.Ceiling(gobFrameMove.Length() / MOVE_LENGTH_MAXIMUM);
+                int moveChunkCount = (int)Math.Ceiling(gobFrameMove.Length() / 10);
                 if (moveChunkCount == 0) moveChunkCount = 1;
                 var chunkMoveTime = moveTimeLeft.Divide(moveChunkCount);
                 for (int chunk = 0; chunk < moveChunkCount; ++chunk)
@@ -597,21 +514,18 @@ namespace AW2.Game
         /// Performs nonphysical collisions. Must be called every frame
         /// after all gob movement is done.
         /// </summary>
+        [Obsolete]
         public void PerformNonphysicalCollisions(bool allowIrreversibleSideEffects)
         {
             var stuck = false;
-            for (int bitIndex = 0; bitIndex < _collisionAreas.Length; ++bitIndex)
-            {
-                var container = _collisionAreas[bitIndex];
-                if (container != null && _collisionAreaMayCollide[bitIndex])
-                    foreach (var area in container.GetElements())
-                        foreach (var collider in GetOverlappers(area, area.CollidesAgainst))
-                        {
-                            area.Owner.CollideReversible(area, collider, stuck);
-                            if (allowIrreversibleSideEffects && area.Owner.CollideIrreversible(area, collider, stuck))
-                                _collisionEvents.Add(new CollisionEvent(area, collider, stuck: false, collideBothWays: false, sound: CollisionSoundTypes.None));
-                        }
-            }
+            var container = new CollisionArea[0];
+            foreach (var area in container)
+                foreach (var collider in GetOverlappers(area, area.CollidesAgainst))
+                {
+                    area.Owner.CollideReversible(area, collider, stuck);
+                    if (allowIrreversibleSideEffects && area.Owner.CollideIrreversible(area, collider, stuck))
+                        _collisionEvents.Add(new CollisionEvent(area, collider, stuck: false, collideBothWays: false, sound: CollisionSoundTypes.None));
+                }
         }
 
         public List<CollisionEvent> GetCollisionEvents()
@@ -787,12 +701,17 @@ namespace AW2.Game
         public int MakeHole(Vector2 holePos, float holeRadius)
         {
             if (holeRadius <= 0) return 0;
-            var boundingBox = new Rectangle(holePos.X - holeRadius, holePos.Y - holeRadius,
-                holePos.X + holeRadius, holePos.Y + holeRadius);
-            int wallBoundsIndex = AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds);
-            return _collisionAreas[wallBoundsIndex].GetElements(boundingBox)
-                .Select(area => (Gobs.Wall)area.Owner)
-                .Sum((wall => wall.MakeHole(holePos, holeRadius)));
+            var holeAabb = new AABB(holePos, holeRadius * 2, holeRadius * 2);
+            var pixelsRemoved = 0;
+            var handledWalls = new HashSet<Gobs.Wall>();
+            _world.QueryAABB(fixture =>
+            {
+                var wall = ((CollisionArea)fixture.Body.UserData).Owner as Gobs.Wall;
+                if (wall != null && handledWalls.Add(wall))
+                    wall.MakeHole(holePos, holeRadius);
+                return true;
+            }, ref holeAabb);
+            return pixelsRemoved;
         }
 
         public void PrepareEffect(BasicEffect effect)
@@ -831,7 +750,7 @@ namespace AW2.Game
             var lastMoveTry = TimeSpan.Zero;
             var oldMoveLength = oldMove.Length();
             var firstIteration = true;
-            while (firstIteration || moveBad - moveGood > COLLISION_ACCURACY)
+            while (firstIteration || moveBad - moveGood > TimeSpan.FromSeconds(0.01))
             {
                 firstIteration = false;
                 gob.Pos = LerpGobPos(oldPos, oldMove, moveTry);
@@ -1116,22 +1035,6 @@ namespace AW2.Game
                     gobb.Layer = _layers[oldLayers.IndexOf(gob.Layer)];
                     Gobs.Add(gobb);
                 });
-        }
-
-        /// <summary>
-        /// Initialises <see cref="_collisionAreas"/> for playing the arena.
-        /// </summary>
-        private void InitializeCollisionAreas()
-        {
-            _collisionAreas = new SpatialGrid<CollisionArea>[CollisionArea.COLLISION_AREA_TYPE_COUNT];
-            _collisionAreaMayCollide = new bool[CollisionArea.COLLISION_AREA_TYPE_COUNT];
-            Vector2 areaExcess = new Vector2(WALL_TRIANGLE_ARENA_EXCESS);
-            Vector2 arrayDimensions = Dimensions + 2 * areaExcess;
-            for (int i = 0; i < _collisionAreas.Length; ++i)
-                if (COLLISION_AREA_CELL_SIZE[i] >= 0)
-                    _collisionAreas[i] = new SpatialGrid<CollisionArea>(COLLISION_AREA_CELL_SIZE[i],
-                        -areaExcess, arrayDimensions - areaExcess);
-            _collisionAreaMayCollide.Initialize();
         }
 
         private void InitializeWorld()

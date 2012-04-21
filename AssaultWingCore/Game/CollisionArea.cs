@@ -42,11 +42,6 @@ namespace AW2.Game
             public float Damage;
         }
 
-        /// <summary>
-        /// Upper limit for the number of bits in the type representing <see cref="CollisionAreaType"/>.
-        /// </summary>
-        public const int COLLISION_AREA_TYPE_COUNT = 32;
-
         private static CollisionMaterial[] g_collisionMaterials;
 
         [TypeParameter]
@@ -69,12 +64,6 @@ namespace AW2.Game
         /// </summary>
         [TypeParameter, ShallowCopy]
         private IGeomPrimitive _area;
-
-        /// <summary>
-        /// Area in world coordinates, transformed by <b>oldWorldMatrix</b>.
-        /// </summary>
-        private IGeomPrimitive _transformedArea;
-        private Matrix _oldWorldMatrix;
 
         [ExcludeFromDeepCopy]
         private Gob _owner;
@@ -178,9 +167,6 @@ namespace AW2.Game
             _name = "dummyarea";
             _collisionMaterial = CollisionMaterialType.Regular;
             _area = new Circle(Vector2.Zero, 10);
-            _transformedArea = null;
-            _oldWorldMatrix = 0 * Matrix.Identity;
-            _owner = null;
         }
 
         /// <param name="name">Collision area name.</param>
@@ -200,8 +186,6 @@ namespace AW2.Game
             _collisionMaterial = collisionMaterial;
             _name = name;
             _area = area;
-            _transformedArea = null;
-            _oldWorldMatrix = 0 * Matrix.Identity;
             _owner = owner;
         }
 

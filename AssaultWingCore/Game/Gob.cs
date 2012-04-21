@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using FarseerPhysics.Dynamics;
 using AW2.Core;
 using AW2.Game.Arenas;
 using AW2.Game.GobUtils;
@@ -11,7 +13,6 @@ using AW2.Graphics;
 using AW2.Graphics.Content;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using System.Collections.Specialized;
 
 namespace AW2.Game
 {
@@ -540,6 +541,7 @@ namespace AW2.Game
         /// Collision areas are set to null by Wall. It is faster than to remove elements from a large array.
         /// </remarks>
         public IEnumerable<CollisionArea> CollisionAreas { get { return _collisionAreas.Where(area => area != null); } }
+        public Body Body { get; set; }
 
         /// <summary>
         /// Is the gob cold.
@@ -1095,11 +1097,13 @@ namespace AW2.Game
         {
             if (_disabledCount == 0) throw new InvalidOperationException("Cannot enable a gob that is already enabled");
             --_disabledCount;
+            if (_disabledCount == 0) Body.Enabled = true;
         }
 
         public void Disable()
         {
-            ++_disabledCount;
+            if (_disabledCount == 0) Body.Enabled = false;
+            _disabledCount++;
         }
 
         public override string ToString()

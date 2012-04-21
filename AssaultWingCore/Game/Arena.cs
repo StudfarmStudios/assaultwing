@@ -751,33 +751,34 @@ namespace AW2.Game
         /// <summary>
         /// Is a gob overlap consistent (e.g. not inside a wall) at a position. 
         /// </summary>
-        /// <param name="gob">The gob.</param>
-        /// <param name="position">The position.</param>
-        /// <returns><b>true</b> iff the gob is overlap consistent at the position.</returns>
         public bool IsFreePosition(Gob gob, Vector2 position)
         {
-            if (gob.PhysicalArea == null) return true;
-
-            // Make sure Gob.WorldMatrix doesn't contain NaN's.
-            var oldPos = gob.Pos;
-            var oldRotation = gob.Rotation;
-            gob.Pos = Vector2.Zero;
-            gob.Rotation = 0;
-
-            var boundingDimensions = gob.PhysicalArea.Area.BoundingBox.Dimensions;
-            var checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN,
-                1.1f * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
-            var checkRadiusGobCoords = checkRadiusMeters / gob.Scale; // in gob coordinates
-            var wallCheckArea = new CollisionArea("", new Circle(Vector2.Zero, checkRadiusGobCoords), gob,
-                gob.PhysicalArea.Type, gob.PhysicalArea.CollidesAgainst, gob.PhysicalArea.CannotOverlap, CollisionMaterialType.Regular);
-            gob.Pos = position;
-            var result = ArenaBoundaryLegal(gob) && !GetOverlappers(wallCheckArea, wallCheckArea.CannotOverlap).Any();
-
-            // Restore old values
-            gob.Pos = oldPos;
-            gob.Rotation = oldRotation;
-
-            return result;
+            Transform gobTransform;
+            gob.Body.GetTransform(out gobTransform);
+            gobTransform.Position = position;
+            var gobAabb = new AABB(position, position);
+            AABB fixtureAabb;
+            foreach (var gobFixture in gob.Body.FixtureList)
+            {
+                if (gobFixture.IsSensor) continue;
+                gobFixture.Shape.ComputeAABB(out fixtureAabb, ref gobTransform, 0);
+                gobAabb.Combine(ref fixtureAabb);
+            }
+            if (gobAabb.Extents == Vector2.Zero) return true;
+            Transform fixtureTransform;
+            var isFree = true;
+            _world.QueryAABB(otherFixture =>
+            {
+                otherFixture.Body.GetTransform(out fixtureTransform);
+                foreach (var gobFixture in gob.Body.FixtureList)
+                    if (AABB.TestOverlap(otherFixture.Shape, 0, gobFixture.Shape, 0, ref fixtureTransform, ref gobTransform))
+                    {
+                        isFree = false;
+                        return false;
+                    }
+                return true;
+            }, ref gobAabb);
+            return isFree;
         }
 
         /// <summary>

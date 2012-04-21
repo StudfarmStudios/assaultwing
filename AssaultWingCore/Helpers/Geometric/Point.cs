@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -75,6 +77,11 @@ namespace AW2.Helpers.Geometric
 #else
             return Vector2.Distance(_location, point);
 #endif
+        }
+
+        public Body GetBody(World world)
+        {
+            return BodyFactory.CreateEdge(world, Location, Location);
         }
 
         #endregion IGeomPrimitive Members

@@ -1,5 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -58,6 +60,11 @@ namespace AW2.Helpers.Geometric
         {
             float distance = Vector2.Distance(_center, point) - _radius;
             return Math.Max(distance, 0);
+        }
+
+        public Body GetBody(World world)
+        {
+            return BodyFactory.CreateCircle(world, _radius, 1, _center);
         }
 
         #endregion IGeomPrimitive Members

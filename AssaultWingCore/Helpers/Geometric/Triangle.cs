@@ -4,6 +4,9 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Common;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -169,6 +172,11 @@ namespace AW2.Helpers.Geometric
         public float DistanceTo(Vector2 point)
         {
             return Geometry.Distance(new Point(point), this);
+        }
+
+        public Body GetBody(World world)
+        {
+            return BodyFactory.CreatePolygon(world, new Vertices(new[] { P1, P2, P3 }), 1);
         }
 
         #endregion

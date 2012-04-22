@@ -24,6 +24,7 @@ namespace AW2
             "We're sorry for the inconvenience",
         };
         private GameForm _form;
+        private static bool g_reportingException;
 
         public static AssaultWingProgram Instance { get; private set; }
 
@@ -89,6 +90,8 @@ namespace AW2
         private static void ReportException(Exception e)
         {
             Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
+            if (g_reportingException) return; // Don't report if sending the report failed.
+            g_reportingException = true;
             var caption = g_errorCaptions[RandomHelper.GetRandomInt(g_errorCaptions.Length)];
             var intro = "Would you please help solve the problem by sending the developers this error information" +
                 " and the Assault Wing run log \"" + Log.LogFileName + "\"?";
@@ -102,6 +105,8 @@ namespace AW2
 
             // Raise a Windows event to notify any dedicated server keepalive task to relaunch the server.
             System.Diagnostics.EventLog.WriteEvent("Application Error", new System.Diagnostics.EventInstance(1000, 2), "AssaultWing.exe");
+
+            g_reportingException = false;
         }
 
         private static void SendMail(string text)
@@ -117,3 +122,4 @@ namespace AW2
     }
 #endif
 }
+

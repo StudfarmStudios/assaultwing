@@ -127,9 +127,9 @@ namespace AW2.Helpers.Geometric
             var _max = Max;
 #endif
             var p1 = Vector2.Transform(_min, transformation);
-            var p2 = Vector2.Transform(new Vector2(_max.X, _min.Y), transformation);Vector2.Transform(new Vector2(_max.X, _min.Y), transformation);
+            var p2 = Vector2.Transform(new Vector2(_max.X, _min.Y), transformation);
             var p3 = Vector2.Transform(_max, transformation);
-            var p4 = Vector2.Transform(new Vector2(_max.X, _min.Y), transformation);
+            var p4 = Vector2.Transform(new Vector2(_min.X, _max.Y), transformation);
             return new Polygon(new Vector2[] { p1, p2, p3, p4 });
         }
 

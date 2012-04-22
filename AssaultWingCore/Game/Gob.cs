@@ -237,6 +237,7 @@ namespace AW2.Game
         /// </summary>
         [TypeParameter]
         protected CollisionArea[] _collisionAreas;
+        private Body _body;
 
         #region Fields for damage
 
@@ -397,7 +398,11 @@ namespace AW2.Game
         /// <summary>
         /// Position of the gob in the game world.
         /// </summary>
-        public virtual Vector2 Pos { get { return _pos; } set { _pos = value; } }
+        public virtual Vector2 Pos
+        {
+            get { return Body != null ? Body.Position : _pos; }
+            set { if (Body != null) Body.Position = value; else _pos = value; }
+        }
 
         /// <summary>
         /// Drawing position delta of the gob in the game world, relative to <see cref="Pos"/>.
@@ -421,7 +426,11 @@ namespace AW2.Game
         /// <summary>
         /// The gob's movement in meters/second.
         /// </summary>
-        public virtual Vector2 Move { get; set; }
+        public virtual Vector2 Move
+        {
+            get { return Body != null ? Body.LinearVelocity : Vector2.Zero; }
+            set { if (Body != null) Body.LinearVelocity = value; }
+        }
 
         /// <summary>
         /// Mass of the gob, measured in kilograms.
@@ -433,8 +442,8 @@ namespace AW2.Game
         /// </summary>
         public virtual float Rotation
         {
-            get { return _rotation; }
-            set { _rotation = value % MathHelper.TwoPi; }
+            get { return Body != null ? Body.Rotation : _rotation; }
+            set { if (Body != null) Body.Rotation = value; else _rotation = value % MathHelper.TwoPi; }
         }
 
         public virtual float DrawRotation { get { return Rotation; } }
@@ -541,7 +550,15 @@ namespace AW2.Game
         /// Collision areas are set to null by Wall. It is faster than to remove elements from a large array.
         /// </remarks>
         public IEnumerable<CollisionArea> CollisionAreas { get { return _collisionAreas.Where(area => area != null); } }
-        public Body Body { get; set; }
+        public Body Body
+        {
+            get { return _body; }
+            set
+            {
+                _body = value;
+                _body.SetTransform(_pos, _rotation);
+            }
+        }
 
         /// <summary>
         /// Is the gob cold.

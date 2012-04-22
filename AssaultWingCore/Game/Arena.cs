@@ -503,24 +503,6 @@ namespace AW2.Game
             }
         }
 
-        /// <summary>
-        /// Performs nonphysical collisions. Must be called every frame
-        /// after all gob movement is done.
-        /// </summary>
-        [Obsolete]
-        public void PerformNonphysicalCollisions(bool allowIrreversibleSideEffects)
-        {
-            var stuck = false;
-            var container = new CollisionArea[0];
-            foreach (var area in container)
-                foreach (var collider in GetOverlappers(area, area.CollidesAgainst))
-                {
-                    area.Owner.CollideReversible(area, collider, stuck);
-                    if (allowIrreversibleSideEffects && area.Owner.CollideIrreversible(area, collider, stuck))
-                        _collisionEvents.Add(new CollisionEvent(area, collider, stuck: false, collideBothWays: false, sound: CollisionSoundTypes.None));
-                }
-        }
-
         public List<CollisionEvent> GetCollisionEvents()
         {
             return _collisionEvents;
@@ -529,11 +511,6 @@ namespace AW2.Game
         public void ResetCollisionEvents()
         {
             _collisionEvents.Clear();
-        }
-
-        private bool IsRegistered(CollisionArea area)
-        {
-            return area.Fixture != null;
         }
 
         /// <summary>
@@ -728,7 +705,7 @@ namespace AW2.Game
             myArea.Owner.CollideReversible(myArea, theirArea, stuck);
             if (Game.NetworkMode == NetworkMode.Client && !forceIrreversibleSideEffectsOnClient) return false;
             var irreversibleSideEffects = myArea.Owner.CollideIrreversible(myArea, theirArea, stuck);
-            var sounds = GetSoundsToPlay(myArea.Owner, theirArea.Owner);
+            var sounds = GetCollisionSounds(myArea, theirArea);
             if (sounds.HasFlag(CollisionSoundTypes.WallCollision))
                 Game.SoundEngine.PlaySound("Collision", myArea.Owner);
             if (sounds.HasFlag(CollisionSoundTypes.ShipCollision))
@@ -736,13 +713,14 @@ namespace AW2.Game
             return irreversibleSideEffects || sounds != CollisionSoundTypes.None;
         }
 
-        private CollisionSoundTypes GetSoundsToPlay(Gob me, Gob them)
+        private CollisionSoundTypes GetCollisionSounds(CollisionArea myArea, CollisionArea theirArea)
         {
-            if (!(me is Gobs.Ship)) return CollisionSoundTypes.None;
-            if (them is Gobs.Ship)
-                return me.ID < them.ID ? CollisionSoundTypes.ShipCollision : CollisionSoundTypes.None; // Only one ship makes the sound
+            if (!myArea.IsPhysical || !theirArea.IsPhysical) return CollisionSoundTypes.None;
+            if (!(myArea.Owner is Gobs.Ship)) return CollisionSoundTypes.None;
+            if (theirArea.Owner is Gobs.Ship)
+                return myArea.Owner.ID < theirArea.Owner.ID ? CollisionSoundTypes.ShipCollision : CollisionSoundTypes.None; // Only one ship makes the sound
             else
-                return them.Movable ? CollisionSoundTypes.ShipCollision : CollisionSoundTypes.WallCollision;
+                return theirArea.Owner.Movable ? CollisionSoundTypes.ShipCollision : CollisionSoundTypes.WallCollision;
         }
 
         /// <summary>

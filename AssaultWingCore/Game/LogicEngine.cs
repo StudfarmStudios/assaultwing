@@ -75,7 +75,6 @@ namespace AW2.Game
             foreach (var gob in data.Arena.Gobs) gob.Update();
             foreach (var device in data.Devices) device.Update();
             foreach (var player in data.Spectators) player.Update();
-            { }// !!! Game.DataEngine.Arena.PerformNonphysicalCollisions(allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
             KillGobsOnClient();
             RemoveInactivePlayers();
 

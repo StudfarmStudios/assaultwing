@@ -120,6 +120,11 @@ namespace AW2.Game
         /// </summary>
         public Gob Owner { get { return _owner; } set { _owner = value; } }
 
+        /// <summary>
+        /// If true, the collision area represents physical collisions.
+        /// </summary>
+        public bool IsPhysical { get { return CannotOverlap != CollisionAreaType.None; } }
+
         public Fixture Fixture { get; set; }
 
         static CollisionArea()

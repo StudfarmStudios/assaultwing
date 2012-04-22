@@ -175,7 +175,7 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new PolygonShape(new Vertices(new[] { P1, P2, P3 }), 1);
+            return new PolygonShape(new Vertices(new[] { P3, P2, P1 }), 1);
         }
 
         #endregion

@@ -188,7 +188,7 @@ namespace AW2.Game.Gobs
             var relativeLengths = new float[rayCount];
             for (int ray = 0; ray < rayCount; ray++)
             {
-                var fullRay = new Vector2(_triHeightForDamage, _triWidth * (0.5f - (float)ray / (rayCount - 1)));
+                var fullRay = new Vector2(_triHeightForDamage, _triWidth * ((float)ray / (rayCount - 1) - 0.5f));
                 var rayUnit = (fullRay / _triHeightForDamage).Rotate(Rotation);
                 var distance = 0f;
                 while ((distance += rayStep) <= _triHeightForDamage)
@@ -305,7 +305,7 @@ namespace AW2.Game.Gobs
             vertices[0] = Vector2.Zero;
             for (int i = 0; i < relativeLengths.Length; i++)
                 vertices[1 + i] = relativeLengths[i] * new Vector2(_triHeightForDamage,
-                    _triWidth * (0.5f - (float)i / (relativeLengths.Length - 1)));
+                    _triWidth * ((float)i / (relativeLengths.Length - 1) - 0.5f));
             return vertices;
         }
     }

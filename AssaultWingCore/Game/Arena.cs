@@ -542,12 +542,13 @@ namespace AW2.Game
             body.IgnoreGravity = !gob.Gravitating;
             body.Mass = gob.Mass;
             gob.Body = body;
+            var gobScale = Matrix.CreateScale(gob.Scale); // TODO !!! Get rid of Gob.Scale
             foreach (var area in gob.CollisionAreas)
             {
                 var isPhysicalArea = area.CannotOverlap != CollisionAreaType.None;
                 if (isPhysicalArea && area.CollidesAgainst != CollisionAreaType.None)
                     throw new ApplicationException("A physical collision area cannot act as a receptor");
-                var fixture = body.CreateFixture(area.AreaGob.GetShape(), area);
+                var fixture = body.CreateFixture(area.AreaGob.Transform(gobScale).GetShape(), area);
                 fixture.Friction = area.Friction;
                 fixture.Restitution = area.Elasticity;
                 fixture.IsSensor = !isPhysicalArea;

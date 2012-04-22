@@ -114,51 +114,6 @@ namespace AW2.Helpers.Geometric
             _faceStrips = null;
             UpdateBoundingBox();
             UpdateFaceStrips();
-
-#if false// HACK: polygon simplicity check skipped 
-//#if DEBUG
-            // Make sure the polygon is simple.
-            // This is O(n^2) -- slow code and thus not wanted in release builds.
-            // This could be done in O(n log n) by a scanline algorithm, or
-            // apparently even in O(n) by some sophisticated triangulation algorithm.
-            for (int i = 0; i < vertices.Length; ++i)
-            {
-                for (int j = i + 1; j < vertices.Length; ++j)
-                {
-                    Geometry.LineIntersectionType intersect =
-                        Geometry.Intersect(vertices[i], vertices[(i + 1) % vertices.Length],
-                                       vertices[j], vertices[(j + 1) % vertices.Length]);
-                    if ((i + 1) % vertices.Length == j || (j + 1) % vertices.Length == i)
-                    {
-                        if (intersect != Geometry.LineIntersectionType.Point)
-                            throw new Exception("Not a simple polygon");
-                    }
-                    else
-                    {
-                        if (intersect != Geometry.LineIntersectionType.None)
-                            throw new Exception("Not a simple polygon");
-                    }
-                }
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Returns true iff the polygon's vertices are in a clockwise sequence.
-        /// </summary>
-        /// <returns>True iff the polygon's vertices are in a clockwise sequence.</returns>
-        public bool Clockwise()
-        {
-            for (int i = 0; i + 2 < _vertices.Length; ++i)
-                switch (Geometry.Stand(_vertices[i + 2], _vertices[i], _vertices[i + 1]))
-                {
-                    case Geometry.StandType.Left: return false;
-                    case Geometry.StandType.Right: return true;
-                    case Geometry.StandType.Edge: continue;
-                }
-            // We should never get here.
-            throw new Exception("Polygon winding undetermined (" + _vertices.Length.ToString()
-                + " vertices)");
         }
 
         /// <summary>

@@ -784,7 +784,6 @@ namespace AW2.Game
         {
             if (IsRelevant && MayBeDifficultToPredictOnClient) ForcedNetworkUpdate = true;
             _previousMove = Move;
-            Arena.Move(this, Game.TargetElapsedTime, allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
             DrawPosOffset *= 0.95f; // reduces the offset to less than 5 % in 60 updates
             DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
         }

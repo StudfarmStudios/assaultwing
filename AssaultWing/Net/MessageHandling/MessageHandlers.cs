@@ -315,21 +315,13 @@ namespace AW2.Net.MessageHandling
             var arena = Game.DataEngine.Arena;
             foreach (var collisionEvent in mess.CollisionEvents)
             {
+                // TODO !!! Use Dictionary for faster gob retrieval by ID.
                 var gob1 = arena.Gobs.FirstOrDefault(gob => gob.ID == collisionEvent.Gob1ID);
                 var gob2 = arena.Gobs.FirstOrDefault(gob => gob.ID == collisionEvent.Gob2ID);
                 if (gob1 == null || gob2 == null) continue;
                 var area1 = gob1.GetCollisionArea(collisionEvent.Area1ID);
                 var area2 = gob2.GetCollisionArea(collisionEvent.Area2ID);
-                if (area1 != null && area2 != null)
-                {
-                    gob1.CollideIrreversible(area1, area2, collisionEvent.Stuck);
-                    if (collisionEvent.CollideBothWays)
-                        gob2.CollideIrreversible(area2, area1, collisionEvent.Stuck);
-                }
-                if ((collisionEvent.Sound & Arena.CollisionSoundTypes.WallCollision) != 0)
-                    arena.Game.SoundEngine.PlaySound("Collision", gob1);
-                if ((collisionEvent.Sound & Arena.CollisionSoundTypes.ShipCollision) != 0)
-                    arena.Game.SoundEngine.PlaySound("Shipcollision", gob1);
+                if (area1 != null && area2 != null) arena.PerformCustomCollision(area1, area2, true);
             }
             mess.ReadGobs(gobId =>
             {

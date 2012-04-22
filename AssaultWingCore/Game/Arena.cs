@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using FarseerPhysics.Collision;
+using FarseerPhysics.Common;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Contacts;
+using FarseerPhysics.Factories;
 using AW2.Core;
 using AW2.Game.Arenas;
 using AW2.Game.GobUtils;
@@ -13,9 +17,6 @@ using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
-using FarseerPhysics.Collision;
-using FarseerPhysics.Factories;
-using FarseerPhysics.Common;
 
 namespace AW2.Game
 {
@@ -477,22 +478,14 @@ namespace AW2.Game
                 if (gob.Move == oldMove)
                     break;
             }
-            PlayCollisionSounds(gob, soundsToPlay);
+            // !!! PlayCollisionSounds(gob, soundsToPlay);
             if (gob.Gravitating) gob.Move += _gravity * (float)moveTime.TotalSeconds;
             PerformCollisions(gob, gobPhysical, false, allowIrreversibleSideEffects, colliders, soundsToPlay);
             if (gobPhysical != null) Register(gobPhysical);
             ArenaBoundaryActions(gob, allowIrreversibleSideEffects);
         }
 
-        private void PlayCollisionSounds(Gob gob, CollisionSoundTypes soundsToPlay)
-        {
-            if (Game.NetworkMode == NetworkMode.Client) return;
-            if ((soundsToPlay & Arena.CollisionSoundTypes.WallCollision) != 0)
-                Game.SoundEngine.PlaySound("Collision", gob);
-            if ((soundsToPlay & Arena.CollisionSoundTypes.ShipCollision) != 0)
-                Game.SoundEngine.PlaySound("Shipcollision", gob);
-        }
-
+        [Obsolete]
         private void PerformCollisions(Gob gob, CollisionArea gobPhysical, bool stuck, bool allowIrreversibleSideEffects, IEnumerable<CollisionArea> colliders, CollisionSoundTypes soundsToPlay)
         {
             foreach (var collider in colliders.Distinct())
@@ -567,6 +560,7 @@ namespace AW2.Game
         private void Register(Gob gob)
         {
             var body = BodyFactory.CreateBody(_world, gob.Pos, gob);
+            body.OnCollision += BodyCollisionHandler;
             body.IsStatic = !gob.Movable;
             body.IgnoreGravity = !gob.Gravitating;
             body.Mass = gob.Mass;
@@ -725,6 +719,33 @@ namespace AW2.Game
         #region Collision and moving methods
 
         /// <summary>
+        /// Performs custom collision effects when a collision area collides into another one.
+        /// </summary>
+        /// <returns>True if irreversible side effects happened.</returns>
+        public bool PerformCustomCollision(CollisionArea myArea, CollisionArea theirArea, bool forceIrreversibleSideEffectsOnClient)
+        {
+            var stuck = false; // !!!
+            myArea.Owner.CollideReversible(myArea, theirArea, stuck);
+            if (Game.NetworkMode == NetworkMode.Client && !forceIrreversibleSideEffectsOnClient) return false;
+            var irreversibleSideEffects = myArea.Owner.CollideIrreversible(myArea, theirArea, stuck);
+            var sounds = GetSoundsToPlay(myArea.Owner, theirArea.Owner);
+            if (sounds.HasFlag(CollisionSoundTypes.WallCollision))
+                Game.SoundEngine.PlaySound("Collision", myArea.Owner);
+            if (sounds.HasFlag(CollisionSoundTypes.ShipCollision))
+                Game.SoundEngine.PlaySound("Shipcollision", myArea.Owner);
+            return irreversibleSideEffects || sounds != CollisionSoundTypes.None;
+        }
+
+        private CollisionSoundTypes GetSoundsToPlay(Gob me, Gob them)
+        {
+            if (!(me is Gobs.Ship)) return CollisionSoundTypes.None;
+            if (them is Gobs.Ship)
+                return me.ID < them.ID ? CollisionSoundTypes.ShipCollision : CollisionSoundTypes.None; // Only one ship makes the sound
+            else
+                return them.Movable ? CollisionSoundTypes.ShipCollision : CollisionSoundTypes.WallCollision;
+        }
+
+        /// <summary>
         /// Tries to move a gob, stopping it at the first physical collision 
         /// and performing the physical collision. Returns the collision areas
         /// of other gobs this gob collided into (there may be repetition).
@@ -733,6 +754,7 @@ namespace AW2.Game
         /// <param name="moveTime">Remaining duration of the move</param>
         /// <param name="allowSideEffects">Should effects other than changing the gob's
         /// position and movement be allowed.</param>
+        [Obsolete]
         private Tuple<List<CollisionArea>, CollisionSoundTypes> TryMove(Gob gob, ref TimeSpan moveTime, bool allowSideEffects)
         {
             var colliders = new List<CollisionArea>();
@@ -1093,6 +1115,16 @@ namespace AW2.Game
             if (gob.Layer == Gobs.GameplayLayer) Unregister(gob);
             gob.Dispose();
             if (GobRemoved != null) GobRemoved(gob);
+        }
+
+        private bool BodyCollisionHandler(Fixture myFixture, Fixture theirFixture, Contact contact)
+        {
+            var myArea = (CollisionArea)myFixture.UserData;
+            var theirArea = (CollisionArea)theirFixture.UserData;
+            var irreversibleSideEffects = PerformCustomCollision(myArea, theirArea, false);
+            if (Game.NetworkMode == NetworkMode.Server && irreversibleSideEffects)
+                _collisionEvents.Add(new CollisionEvent(myArea, theirArea, stuck: false /*!!!*/, collideBothWays: false /*!!!*/, sound: CollisionSoundTypes.None /*!!!*/));
+            return true;
         }
 
         #endregion

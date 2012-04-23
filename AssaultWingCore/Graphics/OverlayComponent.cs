@@ -28,9 +28,8 @@ namespace AW2.Graphics
 
         /// <summary>
         /// Alignment adjustment; added to the coordinates obtained by the chosen alignment.
-        /// Initially set to Vector2.Zero, which gives no adjustment to the chosen alignment.
         /// </summary>
-        public Vector2 CustomAlignment { get; set; }
+        public Func<Vector2> CustomAlignment { get; set; }
 
         /// <summary>
         /// Is the component visible.
@@ -52,6 +51,7 @@ namespace AW2.Graphics
         {
             HorizontalAlignment = horizontal;
             VerticalAlignment = vertical;
+            CustomAlignment = () => Vector2.Zero;
             Visible = true;
             Viewport = viewport;
             LoadContent();
@@ -100,8 +100,9 @@ namespace AW2.Graphics
                     dimensions.Y = oldViewport.Height;
                     break;
             }
-            newViewport.X += (int)CustomAlignment.X;
-            newViewport.Y += (int)CustomAlignment.Y;
+            var customAlignment = CustomAlignment();
+            newViewport.X += (int)customAlignment.X;
+            newViewport.Y += (int)customAlignment.Y;
             newViewport.Width = Math.Min(oldViewport.Width, dimensions.X);
             newViewport.Height = Math.Min(oldViewport.Height, dimensions.Y);
             gfx.Viewport = newViewport.LimitTo(AssaultWingCore.Instance.Window.Impl.GetClientBounds());

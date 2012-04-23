@@ -46,7 +46,7 @@ namespace AW2.Graphics.OverlayComponents
         public CombatLogOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
-            CustomAlignment = new Vector2(0, 300);
+            CustomAlignment = () => new Vector2(0, 300);
             _player = viewport.Owner;
             _messageBeeper = new MessageBeeper(_player.Game, "PlayerMessage", () => Messages.FirstOrDefault());
         }

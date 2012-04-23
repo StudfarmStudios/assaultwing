@@ -99,7 +99,7 @@ namespace AW2.Menu
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom,
-                CustomAlignment = new Vector2(0, -2),
+                CustomAlignment = () => new Vector2(0, -2),
             };
         }
 

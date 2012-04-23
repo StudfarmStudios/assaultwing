@@ -116,12 +116,13 @@ namespace AW2.Core
             var gfx = GraphicsDeviceService.GraphicsDevice;
             var pp = gfx.PresentationParameters;
             var oldViewport = gfx.Viewport;
-            if (_screenshotRenderTarget ==null) _screenshotRenderTarget = new AutoRenderTarget2D(GraphicsDeviceService.GraphicsDevice, () => new AutoRenderTarget2D.CreationData
-            {
-                Width = GraphicsDeviceService.GraphicsDevice.Viewport.Width,
-                Height = GraphicsDeviceService.GraphicsDevice.Viewport.Height,
-                DepthStencilState = GraphicsDeviceService.GraphicsDevice.DepthStencilState,
-            });
+            if (_screenshotRenderTarget == null) _screenshotRenderTarget = new AutoRenderTarget2D(
+                GraphicsDeviceService.GraphicsDevice, () => new AutoRenderTarget2D.CreationData
+                {
+                    Width = GraphicsDeviceService.GraphicsDevice.Viewport.Width,
+                    Height = GraphicsDeviceService.GraphicsDevice.Viewport.Height,
+                    DepthStencilState = GraphicsDeviceService.GraphicsDevice.DepthStencilState,
+                });
             _screenshotRenderTarget.SetAsRenderTarget();
             DefaultRenderTarget = _screenshotRenderTarget.GetTexture();
             render();

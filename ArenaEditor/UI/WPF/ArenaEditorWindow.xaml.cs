@@ -330,6 +330,7 @@ namespace AW2.UI.WPF
             ArenaView.ClientSizeChanged += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
             ArenaView.Draw += _game.Draw;
             ArenaView.GraphicsDeviceService = _graphicsDeviceService;
+            ArenaView.GetClientSize = () => _game.Window.Impl.GetClientBounds().GetSize();
             ArenaView.ClientSize = ArenaView.ClientSize; // trigger ArenaView.ClientSizeChanged to react to the initial ArenaView size
             _runner = new AWGameRunner(_game,
                 invoker: action => Dispatcher.Invoke(action),

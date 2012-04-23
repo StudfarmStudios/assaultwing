@@ -8,6 +8,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace AW2.Core
@@ -24,8 +25,12 @@ namespace AW2.Core
         /// </summary>
         public GraphicsDeviceService GraphicsDeviceService { get; set; }
 
-        public event Action<Message> ExternalWndProc;
+        /// <summary>
+        /// Getter of the size of drawable area. Must be set after construction.
+        /// </summary>
+        public Func<Size> GetClientSize { get; set; }
 
+        public event Action<Message> ExternalWndProc;
         public event Action Draw;
 
         protected override void WndProc(ref Message m)
@@ -37,13 +42,14 @@ namespace AW2.Core
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
+            var clientSize = GetClientSize();
             var beginDrawError = DesignMode
                 ? Text + "\n\n" + GetType()
-                : GraphicsDeviceService.BeginDraw(ClientSize, false);
+                : GraphicsDeviceService.BeginDraw(clientSize, false);
             if (beginDrawError == null)
             {
                 if (Draw != null) Draw();
-                GraphicsDeviceService.EndDraw(ClientSize, Handle);
+                GraphicsDeviceService.EndDraw(clientSize, Handle);
             }
             else
             {

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using AW2.Core;
+using AW2.Helpers;
 
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Timer = System.Windows.Forms.Timer;
@@ -296,6 +297,7 @@ namespace AW2.UI
         private void InitializeGameView()
         {
             _gameView.GraphicsDeviceService = _graphicsDeviceService;
+            _gameView.GetClientSize = () => _game.Window.Impl.GetClientBounds().GetSize();
         }
 
         private void InitializeRunner()

@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Size = System.Drawing.Size;
 
 namespace AW2.Helpers
 {
@@ -312,6 +313,11 @@ namespace AW2.Helpers
         public static bool IsPublished(this Version v)
         {
             return v.Major != 0;
+        }
+
+        public static Size GetSize(this Rectangle rectangle)
+        {
+            return new Size(rectangle.Width, rectangle.Height);
         }
 
         /// <summary>

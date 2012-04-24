@@ -91,9 +91,9 @@ namespace AW2.Core
             Stats.Enabled = true;
         }
 
-        public override void Update(AWGameTime gameTime)
+        protected override void UpdateImpl()
         {
-            base.Update(gameTime);
+            base.UpdateImpl();
             SendServerStateToStats();
             Logic.Update();
             UpdateCustomControls();

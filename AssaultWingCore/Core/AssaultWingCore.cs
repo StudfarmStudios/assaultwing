@@ -63,11 +63,6 @@ namespace AW2.Core
         /// </summary>
         public NetworkMode NetworkMode { get; set; }
 
-        /// <summary>
-        /// The game time on this frame.
-        /// </summary>
-        public AWGameTime GameTime { get; private set; }
-
         public virtual bool IsShipControlsEnabled { get { return true; } }
         public Window Window { get; set; }
 
@@ -99,7 +94,6 @@ namespace AW2.Core
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
             NetworkMode = NetworkMode.Standalone;
-            GameTime = new AWGameTime();
             InitializeComponents();
         }
 
@@ -269,12 +263,6 @@ namespace AW2.Core
             AW2.Helpers.Serialization.ProfilingNetworkBinaryWriter.DumpStats();
 #endif
             base.EndRun();
-        }
-
-        public override void Update(AWGameTime gameTime)
-        {
-            GameTime = gameTime;
-            base.Update(GameTime);
         }
 
         public override void Draw()

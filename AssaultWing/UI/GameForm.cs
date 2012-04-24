@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using AW2.Core;
+using AW2.Helpers;
 
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Timer = System.Windows.Forms.Timer;
@@ -72,7 +73,7 @@ namespace AW2.UI
         public Rectangle ClientBoundsMin
         {
             get { return new Rectangle(0, 0, MinimumSize.Width, MinimumSize.Height); }
-            set { BeginInvoke((Action)(() => MinimumSize = new System.Drawing.Size(value.Width, value.Height))); }
+            set { BeginInvoke((Action)(() => MinimumSize = value.GetSize())); }
         }
         public GraphicsDeviceControl GameView { get { return _gameView; } }
         public AssaultWing Game { get { return _game; } }
@@ -311,6 +312,8 @@ namespace AW2.UI
                         BeginInvoke((Action)_gameView.Invalidate);
                 },
                 update: gameTime => BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
+            _game.UpdateFinished += _runner.UpdateFinished;
+            _game.DrawFinished += _runner.DrawFinished;
         }
 
         private static FormParameters GetFullScreenFormParameters(int width, int height)

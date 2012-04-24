@@ -20,9 +20,14 @@ namespace AW2.Core
         private bool _exiting;
         private SemaphoreSlim _exitSemaphore;
         private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
+        private bool _readyForNextUpdate;
+        private bool _readyForNextDraw;
 
         public event Action Initialized;
 
+        /// <param name="invoker">A delegate that invokes a delegate in the main thread.</param>
+        /// <param name="draw">A delegate that draws the game screen.</param>
+        /// <param name="update">A delegate that updates the game world.</param>
         public AWGameRunner(AWGame game, Action<Action> invoker, Action<Exception> exceptionHandler, Action draw, Action<AWGameTime> update)
         {
             if (game == null || exceptionHandler == null || draw == null || update == null) throw new ArgumentNullException();
@@ -44,6 +49,22 @@ namespace AW2.Core
             _exitSemaphore.Wait();
             if (_exiting) return;
             _gameUpdateAndDrawLoopAsyncResult = ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
+        }
+
+        /// <summary>
+        /// To be called when a frame update has finished.
+        /// </summary>
+        public void UpdateFinished()
+        {
+            _readyForNextUpdate = true;
+        }
+
+        /// <summary>
+        /// To be called when a frame draw has finished.
+        /// </summary>
+        public void DrawFinished()
+        {
+            _readyForNextDraw = true;
         }
 
         /// <summary>
@@ -117,22 +138,36 @@ namespace AW2.Core
                 Initialized();
                 Initialized = null;
             }
+            _readyForNextUpdate = true;
+            _readyForNextDraw = true;
             while (!_exiting)
             {
                 lock (_timer)
                 {
                     var now = _timer.Elapsed;
                     if (now + Waiter.PRECISION < nextUpdate)
+                    {
+                        // It's not yet time for update.
                         Waiter.Instance.Sleep(nextUpdate - now);
+                    }
                     else if (now > nextUpdate + TimeSpan.FromSeconds(10))
+                    {
+                        // Update is lagging a lot; skip over the missed updates.
                         nextUpdate = now;
-                    else
+                    }
+                    else if (_readyForNextUpdate && _readyForNextDraw)
                     {
                         var updateInterval = _game.TargetElapsedTime;
                         var nextNextUpdate = nextUpdate + updateInterval;
                         var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
+                        _readyForNextUpdate = false;
                         _update(gameTime);
-                        if (now < nextNextUpdate) _draw();
+                        if (now < nextNextUpdate)
+                        {
+                            // There is time left before the following update; draw in the meantime.
+                            _readyForNextDraw = false;
+                            _draw();
+                        }
                         nextUpdate = nextNextUpdate;
                         lastUpdate = now;
                         totalGameTime += updateInterval;

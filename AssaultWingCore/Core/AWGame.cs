@@ -22,6 +22,21 @@ namespace AW2.Core
         public TimeSpan TargetElapsedTime { get { return TimeSpan.FromSeconds(1f / TargetFPS); } }
         public int TargetFPS { get; set; }
 
+        /// <summary>
+        /// The current game time.
+        /// </summary>
+        public AWGameTime GameTime { get; private set; }
+
+        /// <summary>
+        /// Raised when <see cref="Update"/> finishes.
+        /// </summary>
+        public event Action UpdateFinished;
+
+        /// <summary>
+        /// Raised when <see cref="Draw"/> finishes.
+        /// </summary>
+        public event Action DrawFinished;
+
         private bool _takeScreenShot;
         private AutoRenderTarget2D _screenshotRenderTarget;
 
@@ -32,6 +47,7 @@ namespace AW2.Core
             if (graphicsDeviceService != null) Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
             Components = new AWGameComponentCollection();
             TargetFPS = 60;
+            GameTime = new AWGameTime();
         }
 
         public void TakeScreenShot()
@@ -80,11 +96,19 @@ namespace AW2.Core
         /// <summary>
         /// Called when the game has determined that game logic needs to be processed.
         /// </summary>
-        public virtual void Update(AWGameTime gameTime)
+        public void Update(AWGameTime gameTime)
         {
+            GameTime = gameTime;
             foreach (var item in Components)
                 if (item.Enabled) item.Update();
+            UpdateImpl();
+            if (UpdateFinished != null) UpdateFinished();
         }
+
+        /// <summary>
+        /// Subclasses may process additional game logic by overriding this method.
+        /// </summary>
+        protected virtual void UpdateImpl() { }
 
         /// <summary>
         /// Called when the game determines it is time to draw a frame.
@@ -94,6 +118,7 @@ namespace AW2.Core
             if (_takeScreenShot) RenderToFile(DrawImpl);
             _takeScreenShot = false;
             DrawImpl();
+            if (DrawFinished != null) DrawFinished();
         }
 
         /// <summary>

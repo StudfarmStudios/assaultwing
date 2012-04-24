@@ -336,6 +336,8 @@ namespace AW2.UI.WPF
                 exceptionHandler: e => Dispatcher.BeginInvoke((Action)(() => { throw new ApplicationException("An exception occurred in a background thread", e); })),
                 draw: () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
                 update: gameTime => Dispatcher.BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
+            _game.UpdateFinished += _runner.UpdateFinished;
+            _game.DrawFinished += _runner.DrawFinished;
             _runner.Initialized += () => Dispatcher.BeginInvoke((Action)GameInitializedHandler);
             _runner.Run();
         }

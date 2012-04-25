@@ -595,36 +595,33 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Tries to return a position in an area of the game world 
-        /// where a gob is overlap consistent (e.g. not inside a wall).
+        /// Tries to return a position in the arena where there is no physical obstacles in a radius.
         /// </summary>
-        /// <param name="gob">The gob to position.</param>
         /// <param name="area">The area where to look for a position.</param>
-        /// <returns>A position in the area where the gob is overlap consistent.</returns>
-        public Vector2 GetFreePosition(Gob gob, IGeomPrimitive area)
+        /// <returns>A position in the area where a gob might be overlap consistent.</returns>
+        public Vector2 GetFreePosition(float radius, IGeomPrimitive area)
         {
             Vector2 result;
-            GetFreePosition(gob, area, out result);
+            GetFreePosition(radius, area, out result);
             return result;
         }
 
         /// <summary>
-        /// Tries to return a legal position in an area of the game world 
-        /// where a gob is overlap consistent (e.g. not inside a wall).
+        /// Tries to return a position in the arena where there is no physical obstacles in a radius.
         /// </summary>
-        /// <param name="gob">The gob to position.</param>
+        /// <param name="radius">The radius of requested free space.</param>
         /// <param name="area">The area where to look for a position.</param>
         /// <param name="result">Best try for a position in the area where the gob is overlap consistent.</param>
         /// <returns>true if <paramref name="result"/> is legal and overlap consistent,
         /// false if the search failed.</returns>
-        public bool GetFreePosition(Gob gob, IGeomPrimitive area, out Vector2 result)
+        public bool GetFreePosition(float radius, IGeomPrimitive area, out Vector2 result)
         {
             // Iterate in the area for a while, looking for a free position.
             // Ultimately give up and return something that may be bad.
             for (int attempt = 1; attempt < FREE_POS_MAX_ATTEMPTS; ++attempt)
             {
-                Vector2 tryPos = Geometry.GetRandomLocation(area);
-                if (IsFreePosition(gob, tryPos))
+                var tryPos = Geometry.GetRandomLocation(area);
+                if (IsFreePosition(new Circle(tryPos, radius)))
                 {
                     result = tryPos;
                     return true;
@@ -635,35 +632,24 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Is a gob overlap consistent (e.g. not inside a wall) at a position. 
+        /// Is an area free of physical gobs.
         /// </summary>
-        public bool IsFreePosition(Gob gob, Vector2 position)
+        public bool IsFreePosition(IGeomPrimitive area)
         {
-            Transform gobTransform;
-            gob.Body.GetTransform(out gobTransform);
-            gobTransform.Position = position;
-            var gobAabb = new AABB(position, position);
-            AABB fixtureAabb;
-            foreach (var gobFixture in gob.Body.FixtureList)
-            {
-                if (gobFixture.IsSensor) continue;
-                gobFixture.Shape.ComputeAABB(out fixtureAabb, ref gobTransform, 0);
-                gobAabb.Combine(ref fixtureAabb);
-            }
-            if (gobAabb.Extents == Vector2.Zero) return true;
+            var shape = area.GetShape();
+            AABB shapeAabb;
+            Transform shapeTransform = new Transform();
+            shapeTransform.SetIdentity();
+            shape.ComputeAABB(out shapeAabb, ref shapeTransform, 0);
             Transform fixtureTransform;
             var isFree = true;
             _world.QueryAABB(otherFixture =>
             {
                 otherFixture.Body.GetTransform(out fixtureTransform);
-                foreach (var gobFixture in gob.Body.FixtureList)
-                    if (AABB.TestOverlap(otherFixture.Shape, 0, gobFixture.Shape, 0, ref fixtureTransform, ref gobTransform))
-                    {
-                        isFree = false;
-                        return false;
-                    }
-                return true;
-            }, ref gobAabb);
+                if (!otherFixture.IsSensor && AABB.TestOverlap(otherFixture.Shape, 0, shape, 0, ref fixtureTransform, ref shapeTransform))
+                    isFree = false;
+                return isFree;
+            }, ref shapeAabb);
             return isFree;
         }
 

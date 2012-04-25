@@ -107,6 +107,11 @@ namespace AW2.Game
         /// </summary>
         public const float ROTATION_SMOOTHING_CUTOFF = MathHelper.PiOver2;
 
+        /// <summary>
+        /// Radius of the physical area of a large gob, in meters.
+        /// </summary>
+        public const float LARGE_GOB_PHYSICAL_RADIUS = 25;
+
         private const float HIDING_ALPHA_LIMIT = 0.01f;
         private const float MIN_GOB_COORDINATE = -Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
         private const float MAX_GOB_COORDINATE = 16000 + Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
@@ -556,7 +561,7 @@ namespace AW2.Game
             set
             {
                 _body = value;
-                _body.SetTransform(_pos, _rotation);
+                if (_body != null) _body.SetTransform(_pos, _rotation);
             }
         }
 

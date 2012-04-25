@@ -80,7 +80,7 @@ namespace AW2.Game.Weapons
         protected override bool PermissionToFire()
         {
             _queriedTargetPos = GetBlinkTarget();
-            return Arena.IsFreePosition(Owner, _queriedTargetPos);
+            return Arena.IsFreePosition(new Circle(_queriedTargetPos, Gob.LARGE_GOB_PHYSICAL_RADIUS));
         }
 
         protected override void ShootImpl()

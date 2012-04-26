@@ -366,9 +366,9 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Resets the arena for a new play session.
+        /// Initializes the arena for a new play session.
         /// </summary>
-        public void Reset()
+        public void Initialize()
         {
             TotalTime = TimeSpan.Zero;
             FrameNumber = 0;
@@ -1055,7 +1055,18 @@ namespace AW2.Game
         private void InitializeWorld()
         {
             var outerBoundaryThickness = new Vector2(ARENA_OUTER_BOUNDARY_THICKNESS);
-            _world = new World(_gravity, new AABB(-outerBoundaryThickness, Dimensions + outerBoundaryThickness));
+            var arenaBounds = new AABB(-outerBoundaryThickness, Dimensions + outerBoundaryThickness);
+            _world = new World(_gravity, arenaBounds);
+            var arenaBoundaryVertices = new Vertices(new[]
+            {
+                Vector2.Zero,
+                new Vector2(0, Dimensions.Y),
+                Dimensions,
+                new Vector2(Dimensions.X, 0),
+            });
+            var arenaBoundary = BodyFactory.CreateLoopShape(_world, arenaBoundaryVertices);
+            arenaBoundary.CollisionCategories = Category.All;
+            arenaBoundary.CollidesWith = Category.All;
         }
 
         private void InitializeSpecialLayers()

@@ -136,7 +136,7 @@ namespace AW2.UI
             AW2.Game.Gobs.Wall.WallActivatedCounter = 0;
             foreach (var conn in Game.NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
             MenuEngine.ProgressBar.Start(wallCount, () => AW2.Game.Gobs.Wall.WallActivatedCounter);
-            Game.ArenaLoadTask.StartTask(Game.DataEngine.Arena.Reset);
+            Game.ArenaLoadTask.StartTask(Game.DataEngine.Arena.Initialize);
         }
 
         public override void ShowMainMenuAndResetGameplay()

@@ -149,6 +149,7 @@ namespace AW2.Game
         /// </summary>
         [RuntimeState]
         private Vector2 _pos;
+        private Vector2 _move;
 
         /// <summary>
         /// Gob rotation around the Z-axis in radians.
@@ -433,8 +434,8 @@ namespace AW2.Game
         /// </summary>
         public virtual Vector2 Move
         {
-            get { return Body != null ? Body.LinearVelocity : Vector2.Zero; }
-            set { if (Body != null) Body.LinearVelocity = value; }
+            get { return Body != null ? Body.LinearVelocity : _move; }
+            set { if (Body != null) Body.LinearVelocity = value; else _move = value; }
         }
 
         /// <summary>
@@ -561,7 +562,11 @@ namespace AW2.Game
             set
             {
                 _body = value;
-                if (_body != null) _body.SetTransform(_pos, _rotation);
+                if (_body != null)
+                {
+                    _body.SetTransform(_pos, _rotation);
+                    _body.LinearVelocity = _move;
+                }
             }
         }
 

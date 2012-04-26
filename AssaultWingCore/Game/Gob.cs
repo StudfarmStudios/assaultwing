@@ -508,7 +508,7 @@ namespace AW2.Game
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
-        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, DrawRotation + DrawRotationOffset, _pos + DrawPosOffset); } }
+        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, DrawRotation + DrawRotationOffset, Pos + DrawPosOffset); } }
 
         /// <summary>
         /// The transform matrices of the gob's 3D model parts.
@@ -961,13 +961,13 @@ namespace AW2.Game
                             rotationAndFlags |= 0x80;
                             _nextFullNetworkUdpateTime = Game.GameTime.TotalGameTime + FULL_NETWORK_UPDATE_INTERVAL;
                             writer.Write((byte)rotationAndFlags);
-                            writer.WriteNormalized16((Vector2)_pos, MIN_GOB_COORDINATE, MAX_GOB_COORDINATE);
+                            writer.WriteNormalized16((Vector2)Pos, MIN_GOB_COORDINATE, MAX_GOB_COORDINATE);
                         }
                         else
                         {
                             writer.Write((byte)rotationAndFlags);
-                            writer.WriteNormalized8((Vector2)(_pos - _lastNetworkUpdatePos), MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
-                            _lastNetworkUpdatePos = _pos;
+                            writer.WriteNormalized8((Vector2)(Pos - _lastNetworkUpdatePos), MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
+                            _lastNetworkUpdatePos = Pos;
                         }
                         writer.WriteHalf((Vector2)Move);
                         if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
@@ -999,19 +999,19 @@ namespace AW2.Game
                 var oldRotation = _rotation;
                 byte rotationAndFlags = reader.ReadByte();
                 var fullUpdate = true; // UNDONE !!! (rotationAndFlags & 0x80) != 0;
-                _rotation = (rotationAndFlags & 0x7f) * MathHelper.TwoPi / 128;
-                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - _rotation);
+                Rotation = (rotationAndFlags & 0x7f) * MathHelper.TwoPi / 128;
+                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - Rotation);
                 if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
                     DrawRotationOffset = 0;
 
-                var oldPos = _pos;
+                var oldPos = Pos;
                 var newPos = fullUpdate
                     ? reader.ReadVector2Normalized16(MIN_GOB_COORDINATE, MAX_GOB_COORDINATE)
                     : _lastNetworkUpdatePos + reader.ReadVector2Normalized8(MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
                 _lastNetworkUpdatePos = newPos;
                 var newMove = reader.ReadHalfVector2();
                 ExtrapolatePosAndMove(newPos, newMove, framesAgo);
-                DrawPosOffset += oldPos - _pos;
+                DrawPosOffset += oldPos - Pos;
                 if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
                     DrawPosOffset = Vector2.Zero;
 

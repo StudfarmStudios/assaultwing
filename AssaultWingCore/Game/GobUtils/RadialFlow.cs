@@ -68,7 +68,6 @@ namespace AW2.Game.GobUtils
         {
             _radiator = radiator;
             _collisionArea.Owner = radiator;
-            radiator.TransformUnmovableCollisionAreas(new[] { _collisionArea });
             _flowEndTime = now + TimeSpan.FromSeconds(_flowTime);
         }
 

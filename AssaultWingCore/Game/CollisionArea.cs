@@ -12,7 +12,7 @@ namespace AW2.Game
     /// resulting in a collision.
     /// </summary>
     [LimitedSerialization]
-    [System.Diagnostics.DebuggerDisplay("Type:{Type} Name:{Name} Area:{Area}")]
+    [System.Diagnostics.DebuggerDisplay("Type:{Type} Name:{Name} AreaGob:{AreaGob}")]
     public class CollisionArea : INetworkSerializable
     {
         private struct CollisionMaterial

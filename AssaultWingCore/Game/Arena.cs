@@ -539,7 +539,7 @@ namespace AW2.Game
             var body = BodyFactory.CreateBody(_world, gob.Pos, gob);
             body.OnCollision += BodyCollisionHandler;
             body.IsStatic = !gob.Movable;
-            body.IgnoreGravity = !gob.Gravitating;
+            body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
             body.Mass = gob.Mass;
             gob.Body = body;
             var gobScale = Matrix.CreateScale(gob.Scale); // TODO !!! Get rid of Gob.Scale
@@ -589,9 +589,10 @@ namespace AW2.Game
             }
         }
 
+        [Obsolete("Use Farseer Fixtures and AW Collision methods")]
         public IEnumerable<Gob> GetOverlappingGobs(CollisionArea area, CollisionAreaType types)
         {
-            return GetOverlappers(area, types).Select(area2 => area2.Owner);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -654,6 +655,33 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Invokes an action for all fixtures that overlap an area.
+        /// </summary>
+        /// <param name="action">If returns false, the query will exit.</param>
+        /// <param name="preFilter">Filters fixtures that may overlap the area. This delegate is supposed to be light.
+        /// It is called before testing for precise overlapping which is a more costly operation. To return true
+        /// if the fixture qualifies for more precise overlap testing.</param>
+        private void QueryOverlappingFixtures(IGeomPrimitive area, Func<Fixture, bool> action, Func<Fixture, bool> preFilter = null)
+        {
+            var shape = area.GetShape();
+            AABB shapeAabb;
+            var shapeTransform = new Transform();
+            shapeTransform.SetIdentity();
+            shape.ComputeAABB(out shapeAabb, ref shapeTransform, 0);
+            Transform fixtureTransform;
+            _world.QueryAABB(otherFixture =>
+            {
+                if (preFilter == null || preFilter(otherFixture))
+                {
+                    otherFixture.Body.GetTransform(out fixtureTransform);
+                    if (AABB.TestOverlap(otherFixture.Shape, 0, shape, 0, ref fixtureTransform, ref shapeTransform))
+                        return action(otherFixture);
+                }
+                return true;
+            }, ref shapeAabb);
+        }
+
+        /// <summary>
         /// Returns the number of pixels removed.
         /// </summary>
         public int MakeHole(Vector2 holePos, float holeRadius)
@@ -664,7 +692,7 @@ namespace AW2.Game
             var handledWalls = new HashSet<Gobs.Wall>();
             _world.QueryAABB(fixture =>
             {
-                var wall = ((CollisionArea)fixture.Body.UserData).Owner as Gobs.Wall;
+                var wall = fixture.Body.UserData as Gobs.Wall;
                 if (wall != null && handledWalls.Add(wall))
                     wall.MakeHole(holePos, holeRadius);
                 return true;
@@ -1058,6 +1086,27 @@ namespace AW2.Game
         }
 
         #region Callbacks
+
+        public void DebugDrawGob(Gob gob, Matrix view, Matrix projection)
+        {
+            var broadPhase = _world.ContactManager.BroadPhase;
+            foreach (var body in _world.BodyList)
+            {
+                if (!body.Enabled) continue;
+                foreach (var fixture in body.FixtureList)
+                {
+                    for (int t = 0; t < fixture.ProxyCount; ++t)
+                    {
+                        var proxy = fixture.Proxies[t];
+                        AABB aabb;
+                        broadPhase.GetFatAABB(proxy.ProxyId, out aabb);
+                        Graphics3D.DebugDraw(view, projection, Matrix.Identity,
+                            aabb.LowerBound, new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y),
+                            aabb.UpperBound, new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y), aabb.LowerBound);
+                    }
+                }
+            }
+        }
 
         private void GobAddedHandler(Gob gob)
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
@@ -314,12 +315,11 @@ namespace AW2.Helpers
             DebugDraw(view, projection, world, vertexData);
         }
 
-        public static void DebugDraw(Vector2 p1, Vector2 p2, Matrix view, Matrix projection, Matrix world)
+        public static void DebugDraw(Matrix view, Matrix projection, Matrix world, params Vector2[] vertices)
         {
-            var vertexData = new VertexPositionColor[] {
-                new VertexPositionColor(new Vector3(p1, DEBUG_DRAW_Z), DEBUG_DRAW_COLOR),
-                new VertexPositionColor(new Vector3(p2, DEBUG_DRAW_Z), DEBUG_DRAW_COLOR),
-            };
+            var vertexData = new VertexPositionColor[vertices.Length];
+            for (int i = 0; i < vertices.Length; i++)
+                vertexData[i] = new VertexPositionColor(new Vector3(vertices[i], DEBUG_DRAW_Z), DEBUG_DRAW_COLOR);
             DebugDraw(view, projection, world, vertexData);
         }
 

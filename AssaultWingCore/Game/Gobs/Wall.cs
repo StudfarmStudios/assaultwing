@@ -59,31 +59,7 @@ namespace AW2.Game.Gobs
 
         #endregion // Wall Fields
 
-        #region Properties
-
         public static int WallActivatedCounter { get; set; }
-
-        public override Matrix WorldMatrix
-        {
-            get
-            {
-                return Arena.IsForPlaying
-                    ? Matrix.Identity
-                    : base.WorldMatrix;
-            }
-        }
-
-        public override BoundingSphere DrawBounds
-        {
-            get
-            {
-                return Arena.IsForPlaying
-                    ? DrawBoundsInGobCoordinates
-                    : base.DrawBounds;
-            }
-        }
-
-        #endregion Properties
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -145,7 +121,7 @@ namespace AW2.Game.Gobs
                 return;
             }
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            Effect.World = Matrix.Identity;
+            Effect.World = WorldMatrix;
             Effect.Projection = projection;
             Effect.View = view;
             Effect.Texture = Texture;
@@ -167,6 +143,7 @@ namespace AW2.Game.Gobs
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             var silhouetteEffect = Game.GraphicsEngine.GameContent.WallSilhouetteEffect;
+            silhouetteEffect.World = WorldMatrix;
             silhouetteEffect.Projection = projection;
             silhouetteEffect.View = view;
             silhouetteEffect.Texture = Texture;
@@ -333,7 +310,7 @@ namespace AW2.Game.Gobs
                     new Vector2(v2.X, v2.Y),
                     new Vector2(v3.X, v3.Y));
                 _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
-                    CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
+                    CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.PhysicalConsistencyCompromisable, CollisionMaterialType.Rough);
             }
 
             // Create a collision bounding volume for the whole wall.

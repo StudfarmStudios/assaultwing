@@ -97,6 +97,7 @@ namespace AW2.Graphics
             };
             _getPostprocessEffectNames = getPostprocessEffectNames;
             ZoomRatio = 1;
+            // !!! GobDrawn += gob => game.DataEngine.Arena.DebugDrawGob(gob, ViewMatrix, GetProjectionMatrix(gob.Layer.Z));
         }
 
         /// <summary>

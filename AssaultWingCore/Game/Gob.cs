@@ -786,7 +786,6 @@ namespace AW2.Game
             LoadContent();
             if (Arena.IsForPlaying)
             {
-                TransformUnmovableCollisionAreas(_collisionAreas);
                 CreateBirthGobs();
                 CreateModelBirthGobs();
             }
@@ -1328,19 +1327,6 @@ namespace AW2.Game
                     gob.LeaderBone = pos.Item2;
                     Arena.Gobs.Add(gob);
                 });
-            }
-        }
-
-        /// <summary>
-        /// Pretransforms the gob's collision areas if the gob is unmovable.
-        /// </summary>
-        public void TransformUnmovableCollisionAreas(IEnumerable<CollisionArea> collisionAreas)
-        {
-            if (Movable) return;
-            foreach (var area in collisionAreas)
-            {
-                if (area.Owner != this) throw new ApplicationException("Trying to transform area to a non-owner");
-                area.AreaGob = area.AreaGob.Transform(WorldMatrix);
             }
         }
 

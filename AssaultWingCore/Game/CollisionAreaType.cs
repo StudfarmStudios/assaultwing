@@ -25,11 +25,6 @@ namespace AW2.Game
         Force = 0x0002,
 
         /// <summary>
-        /// A bounding volume for a piece of wall.
-        /// </summary>
-        WallBounds = 0x0004,
-
-        /// <summary>
         /// The physical collision area of a ship.
         /// </summary>
         PhysicalShip = 0x0010,
@@ -43,16 +38,6 @@ namespace AW2.Game
         /// The physical collision area of a piece of wall.
         /// </summary>
         PhysicalWall = 0x0040,
-
-        /// <summary>
-        /// The physical collision area of a blob of water.
-        /// </summary>
-        PhysicalWater = 0x0080,
-
-        /// <summary>
-        /// The physical collision area of a cloud of gas.
-        /// </summary>
-        PhysicalGas = 0x0100,
 
         /// <summary>
         /// The physical collision area of a nonspecific gob type that is neither damageable nor movable.
@@ -89,8 +74,6 @@ namespace AW2.Game
         Physical = CollisionAreaType.PhysicalShip |
                    CollisionAreaType.PhysicalShot |
                    CollisionAreaType.PhysicalWall |
-                   CollisionAreaType.PhysicalWater |
-                   CollisionAreaType.PhysicalGas |
                    CollisionAreaType.PhysicalOther,
 
         /// <summary>
@@ -114,8 +97,8 @@ namespace AW2.Game
                                   CollisionAreaType.PhysicalOtherDamageableMovable,
 
         /// <summary>
-        /// The group of physical collision areas of all gob types that are have a concrete body that must avoid overlap with other concrete bodies, i.e.
-        /// whose overlap consistency is compromisable.
+        /// The group of physical collision areas of all gob types that are have a concrete body that
+        /// must avoid overlap with other concrete bodies, i.e. whose overlap consistency is compromisable.
         /// </summary>
         PhysicalConsistencyCompromisable = CollisionAreaType.PhysicalShip |
                                            CollisionAreaType.PhysicalWall |
@@ -132,8 +115,6 @@ namespace AW2.Game
         /// </summary>
         PhysicalMovable = CollisionAreaType.PhysicalShip |
                           CollisionAreaType.PhysicalShot |
-                          CollisionAreaType.PhysicalWater |
-                          CollisionAreaType.PhysicalGas |
                           CollisionAreaType.PhysicalOtherMovable,
 
         #endregion

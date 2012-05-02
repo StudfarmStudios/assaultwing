@@ -95,7 +95,10 @@ namespace AW2.Game.Gobs
             {
                 Prepare3DModel();
                 var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
-                var boundingBox = CollisionAreas.Single(area => area.Name == "Bounding").AreaGob.BoundingBox;
+                var gobVertices = _vertexData.Select(AWMathHelper.ProjectXY).ToArray();
+                var worldMatrix = WorldMatrix;
+                Vector2.Transform(gobVertices, ref worldMatrix, gobVertices);
+                var boundingBox = GetBoundingBox(gobVertices);
                 _indexMap = new WallIndexMap(_removedTriangleIndices.Add, boundingBox, binReader);
                 binReader.Close();
 #if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
@@ -298,7 +301,7 @@ namespace AW2.Game.Gobs
         private void CreateCollisionAreas()
         {
             // Create one collision area for each triangle in the wall's 3D model.
-            _collisionAreas = new CollisionArea[_indexData.Length / 3 + 1];
+            _collisionAreas = new CollisionArea[_indexData.Length / 3];
             for (int i = 0; i + 2 < _indexData.Length; i += 3)
             {
                 // Create a physical collision area for this triangle.
@@ -309,11 +312,6 @@ namespace AW2.Game.Gobs
                 _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
                     CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.PhysicalConsistencyCompromisable, CollisionMaterialType.Rough);
             }
-
-            // Create a collision bounding volume for the whole wall.
-            _collisionAreas[_collisionAreas.Length - 1] = new CollisionArea("Bounding",
-                GetBoundingBox(_vertexData.Select(AWMathHelper.ProjectXY)),
-                this, CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
         }
 
         private Rectangle GetBoundingBox(IEnumerable<Vector2> vertexPositions)

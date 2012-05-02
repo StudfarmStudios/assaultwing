@@ -257,13 +257,12 @@ namespace AW2.Game.GobUtils
         public int Width { get { return _data.Width; } }
         public int Height { get { return _data.Height; } }
 
-        /// <summary>
-        /// Transformation matrix from wall's 3D model's coordinates to index map coordinates.
-        /// </summary>
         public Matrix WallToIndexMapTransform { get; private set; }
 
         private RemoveTriangleDelegate _removeTriangle;
 
+        /// <param name="boundingBox">Bounding box of the wall in wall coordinates.
+        /// Only the lower left corner is relevant.</param>
         public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, Vector2[] vertexPositions, short[] indexData)
             : this(removeTriangle, boundingBox)
         {

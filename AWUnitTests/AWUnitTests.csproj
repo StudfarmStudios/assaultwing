@@ -73,6 +73,7 @@
     <Compile Include="Game\GobUtils\DamageInfoTest.cs" />
     <Compile Include="Game\GobUtils\ShipLocationPredicterTest.cs" />
     <Compile Include="Game\GobUtils\TargetSelectorTest.cs" />
+    <Compile Include="Game\GobUtils\WallIndexMapTest.cs" />
     <Compile Include="Game\Weapons\LightningGunTest.cs" />
     <Compile Include="Graphics\AWViewportCollectionTest.cs" />
     <Compile Include="Graphics\WrappedTextTest.cs" />

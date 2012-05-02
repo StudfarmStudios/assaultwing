@@ -3,6 +3,7 @@
 #endif
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers.Serialization;
 
@@ -59,6 +60,16 @@ namespace AW2.Helpers.Geometric
                 return (_min + _max) / 2;
 #endif
             }
+        }
+
+        /// <summary>
+        /// Returns the smallest Rectangle that bounds a set of points.
+        /// </summary>
+        public static Rectangle FromVector2(IEnumerable<Vector2> points)
+        {
+            var min = points.Aggregate((v1, v2) => Vector2.Min(v1, v2));
+            var max = points.Aggregate((v1, v2) => Vector2.Max(v1, v2));
+            return new Rectangle(min, max);
         }
 
         /// <summary>

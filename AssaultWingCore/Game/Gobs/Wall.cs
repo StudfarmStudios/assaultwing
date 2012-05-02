@@ -227,7 +227,7 @@ namespace AW2.Game.Gobs
             var transformation = Matrix.CreateRotationZ(Rotation);
             Vector2.Transform(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y)).ToArray(),
                 ref transformation, transformedVertexPositions);
-            var indexMap = new WallIndexMap(_removedTriangleIndices.Add, GetBoundingBox(transformedVertexPositions),
+            var indexMap = new WallIndexMap(_removedTriangleIndices.Add, Rectangle.FromVector2(transformedVertexPositions),
                 transformedVertexPositions, _indexData);
 #if VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
             indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
@@ -338,16 +338,8 @@ namespace AW2.Game.Gobs
 
             // Create a collision bounding volume for the whole wall.
             _collisionAreas[_collisionAreas.Length - 1] = new CollisionArea("Bounding",
-                GetBoundingBox(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y))),
+                Rectangle.FromVector2(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y))),
                 this, CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
-        }
-
-        private Rectangle GetBoundingBox(IEnumerable<Vector2> vertexPositions)
-        {
-            var min = vertexPositions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
-            var max = vertexPositions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
-            var boundingArea = new Rectangle(min, max);
-            return boundingArea;
         }
 
         #endregion Private methods

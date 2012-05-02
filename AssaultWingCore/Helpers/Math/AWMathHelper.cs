@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 
 namespace AW2.Helpers
@@ -334,6 +335,16 @@ namespace AW2.Helpers
             return -MathHelper.Pi - asin;
         }
 
+        public static Vector2 ProjectXY(this Vector3 v)
+        {
+            return new Vector2(v.X, v.Y);
+        }
+
+        public static Vector2 ProjectXY(this VertexPositionNormalTexture v)
+        {
+            return v.Position.ProjectXY();
+        }
+
         /// <summary>
         /// Returns the absolute difference of two angles in radians
         /// as the smallest non-negative angle congruent to 2 * PI.
@@ -533,7 +544,7 @@ namespace AW2.Helpers
         /// </summary>
         public static Vector3 RotateZ(this Vector3 v, float radians)
         {
-            return new Vector3(new Vector2(v.X, v.Y).Rotate(radians), v.Z);
+            return new Vector3(v.ProjectXY().Rotate(radians), v.Z);
         }
 
         /// <summary>
@@ -617,6 +628,11 @@ namespace AW2.Helpers
         public static Vector2 Rotate90(this Vector2 value)
         {
             return new Vector2(-value.Y, value.X);
+        }
+
+        public static Vector2 MirrorX(this Vector2 value)
+        {
+            return new Vector2(-value.X, value.Y);
         }
 
         public static Vector2 MirrorY(this Vector2 value)

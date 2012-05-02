@@ -202,7 +202,7 @@ namespace AW2.Game.Gobs
         {
             var transformedVertexPositions = new Vector2[_vertexData.Length];
             var transformation = Matrix.CreateRotationZ(Rotation);
-            Vector2.Transform(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y)).ToArray(),
+            Vector2.Transform(_vertexData.Select(AWMathHelper.ProjectXY).ToArray(),
                 ref transformation, transformedVertexPositions);
             var indexMap = new WallIndexMap(_removedTriangleIndices.Add, GetBoundingBox(transformedVertexPositions),
                 transformedVertexPositions, _indexData);
@@ -302,20 +302,17 @@ namespace AW2.Game.Gobs
             for (int i = 0; i + 2 < _indexData.Length; i += 3)
             {
                 // Create a physical collision area for this triangle.
-                var v1 = _vertexData[_indexData[i + 0]].Position;
-                var v2 = _vertexData[_indexData[i + 1]].Position;
-                var v3 = _vertexData[_indexData[i + 2]].Position;
-                var triangleArea = new Triangle(
-                    new Vector2(v1.X, v1.Y),
-                    new Vector2(v2.X, v2.Y),
-                    new Vector2(v3.X, v3.Y));
+                var v1 = _vertexData[_indexData[i + 0]];
+                var v2 = _vertexData[_indexData[i + 1]];
+                var v3 = _vertexData[_indexData[i + 2]];
+                var triangleArea = new Triangle(v1.ProjectXY(), v2.ProjectXY(), v3.ProjectXY());
                 _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
                     CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.PhysicalConsistencyCompromisable, CollisionMaterialType.Rough);
             }
 
             // Create a collision bounding volume for the whole wall.
             _collisionAreas[_collisionAreas.Length - 1] = new CollisionArea("Bounding",
-                GetBoundingBox(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y))),
+                GetBoundingBox(_vertexData.Select(AWMathHelper.ProjectXY)),
                 this, CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
         }
 

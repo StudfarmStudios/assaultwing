@@ -268,7 +268,7 @@ namespace AW2.Helpers
                 {
                     prevIndex = firstIndex = faceUseCount.Key.Item1;
                     nextIndex = faceUseCount.Key.Item2;
-                    polyVertices.Add(new Vector2(firstIndex.X, firstIndex.Y));
+                    polyVertices.Add(firstIndex.ProjectXY());
                     break;
                 }
 
@@ -280,7 +280,7 @@ namespace AW2.Helpers
                     if (faceUseCount.Value == 1 && faceUseCount.Key.Item1.Equals(nextIndex)
                         && !faceUseCount.Key.Item2.Equals(prevIndex))
                     {
-                        polyVertices.Add(new Vector2(nextIndex.X, nextIndex.Y));
+                        polyVertices.Add(nextIndex.ProjectXY());
                         prevIndex = nextIndex;
                         nextIndex = faceUseCount.Key.Item2;
                         foundNext = true;
@@ -289,7 +289,7 @@ namespace AW2.Helpers
                     else if (faceUseCount.Value == 1 && faceUseCount.Key.Item2.Equals(nextIndex)
                         && !faceUseCount.Key.Item1.Equals(prevIndex))
                 {
-                    polyVertices.Add(new Vector2(nextIndex.X, nextIndex.Y));
+                    polyVertices.Add(nextIndex.ProjectXY());
                     prevIndex = nextIndex;
                     nextIndex = faceUseCount.Key.Item1;
                     foundNext = true;

@@ -106,7 +106,7 @@ namespace AW2.Game.Gobs
             _nextHitTimer.SetCurrentInterval(_firstHitDelay);
             var fullConeArea = new Triangle(Vector2.Zero, new Vector2(_triHeightForDamage, _triWidth / 2), new Vector2(_triHeightForDamage, -_triWidth / 2));
             var fullConeCircumsphere = BoundingSphere.CreateFromPoints(new[] { fullConeArea.P1, fullConeArea.P2, fullConeArea.P3 }.Select(p => new Vector3(p, 0)));
-            _fullDamageArea = CreateCollisionArea(new Circle(new Vector2(fullConeCircumsphere.Center.X, fullConeCircumsphere.Center.Y), fullConeCircumsphere.Radius));
+            _fullDamageArea = CreateCollisionArea(new Circle(fullConeCircumsphere.Center.ProjectXY(), fullConeCircumsphere.Radius));
             _wallPunchPosesForClient = new List<Vector2>();
         }
 

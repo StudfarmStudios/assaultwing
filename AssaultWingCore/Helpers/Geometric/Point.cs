@@ -80,7 +80,7 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new CircleShape(0.05f, 1) { Position = Location };
+            return new CircleShape(AW2.Game.Arena.FARSEER_SCALE * 0.05f, 1) { Position = AW2.Game.Arena.FARSEER_SCALE * Location };
         }
 
         #endregion IGeomPrimitive Members

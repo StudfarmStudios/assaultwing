@@ -548,7 +548,7 @@ namespace AW2.Game
             body.IsStatic = !gob.Movable;
             body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
             gob.Body = body;
-            var gobScale = Matrix.CreateScale(FARSEER_SCALE * gob.Scale); // TODO !!! Get rid of Gob.Scale
+            var gobScale = Matrix.CreateScale(gob.Scale); // TODO !!! Get rid of Gob.Scale
             foreach (var area in gob.CollisionAreas)
             {
                 var isPhysicalArea = area.CannotOverlap != CollisionAreaType.None;

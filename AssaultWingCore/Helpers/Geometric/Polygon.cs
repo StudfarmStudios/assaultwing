@@ -193,7 +193,10 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new PolygonShape(new Vertices(Vertices), 1);
+            var vertices = new Vertices(Vertices);
+            var scale = new Vector2(AW2.Game.Arena.FARSEER_SCALE);
+            vertices.Scale(ref scale);
+            return new PolygonShape(vertices, 1);
         }
 
         #endregion IGeomPrimitive Members

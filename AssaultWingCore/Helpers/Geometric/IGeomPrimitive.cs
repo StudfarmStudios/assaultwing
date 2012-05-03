@@ -31,6 +31,9 @@ namespace AW2.Helpers.Geometric
         /// and the point.</returns>
         float DistanceTo(Vector2 point);
 
+        /// <summary>
+        /// Returns a Farseer shape in Farseer coordinates that corresponds to the IGeomPrimitive.
+        /// </summary>
         Shape GetShape();
     }
 }

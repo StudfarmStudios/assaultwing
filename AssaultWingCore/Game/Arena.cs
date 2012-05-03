@@ -190,13 +190,6 @@ namespace AW2.Game
 
         #region General fields
 
-        /// <summary>
-        /// Ratio of Farseer Physics Engine coordinates to Assault Wing coordinates.
-        /// E.g. Farseer_X = Assault_Wing_X * FARSEER_SCALE. Farseer provides the most
-        /// accurate simulation when body sizes are between 0.1 and 10.
-        /// </summary>
-        public const float FARSEER_SCALE = 0.1f;
-
         private AssaultWingCore _game;
         private GobCollection _gobs;
         private World _world;
@@ -702,7 +695,8 @@ namespace AW2.Game
         public int MakeHole(Vector2 holePos, float holeRadius)
         {
             if (holeRadius <= 0) return 0;
-            var holeAabb = new AABB(holePos, holeRadius * 2, holeRadius * 2);
+            var holeHalfDiagonal = new Vector2(holeRadius);
+            var holeAabb = AWMathHelper.CreateAABB(holePos - holeHalfDiagonal, holePos + holeHalfDiagonal);
             var pixelsRemoved = 0;
             var handledWalls = new HashSet<Gobs.Wall>();
             _world.QueryAABB(fixture =>
@@ -1072,16 +1066,16 @@ namespace AW2.Game
         private void InitializeWorld()
         {
             var outerBoundaryThickness = new Vector2(ARENA_OUTER_BOUNDARY_THICKNESS);
-            var arenaBounds = new AABB(FARSEER_SCALE * -outerBoundaryThickness, FARSEER_SCALE * (Dimensions + outerBoundaryThickness));
+            var arenaBounds = AWMathHelper.CreateAABB(-outerBoundaryThickness, Dimensions + outerBoundaryThickness);
             _world = new World(_gravity, arenaBounds);
-            var arenaBoundaryVertices = new Vertices(new[]
+            var corners = new[]
             {
-                FARSEER_SCALE * Vector2.Zero,
-                FARSEER_SCALE * new Vector2(0, Dimensions.Y),
-                FARSEER_SCALE * Dimensions,
-                FARSEER_SCALE * new Vector2(Dimensions.X, 0),
-            });
-            var arenaBoundary = BodyFactory.CreateLoopShape(_world, arenaBoundaryVertices);
+                Vector2.Zero,
+                new Vector2(0, Dimensions.Y),
+                Dimensions,
+                new Vector2(Dimensions.X, 0),
+            };
+            var arenaBoundary = BodyFactory.CreateLoopShape(_world, AWMathHelper.CreateVertices(corners));
             arenaBoundary.CollisionCategories = Category.All;
             arenaBoundary.CollidesWith = Category.All;
         }
@@ -1129,11 +1123,11 @@ namespace AW2.Game
                         AABB aabb;
                         broadPhase.GetFatAABB(proxy.ProxyId, out aabb);
                         Graphics3D.DebugDrawPolyline(view, projection, Matrix.Identity,
-                            aabb.LowerBound / FARSEER_SCALE,
-                            new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y) / FARSEER_SCALE,
-                            aabb.UpperBound / FARSEER_SCALE,
-                            new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y) / FARSEER_SCALE,
-                            aabb.LowerBound / FARSEER_SCALE);
+                            aabb.LowerBound / AWMathHelper.FARSEER_SCALE,
+                            new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y) / AWMathHelper.FARSEER_SCALE,
+                            aabb.UpperBound / AWMathHelper.FARSEER_SCALE,
+                            new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y) / AWMathHelper.FARSEER_SCALE,
+                            aabb.LowerBound / AWMathHelper.FARSEER_SCALE);
                     }
                 }
             }

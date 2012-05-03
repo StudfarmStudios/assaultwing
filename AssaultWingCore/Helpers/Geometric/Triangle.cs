@@ -175,10 +175,8 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            var vertices = new Vertices(new[] { P3, P2, P1 });
-            var scale = new Vector2(AW2.Game.Arena.FARSEER_SCALE);
-            vertices.Scale(ref scale);
-            return new PolygonShape(vertices, 1);
+            var corners = new[] { P3, P2, P1 };
+            return new PolygonShape(AWMathHelper.CreateVertices(corners), 1);
         }
 
         #endregion

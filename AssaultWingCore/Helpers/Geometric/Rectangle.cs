@@ -140,10 +140,8 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            var vertices = new Vertices(new[] { Min, new Vector2(Max.X, Min.Y), Max, new Vector2(Min.X, Max.Y) });
-            var scale = new Vector2(AW2.Game.Arena.FARSEER_SCALE);
-            vertices.Scale(ref scale);
-            return new PolygonShape(vertices, 1);
+            var corners = new[] { Min, new Vector2(Max.X, Min.Y), Max, new Vector2(Min.X, Max.Y) };
+            return new PolygonShape(AWMathHelper.CreateVertices(corners), 1);
         }
 
         #endregion

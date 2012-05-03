@@ -312,6 +312,7 @@ namespace AW2.Game.Gobs
             _coughEngine.Activate(this);
             CreateGlow();
             IsNewborn = true;
+            DampAngularVelocity = true;
             Game.SoundEngine.PlaySound(SHIP_BIRTH_SOUND, this);
         }
 

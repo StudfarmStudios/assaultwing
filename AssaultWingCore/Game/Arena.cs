@@ -130,6 +130,7 @@ namespace AW2.Game
         /// The arena boundary is a rectangle spanned by points (0, 0) and
         /// (arenaWidth, arenaHeight). The outer arena boundary is the arena
         /// boundary stretched a constant distance to all directions.
+        [Obsolete]
         [Flags]
         private enum OutOfArenaBounds
         {
@@ -544,7 +545,6 @@ namespace AW2.Game
         private void Register(Gob gob)
         {
             var body = BodyFactory.CreateBody(_world, gob);
-            body.OnCollision += BodyCollisionHandler;
             body.IsStatic = !gob.Movable;
             body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
             gob.Body = body;
@@ -563,6 +563,13 @@ namespace AW2.Game
                 area.Fixture = fixture;
             }
             body.Mass = gob.Mass; // override mass from fixtures
+            body.OnCollision += BodyCollisionHandler;
+            if (gob.DampAngularVelocity)
+            {
+                body.AngularDamping = float.MaxValue;
+                gob.AngularVelocityLimit = JointFactory.CreateFixedAngleJoint(_world, body);
+                gob.AngularVelocityLimit.TargetAngle = gob.Rotation;
+            }
         }
 
         /// <summary>
@@ -979,6 +986,7 @@ namespace AW2.Game
         /// the arena boundaries. Think of this as physical overlap
         /// consistency but against arena boundaries instead of other gobs.
         /// </summary>
+        [Obsolete]
         private bool ArenaBoundaryLegal(Gob gob)
         {
             return !gob.IsKeptInArenaBounds || IsOutOfArenaBounds(gob) == OutOfArenaBounds.None;
@@ -991,6 +999,7 @@ namespace AW2.Game
         /// </summary>
         /// <param name="allowSideEffects">Should effects other than changing the gob's
         /// position and movement be allowed.</param>
+        [Obsolete]
         private void ArenaBoundaryActions(Gob gob, bool allowSideEffects)
         {
             var outOfBounds = IsOutOfArenaBounds(gob);
@@ -1157,9 +1166,12 @@ namespace AW2.Game
         {
             var myArea = (CollisionArea)myFixture.UserData;
             var theirArea = (CollisionArea)theirFixture.UserData;
-            var irreversibleSideEffects = PerformCustomCollision(myArea, theirArea, false);
-            if (Game.NetworkMode == NetworkMode.Server && irreversibleSideEffects)
-                _collisionEvents.Add(new CollisionEvent(myArea, theirArea, stuck: false /*!!!*/, collideBothWays: false /*!!!*/, sound: CollisionSoundTypes.None /*!!!*/));
+            if (myArea != null && theirArea != null)
+            {
+                var irreversibleSideEffects = PerformCustomCollision(myArea, theirArea, false);
+                if (Game.NetworkMode == NetworkMode.Server && irreversibleSideEffects)
+                    _collisionEvents.Add(new CollisionEvent(myArea, theirArea, stuck: false /*!!!*/, collideBothWays: false /*!!!*/, sound: CollisionSoundTypes.None /*!!!*/));
+            }
             return true;
         }
 

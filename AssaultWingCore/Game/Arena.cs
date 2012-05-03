@@ -540,7 +540,6 @@ namespace AW2.Game
             body.OnCollision += BodyCollisionHandler;
             body.IsStatic = !gob.Movable;
             body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
-            body.Mass = gob.Mass;
             gob.Body = body;
             var gobScale = Matrix.CreateScale(gob.Scale); // TODO !!! Get rid of Gob.Scale
             foreach (var area in gob.CollisionAreas)
@@ -556,6 +555,7 @@ namespace AW2.Game
                 fixture.CollidesWith = isPhysicalArea ? (Category)area.CannotOverlap : (Category)area.CollidesAgainst;
                 area.Fixture = fixture;
             }
+            body.Mass = gob.Mass; // override mass from fixtures
         }
 
         /// <summary>

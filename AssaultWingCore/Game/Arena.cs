@@ -592,7 +592,8 @@ namespace AW2.Game
         [Obsolete("Use Farseer Fixtures and AW Collision methods")]
         public IEnumerable<Gob> GetOverlappingGobs(CollisionArea area, CollisionAreaType types)
         {
-            throw new NotImplementedException();
+            // !!! throw new NotImplementedException();
+            yield break;
         }
 
         /// <summary>

@@ -105,13 +105,13 @@ namespace AW2.Game.Gobs
             if (data.Meshes.Length != 1) throw new ApplicationException("WallModel only supports one Mesh");
             var mesh = data.Meshes[0];
             if (mesh.MeshParts.Length != 1) throw new ApplicationException("WallModel only supports one MeshPart");
-            var worldMatrix = Matrix.Identity;
-            for (var bone = mesh.ParentBone; bone != null; bone = bone.Parent) worldMatrix *= bone.Transform;
+            var mehsPartToworldMatrix = Matrix.Identity;
+            for (var bone = mesh.ParentBone; bone != null; bone = bone.Parent) mehsPartToworldMatrix *= bone.Transform;
             var meshPart = mesh.MeshParts[0];
             var vertices = meshPart.VertexBuffer.Vertices
                 .Select(vertex => new VertexPositionNormalTexture(
-                    position: Vector3.Transform(vertex.Position, worldMatrix),
-                    normal: Vector3.TransformNormal(vertex.Normal, worldMatrix),
+                    position: Vector3.Transform(vertex.Position, mehsPartToworldMatrix),
+                    normal: Vector3.TransformNormal(vertex.Normal, mehsPartToworldMatrix),
                     textureCoordinate: vertex.TextureCoordinate))
                 .ToArray();
             var effect = Game.CommandLineOptions.DedicatedServer ? null : GetEffect(Game.Content.Load<Model>(wallModelName));

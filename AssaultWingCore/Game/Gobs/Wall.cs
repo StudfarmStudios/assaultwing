@@ -61,6 +61,15 @@ namespace AW2.Game.Gobs
 
         public static int WallActivatedCounter { get; set; }
 
+        private Matrix WorldToIndexMapTransform
+        {
+            get
+            {
+                return Matrix.CreateTranslation(-Pos.X, -Pos.Y, 0)
+                    * _indexMap.WallToIndexMapTransform;
+            }
+        }
+
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
@@ -96,7 +105,7 @@ namespace AW2.Game.Gobs
                 Prepare3DModel();
                 var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
                 var gobVertices = _vertexData.Select(AWMathHelper.ProjectXY).ToArray();
-                var worldMatrix = WorldMatrix;
+                var worldMatrix = Matrix.CreateRotationZ(Rotation); // FIXME: Use WorldMatrix or nothing
                 Vector2.Transform(gobVertices, ref worldMatrix, gobVertices);
                 var boundingBox = GetBoundingBox(gobVertices);
                 _indexMap = new WallIndexMap(_removedTriangleIndices.Add, boundingBox, binReader);
@@ -225,7 +234,7 @@ namespace AW2.Game.Gobs
         {
             if (!_destructible || holeRadius <= 0) return 0;
             if (Game.NetworkMode == NetworkMode.Client) return 0;
-            var posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
+            var posInIndexMap = Vector2.Transform(holePos, WorldToIndexMapTransform).Round();
             var removeCount = 0;
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius),
                 (x, y) => { if (_indexMap.Remove(x, y)) removeCount++; });

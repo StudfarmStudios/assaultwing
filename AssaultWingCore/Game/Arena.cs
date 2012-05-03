@@ -1106,7 +1106,7 @@ namespace AW2.Game
 
         #region Callbacks
 
-        public void DebugDrawGob(Gob gob, Matrix view, Matrix projection)
+        public void DebugDrawFixtures(Matrix view, Matrix projection)
         {
             var broadPhase = _world.ContactManager.BroadPhase;
             foreach (var body in _world.BodyList)
@@ -1120,8 +1120,11 @@ namespace AW2.Game
                         AABB aabb;
                         broadPhase.GetFatAABB(proxy.ProxyId, out aabb);
                         Graphics3D.DebugDrawPolyline(view, projection, Matrix.Identity,
-                            aabb.LowerBound, new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y),
-                            aabb.UpperBound, new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y), aabb.LowerBound);
+                            aabb.LowerBound / FARSEER_SCALE,
+                            new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y) / FARSEER_SCALE,
+                            aabb.UpperBound / FARSEER_SCALE,
+                            new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y) / FARSEER_SCALE,
+                            aabb.LowerBound / FARSEER_SCALE);
                     }
                 }
             }

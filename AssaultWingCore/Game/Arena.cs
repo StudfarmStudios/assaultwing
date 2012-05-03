@@ -1078,6 +1078,8 @@ namespace AW2.Game
             var arenaBoundary = BodyFactory.CreateLoopShape(_world, AWMathHelper.CreateVertices(corners));
             arenaBoundary.CollisionCategories = Category.All;
             arenaBoundary.CollidesWith = Category.All;
+            arenaBoundary.Restitution = 0;
+            arenaBoundary.Friction = 0;
         }
 
         private void InitializeSpecialLayers()

@@ -134,19 +134,19 @@ namespace AW2.Game
 
             g_collisionMaterials[(int)CollisionMaterialType.Regular] = new CollisionMaterial
             {
-                Elasticity = 0.9f,
+                Elasticity = 0.2f,
                 Friction = 0.5f,
                 Damage = 1.0f,
             };
             g_collisionMaterials[(int)CollisionMaterialType.Rough] = new CollisionMaterial
             {
-                Elasticity = 0.2f,
+                Elasticity = 0.01f,
                 Friction = 0.7f,
                 Damage = 1.0f,
             };
             g_collisionMaterials[(int)CollisionMaterialType.Bouncy] = new CollisionMaterial
             {
-                Elasticity = 2.0f,
+                Elasticity = 1.0f,
                 Friction = 0.1f,
                 Damage = 1.0f,
             };

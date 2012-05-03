@@ -1112,7 +1112,7 @@ namespace AW2.Game
                         var proxy = fixture.Proxies[t];
                         AABB aabb;
                         broadPhase.GetFatAABB(proxy.ProxyId, out aabb);
-                        Graphics3D.DebugDraw(view, projection, Matrix.Identity,
+                        Graphics3D.DebugDrawPolyline(view, projection, Matrix.Identity,
                             aabb.LowerBound, new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y),
                             aabb.UpperBound, new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y), aabb.LowerBound);
                     }

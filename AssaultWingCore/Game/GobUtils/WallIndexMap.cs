@@ -346,6 +346,17 @@ namespace AW2.Game.GobUtils
             }
         }
 
+        public void DebugDraw(Matrix view, Matrix projection, Vector2 wallPos)
+        {
+            var pointSpacing = 4;
+            var points = Enumerable.Range(0, (Width + pointSpacing - 1) / pointSpacing)
+                .Join(Enumerable.Range(0, (Height + pointSpacing - 1) / pointSpacing), x => 0, x => 0,
+                    (x, y) => new Vector2(x * pointSpacing, y * pointSpacing))
+                .Where(p => _data.Get((int)p.X, (int)p.Y).Any());
+            var world = Matrix.Invert(WallToIndexMapTransform) * Matrix.CreateTranslation(wallPos.X, wallPos.Y, 0);
+            Graphics3D.DebugDrawPoints(view, projection, world, points.ToArray());
+        }
+
         private static Point Vector2ToPoint(Vector2 vertexPosition, Vector2 origin)
         {
             return new Point((int)(vertexPosition.X - origin.X), (int)(vertexPosition.Y - origin.Y));

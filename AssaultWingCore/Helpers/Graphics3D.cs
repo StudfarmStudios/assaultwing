@@ -305,34 +305,48 @@ namespace AW2.Helpers
 
         #region Utility methods for 3D graphics
 
-        /// <summary>
-        /// Draws a bounding sphere for debug purposes.
-        /// </summary>
-        public static void DebugDraw(BoundingSphere sphere, Matrix view, Matrix projection, Matrix world)
+        public static void DebugDrawCircle(BoundingSphere sphere, Matrix view, Matrix projection, Matrix world)
         {
             VertexPositionColor[] vertexData;
             Graphics3D.GetWireframeModelData(sphere, DEBUG_DRAW_Z, DEBUG_DRAW_COLOR, out vertexData);
-            DebugDraw(view, projection, world, vertexData);
+            DebugDraw(view, projection, world, vertexData, PrimitiveType.LineStrip);
         }
 
-        public static void DebugDraw(Matrix view, Matrix projection, Matrix world, params Vector2[] vertices)
+        public static void DebugDrawPolyline(Matrix view, Matrix projection, Matrix world, params Vector2[] vertices)
         {
             var vertexData = new VertexPositionColor[vertices.Length];
             for (int i = 0; i < vertices.Length; i++)
                 vertexData[i] = new VertexPositionColor(new Vector3(vertices[i], DEBUG_DRAW_Z), DEBUG_DRAW_COLOR);
-            DebugDraw(view, projection, world, vertexData);
+            DebugDraw(view, projection, world, vertexData, PrimitiveType.LineStrip);
         }
 
-        private static void DebugDraw(Matrix view, Matrix projection, Matrix world, VertexPositionColor[] vertexData)
+        public static void DebugDrawPoints(Matrix view, Matrix projection, Matrix world, params Vector2[] points)
+        {
+            var vertexData = new VertexPositionColor[points.Length * 2];
+            for (int i = 0; i < points.Length; i++)
+            {
+                vertexData[i * 2 + 0] = new VertexPositionColor(new Vector3(points[i], DEBUG_DRAW_Z), DEBUG_DRAW_COLOR);
+                vertexData[i * 2 + 1] = new VertexPositionColor(new Vector3(points[i] + Vector2.UnitX, DEBUG_DRAW_Z), DEBUG_DRAW_COLOR);
+            }
+            DebugDraw(view, projection, world, vertexData, PrimitiveType.LineList);
+        }
+
+        private static void DebugDraw(Matrix view, Matrix projection, Matrix world, VertexPositionColor[] vertexData, PrimitiveType primitiveType)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             DebugEffect.View = view;
             DebugEffect.Projection = projection;
             DebugEffect.World = world;
+            var primitiveCount = primitiveType == PrimitiveType.LineList ? vertexData.Length / 2
+                : primitiveType == PrimitiveType.LineStrip ? vertexData.Length - 1
+                : primitiveType == PrimitiveType.TriangleList ? vertexData.Length / 3
+                : primitiveType == PrimitiveType.TriangleStrip ? vertexData.Length - 2
+                : 0;
+            if (primitiveCount <= 0) throw new ArgumentException("Invalid primitive type or vertex count");
             foreach (var pass in DebugEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineStrip, vertexData, 0, vertexData.Length - 1);
+                gfx.DrawUserPrimitives<VertexPositionColor>(primitiveType, vertexData, 0, primitiveCount);
             }
         }
 

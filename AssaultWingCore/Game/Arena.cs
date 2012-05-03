@@ -1067,7 +1067,7 @@ namespace AW2.Game
         {
             var outerBoundaryThickness = new Vector2(ARENA_OUTER_BOUNDARY_THICKNESS);
             var arenaBounds = AWMathHelper.CreateAABB(-outerBoundaryThickness, Dimensions + outerBoundaryThickness);
-            _world = new World(_gravity, arenaBounds);
+            _world = new World(AWMathHelper.FARSEER_SCALE * _gravity, arenaBounds);
             var corners = new[]
             {
                 Vector2.Zero,

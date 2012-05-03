@@ -189,6 +189,13 @@ namespace AW2.Game
 
         #region General fields
 
+        /// <summary>
+        /// Ratio of Farseer Physics Engine coordinates to Assault Wing coordinates.
+        /// E.g. Farseer_X = Assault_Wing_X * FARSEER_SCALE. Farseer provides the most
+        /// accurate simulation when body sizes are between 0.1 and 10.
+        /// </summary>
+        public const float FARSEER_SCALE = 0.1f;
+
         private AssaultWingCore _game;
         private GobCollection _gobs;
         private World _world;
@@ -536,12 +543,12 @@ namespace AW2.Game
         /// </summary>
         private void Register(Gob gob)
         {
-            var body = BodyFactory.CreateBody(_world, gob.Pos, gob);
+            var body = BodyFactory.CreateBody(_world, gob);
             body.OnCollision += BodyCollisionHandler;
             body.IsStatic = !gob.Movable;
             body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
             gob.Body = body;
-            var gobScale = Matrix.CreateScale(gob.Scale); // TODO !!! Get rid of Gob.Scale
+            var gobScale = Matrix.CreateScale(FARSEER_SCALE * gob.Scale); // TODO !!! Get rid of Gob.Scale
             foreach (var area in gob.CollisionAreas)
             {
                 var isPhysicalArea = area.CannotOverlap != CollisionAreaType.None;
@@ -1056,14 +1063,14 @@ namespace AW2.Game
         private void InitializeWorld()
         {
             var outerBoundaryThickness = new Vector2(ARENA_OUTER_BOUNDARY_THICKNESS);
-            var arenaBounds = new AABB(-outerBoundaryThickness, Dimensions + outerBoundaryThickness);
+            var arenaBounds = new AABB(FARSEER_SCALE * -outerBoundaryThickness, FARSEER_SCALE * (Dimensions + outerBoundaryThickness));
             _world = new World(_gravity, arenaBounds);
             var arenaBoundaryVertices = new Vertices(new[]
             {
-                Vector2.Zero,
-                new Vector2(0, Dimensions.Y),
-                Dimensions,
-                new Vector2(Dimensions.X, 0),
+                FARSEER_SCALE * Vector2.Zero,
+                FARSEER_SCALE * new Vector2(0, Dimensions.Y),
+                FARSEER_SCALE * Dimensions,
+                FARSEER_SCALE * new Vector2(Dimensions.X, 0),
             });
             var arenaBoundary = BodyFactory.CreateLoopShape(_world, arenaBoundaryVertices);
             arenaBoundary.CollisionCategories = Category.All;

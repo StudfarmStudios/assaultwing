@@ -406,8 +406,8 @@ namespace AW2.Game
         /// </summary>
         public virtual Vector2 Pos
         {
-            get { return Body != null ? Body.Position : _pos; }
-            set { if (Body != null) Body.Position = value; else _pos = value; }
+            get { return Body != null ? Body.Position / Arena.FARSEER_SCALE : _pos; }
+            set { if (Body != null) Body.Position = value * Arena.FARSEER_SCALE; else _pos = value; }
         }
 
         /// <summary>
@@ -434,8 +434,8 @@ namespace AW2.Game
         /// </summary>
         public virtual Vector2 Move
         {
-            get { return Body != null ? Body.LinearVelocity : _move; }
-            set { if (Body != null) Body.LinearVelocity = value; else _move = value; }
+            get { return Body != null ? Body.LinearVelocity / Arena.FARSEER_SCALE : _move; }
+            set { if (Body != null) Body.LinearVelocity = value * Arena.FARSEER_SCALE; else _move = value; }
         }
 
         /// <summary>
@@ -564,8 +564,8 @@ namespace AW2.Game
                 _body = value;
                 if (_body != null)
                 {
-                    _body.SetTransform(_pos, _rotation);
-                    _body.LinearVelocity = _move;
+                    _body.SetTransform(_pos * Arena.FARSEER_SCALE, _rotation);
+                    _body.LinearVelocity = _move * Arena.FARSEER_SCALE;
                 }
             }
         }

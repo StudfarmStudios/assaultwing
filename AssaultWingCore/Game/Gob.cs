@@ -450,16 +450,7 @@ namespace AW2.Game
         public virtual float Rotation
         {
             get { return Body != null ? Body.Rotation : _rotation; }
-            set
-            {
-                if (Body != null)
-                {
-                    Body.Rotation = value;
-                    if (AngularVelocityLimit != null) AngularVelocityLimit.TargetAngle = value;
-                }
-                else
-                    _rotation = value % MathHelper.TwoPi;
-            }
+            set { if (Body != null) Body.Rotation = value; else _rotation = value % MathHelper.TwoPi; }
         }
 
         public virtual float DrawRotation { get { return Rotation; } }
@@ -619,9 +610,8 @@ namespace AW2.Game
         public bool Gravitating { get; protected set; }
 
         /// <summary>
-        /// Used only if <see cref="DampAngularVelocity"/> is true.
+        /// Does the physics simulation ignore changes in angular velocity in collisions.
         /// </summary>
-        public FixedAngleJoint AngularVelocityLimit { get; set; }
         public bool DampAngularVelocity { get; protected set; }
 
         /// <summary>

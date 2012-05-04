@@ -540,6 +540,7 @@ namespace AW2.Game
             var body = BodyFactory.CreateBody(_world, gob);
             body.IsStatic = !gob.Movable;
             body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
+            body.FixedRotation = gob.DampAngularVelocity; // Note: Recomputes body mass from fixtures.
             gob.Body = body;
             var gobScale = Matrix.CreateScale(gob.Scale); // TODO !!! Get rid of Gob.Scale
             foreach (var area in gob.CollisionAreas)
@@ -555,14 +556,8 @@ namespace AW2.Game
                 fixture.CollidesWith = isPhysicalArea ? (Category)area.CannotOverlap : (Category)area.CollidesAgainst;
                 area.Fixture = fixture;
             }
-            body.Mass = gob.Mass; // override mass from fixtures
-            body.OnCollision += BodyCollisionHandler;
-            if (gob.DampAngularVelocity)
-            {
-                body.AngularDamping = float.MaxValue;
-                gob.AngularVelocityLimit = JointFactory.CreateFixedAngleJoint(_world, body);
-                gob.AngularVelocityLimit.TargetAngle = gob.Rotation;
-            }
+            body.Mass = gob.Mass; // Override mass from fixtures.
+            body.OnCollision += BodyCollisionHandler; // Note: Handler is set on each fixture.
         }
 
         /// <summary>

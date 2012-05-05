@@ -71,9 +71,9 @@ namespace AW2.Net.Messages
                 //   byte: mixed data
                 //     bits 0..1: area 1 ID
                 //     bits 2..3: area 2 ID
-                //     bits 4..5: physical collision sound effects to play (Arena.CollisionSoundTypes)
-                //     bit 6: collision while stuck
-                //     bit 7: collide both ways (if not, then only gob 1 to gob 2)
+                //     bits 4..5: not used
+                //     bit 6: not used
+                //     bit 7: not used
                 // byte: number of gobs to update, K
                 // K shorts: identifiers of the gobs
                 // ushort: total byte count of gob data
@@ -94,9 +94,6 @@ namespace AW2.Net.Messages
                                 throw new ApplicationException("Too large collision area identifier: " + collisionEvent.Area1ID + " or " + collisionEvent.Area2ID);
                             var mixedData = (byte)(collisionEvent.Area1ID & 0x03);
                             mixedData |= (byte)((collisionEvent.Area2ID & 0x03) << 2);
-                            mixedData |= (byte)(((byte)collisionEvent.Sound & 0x03) << 4);
-                            if (collisionEvent.Stuck) mixedData |= 0x40;
-                            if (collisionEvent.CollideBothWays) mixedData |= 0x80;
                             writer.Write((byte)mixedData);
                         }
                         writer.Write((byte)_gobIds.Count);
@@ -121,10 +118,7 @@ namespace AW2.Net.Messages
                 var mixedData = reader.ReadByte();
                 var area1ID = mixedData & 0x03;
                 var area2ID = (mixedData >> 2) & 0x03;
-                var soundsToPlay = (Arena.CollisionSoundTypes)((mixedData >> 4) & 0x03);
-                var stuck = (mixedData & 0x40) != 0;
-                var collideBothWays = (mixedData & 0x80) != 0;
-                CollisionEvents.Add(new Arena.CollisionEvent(gob1ID, gob2ID, area1ID, area2ID, stuck, collideBothWays, soundsToPlay));
+                CollisionEvents.Add(new Arena.CollisionEvent(gob1ID, gob2ID, area1ID, area2ID));
             }
             var gobCount = reader.ReadByte();
             _gobIds.Clear();

@@ -114,8 +114,8 @@ namespace AW2.Game
         public const float LARGE_GOB_PHYSICAL_RADIUS = 25;
 
         private const float HIDING_ALPHA_LIMIT = 0.01f;
-        private const float MIN_GOB_COORDINATE = -Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
-        private const float MAX_GOB_COORDINATE = 16000 + Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
+        private const float MIN_GOB_COORDINATE = 0;
+        private const float MAX_GOB_COORDINATE = 16000;
         private const float MIN_GOB_DELTA_COORDINATE = byte.MinValue / 8f;
         private const float MAX_GOB_DELTA_COORDINATE = byte.MaxValue / 8f;
         private static readonly TimeSpan FULL_NETWORK_UPDATE_INTERVAL = TimeSpan.FromSeconds(1);
@@ -614,13 +614,6 @@ namespace AW2.Game
         /// </summary>
         public bool DampAngularVelocity { get; protected set; }
 
-        /// <summary>
-        /// If true, the gob is not let outside the arena boundary. Otherwise the gob is
-        /// removed when it passes the arena boundary.
-        /// </summary>
-        [Obsolete]
-        public bool IsKeptInArenaBounds { get; protected set; }
-
         #endregion Gob Properties
 
         #region Network properties
@@ -1022,24 +1015,13 @@ namespace AW2.Game
                     : _lastNetworkUpdatePos + reader.ReadVector2Normalized8(MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
                 _lastNetworkUpdatePos = newPos;
                 var newMove = reader.ReadHalfVector2();
-                ExtrapolatePosAndMove(newPos, newMove, framesAgo);
+                // TODO: Extrapolate with Farseer after deserializing all gobs !!! ExtrapolatePosAndMove(newPos, newMove, framesAgo);
                 DrawPosOffset += oldPos - Pos;
                 if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
                     DrawPosOffset = Vector2.Zero;
 
                 if (IsDamageable) DamageLevel = reader.ReadByte() / (float)byte.MaxValue * MaxDamageLevel;
             }
-        }
-
-        /// <summary>
-        /// Sets the gob's position and movement by computing it from a known position
-        /// and movement some time ago.
-        /// </summary>
-        public void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, int frameCount)
-        {
-            _pos = oldPos;
-            Move = oldMove;
-            if (Arena != null) Arena.Move(this, frameCount, allowIrreversibleSideEffects: false);
         }
 
         #endregion Methods related to serialisation

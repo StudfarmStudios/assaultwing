@@ -64,7 +64,7 @@ namespace AW2.Game.Gobs
                 Die();
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             // We assume we have only one receptor area and that's the one for
             // bonus collection. That means that the other gob is a ship.

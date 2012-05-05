@@ -83,7 +83,7 @@ namespace AW2.Game.Gobs
             _radialFlow.Update();
         }
 
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if (_damageTime.HasValue && _damageTime.Value != Game.GameTime.TotalGameTime) return;
             Game.Stats.SendHit(this, theirArea.Owner);

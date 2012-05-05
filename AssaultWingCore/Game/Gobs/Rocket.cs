@@ -123,7 +123,7 @@ namespace AW2.Game.Gobs
             _thruster.Update();
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
             {

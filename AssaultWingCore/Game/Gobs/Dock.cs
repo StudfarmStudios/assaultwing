@@ -101,12 +101,12 @@ namespace AW2.Game.Gobs
                 foreach (Ship gob in _repairingGobsOnClient) if (gob != null) RepairShip(gob);
         }
 
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if (myArea.Name == "Dock" && theirArea.Owner is Ship) EnsureEffectActive();
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             var ship = theirArea.Owner as Ship;
             if (myArea.Name != "Dock" || ship == null) return false;

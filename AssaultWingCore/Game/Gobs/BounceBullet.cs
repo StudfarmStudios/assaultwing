@@ -35,10 +35,10 @@ namespace AW2.Game.Gobs
             if (_deathBySlownessCounter > 3) Die();
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             var collidedWithPhysical = (theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0;
-            return !collidedWithPhysical && !stuck ? false : base.CollideIrreversible(myArea, theirArea, stuck);
+            return !collidedWithPhysical ? false : base.CollideIrreversible(myArea, theirArea);
         }
     }
 }

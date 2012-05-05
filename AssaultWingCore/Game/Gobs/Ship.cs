@@ -144,11 +144,6 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private ShipInfo _shipInfo;
 
-        /// <summary>
-        /// Gobs that we have temporarily disabled while we move through them.
-        /// </summary>
-        private List<Gob> _temporarilyDisabledGobs; // TODO: Move to physics engine
-
         #endregion Ship fields related to other things
 
         #region Ship fields for signalling visual things over the network
@@ -297,7 +292,6 @@ namespace AW2.Game.Gobs
         public Ship(CanonicalString typeName)
             : base(typeName)
         {
-            _temporarilyDisabledGobs = new List<Gob>();
         }
 
         #endregion Ship constructors
@@ -320,8 +314,6 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == NetworkMode.Client && Owner != null && !Owner.IsLocal && LocationPredicter == null) LocationPredicter = new ShipLocationPredicter(this);
             UpdateRoll();
             base.Update();
-            foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
-            _temporarilyDisabledGobs.Clear();
             UpdateThrustInNetworkGame(); // TODO !!! Move to Thruster
             _thruster.Update();
             _coughEngine.Update();
@@ -498,15 +490,6 @@ namespace AW2.Game.Gobs
             var nameAlpha = (IsHiding ? Alpha : 1) * 0.8f;
             var nameColor = Color.Multiply(Owner.Color, nameAlpha);
             spriteBatch.DrawString(PlayerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
-        }
-
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
-        {
-            if (!stuck) return;
-            // Set the other gob as disabled while we move, then enable it after we finish moving.
-            // This works with the assumption that there are at least two moving iterations.
-            theirArea.Owner.Disable(); // re-enabled in Update()
-            _temporarilyDisabledGobs.Add(theirArea.Owner);
         }
 
         public override void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)

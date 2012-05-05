@@ -149,39 +149,5 @@ namespace AW2.Game.Gobs
         }
 
         #endregion Methods related to serialisation
-
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public override void MakeConsistent(Type limitationAttribute)
-        {
-            base.MakeConsistent(limitationAttribute);
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Make sure there's no null references.
-
-                // 'wallModelName' is actually part of our runtime state,
-                // but its value is passed onwards by 'ModelNames' even
-                // if we were only a gob template. The real problem is
-                // that we don't make a difference between gob templates
-                // and actual gob instances (that have a proper runtime state).
-                if (wallModelName == null)
-                    wallModelName = (CanonicalString)"dummymodel";
-            }
-            if (limitationAttribute == typeof(RuntimeStateAttribute))
-            {
-                // Make sure there's no null references.
-                if (wallModelName == null)
-                    wallModelName = (CanonicalString)"dummymodel";
-            }
-        }
-
-        #endregion IConsistencyCheckable Members
     }
 }

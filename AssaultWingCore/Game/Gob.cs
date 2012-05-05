@@ -49,7 +49,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
     [System.Diagnostics.DebuggerDisplay("ID:{ID} TypeName:{TypeName} Pos:{Pos} Move:{Move}")]
-    public class Gob : Clonable, IConsistencyCheckable, INetworkSerializable, ICustomTypeDescriptor
+    public class Gob : Clonable, INetworkSerializable, ICustomTypeDescriptor
     {
         /// <summary>
         /// Type of a gob's preferred placement to arena layers.
@@ -1158,22 +1158,6 @@ namespace AW2.Game
         #region Collision methods
 
         /// <summary>
-        /// The primary physical collision area of the gob or <b>null</b> if it doesn't have one.
-        /// </summary>
-        /// The primary physical collision area is used mostly for movable gobs as an
-        /// optimisation to avoid looping through all collision areas in order to find
-        /// physical ones.
-        public CollisionArea PhysicalArea
-        {
-            get
-            {
-                if (_collisionAreas.Length == 0) return null;
-                if ((_collisionAreas[0].Type & CollisionAreaType.Physical) == 0) return null;
-                return _collisionAreas[0];
-            }
-        }
-
-        /// <summary>
         /// Performs collision operations for the case when one of this gob's collision areas
         /// is overlapping one of another gob's collision areas.
         /// Called only when <b>theirArea.Type</b> matches <b>myArea.CollidesAgainst</b>.
@@ -1182,7 +1166,7 @@ namespace AW2.Game
         /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
         /// to backtrack out of the overlap. It is then up to this gob and the other gob 
         /// to resolve the overlap.</param>
-        public virtual void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public virtual void CollideReversible(CollisionArea myArea, CollisionArea theirArea)
         {
         }
 
@@ -1195,7 +1179,7 @@ namespace AW2.Game
         /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
         /// to backtrack out of the overlap. It is then up to this gob and the other gob 
         /// to resolve the overlap.</param>
-        public virtual bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public virtual bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             return false;
         }
@@ -1386,35 +1370,10 @@ namespace AW2.Game
 
         #endregion
 
-        #region IConsistencyCheckable and Clonable Members
-
         public override void Cloned()
         {
             foreach (var area in _collisionAreas) area.Owner = this;
         }
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public virtual void MakeConsistent(Type limitationAttribute)
-        {
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Rearrange our collision areas to have a physical area be first, if there is such,
-                // and all other collision areas to be sorted in increasing order by name.
-                // Order is important because game server and game clients communicate in indices.
-                _collisionAreas = _collisionAreas.OrderBy(area => (area.Type & CollisionAreaType.Physical) != 0 ? "" : area.Name).ToArray();
-
-                // Make physical attributes sensible.
-                _mass = Math.Max(0.001f, _mass); // strictly positive mass
-            }
-        }
-
-        #endregion
 
         #region ICustomTypeDescriptor Members
 

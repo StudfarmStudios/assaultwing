@@ -38,7 +38,6 @@ namespace AW2.Game.Gobs
 
         private Vector2? _hoverAroundPos;
         private Vector2 _thrustForce;
-        private List<Gob> _temporarilyDisabledGobs; // TODO: combine with Ship and move to physics engine
 
         private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(Game.TargetFPS * HOVER_THRUST_INTERVAL); } }
         private bool IsHoverThrusting { get { return HoverThrustCycleFrame < Game.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
@@ -65,7 +64,6 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             Gravitating = false;
-            _temporarilyDisabledGobs = new List<Gob>();
         }
 
         public override void Activate()
@@ -77,9 +75,7 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
-            _temporarilyDisabledGobs.Clear();
-            Move *= 0.97f;
+            Move *= 0.97f; // TODO !!! Use Body.LinearDamping
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
             Alpha = Game.DataEngine.Minions
@@ -90,7 +86,7 @@ namespace AW2.Game.Gobs
                 .Max();
         }
 
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea)
         {
             var collidedWithFriend = theirArea.Owner.Owner == Owner;
             var collidedWithNeutral = theirArea.Owner.Owner == null || theirArea.Owner.IsHidden;
@@ -104,24 +100,17 @@ namespace AW2.Game.Gobs
                     if (collidedWithFriend && theirArea.Owner is FloatingBullet)
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
                     break;
-                default:
-                    if (collidedWithFriend && theirArea.Owner is FloatingBullet && stuck)
-                    {
-                        theirArea.Owner.Disable(); // re-enabled in Update()
-                        _temporarilyDisabledGobs.Add(theirArea.Owner);
-                    }
-                    break;
             }
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if (myArea.Name == "Magnet" || myArea.Name == "Spread") return false;
             var collidedWithFriend = theirArea.Owner.Owner == Owner;
-            if (collidedWithFriend || (theirArea.Owner.MaxDamageLevel <= 100 && (theirArea.Owner.Movable || !stuck))) return false;
+            if (collidedWithFriend || (theirArea.Owner.MaxDamageLevel <= 100 && theirArea.Owner.Movable)) return false;
             var hasHitSound = _hitSound != "";
             if (hasHitSound) Game.SoundEngine.PlaySound(_hitSound, this);
-            var baseResult = base.CollideIrreversible(myArea, theirArea, stuck);
+            var baseResult = base.CollideIrreversible(myArea, theirArea);
             return hasHitSound || baseResult;
         }
 

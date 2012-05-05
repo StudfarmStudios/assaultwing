@@ -428,10 +428,9 @@ namespace AW2.Game
         /// <returns>True if irreversible side effects happened.</returns>
         public bool PerformCustomCollision(CollisionArea myArea, CollisionArea theirArea, bool forceIrreversibleSideEffectsOnClient)
         {
-            var stuck = false; // !!!
-            myArea.Owner.CollideReversible(myArea, theirArea, stuck);
+            myArea.Owner.CollideReversible(myArea, theirArea);
             if (Game.NetworkMode == NetworkMode.Client && !forceIrreversibleSideEffectsOnClient) return false;
-            var irreversibleSideEffects = myArea.Owner.CollideIrreversible(myArea, theirArea, stuck);
+            var irreversibleSideEffects = myArea.Owner.CollideIrreversible(myArea, theirArea);
             var sounds = GetCollisionSounds(myArea, theirArea);
             if (sounds.HasFlag(CollisionSoundTypes.WallCollision))
                 Game.SoundEngine.PlaySound("Collision", myArea.Owner);

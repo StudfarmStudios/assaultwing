@@ -116,6 +116,12 @@ namespace AW2.Helpers.Geometric
             return "{" + Min + " - " + Max + "}";
         }
 
+        public bool Contains(Rectangle other)
+        {
+            return Min.X <= other.Min.X && other.Max.X <= Max.X
+                && Min.Y <= other.Min.Y && other.Max.Y <= Max.Y;
+        }
+
         #region IGeomPrimitive Members
 
         public Rectangle BoundingBox { get { return this; } }

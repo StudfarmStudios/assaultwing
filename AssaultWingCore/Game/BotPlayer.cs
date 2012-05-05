@@ -81,7 +81,7 @@ namespace AW2.Game
             Gob.CreateGob<Bot>(Game, g_botTypes[_preferredBotTypeIndex], bot =>
             {
                 SeizeBot(bot);
-                var pos = Arena.GetFreePosition(Gob.LARGE_GOB_PHYSICAL_RADIUS, Arena.BoundedArea);
+                var pos = Arena.GetFreePosition(Gob.LARGE_GOB_PHYSICAL_RADIUS, Arena.BoundedAreaNormal);
                 bot.ResetPos(pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 Arena.Gobs.Add(bot);
                 Game.Stats.Send(new

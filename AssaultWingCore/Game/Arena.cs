@@ -16,6 +16,7 @@ using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
+using Point = AW2.Helpers.Geometric.Point;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game
@@ -108,14 +109,8 @@ namespace AW2.Game
 
         #region Collision related fields
 
-        /// <summary>
-        /// The maximum number of attempts to find a free position for a gob.
-        /// </summary>
+        private const float GOB_DESTRUCTION_BOUNDARY = 1000;
         private const int FREE_POS_MAX_ATTEMPTS = 50;
-
-        /// <summary>
-        /// Minimum change of gob speed in a collision to cause damage and a sound effect.
-        /// </summary>
         private const float MINIMUM_COLLISION_DELTA = 20;
         private const float MOVABLE_MOVABLE_COLLISION_SOUND_TRESHOLD = 40;
 
@@ -137,7 +132,8 @@ namespace AW2.Game
         public byte ID { get; set; }
         public ArenaInfo Info { get { return _info; } set { _info = value; } }
         public Vector2 Dimensions { get { return Info.Dimensions; } }
-        public Rectangle BoundedArea { get { return new Rectangle(Vector2.Zero, Dimensions); } }
+        public Rectangle BoundedAreaNormal { get { return new Rectangle(Vector2.Zero, Dimensions); } }
+        public Rectangle BoundedAreaExtreme { get { return new Rectangle(-new Vector2(GOB_DESTRUCTION_BOUNDARY), Dimensions + new Vector2(GOB_DESTRUCTION_BOUNDARY)); } }
 
         /// <summary>
         /// Filename of the arena's binary data container.
@@ -297,6 +293,10 @@ namespace AW2.Game
         public void Update()
         {
             _world.Step((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
+            if (Game.NetworkMode != NetworkMode.Client)
+                foreach (var gob in Gobs.GameplayLayer.Gobs)
+                    if (!Geometry.Intersect(BoundedAreaExtreme, new Point(gob.Pos)))
+                        gob.Die();
         }
 
         public List<CollisionEvent> GetCollisionEvents()
@@ -358,6 +358,7 @@ namespace AW2.Game
         /// </summary>
         public bool IsFreePosition(IGeomPrimitive area)
         {
+            if (!BoundedAreaNormal.Contains(area.BoundingBox)) return false;
             var shape = area.GetShape();
             AABB shapeAabb;
             Transform shapeTransform = new Transform();
@@ -426,16 +427,17 @@ namespace AW2.Game
         /// Performs custom collision effects when a collision area collides into another one.
         /// </summary>
         /// <returns>True if irreversible side effects happened.</returns>
-        public bool PerformCustomCollision(CollisionArea myArea, CollisionArea theirArea, bool forceIrreversibleSideEffectsOnClient)
+        public bool PerformCustomCollision(CollisionArea areaA, CollisionArea areaB, bool forceIrreversibleSideEffectsOnClient)
         {
-            myArea.Owner.CollideReversible(myArea, theirArea);
+            areaA.Owner.CollideReversible(areaA, areaB);
+            areaB.Owner.CollideReversible(areaB, areaA);
             if (Game.NetworkMode == NetworkMode.Client && !forceIrreversibleSideEffectsOnClient) return false;
-            var irreversibleSideEffects = myArea.Owner.CollideIrreversible(myArea, theirArea);
-            var sounds = GetCollisionSounds(myArea, theirArea);
+            var irreversibleSideEffects = areaA.Owner.CollideIrreversible(areaA, areaB) || areaB.Owner.CollideIrreversible(areaB, areaA);
+            var sounds = GetCollisionSounds(areaA, areaB);
             if (sounds.HasFlag(CollisionSoundTypes.WallCollision))
-                Game.SoundEngine.PlaySound("Collision", myArea.Owner);
+                Game.SoundEngine.PlaySound("Collision", areaA.Owner);
             if (sounds.HasFlag(CollisionSoundTypes.ShipCollision))
-                Game.SoundEngine.PlaySound("Shipcollision", myArea.Owner);
+                Game.SoundEngine.PlaySound("Shipcollision", areaA.Owner);
             return irreversibleSideEffects || sounds != CollisionSoundTypes.None;
         }
 
@@ -493,7 +495,6 @@ namespace AW2.Game
                 area.Fixture = fixture;
             }
             body.Mass = gob.Mass; // Override mass from fixtures.
-            body.OnCollision += BodyCollisionHandler; // Note: Handler is set on each fixture.
         }
 
         /// <summary>
@@ -536,6 +537,14 @@ namespace AW2.Game
             }
         }
 
+        private void InitializeWorld()
+        {
+            var arenaBounds = AWMathHelper.CreateAABB(Vector2.Zero, Dimensions);
+            _world = new World(AWMathHelper.FARSEER_SCALE * _gravity, arenaBounds);
+            _world.ContactManager.PostSolve += PostSolveHandler;
+            _world.ContactManager.BeginContact += BeginContactHandler;
+        }
+
         /// <summary>
         /// Initialises the gobs that are initially contained in the arena for playing the arena.
         /// </summary>
@@ -561,24 +570,6 @@ namespace AW2.Game
                     gobb.Layer = _layers[oldLayers.IndexOf(gob.Layer)];
                     Gobs.Add(gobb);
                 });
-        }
-
-        private void InitializeWorld()
-        {
-            var arenaBounds = AWMathHelper.CreateAABB(Vector2.Zero, Dimensions);
-            _world = new World(AWMathHelper.FARSEER_SCALE * _gravity, arenaBounds);
-            var corners = new[]
-            {
-                Vector2.Zero,
-                new Vector2(0, Dimensions.Y),
-                Dimensions,
-                new Vector2(Dimensions.X, 0),
-            };
-            var arenaBoundary = BodyFactory.CreateLoopShape(_world, AWMathHelper.CreateVertices(corners));
-            arenaBoundary.CollisionCategories = Category.All;
-            arenaBoundary.CollidesWith = Category.All;
-            arenaBoundary.Restitution = 0;
-            arenaBoundary.Friction = 0;
         }
 
         private void InitializeSpecialLayers()
@@ -659,17 +650,25 @@ namespace AW2.Game
             if (GobRemoved != null) GobRemoved(gob);
         }
 
-        private bool BodyCollisionHandler(Fixture myFixture, Fixture theirFixture, Contact contact)
+        private bool BeginContactHandler(Contact contact)
         {
-            var myArea = (CollisionArea)myFixture.UserData;
-            var theirArea = (CollisionArea)theirFixture.UserData;
-            if (myArea != null && theirArea != null)
-            {
-                var irreversibleSideEffects = PerformCustomCollision(myArea, theirArea, false);
-                if (Game.NetworkMode == NetworkMode.Server && irreversibleSideEffects)
-                    _collisionEvents.Add(new CollisionEvent(myArea, theirArea));
-            }
+            var areaA = (CollisionArea)contact.FixtureA.UserData;
+            var areaB = (CollisionArea)contact.FixtureB.UserData;
+            var irreversibleSideEffects = PerformCustomCollision(areaA, areaB, false);
+            if (Game.NetworkMode == NetworkMode.Server && irreversibleSideEffects)
+                _collisionEvents.Add(new CollisionEvent(areaA, areaB));
             return true;
+        }
+
+        private void PostSolveHandler(Contact contact, ContactConstraint impulse)
+        {
+            for (int i = 0; i < impulse.PointCount; i++)
+            {
+                var point = impulse.Points[i];
+                //Log.Write("!!! {1} hit {2}, NormalImpulse={0}", point.NormalImpulse,
+                //    contact.FixtureA.UserData == null ? "<null>" : ((CollisionArea)contact.FixtureA.UserData).Owner.TypeName,
+                //    contact.FixtureB.UserData == null ? "<null>" : ((CollisionArea)contact.FixtureB.UserData).Owner.TypeName);
+            }
         }
 
         #endregion Callbacks

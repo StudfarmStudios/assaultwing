@@ -28,45 +28,41 @@
         <position>0</position>
         <internalValue>1</internalValue>
         <tangentIn>0</tangentIn>
-        <tangentOut>-0.00999999</tangentOut>
+        <tangentOut>0</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
-        <position>150</position>
+        <position>250</position>
         <internalValue>0.99</internalValue>
         <tangentIn>-0.00999999</tangentIn>
-        <tangentOut>-0.59</tangentOut>
+        <tangentOut>-0.04000002</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
         <position>350</position>
-        <internalValue>0.4</internalValue>
-        <tangentIn>-0.59</tangentIn>
-        <tangentOut>-0.196917</tangentOut>
+        <internalValue>0.95</internalValue>
+        <tangentIn>-0.04000002</tangentIn>
+        <tangentOut>-0.25</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
-        <position>698.6941</position>
-        <internalValue>0.203083</internalValue>
-        <tangentIn>-0.196917</tangentIn>
+        <position>550</position>
+        <internalValue>0.7</internalValue>
+        <tangentIn>-0.25</tangentIn>
         <tangentOut>0</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
     </keys>
   </cloakStrengthForVelocity>
-  <fadeOutDuration>
-    <ticks>15000000</ticks>
-  </fadeOutDuration>
-  <fadeInDuration>
-    <ticks>5000000</ticks>
-  </fadeInDuration>
+  <fadeOutDuration>1</fadeOutDuration>
+  <fadeInDuration>0.5</fadeInDuration>
   <runningSoundName>purpur</runningSoundName>
   <breakOutSoundName>angry</breakOutSoundName>
   <fireSound>meow</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <iconName>menu_equip_mod_catmoflage</iconName>
-  <loadTime>11.2</loadTime>
+  <loadTime>9</loadTime>
   <fireCharge>0</fireCharge>
   <fireChargePerSecond>85</fireChargePerSecond>
   <shotCount>1</shotCount>

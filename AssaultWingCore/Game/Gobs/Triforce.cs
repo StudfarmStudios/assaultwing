@@ -163,7 +163,7 @@ namespace AW2.Game.Gobs
             if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 int hostID = reader.ReadInt16();
-                _hostProxy = new LazyProxy<int, Gob>(FindGob);
+                _hostProxy = new LazyProxy<int, Gob>(Arena.FindGob);
                 _hostProxy.SetData(hostID);
                 int wallPunchCount = reader.ReadByte();
                 for (int i = 0; i < wallPunchCount; i++)

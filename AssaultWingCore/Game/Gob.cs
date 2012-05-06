@@ -1129,14 +1129,6 @@ namespace AW2.Game
 
         #region Gob miscellaneous protected methods
 
-        protected Tuple<bool, Gob> FindGob(int id)
-        {
-            var gob = id == Gob.INVALID_ID || Arena == null
-                ? null
-                : Arena.Gobs.FirstOrDefault(g => g.ID == id);
-            return Tuple.Create(gob != null, gob);
-        }
-
         /// <summary>
         /// Copies a transform of each bone in a model relative to all parent bones of the bone into a given array.
         /// </summary>

@@ -132,8 +132,8 @@ namespace AW2.Game.Gobs
         public Lightning(CanonicalString typeName)
             : base(typeName)
         {
-            Shooter = new LazyProxy<int, Gob>(FindGob);
-            Target = new LazyProxy<int, Gob>(FindGob);
+            Shooter = new LazyProxy<int, Gob>(Arena.FindGob);
+            Target = new LazyProxy<int, Gob>(Arena.FindGob);
         }
 
         #region Methods related to gobs' functionality in the game world

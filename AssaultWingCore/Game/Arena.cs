@@ -34,27 +34,28 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("{Info.Name} Dimensions:{Info.Dimensions} Layers:{Layers.Count} Gobs:{Gobs.Count}")]
     public class Arena : IConsistencyCheckable
     {
+        [System.Diagnostics.DebuggerDisplay("Gob1:{_gob1ID} Gob2:{_gob2ID}")]
         private struct CollisionEventKey
         {
-            private int gob1ID;
-            private int gob2ID;
+            private int _gob1ID;
+            private int _gob2ID;
 
             public CollisionEventKey(Gob gob1, Gob gob2)
             {
-                gob1ID = Math.Min(gob1.ID, gob2.ID);
-                gob2ID = Math.Max(gob1.ID, gob2.ID);
+                _gob1ID = Math.Min(gob1.ID, gob2.ID);
+                _gob2ID = Math.Max(gob1.ID, gob2.ID);
             }
 
             public override int GetHashCode()
             {
-                return gob1ID ^ (gob2ID << 16);
+                return _gob1ID ^ (_gob2ID << 16);
             }
 
             public override bool Equals(object other)
             {
                 if (!(other is CollisionEventKey)) return false;
                 var otherKey = (CollisionEventKey)other;
-                return gob1ID == otherKey.gob1ID && gob2ID == otherKey.gob2ID;
+                return _gob1ID == otherKey._gob1ID && _gob2ID == otherKey._gob2ID;
             }
         }
 
@@ -96,6 +97,7 @@ namespace AW2.Game
         private const float MINIMUM_COLLISION_DELTA = 20;
 
         private Dictionary<CollisionEventKey, CollisionEvent> _collisionEvents = new Dictionary<CollisionEventKey, CollisionEvent>();
+        private Dictionary<CollisionEventKey, float> _collisionImpulses = new Dictionary<CollisionEventKey, float>();
 
         #endregion Collision related fields
 
@@ -283,11 +285,11 @@ namespace AW2.Game
 
         private void PerformCustomCollisions()
         {
-            foreach (var collisionEvent in _collisionEvents.Values)
+            foreach (var collisionEvent in _collisionEvents)
             {
-                var impulse = 100; // TODO !!! Find collision impulse for this event
-                collisionEvent.SetImpulse(impulse);
-                collisionEvent.Handle();
+                var impulse = _collisionImpulses[collisionEvent.Key];
+                collisionEvent.Value.SetImpulse(impulse);
+                collisionEvent.Value.Handle();
             }
         }
 
@@ -299,6 +301,7 @@ namespace AW2.Game
         public void ResetCollisionEvents()
         {
             _collisionEvents.Clear();
+            _collisionImpulses.Clear();
         }
 
         [Obsolete("Use Farseer Fixtures and AW Collision methods")]
@@ -642,16 +645,12 @@ namespace AW2.Game
 
         private void PostSolveHandler(Contact contact, ContactConstraint impulse)
         {
-            // Remember the collision impulse.
-            for (int i = 0; i < impulse.PointCount; i++)
-            {
-                var point = impulse.Points[i];
-                // TODO !!! Store point until the end of the frame, then figure out collision sounds
-                // based on normal impulse and write it to _collisionEvents before sending to client.
-                //Log.Write("!!! {1} hit {2}, NormalImpulse={0}", point.NormalImpulse,
-                //    ((CollisionArea)contact.FixtureA.UserData).Owner.TypeName,
-                //    ((CollisionArea)contact.FixtureB.UserData).Owner.TypeName);
-            }
+            var gob1 = ((CollisionArea)contact.FixtureA.UserData).Owner;
+            var gob2 = ((CollisionArea)contact.FixtureB.UserData).Owner;
+            var eventKey = new CollisionEventKey(gob1, gob2);
+            var previousMaxImpulse = 0f;
+            _collisionImpulses.TryGetValue(eventKey, out previousMaxImpulse);
+            _collisionImpulses[eventKey] = Math.Max(previousMaxImpulse, impulse.Points.Take(impulse.PointCount).Max(p => p.NormalImpulse));
         }
 
         #endregion Callbacks

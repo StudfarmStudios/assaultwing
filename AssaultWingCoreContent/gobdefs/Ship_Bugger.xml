@@ -147,7 +147,21 @@
         <continuity>Step</continuity>
       </Item>
       <Item>
+        <position>2.125</position>
+        <internalValue>0.8</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
         <position>2.25</position>
+        <internalValue>0.2</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>2.375</position>
         <internalValue>0.8</internalValue>
         <tangentOut>0</tangentOut>
         <tangentIn>0</tangentIn>
@@ -175,7 +189,7 @@
         <continuity>Step</continuity>
       </Item>
       <Item>
-        <position>2.825</position>
+        <position>2.875</position>
         <internalValue>0.8</internalValue>
         <tangentOut>0</tangentOut>
         <tangentIn>0</tangentIn>
@@ -183,62 +197,6 @@
       </Item>
       <Item>
         <position>3.0</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.125</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.25</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.375</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.5</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.625</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.75</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.875</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.0</position>
         <internalValue>1.0</internalValue>
         <tangentOut>0</tangentOut>
         <tangentIn>0</tangentIn>

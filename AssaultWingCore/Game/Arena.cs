@@ -43,34 +43,145 @@ namespace AW2.Game
             ShipCollision = 0x02,
         };
 
-        public struct CollisionEvent
+        public class CollisionEvent
         {
-            public int Gob1ID { get; private set; }
-            public int Gob2ID { get; private set; }
-            public int Area1ID { get; private set; }
-            public int Area2ID { get; private set; }
+            private const float COLLISION_SOUND_MINIMUM_IMPULSE = 2000;
 
-            public CollisionEvent(int gob1ID, int gob2ID, int area1ID, int area2ID)
-                : this()
+            private CollisionArea _area1;
+            private CollisionArea _area2;
+            private int _gob1ID;
+            private int _gob2ID;
+            private int _area1ID;
+            private int _area2ID;
+            private float _impulse;
+
+            public bool SkipReversibleSideEffects { get; set; }
+            public bool SkipIrreversibleSideEffects { get; set; }
+            public bool IrreversibleSideEffectsPerformed { get; private set; }
+
+            /// <summary>
+            /// Creates an uninitialized collision event. Initialize by calling
+            /// <see cref="SetCollisionAreas"/> and <see cref="SetImpulse"/>.
+            /// </summary>
+            public CollisionEvent()
             {
-                Gob1ID = gob1ID;
-                Gob2ID = gob2ID;
-                Area1ID = area1ID;
-                Area2ID = area2ID;
+                _gob1ID = _gob2ID = Gob.INVALID_ID;
+                _area1ID = _area2ID = -1;
             }
 
-            public CollisionEvent(CollisionArea area1, CollisionArea area2)
-                : this()
+            public void SetCollisionAreas(CollisionArea area1, CollisionArea area2)
             {
+                _area1 = area1;
+                _area2 = area2;
                 var gob1 = area1.Owner;
                 var gob2 = area2.Owner;
-                Gob1ID = gob1.ID;
-                Gob2ID = gob2.ID;
+                _gob1ID = gob1.ID;
+                _gob2ID = gob2.ID;
                 // Note: Walls are the only gobs to have over 4 collision areas; there can be hundreds of them.
                 // To fit collision area IDs into as few bits as possible, walls will always collide with
                 // their first collision area. This should not have a visible effect on game clients.
-                Area1ID = gob1 is Gobs.Wall ? 0 : gob1.GetCollisionAreaID(area1);
-                Area2ID = gob2 is Gobs.Wall ? 0 : gob2.GetCollisionAreaID(area2);
+                _area1ID = gob1 is Gobs.Wall ? 0 : gob1.GetCollisionAreaID(area1);
+                _area2ID = gob2 is Gobs.Wall ? 0 : gob2.GetCollisionAreaID(area2);
+            }
+
+            public void SetImpulse(float impulse)
+            {
+                _impulse = impulse;
+            }
+
+            public void Handle()
+            {
+                if (_area1 == null || _area2 == null) return; // May happen on a game client.
+                if (!SkipReversibleSideEffects) HandleReversibleSideEffects();
+                if (!SkipIrreversibleSideEffects) HandleIrreversibleSideEffects();
+            }
+
+            public void Serialize(NetworkBinaryWriter writer)
+            {
+                writer.Write((short)_gob1ID);
+                writer.Write((short)_gob2ID);
+                if (_area1ID > 0x03 || _area2ID > 0x03)
+                    throw new ApplicationException("Too large collision area identifier: " + _area1ID + " or " + _area2ID);
+                var mixedData = (byte)((byte)_area1ID & 0x03);
+                mixedData |= (byte)(((byte)_area2ID & 0x03) << 2);
+                if (_impulse >= COLLISION_SOUND_MINIMUM_IMPULSE) mixedData |= 0x10;
+                writer.Write((byte)mixedData);
+            }
+
+            public static CollisionEvent Deserialize(NetworkBinaryReader reader)
+            {
+                var gob1ID = reader.ReadInt16();
+                var gob2ID = reader.ReadInt16();
+                var mixedData = reader.ReadByte();
+                var area1ID = mixedData & 0x03;
+                var area2ID = (mixedData >> 2) & 0x03;
+                var strongImpulse = (mixedData & 0x10) != 0;
+                var impulse = strongImpulse ? COLLISION_SOUND_MINIMUM_IMPULSE : 0;
+                var collisionEvent = new CollisionEvent();
+                var arena = AssaultWingCore.Instance.DataEngine.Arena;
+                var gob1 = arena.FindGob(collisionEvent._gob1ID).Item2;
+                var gob2 = arena.FindGob(collisionEvent._gob2ID).Item2;
+                if (gob1 == null && gob2 == null) return collisionEvent;
+                var area1 = gob1.GetCollisionArea(collisionEvent._area1ID);
+                var area2 = gob2.GetCollisionArea(collisionEvent._area2ID);
+                collisionEvent.SetCollisionAreas(area1, area2);
+                collisionEvent.SetImpulse(impulse);
+                return collisionEvent;
+            }
+
+            private void HandleReversibleSideEffects()
+            {
+                _area1.Owner.CollideReversible(_area1, _area2);
+                _area2.Owner.CollideReversible(_area2, _area1);
+            }
+
+            private void HandleIrreversibleSideEffects()
+            {
+                var irreversibleSideEffects = _area1.Owner.CollideIrreversible(_area1, _area2) | _area2.Owner.CollideIrreversible(_area2, _area1);
+                var game = _area1.Owner.Game;
+                var sounds = GetCollisionSounds();
+                if (sounds.HasFlag(CollisionSoundTypes.WallCollision))
+                    game.SoundEngine.PlaySound("Collision", _area1.Owner);
+                if (sounds.HasFlag(CollisionSoundTypes.ShipCollision))
+                    game.SoundEngine.PlaySound("Shipcollision", _area1.Owner);
+                IrreversibleSideEffectsPerformed = irreversibleSideEffects || sounds != CollisionSoundTypes.None;
+            }
+
+            private CollisionSoundTypes GetCollisionSounds()
+            {
+                if (!_area1.IsPhysical || !_area2.IsPhysical) return CollisionSoundTypes.None;
+                if (_impulse < COLLISION_SOUND_MINIMUM_IMPULSE) return CollisionSoundTypes.None;
+                if (_area1.Owner is Gobs.Ship && _area2.Owner is Gobs.Ship) return CollisionSoundTypes.ShipCollision;
+                if (_area1.Owner is Gobs.Ship || _area2.Owner is Gobs.Ship)
+                {
+                    if (_area1.Owner.Movable && _area2.Owner.Movable) return CollisionSoundTypes.ShipCollision;
+                    return CollisionSoundTypes.WallCollision;
+                }
+                return CollisionSoundTypes.None;
+            }
+        }
+
+        private struct CollisionEventKey
+        {
+            private int gob1ID;
+            private int gob2ID;
+
+            public CollisionEventKey(Gob gob1, Gob gob2)
+            {
+                gob1ID = Math.Min(gob1.ID, gob2.ID);
+                gob2ID = Math.Max(gob1.ID, gob2.ID);
+            }
+
+            public override int GetHashCode()
+            {
+                return gob1ID ^ (gob2ID << 16);
+            }
+
+            public override bool Equals(object other)
+            {
+                if (!(other is CollisionEventKey)) return false;
+                var otherKey = (CollisionEventKey)other;
+                return gob1ID == otherKey.gob1ID && gob2ID == otherKey.gob2ID;
             }
         }
 
@@ -112,9 +223,8 @@ namespace AW2.Game
         private const float GOB_DESTRUCTION_BOUNDARY = 1000;
         private const int FREE_POS_MAX_ATTEMPTS = 50;
         private const float MINIMUM_COLLISION_DELTA = 20;
-        private const float MOVABLE_MOVABLE_COLLISION_SOUND_TRESHOLD = 40;
 
-        private List<CollisionEvent> _collisionEvents = new List<CollisionEvent>();
+        private Dictionary<CollisionEventKey, CollisionEvent> _collisionEvents = new Dictionary<CollisionEventKey, CollisionEvent>();
 
         #endregion Collision related fields
 
@@ -293,15 +403,26 @@ namespace AW2.Game
         public void Update()
         {
             _world.Step((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
+            PerformCustomCollisions();
             if (Game.NetworkMode != NetworkMode.Client)
                 foreach (var gob in Gobs.GameplayLayer.Gobs)
                     if (!Geometry.Intersect(BoundedAreaExtreme, new Point(gob.Pos)))
                         gob.Die();
         }
 
-        public List<CollisionEvent> GetCollisionEvents()
+        private void PerformCustomCollisions()
         {
-            return _collisionEvents;
+            foreach (var collisionEvent in _collisionEvents.Values)
+            {
+                var impulse = 100; // TODO !!! Find collision impulse for this event
+                collisionEvent.SetImpulse(impulse);
+                collisionEvent.Handle();
+            }
+        }
+
+        public IEnumerable<CollisionEvent> GetCollisionEvents()
+        {
+            return _collisionEvents.Values;
         }
 
         public void ResetCollisionEvents()
@@ -432,24 +553,6 @@ namespace AW2.Game
             return pixelsRemoved;
         }
 
-        /// <summary>
-        /// Performs custom collision effects when a collision area collides into another one.
-        /// </summary>
-        /// <returns>True if irreversible side effects happened.</returns>
-        public bool PerformCustomCollision(CollisionArea areaA, CollisionArea areaB, bool forceIrreversibleSideEffectsOnClient)
-        {
-            areaA.Owner.CollideReversible(areaA, areaB);
-            areaB.Owner.CollideReversible(areaB, areaA);
-            if (Game.NetworkMode == NetworkMode.Client && !forceIrreversibleSideEffectsOnClient) return false;
-            var irreversibleSideEffects = areaA.Owner.CollideIrreversible(areaA, areaB) || areaB.Owner.CollideIrreversible(areaB, areaA);
-            var sounds = GetCollisionSounds(areaA, areaB);
-            if (sounds.HasFlag(CollisionSoundTypes.WallCollision))
-                Game.SoundEngine.PlaySound("Collision", areaA.Owner);
-            if (sounds.HasFlag(CollisionSoundTypes.ShipCollision))
-                Game.SoundEngine.PlaySound("Shipcollision", areaA.Owner);
-            return irreversibleSideEffects || sounds != CollisionSoundTypes.None;
-        }
-
         public void PrepareEffect(BasicEffect effect)
         {
             _lighting.PrepareEffect(effect);
@@ -468,16 +571,6 @@ namespace AW2.Game
         #endregion Public methods
 
         #region Private methods
-
-        private CollisionSoundTypes GetCollisionSounds(CollisionArea myArea, CollisionArea theirArea)
-        {
-            if (!myArea.IsPhysical || !theirArea.IsPhysical) return CollisionSoundTypes.None;
-            if (!(myArea.Owner is Gobs.Ship)) return CollisionSoundTypes.None;
-            if (theirArea.Owner is Gobs.Ship)
-                return myArea.Owner.ID < theirArea.Owner.ID ? CollisionSoundTypes.ShipCollision : CollisionSoundTypes.None; // Only one ship makes the sound
-            else
-                return theirArea.Owner.Movable ? CollisionSoundTypes.ShipCollision : CollisionSoundTypes.WallCollision;
-        }
 
         /// <summary>
         /// Registers a gob for collisions.
@@ -661,22 +754,32 @@ namespace AW2.Game
 
         private bool BeginContactHandler(Contact contact)
         {
+            // Remember which gobs collided.
             var areaA = (CollisionArea)contact.FixtureA.UserData;
             var areaB = (CollisionArea)contact.FixtureB.UserData;
-            var irreversibleSideEffects = PerformCustomCollision(areaA, areaB, false);
-            if (Game.NetworkMode == NetworkMode.Server && irreversibleSideEffects)
-                _collisionEvents.Add(new CollisionEvent(areaA, areaB));
-            return true;
+            var eventKey = new CollisionEventKey(areaA.Owner, areaB.Owner);
+            CollisionEvent collisionEvent = null;
+            if (!_collisionEvents.TryGetValue(eventKey, out collisionEvent))
+            {
+                collisionEvent = new CollisionEvent { SkipIrreversibleSideEffects = Game.NetworkMode == NetworkMode.Client };
+                _collisionEvents.Add(eventKey, collisionEvent);
+            }
+            collisionEvent.SetCollisionAreas(areaA, areaB);
+            // Always break sensor contacts so that we get a new collision event each frame.
+            return areaA.IsPhysical && areaB.IsPhysical;
         }
 
         private void PostSolveHandler(Contact contact, ContactConstraint impulse)
         {
+            // Remember the collision impulse.
             for (int i = 0; i < impulse.PointCount; i++)
             {
                 var point = impulse.Points[i];
+                // TODO !!! Store point until the end of the frame, then figure out collision sounds
+                // based on normal impulse and write it to _collisionEvents before sending to client.
                 //Log.Write("!!! {1} hit {2}, NormalImpulse={0}", point.NormalImpulse,
-                //    contact.FixtureA.UserData == null ? "<null>" : ((CollisionArea)contact.FixtureA.UserData).Owner.TypeName,
-                //    contact.FixtureB.UserData == null ? "<null>" : ((CollisionArea)contact.FixtureB.UserData).Owner.TypeName);
+                //    ((CollisionArea)contact.FixtureA.UserData).Owner.TypeName,
+                //    ((CollisionArea)contact.FixtureB.UserData).Owner.TypeName);
             }
         }
 

@@ -6,8 +6,9 @@ using AW2.Helpers.Serialization;
 namespace AW2.Net.Messages
 {
     /// <summary>
-    /// A message from a game server to a game client updating
-    /// the <see cref="SerializationModeFlags.VaryingDataFromServer"/> state of a gob.
+    /// A message from a game instance to another updating the
+    /// <see cref="SerializationModeFlags.VaryingDataFromServer"/> or
+    /// <see cref="SerializationModeFlags.VaryingDataFromClient"/> state of a gob.
     /// </summary>
     [MessageType(0x24, false)]
     public class GobUpdateMessage : GameplayMessage
@@ -24,7 +25,7 @@ namespace AW2.Net.Messages
             // Because the gob doesn't exist, the client doesn't know the type of the gob and
             // therefore has no way of knowing how many bytes in the message are for that one gob.
             // The only solution is to skip the remaining message, losing many gob updates.
-            // This is why GobUpdateMessage does not send SerializationModeFlags.ConstantData.
+            // This is why GobUpdateMessage sends only varying data.
             _gobIds.Add(gobId);
             Write(gob, serializationMode);
         }
@@ -65,15 +66,7 @@ namespace AW2.Net.Messages
                 base.SerializeBody(writer);
                 // Gob update (request) message structure:
                 // byte: number of collision events, N
-                // repeat N times:
-                //   short: gob 1 ID
-                //   short: gob 2 ID
-                //   byte: mixed data
-                //     bits 0..1: area 1 ID
-                //     bits 2..3: area 2 ID
-                //     bits 4..5: not used
-                //     bit 6: not used
-                //     bit 7: not used
+                // repeat N times: collision event
                 // byte: number of gobs to update, K
                 // K shorts: identifiers of the gobs
                 // ushort: total byte count of gob data
@@ -86,16 +79,7 @@ namespace AW2.Net.Messages
                     checked
                     {
                         writer.Write((byte)CollisionEvents.Count);
-                        foreach (var collisionEvent in CollisionEvents)
-                        {
-                            writer.Write((short)collisionEvent.Gob1ID);
-                            writer.Write((short)collisionEvent.Gob2ID);
-                            if (collisionEvent.Area1ID > 0x03 || collisionEvent.Area2ID > 0x03)
-                                throw new ApplicationException("Too large collision area identifier: " + collisionEvent.Area1ID + " or " + collisionEvent.Area2ID);
-                            var mixedData = (byte)(collisionEvent.Area1ID & 0x03);
-                            mixedData |= (byte)((collisionEvent.Area2ID & 0x03) << 2);
-                            writer.Write((byte)mixedData);
-                        }
+                        foreach (var collisionEvent in CollisionEvents) collisionEvent.Serialize(writer);
                         writer.Write((byte)_gobIds.Count);
                         foreach (var gobId in _gobIds)
                             writer.Write((short)gobId);
@@ -111,15 +95,7 @@ namespace AW2.Net.Messages
             base.Deserialize(reader);
             var collisionEventCount = reader.ReadByte();
             CollisionEvents = new List<Arena.CollisionEvent>(collisionEventCount);
-            for (int i = 0; i < collisionEventCount; i++)
-            {
-                var gob1ID = reader.ReadInt16();
-                var gob2ID = reader.ReadInt16();
-                var mixedData = reader.ReadByte();
-                var area1ID = mixedData & 0x03;
-                var area2ID = (mixedData >> 2) & 0x03;
-                CollisionEvents.Add(new Arena.CollisionEvent(gob1ID, gob2ID, area1ID, area2ID));
-            }
+            for (int i = 0; i < collisionEventCount; i++) CollisionEvents.Add(Arena.CollisionEvent.Deserialize(reader));
             var gobCount = reader.ReadByte();
             _gobIds.Clear();
             for (int i = 0; i < gobCount; i++)

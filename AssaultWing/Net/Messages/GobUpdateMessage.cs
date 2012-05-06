@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AW2.Game;
+using AW2.Game.Collisions;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
@@ -16,7 +17,7 @@ namespace AW2.Net.Messages
         private List<int> _gobIds = new List<int>();
 
         public override MessageSendType SendType { get { return MessageSendType.UDP; } }
-        public List<Arena.CollisionEvent> CollisionEvents { get; set; }
+        public List<CollisionEvent> CollisionEvents { get; set; }
 
         public void AddGob(int gobId, INetworkSerializable gob, SerializationModeFlags serializationMode)
         {
@@ -94,8 +95,8 @@ namespace AW2.Net.Messages
         {
             base.Deserialize(reader);
             var collisionEventCount = reader.ReadByte();
-            CollisionEvents = new List<Arena.CollisionEvent>(collisionEventCount);
-            for (int i = 0; i < collisionEventCount; i++) CollisionEvents.Add(Arena.CollisionEvent.Deserialize(reader));
+            CollisionEvents = new List<CollisionEvent>(collisionEventCount);
+            for (int i = 0; i < collisionEventCount; i++) CollisionEvents.Add(CollisionEvent.Deserialize(reader));
             var gobCount = reader.ReadByte();
             _gobIds.Clear();
             for (int i = 0; i < gobCount; i++)

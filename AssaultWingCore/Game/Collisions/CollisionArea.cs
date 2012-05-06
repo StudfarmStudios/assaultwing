@@ -5,7 +5,7 @@ using FarseerPhysics.Dynamics;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 
-namespace AW2.Game
+namespace AW2.Game.Collisions
 {
     /// <summary>
     /// An area with which a gob can overlap with other gobs' areas,
@@ -15,35 +15,6 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("Type:{Type} Name:{Name} AreaGob:{AreaGob}")]
     public class CollisionArea : INetworkSerializable
     {
-        private struct CollisionMaterial
-        {
-            /// <summary>
-            /// Elasticity factor of the collision area. Zero means no collision bounce.
-            /// One means fully elastic collision.
-            /// </summary>
-            /// The elasticity factors of both colliding collision areas affect the final elasticity
-            /// of the collision. Avoid using zero; instead, use a very small number.
-            /// Use a number above one to regain fully elastic collisions even
-            /// when countered by inelastic gobs.
-            public float Elasticity;
-
-            /// <summary>
-            /// Friction factor of the collision area. Zero means that movement along the
-            /// collision surface is not slowed by friction.
-            /// </summary>
-            /// The friction factors of both colliding collision areas affect the final friction
-            /// of the collision. It's a good idea to use values that are closer to
-            /// zero than one.
-            public float Friction;
-
-            /// <summary>
-            /// Multiplier for collision damage.
-            /// </summary>
-            public float Damage;
-        }
-
-        private static CollisionMaterial[] g_collisionMaterials;
-
         [TypeParameter]
         private CollisionAreaType _type;
 
@@ -96,18 +67,18 @@ namespace AW2.Game
         /// Elasticity factor of the collision area. Zero means no collision bounce.
         /// One means fully elastic collision.
         /// </summary>
-        public float Elasticity { get { return g_collisionMaterials[(int)_collisionMaterial].Elasticity; } }
+        public float Elasticity { get { return CollisionMaterial.Get(_collisionMaterial).Elasticity; } }
 
         /// <summary>
         /// Friction factor of the collision area. Zero means that movement along the
         /// collision surface is not slowed by friction.
         /// </summary>
-        public float Friction { get { return g_collisionMaterials[(int)_collisionMaterial].Friction; } }
+        public float Friction { get { return CollisionMaterial.Get(_collisionMaterial).Friction; } }
 
         /// <summary>
         /// Multiplier for collision damage.
         /// </summary>
-        public float Damage { get { return g_collisionMaterials[(int)_collisionMaterial].Damage; } }
+        public float Damage { get { return CollisionMaterial.Get(_collisionMaterial).Damage; } }
 
         /// <summary>
         /// The geometric area for overlap testing, in hosting gob coordinates if the gob is movable,
@@ -126,40 +97,6 @@ namespace AW2.Game
         public bool IsPhysical { get { return CannotOverlap != CollisionAreaType.None; } }
 
         public Fixture Fixture { get; set; }
-
-        static CollisionArea()
-        {
-            g_collisionMaterials = new CollisionMaterial[Enum.GetValues(typeof(CollisionMaterialType)).Length];
-            for (int i = 0; i < g_collisionMaterials.Length; ++i) g_collisionMaterials[i].Elasticity = -1;
-
-            g_collisionMaterials[(int)CollisionMaterialType.Regular] = new CollisionMaterial
-            {
-                Elasticity = 0.2f,
-                Friction = 0.5f,
-                Damage = 1.0f,
-            };
-            g_collisionMaterials[(int)CollisionMaterialType.Rough] = new CollisionMaterial
-            {
-                Elasticity = 0.01f,
-                Friction = 0.7f,
-                Damage = 1.0f,
-            };
-            g_collisionMaterials[(int)CollisionMaterialType.Bouncy] = new CollisionMaterial
-            {
-                Elasticity = 1.0f,
-                Friction = 0.1f,
-                Damage = 1.0f,
-            };
-            g_collisionMaterials[(int)CollisionMaterialType.Sticky] = new CollisionMaterial
-            {
-                Elasticity = 0.01f,
-                Friction = 4.0f,
-                Damage = 0.0f,
-            };
-
-            if (g_collisionMaterials.Any(mat => mat.Elasticity == -1))
-                throw new ApplicationException("Invalid number of collision materials defined");
-        }
 
         /// <summary>
         /// This constructor is only for serialisation.

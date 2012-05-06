@@ -117,9 +117,12 @@
     <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
     <Compile Include="Game\BotPlayer.cs" />
-    <Compile Include="Game\CollisionArea.cs" />
-    <Compile Include="Game\CollisionAreaType.cs" />
-    <Compile Include="Game\CollisionMaterialType.cs" />
+    <Compile Include="Game\Collisions\CollisionArea.cs" />
+    <Compile Include="Game\Collisions\CollisionAreaType.cs" />
+    <Compile Include="Game\Collisions\CollisionEvent.cs" />
+    <Compile Include="Game\Collisions\CollisionMaterial.cs" />
+    <Compile Include="Game\Collisions\CollisionMaterialType.cs" />
+    <Compile Include="Game\Collisions\CollisionSoundType.cs" />
     <Compile Include="Game\DataEngine.cs" />
     <Compile Include="Game\GameContent.cs" />
     <Compile Include="Game\GameplayMode.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Graphics.Content;
 using AW2.Helpers;

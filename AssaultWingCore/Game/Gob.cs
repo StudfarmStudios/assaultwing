@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using FarseerPhysics.Dynamics;
 using AW2.Core;
 using AW2.Game.Arenas;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Graphics;
 using AW2.Graphics.Content;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AW2.Game
+namespace AW2.Game.Collisions
 {
     /// <summary>
     /// Type of collision area.

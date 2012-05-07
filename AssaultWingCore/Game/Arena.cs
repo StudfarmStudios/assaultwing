@@ -287,7 +287,8 @@ namespace AW2.Game
         {
             foreach (var collisionEvent in _collisionEvents)
             {
-                var impulse = _collisionImpulses[collisionEvent.Key];
+                var impulse = 0f;
+                _collisionImpulses.TryGetValue(collisionEvent.Key, out impulse); // Is not found for sensor fixtures.
                 collisionEvent.Value.SetImpulse(impulse);
                 collisionEvent.Value.Handle();
             }

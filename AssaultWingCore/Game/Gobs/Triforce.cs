@@ -18,6 +18,11 @@ namespace AW2.Game.Gobs
     public class Triforce : Gob
     {
         [TypeParameter]
+        private CanonicalString[] _surroundEffects;
+        [TypeParameter]
+        private float _surroundDamage;
+
+        [TypeParameter]
         private float _triHeightForDamage;
         [TypeParameter]
         private float _triHeightForWallPunches;
@@ -72,6 +77,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Triforce()
         {
+            _surroundEffects = new[] { (CanonicalString)"dummypeng" };
+            _collisionAreas = new[] { new CollisionArea("Hit", new Circle(Vector2.Zero, 100), null, CollisionAreaType.Damage, CollisionMaterialType.Regular) };
+            _surroundDamage = 500;
             _triHeightForDamage = 500;
             _triHeightForWallPunches = 100;
             _triWidth = 200;
@@ -109,16 +117,33 @@ namespace AW2.Game.Gobs
             var fullConeCircumsphere = BoundingSphere.CreateFromPoints(new[] { fullConeArea.P1, fullConeArea.P2, fullConeArea.P3 }.Select(p => new Vector3(p, 0)));
             _fullDamageArea = CreateCollisionArea(new Circle(fullConeCircumsphere.Center.ProjectXY(), fullConeCircumsphere.Radius));
             _wallPunchPosesForClient = new List<Vector2>();
+            GobHelper.CreatePengs(_surroundEffects, this);
         }
 
         public override void Update()
         {
-            if (Arena.TotalTime >= _deathTime) Die();
-            if (IsFadingOut) return;
-            if (Host != null && Host.Dead) _deathTime = Arena.TotalTime + FadeTime;
             UpdateLocation();
             UpdateGeometry();
-            HitPeriodically();
+            if (Arena.TotalTime >= _deathTime) Die();
+            if (Host != null && Host.Dead)
+            {
+                _deathTime = Arena.TotalTime + FadeTime;
+                Host = null;
+            }
+        }
+
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
+        {
+            throw new NotImplementedException("TODO !!! Hit intervals");
+            if (!theirArea.Owner.IsDamageable || theirArea.Owner == Host) return false;
+            var damage = myArea.Name == "Surround" ? _surroundDamage
+                : myArea.Name == "Cone" ? _damagePerHit
+                : -1;
+            if (damage == -1) throw new ApplicationException("Unexpected collision area " + myArea.Name);
+            theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
+            GobHelper.CreatePengs(_hitEffects, theirArea.Owner);
+            Game.Stats.SendHit(this, theirArea.Owner);
+            return true;
         }
 
         public override void Draw3D(Matrix view, Matrix projection, Player viewer)
@@ -202,22 +227,10 @@ namespace AW2.Game.Gobs
 #endif
         }
 
-        private void HitPeriodically()
+        private void HitPeriodically() // TODO !!! Merge into DamageIrreversible
         {
             if (IsFadingOut || !_nextHitTimer.IsElapsed) return;
-            HitGobs();
             PunchWalls();
-        }
-
-        private void HitGobs()
-        {
-            throw new NotImplementedException("!!! Reimplement with Farseer");
-            //!!! foreach (var victim in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
-            //!!!     if (victim != Host)
-            //!!!     {
-            //!!!         victim.InflictDamage(_damagePerHit, new GobUtils.DamageInfo(this));
-            //!!!         GobHelper.CreatePengs(_hitEffects, victim);
-            //!!!     }
         }
 
         private void PunchWalls()
@@ -259,7 +272,7 @@ namespace AW2.Game.Gobs
 
         private CollisionArea CreateCollisionArea(IGeomPrimitive gobArea)
         {
-            return new CollisionArea("damage", gobArea, this, CollisionAreaType.Damage, CollisionMaterialType.Regular);
+            return new CollisionArea("Cone", gobArea, this, CollisionAreaType.Damage, CollisionMaterialType.Regular);
         }
 
         /// <summary>

@@ -17,7 +17,20 @@
   <deathGobTypes>
   </deathGobTypes>
   <collisionAreas>
+    <Item>
+      <type>Damage</type>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Surround</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>60</radius>
+      </area>
+    </Item>
   </collisionAreas>
+  <surroundDamage>400</surroundDamage>
   <damagePerHit>115</damagePerHit>
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.25</hitInterval>
@@ -28,6 +41,9 @@
   <wallPunchRadius>16</wallPunchRadius>
   <wallPunchesPerHit>4</wallPunchesPerHit>
   <textureName>lightning_3</textureName>
+  <surroundEffects>
+    <Item>selfdestruct strokes</Item>
+  </surroundEffects>
   <hitEffects>
     <Item>explo white flash</Item>
   </hitEffects>

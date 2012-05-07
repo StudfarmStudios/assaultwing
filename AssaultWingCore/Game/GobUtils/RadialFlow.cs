@@ -74,8 +74,9 @@ namespace AW2.Game.GobUtils
 
         public void Update()
         {
-            foreach (var gob in _radiator.Arena.GetOverlappingGobs(_collisionArea, _collisionArea.CollidesAgainst))
-                ApplyTo(gob);
+            throw new NotImplementedException("!!! Reimplement with Farseer");
+            //!!! foreach (var gob in _radiator.Arena.GetOverlappingGobs(_collisionArea, _collisionArea.CollidesAgainst))
+            //!!!     ApplyTo(gob);
         }
 
         public bool IsFinished(TimeSpan now)

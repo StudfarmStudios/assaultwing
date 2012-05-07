@@ -110,7 +110,7 @@ namespace AW2.Game.Collisions
 
         private CollisionSoundType GetCollisionSound()
         {
-            if (!_area1.IsPhysical || !_area2.IsPhysical) return CollisionSoundType.None;
+            if (!_area1.Type.IsPhysical() || !_area2.Type.IsPhysical()) return CollisionSoundType.None;
             if (_impulse < COLLISION_SOUND_MINIMUM_IMPULSE) return CollisionSoundType.None;
             if (_area1.Owner is Gobs.Ship && _area2.Owner is Gobs.Ship) return CollisionSoundType.ShipCollision;
             if (_area1.Owner is Gobs.Ship || _area2.Owner is Gobs.Ship)

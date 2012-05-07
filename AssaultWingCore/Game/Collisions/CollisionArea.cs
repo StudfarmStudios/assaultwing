@@ -19,12 +19,6 @@ namespace AW2.Game.Collisions
         private CollisionAreaType _type;
 
         [TypeParameter]
-        private CollisionAreaType _collidesAgainst;
-
-        [TypeParameter]
-        private CollisionAreaType _cannotOverlap;
-
-        [TypeParameter]
         private CollisionMaterialType _collisionMaterial;
 
         [TypeParameter]
@@ -51,17 +45,6 @@ namespace AW2.Game.Collisions
         /// The type of the collision area.
         /// </summary>
         public CollisionAreaType Type { get { return _type; } }
-
-        /// <summary>
-        /// The types of collision areas this collision area collides against.
-        /// </summary>
-        public CollisionAreaType CollidesAgainst { get { return _collidesAgainst; } }
-
-        /// <summary>
-        /// The types of collision areas this collision area collides physically against,
-        /// i.e. types of collision areas that this collision area cannot overlap.
-        /// </summary>
-        public CollisionAreaType CannotOverlap { get { return _cannotOverlap; } }
 
         /// <summary>
         /// Elasticity factor of the collision area. Zero means no collision bounce.
@@ -91,11 +74,6 @@ namespace AW2.Game.Collisions
         /// </summary>
         public Gob Owner { get { return _owner; } set { _owner = value; } }
 
-        /// <summary>
-        /// If true, the collision area represents physical collisions.
-        /// </summary>
-        public bool IsPhysical { get { return CannotOverlap != CollisionAreaType.None; } }
-
         public Fixture Fixture { get; set; }
 
         /// <summary>
@@ -103,9 +81,7 @@ namespace AW2.Game.Collisions
         /// </summary>
         public CollisionArea()
         {
-            _type = CollisionAreaType.None;
-            _collidesAgainst = CollisionAreaType.None;
-            _cannotOverlap = CollisionAreaType.None;
+            _type = CollisionAreaType.Common;
             _name = "dummyarea";
             _collisionMaterial = CollisionMaterialType.Regular;
             _area = new Circle(Vector2.Zero, 10);
@@ -116,15 +92,9 @@ namespace AW2.Game.Collisions
         /// <param name="owner">The gob whose collision area this is.</param>
         /// <param name="type">The type of the collision area.</param>
         /// <param name="collisionMaterial">Material of the collision area.</param>
-        /// <param name="collidesAgainst">The types of collision areas this area collides against.</param>
-        /// <param name="cannotOverlap">The types of collision areas this area collides against and cannot overlap.</param>
-        public CollisionArea(string name, IGeomPrimitive area, Gob owner,
-            CollisionAreaType type, CollisionAreaType collidesAgainst, CollisionAreaType cannotOverlap,
-            CollisionMaterialType collisionMaterial)
+        public CollisionArea(string name, IGeomPrimitive area, Gob owner, CollisionAreaType type, CollisionMaterialType collisionMaterial)
         {
             _type = type;
-            _collidesAgainst = collidesAgainst;
-            _cannotOverlap = cannotOverlap;
             _collisionMaterial = collisionMaterial;
             _name = name;
             _area = area;
@@ -146,8 +116,6 @@ namespace AW2.Game.Collisions
                 if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
                     writer.Write((int)_type);
-                    writer.Write((int)_collidesAgainst);
-                    writer.Write((int)_cannotOverlap);
                     writer.Write((string)_name);
                     writer.Write((byte)_collisionMaterial);
                     _area.Serialize(writer, SerializationModeFlags.AllFromServer);
@@ -160,8 +128,6 @@ namespace AW2.Game.Collisions
             if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
                 _type = (CollisionAreaType)reader.ReadInt32();
-                _collidesAgainst = (CollisionAreaType)reader.ReadInt32();
-                _cannotOverlap = (CollisionAreaType)reader.ReadInt32();
                 _name = reader.ReadString();
                 _collisionMaterial = (CollisionMaterialType)reader.ReadByte();
                 _area.Deserialize(reader, SerializationModeFlags.AllFromServer, framesAgo);

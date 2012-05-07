@@ -59,6 +59,7 @@ namespace AW2.Game.Gobs
         private float _fanAngleSpeed; // in radians/second
         private CollisionArea[] _navAreas;
 
+        public override bool IsDamageable { get { return true; } }
         public CanonicalString WeaponName { get { return _weaponName; } }
         public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
         private Gob Target
@@ -99,11 +100,14 @@ namespace AW2.Game.Gobs
             _weapon = Weapon.Create(_weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
-            _navAreas = g_wallNavPrimitives
-                .Select(prim => new CollisionArea("", prim, this, CollisionAreaType.Receptor,
-                    CollisionAreaType.Physical & ~CollisionAreaType.PhysicalMovable,
-                    CollisionAreaType.None, CollisionMaterialType.Regular))
-                .ToArray();
+            throw new NotImplementedException("!!! Reimplement bot navigation in Farseer by using ray casts");
+            // !!! >>>
+            //_navAreas = g_wallNavPrimitives
+            //    .Select(prim => new CollisionArea("", prim, this, CollisionAreaType.Receptor,
+            //        CollisionAreaType.Physical & ~CollisionAreaType.PhysicalMovable,
+            //        CollisionAreaType.None, CollisionMaterialType.Regular))
+            //    .ToArray();
+            // !!! <<<
             _thrustController = new PIDController(() => _optimalTargetDistance, () => Target == null ? 0 : Vector2.Distance(Target.Pos, Pos))
             {
                 ProportionalGain = 2,

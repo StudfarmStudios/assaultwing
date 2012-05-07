@@ -319,8 +319,7 @@ namespace AW2.Game.Gobs
                 var v2 = _vertexData[_indexData[i + 1]];
                 var v3 = _vertexData[_indexData[i + 2]];
                 var triangleArea = new Triangle(v1.ProjectXY(), v2.ProjectXY(), v3.ProjectXY());
-                _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
-                    CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.PhysicalConsistencyCompromisable, CollisionMaterialType.Rough);
+                _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this, CollisionAreaType.Static, CollisionMaterialType.Rough);
             }
         }
 

@@ -127,7 +127,7 @@ namespace AW2.Game.Gobs
 
         public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
-            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+            if (theirArea.Owner.IsDamageable)
             {
                 Game.Stats.SendHit(this, theirArea.Owner);
                 theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));

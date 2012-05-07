@@ -315,13 +315,7 @@ namespace AW2.Game
         }
 
         public bool IsDisposed { get; private set; }
-        public bool IsDamageable
-        {
-            get
-            {
-                return CollisionAreas.Any(area => (area.Type & CollisionAreaType.PhysicalDamageable) != 0);
-            }
-        }
+        public virtual bool IsDamageable { get { return false; } }
         public float CollisionDamageToOthersMultiplier { get; set; }
 
         /// <summary>

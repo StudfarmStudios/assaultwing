@@ -29,8 +29,9 @@ namespace AW2.Game.Weapons
         public PowerCone()
         {
             _surroundEffects = new[] { (CanonicalString)"dummypeng" };
-            _surroundArea = new CollisionArea("Hit", new Circle(Vector2.Zero, 100), null, CollisionAreaType.Receptor,
-                CollisionAreaType.PhysicalDamageable, CollisionAreaType.None, CollisionMaterialType.Regular);
+            throw new NotImplementedException("!!! Reimplement in Farseer by attaching the CollisionArea to Triforce");
+            //!!! _surroundArea = new CollisionArea("Hit", new Circle(Vector2.Zero, 100), null, CollisionAreaType.Receptor,
+            //!!!    CollisionAreaType.PhysicalDamageable, CollisionAreaType.None, CollisionMaterialType.Regular);
             _surroundDamage = 500;
         }
 
@@ -61,11 +62,14 @@ namespace AW2.Game.Weapons
 
         private void CreateSurroundingBlow(Gob host)
         {
-            GobHelper.CreatePengs(_surroundEffects, Owner);
-            _surroundArea.Owner = host;
-            foreach (var victim in Arena.GetOverlappingGobs(_surroundArea, _surroundArea.CollidesAgainst))
-                if (victim != Owner) victim.InflictDamage(_surroundDamage, new DamageInfo(Owner));
-            _surroundArea.Owner = null;
+            throw new NotImplementedException("!!! Reimplement in Farseer by attaching the CollisionArea to Triforce");
+            // !!! >>>
+            //GobHelper.CreatePengs(_surroundEffects, Owner);
+            //_surroundArea.Owner = host;
+            //foreach (var victim in Arena.GetOverlappingGobs(_surroundArea, _surroundArea.CollidesAgainst))
+            //    if (victim != Owner) victim.InflictDamage(_surroundDamage, new DamageInfo(Owner));
+            //_surroundArea.Owner = null;
+            // !!! <<<
         }
     }
 }

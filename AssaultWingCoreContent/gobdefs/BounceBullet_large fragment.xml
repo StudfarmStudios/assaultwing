@@ -36,9 +36,7 @@
   </thruster>
   <collisionAreas>
     <Item>
-      <type>PhysicalShot</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Shot</type>
       <collisionMaterial>Bouncy</collisionMaterial>
       <name>General</name>
       <area type="AW2.Helpers.Geometric.Circle">

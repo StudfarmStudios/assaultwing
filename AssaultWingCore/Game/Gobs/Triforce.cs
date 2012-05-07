@@ -211,12 +211,13 @@ namespace AW2.Game.Gobs
 
         private void HitGobs()
         {
-            foreach (var victim in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
-                if (victim != Host)
-                {
-                    victim.InflictDamage(_damagePerHit, new GobUtils.DamageInfo(this));
-                    GobHelper.CreatePengs(_hitEffects, victim);
-                }
+            throw new NotImplementedException("!!! Reimplement with Farseer");
+            //!!! foreach (var victim in Arena.GetOverlappingGobs(_damageArea, CollisionAreaType.PhysicalDamageable))
+            //!!!     if (victim != Host)
+            //!!!     {
+            //!!!         victim.InflictDamage(_damagePerHit, new GobUtils.DamageInfo(this));
+            //!!!         GobHelper.CreatePengs(_hitEffects, victim);
+            //!!!     }
         }
 
         private void PunchWalls()
@@ -258,9 +259,7 @@ namespace AW2.Game.Gobs
 
         private CollisionArea CreateCollisionArea(IGeomPrimitive gobArea)
         {
-            return new CollisionArea("damage", gobArea,
-                owner: this, type: CollisionAreaType.Receptor, collidesAgainst: CollisionAreaType.PhysicalDamageable,
-                cannotOverlap: CollisionAreaType.None, collisionMaterial: CollisionMaterialType.Regular);
+            return new CollisionArea("damage", gobArea, this, CollisionAreaType.Damage, CollisionMaterialType.Regular);
         }
 
         /// <summary>

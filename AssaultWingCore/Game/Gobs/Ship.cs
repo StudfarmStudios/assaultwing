@@ -204,6 +204,7 @@ namespace AW2.Game.Gobs
             }
         }
 
+        public override bool IsDamageable { get { return true; } }
         public float TurnSpeed { get { return _turnSpeed; } }
         public Thruster Thruster { get { return _thruster; } }
 

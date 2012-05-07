@@ -47,9 +47,7 @@
   </deathGobTypes>
   <collisionAreas>
     <Item>
-      <type>PhysicalDamageable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Common</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">

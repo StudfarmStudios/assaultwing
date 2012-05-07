@@ -304,13 +304,6 @@ namespace AW2.Game
             _collisionImpulses.Clear();
         }
 
-        [Obsolete("Use Farseer Fixtures and AW Collision methods")]
-        public IEnumerable<Gob> GetOverlappingGobs(CollisionArea area, CollisionAreaType types)
-        {
-            // !!! throw new NotImplementedException();
-            yield break;
-        }
-
         /// <summary>
         /// Tries to return a position in the arena where there is no physical obstacles in a radius.
         /// </summary>
@@ -459,15 +452,12 @@ namespace AW2.Game
             var gobScale = Matrix.CreateScale(gob.Scale); // TODO !!! Get rid of Gob.Scale
             foreach (var area in gob.CollisionAreas)
             {
-                var isPhysicalArea = area.CannotOverlap != CollisionAreaType.None;
-                if (isPhysicalArea && area.CollidesAgainst != CollisionAreaType.None)
-                    throw new ApplicationException("A physical collision area cannot act as a receptor");
                 var fixture = body.CreateFixture(area.AreaGob.Transform(gobScale).GetShape(), area);
                 fixture.Friction = area.Friction;
                 fixture.Restitution = area.Elasticity;
-                fixture.IsSensor = !isPhysicalArea;
-                fixture.CollisionCategories = (Category)area.Type;
-                fixture.CollidesWith = isPhysicalArea ? (Category)area.CannotOverlap : (Category)area.CollidesAgainst;
+                fixture.IsSensor = !area.Type.IsPhysical();
+                fixture.CollisionCategories = area.Type.Category();
+                fixture.CollidesWith = area.Type.CollidesWith();
                 area.Fixture = fixture;
             }
             body.Mass = gob.Mass; // Override mass from fixtures.
@@ -640,7 +630,7 @@ namespace AW2.Game
             }
             collisionEvent.SetCollisionAreas(areaA, areaB);
             // Always break sensor contacts so that we get a new collision event each frame.
-            return areaA.IsPhysical && areaB.IsPhysical;
+            return areaA.Type.IsPhysical() && areaB.Type.IsPhysical();
         }
 
         private void PostSolveHandler(Contact contact, ContactConstraint impulse)

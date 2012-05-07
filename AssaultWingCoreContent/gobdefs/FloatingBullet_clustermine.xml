@@ -38,9 +38,7 @@
   </thruster>
   <collisionAreas>
     <Item>
-      <type>PhysicalShip</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>MinePhysical</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">
@@ -52,9 +50,7 @@
       </area>
     </Item>
     <Item>
-      <type>Receptor</type>
-      <collidesAgainst>PhysicalDamageable</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>MineMagnet</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Magnet</name>
       <area type="AW2.Helpers.Geometric.Circle">
@@ -66,9 +62,7 @@
       </area>
     </Item>
     <Item>
-      <type>Force</type>
-      <collidesAgainst>PhysicalShip</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>MineSpread</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Spread</name>
       <area type="AW2.Helpers.Geometric.Circle">

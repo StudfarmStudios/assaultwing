@@ -31,9 +31,7 @@
   </deathGobTypes>
   <collisionAreas>
     <Item>
-      <type>Receptor</type>
-      <collidesAgainst>PhysicalDamageable</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>Damage</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">
@@ -89,9 +87,7 @@
       </keys>
     </flowSpeed>
     <collisionArea>
-      <type>Receptor</type>
-      <collidesAgainst>PhysicalMovable</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>Flow</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Force</name>
       <area type="AW2.Helpers.Geometric.Circle">

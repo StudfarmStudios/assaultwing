@@ -119,6 +119,7 @@
     <Compile Include="Game\BotPlayer.cs" />
     <Compile Include="Game\Collisions\CollisionArea.cs" />
     <Compile Include="Game\Collisions\CollisionAreaType.cs" />
+    <Compile Include="Game\Collisions\CollisionCategories.cs" />
     <Compile Include="Game\Collisions\CollisionEvent.cs" />
     <Compile Include="Game\Collisions\CollisionMaterial.cs" />
     <Compile Include="Game\Collisions\CollisionMaterialType.cs" />

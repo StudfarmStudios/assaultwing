@@ -40,6 +40,7 @@ namespace AW2.Game.Gobs
         private Vector2? _hoverAroundPos;
         private Vector2 _thrustForce;
 
+        public override bool IsDamageable { get { return true; } }
         private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(Game.TargetFPS * HOVER_THRUST_INTERVAL); } }
         private bool IsHoverThrusting { get { return HoverThrustCycleFrame < Game.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
         private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }

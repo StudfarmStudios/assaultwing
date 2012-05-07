@@ -27,9 +27,7 @@
   </collectGobTypes>
   <collisionAreas>
     <Item>
-      <type>PhysicalOtherDamageableMovable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Common</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>General</name>
       <area type="AW2.Helpers.Geometric.Circle">
@@ -41,9 +39,7 @@
       </area>
     </Item>
     <Item>
-      <type>Receptor</type>
-      <collidesAgainst>PhysicalShip</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>BonusCollect</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Activate</name>
       <area type="AW2.Helpers.Geometric.Circle">

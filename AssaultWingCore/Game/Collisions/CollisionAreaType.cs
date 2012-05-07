@@ -1,122 +1,55 @@
-﻿using System;
-
-namespace AW2.Game.Collisions
+﻿namespace AW2.Game.Collisions
 {
-    /// <summary>
-    /// Type of collision area.
-    /// </summary>
-    /// <remarks>Some of the values denote groups of types of collision areas. Such
-    /// values are not to be used to denote a single collision area's type. They
-    /// are for marking a range of collision area types e.g. in specifying which
-    /// types of collision areas to collide against.</remarks>
-    [Flags]
     public enum CollisionAreaType
     {
-        #region Elementary types
+        /// <summary>
+        /// Receptor area of gobs that can collect a bonus.
+        /// </summary>
+        BonusCollect,
 
         /// <summary>
-        /// A non-physical collision area that collides against other collision areas.
+        /// Physical area of common gobs.
         /// </summary>
-        Receptor = 0x0001,
+        Common,
 
         /// <summary>
-        /// A non-physical collision area that collides against gob locations.
+        /// Receptor of targets that can be damaged.
         /// </summary>
-        Force = 0x0002,
+        Damage,
 
         /// <summary>
-        /// The physical collision area of a ship.
+        /// Receptor of targets that a dock can repair.
         /// </summary>
-        PhysicalShip = 0x0010,
+        DockRepair,
 
         /// <summary>
-        /// The physical collision area of a shot.
+        /// Receptor of targets of a flow of medium.
         /// </summary>
-        PhysicalShot = 0x0020,
+        Flow,
 
         /// <summary>
-        /// The physical collision area of a piece of wall.
+        /// Receptor of targets of a mine.
         /// </summary>
-        PhysicalWall = 0x0040,
+        MineMagnet,
 
         /// <summary>
-        /// The physical collision area of a nonspecific gob type that is neither damageable nor movable.
+        /// Physical area of a mine.
         /// </summary>
-        PhysicalOtherUndamageableUnmovable = 0x1000,
+        MinePhysical,
 
         /// <summary>
-        /// The physical collision area of a nonspecific gob type that is damageable but not movable.
+        /// Receptor of friendly mines for spreading out.
         /// </summary>
-        PhysicalOtherDamageableUnmovable = 0x2000,
+        MineSpread,
 
         /// <summary>
-        /// The physical collision area of a nonspecific gob type that is not damageable but is movable.
+        /// Physical area of a shot.
         /// </summary>
-        PhysicalOtherUndamageableMovable = 0x4000,
+        Shot,
 
         /// <summary>
-        /// The physical collision area of a nonspecific gob type that is both damageable and movable.
+        /// Physical area of a gob that doesn't move.
         /// </summary>
-        PhysicalOtherDamageableMovable = 0x8000,
-
-        #endregion
-
-        #region Combined types
-
-        /// <summary>
-        /// The (empty) group of no collision area types.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// The group of physical collision areas of all gob types.
-        /// </summary>
-        Physical = CollisionAreaType.PhysicalShip |
-                   CollisionAreaType.PhysicalShot |
-                   CollisionAreaType.PhysicalWall |
-                   CollisionAreaType.PhysicalOther,
-
-        /// <summary>
-        /// The group of physical collision areas of nonspecific gob types.
-        /// </summary>
-        PhysicalOther = CollisionAreaType.PhysicalOtherUndamageableUnmovable |
-                        CollisionAreaType.PhysicalOtherDamageableUnmovable |
-                        CollisionAreaType.PhysicalOtherUndamageableMovable |
-                        CollisionAreaType.PhysicalOtherDamageableMovable,
-
-        /// <summary>
-        /// The group of physical collision areas of nonspecific gob types that are movable.
-        /// </summary>
-        PhysicalOtherMovable = CollisionAreaType.PhysicalOtherUndamageableMovable |
-                               CollisionAreaType.PhysicalOtherDamageableMovable,
-
-        /// <summary>
-        /// The group of physical collision areas of nonspecific gob types that are damageable.
-        /// </summary>
-        PhysicalOtherDamageable = CollisionAreaType.PhysicalOtherDamageableUnmovable |
-                                  CollisionAreaType.PhysicalOtherDamageableMovable,
-
-        /// <summary>
-        /// The group of physical collision areas of all gob types that are have a concrete body that
-        /// must avoid overlap with other concrete bodies, i.e. whose overlap consistency is compromisable.
-        /// </summary>
-        PhysicalConsistencyCompromisable = CollisionAreaType.PhysicalShip |
-                                           CollisionAreaType.PhysicalWall |
-                                           CollisionAreaType.PhysicalOther,
-
-        /// <summary>
-        /// The group of physical collision areas of all gob types that are damageable.
-        /// </summary>
-        PhysicalDamageable = CollisionAreaType.PhysicalShip |
-                             CollisionAreaType.PhysicalOtherDamageable,
-
-        /// <summary>
-        /// The group of physical collision areas of all gob types that are movable.
-        /// </summary>
-        PhysicalMovable = CollisionAreaType.PhysicalShip |
-                          CollisionAreaType.PhysicalShot |
-                          CollisionAreaType.PhysicalOtherMovable,
-
-        #endregion
+        Static,
     }
 }

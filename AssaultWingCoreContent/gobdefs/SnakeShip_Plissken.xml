@@ -67,9 +67,7 @@
   </deathGobTypes>
   <collisionAreas>
     <Item>
-      <type>PhysicalShip</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Common</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>General</name>
       <area type="AW2.Helpers.Geometric.Circle">

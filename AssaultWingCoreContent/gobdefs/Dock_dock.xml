@@ -22,9 +22,7 @@
   <dockActiveEffectName>dockeffect occupied</dockActiveEffectName>
   <collisionAreas>
     <Item>
-      <type>PhysicalOtherUndamageableUnmovable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>Static</type>
       <collisionMaterial>Rough</collisionMaterial>
       <name>GeneralBottom</name>
       <area type="AW2.Helpers.Geometric.Polygon">
@@ -53,9 +51,7 @@
       </area>
     </Item>
     <Item>
-      <type>PhysicalOtherUndamageableUnmovable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>Static</type>
       <collisionMaterial>Rough</collisionMaterial>
       <name>GeneralMiddle</name>
       <area type="AW2.Helpers.Geometric.Polygon">
@@ -88,9 +84,7 @@
       </area>
     </Item>
     <Item>
-      <type>PhysicalOtherUndamageableUnmovable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>Static</type>
       <collisionMaterial>Rough</collisionMaterial>
       <name>GeneralTop</name>
       <area type="AW2.Helpers.Geometric.Polygon">
@@ -131,9 +125,7 @@
       </area>
     </Item>
     <Item>
-      <type>PhysicalOtherUndamageableUnmovable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalDamageable</cannotOverlap>
+      <type>DockRepair</type>
       <collisionMaterial>Sticky</collisionMaterial>
       <name>Dock</name>
       <area type="AW2.Helpers.Geometric.Polygon">

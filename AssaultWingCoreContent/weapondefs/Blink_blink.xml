@@ -23,6 +23,9 @@
   <fireEffectType>Once</fireEffectType>
   <blinkMoveSpeed>1000</blinkMoveSpeed>
   <blinkDistance>300</blinkDistance>
+  <blinkFailTravelEffectSpeed>2430</blinkFailTravelEffectSpeed>
+  <blinkFailTravelEffect>blink fail</blinkFailTravelEffect>
+  <blinkFailTargetEffect>blink fail target</blinkFailTargetEffect>
   <iconName>menu_equip_mod_blink</iconName>
   <loadTime>3</loadTime>
   <fireCharge>500</fireCharge>

@@ -29,6 +29,13 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private float _blinkMoveSpeed;
 
+        [TypeParameter]
+        private float _blinkFailTravelEffectSpeed;
+        [TypeParameter]
+        private CanonicalString _blinkFailTravelEffect;
+        [TypeParameter]
+        private CanonicalString _blinkFailTargetEffect;
+
         private Vector2 _queriedTargetPos;
         private Vector2? _targetPos;
         private Vector2 _startPos;
@@ -43,6 +50,9 @@ namespace AW2.Game.Weapons
         {
             _blinkDistance = 500;
             _blinkMoveSpeed = 1200;
+            _blinkFailTravelEffectSpeed = 2400;
+            _blinkFailTravelEffect = (CanonicalString)"dummypeng";
+            _blinkFailTargetEffect = (CanonicalString)"dummypeng";
         }
 
         public Blink(CanonicalString typeName)
@@ -102,18 +112,17 @@ namespace AW2.Game.Weapons
         protected override void ShowFiringFailedEffect()
         {
             if (Owner == null) return;
-            Gob.CreateGob<Gobs.Peng>(Owner.Game, (CanonicalString)"blink fail", peng =>
+            Gob.CreateGob<Gobs.Peng>(Owner.Game, _blinkFailTravelEffect, peng =>
             {
-                var pengMoveSpeed = 2 * _blinkMoveSpeed;
-                var pengMove = pengMoveSpeed * Vector2.Normalize(GetBlinkTarget() - Owner.Pos);
+                var pengMove = _blinkFailTravelEffectSpeed * Vector2.Normalize(GetBlinkTarget() - Owner.Pos);
                 peng.ResetPos(Owner.Pos, pengMove, Owner.Rotation);
-                var flyTime = _blinkDistance / pengMoveSpeed;
+                var flyTime = _blinkDistance / _blinkFailTravelEffectSpeed;
                 peng.Emitter.NumberToCreate = (int)Math.Round(flyTime * peng.Emitter.EmissionFrequency);
                 peng.IsMovable = true;
                 peng.VisibilityLimitedTo = PlayerOwner;
                 Owner.Arena.Gobs.Add(peng);
             });
-            Gob.CreateGob<Gobs.Peng>(Owner.Game, (CanonicalString)"blink fail target", peng =>
+            Gob.CreateGob<Gobs.Peng>(Owner.Game, _blinkFailTargetEffect, peng =>
             {
                 peng.ResetPos(GetBlinkTarget(), Vector2.Zero, Owner.Rotation);
                 peng.VisibilityLimitedTo = PlayerOwner;

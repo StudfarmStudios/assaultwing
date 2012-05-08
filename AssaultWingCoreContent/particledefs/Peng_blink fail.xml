@@ -21,7 +21,6 @@
          <Item>p_red_arrow</Item>
       </textureNames>
       <gobTypeNames>
-<!--      <Item type="&string;">hail</Item>-->
     </gobTypeNames>
       <initialVelocity type="AW2.Game.Pengs.ConstantValue">
         <value>0</value>

@@ -76,7 +76,7 @@
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>
   <iconName>dummytexture</iconName>
-  <loadTime>5</loadTime>
+  <loadTime>4.5</loadTime>
   <fireCharge>350</fireCharge>
   <fireChargePerSecond>350</fireChargePerSecond>
   <shotCount>1</shotCount>

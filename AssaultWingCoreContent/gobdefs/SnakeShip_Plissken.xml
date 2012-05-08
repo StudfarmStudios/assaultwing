@@ -45,7 +45,7 @@
   <weapon1TypeName>venom spray</weapon1TypeName>
   <extraDeviceChargeMax>750</extraDeviceChargeMax>
   <weapon2ChargeMax>1400</weapon2ChargeMax>
-  <extraDeviceChargeSpeed>40</extraDeviceChargeSpeed>
+  <extraDeviceChargeSpeed>42</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>40</weapon2ChargeSpeed>
   <turnSpeed>3.96</turnSpeed>
   <rollMax>0.9</rollMax>
@@ -149,7 +149,21 @@
         <continuity>Step</continuity>
       </Item>
       <Item>
+        <position>2.125</position>
+        <internalValue>0.8</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
         <position>2.25</position>
+        <internalValue>0.2</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>2.375</position>
         <internalValue>0.8</internalValue>
         <tangentOut>0</tangentOut>
         <tangentIn>0</tangentIn>
@@ -163,7 +177,21 @@
         <continuity>Step</continuity>
       </Item>
       <Item>
+        <position>2.625</position>
+        <internalValue>0.8</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
         <position>2.75</position>
+        <internalValue>0.2</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Step</continuity>
+      </Item>
+      <Item>
+        <position>2.875</position>
         <internalValue>0.8</internalValue>
         <tangentOut>0</tangentOut>
         <tangentIn>0</tangentIn>
@@ -171,118 +199,6 @@
       </Item>
       <Item>
         <position>3.0</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.125</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.25</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.375</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.5</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.625</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.75</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.875</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.0</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.125</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.25</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.375</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.5</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.625</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.75</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>4.875</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>5.0</position>
         <internalValue>1.0</internalValue>
         <tangentOut>0</tangentOut>
         <tangentIn>0</tangentIn>
@@ -290,5 +206,4 @@
       </Item>
     </keys>
   </birthAlpha>
-
 </GobType>

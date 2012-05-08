@@ -9,7 +9,7 @@
       phase and pushes you through an
       extra-dimensional conduit. As a
       safety this device wont allow you to
-      blink inside a wall
+      blink inside a wall.
     </infoText>
     <reloadSpeed>High</reloadSpeed>
     <energyUsage>Average</energyUsage>
@@ -21,8 +21,11 @@
   <fireSound>Blink</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
-  <blinkMoveSpeed>1200</blinkMoveSpeed>
-  <blinkDistance>500</blinkDistance>
+  <blinkMoveSpeed>1000</blinkMoveSpeed>
+  <blinkDistance>300</blinkDistance>
+  <blinkFailTravelEffectSpeed>2430</blinkFailTravelEffectSpeed>
+  <blinkFailTravelEffect>blink fail</blinkFailTravelEffect>
+  <blinkFailTargetEffect>blink fail target</blinkFailTargetEffect>
   <iconName>menu_equip_mod_blink</iconName>
   <loadTime>3</loadTime>
   <fireCharge>500</fireCharge>

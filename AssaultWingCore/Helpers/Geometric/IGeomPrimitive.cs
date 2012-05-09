@@ -32,7 +32,7 @@ namespace AW2.Helpers.Geometric
         float DistanceTo(Vector2 point);
 
         /// <summary>
-        /// Returns a Farseer shape in Farseer coordinates that corresponds to the IGeomPrimitive.
+        /// Returns a zero-density Farseer shape in Farseer coordinates that corresponds to the IGeomPrimitive.
         /// </summary>
         Shape GetShape();
     }

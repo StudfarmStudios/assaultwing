@@ -80,7 +80,7 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new CircleShape(AWMathHelper.FARSEER_SCALE * 0.05f, 1) { Position = AWMathHelper.FARSEER_SCALE * Location };
+            return new CircleShape(AWMathHelper.FARSEER_SCALE * 0.05f, 0) { Position = AWMathHelper.FARSEER_SCALE * Location };
         }
 
         #endregion IGeomPrimitive Members

@@ -72,7 +72,7 @@ namespace AW2.Game.Gobs
         {
             Game.SoundEngine.PlaySound(_sound, this);
             GobHelper.CreateGobs(_particleEngineNames, Arena, Pos, gob => gob.Owner = Owner);
-            _radialFlow.Activate(this, Arena.TotalTime);
+            _radialFlow.Activate(this);
             Arena.MakeHole(Pos, _impactHoleRadius);
             base.Activate();
         }
@@ -80,19 +80,23 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (_radialFlow.IsFinished(Arena.TotalTime)) Die();
+            if (!_radialFlow.IsActive) Die();
             _radialFlow.Update();
         }
 
         public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if (_damageTime.HasValue && _damageTime.Value != Game.GameTime.TotalGameTime) return;
-            Game.Stats.SendHit(this, theirArea.Owner);
-            _damageTime = Game.GameTime.TotalGameTime;
-            float distance = 100; // !!! theirArea.Area.DistanceTo(Pos);
-            float damage = _inflictDamage.Evaluate(distance);
-            theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
-            myArea.Disable();
+            // Note: RadialFlow attaches its own CollisionArea to Explosion. Do nothing with it.
+            if (myArea.Type == CollisionAreaType.Damage)
+            {
+                Game.Stats.SendHit(this, theirArea.Owner);
+                _damageTime = Game.GameTime.TotalGameTime;
+                float distance = 100; // !!! theirArea.Area.DistanceTo(Pos);
+                float damage = _inflictDamage.Evaluate(distance);
+                theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
+                myArea.Disable();
+            }
         }
     }
 }

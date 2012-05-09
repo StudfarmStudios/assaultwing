@@ -5,6 +5,9 @@ using Microsoft.Xna.Framework;
 using AW2.Game.Collisions;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
+using AW2.Helpers.Geometric;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Contacts;
 
 namespace AW2.Game.GobUtils
 {
@@ -40,7 +43,6 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Area of effect of the medium flow.
         /// </summary>
-        [TypeParameter]
         private CollisionArea _collisionArea;
 
         /// <summary>
@@ -49,6 +51,10 @@ namespace AW2.Game.GobUtils
         private TimeSpan _flowEndTime;
 
         private Gob _radiator;
+
+        public bool IsActive { get { return _collisionArea != null; } }
+        private bool IsTimeUp { get { return Now >= _flowEndTime; } }
+        private TimeSpan Now { get { return _radiator.Arena.TotalTime; } }
 
         /// <summary>
         /// Only for serialization.
@@ -62,26 +68,28 @@ namespace AW2.Game.GobUtils
             _flowSpeed.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
             _flowTime = 0.5f;
             _dragMagnitude = 0.003f;
-            _collisionArea = new CollisionArea();
         }
 
-        public void Activate(Gob radiator, TimeSpan now)
+        public void Activate(Gob radiator)
         {
+            if (IsActive) throw new ApplicationException("Cannot activate an active RadialFlow");
             _radiator = radiator;
-            _collisionArea.Owner = radiator;
-            _flowEndTime = now + TimeSpan.FromSeconds(_flowTime);
+            _flowEndTime = Now + TimeSpan.FromSeconds(_flowTime);
+            _collisionArea = new CollisionArea("Flow", new Circle(Vector2.Zero, _flowSpeed.Keys.Last().Position), radiator,
+                CollisionAreaType.Flow, CollisionMaterialType.Regular);
+            _collisionArea.Fixture.OnCollision += OnCollisionHandler;
+        }
+
+        public void Deactivate()
+        {
+            if (!IsActive) throw new ApplicationException("Cannot deactivate an inactive RadialFlow");
+            _collisionArea.Fixture.Dispose();
+            _collisionArea = null;
         }
 
         public void Update()
         {
-            throw new NotImplementedException("!!! Reimplement with Farseer");
-            //!!! foreach (var gob in _radiator.Arena.GetOverlappingGobs(_collisionArea, _collisionArea.CollidesAgainst))
-            //!!!     ApplyTo(gob);
-        }
-
-        public bool IsFinished(TimeSpan now)
-        {
-            return now >= _flowEndTime;
+            if (IsActive && IsTimeUp) Deactivate();
         }
 
         private void ApplyTo(Gob gob)
@@ -102,6 +110,12 @@ namespace AW2.Game.GobUtils
                 var turnStep = (1 + rocket.TargetTurnSpeed) * (float)_radiator.Game.GameTime.ElapsedGameTime.TotalSeconds;
                 rocket.Rotation = AWMathHelper.InterpolateTowardsAngle(rocket.Rotation, difference.Angle(), turnStep);
             }
+        }
+
+        private bool OnCollisionHandler(Fixture fixtureA, Fixture fixtureB, Contact contact)
+        {
+            ApplyTo((Gob)fixtureB.Body.UserData);
+            return true;
         }
     }
 }

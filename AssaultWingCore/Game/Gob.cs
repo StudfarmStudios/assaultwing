@@ -609,6 +609,11 @@ namespace AW2.Game
         /// </summary>
         public bool DampAngularVelocity { get; protected set; }
 
+        /// <summary>
+        /// Is the gob registered to its <see cref="Arena"/>.
+        /// </summary>
+        public bool IsRegistered { get { return Body != null; } }
+
         #endregion Gob Properties
 
         #region Network properties
@@ -1301,7 +1306,6 @@ namespace AW2.Game
             if (Dead) throw new InvalidOperationException("Gob is already dead");
             _dead = true;
             if (Death != null) Death(coroner);
-            Arena.Gobs.Remove(this, forceRemove);
             foreach (var gobType in _deathGobTypes)
                 CreateGob<Gob>(Game, gobType, gob =>
                 {
@@ -1309,6 +1313,7 @@ namespace AW2.Game
                     gob.Owner = Owner;
                     Arena.Gobs.Add(gob);
                 });
+            Arena.Gobs.Remove(this, forceRemove);
         }
 
         /// <summary>

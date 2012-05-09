@@ -449,19 +449,9 @@ namespace AW2.Game
             body.IsStatic = !gob.Movable;
             body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
             body.FixedRotation = gob.DampAngularVelocity; // Note: Recomputes body mass from fixtures.
+            body.Mass = gob.Mass;
             gob.Body = body;
-            var gobScale = Matrix.CreateScale(gob.Scale); // TODO !!! Get rid of Gob.Scale
-            foreach (var area in gob.CollisionAreas)
-            {
-                var fixture = body.CreateFixture(area.AreaGob.Transform(gobScale).GetShape(), area);
-                fixture.Friction = area.Friction;
-                fixture.Restitution = area.Elasticity;
-                fixture.IsSensor = !area.Type.IsPhysical();
-                fixture.CollisionCategories = area.Type.Category();
-                fixture.CollidesWith = area.Type.CollidesWith();
-                area.Fixture = fixture;
-            }
-            body.Mass = gob.Mass; // Override mass from fixtures.
+            foreach (var area in gob.CollisionAreas) area.Initialize(gob.Scale); // TODO !!! Get rid of Gob.Scale
         }
 
         /// <summary>
@@ -481,7 +471,6 @@ namespace AW2.Game
         private void Prepare(Gob gob)
         {
             gob.Arena = this;
-            gob.Activate();
             if (IsForPlaying)
             {
                 if (gob.Layer == Gobs.GameplayLayer)
@@ -493,6 +482,7 @@ namespace AW2.Game
                     gob.ClearCollisionAreas();
                 }
             }
+            gob.Activate();
         }
 
         private void SetGameAndArenaToGobs()

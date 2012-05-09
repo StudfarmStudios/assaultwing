@@ -87,11 +87,6 @@ namespace AW2.Game.Collisions
             _area = new Circle(Vector2.Zero, 10);
         }
 
-        /// <param name="name">Collision area name.</param>
-        /// <param name="area">The geometric area.</param>
-        /// <param name="owner">The gob whose collision area this is.</param>
-        /// <param name="type">The type of the collision area.</param>
-        /// <param name="collisionMaterial">Material of the collision area.</param>
         public CollisionArea(string name, IGeomPrimitive area, Gob owner, CollisionAreaType type, CollisionMaterialType collisionMaterial)
         {
             _type = type;
@@ -99,6 +94,21 @@ namespace AW2.Game.Collisions
             _name = name;
             _area = area;
             _owner = owner;
+            if (owner != null && owner.IsRegistered) Initialize();
+        }
+
+        public void Initialize(float scale = 1)
+        {
+            var gob = Owner;
+            var areaArea = AreaGob;
+            if (scale != 1) areaArea = areaArea.Transform(Matrix.CreateScale(scale));
+            var fixture = gob.Body.CreateFixture(areaArea.GetShape(), this);
+            fixture.Friction = Friction;
+            fixture.Restitution = Elasticity;
+            fixture.IsSensor = !Type.IsPhysical();
+            fixture.CollisionCategories = Type.Category();
+            fixture.CollidesWith = Type.CollidesWith();
+            Fixture = fixture;
         }
 
         public void Disable()

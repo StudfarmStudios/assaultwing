@@ -95,7 +95,7 @@ namespace AW2.Game.Gobs
                 float distance = 100; // !!! theirArea.Area.DistanceTo(Pos);
                 float damage = _inflictDamage.Evaluate(distance);
                 theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
-                myArea.Disable();
+                myArea.Destroy();
             }
         }
     }

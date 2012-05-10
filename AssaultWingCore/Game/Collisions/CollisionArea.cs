@@ -111,10 +111,9 @@ namespace AW2.Game.Collisions
             Fixture = fixture;
         }
 
-        public void Disable()
+        public void Destroy()
         {
-            Fixture.CollidesWith = Category.None;
-            Fixture.CollisionCategories = Category.None;
+            Fixture.Dispose();
         }
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

@@ -83,7 +83,7 @@ namespace AW2.Game.GobUtils
         public void Deactivate()
         {
             if (!IsActive) throw new ApplicationException("Cannot deactivate an inactive RadialFlow");
-            _collisionArea.Fixture.Dispose();
+            _collisionArea.Destroy();
             _collisionArea = null;
         }
 

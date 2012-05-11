@@ -609,9 +609,10 @@ namespace AW2.Game
 
         private bool BeginContactHandler(Contact contact)
         {
-            // Remember which gobs collided.
             var areaA = (CollisionArea)contact.FixtureA.UserData;
             var areaB = (CollisionArea)contact.FixtureB.UserData;
+            if (areaA.Owner.Owner == areaB.Owner.Owner && (areaA.Owner.Cold || areaB.Owner.Cold)) return false;
+            // Remember which gobs collided.
             var eventKey = new CollisionEventKey(areaA.Owner, areaB.Owner);
             CollisionEvent collisionEvent = null;
             if (!_collisionEvents.TryGetValue(eventKey, out collisionEvent))

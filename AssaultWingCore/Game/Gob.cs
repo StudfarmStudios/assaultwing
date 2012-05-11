@@ -557,8 +557,14 @@ namespace AW2.Game
             get { return _body; }
             set
             {
+                if (value == null)
+                {
+                    _pos = _body.WorldCenter / AWMathHelper.FARSEER_SCALE;
+                    _move = _body.LinearVelocity / AWMathHelper.FARSEER_SCALE;
+                    _rotation = _body.Rotation;
+                }
                 _body = value;
-                if (_body != null)
+                if (value != null)
                 {
                     _body.SetTransform(_pos * AWMathHelper.FARSEER_SCALE, _rotation);
                     _body.LinearVelocity = _move * AWMathHelper.FARSEER_SCALE;

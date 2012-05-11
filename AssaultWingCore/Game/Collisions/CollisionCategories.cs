@@ -32,7 +32,7 @@ namespace AW2.Game.Collisions
         {
             g_collidesWith = new Category[CollisionAreaTypeCount];
             SetCollidesWith(CollisionAreaType.BonusCollect, CollisionAreaType.Common);
-            // TEST!!! SetCollidesWith(CollisionAreaType.Common, CollisionAreaType.Common, CollisionAreaType.Static, CollisionAreaType.MinePhysical);
+            SetCollidesWith(CollisionAreaType.Common, CollisionAreaType.Common, CollisionAreaType.Static, CollisionAreaType.MinePhysical);
             SetCollidesWith(CollisionAreaType.Damage, CollisionAreaType.Common, CollisionAreaType.Static, CollisionAreaType.MinePhysical);
             SetCollidesWith(CollisionAreaType.DockRepair, CollisionAreaType.Common);
             SetCollidesWith(CollisionAreaType.Flow, CollisionAreaType.Common, CollisionAreaType.Shot);
@@ -41,13 +41,11 @@ namespace AW2.Game.Collisions
             SetCollidesWith(CollisionAreaType.MinePhysical, CollisionAreaType.Common, CollisionAreaType.Static, CollisionAreaType.MinePhysical);
             SetCollidesWith(CollisionAreaType.Shot, CollisionAreaType.Common, CollisionAreaType.Static, CollisionAreaType.MinePhysical);
             SetCollidesWith(CollisionAreaType.Static, CollisionAreaType.Common, CollisionAreaType.MinePhysical);
-            if (g_collidesWith.Any(c => c == FarseerPhysics.Dynamics.Category.None))
-                throw new ApplicationException("Looks like some collision area type is not set up.");
         }
 
         public static bool IsPhysical(this CollisionAreaType collisionAreaType)
         {
-            return false;
+            return g_isPhysical[(int)collisionAreaType];
         }
 
         public static Category Category(this CollisionAreaType collisionAreaType)

@@ -302,6 +302,7 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Returns the indices of triangles that are too small to show up in the index map.
         /// Triangle index * 3 = the index of the first vertex of the triangle in the 3D model index data.
+        /// The indices are returned in increasing order.
         /// </summary>
         public IEnumerable<int> GetVerySmallTriangles()
         {

@@ -103,7 +103,6 @@ namespace AW2.Game.Gobs
             base.Activate();
             if (Arena.IsForPlaying)
             {
-                Prepare3DModel();
                 var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
                 var gobVertices = _vertexData.Select(AWMathHelper.ProjectXY).ToArray();
                 var worldMatrix = Matrix.CreateRotationZ(Rotation); // FIXME: Use WorldMatrix or nothing
@@ -111,9 +110,7 @@ namespace AW2.Game.Gobs
                 var boundingBox = GetBoundingBox(gobVertices);
                 _indexMap = new WallIndexMap(_removedTriangleIndices.Add, boundingBox, binReader);
                 binReader.Close();
-#if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
-                RemoveVerySmallTrianglesFromCollisionAreas();
-#endif
+                CreateCollisionAreas();
             }
             WallActivatedCounter++;
         }
@@ -280,16 +277,10 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
-        private void RemoveVerySmallTrianglesFromCollisionAreas()
-        {
-            foreach (int index in _indexMap.GetVerySmallTriangles()) _collisionAreas[index] = null;
-            TriangleCount -= _indexMap.GetVerySmallTriangles().Count();
-        }
-
         private void RemoveTriangle(int index)
         {
             if (_collisionAreas[index] == null) return; // triangle already removed earlier this frame
-            _collisionAreas[index].Fixture.Dispose();
+            _collisionAreas[index].Destroy();
             _collisionAreas[index] = null;
             --TriangleCount;
 
@@ -299,22 +290,24 @@ namespace AW2.Game.Gobs
             _indexData[3 * index + 2] = 0;
         }
 
-        /// <summary>
-        /// Prepares the wall's 3D model for use in gameplay.
-        /// </summary>
-        private void Prepare3DModel()
-        {
-            TriangleCount = _indexData.Length / 3;
-            CreateCollisionAreas();
-        }
-
         private void CreateCollisionAreas()
         {
-            // Create one collision area for each triangle in the wall's 3D model.
+#if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
+            var verySmallTriangles = _indexMap.GetVerySmallTriangles(); // sorted in increasing order
+#else
+            var verySmallTriangles = new List<int>();
+#endif
+            TriangleCount = _indexData.Length / 3 - verySmallTriangles.Count();
             _collisionAreas = new CollisionArea[_indexData.Length / 3];
+            var smallTriangleEnumerator = verySmallTriangles.GetEnumerator();
+            var smallTrianglesRemaining = smallTriangleEnumerator.MoveNext();
             for (int i = 0; i + 2 < _indexData.Length; i += 3)
             {
-                // Create a physical collision area for this triangle.
+                if (smallTrianglesRemaining && smallTriangleEnumerator.Current == i / 3)
+                {
+                    smallTrianglesRemaining = smallTriangleEnumerator.MoveNext();
+                    continue;
+                }
                 var v1 = _vertexData[_indexData[i + 0]];
                 var v2 = _vertexData[_indexData[i + 1]];
                 var v3 = _vertexData[_indexData[i + 2]];

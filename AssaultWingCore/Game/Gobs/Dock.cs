@@ -67,6 +67,7 @@ namespace AW2.Game.Gobs
         /// This constructor is only for serialisation.
         public Dock()
         {
+            Movable = false;
             _repairSpeed = -10;
             _weapon1ChargeSpeed = 100;
             _weapon2ChargeSpeed = 100;
@@ -77,7 +78,6 @@ namespace AW2.Game.Gobs
         public Dock(CanonicalString typeName)
             : base(typeName)
         {
-            Movable = false;
             Gravitating = false;
             _lastRepairTimes = new Dictionary<Gob, TimeSpan>();
             _repairingGobsOnClient = new List<LazyProxy<int, Gob>>();

@@ -76,6 +76,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Wall()
         {
+            Movable = false;
             _destructible = true;
             Set3DModel(new[] 
                 {
@@ -93,7 +94,6 @@ namespace AW2.Game.Gobs
             _removedTriangleIndices = new List<int>();
             _removedTriangleIndicesToSerialize = new List<int>();
             _removedTriangleIndicesOfAllTime = new List<int>();
-            Movable = false;
         }
 
         #region Methods related to gobs' functionality in the game world

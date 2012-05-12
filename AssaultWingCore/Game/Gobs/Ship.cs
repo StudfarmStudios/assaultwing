@@ -293,6 +293,7 @@ namespace AW2.Game.Gobs
         public Ship(CanonicalString typeName)
             : base(typeName)
         {
+            DampAngularVelocity = true;
         }
 
         #endregion Ship constructors
@@ -306,7 +307,6 @@ namespace AW2.Game.Gobs
             _coughEngine.Activate(this);
             CreateGlow();
             IsNewborn = true;
-            DampAngularVelocity = true;
             Game.SoundEngine.PlaySound(SHIP_BIRTH_SOUND, this);
         }
 

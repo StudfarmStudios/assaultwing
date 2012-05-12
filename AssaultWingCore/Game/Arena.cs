@@ -448,10 +448,19 @@ namespace AW2.Game
             var body = BodyFactory.CreateBody(_world, gob);
             body.IsStatic = !gob.Movable;
             body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
-            body.FixedRotation = gob.DampAngularVelocity; // Note: Recomputes body mass from fixtures.
-            body.Mass = gob.Mass;
             gob.Body = body;
             foreach (var area in gob.CollisionAreas) area.Initialize(gob.Scale); // TODO !!! Get rid of Gob.Scale
+            // Compute physical shape density from gob mass. This way bodies have inertia and
+            // are able to gain angular velocity in collisions. Assumption: gobs have only one
+            // physical collision area (except Dock but it doesn't need inertia anyway).
+            // TODO !!! Specify density directly in CollisionArea.
+            var physicalArea = gob.CollisionAreas.FirstOrDefault(area => area.Type.IsPhysical());
+            if (physicalArea != null)
+            {
+                physicalArea.Fixture.Shape.Density = gob.Mass / physicalArea.Fixture.Shape.MassData.Area;
+                body.ResetMassData();
+            }
+            body.FixedRotation = gob.DampAngularVelocity; // Note: Recomputes body mass from fixtures.
         }
 
         /// <summary>

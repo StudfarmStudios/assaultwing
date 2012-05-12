@@ -552,6 +552,7 @@ namespace AW2.Game
         /// Collision areas are set to null by Wall. It is faster than to remove elements from a large array.
         /// </remarks>
         public IEnumerable<CollisionArea> CollisionAreas { get { return _collisionAreas.Where(area => area != null); } }
+
         public Body Body
         {
             get { return _body; }
@@ -563,12 +564,13 @@ namespace AW2.Game
                     _move = _body.LinearVelocity / AWMathHelper.FARSEER_SCALE;
                     _rotation = _body.Rotation;
                 }
-                _body = value;
-                if (value != null)
+                else
                 {
-                    _body.SetTransform(_pos * AWMathHelper.FARSEER_SCALE, _rotation);
-                    _body.LinearVelocity = _move * AWMathHelper.FARSEER_SCALE;
+                    var worldPos = _pos * AWMathHelper.FARSEER_SCALE;
+                    value.SetTransformIgnoreContacts(ref worldPos, _rotation);
+                    value.LinearVelocity = _move * AWMathHelper.FARSEER_SCALE;
                 }
+                _body = value;
             }
         }
 

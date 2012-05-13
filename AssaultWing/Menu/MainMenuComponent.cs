@@ -158,6 +158,7 @@ namespace AW2.Menu
                 !nextGame.HasValue || nextGame + TimeSpan.FromHours(2) <= currentTime ? "Not yet scheduled"
                 : nextGame <= currentTime ? "Now! Join in!"
                 : (nextGame.Value - currentTime).ToDurationString("d", "h", "min", null, usePlurals: false);
+            if (text == "") text = "< 1 min";
             spriteBatch.DrawString(Content.FontBig, text, textStartPos + new Vector2(260, 6), Color.YellowGreen);
         }
 

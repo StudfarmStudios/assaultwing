@@ -612,7 +612,7 @@ namespace AW2.Net
             var managementServerConnectionLostEarlier = _managementServerConnectionLost;
             _managementServerConnectionLost = !ManagementServerConnection.HasReceivedPingsRecently;
             if (!_managementServerConnectionLost) return;
-            if (managementServerConnectionLostEarlier)
+            if (!managementServerConnectionLostEarlier)
                 Log.Write("Connection to management server lost. Clients may not be able to join. Reconnecting...");
             RegisterServerToManagementServer();
         }

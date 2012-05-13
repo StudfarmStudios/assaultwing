@@ -52,7 +52,8 @@ namespace AW2.Graphics.Content
             for (int i = 0; i < typeReaderCount; i++)
             {
                 var typeReaderFullName = reader.ReadString();
-                var typeReaderShortName = new Regex(@"\b([a-z0-9_]+)(,|$)", RegexOptions.IgnoreCase).Match(typeReaderFullName).Groups[1].Value;
+                var regex = new Regex(@"\b([a-z0-9_]+)(,|$)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                var typeReaderShortName = regex.Match(typeReaderFullName).Groups[1].Value;
                 var typeReaderVersion = reader.ReadInt32();
                 if (typeReaderVersion != 0) throw new InvalidDataException("Unexpected type reader version " + typeReaderVersion);
                 typeReaders.Add(typeReaderShortName);

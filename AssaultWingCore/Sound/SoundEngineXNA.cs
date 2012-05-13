@@ -83,7 +83,7 @@ namespace AW2.Sound
                 var errors = false;
                 foreach (XmlNode sound in soundNodes)
                 {
-                    var baseName = sound.Attributes["name"].Value.ToLower();
+                    var baseName = sound.Attributes["name"].Value.ToLower(CultureInfo.InvariantCulture);
 
                     var loopAttribute = sound.Attributes["loop"];
                     bool loop = (loopAttribute != null ? Boolean.Parse(loopAttribute.Value) : false);
@@ -206,7 +206,7 @@ namespace AW2.Sound
         private SoundInstance CreateSoundInternal(string soundName, Gob parentGob)
         {
             if (!Enabled) return new SoundInstanceDummy();
-            soundName = soundName.ToLower();
+            soundName = soundName.ToLower(CultureInfo.InvariantCulture);
             if (!_soundCues.ContainsKey(soundName))
             {
                 throw new ArgumentException("Sound " + soundName + " does not exist!");

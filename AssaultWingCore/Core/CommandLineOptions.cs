@@ -37,7 +37,7 @@ namespace AW2.Core
             {
                 return _commandLineArgs.Contains("--" + flag)
                     || _queryStringParams[flag] != null
-                    || new Regex("^" + flag + "( *|=).*$", RegexOptions.Multiline).IsMatch(_argumentText);
+                    || new Regex("^" + flag + "( *|=).*$", RegexOptions.Multiline | RegexOptions.CultureInvariant).IsMatch(_argumentText);
             }
 
             public string GetValue(string key)
@@ -45,7 +45,7 @@ namespace AW2.Core
                 int index = Array.IndexOf(_commandLineArgs, "--" + key);
                 if (index >= 0) return _commandLineArgs[index + 1];
                 if (_queryStringParams[key] != null) return _queryStringParams[key];
-                var match = new Regex("^" + key + " *(= *)?(.*)", RegexOptions.Multiline).Match(_argumentText);
+                var match = new Regex("^" + key + " *(= *)?(.*)", RegexOptions.Multiline | RegexOptions.CultureInvariant).Match(_argumentText);
                 if (match.Success) return match.Groups[2].Captures[0].Value;
                 return null;
             }

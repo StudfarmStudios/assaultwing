@@ -1,11 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <!-- 
 	AW sound definitions 
-	
-	Supported tags: name, volume, loop
-	
+	Supported tags: name, volume, loop, spatial, distancescale
 	Default distance scale: 200
 -->
-
 <group name="sfx">
 	<sound name="bad" volume="0.5"/>
 	<sound name="bazooka" volume="0.3"/>

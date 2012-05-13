@@ -3,6 +3,7 @@ using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -280,7 +281,7 @@ namespace AW2.UI.WPF
 
         private static IEnumerable<Attribute> GetPropertyAttributes(System.Reflection.FieldInfo field)
         {
-            if (field.Name.ToLower().Contains("rotation")) yield return new EditorAttribute(typeof(RotationEditor), typeof(PropertyValueEditor));
+            if (field.Name.ToLower(CultureInfo.InvariantCulture).Contains("rotation")) yield return new EditorAttribute(typeof(RotationEditor), typeof(PropertyValueEditor));
             if (field.FieldType == typeof(Vector2)) yield return new EditorAttribute(typeof(Vector2Editor), typeof(PropertyValueEditor));
         }
 

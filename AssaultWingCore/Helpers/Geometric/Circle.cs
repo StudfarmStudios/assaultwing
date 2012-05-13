@@ -63,7 +63,7 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new CircleShape(AWMathHelper.FARSEER_SCALE * _radius, 0) { Position = AWMathHelper.FARSEER_SCALE * _center };
+            return new CircleShape(AWMathHelper.FARSEER_SCALE * _radius, 1) { Position = AWMathHelper.FARSEER_SCALE * _center };
         }
 
         #endregion IGeomPrimitive Members

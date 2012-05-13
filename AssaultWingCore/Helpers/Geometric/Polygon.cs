@@ -193,7 +193,7 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new PolygonShape(AWMathHelper.CreateVertices(Vertices), 0);
+            return new PolygonShape(AWMathHelper.CreateVertices(Vertices), 1);
         }
 
         #endregion IGeomPrimitive Members

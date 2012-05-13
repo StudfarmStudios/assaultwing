@@ -454,11 +454,12 @@ namespace AW2.Game
             // are able to gain angular velocity in collisions. Assumption: gobs have only one
             // physical collision area (except Dock but it doesn't need inertia anyway).
             // TODO !!! Specify density directly in CollisionArea.
-            var physicalArea = gob.CollisionAreas.FirstOrDefault(area => area.Type.IsPhysical());
-            if (physicalArea != null)
+            var physicalAreas = gob.CollisionAreas.Where(area => area.Type.IsPhysical()).ToArray();
+            if (physicalAreas.Length > 0)
             {
-                physicalArea.Fixture.Shape.Density = gob.Mass / physicalArea.Fixture.Shape.MassData.Area;
-                body.ResetMassData();
+                foreach (var physicalArea in physicalAreas)
+                    physicalArea.Fixture.Shape.Density = gob.Mass / physicalAreas.Length / physicalArea.Fixture.Shape.MassData.Area;
+                body.ResetMassData(); // Compute masses of shapes. Their sum will equal gob.Mass. Also inertia etc. will be computed.
             }
             body.FixedRotation = gob.DampAngularVelocity; // Note: Recomputes body mass from fixtures.
         }

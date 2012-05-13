@@ -1,5 +1,4 @@
 ﻿using System;
-using AW2.Core;
 
 namespace AW2.Helpers
 {
@@ -11,14 +10,13 @@ namespace AW2.Helpers
     /// </summary>
     public class AWTimer
     {
-        private AssaultWingCore _game;
+        private Func<TimeSpan> _getTime;
         private TimeSpan _regularInterval;
         private TimeSpan _currentInterval;
-        private TimeSpan _currentElapsed;
         private TimeSpan _currentStart;
 
-        private TimeSpan Now { get { return _game.GameTime.TotalGameTime; } }
-        private bool IsIntervalFinished { get { return Now >= _currentStart + _currentInterval; } }
+        public bool SkipPastIntervals { get; set; }
+        private bool IsIntervalFinished { get { return _getTime() >= _currentStart + _currentInterval; } }
 
         /// <summary>
         /// Returns true if the current frame is the first after the set interval has
@@ -28,26 +26,30 @@ namespace AW2.Helpers
         {
             get
             {
-                if (IsIntervalFinished)
-                {
-                    _currentElapsed = Now;
-                    _currentInterval = _regularInterval;
-                    _currentStart = IsIntervalFinished ? Now : _currentStart + _currentInterval;
-                }
-                return Now == _currentElapsed;
+                if (!IsIntervalFinished) return false;
+                _currentStart = SkipPastIntervals ? _getTime() : _currentStart + _currentInterval;
+                _currentInterval = _regularInterval;
+                return true;
             }
         }
 
-        public AWTimer(AssaultWingCore game, TimeSpan interval)
+        public AWTimer(Func<TimeSpan> getTime, TimeSpan interval)
         {
-            _game = game;
+            if (interval <= TimeSpan.Zero) throw new ArgumentOutOfRangeException("interval");
+            _getTime = getTime;
             _currentInterval = _regularInterval = interval;
-            _currentStart = _game.GameTime.TotalGameTime + _currentInterval;
+            _currentStart = _getTime();
         }
 
         public void SetCurrentInterval(TimeSpan interval)
         {
             _currentInterval = interval;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} + {1}{2}", _currentStart, _currentInterval,
+                _currentInterval == _regularInterval ? "" : " (" + _regularInterval + ")");
         }
     }
 }

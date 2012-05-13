@@ -78,7 +78,7 @@ namespace AW2.Helpers.Serialization
         {
             _currentStack = null;
             _rootNode = null;
-            if (!AW2.Core.AssaultWingCore.Instance.Settings.Net.HeavyProfileLog) return;
+            if (AW2.Core.AssaultWingCore.Instance == null || !AW2.Core.AssaultWingCore.Instance.Settings.Net.HeavyProfileLog) return;
             _currentStack = new Stack<ScopeTreeNode>();
             _rootNode = new ScopeTreeNode("ROOT");
             _currentStack.Push(_rootNode);

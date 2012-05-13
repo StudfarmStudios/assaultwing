@@ -171,6 +171,7 @@
     <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\MessageBeeper.cs" />
     <Compile Include="Game\MessageContainer.cs" />
+    <Compile Include="Game\MockStats.cs" />
     <Compile Include="Game\Pengs\ConstantValue.cs" />
     <Compile Include="Game\Pengs\CurveLerp.cs" />
     <Compile Include="Game\Pengs\CurveLerpKey.cs" />

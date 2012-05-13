@@ -70,7 +70,8 @@ namespace AW2.Net
         /// or <c>null</c> if no such live connection exists.
         /// </summary>
         private ManagementServerConnection _managementServerConnection;
-        private bool _managementServerConnectionLossReported;
+        private bool _managementServerConnectionLost;
+        private AWTimer _managementServerConnectionCheckTimer;
 
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
@@ -101,6 +102,7 @@ namespace AW2.Net
             GameClientConnections = new List<GameClientConnection>();
             _removedClientConnections = new List<GameClientConnection>();
             _udpMessagesToHandle = new ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>>(new List<Tuple<Message, IPEndPoint>>());
+            _managementServerConnectionCheckTimer = new AWTimer(() => _game.GameTime.TotalRealTime, TimeSpan.FromSeconds(10)) { SkipPastIntervals = true };
             MessageHandlers = new List<MessageHandlerBase>();
             InitializeUDPSocket();
         }
@@ -183,7 +185,6 @@ namespace AW2.Net
             var managementServerEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.ManagementServerAddress);
             if (managementServerEndPoint.Port == 0)
                 managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
-            _managementServerConnectionLossReported = false;
             _managementServerConnection = new ManagementServerConnection(_game, managementServerEndPoint);
         }
 
@@ -199,7 +200,6 @@ namespace AW2.Net
             _connectionAttemptListener = new ConnectionAttemptListener(_game);
             _connectionAttemptListener.StartListening(Game.Settings.Net.GameServerPort, UDPSocket.PrivateLocalEndPoint.Port);
             RegisterServerToManagementServer();
-            _game.UpdateGameServerInfoToManagementServer();
         }
 
         /// <summary>
@@ -486,6 +486,7 @@ namespace AW2.Net
                 AWVersion = MiscHelper.Version,
             };
             ManagementServerConnection.Send(message);
+            _game.UpdateGameServerInfoToManagementServer();
         }
 
         private void UnregisterServerFromManagementServer()
@@ -625,12 +626,13 @@ namespace AW2.Net
 
         private void CheckManagementServerConnection()
         {
-            if (ManagementServerConnection.HasReceivedPingsRecently) return;
-            if (_managementServerConnectionLossReported) return;
-            _managementServerConnectionLossReported = true;
-            var message = "Connection to management server lost.\nNo more clients can join the game.\nTry restarting the game server.";
-            Log.Write(message.Replace('\n', ' '));
-            _game.ShowInfoDialog(message); // TODO: Proper line wrapping in dialogs
+            if (!_managementServerConnectionCheckTimer.IsElapsed) return;
+            var managementServerConnectionLostEarlier = _managementServerConnectionLost;
+            _managementServerConnectionLost = !ManagementServerConnection.HasReceivedPingsRecently;
+            if (!_managementServerConnectionLost) return;
+            if (managementServerConnectionLostEarlier)
+                Log.Write("Connection to management server lost. Clients may not be able to join. Reconnecting...");
+            RegisterServerToManagementServer();
         }
 
         private void HandleConnectionHandshakingOnServer()

@@ -458,7 +458,6 @@ namespace AW2.Net
 
         private void RegisterServerToManagementServer()
         {
-            Log.Write("!!! RegisterServerToManagementServer");
             var message = new RegisterGameServerMessage
             {
                 GameServerName = Game.Settings.Net.GameServerName,

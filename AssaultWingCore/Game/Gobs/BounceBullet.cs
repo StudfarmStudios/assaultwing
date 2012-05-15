@@ -38,7 +38,7 @@ namespace AW2.Game.Gobs
 
         public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
-            return theirArea.Owner.IsDamageable ? false : base.CollideIrreversible(myArea, theirArea);
+            return theirArea.Owner.IsDamageable ? base.CollideIrreversible(myArea, theirArea) : false;
         }
     }
 }

@@ -18,11 +18,6 @@
         Damage,
 
         /// <summary>
-        /// Receptor of targets that a dock can repair.
-        /// </summary>
-        DockRepair,
-
-        /// <summary>
         /// Receptor of targets of a flow of medium.
         /// </summary>
         Flow,

@@ -125,7 +125,7 @@
       </area>
     </Item>
     <Item>
-      <type>DockRepair</type>
+      <type>Static</type>
       <collisionMaterial>Sticky</collisionMaterial>
       <name>Dock</name>
       <area type="AW2.Helpers.Geometric.Polygon">

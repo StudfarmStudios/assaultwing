@@ -57,7 +57,7 @@ namespace FarseerPhysics
         /// <summary>
         /// Enable/Disable Continuous Collision Detection (CCD)
         /// </summary>
-        public static bool ContinuousPhysics = true;
+        public static bool ContinuousPhysics = false;
 
         /// <summary>
         /// The number of velocity iterations in the TOI solver

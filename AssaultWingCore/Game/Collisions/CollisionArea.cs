@@ -108,6 +108,7 @@ namespace AW2.Game.Collisions
             fixture.IsSensor = !Type.IsPhysical();
             fixture.CollisionCategories = Type.Category();
             fixture.CollidesWith = Type.CollidesWith();
+            gob.Body.SleepingAllowed &= Type.IsPhysical(); // Bodies with sensors must never sleep, lest sensor contacts might go unnoticed.
             Fixture = fixture;
         }
 

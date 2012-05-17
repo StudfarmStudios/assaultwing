@@ -59,7 +59,7 @@ namespace AW2.Game.Collisions
         public float Friction { get { return CollisionMaterial.Get(_collisionMaterial).Friction; } }
 
         /// <summary>
-        /// Multiplier for collision damage.
+        /// Multiplier for collision damage inflicted to others.
         /// </summary>
         public float Damage { get { return CollisionMaterial.Get(_collisionMaterial).Damage; } }
 

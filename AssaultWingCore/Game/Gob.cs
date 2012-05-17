@@ -316,7 +316,6 @@ namespace AW2.Game
 
         public bool IsDisposed { get; private set; }
         public virtual bool IsDamageable { get { return false; } }
-        public float CollisionDamageToOthersMultiplier { get; set; }
 
         /// <summary>
         /// Gob drawing bleach override, between 0 and 1. If null, normal bleach behaviour is used.
@@ -695,7 +694,6 @@ namespace AW2.Game
             ResetPos(new Vector2(float.NaN), Vector2.Zero, float.NaN); // resets Pos and Rotation smoothing on game clients
             Alpha = 1;
             _previousBleach = -1;
-            CollisionDamageToOthersMultiplier = 1;
             BonusActions = new List<Gobs.BonusAction>();
         }
 
@@ -1201,31 +1199,6 @@ namespace AW2.Game
         /// The maximum amount of damage the entity can sustain.
         /// </summary>
         public float MaxDamageLevel { get { return _maxDamage; } set { _maxDamage = value; } }
-
-        /// <summary>
-        /// Optional filter for processing damage from physical collisions (not explosions
-        /// and other active weapon damage). Parameter is damage about to be inflicted.
-        /// Return value is the remaining filtered damage.
-        /// </summary>
-        public Func<float, float> CollisionDamageFilter { get; set; }
-
-        /// <summary>
-        /// Called when the gob experiences a physical collision into another gob.
-        /// </summary>
-        public virtual void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)
-        {
-            float collisionDamage = 0.0003f * damageMultiplier * CollisionDamageToOthersMultiplier * moveDelta.Length() * other.Mass;
-            other.InflictCollisionDamage(collisionDamage, new DamageInfo(this));
-        }
-
-        public virtual void InflictCollisionDamage(float damageAmount, DamageInfo info)
-        {
-            if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
-            if (CollisionDamageFilter != null)
-                damageAmount = CollisionDamageFilter(damageAmount);
-            if (damageAmount > 0)
-                InflictDamage(damageAmount, info);
-        }
 
         public virtual void InflictDamage(float damageAmount, DamageInfo info)
         {

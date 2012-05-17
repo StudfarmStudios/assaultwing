@@ -8,7 +8,9 @@ namespace AW2.Game.Collisions
 {
     public class CollisionEvent
     {
-        private const float COLLISION_SOUND_MINIMUM_IMPULSE = 2000;
+        private const float COLLISION_SOUND_MINIMUM_IMPULSE = 2000; // TODO !!! Use force, not impulse.
+        private const float COLLISION_DAMAGE_VELOCITY_MIN = 8;
+        private const float COLLISION_DAMAGE_PER_ACCELERATION = 0.045f;
 
         private CollisionArea _area1;
         private CollisionArea _area2;
@@ -94,8 +96,16 @@ namespace AW2.Game.Collisions
 
         private void HandleReversibleSideEffects()
         {
-            _area1.Owner.CollideReversible(_area1, _area2);
-            _area2.Owner.CollideReversible(_area2, _area1);
+            var gob1 = _area1.Owner;
+            var gob2 = _area2.Owner;
+            var targetFPS = gob1.Game.TargetFPS;
+            var force = _impulse * targetFPS;
+            var gob1Damage = _area2.Damage * COLLISION_DAMAGE_PER_ACCELERATION * Math.Max(0, force / gob1.Mass - COLLISION_DAMAGE_VELOCITY_MIN * targetFPS);
+            var gob2Damage = _area1.Damage * COLLISION_DAMAGE_PER_ACCELERATION * Math.Max(0, force / gob2.Mass - COLLISION_DAMAGE_VELOCITY_MIN * targetFPS);
+            if (gob1.IsDamageable) gob1.InflictDamage(gob1Damage, new GobUtils.DamageInfo(gob2));
+            if (gob2.IsDamageable) gob2.InflictDamage(gob2Damage, new GobUtils.DamageInfo(gob1));
+            gob1.CollideReversible(_area1, _area2);
+            gob2.CollideReversible(_area2, _area1);
         }
 
         private void HandleIrreversibleSideEffects()

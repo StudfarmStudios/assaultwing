@@ -246,7 +246,6 @@ namespace AW2.Game.Gobs
             get { return base.TextureNames.Union(new CanonicalString[] { ShipInfo.IconEquipName }); }
         }
 
-        public event Action<Gob> PhysicalCollidedInto;
         public event ReceivingDamageEvent ReceivingDamage;
 
         private SpriteFont PlayerNameFont { get { return Game.GraphicsEngine.GameContent.ConsoleFont; } }
@@ -491,12 +490,6 @@ namespace AW2.Game.Gobs
             var nameAlpha = (IsHiding ? Alpha : 1) * 0.8f;
             var nameColor = Color.Multiply(Owner.Color, nameAlpha);
             spriteBatch.DrawString(PlayerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
-        }
-
-        public override void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)
-        {
-            base.PhysicalCollisionInto(other, moveDelta, damageMultiplier);
-            if (PhysicalCollidedInto != null) PhysicalCollidedInto(other);
         }
 
         public override void InflictDamage(float damageAmount, DamageInfo cause)

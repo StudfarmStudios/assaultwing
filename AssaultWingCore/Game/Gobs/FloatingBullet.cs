@@ -32,6 +32,12 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _spreadingForce;
 
+        /// <summary>
+        /// Damping factor of linear movement.
+        /// </summary>
+        [TypeParameter]
+        private float _movementDamping;
+
         [TypeParameter]
         private string _hitSound;
         [TypeParameter, ShallowCopy]
@@ -53,6 +59,7 @@ namespace AW2.Game.Gobs
             _hoverThrust = 10000;
             _attractionForce = 50000;
             _spreadingForce = 10000;
+            _movementDamping = 0.95f;
             _hitSound = "";
             _enemyDistanceToAlpha = new Curve();
             _enemyDistanceToAlpha.PreLoop = CurveLoopType.Constant;
@@ -72,12 +79,12 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             IsHiding = true;
+            Body.LinearDamping = _movementDamping;
         }
 
         public override void Update()
         {
             base.Update();
-            Move *= 0.97f; // TODO !!! Use Body.LinearDamping
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
             Alpha = Game.DataEngine.Minions
@@ -108,8 +115,9 @@ namespace AW2.Game.Gobs
         public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if (myArea.Name == "Magnet" || myArea.Name == "Spread") return false;
-            var collidedWithFriend = theirArea.Owner.Owner == Owner;
-            if (collidedWithFriend || (theirArea.Owner.MaxDamageLevel <= 100 && theirArea.Owner.Movable)) return false;
+            if (theirArea.Owner.Owner == Owner) return false;
+            if (!theirArea.Owner.IsDamageable) return false;
+            if (theirArea.Owner.MaxDamageLevel <= 100 && theirArea.Owner.Movable) return false;
             var hasHitSound = _hitSound != "";
             if (hasHitSound) Game.SoundEngine.PlaySound(_hitSound, this);
             var baseResult = base.CollideIrreversible(myArea, theirArea);

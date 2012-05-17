@@ -6,6 +6,7 @@
   <hoverThrust>4000</hoverThrust>
   <attractionForce>50000</attractionForce>
   <spreadingForce>12000</spreadingForce>
+  <movementDamping>0.97</movementDamping>
   <hitSound>mineHit</hitSound>
   <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>35</lifetime>

@@ -101,6 +101,8 @@ namespace AW2.Game.Gobs
         {
             if (Arena.TotalTime >= DeathTime) Die();
             base.Update();
+            /* !!! TODO: Implement in Farseer by using _rotationSpeed only for initial AngularVelocity, and
+             * make "nose first" by setting AngularVelocity for each frame.
             if (_isRotating)
             {
                 Rotation += _rotationSpeed * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
@@ -115,6 +117,7 @@ namespace AW2.Game.Gobs
                     Rotation = rotationGoal;
                 }
             }
+             */
             _thruster.Thrust(1);
             _thruster.Update();
         }

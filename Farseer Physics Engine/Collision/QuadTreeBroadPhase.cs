@@ -12,8 +12,10 @@ public class QuadTreeBroadPhase : IBroadPhase
     private Dictionary<int, Element<FixtureProxy>> _idRegister;
     private List<Element<FixtureProxy>> _moveBuffer;
     private List<Pair> _pairBuffer;
-    private QuadTree<FixtureProxy> _quadTree;
-    private int _treeMoveNum;
+    private QuadTree<FixtureProxy> _quadTreeNonstatic;
+    private QuadTree<FixtureProxy> _quadTreeStatic;
+    private int _treeMoveNumNonstatic;
+    private int _treeMoveNumStatic;
 
     /// <summary>
     /// Creates a new quad tree broadphase with the specified span.
@@ -21,7 +23,8 @@ public class QuadTreeBroadPhase : IBroadPhase
     /// <param name="span">the maximum span of the tree (world size)</param>
     public QuadTreeBroadPhase(AABB span)
     {
-        _quadTree = new QuadTree<FixtureProxy>(span, 5, 10);
+        _quadTreeNonstatic = new QuadTree<FixtureProxy>(span, 5, 10);
+        _quadTreeStatic = new QuadTree<FixtureProxy>(span, 5, 10);
         _idRegister = new Dictionary<int, Element<FixtureProxy>>();
         _moveBuffer = new List<Element<FixtureProxy>>();
         _pairBuffer = new List<Pair>();
@@ -51,7 +54,7 @@ public class QuadTreeBroadPhase : IBroadPhase
         foreach (Element<FixtureProxy> qtnode in _moveBuffer)
         {
             // Query tree, create pairs and add them pair buffer.
-            Query(proxyID => PairBufferQueryCallback(proxyID, qtnode.Value.ProxyId), ref qtnode.Span);
+            Query(proxyID => PairBufferQueryCallback(proxyID, qtnode.Value.ProxyId), ref qtnode.Span, includeStatic: !qtnode.Value.IsStatic);
         }
         _moveBuffer.Clear();
 
@@ -99,7 +102,10 @@ public class QuadTreeBroadPhase : IBroadPhase
         Element<FixtureProxy> qtnode = new Element<FixtureProxy>(proxy, aabb);
 
         _idRegister.Add(proxyID, qtnode);
-        _quadTree.AddNode(qtnode);
+        if (proxy.IsStatic)
+            _quadTreeStatic.AddNode(qtnode);
+        else
+            _quadTreeNonstatic.AddNode(qtnode);
 
         return proxyID;
     }
@@ -111,7 +117,10 @@ public class QuadTreeBroadPhase : IBroadPhase
             Element<FixtureProxy> qtnode = _idRegister[proxyId];
             UnbufferMove(qtnode);
             _idRegister.Remove(proxyId);
-            _quadTree.RemoveNode(qtnode);
+            if (qtnode.Value.IsStatic)
+                _quadTreeStatic.RemoveNode(qtnode);
+            else
+                _quadTreeNonstatic.RemoveNode(qtnode);
         }
         else
             throw new KeyNotFoundException("proxyID not found in register");
@@ -173,15 +182,22 @@ public class QuadTreeBroadPhase : IBroadPhase
 
     public void Query(Func<int, bool> callback, ref AABB query)
     {
-        _quadTree.QueryAABB(TransformPredicate(callback), ref query);
+        Query(callback, ref query, includeStatic: true);
     }
 
     public void RayCast(Func<RayCastInput, int, float> callback, ref RayCastInput input)
     {
-        _quadTree.RayCast(TransformRayCallback(callback), ref input);
+        _quadTreeNonstatic.RayCast(TransformRayCallback(callback), ref input);
+        _quadTreeStatic.RayCast(TransformRayCallback(callback), ref input);
     }
 
     #endregion
+
+    private void Query(Func<int, bool> callback, ref AABB query, bool includeStatic)
+    {
+        _quadTreeNonstatic.QueryAABB(TransformPredicate(callback), ref query);
+        if (includeStatic) _quadTreeStatic.QueryAABB(TransformPredicate(callback), ref query);
+    }
 
     private AABB Fatten(ref AABB aabb)
     {
@@ -217,23 +233,34 @@ public class QuadTreeBroadPhase : IBroadPhase
         return true;
     }
 
-    private void ReconstructTree()
+    private void ReconstructTree(bool isStatic)
     {
-        //this is faster than _quadTree.Reconstruct(), since the quadtree method runs a recusive query to find all nodes.
-        _quadTree.Clear();
+        var quadTree = isStatic ? _quadTreeStatic : _quadTreeNonstatic;
+        //this is faster than quadTree.Reconstruct(), since the quadtree method runs a recusive query to find all nodes.
+        quadTree.Clear();
         foreach (Element<FixtureProxy> elem in _idRegister.Values)
-            _quadTree.AddNode(elem);
+            if (elem.Value.IsStatic == isStatic)
+                quadTree.AddNode(elem);
     }
 
     private void ReinsertNode(Element<FixtureProxy> qtnode)
     {
-        _quadTree.RemoveNode(qtnode);
-        _quadTree.AddNode(qtnode);
+        if (qtnode.Value.IsStatic)
+            ReinsertNodeImpl(qtnode, true, ref _treeMoveNumStatic);
+        else
+            ReinsertNodeImpl(qtnode, false, ref _treeMoveNumNonstatic);
+    }
 
-        if (++_treeMoveNum > TreeUpdateThresh)
+    private void ReinsertNodeImpl(Element<FixtureProxy> qtnode, bool isStatic, ref int treeMoveNum)
+    {
+        var quadTree = isStatic ? _quadTreeStatic : _quadTreeNonstatic;
+        quadTree.RemoveNode(qtnode);
+        quadTree.AddNode(qtnode);
+
+        if (++treeMoveNum > TreeUpdateThresh)
         {
-            ReconstructTree();
-            _treeMoveNum = 0;
+            ReconstructTree(isStatic);
+            treeMoveNum = 0;
         }
     }
 

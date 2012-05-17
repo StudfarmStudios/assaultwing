@@ -81,6 +81,7 @@ namespace FarseerPhysics.Dynamics
         public int ChildIndex;
         public Fixture Fixture;
         public int ProxyId;
+        public bool IsStatic;
     }
 
     /// <summary>
@@ -549,6 +550,7 @@ namespace FarseerPhysics.Dynamics
 
                 proxy.Fixture = this;
                 proxy.ChildIndex = i;
+                proxy.IsStatic = Body.IsStatic;
                 proxy.ProxyId = broadPhase.AddProxy(ref proxy);
 
                 Proxies[i] = proxy;

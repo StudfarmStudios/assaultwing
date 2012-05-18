@@ -34,7 +34,7 @@ namespace AW2.Game.Collisions
             SetCollidesWith(CollisionAreaType.BonusCollect, CollisionAreaType.Common);
             SetCollidesWith(CollisionAreaType.Common, CollisionAreaType.Common, CollisionAreaType.Static, CollisionAreaType.MinePhysical);
             SetCollidesWith(CollisionAreaType.Damage, CollisionAreaType.Common, CollisionAreaType.Static, CollisionAreaType.MinePhysical);
-            SetCollidesWith(CollisionAreaType.Flow, CollisionAreaType.Common, CollisionAreaType.Shot);
+            SetCollidesWith(CollisionAreaType.Flow, CollisionAreaType.Common, CollisionAreaType.Shot, CollisionAreaType.MinePhysical);
             SetCollidesWith(CollisionAreaType.MineMagnet, CollisionAreaType.Common);
             SetCollidesWith(CollisionAreaType.MineSpread, CollisionAreaType.MinePhysical);
             SetCollidesWith(CollisionAreaType.MinePhysical, CollisionAreaType.Common, CollisionAreaType.Static, CollisionAreaType.MinePhysical);

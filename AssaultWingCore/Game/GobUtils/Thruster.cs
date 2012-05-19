@@ -136,6 +136,7 @@ namespace AW2.Game.GobUtils
         /// <param name="thrustDirection">Amplitude is irrelevant.</param>
         public void Thrust(float proportionalThrust, Vector2 thrustDirection)
         {
+            if (thrustDirection == Vector2.Zero) return;
             var exhaustDirection = (-thrustDirection).Angle() - Owner.Rotation;
             ThrustImpl(proportionalThrust, exhaustDirection, Vector2.Normalize(thrustDirection));
         }

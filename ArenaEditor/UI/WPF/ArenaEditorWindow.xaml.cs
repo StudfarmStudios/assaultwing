@@ -334,10 +334,12 @@ namespace AW2.UI.WPF
             _runner = new AWGameRunner(_game,
                 invoker: action => Dispatcher.Invoke(action),
                 exceptionHandler: e => Dispatcher.BeginInvoke((Action)(() => { throw new ApplicationException("An exception occurred in a background thread", e); })),
-                draw: () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
-                update: gameTime => Dispatcher.BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
-            _game.UpdateFinished += _runner.UpdateFinished;
-            _game.DrawFinished += _runner.DrawFinished;
+                updateAndDraw: gameTime => Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    _game.Update(gameTime);
+                    if (!_runner.IsTimeForNextUpdate) Dispatcher.BeginInvoke((Action)ArenaView.Invalidate);
+                    _runner.UpdateAndDrawFinished();
+                })));
             _runner.Initialized += () => Dispatcher.BeginInvoke((Action)GameInitializedHandler);
             _runner.Run();
         }

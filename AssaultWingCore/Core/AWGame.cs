@@ -27,16 +27,6 @@ namespace AW2.Core
         /// </summary>
         public AWGameTime GameTime { get; private set; }
 
-        /// <summary>
-        /// Raised when <see cref="Update"/> finishes.
-        /// </summary>
-        public event Action UpdateFinished;
-
-        /// <summary>
-        /// Raised when <see cref="Draw"/> finishes.
-        /// </summary>
-        public event Action DrawFinished;
-
         private bool _takeScreenShot;
         private AutoRenderTarget2D _screenshotRenderTarget;
 
@@ -102,7 +92,6 @@ namespace AW2.Core
             foreach (var item in Components)
                 if (item.Enabled) item.Update();
             UpdateImpl();
-            if (UpdateFinished != null) UpdateFinished();
         }
 
         /// <summary>
@@ -118,7 +107,6 @@ namespace AW2.Core
             if (_takeScreenShot) RenderToFile(DrawImpl);
             _takeScreenShot = false;
             DrawImpl();
-            if (DrawFinished != null) DrawFinished();
         }
 
         /// <summary>

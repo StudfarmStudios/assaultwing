@@ -304,16 +304,16 @@ namespace AW2.UI
             _runner = new AWGameRunner(_game,
                 invoker: action => Invoke(action),
                 exceptionHandler: e => BeginInvoke((Action)(() => { throw new ApplicationException("An exception occurred in a background thread", e); })),
-                draw: () =>
+                updateAndDraw: gameTime => BeginInvoke((Action)(() =>
                 {
-                    if (_isFullScreen)
-                        BeginInvoke((Action)Invalidate);
-                    else
-                        BeginInvoke((Action)_gameView.Invalidate);
-                },
-                update: gameTime => BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
-            _game.UpdateFinished += _runner.UpdateFinished;
-            _game.DrawFinished += _runner.DrawFinished;
+                    _game.Update(gameTime);
+                    if (!_runner.IsTimeForNextUpdate)
+                        if (_isFullScreen)
+                            Invalidate();
+                        else
+                            _gameView.Invalidate();
+                    _runner.UpdateAndDrawFinished();
+                })));
         }
 
         private static FormParameters GetFullScreenFormParameters(int width, int height)

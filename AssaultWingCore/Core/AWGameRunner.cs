@@ -172,6 +172,11 @@ namespace AW2.Core
                         lastUpdate = now;
                         totalGameTime += updateInterval;
                     }
+                    else
+                    {
+                        // We didn't make it in time for a frame update. Wait for a while and try again.
+                        Waiter.Instance.Sleep(TimeSpan.FromMilliseconds(5));
+                    }
                 }
             }
         }

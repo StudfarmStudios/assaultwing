@@ -355,7 +355,8 @@ namespace AW2.Game.GobUtils
                     (x, y) => new Vector2(x * pointSpacing, y * pointSpacing))
                 .Where(p => _data.Get((int)p.X, (int)p.Y).Any());
             var world = Matrix.Invert(WallToIndexMapTransform) * Matrix.CreateTranslation(wallPos.X, wallPos.Y, 0);
-            Graphics3D.DebugDrawPoints(view, projection, world, points.ToArray());
+            var context = new Graphics3D.DebugDrawContext(view, projection, world);
+            Graphics3D.DebugDrawPoints(context, points.ToArray());
         }
 
         private static Point Vector2ToPoint(Vector2 vertexPosition, Vector2 origin)

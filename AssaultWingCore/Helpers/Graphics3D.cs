@@ -37,8 +37,30 @@ namespace AW2.Helpers
     /// </summary>
     public static class Graphics3D
     {
+        public struct DebugDrawContext
+        {
+            public static readonly Color DEFAULT_COLOR = Color.Aquamarine;
+
+            public Matrix View;
+            public Matrix Projection;
+            public Matrix World;
+            public Color Color;
+
+            public DebugDrawContext(Matrix view, Matrix projection)
+                :this (view, projection, Matrix.Identity)
+            {
+            }
+
+            public DebugDrawContext(Matrix view, Matrix projection, Matrix world)
+            {
+                View = view;
+                Projection = projection;
+                World = world;
+                Color = DEFAULT_COLOR;
+            }
+        }
+
         private const float DEBUG_DRAW_Z = 300;
-        private static readonly Color DEBUG_DRAW_COLOR = Color.Aquamarine;
 
         static BasicEffect debugEffect;
         static BasicEffect DebugEffect
@@ -305,38 +327,38 @@ namespace AW2.Helpers
 
         #region Utility methods for 3D graphics
 
-        public static void DebugDrawCircle(BoundingSphere sphere, Matrix view, Matrix projection, Matrix world)
+        public static void DebugDrawCircle(DebugDrawContext context, BoundingSphere sphere)
         {
             VertexPositionColor[] vertexData;
-            Graphics3D.GetWireframeModelData(sphere, DEBUG_DRAW_Z, DEBUG_DRAW_COLOR, out vertexData);
-            DebugDraw(view, projection, world, vertexData, PrimitiveType.LineStrip);
+            Graphics3D.GetWireframeModelData(sphere, DEBUG_DRAW_Z, context.Color, out vertexData);
+            DebugDraw(context, vertexData, PrimitiveType.LineStrip);
         }
 
-        public static void DebugDrawPolyline(Matrix view, Matrix projection, Matrix world, params Vector2[] vertices)
+        public static void DebugDrawPolyline(DebugDrawContext context, params Vector2[] vertices)
         {
             var vertexData = new VertexPositionColor[vertices.Length];
             for (int i = 0; i < vertices.Length; i++)
-                vertexData[i] = new VertexPositionColor(new Vector3(vertices[i], DEBUG_DRAW_Z), DEBUG_DRAW_COLOR);
-            DebugDraw(view, projection, world, vertexData, PrimitiveType.LineStrip);
+                vertexData[i] = new VertexPositionColor(new Vector3(vertices[i], DEBUG_DRAW_Z), context.Color);
+            DebugDraw(context, vertexData, PrimitiveType.LineStrip);
         }
 
-        public static void DebugDrawPoints(Matrix view, Matrix projection, Matrix world, params Vector2[] points)
+        public static void DebugDrawPoints(DebugDrawContext context, params Vector2[] points)
         {
             var vertexData = new VertexPositionColor[points.Length * 2];
             for (int i = 0; i < points.Length; i++)
             {
-                vertexData[i * 2 + 0] = new VertexPositionColor(new Vector3(points[i], DEBUG_DRAW_Z), DEBUG_DRAW_COLOR);
-                vertexData[i * 2 + 1] = new VertexPositionColor(new Vector3(points[i] + Vector2.UnitX, DEBUG_DRAW_Z), DEBUG_DRAW_COLOR);
+                vertexData[i * 2 + 0] = new VertexPositionColor(new Vector3(points[i], DEBUG_DRAW_Z), context.Color);
+                vertexData[i * 2 + 1] = new VertexPositionColor(new Vector3(points[i] + Vector2.UnitX, DEBUG_DRAW_Z), context.Color);
             }
-            DebugDraw(view, projection, world, vertexData, PrimitiveType.LineList);
+            DebugDraw(context, vertexData, PrimitiveType.LineList);
         }
 
-        private static void DebugDraw(Matrix view, Matrix projection, Matrix world, VertexPositionColor[] vertexData, PrimitiveType primitiveType)
+        private static void DebugDraw(DebugDrawContext context, VertexPositionColor[] vertexData, PrimitiveType primitiveType)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            DebugEffect.View = view;
-            DebugEffect.Projection = projection;
-            DebugEffect.World = world;
+            DebugEffect.View = context.View;
+            DebugEffect.Projection = context.Projection;
+            DebugEffect.World = context.World;
             var primitiveCount = primitiveType == PrimitiveType.LineList ? vertexData.Length / 2
                 : primitiveType == PrimitiveType.LineStrip ? vertexData.Length - 1
                 : primitiveType == PrimitiveType.TriangleList ? vertexData.Length / 3

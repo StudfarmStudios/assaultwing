@@ -28,6 +28,6 @@ namespace FarseerPhysics.Collision
 
         void RayCast(Func<RayCastInput, int, float> callback, ref RayCastInput input);
 
-        void GetSpans(ref List<AABB> spans);
+        void GetSpans(ref List<Tuple<AABB, int>> spansAndElementCounts);
     }
 }

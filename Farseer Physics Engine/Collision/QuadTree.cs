@@ -244,11 +244,11 @@ public class QuadTree<T>
             foreach (QuadTree<T> st in SubTrees) st.GetAllNodesR(ref nodes);
     }
 
-    public void GetAllSpansR(ref List<AABB> spans)
+    public void GetAllSpansR(ref List<Tuple<AABB, int>> spansAndElementCounts)
     {
-        spans.Add(Span);
+        spansAndElementCounts.Add(Tuple.Create(Span, Nodes.Count));
         if (IsPartitioned)
-            foreach (var st in SubTrees) st.GetAllSpansR(ref spans);
+            foreach (var st in SubTrees) st.GetAllSpansR(ref spansAndElementCounts);
     }
 
     public void RemoveNode(Element<T> node)

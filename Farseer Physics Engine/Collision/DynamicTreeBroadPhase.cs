@@ -261,7 +261,7 @@ namespace FarseerPhysics.Collision
             BufferMove(proxyId);
         }
 
-        public void GetSpans(ref List<AABB> spans)
+        public void GetSpans(ref List<Tuple<AABB, int>> spansAndElementCounts)
         {
             throw new NotImplementedException("DynamicTreeBroadPhase.GetSpans");
         }

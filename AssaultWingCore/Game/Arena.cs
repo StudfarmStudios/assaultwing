@@ -588,6 +588,7 @@ namespace AW2.Game
 
         public void DebugDrawFixtures(Matrix view, Matrix projection)
         {
+            var context = new Graphics3D.DebugDrawContext(view, projection);
             var broadPhase = _world.ContactManager.BroadPhase;
             foreach (var body in _world.BodyList)
             {
@@ -599,7 +600,7 @@ namespace AW2.Game
                         var proxy = fixture.Proxies[t];
                         AABB aabb;
                         broadPhase.GetFatAABB(proxy.ProxyId, out aabb);
-                        Graphics3D.DebugDrawPolyline(view, projection, Matrix.Identity,
+                        Graphics3D.DebugDrawPolyline(context,
                             aabb.LowerBound / AWMathHelper.FARSEER_SCALE,
                             new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y) / AWMathHelper.FARSEER_SCALE,
                             aabb.UpperBound / AWMathHelper.FARSEER_SCALE,
@@ -612,15 +613,33 @@ namespace AW2.Game
 
         public void DebugDrawBroadPhase(Matrix view, Matrix projection)
         {
-            var spans = new List<AABB>();
-            _world.ContactManager.BroadPhase.GetSpans(ref spans);
-            foreach (var aabb in spans)
-                Graphics3D.DebugDrawPolyline(view, projection, Matrix.Identity,
-                    aabb.LowerBound / AWMathHelper.FARSEER_SCALE,
-                    new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y) / AWMathHelper.FARSEER_SCALE,
-                    aabb.UpperBound / AWMathHelper.FARSEER_SCALE,
-                    new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y) / AWMathHelper.FARSEER_SCALE,
-                    aabb.LowerBound / AWMathHelper.FARSEER_SCALE);
+            var context = new Graphics3D.DebugDrawContext(view, projection);
+            Func<int, Color> getColor = count =>
+                count <= 0 ? new Color(0f, 0f, 1f) :
+                count <= 5 ? new Color(0f, 1f, 0f) :
+                count <= 25 ? new Color(1f, 0.5f, 0f) :
+                count <= 125 ? new Color(1f, 1f, 0f) :
+                new Color(1f, 1f, 1f);
+            Func<AABB, Vector2[]> getVertices = aabb =>
+            {
+                var awCenter = aabb.Center / AWMathHelper.FARSEER_SCALE;
+                var reducedExtents = aabb.Extents * (0.95f / AWMathHelper.FARSEER_SCALE);
+                return new[]
+                {
+                    awCenter - reducedExtents,
+                    awCenter + reducedExtents.MirrorX(),
+                    awCenter + reducedExtents,
+                    awCenter + reducedExtents.MirrorY(),
+                    awCenter - reducedExtents,
+                };
+            };
+            var spansAndElementCounts = new List<Tuple<AABB, int>>();
+            _world.ContactManager.BroadPhase.GetSpans(ref spansAndElementCounts);
+            foreach (var aabbAndCount in spansAndElementCounts)
+            {
+                context.Color = getColor(aabbAndCount.Item2);
+                Graphics3D.DebugDrawPolyline(context, getVertices(aabbAndCount.Item1));
+            }
         }
 
         private void GobAddedHandler(Gob gob)

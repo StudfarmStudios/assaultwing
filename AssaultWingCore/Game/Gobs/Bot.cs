@@ -25,14 +25,6 @@ namespace AW2.Game.Gobs
         private static readonly TimeSpan MOVE_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(11);
         private static readonly TimeSpan AIM_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
         private const float FAN_ANGLE_SPEED_MAX = 30;
-        private static IGeomPrimitive[] g_wallNavPrimitives =
-        { // HACK: These primitives assume that gob scale is 0.047.
-            new Circle(new Vector2(1200, 0), 200),
-            new Circle(new Vector2(1200, 0).Rotate(MathHelper.TwoPi / 5), 200),
-            new Circle(new Vector2(1200, 0).Rotate(MathHelper.TwoPi / 5 * 2), 200),
-            new Circle(new Vector2(1200, 0).Rotate(MathHelper.TwoPi / 5 * 3), 200),
-            new Circle(new Vector2(1200, 0).Rotate(MathHelper.TwoPi / 5 * 4), 200),
-        };
 
         [TypeParameter]
         private float _rotationSpeed; // radians/second
@@ -57,7 +49,6 @@ namespace AW2.Game.Gobs
         private TargetSelector _moveTargetSelector;
         private float _fanAngle; // in radians
         private float _fanAngleSpeed; // in radians/second
-        private CollisionArea[] _navAreas;
 
         public override bool IsDamageable { get { return true; } }
         public CanonicalString WeaponName { get { return _weaponName; } }
@@ -89,6 +80,7 @@ namespace AW2.Game.Gobs
         public Bot(CanonicalString typeName)
             : base(typeName)
         {
+            DampAngularVelocity = true;
             Gravitating = false;
         }
 
@@ -100,14 +92,6 @@ namespace AW2.Game.Gobs
             _weapon = Weapon.Create(_weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
-            throw new NotImplementedException("!!! Reimplement bot navigation in Farseer by using ray casts");
-            // !!! >>>
-            //_navAreas = g_wallNavPrimitives
-            //    .Select(prim => new CollisionArea("", prim, this, CollisionAreaType.Receptor,
-            //        CollisionAreaType.Physical & ~CollisionAreaType.PhysicalMovable,
-            //        CollisionAreaType.None, CollisionMaterialType.Regular))
-            //    .ToArray();
-            // !!! <<<
             _thrustController = new PIDController(() => _optimalTargetDistance, () => Target == null ? 0 : Vector2.Distance(Target.Pos, Pos))
             {
                 ProportionalGain = 2,
@@ -213,26 +197,28 @@ namespace AW2.Game.Gobs
 
         private void MoveAround()
         {
-            throw new NotImplementedException("Rewrite using Farseer raycasting");
-#if false // !!!
             if (Target == null || Target.IsHidden) return;
             var trip = Vector2.Normalize(Target.Pos - Pos);
             _thrustController.Compute();
             var proportionalThrust = -_thrustController.Output / _thrustController.OutputMaxAmplitude;
 
             // Avoid walls
-            var navDirs =_navAreas
-                .Where(area => Arena.GetOverlappingGobs(area, area.CollidesAgainst).Any())
-                .Select(area => Vector2.Normalize(Pos - area.Area.BoundingBox.Center));
+            var scanRange = 100;
+            var scanDirs = 5;
+            var navDirs =
+                from dir in Enumerable.Range(0, scanDirs)
+                let scanUnit = Vector2.UnitX.Rotate(Rotation + dir * MathHelper.TwoPi / scanDirs)
+                let distance = Arena.GetDistanceToClosest(Pos, Pos + scanRange * scanUnit, gob => !gob.Movable) // TODO !!! Support static body scan in Farseer
+                where distance.HasValue
+                select scanUnit;
             if (navDirs.Any())
             {
                 trip *= proportionalThrust * 0.5f; // Avoiding walls has higher priority than reaching shooting distance.
                 proportionalThrust = 1;
-                foreach (var dir in navDirs) trip += dir;
+                foreach (var dir in navDirs) trip -= dir;
             }
 
             _thruster.Thrust(proportionalThrust, trip);
-#endif
         }
 
         private void Aim()

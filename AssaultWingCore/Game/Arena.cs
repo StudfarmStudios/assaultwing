@@ -366,6 +366,22 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Returns distance to the closest gob, if any, along a directed line segment.
+        /// Gobs for whom <paramref name="filter"/> returns false are ignored.
+        /// </summary>
+        public float? GetDistanceToClosest(Vector2 from, Vector2 to, Func<Gob, bool> filter)
+        {
+            Vector2? closestPoint = null;
+            _world.RayCast((Fixture fixture, Vector2 point, Vector2 normal, float fraction) =>
+            {
+                var gob = (Gob)fixture.Body.UserData;
+                if (filter(gob)) closestPoint = point / AWMathHelper.FARSEER_SCALE;
+                return fraction; // Skip everything that is farther away.
+            }, from * AWMathHelper.FARSEER_SCALE, to * AWMathHelper.FARSEER_SCALE);
+            return closestPoint.HasValue ? Vector2.Distance(from, closestPoint.Value) : (float?)null;
+        }
+
+        /// <summary>
         /// Invokes an action for all fixtures that overlap an area.
         /// </summary>
         /// <param name="action">If returns false, the query will exit.</param>

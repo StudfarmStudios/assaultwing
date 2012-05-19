@@ -80,7 +80,7 @@ namespace AW2.Game.Gobs
             _chargingSound = Game.SoundEngine.CreateSound("HomeBaseLoop", this);
             _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoopLow", this);
             var dockArea = CollisionAreas.First(area => area.Name == "Dock");
-            dockArea.Fixture.OnSeparation += OnSeparationHandler;
+            if (dockArea.Fixture != null) dockArea.Fixture.OnSeparation += OnSeparationHandler;
         }
 
         public override void Update()

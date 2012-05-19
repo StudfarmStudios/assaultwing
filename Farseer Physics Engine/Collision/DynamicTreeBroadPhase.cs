@@ -24,6 +24,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
 
@@ -258,6 +259,11 @@ namespace FarseerPhysics.Collision
         public void TouchProxy(int proxyId)
         {
             BufferMove(proxyId);
+        }
+
+        public void GetSpans(ref List<AABB> spans)
+        {
+            throw new NotImplementedException("DynamicTreeBroadPhase.GetSpans");
         }
 
         #endregion

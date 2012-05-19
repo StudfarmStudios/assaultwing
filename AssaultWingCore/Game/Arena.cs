@@ -610,6 +610,19 @@ namespace AW2.Game
             }
         }
 
+        public void DebugDrawBroadPhase(Matrix view, Matrix projection)
+        {
+            var spans = new List<AABB>();
+            _world.ContactManager.BroadPhase.GetSpans(ref spans);
+            foreach (var aabb in spans)
+                Graphics3D.DebugDrawPolyline(view, projection, Matrix.Identity,
+                    aabb.LowerBound / AWMathHelper.FARSEER_SCALE,
+                    new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y) / AWMathHelper.FARSEER_SCALE,
+                    aabb.UpperBound / AWMathHelper.FARSEER_SCALE,
+                    new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y) / AWMathHelper.FARSEER_SCALE,
+                    aabb.LowerBound / AWMathHelper.FARSEER_SCALE);
+        }
+
         private void GobAddedHandler(Gob gob)
         {
             Prepare(gob);

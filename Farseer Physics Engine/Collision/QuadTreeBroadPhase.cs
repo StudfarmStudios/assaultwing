@@ -191,6 +191,12 @@ public class QuadTreeBroadPhase : IBroadPhase
         _quadTreeStatic.RayCast(TransformRayCallback(callback), ref input);
     }
 
+    public void GetSpans(ref List<AABB> spans)
+    {
+        _quadTreeNonstatic.GetAllSpansR(ref spans);
+        _quadTreeStatic.GetAllSpansR(ref spans);
+    }
+
     #endregion
 
     private void Query(Func<int, bool> callback, ref AABB query, bool includeStatic)

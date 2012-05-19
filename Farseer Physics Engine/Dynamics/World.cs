@@ -831,7 +831,7 @@ namespace FarseerPhysics.Dynamics
                                                           return callback(fixture, point, output.Normal, fraction);
                                                       }
 
-                                                      return input.MaxFraction;
+                                                      return rayCastInput.MaxFraction;
                                                   }, ref input);
         }
 

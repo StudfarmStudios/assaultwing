@@ -230,7 +230,7 @@ public class QuadTree<T>
                 maxFraction = value;
                 p2 = p1 + (input.Point2 - input.Point1) * maxFraction; //update segment endpoint
             }
-            if (IsPartitioned)
+            if (qt.IsPartitioned)
                 foreach (QuadTree<T> st in qt.SubTrees)
                     stack.Push(st);
         }

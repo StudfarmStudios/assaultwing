@@ -263,7 +263,7 @@ namespace FarseerPhysics.Collision
 
         public void GetSpans(ref List<Tuple<AABB, int>> spansAndElementCounts)
         {
-            throw new NotImplementedException("DynamicTreeBroadPhase.GetSpans");
+            _tree.GetSpans(ref spansAndElementCounts);
         }
 
         #endregion

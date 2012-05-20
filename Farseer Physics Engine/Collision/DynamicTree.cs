@@ -392,6 +392,24 @@ namespace FarseerPhysics.Collision
             }
         }
 
+        public void GetSpans(ref List<Tuple<AABB, int>> spansAndElementCounts)
+        {
+            _stack.Clear();
+            _stack.Push(_root);
+            while (_stack.Count > 0)
+            {
+                int nodeId = _stack.Pop();
+                if (nodeId == NullNode) continue;
+                var node = _nodes[nodeId];
+                spansAndElementCounts.Add(Tuple.Create(node.AABB, node.LeafCount));
+                if (!node.IsLeaf())
+                {
+                    _stack.Push(node.Child1);
+                    _stack.Push(node.Child2);
+                }
+            }
+        }
+
         private int CountLeaves(int nodeId)
         {
             if (nodeId == NullNode)

@@ -241,7 +241,7 @@ namespace FarseerPhysics.Dynamics
             : this()
         {
             Gravity = gravity;
-            ContactManager = new ContactManager(new QuadTreeBroadPhase(span));
+            ContactManager = new ContactManager(new LooseQuadTreeBroadPhase(span));
         }
 
         /// <summary>

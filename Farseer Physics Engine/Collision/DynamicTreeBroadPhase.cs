@@ -78,11 +78,32 @@ namespace FarseerPhysics.Collision
         private int _proxyCount;
         private Func<int, bool> _queryCallback;
         private int _queryProxyId;
-        private DynamicTree<FixtureProxy> _tree = new DynamicTree<FixtureProxy>();
+        private DynamicTree<FixtureProxy> _treeNonstatic = new DynamicTree<FixtureProxy>();
+        private DynamicTree<FixtureProxy> _treeStatic = new DynamicTree<FixtureProxy>();
+
+        private static bool IsStaticProxyID(int proxyID)
+        {
+            return (proxyID & 1) == 1;
+        }
+
+        private static int GetPlainProxyID(int proxyID)
+        {
+            return proxyID >> 1;
+        }
+
+        private static int GetProxyID(int plainProxyID, bool isStatic)
+        {
+            return isStatic ? (plainProxyID << 1) | 1 : (plainProxyID << 1);
+        }
+
+        private DynamicTree<FixtureProxy> GetTree(int proxyID)
+        {
+            return IsStaticProxyID(proxyID) ? _treeStatic : _treeNonstatic;
+        }
 
         public DynamicTreeBroadPhase()
         {
-            _queryCallback = new Func<int, bool>(QueryCallback);
+            _queryCallback = QueryCallback;
 
             _pairCapacity = 16;
             _pairBuffer = new Pair[_pairCapacity];
@@ -111,7 +132,8 @@ namespace FarseerPhysics.Collision
         /// <returns></returns>
         public int AddProxy(ref FixtureProxy proxy)
         {
-            int proxyId = _tree.AddProxy(ref proxy.AABB, proxy);
+            var tree = proxy.IsStatic ? _treeStatic : _treeNonstatic;
+            int proxyId = GetProxyID(tree.AddProxy(ref proxy.AABB, proxy), proxy.IsStatic);
             ++_proxyCount;
             BufferMove(proxyId);
             return proxyId;
@@ -125,12 +147,12 @@ namespace FarseerPhysics.Collision
         {
             UnBufferMove(proxyId);
             --_proxyCount;
-            _tree.RemoveProxy(proxyId);
+            GetTree(proxyId).RemoveProxy(GetPlainProxyID(proxyId));
         }
 
         public void MoveProxy(int proxyId, ref AABB aabb, Vector2 displacement)
         {
-            bool buffer = _tree.MoveProxy(proxyId, ref aabb, displacement);
+            bool buffer = GetTree(proxyId).MoveProxy(GetPlainProxyID(proxyId), ref aabb, displacement);
             if (buffer)
             {
                 BufferMove(proxyId);
@@ -144,7 +166,7 @@ namespace FarseerPhysics.Collision
         /// <param name="aabb">The aabb.</param>
         public void GetFatAABB(int proxyId, out AABB aabb)
         {
-            _tree.GetFatAABB(proxyId, out aabb);
+            GetTree(proxyId).GetFatAABB(GetPlainProxyID(proxyId), out aabb);
         }
 
         /// <summary>
@@ -154,7 +176,7 @@ namespace FarseerPhysics.Collision
         /// <returns></returns>
         public FixtureProxy GetProxy(int proxyId)
         {
-            return _tree.GetUserData(proxyId);
+            return GetTree(proxyId).GetUserData(GetPlainProxyID(proxyId));
         }
 
         /// <summary>
@@ -166,8 +188,8 @@ namespace FarseerPhysics.Collision
         public bool TestOverlap(int proxyIdA, int proxyIdB)
         {
             AABB aabbA, aabbB;
-            _tree.GetFatAABB(proxyIdA, out aabbA);
-            _tree.GetFatAABB(proxyIdB, out aabbB);
+            GetTree(proxyIdA).GetFatAABB(GetPlainProxyID(proxyIdA), out aabbA);
+            GetTree(proxyIdB).GetFatAABB(GetPlainProxyID(proxyIdB), out aabbB);
             return AABB.TestOverlap(ref aabbA, ref aabbB);
         }
 
@@ -192,10 +214,11 @@ namespace FarseerPhysics.Collision
                 // We have to query the tree with the fat AABB so that
                 // we don't fail to create a pair that may touch later.
                 AABB fatAABB;
-                _tree.GetFatAABB(_queryProxyId, out fatAABB);
+                GetTree(_queryProxyId).GetFatAABB(GetPlainProxyID(_queryProxyId), out fatAABB);
 
                 // Query tree, create pairs and add them pair buffer.
-                _tree.Query(_queryCallback, ref fatAABB);
+                _treeNonstatic.Query(plainProxyID => _queryCallback(GetProxyID(plainProxyID, isStatic: false)), ref fatAABB);
+                if (!IsStaticProxyID(_queryProxyId)) _treeStatic.Query(plainProxyID => _queryCallback(GetProxyID(plainProxyID, isStatic: true)), ref fatAABB);
             }
 
             // Reset move buffer
@@ -209,8 +232,8 @@ namespace FarseerPhysics.Collision
             while (i < _pairCount)
             {
                 Pair primaryPair = _pairBuffer[i];
-                FixtureProxy userDataA = _tree.GetUserData(primaryPair.ProxyIdA);
-                FixtureProxy userDataB = _tree.GetUserData(primaryPair.ProxyIdB);
+                FixtureProxy userDataA = GetTree(primaryPair.ProxyIdA).GetUserData(GetPlainProxyID(primaryPair.ProxyIdA));
+                FixtureProxy userDataB = GetTree(primaryPair.ProxyIdB).GetUserData(GetPlainProxyID(primaryPair.ProxyIdB));
 
                 callback(ref userDataA, ref userDataB);
                 ++i;
@@ -227,8 +250,8 @@ namespace FarseerPhysics.Collision
                 }
             }
 
-            // Try to keep the tree balanced.
-            _tree.Rebalance(4);
+            // Try to keep the nonstatic tree balanced. The static tree shouldn't change, so don't balance it.
+            _treeNonstatic.Rebalance(4);
         }
 
         /// <summary>
@@ -239,7 +262,8 @@ namespace FarseerPhysics.Collision
         /// <param name="aabb">The aabb.</param>
         public void Query(Func<int, bool> callback, ref AABB aabb)
         {
-            _tree.Query(callback, ref aabb);
+            _treeNonstatic.Query(plainProxyID => callback(GetProxyID(plainProxyID, isStatic: false)), ref aabb);
+            _treeStatic.Query(plainProxyID => callback(GetProxyID(plainProxyID, isStatic: true)), ref aabb);
         }
 
         /// <summary>
@@ -253,7 +277,8 @@ namespace FarseerPhysics.Collision
         /// <param name="input">The ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).</param>
         public void RayCast(Func<RayCastInput, int, float> callback, ref RayCastInput input)
         {
-            _tree.RayCast(callback, ref input);
+            _treeNonstatic.RayCast((rayCastInput, plainProxyID) => callback(rayCastInput, GetProxyID(plainProxyID, isStatic: false)), ref input);
+            _treeStatic.RayCast((rayCastInput, plainProxyID) => callback(rayCastInput, GetProxyID(plainProxyID, isStatic: true)), ref input);
         }
 
         public void TouchProxy(int proxyId)
@@ -263,7 +288,8 @@ namespace FarseerPhysics.Collision
 
         public void GetSpans(ref List<Tuple<AABB, int>> spansAndElementCounts)
         {
-            _tree.GetSpans(ref spansAndElementCounts);
+            _treeNonstatic.GetSpans(ref spansAndElementCounts);
+            _treeStatic.GetSpans(ref spansAndElementCounts);
         }
 
         #endregion
@@ -274,7 +300,7 @@ namespace FarseerPhysics.Collision
         /// <returns></returns>
         public int ComputeHeight()
         {
-            return _tree.ComputeHeight();
+            return Math.Max(_treeNonstatic.ComputeHeight(), _treeStatic.ComputeHeight());
         }
 
         private void BufferMove(int proxyId)

@@ -22,7 +22,7 @@ public class LooseQuadTree<T>
     public int MaxBucket;
     public int MaxDepth;
     public List<LooseElement<T>> Nodes;
-    public AABB Span;
+    public AABB Span; // fat span
     public LooseQuadTree<T>[] SubTrees;
 
     public LooseQuadTree(AABB span, int maxbucket, int maxdepth)
@@ -47,11 +47,11 @@ public class LooseQuadTree<T>
     /// <returns></returns>
     private int Partition(AABB span, AABB test)
     {
-        if (span.Q1.Contains(ref test)) return 1;
-        if (span.Q2.Contains(ref test)) return 2;
-        if (span.Q3.Contains(ref test)) return 3;
-        if (span.Q4.Contains(ref test)) return 4;
-
+        var thinSpan = span.Thinned;
+        if (thinSpan.Q1.Fattened.Contains(ref test)) return 1;
+        if (thinSpan.Q2.Fattened.Contains(ref test)) return 2;
+        if (thinSpan.Q3.Fattened.Contains(ref test)) return 3;
+        if (thinSpan.Q4.Fattened.Contains(ref test)) return 4;
         return 0;
     }
 
@@ -67,10 +67,11 @@ public class LooseQuadTree<T>
                 Nodes.Add(node); //treat new node just like other nodes for partitioning
 
                 SubTrees = new LooseQuadTree<T>[4];
-                SubTrees[0] = new LooseQuadTree<T>(Span.Q1, MaxBucket, MaxDepth - 1);
-                SubTrees[1] = new LooseQuadTree<T>(Span.Q2, MaxBucket, MaxDepth - 1);
-                SubTrees[2] = new LooseQuadTree<T>(Span.Q3, MaxBucket, MaxDepth - 1);
-                SubTrees[3] = new LooseQuadTree<T>(Span.Q4, MaxBucket, MaxDepth - 1);
+                var thinSpan = Span.Thinned;
+                SubTrees[0] = new LooseQuadTree<T>(thinSpan.Q1.Fattened, MaxBucket, MaxDepth - 1);
+                SubTrees[1] = new LooseQuadTree<T>(thinSpan.Q2.Fattened, MaxBucket, MaxDepth - 1);
+                SubTrees[2] = new LooseQuadTree<T>(thinSpan.Q3.Fattened, MaxBucket, MaxDepth - 1);
+                SubTrees[3] = new LooseQuadTree<T>(thinSpan.Q4.Fattened, MaxBucket, MaxDepth - 1);
 
                 List<LooseElement<T>> remNodes = new List<LooseElement<T>>();
                 //nodes that are not fully contained by any quadrant

@@ -125,6 +125,17 @@ namespace FarseerPhysics
         public const float AABBMultiplier = 2.0f;
 
         /// <summary>
+        /// Ratio of quad tree surplus extents to the usual quad tree extents.
+        /// Set to zero for the common quad tree where subtrees don't overlap.
+        /// Set to one to double subtree extents in each dimension.
+        /// </summary>
+        public const float QuadTreeLooseness = 0.5f;
+        public const float QuadTreeFatteningSmall = QuadTreeLooseness;
+        public const float QuadTreeFatteningLarge = 1 + QuadTreeLooseness;
+        public const float QuadTreeThinningSmall = QuadTreeLooseness / (1 + 2 * QuadTreeLooseness);
+        public const float QuadTreeThinningLarge = (1 + QuadTreeLooseness) / (1 + 2 * QuadTreeLooseness);
+
+        /// <summary>
         /// A small length used as a collision and constraint tolerance. Usually it is
         /// chosen to be numerically significant, but visually insignificant.
         /// </summary>

@@ -310,7 +310,6 @@ namespace FarseerPhysics.Collision
             get
             {
                 return new AABB(new Vector2(LowerBound.X, Center.Y), new Vector2(Center.X, UpperBound.Y));
-                ;
             }
         }
 
@@ -322,6 +321,26 @@ namespace FarseerPhysics.Collision
         public AABB Q4
         {
             get { return new AABB(new Vector2(Center.X, LowerBound.Y), new Vector2(UpperBound.X, Center.Y)); }
+        }
+
+        public AABB Fattened
+        {
+            get
+            {
+                var fatLB = Settings.QuadTreeFatteningLarge * LowerBound - Settings.QuadTreeFatteningSmall * UpperBound;
+                var fatUB = Settings.QuadTreeFatteningLarge * UpperBound - Settings.QuadTreeFatteningSmall * LowerBound;
+                return new AABB(fatLB, fatUB);
+            }
+        }
+
+        public AABB Thinned
+        {
+            get
+            {
+                var thinLB = Settings.QuadTreeThinningLarge * LowerBound + Settings.QuadTreeThinningSmall * UpperBound;
+                var thinUB = Settings.QuadTreeThinningLarge * UpperBound + Settings.QuadTreeThinningSmall * LowerBound;
+                return new AABB(thinLB, thinUB);
+            }
         }
 
         public Vector2[] GetVertices()

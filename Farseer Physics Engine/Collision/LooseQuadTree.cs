@@ -267,7 +267,7 @@ public class LooseQuadTree<T>
 
     public void GetAllSpansR(ref List<Tuple<AABB, int>> spansAndElementCounts)
     {
-        spansAndElementCounts.Add(Tuple.Create(Span, Nodes.Count));
+        spansAndElementCounts.Add(Tuple.Create(Span.Thinned, Nodes.Count));
         if (IsPartitioned)
             foreach (var st in SubTrees) st.GetAllSpansR(ref spansAndElementCounts);
     }

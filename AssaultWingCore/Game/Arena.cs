@@ -623,7 +623,8 @@ namespace AW2.Game
             Func<AABB, Vector2[]> getVertices = aabb =>
             {
                 var awCenter = aabb.Center / AWMathHelper.FARSEER_SCALE;
-                var reducedExtents = aabb.Extents * (0.95f / AWMathHelper.FARSEER_SCALE);
+                var extents = aabb.Extents;
+                var reducedExtents = extents / AWMathHelper.FARSEER_SCALE - new Vector2((float)Math.Log(extents.X + 1, 1.5), (float)Math.Log(extents.Y + 1, 1.5));
                 return new[]
                 {
                     awCenter - reducedExtents,

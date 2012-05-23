@@ -127,7 +127,7 @@ namespace FarseerPhysics
         /// <summary>
         /// Ratio of quad tree surplus extents to the usual quad tree extents.
         /// Set to zero for the common quad tree where subtrees don't overlap.
-        /// Set to one to double subtree extents in each dimension.
+        /// Set to one to triple subtree extents in each dimension.
         /// </summary>
         public const float QuadTreeLooseness = 0.5f;
         public const float QuadTreeFatteningSmall = QuadTreeLooseness;

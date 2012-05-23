@@ -522,8 +522,8 @@ namespace AW2.Game
 
         private void InitializeWorld()
         {
-            var arenaBounds = AWMathHelper.CreateAABB(Vector2.Zero, Dimensions);
-            _world = new World(AWMathHelper.FARSEER_SCALE * _gravity, arenaBounds);
+            var worldSpan = AWMathHelper.CreateAABB(BoundedAreaExtreme.Min, BoundedAreaExtreme.Max);
+            _world = new World(AWMathHelper.FARSEER_SCALE * _gravity, worldSpan);
             _world.ContactManager.PostSolve += PostSolveHandler;
             _world.ContactManager.BeginContact += BeginContactHandler;
         }

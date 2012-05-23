@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CommandLineOptionsTest.cs" />
+    <Compile Include="FarseerPhysics\Collision\AABBTest.cs" />
     <Compile Include="Game\GobTest.cs" />
     <Compile Include="Game\GobUtils\CoronerTest.cs" />
     <Compile Include="Game\GobUtils\DamageInfoTest.cs" />
@@ -102,6 +103,10 @@
     <ProjectReference Include="..\AssaultWing\AssaultWing.csproj">
       <Project>{930EB940-D07F-408D-A5C6-A1C8D49636CB}</Project>
       <Name>AssaultWing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Farseer Physics Engine\Farseer Physics XNA.csproj">
+      <Project>{0A850700-1ABB-4288-A391-6726B90EBEB9}</Project>
+      <Name>Farseer Physics XNA</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

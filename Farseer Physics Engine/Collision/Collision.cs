@@ -405,6 +405,20 @@ namespace FarseerPhysics.Collision
         }
 
         /// <summary>
+        /// Returns the distance the provided AABB can move to any direction while staying contained in this AABB.
+        /// Negative distance means the provided AABB is not contained in this AABB.
+        /// </summary>
+        public float ContainmentDistance(ref AABB aabb)
+        {
+            float result = float.MaxValue;
+            result = Math.Min(result, aabb.LowerBound.X - LowerBound.X);
+            result = Math.Min(result, aabb.LowerBound.Y - LowerBound.Y);
+            result = Math.Min(result, UpperBound.X - aabb.UpperBound.X);
+            result = Math.Min(result, UpperBound.Y - aabb.UpperBound.Y);
+            return result;
+        }
+
+        /// <summary>
         /// Determines whether the AAABB contains the specified point.
         /// </summary>
         /// <param name="point">The point.</param>
@@ -541,6 +555,11 @@ namespace FarseerPhysics.Collision
             output.Fraction = tmin;
             output.Normal = normal;
             return true;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}-{1}", LowerBound, UpperBound);
         }
     }
 

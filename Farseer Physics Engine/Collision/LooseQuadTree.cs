@@ -40,19 +40,39 @@ public class LooseQuadTree<T>
     }
 
     /// <summary>
-    /// returns the quadrant of span that entirely contains test. if none, return 0.
+    /// Returns the most suitable quadrant of span that entirely contains test. If none, return 0.
     /// </summary>
-    /// <param name="span"></param>
-    /// <param name="test"></param>
-    /// <returns></returns>
     private int Partition(AABB span, AABB test)
     {
         var thinSpan = span.Thinned;
-        if (thinSpan.Q1.Fattened.Contains(ref test)) return 1;
-        if (thinSpan.Q2.Fattened.Contains(ref test)) return 2;
-        if (thinSpan.Q3.Fattened.Contains(ref test)) return 3;
-        if (thinSpan.Q4.Fattened.Contains(ref test)) return 4;
-        return 0;
+        var bestContainment = float.MinValue;
+        var bestIndex = -1;
+        float distance = float.MinValue;
+        distance = thinSpan.Q1.Fattened.ContainmentDistance(ref test);
+        if (distance > bestContainment)
+        {
+            bestContainment = distance;
+            bestIndex = 1;
+        }
+        distance = thinSpan.Q2.Fattened.ContainmentDistance(ref test);
+        if (distance > bestContainment)
+        {
+            bestContainment = distance;
+            bestIndex = 2;
+        }
+        distance = thinSpan.Q3.Fattened.ContainmentDistance(ref test);
+        if (distance > bestContainment)
+        {
+            bestContainment = distance;
+            bestIndex = 3;
+        }
+        distance = thinSpan.Q4.Fattened.ContainmentDistance(ref test);
+        if (distance > bestContainment)
+        {
+            bestContainment = distance;
+            bestIndex = 4;
+        }
+        return bestContainment >= 0 ? bestIndex : 0;
     }
 
     public void AddNode(LooseElement<T> node)

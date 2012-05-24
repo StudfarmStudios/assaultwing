@@ -20,11 +20,12 @@ public class QuadTreeBroadPhase : IBroadPhase
     /// <summary>
     /// Creates a new quad tree broadphase with the specified span.
     /// </summary>
-    /// <param name="span">the maximum span of the tree (world size)</param>
+    /// <param name="span">world size</param>
     public QuadTreeBroadPhase(AABB span)
     {
-        _quadTreeNonstatic = new QuadTree<FixtureProxy>(span, 5, 10);
-        _quadTreeStatic = new QuadTree<FixtureProxy>(span, 5, 10);
+        var fatSpan = span.Fattened;
+        _quadTreeNonstatic = new QuadTree<FixtureProxy>(fatSpan, 5, 10);
+        _quadTreeStatic = new QuadTree<FixtureProxy>(fatSpan, 5, 10);
         _idRegister = new Dictionary<int, Element<FixtureProxy>>();
         _moveBuffer = new List<Element<FixtureProxy>>();
         _pairBuffer = new List<Pair>();

@@ -150,14 +150,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collision\Collision.cs" />
-    <Compile Include="Collision\LooseQuadTreeBroadPhase.cs" />
-    <Compile Include="Collision\LooseQuadTree.cs" />
+    <Compile Include="Collision\QuadTreeBroadPhase.cs" />
+    <Compile Include="Collision\QuadTree.cs" />
     <Compile Include="Collision\Distance.cs" />
     <Compile Include="Collision\DynamicTree.cs" />
     <Compile Include="Collision\DynamicTreeBroadPhase.cs" />
     <Compile Include="Collision\IBroadPhase.cs" />
-    <Compile Include="Collision\QuadTree.cs" />
-    <Compile Include="Collision\QuadTreeBroadPhase.cs" />
     <Compile Include="Collision\Shapes\CircleShape.cs" />
     <Compile Include="Collision\Shapes\EdgeShape.cs" />
     <Compile Include="Collision\Shapes\LoopShape.cs" />

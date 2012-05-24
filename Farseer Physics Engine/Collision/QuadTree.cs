@@ -22,7 +22,7 @@ public class QuadTree<T>
     public int MaxBucket;
     public int MaxDepth;
     public List<Element<T>> Nodes;
-    public AABB Span;
+    public AABB Span; // fat span
     public QuadTree<T>[] SubTrees;
 
     public QuadTree(AABB span, int maxbucket, int maxdepth)
@@ -40,19 +40,39 @@ public class QuadTree<T>
     }
 
     /// <summary>
-    /// returns the quadrant of span that entirely contains test. if none, return 0.
+    /// Returns the most suitable quadrant of span that entirely contains test. If none, return 0.
     /// </summary>
-    /// <param name="span"></param>
-    /// <param name="test"></param>
-    /// <returns></returns>
     private int Partition(AABB span, AABB test)
     {
-        if (span.Q1.Contains(ref test)) return 1;
-        if (span.Q2.Contains(ref test)) return 2;
-        if (span.Q3.Contains(ref test)) return 3;
-        if (span.Q4.Contains(ref test)) return 4;
-
-        return 0;
+        var thinSpan = span.Thinned;
+        var bestContainment = float.MinValue;
+        var bestIndex = -1;
+        float distance = float.MinValue;
+        distance = thinSpan.Q1.Fattened.ContainmentDistance(ref test);
+        if (distance > bestContainment)
+        {
+            bestContainment = distance;
+            bestIndex = 1;
+        }
+        distance = thinSpan.Q2.Fattened.ContainmentDistance(ref test);
+        if (distance > bestContainment)
+        {
+            bestContainment = distance;
+            bestIndex = 2;
+        }
+        distance = thinSpan.Q3.Fattened.ContainmentDistance(ref test);
+        if (distance > bestContainment)
+        {
+            bestContainment = distance;
+            bestIndex = 3;
+        }
+        distance = thinSpan.Q4.Fattened.ContainmentDistance(ref test);
+        if (distance > bestContainment)
+        {
+            bestContainment = distance;
+            bestIndex = 4;
+        }
+        return bestContainment >= 0 ? bestIndex : 0;
     }
 
     public void AddNode(Element<T> node)
@@ -67,10 +87,11 @@ public class QuadTree<T>
                 Nodes.Add(node); //treat new node just like other nodes for partitioning
 
                 SubTrees = new QuadTree<T>[4];
-                SubTrees[0] = new QuadTree<T>(Span.Q1, MaxBucket, MaxDepth - 1);
-                SubTrees[1] = new QuadTree<T>(Span.Q2, MaxBucket, MaxDepth - 1);
-                SubTrees[2] = new QuadTree<T>(Span.Q3, MaxBucket, MaxDepth - 1);
-                SubTrees[3] = new QuadTree<T>(Span.Q4, MaxBucket, MaxDepth - 1);
+                var thinSpan = Span.Thinned;
+                SubTrees[0] = new QuadTree<T>(thinSpan.Q1.Fattened, MaxBucket, MaxDepth - 1);
+                SubTrees[1] = new QuadTree<T>(thinSpan.Q2.Fattened, MaxBucket, MaxDepth - 1);
+                SubTrees[2] = new QuadTree<T>(thinSpan.Q3.Fattened, MaxBucket, MaxDepth - 1);
+                SubTrees[3] = new QuadTree<T>(thinSpan.Q4.Fattened, MaxBucket, MaxDepth - 1);
 
                 List<Element<T>> remNodes = new List<Element<T>>();
                 //nodes that are not fully contained by any quadrant
@@ -246,7 +267,7 @@ public class QuadTree<T>
 
     public void GetAllSpansR(ref List<Tuple<AABB, int>> spansAndElementCounts)
     {
-        spansAndElementCounts.Add(Tuple.Create(Span, Nodes.Count));
+        spansAndElementCounts.Add(Tuple.Create(Span.Thinned, Nodes.Count));
         if (IsPartitioned)
             foreach (var st in SubTrees) st.GetAllSpansR(ref spansAndElementCounts);
     }

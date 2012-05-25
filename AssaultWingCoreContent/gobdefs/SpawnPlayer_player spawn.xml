@@ -2,7 +2,7 @@
 <GobType type="AW2.Game.Gobs.SpawnPlayer">
   <typeName>player spawn</typeName>
    <networkUpdatePeriod>2</networkUpdatePeriod>
-  <movable>false</movable>
+  <moveType>Static</moveType>
   <birthGobTypes>
   </birthGobTypes>
   <deathGobTypes>

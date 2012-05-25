@@ -104,12 +104,12 @@ namespace AW2.Game.Weapons
             if (Owner == null) return;
             Gob.CreateGob<Gobs.Peng>(Owner.Game, (CanonicalString)"blink fail", peng =>
             {
-                var pengMoveSpeed = 2 * _blinkMoveSpeed;
+                var pengMoveSpeed = 2 * _blinkMoveSpeed; // FIXME !!! May go too fast for Farseer
                 var pengMove = pengMoveSpeed * Vector2.Normalize(GetBlinkTarget() - Owner.Pos);
                 peng.ResetPos(Owner.Pos, pengMove, Owner.Rotation);
                 var flyTime = _blinkDistance / pengMoveSpeed;
                 peng.Emitter.NumberToCreate = (int)Math.Round(flyTime * peng.Emitter.EmissionFrequency);
-                peng.IsMovable = true;
+                peng.MoveType = MoveType.Kinematic;
                 peng.VisibilityLimitedTo = PlayerOwner;
                 Owner.Arena.Gobs.Add(peng);
             });

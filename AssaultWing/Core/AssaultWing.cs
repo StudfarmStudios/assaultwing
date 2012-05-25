@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Core.GameComponents;
 using AW2.Core.OverlayComponents;
 using AW2.Game;
+using AW2.Game.GobUtils;
+using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Menu;
@@ -14,7 +16,6 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
-using AW2.Graphics;
 
 namespace AW2.Core
 {
@@ -618,7 +619,7 @@ namespace AW2.Core
                 if (!gob.ForcedNetworkUpdate)
                 {
                     if (!gob.IsRelevant) continue;
-                    if (!gob.Movable) continue;
+                    if (gob.MoveType == MoveType.Static) continue;
                     if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
                     if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
                 }

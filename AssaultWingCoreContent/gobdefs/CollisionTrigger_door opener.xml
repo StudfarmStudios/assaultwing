@@ -28,5 +28,5 @@
   <layerPreference>Front</layerPreference>
   <birthGobTypes/>
   <maxDamage>100</maxDamage>
-  <movable>false</movable>
+  <moveType>Static</moveType>
 </GobType>

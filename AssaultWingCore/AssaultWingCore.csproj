@@ -161,6 +161,7 @@
     <Compile Include="Game\GobUtils\GobHelper.cs" />
     <Compile Include="Game\GobUtils\GobPropertyDescriptor.cs" />
     <Compile Include="Game\GobUtils\MinionDeathHandler.cs" />
+    <Compile Include="Game\GobUtils\MoveType.cs" />
     <Compile Include="Game\GobUtils\RadialFlow.cs" />
     <Compile Include="Game\GobUtils\ShipDevice.cs" />
     <Compile Include="Game\GobUtils\ShipDeviceInfo.cs" />

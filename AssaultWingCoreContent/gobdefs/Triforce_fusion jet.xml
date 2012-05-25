@@ -7,7 +7,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Overlay</layerPreference>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <mass>1</mass>
   <modelName>dummymodel</modelName>
   <scale>1.0</scale>

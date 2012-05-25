@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FarseerPhysics.Dynamics;
 using AW2.Game.Collisions;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
@@ -57,7 +58,7 @@ namespace AW2.Game.Gobs
         /// This constructor is only for serialisation.
         public Dock()
         {
-            Movable = false;
+            MoveType = MoveType.Static;
             _repairSpeed = -10;
             _weapon1ChargeSpeed = 100;
             _weapon2ChargeSpeed = 100;

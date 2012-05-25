@@ -53,7 +53,7 @@
     <type>Transparent</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <modelName>bugger</modelName>
   <scale>0.064</scale>
   <birthGobTypes>

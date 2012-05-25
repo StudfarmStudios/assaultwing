@@ -24,7 +24,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <maxDamage>100</maxDamage>
   <birthGobTypes>
   </birthGobTypes>

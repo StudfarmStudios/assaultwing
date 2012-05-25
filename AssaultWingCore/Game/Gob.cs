@@ -204,11 +204,10 @@ namespace AW2.Game
         private int _disabledCount;
 
         /// <summary>
-        /// True iff the gob moves around by the laws of physics.
+        /// The kind of movement of the gob. Not to be changed after the gob is added to an <see cref="Arena"/>.
         /// </summary>
-        /// Subclasses should set this according to their needs.
         [TypeParameter]
-        private bool _movable;
+        private MoveType _moveType;
 
         /// <summary>
         /// Preferred maximum time between the gob's state updates
@@ -602,9 +601,9 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// True iff the gob moves around by the laws of physics.
+        /// The kind of movement of the gob. Not to be changed after the gob is added to an <see cref="Arena"/>.
         /// </summary>
-        public bool Movable { get { return _movable; } protected set { _movable = value; } }
+        public MoveType MoveType { get { return _moveType; } set { _moveType = value; } }
 
         /// <summary>
         /// Does arena gravity affect the gob. Subclasses should set this according to their needs.
@@ -681,7 +680,7 @@ namespace AW2.Game
             _deathGobTypes = new CanonicalString[0];
             _collisionAreas = new CollisionArea[0];
             _maxDamage = 100;
-            _movable = true;
+            _moveType = MoveType.Dynamic;
         }
 
         /// <summary>

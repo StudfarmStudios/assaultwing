@@ -122,7 +122,7 @@ namespace AW2.Game.Collisions
             var irreversibleSideEffects = _area1.Owner.CollideIrreversible(_area1, _area2) | _area2.Owner.CollideIrreversible(_area2, _area1);
             var game = _area1.Owner.Game;
             var sound = GetCollisionSound();
-            var soundPos = _area1.Owner.Movable ? _area1.Owner : _area2.Owner;
+            var soundPos = _area1.Owner.MoveType == GobUtils.MoveType.Dynamic ? _area1.Owner : _area2.Owner;
             if (sound != CollisionSoundType.None) game.SoundEngine.PlaySound(sound.ToString(), soundPos);
             IrreversibleSideEffectsPerformed = irreversibleSideEffects || sound != CollisionSoundType.None;
         }
@@ -139,10 +139,8 @@ namespace AW2.Game.Collisions
             var gob2MakesSound = gob2HitHard && gob2 is Gobs.Ship;
             if (gob1MakesSound && gob2MakesSound) return CollisionSoundType.ShipCollision;
             if (gob1MakesSound || gob2MakesSound)
-            {
-                if (gob1.Movable && gob2.Movable) return CollisionSoundType.ShipCollision;
-                return CollisionSoundType.Collision;
-            }
+                return gob1.MoveType == GobUtils.MoveType.Dynamic && gob2.MoveType == GobUtils.MoveType.Dynamic
+                    ? CollisionSoundType.ShipCollision :  CollisionSoundType.Collision;
             return CollisionSoundType.None;
         }
 

@@ -23,7 +23,7 @@
     <Item>clustermine</Item>
   </bulletModelNames>
   <modelName>dummymodel</modelName>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <maxDamage>1000</maxDamage>
   <birthGobTypes>
     <Item>mine warning</Item>

@@ -14,5 +14,5 @@
   <layerPreference>Front</layerPreference>
   <birthGobTypes/>
   <maxDamage>100</maxDamage>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
 </GobType>

@@ -23,7 +23,7 @@
     <Item>venom fragments</Item>
     <Item>venom explo</Item>
   </deathGobTypes>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <networkUpdatePeriod>0</networkUpdatePeriod>
   <thruster>
     <maxSpeed>0</maxSpeed>

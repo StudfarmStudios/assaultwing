@@ -13,7 +13,7 @@
   </drawMode2D>
   <bonusActionTypeName>full repair bonus action</bonusActionTypeName>
   <layerPreference>Front</layerPreference>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <birthGobTypes>
     <Item>bonus birth</Item>
     <Item>megabonus blink</Item>

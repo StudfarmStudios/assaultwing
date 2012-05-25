@@ -462,8 +462,11 @@ namespace AW2.Game
         private void Register(Gob gob)
         {
             var body = BodyFactory.CreateBody(_world, gob);
-            body.IsStatic = !gob.Movable;
-            body.IgnoreGravity = !gob.Gravitating || !gob.Movable;
+            body.BodyType =
+                gob.MoveType == MoveType.Static ? BodyType.Static :
+                gob.MoveType == MoveType.Kinematic ? BodyType.Kinematic :
+                BodyType.Dynamic;
+            body.IgnoreGravity = !gob.Gravitating || gob.MoveType != MoveType.Dynamic;
             gob.Body = body;
             foreach (var area in gob.CollisionAreas) area.Initialize(gob.Scale); // TODO !!! Get rid of Gob.Scale
             // Compute physical shape density from gob mass. This way bodies have inertia and

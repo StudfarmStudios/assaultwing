@@ -118,7 +118,7 @@ namespace AW2.Game.Gobs
             if (theirArea.Owner.Owner == Owner) return false;
             if (!theirArea.Owner.IsDamageable) return false;
             if (!theirArea.Type.IsPhysical()) return false;
-            if (theirArea.Owner.MaxDamageLevel <= 100 && theirArea.Owner.Movable) return false;
+            if (theirArea.Owner.MaxDamageLevel <= 100 && theirArea.Owner.MoveType == GobUtils.MoveType.Dynamic) return false;
             var hasHitSound = _hitSound != "";
             if (hasHitSound) Game.SoundEngine.PlaySound(_hitSound, this);
             var baseResult = base.CollideIrreversible(myArea, theirArea);

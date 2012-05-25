@@ -13,7 +13,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <movable>false</movable>
+  <moveType>Static</moveType>
   <maxDamage>1000</maxDamage>
   <birthGobTypes/>
   <deathGobTypes>

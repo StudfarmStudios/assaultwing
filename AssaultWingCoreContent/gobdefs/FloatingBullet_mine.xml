@@ -23,7 +23,7 @@
     <Item>mine</Item>
   </bulletModelNames>
   <modelName>dummymodel</modelName>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <maxDamage>500</maxDamage>
   <birthGobTypes>
     <Item>mine warning</Item>

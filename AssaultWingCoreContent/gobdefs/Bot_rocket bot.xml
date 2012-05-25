@@ -31,7 +31,7 @@
 
   <weaponName>bot rockets</weaponName>
   <modelName>bot</modelName>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <maxDamage>1700</maxDamage>
   <birthGobTypes>
     <Item>bot birth electric ball</Item>

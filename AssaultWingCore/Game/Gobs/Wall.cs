@@ -76,7 +76,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Wall()
         {
-            Movable = false;
+            MoveType = MoveType.Static;
             _destructible = true;
             Set3DModel(new[] 
                 {

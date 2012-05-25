@@ -14,7 +14,7 @@
     <Item>junk_falling_pipe</Item>
   </bulletModelNames>
   <modelName>dummymodel</modelName>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
     <type>None</type>

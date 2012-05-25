@@ -25,6 +25,14 @@ namespace AW2.Game.Gobs
         private static readonly TimeSpan MOVE_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(11);
         private static readonly TimeSpan AIM_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
         private const float FAN_ANGLE_SPEED_MAX = 30;
+        private const float FAN_ANGLE_SPEED_FADEOUT = 0.9873f; // slow down to 10 % in 180 updates (i.e. 3 seconds)
+        private const int WALL_SCAN_DIRS = 16;
+        private const int WALL_SCAN_DIR_ROTATION = 7;
+        private const float WALL_SCAN_RANGE = 100;
+        private const float WALL_THRUST_FADEOUT = 0.91f;
+        private const float WALL_THRUST_CUTOFF = 0.5f;
+
+        private static readonly Vector2[] g_wallScanUnits;
 
         [TypeParameter]
         private float _rotationSpeed; // radians/second
@@ -49,6 +57,9 @@ namespace AW2.Game.Gobs
         private TargetSelector _moveTargetSelector;
         private float _fanAngle; // in radians
         private float _fanAngleSpeed; // in radians/second
+        private int _wallScanDir;
+        private float _wallThrust;
+        private Vector2 _wallTripAccumulator;
 
         public override bool IsDamageable { get { return true; } }
         public CanonicalString WeaponName { get { return _weaponName; } }
@@ -61,6 +72,13 @@ namespace AW2.Game.Gobs
                 if (Game.NetworkMode == Core.NetworkMode.Server && Target != value) ForcedNetworkUpdate = true;
                 _targetProxy = value;
             }
+        }
+
+        static Bot()
+        {
+            g_wallScanUnits = Enumerable.Range(0, WALL_SCAN_DIRS)
+                .Select(dir => Vector2.UnitX.Rotate(dir * MathHelper.TwoPi / WALL_SCAN_DIRS))
+                .ToArray();
         }
 
         /// <summary>
@@ -197,28 +215,48 @@ namespace AW2.Game.Gobs
 
         private void MoveAround()
         {
-            if (Target == null || Target.IsHidden) return;
-            var trip = Vector2.Normalize(Target.Pos - Pos);
+            var targetThrust = GetTargetThrust();
+            var wallThrust = GetWallThrust();
+            var combinedThrust = CombineThrusts(targetThrust, wallThrust);
+            _thruster.Thrust(MathHelper.Clamp(combinedThrust.Length(), 0, 1), combinedThrust);
+        }
+
+        private Vector2 CombineThrusts(Vector2 targetThrust, Vector2 wallThrust)
+        {
+            // Avoiding walls has higher priority than reaching optimal shooting distance.
+            return wallThrust == Vector2.Zero
+                ? targetThrust
+                : wallThrust + targetThrust.ProjectOnto(wallThrust.Rotate90());
+        }
+
+        /// <summary>
+        /// Returns thrust direction vector with amplitude between 0 and 1 denoting thrust force.
+        /// </summary>
+        private Vector2 GetTargetThrust()
+        {
+            if (Target == null || Target.IsHidden || Target.Dead) return Vector2.Zero;
+            var trip = (Target.Pos - Pos).NormalizeOrZero();
             _thrustController.Compute();
             var proportionalThrust = -_thrustController.Output / _thrustController.OutputMaxAmplitude;
+            return proportionalThrust * trip;
+        }
 
-            // Avoid walls
-            var scanRange = 100;
-            var scanDirs = 5;
-            var navDirs =
-                from dir in Enumerable.Range(0, scanDirs)
-                let scanUnit = Vector2.UnitX.Rotate(Rotation + dir * MathHelper.TwoPi / scanDirs)
-                let distance = Arena.GetDistanceToClosest(Pos, Pos + scanRange * scanUnit, gob => !gob.Movable) // TODO !!! Support static body scan in Farseer
-                where distance.HasValue
-                select scanUnit;
-            if (navDirs.Any())
+        /// <summary>
+        /// Returns thrust direction vector with amplitude between 0 and 1 denoting thrust force.
+        /// </summary>
+        private Vector2 GetWallThrust()
+        {
+            _wallScanDir = (_wallScanDir + WALL_SCAN_DIR_ROTATION) % WALL_SCAN_DIRS;
+            var distance = Arena.GetDistanceToClosest(Pos, Pos + WALL_SCAN_RANGE * g_wallScanUnits[_wallScanDir], gob => !gob.Movable);
+            _wallTripAccumulator *= WALL_THRUST_FADEOUT;
+            _wallThrust *= WALL_THRUST_FADEOUT;
+            if (distance.HasValue)
             {
-                trip *= proportionalThrust * 0.5f; // Avoiding walls has higher priority than reaching shooting distance.
-                proportionalThrust = 1;
-                foreach (var dir in navDirs) trip -= dir;
+                _wallThrust = 1;
+                _wallTripAccumulator -= g_wallScanUnits[_wallScanDir];
             }
-
-            _thruster.Thrust(proportionalThrust, trip);
+            if (_wallThrust <= WALL_THRUST_CUTOFF) _wallThrust = 0;
+            return _wallThrust * _wallTripAccumulator.NormalizeOrZero();
         }
 
         private void Aim()
@@ -242,7 +280,7 @@ namespace AW2.Game.Gobs
         private void MoveFan()
         {
             _fanAngle += _fanAngleSpeed * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-            _fanAngleSpeed *= 0.9873f; // slow down to 10 % in 180 updates (i.e. 3 seconds)
+            _fanAngleSpeed *= FAN_ANGLE_SPEED_FADEOUT;
         }
     }
 }

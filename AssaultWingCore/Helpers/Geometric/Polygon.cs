@@ -73,6 +73,8 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         private FaceStrip[] _faceStrips;
 
+        public float Density { get; set; }
+
         /// <summary>
         /// Returns the vertices of the polygon.
         /// </summary>
@@ -92,6 +94,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public Polygon()
         {
+            Density = 1;
             _vertices = null;
         }
 
@@ -110,6 +113,7 @@ namespace AW2.Helpers.Geometric
             // is not needed.
             _vertices = (Vector2[])vertices.Clone();
 
+            Density = 1;
             _boundingBox = new Rectangle();
             _faceStrips = null;
             UpdateBoundingBox();
@@ -193,7 +197,7 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new PolygonShape(AWMathHelper.CreateVertices(Vertices), 1);
+            return new PolygonShape(AWMathHelper.CreateVertices(Vertices), Density);
         }
 
         #endregion IGeomPrimitive Members

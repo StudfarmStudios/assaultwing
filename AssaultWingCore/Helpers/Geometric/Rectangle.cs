@@ -13,14 +13,18 @@ namespace AW2.Helpers.Geometric
     /// <summary>
     /// An axis-aligned rectangle in two-dimensional space.
     /// </summary>
+    [LimitedSerialization]
     public class Rectangle : IGeomPrimitive
     {
+        public float Density { get; set; }
+
 #if TRUSTED_VISIBILITY_BREACH
-        [SerializedName("min")]
+        [TypeParameter, RuntimeState, SerializedName("min")]
         public Vector2 Min;
-        [SerializedName("max")]
+        [TypeParameter, RuntimeState, SerializedName("max")]
         public Vector2 Max;
 #else
+        [TypeParameter, RuntimeState]
         private Vector2 _min, _max;
 #endif
 
@@ -68,6 +72,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public Rectangle()
         {
+            Density = 1;
         }
 
         /// <summary>
@@ -79,6 +84,7 @@ namespace AW2.Helpers.Geometric
         {
             if (min.X > max.X || min.Y > max.Y)
                 throw new ArgumentException("Min is not less than or equal to max");
+            Density = 1;
 #if TRUSTED_VISIBILITY_BREACH
             Min = min;
             Max = max;
@@ -99,6 +105,7 @@ namespace AW2.Helpers.Geometric
         {
             if (minX > maxX || minY > maxY)
                 throw new ArgumentException("Min is not less than or equal to max");
+            Density = 1;
 #if TRUSTED_VISIBILITY_BREACH
             Min = new Vector2(minX, minY);
             Max = new Vector2(maxX, maxY);
@@ -147,7 +154,7 @@ namespace AW2.Helpers.Geometric
         public Shape GetShape()
         {
             var corners = new[] { Min, new Vector2(Max.X, Min.Y), Max, new Vector2(Min.X, Max.Y) };
-            return new PolygonShape(AWMathHelper.CreateVertices(corners), 1);
+            return new PolygonShape(AWMathHelper.CreateVertices(corners), Density);
         }
 
         #endregion

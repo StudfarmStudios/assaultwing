@@ -11,6 +11,11 @@ namespace AW2.Helpers.Geometric
     public interface IGeomPrimitive : INetworkSerializable
     {
         /// <summary>
+        /// Density of the geometric primitive. Defaults to one. Can be zero or any positive value.
+        /// </summary>
+        float Density { get; set; }
+
+        /// <summary>
         /// A rectangle that contains the geometric primitive.
         /// </summary>
         Rectangle BoundingBox { get; }
@@ -33,7 +38,6 @@ namespace AW2.Helpers.Geometric
 
         /// <summary>
         /// Returns a Farseer shape in Farseer coordinates that corresponds to the IGeomPrimitive.
-        /// Shape density will be set to one.
         /// </summary>
         Shape GetShape();
     }

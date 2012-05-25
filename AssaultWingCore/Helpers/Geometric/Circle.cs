@@ -11,12 +11,13 @@ namespace AW2.Helpers.Geometric
     [LimitedSerialization]
     public class Circle : IGeomPrimitive, IConsistencyCheckable
     {
-        [TypeParameter]
+        [TypeParameter, RuntimeState]
         private Vector2 _center;
-        [TypeParameter]
+        [TypeParameter, RuntimeState]
         private float _radius;
         private Rectangle _boundingBox;
 
+        public float Density { get; set; }
         public Vector2 Center { get { return _center; } }
         public float Radius { get { return _radius; } }
 
@@ -25,6 +26,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public Circle()
         {
+            Density = 1;
             _center = Vector2.Zero;
             _radius = 0;
             UpdateBoundingBox();
@@ -32,6 +34,7 @@ namespace AW2.Helpers.Geometric
 
         public Circle(Vector2 center, float radius)
         {
+            Density = 1;
             _center = center;
             _radius = radius;
             UpdateBoundingBox();
@@ -63,7 +66,7 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new CircleShape(AWMathHelper.FARSEER_SCALE * _radius, 1) { Position = AWMathHelper.FARSEER_SCALE * _center };
+            return new CircleShape(AWMathHelper.FARSEER_SCALE * _radius, Density) { Position = AWMathHelper.FARSEER_SCALE * _center };
         }
 
         #endregion IGeomPrimitive Members

@@ -451,6 +451,22 @@ namespace AW2.Helpers
             Assert.AreEqual(new Vector2(0.02f, -0.01f), new Vector2(-0.01f, -0.02f).Rotate90());
         }
 
+        [Test]
+        public void TestProjectOnto()
+        {
+            Assert.AreEqual(new Vector2(0, 0), new Vector2(0, 0).ProjectOnto(new Vector2(0, 0)));
+            Assert.AreEqual(new Vector2(1, 0), new Vector2(1, 0).ProjectOnto(new Vector2(1, 0)));
+            Assert.AreEqual(new Vector2(2, 0), new Vector2(2, 0).ProjectOnto(new Vector2(1, 0)));
+            Assert.AreEqual(new Vector2(2, 0), new Vector2(2, 0).ProjectOnto(new Vector2(3, 0)));
+            Assert.AreEqual(new Vector2(0, 0), new Vector2(1, 0).ProjectOnto(new Vector2(0, 1)));
+            Assert.AreEqual(new Vector2(1, 0), new Vector2(1, 2).ProjectOnto(new Vector2(1, 0)));
+            Assert.AreEqual(new Vector2(0, 2), new Vector2(1, 2).ProjectOnto(new Vector2(0, 1)));
+            Assert.AreEqual(new Vector2(0, 1), new Vector2(0, 1).ProjectOnto(new Vector2(0, -1)));
+            Assert.AreEqual(new Vector2(0, -1), new Vector2(0, -1).ProjectOnto(new Vector2(0, 1)));
+            Assert.AreEqual(new Vector2(0, -1), new Vector2(0, -1).ProjectOnto(new Vector2(0, -1)));
+            Assert.AreEqual(new Vector2(1, 1), new Vector2(0, 2).ProjectOnto(new Vector2(3, 3)));
+        }
+
         private void DoFillTriangleTest(Point point1, Point point2, Point point3)
         {
             Console.Out.WriteLine(string.Format("DoFillTriangleTest({0}, {1}, {2})", point1, point2, point3));

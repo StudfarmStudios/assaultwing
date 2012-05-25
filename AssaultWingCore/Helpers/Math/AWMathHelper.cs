@@ -654,6 +654,27 @@ namespace AW2.Helpers
             return new Vector2(p.X, p.Y);
         }
 
+        public static float Dot(this Vector2 a, Vector2 b)
+        {
+            return a.X * b.X + a.Y * b.Y;
+        }
+
+        public static Vector2 ProjectOnto(this Vector2 value, Vector2 onto)
+        {
+            if (onto == Vector2.Zero) return Vector2.Zero;
+            return onto * value.Dot(onto) / onto.LengthSquared();
+        }
+
+        /// <summary>
+        /// Returns the normalized vector, or zero if the vector is very close to zero.
+        /// </summary>
+        public static Vector2 NormalizeOrZero(this Vector2 value)
+        {
+            return value.LengthSquared() <= 1e-10f * 1e-10f
+                ? Vector2.Zero
+                : Vector2.Normalize(value);
+        }
+
         /// <summary>
         /// Creates an axis aligned bounding box in Farseer coordinates,
         /// given the corner points in Assault Wing coordinates.

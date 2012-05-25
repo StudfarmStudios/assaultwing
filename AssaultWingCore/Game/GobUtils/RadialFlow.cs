@@ -75,7 +75,8 @@ namespace AW2.Game.GobUtils
             if (IsActive) throw new ApplicationException("Cannot activate an active RadialFlow");
             _radiator = radiator;
             _flowEndTime = Now + TimeSpan.FromSeconds(_flowTime);
-            _collisionArea = new CollisionArea("Flow", new Circle(Vector2.Zero, _flowSpeed.Keys.Last().Position), radiator,
+            var areaArea = new Circle(Vector2.Zero, _flowSpeed.Keys.Last().Position) { Density = 0 };
+            _collisionArea = new CollisionArea("Flow", areaArea, radiator,
                 CollisionAreaType.Flow, CollisionMaterialType.Regular);
             _collisionArea.Fixture.OnCollision += OnCollisionHandler;
         }

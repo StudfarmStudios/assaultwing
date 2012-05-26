@@ -254,7 +254,7 @@ namespace AW2.Game.Gobs
         private void OnSeparationHandler(Fixture fixtureA, Fixture fixtureB)
         {
             var leavingGob = (Gob)fixtureB.Body.UserData;
-            _repairingGobs.RemoveAll(gob => gob.GetValue().ID == leavingGob.ID);
+            _repairingGobs.RemoveAll(gob => gob.GetValue() == leavingGob);
         }
     }
 }

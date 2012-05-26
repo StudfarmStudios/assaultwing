@@ -287,6 +287,20 @@ namespace FarseerPhysics.Dynamics
                 if (overlap == false)
                 {
                     Contact cNuke = c;
+
+                    // http://farseerphysics.codeplex.com/workitem/31331
+                    if (cNuke.IsTouching())
+                    {
+                        // Report the separation to both participants:
+                        if (fixtureA != null && fixtureA.OnSeparation != null)
+                            fixtureA.OnSeparation(fixtureA, fixtureB);
+
+                        // Reverse the order of the reported fixtures. The first fixture is always the one that the
+                        // user subscribed to.
+                        if (fixtureB != null && fixtureB.OnSeparation != null)
+                            fixtureB.OnSeparation(fixtureB, fixtureA);
+                    }
+
                     Destroy(cNuke);
                     continue;
                 }

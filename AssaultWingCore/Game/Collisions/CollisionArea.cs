@@ -17,6 +17,7 @@ namespace AW2.Game.Collisions
     {
         [TypeParameter]
         private CollisionAreaType _type;
+        private CollisionAreaType? _typeBeforeDisabling;
 
         [TypeParameter]
         private CollisionMaterialType _collisionMaterial;
@@ -44,7 +45,15 @@ namespace AW2.Game.Collisions
         /// <summary>
         /// The type of the collision area.
         /// </summary>
-        public CollisionAreaType Type { get { return _type; } }
+        public CollisionAreaType Type
+        {
+            get { return _type; }
+            private set
+            {
+                if (Fixture != null) Fixture.CollisionCategories = value.Category();
+                _type = value;
+            }
+        }
 
         /// <summary>
         /// Elasticity factor of the collision area. Zero means no collision bounce.
@@ -110,6 +119,20 @@ namespace AW2.Game.Collisions
             fixture.CollidesWith = Type.CollidesWith();
             gob.Body.SleepingAllowed &= Type.IsPhysical(); // Bodies with sensors must never sleep, lest sensor contacts might go unnoticed.
             Fixture = fixture;
+        }
+
+        public void Disable()
+        {
+            if (_typeBeforeDisabling.HasValue) throw new ApplicationException("CollisionArea is already disabled");
+            _typeBeforeDisabling = Type;
+            Type = CollisionAreaType.Disabled;
+        }
+
+        public void Enable()
+        {
+            if (!_typeBeforeDisabling.HasValue) throw new ApplicationException("CollisionArea is not disabled");
+            Type = _typeBeforeDisabling.Value;
+            _typeBeforeDisabling = null;
         }
 
         public void Destroy()

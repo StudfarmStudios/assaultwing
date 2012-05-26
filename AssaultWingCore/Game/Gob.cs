@@ -1117,12 +1117,12 @@ namespace AW2.Game
         {
             if (_disabledCount == 0) throw new InvalidOperationException("Cannot enable a gob that is already enabled");
             --_disabledCount;
-            if (_disabledCount == 0) Body.Enabled = true;
+            if (_disabledCount == 0) foreach (var area in CollisionAreas) area.Enable();
         }
 
         public void Disable()
         {
-            if (_disabledCount == 0) Body.Enabled = false;
+            if (_disabledCount == 0) foreach (var area in CollisionAreas) area.Disable();
             _disabledCount++;
         }
 

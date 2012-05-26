@@ -18,6 +18,11 @@
         Damage,
 
         /// <summary>
+        /// Doesn't collide with anything.
+        /// </summary>
+        Disabled,
+
+        /// <summary>
         /// Receptor of targets of a flow of medium.
         /// </summary>
         Flow,

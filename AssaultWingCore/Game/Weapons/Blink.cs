@@ -104,10 +104,10 @@ namespace AW2.Game.Weapons
             if (Owner == null) return;
             Gob.CreateGob<Gobs.Peng>(Owner.Game, (CanonicalString)"blink fail", peng =>
             {
-                var pengMoveSpeed = 2 * _blinkMoveSpeed; // FIXME !!! May go too fast for Farseer
+                var pengMoveSpeed = 1.5f * _blinkMoveSpeed;
                 var pengMove = pengMoveSpeed * Vector2.Normalize(GetBlinkTarget() - Owner.Pos);
                 peng.ResetPos(Owner.Pos, pengMove, Owner.Rotation);
-                var flyTime = _blinkDistance / pengMoveSpeed;
+                var flyTime = (_blinkDistance - 50) / pengMoveSpeed; // It looks better if it doesn't travel the full blink distance.
                 peng.Emitter.NumberToCreate = (int)Math.Round(flyTime * peng.Emitter.EmissionFrequency);
                 peng.MoveType = MoveType.Kinematic;
                 peng.VisibilityLimitedTo = PlayerOwner;

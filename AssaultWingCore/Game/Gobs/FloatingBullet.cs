@@ -38,6 +38,12 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _movementDamping;
 
+        /// <summary>
+        /// Damping factor of angular movement.
+        /// </summary>
+        [TypeParameter]
+        private float _rotationDamping;
+
         [TypeParameter]
         private string _hitSound;
         [TypeParameter, ShallowCopy]
@@ -60,6 +66,7 @@ namespace AW2.Game.Gobs
             _attractionForce = 50000;
             _spreadingForce = 10000;
             _movementDamping = 0.95f;
+            _rotationDamping = 0.97f;
             _hitSound = "";
             _enemyDistanceToAlpha = new Curve();
             _enemyDistanceToAlpha.PreLoop = CurveLoopType.Constant;
@@ -80,6 +87,7 @@ namespace AW2.Game.Gobs
             base.Activate();
             IsHiding = true;
             Body.LinearDamping = _movementDamping;
+            Body.AngularDamping = _rotationDamping;
         }
 
         public override void Update()

@@ -7,6 +7,7 @@
   <attractionForce>55000</attractionForce>
   <spreadingForce>12000</spreadingForce>
   <movementDamping>0.97</movementDamping>
+  <rotationDamping>0.97</rotationDamping>
   <hitSound>mineHit</hitSound>
   <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>35</lifetime>

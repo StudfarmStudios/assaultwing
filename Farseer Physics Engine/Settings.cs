@@ -238,6 +238,7 @@ namespace FarseerPhysics
         /// <returns></returns>
         public static float MixRestitution(float restitution1, float restitution2)
         {
+            if (restitution1 == 0 || restitution2 == 0) return 0;
             return restitution1 > restitution2 ? restitution1 : restitution2;
         }
     }

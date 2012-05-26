@@ -231,9 +231,10 @@ namespace FarseerPhysics.Dynamics
         internal void Collide()
         {
             // Update awake contacts.
-            for (int i = 0; i < ContactList.Count; i++)
+            var originalContactList = ContactList.ToArray(); // Items may be removed from ContactList during iteration.
+            for (int i = 0; i < originalContactList.Length; i++)
             {
-                Contact c = ContactList[i];
+                Contact c = originalContactList[i];
                 Fixture fixtureA = c.FixtureA;
                 Fixture fixtureB = c.FixtureB;
                 int indexA = c.ChildIndexA;

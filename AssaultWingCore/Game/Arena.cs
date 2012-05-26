@@ -467,17 +467,19 @@ namespace AW2.Game
                 gob.MoveType == MoveType.Kinematic ? BodyType.Kinematic :
                 BodyType.Dynamic;
             body.IgnoreGravity = !gob.Gravitating || gob.MoveType != MoveType.Dynamic;
+            var originalGobMass = gob.Mass; // gob.Mass will come from body.Mass after the body is assigned.
             gob.Body = body;
             foreach (var area in gob.CollisionAreas) area.Initialize(gob.Scale); // TODO !!! Get rid of Gob.Scale
             // Compute physical shape density from gob mass. This way bodies have inertia and
-            // are able to gain angular velocity in collisions. Assumption: gobs have only one
-            // physical collision area (except Dock but it doesn't need inertia anyway).
+            // are able to gain angular velocity in collisions.
             // TODO !!! Specify density directly in CollisionArea.
             var physicalAreas = gob.CollisionAreas.Where(area => area.Type.IsPhysical()).ToArray();
             if (physicalAreas.Length > 0)
             {
                 foreach (var physicalArea in physicalAreas)
-                    physicalArea.Fixture.Shape.Density = gob.Mass / physicalAreas.Length / physicalArea.Fixture.Shape.MassData.Area;
+                    physicalArea.Fixture.Shape.Density = originalGobMass / physicalAreas.Length / physicalArea.Fixture.Shape.MassData.Area;
+                foreach (var nonphysicalArea in gob.CollisionAreas.Where(area => !area.Type.IsPhysical()))
+                    nonphysicalArea.Fixture.Shape.Density = 0;
                 body.ResetMassData(); // Compute masses of shapes. Their sum will equal gob.Mass. Also inertia etc. will be computed.
             }
             body.FixedRotation = gob.DampAngularVelocity; // Note: Recomputes body mass from fixtures.

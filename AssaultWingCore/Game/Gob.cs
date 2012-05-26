@@ -412,9 +412,10 @@ namespace AW2.Game
         public Vector2 DrawPosOffset { get; set; }
 
         /// <summary>
-        /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/>
-        /// as if the gob appeared there instantaneously
-        /// as opposed to moving there in a continuous fashion.
+        /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/> as if the
+        /// gob appeared there instantaneously as opposed to moving there in a continuous fashion.
+        /// This method breaks some aspects of physics simulation. Only use it when initializing
+        /// gobs.
         /// </summary>
         public virtual void ResetPos(Vector2 pos, Vector2 move, float rotation)
         {
@@ -435,7 +436,7 @@ namespace AW2.Game
         /// <summary>
         /// Mass of the gob, measured in kilograms.
         /// </summary>
-        public float Mass { get { return _mass; } }
+        public float Mass { get { return Body != null ? Body.Mass : _mass; } }
 
         /// <summary>
         /// Get or set the gob's rotation around the Z-axis.

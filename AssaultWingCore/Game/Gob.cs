@@ -114,6 +114,11 @@ namespace AW2.Game
         /// </summary>
         public const float LARGE_GOB_PHYSICAL_RADIUS = 25;
 
+        /// <summary>
+        /// Radius of the physical area of a typical small gob, in meters.
+        /// </summary>
+        public const float SMALL_GOB_PHYSICAL_RADIUS = 4;
+
         private const float HIDING_ALPHA_LIMIT = 0.01f;
         private const float MIN_GOB_COORDINATE = 0;
         private const float MAX_GOB_COORDINATE = 16000;

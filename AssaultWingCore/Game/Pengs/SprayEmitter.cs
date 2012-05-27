@@ -340,7 +340,7 @@ namespace AW2.Game.Pengs
                 else
                 {
                     // Bail out if the position is not free for the gob.
-                    if (!lastAttempt && !Peng.Arena.IsFreePosition(new Circle(pos, Gob.LARGE_GOB_PHYSICAL_RADIUS)))
+                    if (!lastAttempt && !Peng.Arena.IsFreePosition(new Circle(pos, Gob.SMALL_GOB_PHYSICAL_RADIUS)))
                     {
                         attemptOk = false;
                         continue;

@@ -77,7 +77,7 @@ namespace FarseerPhysics
         /// <summary>
         /// Enable/Disable warmstarting
         /// </summary>
-        public static bool EnableWarmstarting = true;
+        public static bool EnableWarmstarting = false;
 
         /// <summary>
         /// Enable/Disable sleeping

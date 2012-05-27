@@ -15,6 +15,7 @@ namespace AW2.Game.Gobs
     public class Bullet : Gob
     {
         private const float HEADING_MOVEMENT_MINIMUM_SQUARED = 1f * 1f;
+        private const float HEADING_TURN_SPEED = 1.5f;
 
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.
@@ -105,8 +106,8 @@ namespace AW2.Game.Gobs
         {
             if (Arena.TotalTime >= DeathTime) Die();
             base.Update();
-            if (!_isRotating && Move.LengthSquared() > HEADING_MOVEMENT_MINIMUM_SQUARED)
-                Body.AngularVelocity = (Move.Angle() - Rotation) * Game.TargetFPS;
+            if (!_isRotating && Move.LengthSquared() >= HEADING_MOVEMENT_MINIMUM_SQUARED)
+                Body.AngularVelocity = AWMathHelper.GetAngleSpeedTowards(Rotation, Move.Angle(), HEADING_TURN_SPEED, Game.TargetElapsedTime);
             _thruster.Thrust(1);
             _thruster.Update();
         }

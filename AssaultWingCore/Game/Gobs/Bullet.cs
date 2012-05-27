@@ -14,6 +14,8 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Bullet : Gob
     {
+        private const float HEADING_MOVEMENT_MINIMUM_SQUARED = 1f * 1f;
+
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.
         /// </summary>
@@ -41,7 +43,8 @@ namespace AW2.Game.Gobs
         private float _lifetime;
 
         /// <summary>
-        /// If true, the bullet rotates by <see cref="rotationSpeed"/>.
+        /// If true, the bullet rotates by physics. Initial rotation speed comes from <see cref="rotationSpeed"/>.
+        /// If false, the bullet heads towards where it's going.
         /// </summary>
         [TypeParameter]
         private bool _isRotating;
@@ -88,6 +91,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             DeathTime = Arena.TotalTime + TimeSpan.FromSeconds(_lifetime);
+            if (_isRotating) Body.AngularVelocity = _rotationSpeed;
             if (_bulletModelNames.Length > 0)
             {
                 int modelNameI = RandomHelper.GetRandomInt(_bulletModelNames.Length);
@@ -101,23 +105,8 @@ namespace AW2.Game.Gobs
         {
             if (Arena.TotalTime >= DeathTime) Die();
             base.Update();
-            /* !!! TODO: Implement in Farseer by using _rotationSpeed only for initial AngularVelocity, and
-             * make "nose first" by setting AngularVelocity for each frame.
-            if (_isRotating)
-            {
-                Rotation += _rotationSpeed * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-            }
-            else
-            {
-                // Fly nose first, but only if we're moving fast enough.
-                if (Move.LengthSquared() > 1 * 1) {
-                    float rotationGoal = (float)Math.Acos( Move.X / Move.Length() );
-                    if (Move.Y < 0)
-                        rotationGoal = MathHelper.TwoPi - rotationGoal;
-                    Rotation = rotationGoal;
-                }
-            }
-             */
+            if (!_isRotating && Move.LengthSquared() > HEADING_MOVEMENT_MINIMUM_SQUARED)
+                Body.AngularVelocity = (Move.Angle() - Rotation) * Game.TargetFPS;
             _thruster.Thrust(1);
             _thruster.Update();
         }

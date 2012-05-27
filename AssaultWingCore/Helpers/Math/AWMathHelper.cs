@@ -126,6 +126,18 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns the angular velocity whose amplitude is at most <paramref name="speed"/> and
+        /// which changes the angle from <paramref name="from"/> towards <paramref name="to"/>
+        /// via the smaller angle. The change is limited so that it won't go past <paramref name="to"/>
+        /// in the given <paramref name="timeStep"/>.
+        /// </summary>
+        public static float GetAngleSpeedTowards(float from, float to, float speed, TimeSpan timeStep)
+        {
+            var seconds = (float)timeStep.TotalSeconds;
+            return (InterpolateTowardsAngle(from, to, speed * seconds) - from) / seconds;
+        }
+
+        /// <summary>
         /// Returns the smallest angle that is positive and that denotes
         /// an equal rotation to the given angle.
         /// </summary>

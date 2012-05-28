@@ -206,25 +206,17 @@ namespace AW2.Game.Gobs
 
         private void UpdateGeometry()
         {
-            throw new NotImplementedException("Rewrite using Farseer raycasting");
-#if false // !!!
-            var potentialObstacles = Arena.GetOverlappers(_fullDamageArea, CollisionAreaType.PhysicalWall).ToArray();
             var rayCount = 4;
-            var rayStep = _wallPunchRadius;
             var relativeLengths = new float[rayCount];
             for (int ray = 0; ray < rayCount; ray++)
             {
-                var fullRay = new Vector2(_triHeightForDamage, _triWidth * ((float)ray / (rayCount - 1) - 0.5f));
-                var rayUnit = (fullRay / _triHeightForDamage).Rotate(Rotation);
-                var distance = 0f;
-                while ((distance += rayStep) <= _triHeightForDamage)
-                    if (potentialObstacles.Any(area => Geometry.Intersect(new AWPoint(Pos + rayUnit * distance), area.Area))) break;
-                relativeLengths[ray] = distance / _triHeightForDamage;
+                var fullRay = new Vector2(_triHeightForDamage, _triWidth * ((float)ray / (rayCount - 1) - 0.5f)).Rotate(Rotation);
+                var distance = Arena.GetDistanceToClosest(Pos, Pos + fullRay, gob => gob.MoveType != GobUtils.MoveType.Dynamic);
+                relativeLengths[ray] = (distance.HasValue ? distance.Value : fullRay.Length()) / _triHeightForDamage;
             }
             var polygonVertices = CreateDamagePolygonVertices(relativeLengths);
             _vertexData = CreateVertexData(relativeLengths, polygonVertices);
             _damageArea = CreateCollisionArea(CreateDamageArea(polygonVertices));
-#endif
         }
 
         private void HitPeriodically() // TODO !!! Merge into DamageIrreversible
@@ -236,8 +228,8 @@ namespace AW2.Game.Gobs
         private void PunchWalls()
         {
             return; // TODO !!! Punch along damage polygon border.
-            var startPos = Host.Pos;
-            var unitFront = Vector2.UnitX.Rotate(Host.Rotation);
+            var startPos = Pos;
+            var unitFront = Vector2.UnitX.Rotate(Rotation);
             var unitLeft = unitFront.Rotate90();
             var punches = 0;
             var distance = 0f;
@@ -291,11 +283,11 @@ namespace AW2.Game.Gobs
                     Vector3.Zero,
                     Vector2.Zero);
                 vertexData[i * 3 + 1] = new VertexPositionTexture(
-                    new Vector3(polygonVertices[1 + i], 0),
-                    relativeLengths[i] * new Vector2(texX1, 1 - texX1));
-                vertexData[i * 3 + 2] = new VertexPositionTexture(
                     new Vector3(polygonVertices[1 + i + 1], 0),
                     relativeLengths[i + 1] * new Vector2(texX2, 1 - texX2));
+                vertexData[i * 3 + 2] = new VertexPositionTexture(
+                    new Vector3(polygonVertices[1 + i], 0),
+                    relativeLengths[i] * new Vector2(texX1, 1 - texX1));
             };
             return vertexData;
         }

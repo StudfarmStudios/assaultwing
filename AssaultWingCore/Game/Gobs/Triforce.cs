@@ -17,6 +17,8 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Triforce : Gob
     {
+        private const int SLICE_COUNT = 3;
+
         [TypeParameter]
         private CanonicalString[] _surroundEffects;
         [TypeParameter]
@@ -51,8 +53,7 @@ namespace AW2.Game.Gobs
         [TypeParameter, ShallowCopy]
         private CanonicalString[] _wallPunchEffects;
 
-        private CollisionArea _fullDamageArea;
-        private CollisionArea _damageArea;
+        private CollisionArea[] _damageAreas;
         private Texture2D _texture;
         private VertexPositionTexture[] _vertexData;
         private TimeSpan _deathTime;
@@ -104,7 +105,7 @@ namespace AW2.Game.Gobs
             base.LoadContent();
             _texture = Game.Content.Load<Texture2D>(_textureName);
             var relativeLengths = new[] { _triHeightForDamage, _triHeightForDamage };
-            _vertexData = CreateVertexData(relativeLengths, CreateDamagePolygonVertices(relativeLengths));
+            _vertexData = CreateVertexData(relativeLengths);
         }
 
         public override void Activate()
@@ -115,7 +116,7 @@ namespace AW2.Game.Gobs
             _nextHitTimer.SetCurrentInterval(_firstHitDelay);
             var fullConeArea = new Triangle(Vector2.Zero, new Vector2(_triHeightForDamage, _triWidth / 2), new Vector2(_triHeightForDamage, -_triWidth / 2));
             var fullConeCircumsphere = BoundingSphere.CreateFromPoints(new[] { fullConeArea.P1, fullConeArea.P2, fullConeArea.P3 }.Select(p => new Vector3(p, 0)));
-            _fullDamageArea = CreateCollisionArea(new Circle(fullConeCircumsphere.Center.ProjectXY(), fullConeCircumsphere.Radius));
+            _damageAreas = new CollisionArea[SLICE_COUNT];
             _wallPunchPosesForClient = new List<Vector2>();
             GobHelper.CreatePengs(_surroundEffects, this);
         }
@@ -206,17 +207,15 @@ namespace AW2.Game.Gobs
 
         private void UpdateGeometry()
         {
-            var rayCount = 4;
-            var relativeLengths = new float[rayCount];
-            for (int ray = 0; ray < rayCount; ray++)
+            var relativeLengths = new float[SLICE_COUNT + 1];
+            for (int ray = 0; ray < SLICE_COUNT + 1; ray++)
             {
-                var fullRay = new Vector2(_triHeightForDamage, _triWidth * ((float)ray / (rayCount - 1) - 0.5f)).Rotate(Rotation);
+                var fullRay = new Vector2(_triHeightForDamage, _triWidth * ((float)ray / SLICE_COUNT - 0.5f)).Rotate(Rotation);
                 var distance = Arena.GetDistanceToClosest(Pos, Pos + fullRay, gob => gob.MoveType != GobUtils.MoveType.Dynamic);
                 relativeLengths[ray] = (distance.HasValue ? distance.Value : fullRay.Length()) / _triHeightForDamage;
             }
-            var polygonVertices = CreateDamagePolygonVertices(relativeLengths);
-            _vertexData = CreateVertexData(relativeLengths, polygonVertices);
-            _damageArea = CreateCollisionArea(CreateDamageArea(polygonVertices));
+            _vertexData = CreateVertexData(relativeLengths);
+            _damageAreas = CreateCollisionAreas(relativeLengths);
         }
 
         private void HitPeriodically() // TODO !!! Merge into DamageIrreversible
@@ -262,56 +261,47 @@ namespace AW2.Game.Gobs
             return 1;
         }
 
-        private CollisionArea CreateCollisionArea(IGeomPrimitive gobArea)
+        private CollisionArea[] CreateCollisionAreas(float[] relativeLengths)
         {
-            return new CollisionArea("Cone", gobArea, this, CollisionAreaType.Damage, CollisionMaterialType.Regular);
+            var vertices = GetSlices(relativeLengths).ToArray();
+            var areas = new CollisionArea[vertices.Length / 3];
+            for (int i = 0; i < areas.Length; i++)
+                areas[i] = new CollisionArea("Cone",
+                    new Triangle
+                        (_triHeightForDamage * vertices[i * 3 + 0],
+                        _triHeightForDamage * vertices[i * 3 + 1],
+                        _triHeightForDamage * vertices[i * 3 + 2]),
+                    this, CollisionAreaType.Damage, CollisionMaterialType.Regular);
+            return areas;
         }
 
         /// <summary>
         /// Returns the vertex data for drawing the Triforce as a triangle list.
         /// </summary>
-        /// <param name="relativeLengths">The relative lengths of equally spaced rays covering
-        /// the cone area, between 0 (short) and 1 (long).</param>
-        private VertexPositionTexture[] CreateVertexData(float[] relativeLengths, Vector2[] polygonVertices)
+        private VertexPositionTexture[] CreateVertexData(float[] relativeLengths)
         {
-            var vertexData = new VertexPositionTexture[(relativeLengths.Length - 1) * 3];
+            return GetSlices(relativeLengths)
+                .Select(v => new VertexPositionTexture(
+                    _triHeightForDamage * new Vector3(v, 0),
+                    (v + Vector2.One) / 2))
+                .ToArray();
+        }
+
+        /// <summary>
+        /// Returns the slices of the triforce as triangles.
+        /// The triangle coordinates are relative to the triforce height.
+        /// The triangles are returned vertex by vertex as a triangle list.
+        /// </summary>
+        private IEnumerable<Vector2> GetSlices(float[] relativeLengths)
+        {
             for (int i = 0; i < relativeLengths.Length - 1; i++)
             {
-                var texX1 = (float)i / (relativeLengths.Length - 1);
-                var texX2 = (float)(i + 1) / (relativeLengths.Length - 1);
-                vertexData[i * 3 + 0] = new VertexPositionTexture(
-                    Vector3.Zero,
-                    Vector2.Zero);
-                vertexData[i * 3 + 1] = new VertexPositionTexture(
-                    new Vector3(polygonVertices[1 + i + 1], 0),
-                    relativeLengths[i + 1] * new Vector2(texX2, 1 - texX2));
-                vertexData[i * 3 + 2] = new VertexPositionTexture(
-                    new Vector3(polygonVertices[1 + i], 0),
-                    relativeLengths[i] * new Vector2(texX1, 1 - texX1));
-            };
-            return vertexData;
-        }
-
-        /// <summary>
-        /// Returns the area of damage in gob coordinates.
-        /// </summary>
-        private Polygon CreateDamageArea(Vector2[] polygonVertices)
-        {
-            return new Polygon(polygonVertices);
-        }
-
-        /// <summary>
-        /// Returns the vertices of the polygon area of damage. The first vertex is the gob origin.
-        /// The vertices wind clockwise.
-        /// </summary>
-        private Vector2[] CreateDamagePolygonVertices(float[] relativeLengths)
-        {
-            var vertices = new Vector2[relativeLengths.Length + 1];
-            vertices[0] = Vector2.Zero;
-            for (int i = 0; i < relativeLengths.Length; i++)
-                vertices[1 + i] = relativeLengths[i] * new Vector2(_triHeightForDamage,
-                    _triWidth * ((float)i / (relativeLengths.Length - 1) - 0.5f));
-            return vertices;
+                yield return Vector2.Zero;
+                yield return relativeLengths[i + 1] / _triHeightForDamage *
+                    new Vector2(_triHeightForDamage, _triWidth * ((float)(i + 1) / (relativeLengths.Length - 1) - 0.5f));
+                yield return relativeLengths[i] / _triHeightForDamage *
+                    new Vector2(_triHeightForDamage, _triWidth * ((float)i / (relativeLengths.Length - 1) - 0.5f));
+            }
         }
     }
 }

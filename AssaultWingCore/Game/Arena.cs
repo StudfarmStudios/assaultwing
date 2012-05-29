@@ -408,6 +408,15 @@ namespace AW2.Game
             }, ref shapeAabb);
         }
 
+        /// <summary>
+        /// Returns the distance of a point from a collision area.
+        /// </summary>
+        public float Distance(CollisionArea area, Vector2 pos)
+        {
+            // TODO: Shortest distance to area boundary.
+            return Vector2.Distance(area.Owner.Pos, pos);
+        }
+
         /// <returns>(true, gob) if a gob was found by the ID, or (false, null) if a gob was not found.</returns>
         public Tuple<bool, Gob> FindGob(int id)
         {

@@ -92,8 +92,7 @@ namespace AW2.Game.Gobs
             {
                 Game.Stats.SendHit(this, theirArea.Owner);
                 _damageTime = Game.GameTime.TotalGameTime;
-                float distance = 100; // !!! theirArea.Area.DistanceTo(Pos);
-                float damage = _inflictDamage.Evaluate(distance);
+                var damage = _inflictDamage.Evaluate(Arena.Distance(theirArea, Pos));
                 theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
                 myArea.Destroy();
             }

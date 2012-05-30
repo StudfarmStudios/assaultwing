@@ -51,11 +51,17 @@ namespace AW2.Game.Gobs
 
         private Vector2? _hoverAroundPos;
         private Vector2 _thrustForce;
+        private CollisionArea _magnetArea;
+        private CollisionArea _spreadArea;
 
         public override bool IsDamageable { get { return true; } }
         private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(Game.TargetFPS * HOVER_THRUST_INTERVAL); } }
         private bool IsHoverThrusting { get { return HoverThrustCycleFrame < Game.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
         private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }
+
+        private bool IsFriendly(Gob gob) { return gob.Owner == Owner; }
+        private bool IsNeutral(Gob gob) { return gob.Owner == null || gob.IsHidden; }
+        private bool IsHostile(Gob gob) { return !IsFriendly(gob) && !IsNeutral(gob); }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -88,6 +94,8 @@ namespace AW2.Game.Gobs
             IsHiding = true;
             Body.LinearDamping = _movementDamping;
             Body.AngularDamping = _rotationDamping;
+            _magnetArea = CollisionAreas.First(area => area.Name == "Magnet");
+            _spreadArea = CollisionAreas.First(area => area.Name == "Spread");
         }
 
         public override void Update()
@@ -101,23 +109,10 @@ namespace AW2.Game.Gobs
                 .Select(_enemyDistanceToAlpha.Evaluate)
                 .DefaultIfEmpty(0)
                 .Max();
-        }
-
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea)
-        {
-            var collidedWithFriend = theirArea.Owner.Owner == Owner;
-            var collidedWithNeutral = theirArea.Owner.Owner == null || theirArea.Owner.IsHidden;
-            var collidedWithHostile = !collidedWithNeutral && !collidedWithFriend;
-            switch (myArea.Name)
-            {
-                case "Magnet":
-                    if (collidedWithHostile) MoveTowards(theirArea.Owner.Pos, _attractionForce);
-                    break;
-                case "Spread":
-                    if (collidedWithFriend && theirArea.Owner is FloatingBullet)
-                        MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
-                    break;
-            }
+            foreach (var gob in Arena.GetContacting(_magnetArea).Select(area => area.Owner))
+                if (IsHostile(gob)) MoveTowards(gob.Pos, _attractionForce);
+            foreach (var gob in Arena.GetContacting(_spreadArea).Select(area => area.Owner))
+                if (IsFriendly(gob) && gob is FloatingBullet) MoveTowards(gob.Pos, -_spreadingForce);
         }
 
         public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)

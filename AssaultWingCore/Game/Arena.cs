@@ -382,30 +382,44 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Invokes an action for all fixtures that overlap an area.
+        /// Invokes an action for all collision areas that overlap an area.
         /// </summary>
         /// <param name="action">If returns false, the query will exit.</param>
-        /// <param name="preFilter">Filters fixtures that may overlap the area. This delegate is supposed to be light.
+        /// <param name="preFilter">Filters potential overlappers. This delegate is supposed to be light.
         /// It is called before testing for precise overlapping which is a more costly operation. To return true
-        /// if the fixture qualifies for more precise overlap testing.</param>
-        private void QueryOverlappingFixtures(IGeomPrimitive area, Func<Fixture, bool> action, Func<Fixture, bool> preFilter = null)
+        /// if the candidate qualifies for more precise overlap testing.</param>
+        public void QueryOverlappers(CollisionArea area, Func<CollisionArea, bool> action, Func<CollisionArea, bool> preFilter = null)
         {
-            var shape = area.GetShape();
+            var shape = area.Fixture.Shape;
             AABB shapeAabb;
-            var shapeTransform = new Transform();
-            shapeTransform.SetIdentity();
+            Transform shapeTransform;
+            area.Fixture.Body.GetTransform(out shapeTransform);
             shape.ComputeAABB(out shapeAabb, ref shapeTransform, 0);
             Transform fixtureTransform;
             _world.QueryAABB(otherFixture =>
             {
-                if (preFilter == null || preFilter(otherFixture))
+                if (preFilter == null || preFilter((CollisionArea)otherFixture.UserData))
                 {
                     otherFixture.Body.GetTransform(out fixtureTransform);
                     if (AABB.TestOverlap(otherFixture.Shape, 0, shape, 0, ref fixtureTransform, ref shapeTransform))
-                        return action(otherFixture);
+                        return action((CollisionArea)otherFixture.UserData);
                 }
                 return true;
             }, ref shapeAabb);
+        }
+
+        /// <summary>
+        /// Returns all collision areas that are in contact with a collision area.
+        /// </summary>
+        public IEnumerable<CollisionArea> GetContacting(CollisionArea area)
+        {
+            var contactEdge = area.Fixture.Body.ContactList;
+            while (contactEdge != null)
+            {
+                if (contactEdge.Contact.FixtureA == area.Fixture) yield return (CollisionArea)contactEdge.Contact.FixtureB.UserData;
+                if (contactEdge.Contact.FixtureB == area.Fixture) yield return (CollisionArea)contactEdge.Contact.FixtureA.UserData;
+                contactEdge = contactEdge.Next;
+            }
         }
 
         /// <summary>
@@ -694,8 +708,7 @@ namespace AW2.Game
                 _collisionEvents.Add(eventKey, collisionEvent);
             }
             collisionEvent.SetCollisionAreas(areaA, areaB);
-            // Always break sensor contacts so that we get a new collision event each frame.
-            return areaA.Type.IsPhysical() && areaB.Type.IsPhysical();
+            return true;
         }
 
         private void PostSolveHandler(Contact contact, ContactConstraint impulse)

@@ -51,9 +51,20 @@ namespace AW2.Game.Gobs
         private List<Peng> _dockActiveEffects;
         private bool _effectStateActive; // true = active; false = idle
         private Dictionary<Gob, TimeSpan> _lastRepairTimes; // in game time
-        private List<LazyProxy<int, Gob>> _repairingGobs;
+        private List<LazyProxy<int, Gob>> _repairingGobsOnClient; // used only on game clients
+        private CollisionArea _dockArea;
 
         #endregion Dock fields
+
+        private IEnumerable<Gob> RepairingGobs
+        {
+            get
+            {
+                return Game.NetworkMode == Core.NetworkMode.Client
+                    ? _repairingGobsOnClient.Select(proxy => proxy.GetValue()).Where(gob => gob != null)
+                    : Arena.GetContacting(_dockArea).Select(area => area.Owner);
+            }
+        }
 
         /// This constructor is only for serialisation.
         public Dock()
@@ -71,7 +82,7 @@ namespace AW2.Game.Gobs
         {
             Gravitating = false;
             _lastRepairTimes = new Dictionary<Gob, TimeSpan>();
-            _repairingGobs = new List<LazyProxy<int, Gob>>();
+            _repairingGobsOnClient = new List<LazyProxy<int, Gob>>();
         }
 
         public override void Activate()
@@ -80,14 +91,13 @@ namespace AW2.Game.Gobs
             CreateDockEffects();
             _chargingSound = Game.SoundEngine.CreateSound("HomeBaseLoop", this);
             _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoopLow", this);
-            var dockArea = CollisionAreas.First(area => area.Name == "Dock");
-            if (dockArea.Fixture != null) dockArea.Fixture.OnSeparation += OnSeparationHandler;
+            _dockArea = CollisionAreas.First(area => area.Name == "Dock");
         }
 
         public override void Update()
         {
             base.Update();
-            if (_repairingGobs.Any(gob => _lastRepairTimes.ContainsKey(gob)))
+            if (RepairingGobs.Any(gob => _lastRepairTimes.ContainsKey(gob)))
             {
                 _chargingSound.EnsureIsPlaying();
                 EnsureEffectActive();
@@ -99,15 +109,8 @@ namespace AW2.Game.Gobs
             }
             _dockSound.EnsureIsPlaying();
             CheckEndedRepairs();
-            foreach (Ship ship in _repairingGobs) if (ship != null) RepairShip(ship);
-        }
-
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
-        {
-            var ship = theirArea.Owner as Ship;
-            if (myArea.Name == "Dock" && ship != null && !_repairingGobs.Contains(ship))
-                _repairingGobs.Add(ship);
-            return false; // Always return false so that game clients will never run this method.
+            foreach (var overlapper in RepairingGobs)
+                if (overlapper is Ship) RepairShip((Ship)overlapper);
         }
 
         public override void Dispose()
@@ -142,12 +145,12 @@ namespace AW2.Game.Gobs
             if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 var repairingCount = reader.ReadByte();
-                _repairingGobs.Clear();
+                _repairingGobsOnClient.Clear();
                 for (int i = 0; i < repairingCount; i++)
                 {
                     var proxy = new LazyProxy<int, Gob>(Arena.FindGob);
                     proxy.SetData(reader.ReadInt16());
-                    _repairingGobs.Add(proxy);
+                    _repairingGobsOnClient.Add(proxy);
                 }
             }
         }
@@ -249,12 +252,6 @@ namespace AW2.Game.Gobs
             ship.RepairDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, elapsedTime));
             ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, elapsedTime);
             ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, elapsedTime);
-        }
-
-        private void OnSeparationHandler(Fixture fixtureA, Fixture fixtureB)
-        {
-            var leavingGob = (Gob)fixtureB.Body.UserData;
-            _repairingGobs.RemoveAll(gob => gob.GetValue() == leavingGob);
         }
     }
 }

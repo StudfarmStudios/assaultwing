@@ -6,8 +6,6 @@ using AW2.Game.Collisions;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Helpers.Geometric;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Dynamics.Contacts;
 
 namespace AW2.Game.GobUtils
 {
@@ -78,7 +76,6 @@ namespace AW2.Game.GobUtils
             var areaArea = new Circle(Vector2.Zero, _flowSpeed.Keys.Last().Position) { Density = 0 };
             _collisionArea = new CollisionArea("Flow", areaArea, radiator,
                 CollisionAreaType.Flow, CollisionMaterialType.Regular);
-            _collisionArea.Fixture.OnCollision += OnCollisionHandler;
         }
 
         public void Deactivate()
@@ -90,11 +87,16 @@ namespace AW2.Game.GobUtils
 
         public void Update()
         {
-            if (IsActive && IsTimeUp) Deactivate();
+            if (IsActive)
+            {
+                foreach (var area in _radiator.Arena.GetContacting(_collisionArea)) ApplyTo(area.Owner);
+                if (IsTimeUp) Deactivate();
+            }
         }
 
         private void ApplyTo(Gob gob)
         {
+            if (gob.MoveType != MoveType.Dynamic) return;
             var difference = gob.Pos - _radiator.Pos;
             var differenceLength = difference.Length();
             var differenceUnit = differenceLength > 0 ? difference / differenceLength : Vector2.Zero;
@@ -111,12 +113,6 @@ namespace AW2.Game.GobUtils
                 var turnStep = (1 + rocket.TargetTurnSpeed) * (float)_radiator.Game.GameTime.ElapsedGameTime.TotalSeconds;
                 rocket.Rotation = AWMathHelper.InterpolateTowardsAngle(rocket.Rotation, difference.Angle(), turnStep);
             }
-        }
-
-        private bool OnCollisionHandler(Fixture fixtureA, Fixture fixtureB, Contact contact)
-        {
-            ApplyTo((Gob)fixtureB.Body.UserData);
-            return true;
         }
     }
 }

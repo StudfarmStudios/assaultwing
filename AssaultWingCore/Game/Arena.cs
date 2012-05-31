@@ -366,16 +366,16 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Returns distance to the closest gob, if any, along a directed line segment.
-        /// Gobs for whom <paramref name="filter"/> returns false are ignored.
+        /// Returns distance to the closest collision area, if any, along a directed line segment.
+        /// Collision areas for whom <paramref name="filter"/> returns false are ignored.
         /// </summary>
-        public float? GetDistanceToClosest(Vector2 from, Vector2 to, Func<Gob, bool> filter)
+        public float? GetDistanceToClosest(Vector2 from, Vector2 to, Func<CollisionArea, bool> filter)
         {
             Vector2? closestPoint = null;
             _world.RayCast((Fixture fixture, Vector2 point, Vector2 normal, float fraction) =>
             {
-                var gob = (Gob)fixture.Body.UserData;
-                if (filter(gob)) closestPoint = point / AWMathHelper.FARSEER_SCALE;
+                var area = (CollisionArea)fixture.UserData;
+                if (filter(area)) closestPoint = point / AWMathHelper.FARSEER_SCALE;
                 return fraction; // Skip everything that is farther away.
             }, from * AWMathHelper.FARSEER_SCALE, to * AWMathHelper.FARSEER_SCALE);
             return closestPoint.HasValue ? Vector2.Distance(from, closestPoint.Value) : (float?)null;
@@ -527,7 +527,7 @@ namespace AW2.Game
             gob.Arena = this;
             if (IsForPlaying)
             {
-                if (gob.Layer == Gobs.GameplayLayer)
+                if (gob.Layer == Gobs.GameplayLayer || gob.Layer == Gobs.GameplayOverlayLayer)
                     Register(gob);
                 else
                 {

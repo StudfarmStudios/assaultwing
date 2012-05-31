@@ -247,7 +247,8 @@ namespace AW2.Game.Gobs
         private Vector2 GetWallThrust()
         {
             _wallScanDir = (_wallScanDir + WALL_SCAN_DIR_ROTATION) % WALL_SCAN_DIRS;
-            var distance = Arena.GetDistanceToClosest(Pos, Pos + WALL_SCAN_RANGE * g_wallScanUnits[_wallScanDir], gob => gob.MoveType != MoveType.Dynamic);
+            var distance = Arena.GetDistanceToClosest(Pos, Pos + WALL_SCAN_RANGE * g_wallScanUnits[_wallScanDir],
+                area => area.Owner.MoveType != MoveType.Dynamic && area.Type.IsPhysical());
             _wallTripAccumulator *= WALL_THRUST_FADEOUT;
             _wallThrust *= WALL_THRUST_FADEOUT;
             if (distance.HasValue)

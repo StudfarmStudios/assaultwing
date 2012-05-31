@@ -73,8 +73,7 @@ namespace AW2.Game.Collisions
         public float Damage { get { return CollisionMaterial.Get(_collisionMaterial).Damage; } }
 
         /// <summary>
-        /// The geometric area for overlap testing, in hosting gob coordinates if the gob is movable,
-        /// in world coordinates if the gob is unmovable.
+        /// The geometric area for overlap testing, in hosting gob coordinates.
         /// </summary>
         public IGeomPrimitive AreaGob { get { return _area; } set { _area = value; } }
 

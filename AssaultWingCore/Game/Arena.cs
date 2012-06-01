@@ -689,7 +689,7 @@ namespace AW2.Game
 
         private void GobRemovedHandler(Gob gob)
         {
-            if (gob.Layer == Gobs.GameplayLayer) Unregister(gob);
+            if (gob.Layer == Gobs.GameplayLayer || gob.Layer == Gobs.GameplayOverlayLayer) Unregister(gob);
             gob.Dispose();
             if (GobRemoved != null) GobRemoved(gob);
         }

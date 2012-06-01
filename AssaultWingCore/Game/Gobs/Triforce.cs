@@ -17,11 +17,13 @@ using AWPoint = AW2.Helpers.Geometric.Point;
 namespace AW2.Game.Gobs
 {
     /// <summary>
-    /// A triangular area that inflicts damage.
+    /// A triangular area that inflicts damage. The area is clipped to walls.
+    /// The area is split into slices which are added to <see cref="Gob.CollisionAreas"/>.
+    /// The slice areas stay disabled for performance reasons.
     /// </summary>
     public class Triforce : Gob
     {
-        private const int SLICE_COUNT = 3;
+        private const int SLICE_COUNT = 15;
 
         [TypeParameter]
         private CanonicalString[] _surroundEffects;
@@ -59,6 +61,7 @@ namespace AW2.Game.Gobs
 
         private Texture2D _texture;
         private VertexPositionTexture[] _vertexData;
+        private float[] _relativeLengths;
         private TimeSpan _deathTime;
         private AWTimer _nextHitTimer;
         private LazyProxy<int, Gob> _hostProxy;
@@ -115,12 +118,13 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            _relativeLengths = new float[SLICE_COUNT + 1];
             _deathTime = Arena.TotalTime + _lifetime + FadeTime;
             _nextHitTimer = new AWTimer(() => Arena.TotalTime, _hitInterval);
             _nextHitTimer.SetCurrentInterval(_firstHitDelay);
             _wallPunchPosesForClient = new List<Vector2>();
             GobHelper.CreatePengs(_surroundEffects, this);
-            CreateConeCollisionAreas();
+            InitializeCollisionAreas();
         }
 
         public override void Update()
@@ -196,16 +200,14 @@ namespace AW2.Game.Gobs
 
         private void UpdateGeometry()
         {
-            var relativeLengths = new float[SLICE_COUNT + 1];
             for (int ray = 0; ray < SLICE_COUNT + 1; ray++)
             {
                 var fullRay = new Vector2(_triHeightForDamage, _triWidth * ((float)ray / SLICE_COUNT - 0.5f)).Rotate(Rotation);
                 var distance = Arena.GetDistanceToClosest(Pos, Pos + fullRay,
                     area => area.Owner.MoveType != GobUtils.MoveType.Dynamic && area.Type.IsPhysical());
-                relativeLengths[ray] = (distance.HasValue ? distance.Value : fullRay.Length()) / _triHeightForDamage;
+                _relativeLengths[ray] = (distance.HasValue ? distance.Value : fullRay.Length()) / _triHeightForDamage;
             }
-            _vertexData = CreateVertexData(relativeLengths);
-            UpdateConeCollisionAreas(relativeLengths);
+            _vertexData = CreateVertexData(_relativeLengths);
         }
 
         private void PerformHits()
@@ -214,6 +216,7 @@ namespace AW2.Game.Gobs
             _surroundHitDone = true;
             if (!IsFadingOut && _nextHitTimer.IsElapsed)
             {
+                UpdateConeCollisionAreas(_relativeLengths);
                 HitInNamedAreas("Cone", _damagePerHit);
                 PunchWalls();
             }
@@ -222,8 +225,11 @@ namespace AW2.Game.Gobs
         private void HitInNamedAreas(string areaName, float damage)
         {
             foreach (var hitArea in CollisionAreas.Where(a => a.Name == areaName))
-                foreach (var area in Arena.GetContacting(hitArea))
-                    Hit(area.Owner, damage);
+            {
+                Arena.QueryOverlappers(hitArea,
+                    area => { Hit(area.Owner, damage); return true; },
+                    area => area.Owner.IsDamageable);
+            }
         }
 
         private void Hit(Gob gob, float damage)
@@ -271,7 +277,7 @@ namespace AW2.Game.Gobs
             return 1;
         }
 
-        private void CreateConeCollisionAreas()
+        private void InitializeCollisionAreas()
         {
             var newCollisionAreas = new CollisionArea[_collisionAreas.Length + SLICE_COUNT];
             Array.Copy(_collisionAreas, newCollisionAreas, _collisionAreas.Length);
@@ -280,6 +286,7 @@ namespace AW2.Game.Gobs
                     new Triangle(Vector2.Zero, Vector2.UnitX, Vector2.UnitY), this,
                     CollisionAreaType.Damage, CollisionMaterialType.Regular);
             _collisionAreas = newCollisionAreas;
+            foreach (var area in _collisionAreas) area.Disable();
         }
 
         private void UpdateConeCollisionAreas(float[] relativeLengths)
@@ -290,9 +297,8 @@ namespace AW2.Game.Gobs
                 vertices.MoveNext();
                 return vertices.Current * _triHeightForDamage * AWMathHelper.FARSEER_SCALE;
             };
-            var sliceVerticeses = CollisionAreas
-                .Where(a => a.Name == "Cone")
-                .Select(a => ((PolygonShape)a.Fixture.Shape).Vertices);
+            var coneAreas = CollisionAreas.Where(a => a.Name == "Cone");
+            var sliceVerticeses = coneAreas.Select(a => ((PolygonShape)a.Fixture.Shape).Vertices);
             foreach (var sliceVertices in sliceVerticeses)
             {
                 sliceVertices[0] = nextVertex();

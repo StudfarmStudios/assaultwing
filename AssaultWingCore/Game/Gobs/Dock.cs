@@ -148,7 +148,7 @@ namespace AW2.Game.Gobs
                 _repairingGobsOnClient.Clear();
                 for (int i = 0; i < repairingCount; i++)
                 {
-                    var proxy = new LazyProxy<int, Gob>(Arena.FindGob);
+                    var proxy = new LazyProxy<int, Gob>(FindGob);
                     proxy.SetData(reader.ReadInt16());
                     _repairingGobsOnClient.Add(proxy);
                 }

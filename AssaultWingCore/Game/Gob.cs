@@ -1026,7 +1026,11 @@ namespace AW2.Game
                     : _lastNetworkUpdatePos + reader.ReadVector2Normalized8(MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
                 _lastNetworkUpdatePos = newPos;
                 var newMove = reader.ReadHalfVector2();
+
                 // TODO: Extrapolate with Farseer after deserializing all gobs !!! ExtrapolatePosAndMove(newPos, newMove, framesAgo);
+                _pos = newPos;
+                Move = newMove;
+
                 DrawPosOffset += oldPos - Pos;
                 if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
                     DrawPosOffset = Vector2.Zero;
@@ -1139,6 +1143,14 @@ namespace AW2.Game
         #endregion Gob public methods
 
         #region Gob miscellaneous protected methods
+
+        /// <summary>
+        /// Lazy wrapper around <see cref="Arena.FindGob"/>
+        /// </summary>
+        protected Tuple<bool, Gob> FindGob(int id)
+        {
+            return Arena.FindGob(id);
+        }
 
         /// <summary>
         /// Copies a transform of each bone in a model relative to all parent bones of the bone into a given array.

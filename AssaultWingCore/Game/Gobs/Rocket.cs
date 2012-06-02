@@ -169,7 +169,7 @@ namespace AW2.Game.Gobs
             if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
                 int targetID = reader.ReadInt16();
-                _targetProxy = new LazyProxy<int, Gob>(Arena.FindGob);
+                _targetProxy = new LazyProxy<int, Gob>(FindGob);
                 _targetProxy.SetData(targetID);
                 UpdateGobTrackers();
             }

@@ -629,6 +629,7 @@ namespace AW2.Core
                 if (debugMessage != null) debugMessage.AppendFormat("{0} [{1}], ", gob.GetType().Name, gob.TypeName); // DEBUG: catch a rare crash that seems to happen only when serializing walls.
             }
             gobMessage.CollisionEvents = DataEngine.Arena.GetCollisionEvents().Where(e => e.IrreversibleSideEffectsPerformed).ToList();
+            DataEngine.Arena.ResetCollisionEvents();
             foreach (var conn in connections) conn.Send(gobMessage);
 
             if (Settings.Net.HeavyDebugLog && connections.Any() && debugMessage != null) // DEBUG: catch a rare crash that seems to happen only when serializing walls.

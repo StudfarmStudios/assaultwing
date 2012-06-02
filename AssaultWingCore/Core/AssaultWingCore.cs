@@ -150,7 +150,6 @@ namespace AW2.Core
         {
             DataEngine.Arena.TotalTime += GameTime.ElapsedGameTime;
             DataEngine.Arena.FrameNumber++;
-            DataEngine.Arena.ResetCollisionEvents();
         }
 
         private void AfterEveryFrame()

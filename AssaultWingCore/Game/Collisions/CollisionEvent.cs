@@ -94,11 +94,11 @@ namespace AW2.Game.Collisions
             var collisionSound = (CollisionSoundType)((mixedData >> 4) & 0x03);
             var collisionEvent = new CollisionEvent();
             var arena = AssaultWingCore.Instance.DataEngine.Arena;
-            var gob1 = arena.FindGob(collisionEvent._gob1ID).Item2;
-            var gob2 = arena.FindGob(collisionEvent._gob2ID).Item2;
-            if (gob1 == null && gob2 == null) return collisionEvent;
-            var area1 = gob1.GetCollisionArea(collisionEvent._area1ID);
-            var area2 = gob2.GetCollisionArea(collisionEvent._area2ID);
+            var gob1 = arena.FindGob(gob1ID).Item2;
+            var gob2 = arena.FindGob(gob2ID).Item2;
+            if (gob1 == null || gob2 == null) return collisionEvent;
+            var area1 = gob1.GetCollisionArea(area1ID);
+            var area2 = gob2.GetCollisionArea(area2ID);
             collisionEvent.SetCollisionAreas(area1, area2);
             collisionEvent.SetCollisionSound(collisionSound);
             return collisionEvent;

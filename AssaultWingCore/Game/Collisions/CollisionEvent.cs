@@ -43,11 +43,8 @@ namespace AW2.Game.Collisions
             var gob2 = area2.Owner;
             _gob1ID = gob1.ID;
             _gob2ID = gob2.ID;
-            // Note: Walls are the only gobs to have over 4 collision areas; there can be hundreds of them.
-            // To fit collision area IDs into as few bits as possible, walls will always collide with
-            // their first collision area. This should not have a visible effect on game clients.
-            _area1ID = gob1 is Gobs.Wall ? 0 : gob1.GetCollisionAreaID(area1);
-            _area2ID = gob2 is Gobs.Wall ? 0 : gob2.GetCollisionAreaID(area2);
+            _area1ID = gob1.GetCollisionAreaID(area1);
+            _area2ID = gob2.GetCollisionAreaID(area2);
         }
 
         public void SetImpulse(float impulse)

@@ -1,6 +1,7 @@
 //#define VERY_SMALL_TRIANGLES_ARE_COLLIDABLE // #define this only if large areas of walls become fly-through
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -97,6 +98,20 @@ namespace AW2.Game.Gobs
         }
 
         #region Methods related to gobs' functionality in the game world
+
+        public override int GetCollisionAreaID(CollisionArea area)
+        {
+            // Note: Walls are the only gobs to have over 4 collision areas; there can be hundreds of them.
+            // To fit collision area IDs into as few bits as possible, walls will always collide with
+            // their first collision area. This should not have a visible effect on game clients.
+            return 0;
+        }
+
+        public override CollisionArea GetCollisionArea(int areaID)
+        {
+            Debug.Assert(areaID == 0);
+            return _collisionAreas.First(area => area != null);
+        }
 
         public override void Activate()
         {

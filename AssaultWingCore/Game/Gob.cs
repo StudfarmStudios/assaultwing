@@ -1094,12 +1094,12 @@ namespace AW2.Game
                 select Tuple.Create(name, bone.Index);
         }
 
-        public int GetCollisionAreaID(CollisionArea area)
+        public virtual int GetCollisionAreaID(CollisionArea area)
         {
             return Array.IndexOf(_collisionAreas, area);
         }
 
-        public CollisionArea GetCollisionArea(int areaID)
+        public virtual CollisionArea GetCollisionArea(int areaID)
         {
             if (areaID < 0 || areaID >= _collisionAreas.Length) return null;
             return _collisionAreas[areaID];

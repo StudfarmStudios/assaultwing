@@ -122,6 +122,7 @@ namespace AW2.Game.Gobs
             }
             base.Update();
             _thruster.Update();
+            UpdateGobTrackers();
         }
 
         public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
@@ -171,7 +172,6 @@ namespace AW2.Game.Gobs
                 int targetID = reader.ReadInt16();
                 _targetProxy = new LazyProxy<int, Gob>(FindGob);
                 _targetProxy.SetData(targetID);
-                UpdateGobTrackers();
             }
         }
 
@@ -221,7 +221,6 @@ namespace AW2.Game.Gobs
                 RandomHelper.GetRandomFloat() < 0.9)
                 newBestTarget = null;
             if (newBestTarget != null) Target = newBestTarget;
-            UpdateGobTrackers();
             if (Game.NetworkMode == AW2.Core.NetworkMode.Server && Target != oldTarget)
                 ForcedNetworkUpdate = true;
         }

@@ -220,7 +220,7 @@ namespace AW2.Game.Gobs
             {
                 UpdateConeCollisionAreas(_relativeSliceSides);
                 HitInNamedAreas("Cone", _damagePerHit);
-                PunchWalls();
+                PunchWalls(_relativeSliceSides);
             }
         }
 
@@ -243,31 +243,18 @@ namespace AW2.Game.Gobs
             Game.Stats.SendHit(this, gob);
         }
 
-        private void PunchWalls()
+        private void PunchWalls(Vector2[] relativeSliceSides)
         {
-            return; // TODO !!! Punch along damage polygon border.
-            var startPos = Pos;
-            var unitFront = Vector2.UnitX.Rotate(Rotation);
-            var unitLeft = unitFront.Rotate90();
-            var punches = 0;
-            var distance = 0f;
-            while (punches < _wallPunchesPerHit && distance <= _triHeightForWallPunches)
+            foreach (var relativeSliceSide in relativeSliceSides)
             {
-                var halfWidth = 100; // !!! _triWidth / 2 / _triHeightForDamage * distance;
-                var punchCenter = startPos + unitFront * distance + unitLeft * RandomHelper.GetRandomFloat(-halfWidth, halfWidth);
-                if (Arena.MakeHole(punchCenter, _wallPunchRadius) > 0)
+                var punchCenter = Pos + (_triHeightForDamage * relativeSliceSide).Rotate(Rotation);
+                if (Arena.MakeHole(punchCenter, _wallPunchRadius) == 0) continue;
+                GobHelper.CreateGobs(_wallPunchEffects, Arena, punchCenter);
+                if (Game.NetworkMode == Core.NetworkMode.Server)
                 {
-                    punches++;
-                    GobHelper.CreateGobs(_wallPunchEffects, Arena, punchCenter);
-                    if (Game.NetworkMode == Core.NetworkMode.Server)
-                    {
-                        _wallPunchPosesForClient.Add(punchCenter);
-                        ForcedNetworkUpdate = true;
-                    }
-                    distance += _wallPunchRadius;
+                    _wallPunchPosesForClient.Add(punchCenter);
+                    ForcedNetworkUpdate = true;
                 }
-                else
-                    distance += _wallPunchRadius * 2.5f;
             }
         }
 

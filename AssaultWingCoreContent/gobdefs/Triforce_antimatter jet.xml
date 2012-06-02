@@ -37,8 +37,8 @@
   <lifetime>1.2</lifetime>
   <triHeightForDamage>390</triHeightForDamage>
   <triHeightForWallPunches>180</triHeightForWallPunches>
-  <angle>0.7</angle>
-  <wallPunchRadius>16</wallPunchRadius>
+  <angle>0.9</angle>
+  <wallPunchRadius>5</wallPunchRadius>
   <wallPunchesPerHit>4</wallPunchesPerHit>
   <textureName>lightning_3</textureName>
   <surroundEffects>

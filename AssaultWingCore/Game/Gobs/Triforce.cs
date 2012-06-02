@@ -35,7 +35,7 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _triHeightForWallPunches;
         [TypeParameter]
-        private float _triWidth;
+        private float _angle;
         [TypeParameter]
         private float _damagePerHit;
         [TypeParameter]
@@ -61,7 +61,7 @@ namespace AW2.Game.Gobs
 
         private Texture2D _texture;
         private VertexPositionTexture[] _vertexData;
-        private float[] _relativeLengths;
+        private Vector2[] _relativeSliceSides; // Relative to the triforce's orientation and length.
         private TimeSpan _deathTime;
         private AWTimer _nextHitTimer;
         private LazyProxy<int, Gob> _hostProxy;
@@ -90,7 +90,7 @@ namespace AW2.Game.Gobs
             _surroundDamage = 500;
             _triHeightForDamage = 500;
             _triHeightForWallPunches = 100;
-            _triWidth = 200;
+            _angle = MathHelper.PiOver4;
             _damagePerHit = 200;
             _firstHitDelay = TimeSpan.FromSeconds(0.1);
             _hitInterval = TimeSpan.FromSeconds(0.3);
@@ -105,20 +105,19 @@ namespace AW2.Game.Gobs
         public Triforce(CanonicalString typeName)
             : base(typeName)
         {
+            _relativeSliceSides = new Vector2[SLICE_COUNT + 1];
         }
 
         public override void LoadContent()
         {
             base.LoadContent();
             _texture = Game.Content.Load<Texture2D>(_textureName);
-            var relativeLengths = new[] { _triHeightForDamage, _triHeightForDamage };
-            _vertexData = CreateVertexData(relativeLengths);
+            _vertexData = CreateVertexData(_relativeSliceSides);
         }
 
         public override void Activate()
         {
             base.Activate();
-            _relativeLengths = new float[SLICE_COUNT + 1];
             _deathTime = Arena.TotalTime + _lifetime + FadeTime;
             _nextHitTimer = new AWTimer(() => Arena.TotalTime, _hitInterval);
             _nextHitTimer.SetCurrentInterval(_firstHitDelay);
@@ -202,12 +201,14 @@ namespace AW2.Game.Gobs
         {
             for (int ray = 0; ray < SLICE_COUNT + 1; ray++)
             {
-                var fullRay = new Vector2(_triHeightForDamage, _triWidth * ((float)ray / SLICE_COUNT - 0.5f)).Rotate(Rotation);
-                var distance = Arena.GetDistanceToClosest(Pos, Pos + fullRay,
+                var relativeRayUnit = AWMathHelper.GetUnitVector2(_angle * ray / SLICE_COUNT - _angle / 2);
+                var worldRay = (_triHeightForDamage * relativeRayUnit).Rotate(Rotation);
+                var rayLength = Arena.GetDistanceToClosest(Pos, Pos + worldRay,
                     area => area.Owner.MoveType != GobUtils.MoveType.Dynamic && area.Type.IsPhysical());
-                _relativeLengths[ray] = (distance.HasValue ? distance.Value : fullRay.Length()) / _triHeightForDamage;
+                var relativeRayLength = rayLength.HasValue ? rayLength.Value / _triHeightForDamage : 1f;
+                _relativeSliceSides[ray] = relativeRayLength * relativeRayUnit;
             }
-            _vertexData = CreateVertexData(_relativeLengths);
+            _vertexData = CreateVertexData(_relativeSliceSides);
         }
 
         private void PerformHits()
@@ -216,7 +217,7 @@ namespace AW2.Game.Gobs
             _surroundHitDone = true;
             if (!IsFadingOut && _nextHitTimer.IsElapsed)
             {
-                UpdateConeCollisionAreas(_relativeLengths);
+                UpdateConeCollisionAreas(_relativeSliceSides);
                 HitInNamedAreas("Cone", _damagePerHit);
                 PunchWalls();
             }
@@ -250,7 +251,7 @@ namespace AW2.Game.Gobs
             var distance = 0f;
             while (punches < _wallPunchesPerHit && distance <= _triHeightForWallPunches)
             {
-                var halfWidth = _triWidth / 2 / _triHeightForDamage * distance;
+                var halfWidth = 100; // !!! _triWidth / 2 / _triHeightForDamage * distance;
                 var punchCenter = startPos + unitFront * distance + unitLeft * RandomHelper.GetRandomFloat(-halfWidth, halfWidth);
                 if (Arena.MakeHole(punchCenter, _wallPunchRadius) > 0)
                 {
@@ -289,9 +290,9 @@ namespace AW2.Game.Gobs
             foreach (var area in _collisionAreas) area.Disable();
         }
 
-        private void UpdateConeCollisionAreas(float[] relativeLengths)
+        private void UpdateConeCollisionAreas(Vector2[] relativeSliceSides)
         {
-            var vertices = GetSlices(relativeLengths).GetEnumerator();
+            var vertices = GetSlices(relativeSliceSides).GetEnumerator();
             Func<Vector2> nextVertex = () =>
             {
                 vertices.MoveNext();
@@ -311,9 +312,9 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Returns the vertex data for drawing the Triforce as a triangle list.
         /// </summary>
-        private VertexPositionTexture[] CreateVertexData(float[] relativeLengths)
+        private VertexPositionTexture[] CreateVertexData(Vector2[] relativeSliceSides)
         {
-            return GetSlices(relativeLengths)
+            return GetSlices(relativeSliceSides)
                 .Select(v => new VertexPositionTexture(
                     _triHeightForDamage * new Vector3(v, 0),
                     (v + Vector2.One) / 2))
@@ -325,15 +326,13 @@ namespace AW2.Game.Gobs
         /// The triangle coordinates are relative to the triforce height.
         /// The triangles are returned vertex by vertex as a triangle list.
         /// </summary>
-        private IEnumerable<Vector2> GetSlices(float[] relativeLengths)
+        private IEnumerable<Vector2> GetSlices(Vector2[] relativeSliceSides)
         {
-            for (int i = 0; i < relativeLengths.Length - 1; i++)
+            for (int i = 0; i < relativeSliceSides.Length - 1; i++)
             {
                 yield return Vector2.Zero;
-                yield return relativeLengths[i + 1] / _triHeightForDamage *
-                    new Vector2(_triHeightForDamage, _triWidth * ((float)(i + 1) / (relativeLengths.Length - 1) - 0.5f));
-                yield return relativeLengths[i] / _triHeightForDamage *
-                    new Vector2(_triHeightForDamage, _triWidth * ((float)i / (relativeLengths.Length - 1) - 0.5f));
+                yield return relativeSliceSides[i + 1];
+                yield return relativeSliceSides[i];
             }
         }
     }

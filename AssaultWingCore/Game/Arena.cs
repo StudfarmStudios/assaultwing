@@ -454,7 +454,7 @@ namespace AW2.Game
             {
                 var wall = fixture.Body.UserData as Gobs.Wall;
                 if (wall != null && handledWalls.Add(wall))
-                    wall.MakeHole(holePos, holeRadius);
+                    pixelsRemoved += wall.MakeHole(holePos, holeRadius);
                 return true;
             }, ref holeAabb);
             return pixelsRemoved;

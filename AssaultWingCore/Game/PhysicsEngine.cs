@@ -15,8 +15,6 @@ namespace AW2.Game
         {
         }
 
-        #region Public interface
-
         /// <summary>
         /// Applies drag to a gob. Drag is a force that manipulates the gob's
         /// movement closer to that of the medium. Drag constant measures the
@@ -63,41 +61,5 @@ namespace AW2.Game
             float speedLimit = MathHelper.Max(maxSpeed, oldSpeed);
             gob.Move = gob.Move.Clamp(0, speedLimit);
         }
-
-        /// <summary>
-        /// Applies the given momentum to the given gob.
-        /// </summary>
-        /// Note that the larger the mass of the gob is, the more momentum is needed to give it
-        /// a good push.
-        /// <param name="gob">The gob to apply the momentum to.</param>
-        /// <param name="momentum">The momentum to apply, measured in Newton seconds.</param>
-        public void ApplyMomentum(Gob gob, Vector2 momentum)
-        {
-            gob.Move += momentum / gob.Mass;
-        }
-
-        /// <summary>
-        /// Returns the scalar amount that represents how much the given scalar change speed
-        /// affects during the current frame.
-        /// </summary>
-        /// <param name="changePerSecond">The speed of change per second.</param>
-        /// <returns>The amount of change during the current frame.</returns>
-        public float ApplyChange(float changePerSecond, TimeSpan duration)
-        {
-            return changePerSecond * (float)duration.TotalSeconds;
-        }
-
-        /// <summary>
-        /// Returns the vector that represents how much the given vector change speed
-        /// affects during the current frame.
-        /// </summary>
-        /// <param name="changePerSecond">The vector of change per second.</param>
-        /// <returns>The vector of change during the current frame.</returns>
-        public Vector2 ApplyChange(Vector2 changePerSecond, TimeSpan duration)
-        {
-            return changePerSecond * (float)duration.TotalSeconds;
-        }
-
-        #endregion Public interface
     }
 }

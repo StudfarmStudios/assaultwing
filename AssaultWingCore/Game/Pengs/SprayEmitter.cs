@@ -298,7 +298,7 @@ namespace AW2.Game.Pengs
                             move = Peng.Move + _initialVelocity.GetValue(0, random) * directionUnit;
 
                             // HACK: 'move' will be added to 'pos' in PhysicalUpdater during this same frame
-                            pos -= Peng.Game.PhysicsEngine.ApplyChange(move, Peng.Game.GameTime.ElapsedGameTime);
+                            pos -= move * (float)Peng.Game.GameTime.ElapsedGameTime.TotalSeconds;
 
                             switch (_facingType)
                             {

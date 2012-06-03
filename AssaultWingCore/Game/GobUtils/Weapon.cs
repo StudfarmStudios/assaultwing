@@ -105,7 +105,7 @@ namespace AW2.Game.GobUtils
         protected void ApplyRecoil()
         {
             var momentum = -_recoilMomentum * AWMathHelper.GetUnitVector2(Owner.Rotation);
-            Owner.Game.PostFrameLogicEngine.DoOnce += () => Owner.Game.PhysicsEngine.ApplyMomentum(Owner, momentum);
+            Owner.Game.PostFrameLogicEngine.DoOnce += () => Owner.Body.ApplyLinearImpulse(ref momentum);
         }
 
         protected void ForEachShipBarrel(ShipBarrelTypes barrelTypes, ShipBarrelAction action)

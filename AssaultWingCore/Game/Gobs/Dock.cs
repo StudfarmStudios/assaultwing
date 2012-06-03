@@ -248,10 +248,10 @@ namespace AW2.Game.Gobs
                 });
             }
             _lastRepairTimes[ship] = Game.GameTime.TotalGameTime;
-            var elapsedTime = Game.GameTime.ElapsedGameTime;
-            ship.RepairDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, elapsedTime));
-            ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, elapsedTime);
-            ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, elapsedTime);
+            var elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            ship.RepairDamage(_repairSpeed * elapsedSeconds);
+            ship.ExtraDevice.Charge += _weapon1ChargeSpeed * elapsedSeconds;
+            ship.Weapon2.Charge += _weapon2ChargeSpeed * elapsedSeconds;
         }
     }
 }

@@ -585,8 +585,8 @@ namespace AW2.Game.Gobs
         private void Turn(float force, TimeSpan duration)
         {
             force = MathHelper.Clamp(force, -1f, 1f);
-            float deltaRotation = Game.PhysicsEngine.ApplyChange(force * _turnSpeed, duration);
-            Rotation += deltaRotation;
+            var durationSeconds = (float)duration.TotalSeconds;
+            Rotation += force * _turnSpeed * durationSeconds;
 
             Vector2 headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
             float moveLength = Move.Length();
@@ -600,10 +600,10 @@ namespace AW2.Game.Gobs
 
         private void UpdateRoll()
         {
-            _rollAngle.Step = Game.PhysicsEngine.ApplyChange(_rollSpeed, Game.GameTime.ElapsedGameTime);
+            var elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            _rollAngle.Step = _rollSpeed * elapsedSeconds;
             _rollAngle.Advance();
-            if (!_rollAngleGoalUpdated)
-                _rollAngle.Target = 0;
+            if (!_rollAngleGoalUpdated) _rollAngle.Target = 0;
             _rollAngleGoalUpdated = false;
         }
 

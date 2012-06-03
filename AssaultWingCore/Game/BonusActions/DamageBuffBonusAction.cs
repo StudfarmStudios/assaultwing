@@ -58,7 +58,7 @@ namespace AW2.Game.BonusActions
         public override void Update()
         {
             base.Update();
-            float damage = Game.PhysicsEngine.ApplyChange(_damagePerSecond, Game.GameTime.ElapsedGameTime);
+            var damage = _damagePerSecond * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
             if (Host != null)
             {
                 if (damage > 0)

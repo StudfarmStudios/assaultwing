@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Core.GameComponents;
 using AW2.Core.OverlayComponents;
 using AW2.Game;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Graphics;
 using AW2.Helpers;
@@ -27,6 +28,7 @@ namespace AW2.Core
         private byte _nextArenaID;
         private GobDeletionMessage _pendingGobDeletionMessage;
         private List<Tuple<GobCreationMessage, int>> _gobCreationMessages = new List<Tuple<GobCreationMessage, int>>();
+        private List<CollisionEvent> _collisionEventsToRemote;
         private byte[] _debugBuffer = new byte[65536]; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
 
         // Debug keys, used only #if DEBUG
@@ -200,6 +202,7 @@ namespace AW2.Core
         public void StartArenaBase() // TODO !!! Figure out a better name.
         {
             base.StartArena();
+            _collisionEventsToRemote = new List<CollisionEvent>();
             PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
         }
 
@@ -529,6 +532,8 @@ namespace AW2.Core
 
         private void AfterEveryFrame()
         {
+            if (NetworkMode == NetworkMode.Server) _collisionEventsToRemote.AddRange(
+                DataEngine.Arena.GetCollisionEvents().Where(e => e.IrreversibleSideEffectsPerformed));
 #if NETWORK_PROFILING
             if (DataEngine.Arena.FrameNumber == 1) ProfilingNetworkBinaryWriter.Reset();
             using (new NetworkProfilingScope(string.Format("Frame {0:0000}", DataEngine.Arena.FrameNumber)))
@@ -647,8 +652,8 @@ namespace AW2.Core
                 gobMessage.AddGob(gob.ID, gob, serializationMode);
                 if (debugMessage != null) debugMessage.AppendFormat("{0} [{1}], ", gob.GetType().Name, gob.TypeName); // DEBUG: catch a rare crash that seems to happen only when serializing walls.
             }
-            gobMessage.CollisionEvents = DataEngine.Arena.GetCollisionEvents().Where(e => e.IrreversibleSideEffectsPerformed).ToList();
-            DataEngine.Arena.ResetCollisionEvents();
+            gobMessage.CollisionEvents = _collisionEventsToRemote;
+            _collisionEventsToRemote = new List<CollisionEvent>();
             foreach (var conn in connections) conn.Send(gobMessage);
 
             if (Settings.Net.HeavyDebugLog && connections.Any() && debugMessage != null) // DEBUG: catch a rare crash that seems to happen only when serializing walls.

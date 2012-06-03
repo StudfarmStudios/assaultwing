@@ -275,6 +275,7 @@ namespace AW2.Game
         /// </summary>
         public void Update()
         {
+            ResetCollisionEvents();
             _world.Step((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
             PerformCustomCollisions();
             if (Game.NetworkMode != NetworkMode.Client)
@@ -299,7 +300,7 @@ namespace AW2.Game
             return _collisionEvents.Values;
         }
 
-        public void ResetCollisionEvents()
+        private void ResetCollisionEvents()
         {
             _collisionEvents.Clear();
             _collisionImpulses.Clear();

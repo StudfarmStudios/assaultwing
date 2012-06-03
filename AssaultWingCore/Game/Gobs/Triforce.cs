@@ -31,9 +31,7 @@ namespace AW2.Game.Gobs
         private float _surroundDamage;
 
         [TypeParameter]
-        private float _triHeightForDamage;
-        [TypeParameter]
-        private float _triHeightForWallPunches;
+        private float _range;
         [TypeParameter]
         private float _angle;
         [TypeParameter]
@@ -44,8 +42,6 @@ namespace AW2.Game.Gobs
         private TimeSpan _hitInterval;
         [TypeParameter]
         private TimeSpan _lifetime;
-        [TypeParameter]
-        private int _wallPunchesPerHit;
         [TypeParameter]
         private float _wallPunchRadius;
 
@@ -89,14 +85,12 @@ namespace AW2.Game.Gobs
             _surroundEffects = new[] { (CanonicalString)"dummypeng" };
             _collisionAreas = new[] { new CollisionArea("Hit", new Circle(Vector2.Zero, 100), null, CollisionAreaType.Damage, CollisionMaterialType.Regular) };
             _surroundDamage = 500;
-            _triHeightForDamage = 500;
-            _triHeightForWallPunches = 100;
+            _range = 500;
             _angle = MathHelper.PiOver4;
             _damagePerHit = 200;
             _firstHitDelay = TimeSpan.FromSeconds(0.1);
             _hitInterval = TimeSpan.FromSeconds(0.3);
             _lifetime = TimeSpan.FromSeconds(1.1);
-            _wallPunchesPerHit = 10;
             _wallPunchRadius = 10;
             _textureName = (CanonicalString)"dummytexture";
             _hitEffects = new[] { (CanonicalString)"dummypeng" };
@@ -203,10 +197,10 @@ namespace AW2.Game.Gobs
             for (int ray = 0; ray < SLICE_COUNT + 1; ray++)
             {
                 var relativeRayUnit = AWMathHelper.GetUnitVector2(_angle * ray / SLICE_COUNT - _angle / 2);
-                var worldRay = (_triHeightForDamage * relativeRayUnit).Rotate(Rotation);
+                var worldRay = (_range * relativeRayUnit).Rotate(Rotation);
                 var rayLength = Arena.GetDistanceToClosest(Pos, Pos + worldRay,
                     area => area.Owner.MoveType != GobUtils.MoveType.Dynamic && area.Type.IsPhysical());
-                var relativeRayLength = rayLength.HasValue ? rayLength.Value / _triHeightForDamage : 1f;
+                var relativeRayLength = rayLength.HasValue ? rayLength.Value / _range : 1f;
                 _relativeSliceSides[ray] = relativeRayLength * relativeRayUnit;
             }
             _vertexData = CreateVertexData(_relativeSliceSides);
@@ -247,7 +241,7 @@ namespace AW2.Game.Gobs
         {
             foreach (var relativeSliceSide in relativeSliceSides)
             {
-                var punchCenter = Pos + (_triHeightForDamage * relativeSliceSide).Rotate(Rotation);
+                var punchCenter = Pos + (_range * relativeSliceSide).Rotate(Rotation);
                 if (Arena.MakeHole(punchCenter, _wallPunchRadius) == 0) continue;
                 GobHelper.CreateGobs(_wallPunchEffects, Arena, punchCenter);
                 if (Game.NetworkMode == Core.NetworkMode.Server)
@@ -285,7 +279,7 @@ namespace AW2.Game.Gobs
             Func<Vector2> nextVertex = () =>
             {
                 vertices.MoveNext();
-                return vertices.Current * _triHeightForDamage * AWMathHelper.FARSEER_SCALE;
+                return vertices.Current * _range * AWMathHelper.FARSEER_SCALE;
             };
             var coneAreas = CollisionAreas.Where(a => a.Name == "Cone");
             var sliceVerticeses = coneAreas.Select(a => ((PolygonShape)a.Fixture.Shape).Vertices);
@@ -305,7 +299,7 @@ namespace AW2.Game.Gobs
         {
             return GetSlices(relativeSliceSides)
                 .Select(v => new VertexPositionTexture(
-                    _triHeightForDamage * new Vector3(v, 0),
+                    _range * new Vector3(v, 0),
                     (v + Vector2.One) / 2))
                 .ToArray();
         }

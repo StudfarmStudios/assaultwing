@@ -35,11 +35,9 @@
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.25</hitInterval>
   <lifetime>1.2</lifetime>
-  <triHeightForDamage>390</triHeightForDamage>
-  <triHeightForWallPunches>180</triHeightForWallPunches>
+  <range>390</range>
   <angle>0.9</angle>
   <wallPunchRadius>5</wallPunchRadius>
-  <wallPunchesPerHit>4</wallPunchesPerHit>
   <textureName>lightning_3</textureName>
   <surroundEffects>
     <Item>selfdestruct strokes</Item>

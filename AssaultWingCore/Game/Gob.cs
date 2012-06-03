@@ -971,7 +971,7 @@ namespace AW2.Game
                     if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
                     {
                         var fullUpdate = true; // UNDONE because of bugs !!! _nextFullNetworkUdpateTime <= Game.GameTime.TotalGameTime;
-                        byte rotationAndFlags = unchecked((byte)(((int)Math.Round(_rotation / MathHelper.TwoPi * 128)) & 0x7f));
+                        byte rotationAndFlags = unchecked((byte)(((int)Math.Round(Rotation / MathHelper.TwoPi * 128)) & 0x7f));
                         if (fullUpdate)
                         {
                             rotationAndFlags |= 0x80;
@@ -1012,7 +1012,7 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
-                var oldRotation = _rotation;
+                var oldRotation = Rotation;
                 byte rotationAndFlags = reader.ReadByte();
                 var fullUpdate = true; // UNDONE !!! (rotationAndFlags & 0x80) != 0;
                 Rotation = (rotationAndFlags & 0x7f) * MathHelper.TwoPi / 128;

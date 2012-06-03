@@ -120,8 +120,8 @@ namespace AW2.Game
         public const float SMALL_GOB_PHYSICAL_RADIUS = 4;
 
         private const float HIDING_ALPHA_LIMIT = 0.01f;
-        private const float MIN_GOB_COORDINATE = 0;
-        private const float MAX_GOB_COORDINATE = 16000;
+        private const float MIN_GOB_COORDINATE = -Arena.GOB_DESTRUCTION_BOUNDARY;
+        private const float MAX_GOB_COORDINATE = -Arena.GOB_DESTRUCTION_BOUNDARY + 16000;
         private const float MIN_GOB_DELTA_COORDINATE = byte.MinValue / 8f;
         private const float MAX_GOB_DELTA_COORDINATE = byte.MaxValue / 8f;
         private static readonly TimeSpan FULL_NETWORK_UPDATE_INTERVAL = TimeSpan.FromSeconds(1);
@@ -1028,7 +1028,7 @@ namespace AW2.Game
                 var newMove = reader.ReadHalfVector2();
 
                 // TODO: Extrapolate with Farseer after deserializing all gobs !!! ExtrapolatePosAndMove(newPos, newMove, framesAgo);
-                _pos = newPos;
+                Pos = newPos;
                 Move = newMove;
 
                 DrawPosOffset += oldPos - Pos;

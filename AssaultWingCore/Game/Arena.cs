@@ -92,7 +92,7 @@ namespace AW2.Game
 
         #region Collision related fields
 
-        private const float GOB_DESTRUCTION_BOUNDARY = 1000;
+        public const float GOB_DESTRUCTION_BOUNDARY = 1000;
         private const int FREE_POS_MAX_ATTEMPTS = 50;
         private const float MINIMUM_COLLISION_DELTA = 20;
 

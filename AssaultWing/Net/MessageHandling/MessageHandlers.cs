@@ -63,7 +63,7 @@ namespace AW2.Net.MessageHandling
             var networkEngine = Game.NetworkEngine;
             yield return new MessageHandler<SpectatorUpdateMessage>(MessageHandlerBase.SourceType.Server, HandleSpectatorUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
-            yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.HandleGobCreationMessage) { OneMessageAtATime = true };
+            yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.GobCreationMessageReceived) { OneMessageAtATime = true };
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
             yield return new MessageHandler<ArenaStatisticsMessage>(MessageHandlerBase.SourceType.Server, HandleArenaStatisticsMessage);

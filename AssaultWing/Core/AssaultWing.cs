@@ -26,6 +26,7 @@ namespace AW2.Core
         private TimeSpan _lastFrameNumberSynchronization;
         private byte _nextArenaID;
         private GobDeletionMessage _pendingGobDeletionMessage;
+        private List<Tuple<GobCreationMessage, int>> _gobCreationMessages = new List<Tuple<GobCreationMessage, int>>();
         private byte[] _debugBuffer = new byte[65536]; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
 
         // Debug keys, used only #if DEBUG
@@ -94,6 +95,7 @@ namespace AW2.Core
 
         protected override void UpdateImpl()
         {
+            HandleGobCreationMessages();
             base.UpdateImpl();
             SendServerStateToStats();
             Logic.Update();
@@ -337,7 +339,24 @@ namespace AW2.Core
             }
         }
 
-        public void HandleGobCreationMessage(GobCreationMessage message, int framesAgo)
+        public void GobCreationMessageReceived(GobCreationMessage message, int framesAgo)
+        {
+            lock (_gobCreationMessages) _gobCreationMessages.Add(Tuple.Create(message, framesAgo));
+        }
+
+        private void HandleGobCreationMessages()
+        {
+            List<Tuple<GobCreationMessage, int>> messages;
+            lock (_gobCreationMessages)
+            {
+                messages = _gobCreationMessages;
+                _gobCreationMessages = new List<Tuple<GobCreationMessage, int>>();
+            }
+            foreach (var messageAndFramesAgo in messages)
+                HandleGobCreationMessage(messageAndFramesAgo.Item1, messageAndFramesAgo.Item2);
+        }
+
+        private void HandleGobCreationMessage(GobCreationMessage message, int framesAgo)
         {
             if (message.ArenaID != DataEngine.Arena.ID) return;
             message.ReadGobs(framesAgo,

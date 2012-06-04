@@ -45,6 +45,8 @@ namespace AW2.Game.GobUtils
             }
         }
 
+        private const float VISIBLE_PROPORTIONAL_THRUST_MIN = 0.2f;
+
         /// <summary>
         /// Maximum force of thrust, measured in Newtons.
         /// </summary>
@@ -145,8 +147,7 @@ namespace AW2.Game.GobUtils
         {
             if (proportionalThrust < -1 || proportionalThrust > 1) throw new ArgumentOutOfRangeException("proportionalThrust");
             var force = _maxForce * proportionalThrust * thrustDirectionUnit;
-            Owner.Game.PhysicsEngine.ApplyLimitedForce(Owner, force, _maxSpeed, Owner.Game.GameTime.ElapsedGameTime);
-            const float VISIBLE_PROPORTIONAL_THRUST_MIN = 0.2f;
+            ApplyLimitedForce(force, _maxSpeed);
             var pengInput = (Math.Abs(proportionalThrust) - VISIBLE_PROPORTIONAL_THRUST_MIN) / (1 - VISIBLE_PROPORTIONAL_THRUST_MIN);
             if (proportionalThrust >= VISIBLE_PROPORTIONAL_THRUST_MIN)
                 EnableExhaustEffects(exhaustDirectionRelativeToOwner, pengInput);
@@ -155,6 +156,22 @@ namespace AW2.Game.GobUtils
             else
                 DisableExhaustEffects();
             _exhaustAmountUpdated = true;
+        }
+
+        /// <summary>
+        /// Applies the given force to a gob, preventing gob speed from growing beyond a limit.
+        /// Although the gob's speed cannot grow beyond <paramref name="maxSpeed"/>,
+        /// it can still maintain its value even if it's larger than <paramref name="maxSpeed"/>.
+        /// </summary>
+        /// <param name="force">The force to apply, measured in Newtons.</param>
+        /// <param name="maxSpeed">The speed limit beyond which the gob's speed cannot grow.</param>
+        private void ApplyLimitedForce(Vector2 force, float maxSpeed)
+        {
+            var forceToAcceleration = (float)Owner.Game.GameTime.ElapsedGameTime.TotalSeconds / Owner.Mass;
+            var unlimitedMove = Owner.Move + force * forceToAcceleration;
+            var limitedMove = unlimitedMove.Clamp(0, Math.Max(maxSpeed, Owner.Move.Length()));
+            var limitedForce = (limitedMove - Owner.Move) / forceToAcceleration * AWMathHelper.FARSEER_SCALE;
+            Owner.Body.ApplyForce(ref limitedForce);
         }
 
         private void EnableExhaustEffects(float exhaustDirectionRelativeToOwner, float pengInput)

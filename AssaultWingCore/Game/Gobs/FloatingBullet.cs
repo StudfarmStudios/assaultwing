@@ -102,7 +102,7 @@ namespace AW2.Game.Gobs
         {
             base.Update();
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
-            if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
+            if (IsHoverThrusting) Body.ApplyForce(_thrustForce * AWMathHelper.FARSEER_SCALE);
             Alpha = Game.DataEngine.Minions
                 .Where(gob => gob.Owner != Owner && !gob.IsHidden)
                 .Select(gob => Vector2.Distance(Pos, gob.Pos))
@@ -160,8 +160,8 @@ namespace AW2.Game.Gobs
 
         private void MoveTowards(Vector2 target, float force)
         {
-            var forceVector = force * Vector2.Normalize(target - Pos);
-            Game.PhysicsEngine.ApplyForce(this, forceVector);
+            var forceVector = force * Vector2.Normalize(target - Pos) * AWMathHelper.FARSEER_SCALE;
+            Body.ApplyForce(ref forceVector);
             _hoverAroundPos = null;
         }
 

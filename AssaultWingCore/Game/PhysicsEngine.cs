@@ -31,35 +31,5 @@ namespace AW2.Game
         {
             gob.Move = (1 - drag) * (gob.Move - flow) + flow;
         }
-
-        /// <summary>
-        /// Applies the given force to the given gob.
-        /// </summary>
-        /// Note that the larger the mass of the gob is, the more force is needed to give it
-        /// a good push.
-        /// <param name="gob">The gob to apply the force to.</param>
-        /// <param name="force">The force to apply, measured in Newtons.</param>
-        public void ApplyForce(Gob gob, Vector2 force)
-        {
-            gob.Move += force / gob.Mass * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-        }
-
-        /// <summary>
-        /// Applies the given force to a gob, preventing gob speed from
-        /// growing beyond a limit.
-        /// </summary>
-        /// Note that the larger the mass of the gob is, the more force is needed to give it
-        /// a good push. Although the gob's speed cannot grow beyond <b>maxSpeed</b>,
-        /// it can still maintain its value even if it's larger than <b>maxSpeed</b>.
-        /// <param name="gob">The gob to apply the force to.</param>
-        /// <param name="force">The force to apply, measured in Newtons.</param>
-        /// <param name="maxSpeed">The speed limit beyond which the gob's speed cannot grow.</param>
-        public void ApplyLimitedForce(Gob gob, Vector2 force, float maxSpeed, TimeSpan duration)
-        {
-            float oldSpeed = gob.Move.Length();
-            gob.Move += force / gob.Mass * (float)duration.TotalSeconds;
-            float speedLimit = MathHelper.Max(maxSpeed, oldSpeed);
-            gob.Move = gob.Move.Clamp(0, speedLimit);
-        }
     }
 }

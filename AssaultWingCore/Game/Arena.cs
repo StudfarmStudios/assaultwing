@@ -94,7 +94,6 @@ namespace AW2.Game
 
         public const float GOB_DESTRUCTION_BOUNDARY = 1000;
         private const int FREE_POS_MAX_ATTEMPTS = 50;
-        private const float MINIMUM_COLLISION_DELTA = 20;
 
         private Dictionary<CollisionEventKey, CollisionEvent> _collisionEvents = new Dictionary<CollisionEventKey, CollisionEvent>();
         private Dictionary<CollisionEventKey, float> _collisionImpulses = new Dictionary<CollisionEventKey, float>();
@@ -231,45 +230,6 @@ namespace AW2.Game
             InitializeAmbientSounds();
         }
 
-        private void UninitializeAmbientSounds()
-        {
-            foreach (var sound in _ambientSounds) sound.Stop();
-            _ambientSounds.Clear();
-        }
-
-        private void InitializeAmbientSounds()
-        {
-            // Just in case
-            UninitializeAmbientSounds();
-
-            // Background
-            _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasAmbience"));
-
-            // HACK! (Add sound property on objects or sound source gob)
-
-            var goldObjectId = new CanonicalString("amazon_chest_1");
-            var shovelObjectId = new CanonicalString("amazon_shovel_1");
-            foreach (var layer in _layers)
-            {
-                foreach (var gob in layer.Gobs)
-                {
-                    var names = gob.ModelNames.ToArray();
-
-                    if (names.Contains(goldObjectId))
-                    {
-                        _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasCoins", gob));
-                    }
-                    else if (gob.ModelNames.Contains(shovelObjectId))
-                    {
-                        _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasLeaves", gob));
-                    }
-
-                    gob.Layer = layer;
-                }
-            }
-            foreach (var sound in _ambientSounds) sound.Play();
-        }
-
         /// <summary>
         /// Updates arena contents for the current time step.
         /// </summary>
@@ -284,26 +244,9 @@ namespace AW2.Game
                         gob.Die();
         }
 
-        private void PerformCustomCollisions()
-        {
-            foreach (var collisionEvent in _collisionEvents)
-            {
-                var impulse = 0f;
-                _collisionImpulses.TryGetValue(collisionEvent.Key, out impulse); // Is not found for sensor fixtures.
-                collisionEvent.Value.SetImpulse(impulse);
-                collisionEvent.Value.Handle();
-            }
-        }
-
         public IEnumerable<CollisionEvent> GetCollisionEvents()
         {
             return _collisionEvents.Values;
-        }
-
-        private void ResetCollisionEvents()
-        {
-            _collisionEvents.Clear();
-            _collisionImpulses.Clear();
         }
 
         /// <summary>
@@ -349,21 +292,7 @@ namespace AW2.Game
         public bool IsFreePosition(IGeomPrimitive area)
         {
             if (!BoundedAreaNormal.Contains(area.BoundingBox)) return false;
-            var shape = area.GetShape();
-            AABB shapeAabb;
-            Transform shapeTransform = new Transform();
-            shapeTransform.SetIdentity();
-            shape.ComputeAABB(out shapeAabb, ref shapeTransform, 0);
-            Transform fixtureTransform;
-            var isFree = true;
-            _world.QueryAABB(otherFixture =>
-            {
-                otherFixture.Body.GetTransform(out fixtureTransform);
-                if (!otherFixture.IsSensor && AABB.TestOverlap(otherFixture.Shape, 0, shape, 0, ref fixtureTransform, ref shapeTransform))
-                    isFree = false;
-                return isFree;
-            }, ref shapeAabb);
-            return isFree;
+            return PhysicsHelper.IsFreePosition(_world, area);
         }
 
         /// <summary>
@@ -424,6 +353,63 @@ namespace AW2.Game
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
                 SetGameAndArenaToGobs();
+            }
+        }
+
+        public void DebugDrawFixtures(Matrix view, Matrix projection)
+        {
+            var context = new Graphics3D.DebugDrawContext(view, projection);
+            var broadPhase = _world.ContactManager.BroadPhase;
+            foreach (var body in _world.BodyList)
+            {
+                if (!body.Enabled) continue;
+                foreach (var fixture in body.FixtureList)
+                {
+                    for (int t = 0; t < fixture.ProxyCount; ++t)
+                    {
+                        var proxy = fixture.Proxies[t];
+                        AABB aabb;
+                        broadPhase.GetFatAABB(proxy.ProxyId, out aabb);
+                        Graphics3D.DebugDrawPolyline(context,
+                            aabb.LowerBound.FromFarseer(),
+                            new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y).FromFarseer(),
+                            aabb.UpperBound.FromFarseer(),
+                            new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y).FromFarseer(),
+                            aabb.LowerBound.FromFarseer());
+                    }
+                }
+            }
+        }
+
+        public void DebugDrawBroadPhase(Matrix view, Matrix projection)
+        {
+            var context = new Graphics3D.DebugDrawContext(view, projection);
+            Func<int, Color> getColor = count =>
+                count <= 0 ? new Color(0f, 0f, 1f) :
+                count <= 5 ? new Color(0f, 1f, 0f) :
+                count <= 25 ? new Color(1f, 0.5f, 0f) :
+                count <= 125 ? new Color(1f, 1f, 0f) :
+                new Color(1f, 1f, 1f);
+            Func<AABB, Vector2[]> getVertices = aabb =>
+            {
+                var awCenter = aabb.Center.FromFarseer();
+                var extents = aabb.Extents.FromFarseer();
+                var reducedExtents = extents - new Vector2((float)Math.Log(extents.X + 1, 1.5), (float)Math.Log(extents.Y + 1, 1.5));
+                return new[]
+                {
+                    awCenter - reducedExtents,
+                    awCenter + reducedExtents.MirrorX(),
+                    awCenter + reducedExtents,
+                    awCenter + reducedExtents.MirrorY(),
+                    awCenter - reducedExtents,
+                };
+            };
+            var spansAndElementCounts = new List<Tuple<AABB, int>>();
+            _world.ContactManager.BroadPhase.GetSpans(ref spansAndElementCounts);
+            foreach (var aabbAndCount in spansAndElementCounts)
+            {
+                context.Color = getColor(aabbAndCount.Item2);
+                Graphics3D.DebugDrawPolyline(context, getVertices(aabbAndCount.Item1));
             }
         }
 
@@ -554,6 +540,62 @@ namespace AW2.Game
             Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
         }
 
+        private void UninitializeAmbientSounds()
+        {
+            foreach (var sound in _ambientSounds) sound.Stop();
+            _ambientSounds.Clear();
+        }
+
+        private void InitializeAmbientSounds()
+        {
+            // Just in case
+            UninitializeAmbientSounds();
+
+            // Background
+            _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasAmbience"));
+
+            // HACK! (Add sound property on objects or sound source gob)
+
+            var goldObjectId = new CanonicalString("amazon_chest_1");
+            var shovelObjectId = new CanonicalString("amazon_shovel_1");
+            foreach (var layer in _layers)
+            {
+                foreach (var gob in layer.Gobs)
+                {
+                    var names = gob.ModelNames.ToArray();
+
+                    if (names.Contains(goldObjectId))
+                    {
+                        _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasCoins", gob));
+                    }
+                    else if (gob.ModelNames.Contains(shovelObjectId))
+                    {
+                        _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasLeaves", gob));
+                    }
+
+                    gob.Layer = layer;
+                }
+            }
+            foreach (var sound in _ambientSounds) sound.Play();
+        }
+
+        private void PerformCustomCollisions()
+        {
+            foreach (var collisionEvent in _collisionEvents)
+            {
+                var impulse = 0f;
+                _collisionImpulses.TryGetValue(collisionEvent.Key, out impulse); // Is not found for sensor fixtures.
+                collisionEvent.Value.SetImpulse(impulse);
+                collisionEvent.Value.Handle();
+            }
+        }
+
+        private void ResetCollisionEvents()
+        {
+            _collisionEvents.Clear();
+            _collisionImpulses.Clear();
+        }
+
         private void AddGobTrackerToViewports(Gob gob, string textureName)
         {
             var trackerItem = new GobTrackerItem(gob, null, textureName);
@@ -564,63 +606,6 @@ namespace AW2.Game
         #endregion Private methods
 
         #region Callbacks
-
-        public void DebugDrawFixtures(Matrix view, Matrix projection)
-        {
-            var context = new Graphics3D.DebugDrawContext(view, projection);
-            var broadPhase = _world.ContactManager.BroadPhase;
-            foreach (var body in _world.BodyList)
-            {
-                if (!body.Enabled) continue;
-                foreach (var fixture in body.FixtureList)
-                {
-                    for (int t = 0; t < fixture.ProxyCount; ++t)
-                    {
-                        var proxy = fixture.Proxies[t];
-                        AABB aabb;
-                        broadPhase.GetFatAABB(proxy.ProxyId, out aabb);
-                        Graphics3D.DebugDrawPolyline(context,
-                            aabb.LowerBound.FromFarseer(),
-                            new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y).FromFarseer(),
-                            aabb.UpperBound.FromFarseer(),
-                            new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y).FromFarseer(),
-                            aabb.LowerBound.FromFarseer());
-                    }
-                }
-            }
-        }
-
-        public void DebugDrawBroadPhase(Matrix view, Matrix projection)
-        {
-            var context = new Graphics3D.DebugDrawContext(view, projection);
-            Func<int, Color> getColor = count =>
-                count <= 0 ? new Color(0f, 0f, 1f) :
-                count <= 5 ? new Color(0f, 1f, 0f) :
-                count <= 25 ? new Color(1f, 0.5f, 0f) :
-                count <= 125 ? new Color(1f, 1f, 0f) :
-                new Color(1f, 1f, 1f);
-            Func<AABB, Vector2[]> getVertices = aabb =>
-            {
-                var awCenter = aabb.Center.FromFarseer();
-                var extents = aabb.Extents.FromFarseer();
-                var reducedExtents = extents - new Vector2((float)Math.Log(extents.X + 1, 1.5), (float)Math.Log(extents.Y + 1, 1.5));
-                return new[]
-                {
-                    awCenter - reducedExtents,
-                    awCenter + reducedExtents.MirrorX(),
-                    awCenter + reducedExtents,
-                    awCenter + reducedExtents.MirrorY(),
-                    awCenter - reducedExtents,
-                };
-            };
-            var spansAndElementCounts = new List<Tuple<AABB, int>>();
-            _world.ContactManager.BroadPhase.GetSpans(ref spansAndElementCounts);
-            foreach (var aabbAndCount in spansAndElementCounts)
-            {
-                context.Color = getColor(aabbAndCount.Item2);
-                Graphics3D.DebugDrawPolyline(context, getVertices(aabbAndCount.Item1));
-            }
-        }
 
         private void GobAddedHandler(Gob gob)
         {

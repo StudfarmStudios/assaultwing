@@ -86,7 +86,7 @@ namespace AW2.Helpers.Geometric
 
         public Shape GetShape()
         {
-            return new CircleShape(AWMathHelper.FARSEER_SCALE * 0.05f, Density) { Position = AWMathHelper.FARSEER_SCALE * Location };
+            return new CircleShape(0.05f.ToFarseer(), Density) { Position = Location.ToFarseer() };
         }
 
         #endregion IGeomPrimitive Members

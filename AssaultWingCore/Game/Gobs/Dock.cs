@@ -62,7 +62,7 @@ namespace AW2.Game.Gobs
             {
                 return Game.NetworkMode == Core.NetworkMode.Client
                     ? _repairingGobsOnClient.Select(proxy => proxy.GetValue()).Where(gob => gob != null)
-                    : Arena.GetContacting(_dockArea).Select(area => area.Owner);
+                    : PhysicsHelper.GetContacting(_dockArea).Select(area => area.Owner);
             }
         }
 

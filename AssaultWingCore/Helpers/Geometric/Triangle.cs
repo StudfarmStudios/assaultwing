@@ -141,7 +141,7 @@ namespace AW2.Helpers.Geometric
         public Shape GetShape()
         {
             var corners = new[] { P3, P2, P1 };
-            return new PolygonShape(AWMathHelper.CreateVertices(corners), Density);
+            return new PolygonShape(PhysicsHelper.CreateVertices(corners), Density);
         }
 
         #endregion

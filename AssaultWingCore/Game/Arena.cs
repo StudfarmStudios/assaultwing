@@ -372,14 +372,7 @@ namespace AW2.Game
         /// </summary>
         public float? GetDistanceToClosest(Vector2 from, Vector2 to, Func<CollisionArea, bool> filter)
         {
-            Vector2? closestPoint = null;
-            _world.RayCast((Fixture fixture, Vector2 point, Vector2 normal, float fraction) =>
-            {
-                var area = (CollisionArea)fixture.UserData;
-                if (filter(area)) closestPoint = point / AWMathHelper.FARSEER_SCALE;
-                return fraction; // Skip everything that is farther away.
-            }, from * AWMathHelper.FARSEER_SCALE, to * AWMathHelper.FARSEER_SCALE);
-            return closestPoint.HasValue ? Vector2.Distance(from, closestPoint.Value) : (float?)null;
+            return PhysicsHelper.GetDistanceToClosest(_world, from, to, filter);
         }
 
         /// <summary>
@@ -391,45 +384,7 @@ namespace AW2.Game
         /// if the candidate qualifies for more precise overlap testing.</param>
         public void QueryOverlappers(CollisionArea area, Func<CollisionArea, bool> action, Func<CollisionArea, bool> preFilter = null)
         {
-            var shape = area.Fixture.Shape;
-            AABB shapeAabb;
-            Transform shapeTransform;
-            area.Fixture.Body.GetTransform(out shapeTransform);
-            shape.ComputeAABB(out shapeAabb, ref shapeTransform, 0);
-            Transform fixtureTransform;
-            _world.QueryAABB(otherFixture =>
-            {
-                if (preFilter == null || preFilter((CollisionArea)otherFixture.UserData))
-                {
-                    otherFixture.Body.GetTransform(out fixtureTransform);
-                    if (AABB.TestOverlap(otherFixture.Shape, 0, shape, 0, ref fixtureTransform, ref shapeTransform))
-                        return action((CollisionArea)otherFixture.UserData);
-                }
-                return true;
-            }, ref shapeAabb);
-        }
-
-        /// <summary>
-        /// Returns all collision areas that are in contact with a collision area.
-        /// </summary>
-        public IEnumerable<CollisionArea> GetContacting(CollisionArea area)
-        {
-            var contactEdge = area.Fixture.Body.ContactList;
-            while (contactEdge != null)
-            {
-                if (contactEdge.Contact.FixtureA == area.Fixture) yield return (CollisionArea)contactEdge.Contact.FixtureB.UserData;
-                if (contactEdge.Contact.FixtureB == area.Fixture) yield return (CollisionArea)contactEdge.Contact.FixtureA.UserData;
-                contactEdge = contactEdge.Next;
-            }
-        }
-
-        /// <summary>
-        /// Returns the distance of a point from a collision area.
-        /// </summary>
-        public float Distance(CollisionArea area, Vector2 pos)
-        {
-            // TODO: Shortest distance to area boundary.
-            return Vector2.Distance(area.Owner.Pos, pos);
+            PhysicsHelper.QueryOverlappers(_world, area, action, preFilter);
         }
 
         /// <returns>(true, gob) if a gob was found by the ID, or (false, null) if a gob was not found.</returns>
@@ -448,17 +403,13 @@ namespace AW2.Game
         {
             if (holeRadius <= 0) return 0;
             var holeHalfDiagonal = new Vector2(holeRadius);
-            var holeAabb = AWMathHelper.CreateAABB(holePos - holeHalfDiagonal, holePos + holeHalfDiagonal);
-            var pixelsRemoved = 0;
-            var handledWalls = new HashSet<Gobs.Wall>();
-            _world.QueryAABB(fixture =>
+            var walls = new HashSet<Gobs.Wall>();
+            PhysicsHelper.QueryOverlappers(_world, holePos - holeHalfDiagonal, holePos + holeHalfDiagonal, area =>
             {
-                var wall = fixture.Body.UserData as Gobs.Wall;
-                if (wall != null && handledWalls.Add(wall))
-                    pixelsRemoved += wall.MakeHole(holePos, holeRadius);
+                walls.Add(area.Owner as Gobs.Wall);
                 return true;
-            }, ref holeAabb);
-            return pixelsRemoved;
+            });
+            return walls.Sum(wall => wall == null ? (int?)null : wall.MakeHole(holePos, holeRadius)).Value;
         }
 
         public void PrepareEffect(BasicEffect effect)
@@ -551,8 +502,7 @@ namespace AW2.Game
 
         private void InitializeWorld()
         {
-            var worldSpan = AWMathHelper.CreateAABB(BoundedAreaExtreme.Min, BoundedAreaExtreme.Max);
-            _world = new World(AWMathHelper.FARSEER_SCALE * _gravity, worldSpan);
+            _world = PhysicsHelper.CreateWorld(_gravity, BoundedAreaExtreme.Min, BoundedAreaExtreme.Max);
             _world.ContactManager.PostSolve += PostSolveHandler;
             _world.ContactManager.BeginContact += BeginContactHandler;
         }
@@ -630,11 +580,11 @@ namespace AW2.Game
                         AABB aabb;
                         broadPhase.GetFatAABB(proxy.ProxyId, out aabb);
                         Graphics3D.DebugDrawPolyline(context,
-                            aabb.LowerBound / AWMathHelper.FARSEER_SCALE,
-                            new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y) / AWMathHelper.FARSEER_SCALE,
-                            aabb.UpperBound / AWMathHelper.FARSEER_SCALE,
-                            new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y) / AWMathHelper.FARSEER_SCALE,
-                            aabb.LowerBound / AWMathHelper.FARSEER_SCALE);
+                            aabb.LowerBound.FromFarseer(),
+                            new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y).FromFarseer(),
+                            aabb.UpperBound.FromFarseer(),
+                            new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y).FromFarseer(),
+                            aabb.LowerBound.FromFarseer());
                     }
                 }
             }
@@ -651,9 +601,9 @@ namespace AW2.Game
                 new Color(1f, 1f, 1f);
             Func<AABB, Vector2[]> getVertices = aabb =>
             {
-                var awCenter = aabb.Center / AWMathHelper.FARSEER_SCALE;
-                var extents = aabb.Extents;
-                var reducedExtents = extents / AWMathHelper.FARSEER_SCALE - new Vector2((float)Math.Log(extents.X + 1, 1.5), (float)Math.Log(extents.Y + 1, 1.5));
+                var awCenter = aabb.Center.FromFarseer();
+                var extents = aabb.Extents.FromFarseer();
+                var reducedExtents = extents - new Vector2((float)Math.Log(extents.X + 1, 1.5), (float)Math.Log(extents.Y + 1, 1.5));
                 return new[]
                 {
                     awCenter - reducedExtents,

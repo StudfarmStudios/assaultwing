@@ -279,7 +279,7 @@ namespace AW2.Game.Gobs
             Func<Vector2> nextVertex = () =>
             {
                 vertices.MoveNext();
-                return vertices.Current * _range * AWMathHelper.FARSEER_SCALE;
+                return vertices.Current * _range.ToFarseer();
             };
             var coneAreas = CollisionAreas.Where(a => a.Name == "Cone");
             var sliceVerticeses = coneAreas.Select(a => ((PolygonShape)a.Fixture.Shape).Vertices);

@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using FarseerPhysics.Collision;
-using FarseerPhysics.Common;
 using AW2.Core;
 
 namespace AW2.Helpers
@@ -70,13 +68,6 @@ namespace AW2.Helpers
                 }
             }
         }
-
-        /// <summary>
-        /// Ratio of Farseer Physics Engine coordinates to Assault Wing coordinates.
-        /// E.g. Farseer_X = Assault_Wing_X * FARSEER_SCALE. Farseer provides the most
-        /// accurate simulation when body sizes are between 0.1 and 10.
-        /// </summary>
-        public const float FARSEER_SCALE = 0.1f;
 
         /// <summary>
         /// Linearly interpolates between two values by stepping at most a constant
@@ -685,27 +676,6 @@ namespace AW2.Helpers
             return value.LengthSquared() <= 1e-10f * 1e-10f
                 ? Vector2.Zero
                 : Vector2.Normalize(value);
-        }
-
-        /// <summary>
-        /// Creates an axis aligned bounding box in Farseer coordinates,
-        /// given the corner points in Assault Wing coordinates.
-        /// </summary>
-        public static AABB CreateAABB(Vector2 minPos, Vector2 maxPos)
-        {
-            return new AABB(FARSEER_SCALE * minPos, FARSEER_SCALE * maxPos);
-        }
-
-        /// <summary>
-        /// Creates a Farseer vertex array in Farseer coordinates,
-        /// given vertices in Assault Wing coordinates.
-        /// </summary>
-        public static Vertices CreateVertices(params Vector2[] poses)
-        {
-            var vertices = new Vertices(poses);
-            var scale = new Vector2(FARSEER_SCALE);
-            vertices.Scale(ref scale);
-            return vertices;
         }
 
         private static void Swap(ref Point point1, ref Point point2)

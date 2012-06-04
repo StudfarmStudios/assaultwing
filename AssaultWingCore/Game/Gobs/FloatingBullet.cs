@@ -102,16 +102,16 @@ namespace AW2.Game.Gobs
         {
             base.Update();
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
-            if (IsHoverThrusting) Body.ApplyForce(_thrustForce * AWMathHelper.FARSEER_SCALE);
+            if (IsHoverThrusting) PhysicsHelper.ApplyForce(this, _thrustForce);
             Alpha = Game.DataEngine.Minions
                 .Where(gob => gob.Owner != Owner && !gob.IsHidden)
                 .Select(gob => Vector2.Distance(Pos, gob.Pos))
                 .Select(_enemyDistanceToAlpha.Evaluate)
                 .DefaultIfEmpty(0)
                 .Max();
-            foreach (var gob in Arena.GetContacting(_magnetArea).Select(area => area.Owner))
+            foreach (var gob in PhysicsHelper.GetContacting(_magnetArea).Select(area => area.Owner))
                 if (IsHostile(gob)) MoveTowards(gob.Pos, _attractionForce);
-            foreach (var gob in Arena.GetContacting(_spreadArea).Select(area => area.Owner))
+            foreach (var gob in PhysicsHelper.GetContacting(_spreadArea).Select(area => area.Owner))
                 if (IsFriendly(gob) && gob is FloatingBullet) MoveTowards(gob.Pos, -_spreadingForce);
         }
 
@@ -160,8 +160,8 @@ namespace AW2.Game.Gobs
 
         private void MoveTowards(Vector2 target, float force)
         {
-            var forceVector = force * Vector2.Normalize(target - Pos) * AWMathHelper.FARSEER_SCALE;
-            Body.ApplyForce(ref forceVector);
+            var forceVector = force * Vector2.Normalize(target - Pos);
+            PhysicsHelper.ApplyForce(this, forceVector);
             _hoverAroundPos = null;
         }
 

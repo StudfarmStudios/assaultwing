@@ -405,8 +405,8 @@ namespace AW2.Game
         /// </summary>
         public virtual Vector2 Pos
         {
-            get { return Body != null ? Body.Position / AWMathHelper.FARSEER_SCALE : _pos; }
-            set { if (Body != null) Body.Position = value * AWMathHelper.FARSEER_SCALE; else _pos = value; }
+            get { return Body != null ? Body.Position.FromFarseer() : _pos; }
+            set { if (Body != null) Body.Position = value.ToFarseer(); else _pos = value; }
         }
 
         /// <summary>
@@ -434,8 +434,8 @@ namespace AW2.Game
         /// </summary>
         public virtual Vector2 Move
         {
-            get { return Body != null ? Body.LinearVelocity / AWMathHelper.FARSEER_SCALE : _move; }
-            set { if (Body != null) Body.LinearVelocity = value * AWMathHelper.FARSEER_SCALE; else _move = value; }
+            get { return Body != null ? Body.LinearVelocity.FromFarseer() : _move; }
+            set { if (Body != null) Body.LinearVelocity = value.ToFarseer(); else _move = value; }
         }
 
         /// <summary>
@@ -564,15 +564,15 @@ namespace AW2.Game
             {
                 if (value == null)
                 {
-                    _pos = _body.WorldCenter / AWMathHelper.FARSEER_SCALE;
-                    _move = _body.LinearVelocity / AWMathHelper.FARSEER_SCALE;
+                    _pos = _body.WorldCenter.FromFarseer();
+                    _move = _body.LinearVelocity.FromFarseer();
                     _rotation = _body.Rotation;
                 }
                 else
                 {
-                    var worldPos = _pos * AWMathHelper.FARSEER_SCALE;
+                    var worldPos = _pos.ToFarseer();
                     value.SetTransformIgnoreContacts(ref worldPos, _rotation);
-                    value.LinearVelocity = _move * AWMathHelper.FARSEER_SCALE;
+                    value.LinearVelocity = _move.ToFarseer();
                 }
                 _body = value;
             }

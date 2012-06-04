@@ -89,7 +89,7 @@ namespace AW2.Game.GobUtils
         {
             if (IsActive)
             {
-                foreach (var area in _radiator.Arena.GetContacting(_collisionArea)) ApplyTo(area.Owner);
+                foreach (var area in PhysicsHelper.GetContacting(_collisionArea)) ApplyTo(area.Owner);
                 if (IsTimeUp) Deactivate();
             }
         }
@@ -98,12 +98,9 @@ namespace AW2.Game.GobUtils
         {
             if (gob.MoveType != MoveType.Dynamic) return;
             var difference = gob.Pos - _radiator.Pos;
-            var differenceLength = difference.Length();
-            var differenceUnit = differenceLength > 0 ? difference / differenceLength : Vector2.Zero;
-            var flow = differenceUnit * _flowSpeed.Evaluate(differenceLength);
-            var moveBoost = _radiator.Move == Vector2.Zero
-                ? Vector2.Zero
-                : Vector2.Normalize(_radiator.Move) * Vector2.Dot(_radiator.Move, differenceUnit);
+            var differenceUnit = difference.NormalizeOrZero();
+            var flow = differenceUnit * _flowSpeed.Evaluate(difference.Length());
+            var moveBoost = _radiator.Move.NormalizeOrZero() * Vector2.Dot(_radiator.Move, differenceUnit);
             _radiator.Game.PhysicsEngine.ApplyDrag(gob, flow + moveBoost, _dragMagnitude);
 
             // HACK to blow rockets away

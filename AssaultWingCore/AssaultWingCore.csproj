@@ -259,6 +259,7 @@
     <Compile Include="Helpers\Math\Half.cs" />
     <Compile Include="Helpers\Math\InterpolatingValue.cs" />
     <Compile Include="Helpers\Math\MovementCurve.cs" />
+    <Compile Include="Helpers\Math\PhysicsHelper.cs" />
     <Compile Include="Helpers\Math\PIDController.cs" />
     <Compile Include="Helpers\Math\PIDController2.cs" />
     <Compile Include="Helpers\Math\PIDControllerBase.cs" />

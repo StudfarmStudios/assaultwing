@@ -453,8 +453,6 @@ namespace AW2.Game
         {
             if (gob.Body == null) return;
             _world.RemoveBody(gob.Body);
-            gob.Body = null;
-            foreach (var area in gob.CollisionAreas) area.Fixture = null;
         }
 
         /// <summary>

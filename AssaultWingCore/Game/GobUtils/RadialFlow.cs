@@ -101,7 +101,7 @@ namespace AW2.Game.GobUtils
             var differenceUnit = difference.NormalizeOrZero();
             var flow = differenceUnit * _flowSpeed.Evaluate(difference.Length());
             var moveBoost = _radiator.Move.NormalizeOrZero() * Vector2.Dot(_radiator.Move, differenceUnit);
-            _radiator.Game.PhysicsEngine.ApplyDrag(gob, flow + moveBoost, _dragMagnitude);
+            PhysicsHelper.ApplyDrag(gob, flow + moveBoost, _dragMagnitude);
 
             // HACK to blow rockets away
             var rocket = gob as Gobs.Rocket;

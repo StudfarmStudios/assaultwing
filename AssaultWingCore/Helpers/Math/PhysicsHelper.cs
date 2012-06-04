@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using FarseerPhysics.Collision;
 using FarseerPhysics.Common;
 using FarseerPhysics.Dynamics;
-using AW2.Game.Collisions;
 using AW2.Game;
+using AW2.Game.Collisions;
 using AW2.Helpers.Geometric;
 
 namespace AW2.Helpers
@@ -71,11 +71,20 @@ namespace AW2.Helpers
         /// </summary>
         public static void ApplyLimitedForce(Gob gob, Vector2 force, float maxSpeed)
         {
-            var forceToAcceleration = (float)gob.Game.GameTime.ElapsedGameTime.TotalSeconds / gob.Mass;
-            var unlimitedMove = gob.Move + force * forceToAcceleration;
+            var unlimitedMove = gob.Move + force.ForceToMoveDelta(gob);
             var limitedMove = unlimitedMove.Clamp(0, Math.Max(maxSpeed, gob.Move.Length()));
-            var limitedForce = (limitedMove - gob.Move) / forceToAcceleration;
-            ApplyForce(gob, limitedForce);
+            SetMove(gob, limitedMove);
+        }
+
+        /// <summary>
+        /// Applies drag to a gob. Drag is a force that manipulates the gob's movement towards
+        /// the <paramref name="flow"/> of the medium. <paramref name="drag"/> measures the
+        /// amount of this manipulation, 0 meaning no drag and 1 meaning absolute drag where
+        /// the gob cannot escape the flow. Practical values are very small, under 0.1.
+        /// </summary>
+        public static void ApplyDrag(Gob gob, Vector2 flow, float drag)
+        {
+            SetMove(gob, (1 - drag) * (gob.Move - flow) + flow);
         }
 
         public static bool IsFreePosition(World world, IGeomPrimitive area)
@@ -171,6 +180,22 @@ namespace AW2.Helpers
         {
             // TODO: Shortest distance to area boundary.
             return Vector2.Distance(area.Owner.Pos, pos);
+        }
+
+        private static void SetMove(Gob gob, Vector2 move)
+        {
+            ApplyForce(gob, (move - gob.Move).MoveDeltaToForce(gob));
+        }
+
+        private static Vector2 ForceToMoveDelta(this Vector2 force, Gob gob)
+        {
+            Debug.Assert(gob.Mass > 0);
+            return force * (float)gob.Game.GameTime.ElapsedGameTime.TotalSeconds / gob.Mass;
+        }
+
+        private static Vector2 MoveDeltaToForce(this Vector2 moveDelta, Gob gob)
+        {
+            return moveDelta / (float)gob.Game.GameTime.ElapsedGameTime.TotalSeconds * gob.Mass;
         }
     }
 }

@@ -188,7 +188,6 @@
     <Compile Include="Game\Pengs\PhysicalUpdater.cs" />
     <Compile Include="Game\Pengs\SimpleCurve.cs" />
     <Compile Include="Game\Pengs\SprayEmitter.cs" />
-    <Compile Include="Game\PhysicsEngine.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\PlayerMessage.cs" />
     <Compile Include="Game\PostprocessEffectNameContainer.cs" />
@@ -288,7 +287,6 @@
     <Compile Include="Helpers\Serialization\ShallowCopyAttribute.cs" />
     <Compile Include="Helpers\Serialization\TypeLoader.cs" />
     <Compile Include="Helpers\Serialization\TypeParameterAttribute.cs" />
-    <Compile Include="Helpers\SpatialGrid.cs" />
     <Compile Include="Helpers\WeakEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AWSettings.cs" />

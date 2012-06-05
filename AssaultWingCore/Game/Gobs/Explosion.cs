@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
@@ -42,10 +43,11 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private string _sound;
 
-        private TimeSpan? _damageTime;
+        private bool _damageDone;
 
         public override bool Cold { get { return false; } }
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+        private CollisionArea DamageArea { get { return CollisionAreas.First(a => a.Type == CollisionAreaType.Damage); } }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -80,22 +82,23 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
+            CauseDamage();
             if (!_radialFlow.IsActive) Die();
             _radialFlow.Update();
         }
 
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea)
+        private void CauseDamage()
         {
-            if (_damageTime.HasValue && _damageTime.Value != Game.GameTime.TotalGameTime) return;
-            // Note: RadialFlow attaches its own CollisionArea to Explosion. Do nothing with it.
-            if (myArea.Type == CollisionAreaType.Damage)
-            {
-                Game.Stats.SendHit(this, theirArea.Owner);
-                _damageTime = Game.GameTime.TotalGameTime;
-                var damage = _inflictDamage.Evaluate(PhysicsHelper.Distance(theirArea, Pos));
-                theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
-                myArea.Destroy();
-            }
+            if (_damageDone) return;
+            foreach (var area in PhysicsHelper.GetContacting(DamageArea)) CauseDamage(area);
+            _damageDone = true;
+        }
+
+        private void CauseDamage(CollisionArea theirArea)
+        {
+            Game.Stats.SendHit(this, theirArea.Owner);
+            var damage = _inflictDamage.Evaluate(PhysicsHelper.Distance(theirArea, Pos));
+            theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
         }
     }
 }

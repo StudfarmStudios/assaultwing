@@ -244,6 +244,25 @@ namespace AW2.Game
                         gob.Die();
         }
 
+        public void UpdateSomeGobs(HashSet<Gob> gobsToUpdate, int frameCount)
+        {
+            var frozenGobs = new List<Tuple<Gob, AW2.Game.GobUtils.MoveType, Vector2, float>>();
+            foreach (var gob in GobsInRelevantLayers)
+            {
+                if (gob.MoveType == AW2.Game.GobUtils.MoveType.Static) continue;
+                if (gobsToUpdate.Contains(gob)) return;
+                frozenGobs.Add(Tuple.Create(gob, gob.MoveType, gob.Body.LinearVelocity, gob.Body.AngularVelocity));
+                gob.MoveType = AW2.Game.GobUtils.MoveType.Static;
+            }
+            for (int i = 0; i < frameCount; i++) Update();
+            foreach (var tuple in frozenGobs)
+            {
+                tuple.Item1.MoveType = tuple.Item2;
+                tuple.Item1.Body.LinearVelocity = tuple.Item3;
+                tuple.Item1.Body.AngularVelocity = tuple.Item4;
+            }
+        }
+
         public IEnumerable<CollisionEvent> GetCollisionEvents()
         {
             return _collisionEvents.Values;

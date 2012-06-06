@@ -318,11 +318,15 @@ namespace AW2.Net.MessageHandling
                 collisionEvent.SkipReversibleSideEffects = true;
                 collisionEvent.Handle();
             }
+            var updatedGobs = new HashSet<Gob>();
             mess.ReadGobs(gobId =>
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
-                return theGob == null || theGob.IsDisposed ? null : theGob;
+                var result = theGob == null || theGob.IsDisposed ? null : theGob;
+                if (result != null) updatedGobs.Add(result);
+                return result;
             }, framesAgo, SerializationModeFlags.VaryingDataFromServer);
+            arena.UpdateSomeGobs(updatedGobs, framesAgo);
         }
 
         private void HandleGobUpdateMessageOnServer(GobUpdateMessage mess, int framesAgo)

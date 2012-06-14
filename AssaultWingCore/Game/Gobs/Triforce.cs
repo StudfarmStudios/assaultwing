@@ -75,7 +75,7 @@ namespace AW2.Game.Gobs
         public Gob Host { get { return _hostProxy != null ? _hostProxy.GetValue() : null; } set { _hostProxy = value; } }
         private TimeSpan FadeTime { get { return _firstHitDelay; } }
         private bool IsFadingOut { get { return Arena.TotalTime + FadeTime >= _deathTime; } }
-        private bool IsHittable(Gob gob) { return gob.IsDamageable && gob != Host; }
+        private bool IsHittable(CollisionArea area) { return area.Type.IsPhysical() && area.Owner.IsDamageable && area.Owner != Host; }
 
         /// <summary>
         /// Only for serialization.
@@ -224,7 +224,7 @@ namespace AW2.Game.Gobs
             foreach (var hitArea in CollisionAreas.Where(a => a.Name == areaName))
             {
                 Arena.QueryOverlappers(hitArea,
-                    area => { if (IsHittable(area.Owner)) victims.Add(area.Owner); return true; },
+                    area => { if (IsHittable(area)) victims.Add(area.Owner); return true; },
                     area => area.Owner.IsDamageable);
             }
             foreach (var victim in victims) Hit(victim, damage);

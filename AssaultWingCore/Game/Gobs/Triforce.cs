@@ -198,8 +198,7 @@ namespace AW2.Game.Gobs
             {
                 var relativeRayUnit = AWMathHelper.GetUnitVector2(_angle * ray / SLICE_COUNT - _angle / 2);
                 var worldRay = (_range * relativeRayUnit).Rotate(Rotation);
-                var rayLength = Arena.GetDistanceToClosest(Pos, Pos + worldRay,
-                    area => area.Owner.MoveType != GobUtils.MoveType.Dynamic && area.Type.IsPhysical());
+                var rayLength = Arena.GetDistanceToClosest(Pos, Pos + worldRay, area => area.Owner is Gobs.Wall);
                 var relativeRayLength = rayLength.HasValue ? rayLength.Value / _range : 1f;
                 _relativeSliceSides[ray] = relativeRayLength * relativeRayUnit;
             }

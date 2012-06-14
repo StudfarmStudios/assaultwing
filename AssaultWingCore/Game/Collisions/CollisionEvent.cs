@@ -9,6 +9,37 @@ namespace AW2.Game.Collisions
 {
     public class CollisionEvent
     {
+        public struct SerializationData : INetworkSerializable
+        {
+            public int Gob1ID, Gob2ID, Area1ID, Area2ID;
+            public CollisionSoundType CollisionSound;
+
+            public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags serializationMode)
+            {
+                // Note: Serialize all regardless of serializationMode.
+                writer.Write((short)Gob1ID);
+                writer.Write((short)Gob2ID);
+                if (Area1ID > 0x03 || Area2ID > 0x03)
+                    throw new ApplicationException("Too large collision area identifier: " + Area1ID + " or " + Area2ID);
+                var mixedData = (byte)((byte)Area1ID & 0x03);
+                mixedData |= (byte)(((byte)Area2ID & 0x03) << 2);
+                Debug.Assert(Enum.GetValues(typeof(CollisionSoundType)).Length < 4, "More possible values for CollisionSoundType than serialization expects.");
+                mixedData |= (byte)(((byte)CollisionSound & 0x03) << 4);
+                writer.Write((byte)mixedData);
+            }
+
+            public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags serializationMode, int framesAgo)
+            {
+                // Note: Deserialize all regardless of serializationMode.
+                Gob1ID = reader.ReadInt16();
+                Gob2ID = reader.ReadInt16();
+                var mixedData = reader.ReadByte();
+                Area1ID = mixedData & 0x03;
+                Area2ID = (mixedData >> 2) & 0x03;
+                CollisionSound = (CollisionSoundType)((mixedData >> 4) & 0x03);
+            }
+        }
+
         private const float COLLISION_DAMAGE_ACCELERATION_MIN = 8 * 60; // Note: Adjusted for target FPS of 60.
         private const float COLLISION_DAMAGE_PER_ACCELERATION = 0.045f;
 
@@ -27,12 +58,27 @@ namespace AW2.Game.Collisions
 
         /// <summary>
         /// Creates an uninitialized collision event. Initialize by calling
-        /// <see cref="SetCollisionAreas"/> and <see cref="SetImpulse"/>.
+        /// <see cref="SetCollisionAreas"/>, <see cref="SetCollisionSound"/> and
+        /// <see cref="SetImpulse"/>.
         /// </summary>
         public CollisionEvent()
         {
             _gob1ID = _gob2ID = Gob.INVALID_ID;
             _area1ID = _area2ID = -1;
+        }
+
+        public CollisionEvent(SerializationData initData, Func<int, Tuple<bool, Gob>> gobFinder)
+            : this()
+        {
+            var gob1 = gobFinder(initData.Gob1ID).Item2;
+            var gob2 = gobFinder(initData.Gob2ID).Item2;
+            if (gob1 != null && gob2 != null)
+            {
+                var area1 = gob1.GetCollisionArea(initData.Area1ID);
+                var area2 = gob2.GetCollisionArea(initData.Area2ID);
+                SetCollisionAreas(area1, area2);
+            }
+            SetCollisionSound(initData.CollisionSound);
         }
 
         public void SetCollisionAreas(CollisionArea area1, CollisionArea area2)
@@ -61,44 +107,23 @@ namespace AW2.Game.Collisions
             _collisionSound = collisionSound;
         }
 
+        public SerializationData GetSerializationData()
+        {
+            return new SerializationData
+            {
+                Gob1ID = _gob1ID,
+                Gob2ID = _gob2ID,
+                Area1ID = _area1ID,
+                Area2ID = _area2ID,
+                CollisionSound = GetCollisionSound(),
+            };
+        }
+
         public void Handle()
         {
             if (_area1 == null || _area2 == null) return; // May happen on a game client.
             if (!SkipReversibleSideEffects) HandleReversibleSideEffects();
             if (!SkipIrreversibleSideEffects) HandleIrreversibleSideEffects();
-        }
-
-        public void Serialize(NetworkBinaryWriter writer)
-        {
-            writer.Write((short)_gob1ID);
-            writer.Write((short)_gob2ID);
-            if (_area1ID > 0x03 || _area2ID > 0x03)
-                throw new ApplicationException("Too large collision area identifier: " + _area1ID + " or " + _area2ID);
-            var mixedData = (byte)((byte)_area1ID & 0x03);
-            mixedData |= (byte)(((byte)_area2ID & 0x03) << 2);
-            Debug.Assert(Enum.GetValues(typeof(CollisionSoundType)).Length < 4, "More possible values for CollisionSoundType than serialization expects.");
-            mixedData |= (byte)(((byte)GetCollisionSound() & 0x03) << 4);
-            writer.Write((byte)mixedData);
-        }
-
-        public static CollisionEvent Deserialize(NetworkBinaryReader reader)
-        {
-            var gob1ID = reader.ReadInt16();
-            var gob2ID = reader.ReadInt16();
-            var mixedData = reader.ReadByte();
-            var area1ID = mixedData & 0x03;
-            var area2ID = (mixedData >> 2) & 0x03;
-            var collisionSound = (CollisionSoundType)((mixedData >> 4) & 0x03);
-            var collisionEvent = new CollisionEvent();
-            var arena = AssaultWingCore.Instance.DataEngine.Arena;
-            var gob1 = arena.FindGob(gob1ID).Item2;
-            var gob2 = arena.FindGob(gob2ID).Item2;
-            if (gob1 == null || gob2 == null) return collisionEvent;
-            var area1 = gob1.GetCollisionArea(area1ID);
-            var area2 = gob2.GetCollisionArea(area2ID);
-            collisionEvent.SetCollisionAreas(area1, area2);
-            collisionEvent.SetCollisionSound(collisionSound);
-            return collisionEvent;
         }
 
         private void HandleReversibleSideEffects()

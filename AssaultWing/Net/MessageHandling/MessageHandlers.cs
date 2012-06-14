@@ -313,19 +313,20 @@ namespace AW2.Net.MessageHandling
         private void HandleGobUpdateMessageOnClient(GobUpdateMessage mess, int framesAgo)
         {
             var arena = Game.DataEngine.Arena;
-            foreach (var collisionEvent in mess.CollisionEvents)
-            {
-                collisionEvent.SkipReversibleSideEffects = true;
-                collisionEvent.Handle();
-            }
             var updatedGobs = new HashSet<Gob>();
+            var serializationMode = SerializationModeFlags.VaryingDataFromServer;
             mess.ReadGobs(gobId =>
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                 var result = theGob == null || theGob.IsDisposed ? null : theGob;
                 if (result != null) updatedGobs.Add(result);
                 return result;
-            }, framesAgo, SerializationModeFlags.VaryingDataFromServer);
+            }, serializationMode, framesAgo);
+            foreach (var collisionEvent in mess.ReadCollisionEvents(arena.FindGob, serializationMode, framesAgo))
+            {
+                collisionEvent.SkipReversibleSideEffects = true;
+                collisionEvent.Handle();
+            }
             arena.UpdateSomeGobs(updatedGobs, framesAgo);
         }
 
@@ -338,7 +339,8 @@ namespace AW2.Net.MessageHandling
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                 return theGob == null || theGob.IsDisposed || theGob.Owner != messOwner ? null : theGob;
-            }, framesAgo, SerializationModeFlags.VaryingDataFromClient);
+            }, SerializationModeFlags.VaryingDataFromClient, framesAgo);
+            // Note: Game server intentionally doesn't call mess.ReadCollisionEvents.
         }
 
         private void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)

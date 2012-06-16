@@ -38,7 +38,7 @@
   <range>220</range>
   <angle>0.54</angle>
   <sliceCount>6</sliceCount>
-  <wallPunchRadius>4</wallPunchRadius>
+  <wallPunchRadius>7</wallPunchRadius>
   <textureName>lightning_2</textureName>
   <surroundEffects>
     <Item>selfdestruct strokes</Item>

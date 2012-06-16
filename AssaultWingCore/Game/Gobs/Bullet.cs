@@ -92,7 +92,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             DeathTime = Arena.TotalTime + TimeSpan.FromSeconds(_lifetime);
-            if (_isRotating) Body.AngularVelocity = _rotationSpeed;
+            if (_isRotating) RotationSpeed = _rotationSpeed;
             if (_bulletModelNames.Length > 0)
             {
                 int modelNameI = RandomHelper.GetRandomInt(_bulletModelNames.Length);
@@ -107,7 +107,7 @@ namespace AW2.Game.Gobs
             if (Arena.TotalTime >= DeathTime) Die();
             base.Update();
             if (!_isRotating && Move.LengthSquared() >= HEADING_MOVEMENT_MINIMUM_SQUARED)
-                Body.AngularVelocity = AWMathHelper.GetAngleSpeedTowards(Rotation, Move.Angle(), HEADING_TURN_SPEED, Game.TargetElapsedTime);
+                RotationSpeed = AWMathHelper.GetAngleSpeedTowards(Rotation, Move.Angle(), HEADING_TURN_SPEED, Game.TargetElapsedTime);
             _thruster.Thrust(1);
             _thruster.Update();
         }

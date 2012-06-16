@@ -452,6 +452,8 @@ namespace AW2.Game
             set { if (Body != null) Body.Rotation = value; else _rotation = value % MathHelper.TwoPi; }
         }
 
+        public float RotationSpeed { get { return Body == null ? 0 : Body.AngularVelocity; } set { if (Body != null) Body.AngularVelocity = value; } }
+
         public virtual float DrawRotation { get { return Rotation; } }
 
         /// <summary>
@@ -986,6 +988,7 @@ namespace AW2.Game
                             _lastNetworkUpdatePos = Pos;
                         }
                         writer.WriteHalf((Vector2)Move);
+                        writer.Write((Half)RotationSpeed);
                         if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
                     }
                 }
@@ -1024,13 +1027,9 @@ namespace AW2.Game
                 var newPos = fullUpdate
                     ? reader.ReadVector2Normalized16(MIN_GOB_COORDINATE, MAX_GOB_COORDINATE)
                     : _lastNetworkUpdatePos + reader.ReadVector2Normalized8(MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
-                _lastNetworkUpdatePos = newPos;
-                var newMove = reader.ReadHalfVector2();
-
-                // TODO: Extrapolate with Farseer after deserializing all gobs !!! ExtrapolatePosAndMove(newPos, newMove, framesAgo);
-                Pos = newPos;
-                Move = newMove;
-
+                Pos = _lastNetworkUpdatePos = newPos;
+                Move = reader.ReadHalfVector2();
+                RotationSpeed = reader.ReadHalf();
                 DrawPosOffset += oldPos - Pos;
                 if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
                     DrawPosOffset = Vector2.Zero;

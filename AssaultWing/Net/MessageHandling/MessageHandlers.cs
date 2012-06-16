@@ -327,7 +327,6 @@ namespace AW2.Net.MessageHandling
                 collisionEvent.SkipReversibleSideEffects = true;
                 collisionEvent.Handle();
             }
-            arena.UpdateSomeGobs(updatedGobs, framesAgo);
         }
 
         private void HandleGobUpdateMessageOnServer(GobUpdateMessage mess, int framesAgo)

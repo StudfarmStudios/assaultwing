@@ -31,12 +31,12 @@
     </Item>
   </collisionAreas>
   <surroundDamage>350</surroundDamage>
-  <damagePerHit>100</damagePerHit>
+  <damagePerHit>70</damagePerHit>
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.3</hitInterval>
   <lifetime>1.1</lifetime>
-  <range>330</range>
-  <angle>0.65</angle>
+  <range>220</range>
+  <angle>0.56</angle>
   <wallPunchRadius>4</wallPunchRadius>
   <textureName>lightning_2</textureName>
   <surroundEffects>

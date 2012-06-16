@@ -2,11 +2,11 @@
 <GobType type="AW2.Game.Gobs.FloatingBullet">
   <typeName>clustermine</typeName>
   <isRotating>true</isRotating>
-  <rotationSpeed>0.2</rotationSpeed>
+  <rotationSpeed>0</rotationSpeed>
   <hoverThrust>4000</hoverThrust>
   <attractionForce>55000</attractionForce>
   <spreadingForce>12000</spreadingForce>
-  <movementDamping>0.97</movementDamping>
+  <movementDamping>0.95</movementDamping>
   <rotationDamping>0.97</rotationDamping>
   <hitSound>mineHit</hitSound>
   <networkUpdatePeriod>2</networkUpdatePeriod>

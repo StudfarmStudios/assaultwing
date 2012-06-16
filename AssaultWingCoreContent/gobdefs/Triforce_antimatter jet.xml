@@ -36,7 +36,8 @@
   <hitInterval>0.25</hitInterval>
   <lifetime>1.2</lifetime>
   <range>260</range>
-  <angle>0.7</angle>
+  <angle>0.72</angle>
+  <sliceCount>8</sliceCount>
   <wallPunchRadius>5</wallPunchRadius>
   <textureName>lightning_3</textureName>
   <surroundEffects>

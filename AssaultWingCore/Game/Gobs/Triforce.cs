@@ -23,8 +23,6 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Triforce : Gob
     {
-        private const int SLICE_COUNT = 15;
-
         [TypeParameter]
         private CanonicalString[] _surroundEffects;
         [TypeParameter]
@@ -34,6 +32,8 @@ namespace AW2.Game.Gobs
         private float _range;
         [TypeParameter]
         private float _angle;
+        [TypeParameter]
+        private int _sliceCount;
         [TypeParameter]
         private float _damagePerHit;
         [TypeParameter]
@@ -57,7 +57,10 @@ namespace AW2.Game.Gobs
 
         private Texture2D _texture;
         private VertexPositionTexture[] _vertexData;
-        private Vector2[] _relativeSliceSides; // Relative to the triforce's orientation and length.
+        /// <summary>
+        /// Access via <see cref="RelativeSliceSlides"/>.
+        /// </summary>
+        private Vector2[] _relativeSliceSides;
         private TimeSpan _deathTime;
         private AWTimer _nextHitTimer;
         private LazyProxy<int, Gob> _hostProxy;
@@ -76,6 +79,17 @@ namespace AW2.Game.Gobs
         private TimeSpan FadeTime { get { return _firstHitDelay; } }
         private bool IsFadingOut { get { return Arena.TotalTime + FadeTime >= _deathTime; } }
         private bool IsHittable(CollisionArea area) { return area.Type.IsPhysical() && area.Owner.IsDamageable && area.Owner != Host; }
+        /// <summary>
+        /// Relative to the triforce's orientation and length.
+        /// </summary>
+        private Vector2[] RelativeSliceSides
+        {
+            get
+            {
+                if (_relativeSliceSides == null) _relativeSliceSides = new Vector2[_sliceCount + 1];
+                return _relativeSliceSides;
+            }
+        }
 
         /// <summary>
         /// Only for serialization.
@@ -87,6 +101,7 @@ namespace AW2.Game.Gobs
             _surroundDamage = 500;
             _range = 500;
             _angle = MathHelper.PiOver4;
+            _sliceCount = 15;
             _damagePerHit = 200;
             _firstHitDelay = TimeSpan.FromSeconds(0.1);
             _hitInterval = TimeSpan.FromSeconds(0.3);
@@ -100,14 +115,13 @@ namespace AW2.Game.Gobs
         public Triforce(CanonicalString typeName)
             : base(typeName)
         {
-            _relativeSliceSides = new Vector2[SLICE_COUNT + 1];
         }
 
         public override void LoadContent()
         {
             base.LoadContent();
             _texture = Game.Content.Load<Texture2D>(_textureName);
-            _vertexData = CreateVertexData(_relativeSliceSides);
+            _vertexData = CreateVertexData(RelativeSliceSides);
         }
 
         public override void Activate()
@@ -194,15 +208,15 @@ namespace AW2.Game.Gobs
 
         private void UpdateGeometry()
         {
-            for (int ray = 0; ray < SLICE_COUNT + 1; ray++)
+            for (int ray = 0; ray < _sliceCount + 1; ray++)
             {
-                var relativeRayUnit = AWMathHelper.GetUnitVector2(_angle * ray / SLICE_COUNT - _angle / 2);
+                var relativeRayUnit = AWMathHelper.GetUnitVector2(_angle * ray / _sliceCount - _angle / 2);
                 var worldRay = (_range * relativeRayUnit).Rotate(Rotation);
                 var rayLength = Arena.GetDistanceToClosest(Pos, Pos + worldRay, area => area.Owner is Gobs.Wall);
                 var relativeRayLength = rayLength.HasValue ? rayLength.Value / _range : 1f;
-                _relativeSliceSides[ray] = relativeRayLength * relativeRayUnit;
+                RelativeSliceSides[ray] = relativeRayLength * relativeRayUnit;
             }
-            _vertexData = CreateVertexData(_relativeSliceSides);
+            _vertexData = CreateVertexData(RelativeSliceSides);
         }
 
         private void PerformHits()
@@ -211,9 +225,9 @@ namespace AW2.Game.Gobs
             _surroundHitDone = true;
             if (!IsFadingOut && _nextHitTimer.IsElapsed)
             {
-                UpdateConeCollisionAreas(_relativeSliceSides);
+                UpdateConeCollisionAreas(RelativeSliceSides);
                 HitInNamedAreas("Cone", _damagePerHit);
-                PunchWalls(_relativeSliceSides);
+                PunchWalls(RelativeSliceSides);
             }
         }
 
@@ -262,9 +276,9 @@ namespace AW2.Game.Gobs
 
         private void InitializeCollisionAreas()
         {
-            var newCollisionAreas = new CollisionArea[_collisionAreas.Length + SLICE_COUNT];
+            var newCollisionAreas = new CollisionArea[_collisionAreas.Length + _sliceCount];
             Array.Copy(_collisionAreas, newCollisionAreas, _collisionAreas.Length);
-            for (int i = 0; i < SLICE_COUNT; i++)
+            for (int i = 0; i < _sliceCount; i++)
                 newCollisionAreas[_collisionAreas.Length + i] = new CollisionArea("Cone",
                     new Triangle(Vector2.Zero, Vector2.UnitX, Vector2.UnitY), this,
                     CollisionAreaType.Damage, CollisionMaterialType.Regular);

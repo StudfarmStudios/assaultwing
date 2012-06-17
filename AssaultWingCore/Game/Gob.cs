@@ -102,6 +102,9 @@ namespace AW2.Game
         /// smoothing algorithm as a repositioning. Measured in meters.
         /// </summary>
         private const int POS_SMOOTHING_CUTOFF = 50;
+        private const float POS_SMOOTHING_FADEOUT = 0.95f; // reduces the offset to less than 5 % in 60 updates
+        private const float POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED = 6 * 6;
+        private const float POS_SMOOTH_MOVE_FADEOUT = 0.63f; // Reduces to < 10 % in 5 frames.
 
         /// <summary>
         /// Maximum gob rotation change that is not interpreted by the draw rotation
@@ -157,6 +160,7 @@ namespace AW2.Game
         [RuntimeState]
         private Vector2 _pos;
         private Vector2 _move;
+        private Vector2 _moveOffset;
 
         /// <summary>
         /// Gob rotation around the Z-axis in radians.
@@ -414,7 +418,21 @@ namespace AW2.Game
         /// This is mostly zero except on game clients who use this to smooth out erratic gob
         /// movement caused by inconsistency between local updates and game server updates.
         /// </summary>
-        public Vector2 DrawPosOffset { get; set; }
+        public Vector2 DrawPosOffset { get; private set; }
+
+        /// <summary>
+        /// Move offset for smoothly sliding <see cref="Pos"/> on a game client to the value on
+        /// the game server. <see cref="MoveOffset"/> is automatically added to <see cref="Move"/>.
+        /// </summary>
+        private Vector2 MoveOffset
+        {
+            get { return _moveOffset; }
+            set
+            {
+                Move += value - _moveOffset;
+                _moveOffset = value;
+            }
+        }
 
         /// <summary>
         /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/> as if the
@@ -823,8 +841,9 @@ namespace AW2.Game
         {
             if (IsRelevant && MayBeDifficultToPredictOnClient) ForcedNetworkUpdate = true;
             _previousMove = Move;
-            DrawPosOffset *= 0.95f; // reduces the offset to less than 5 % in 60 updates
+            DrawPosOffset *= POS_SMOOTHING_FADEOUT;
             DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
+            MoveOffset *= POS_SMOOTH_MOVE_FADEOUT;
         }
 
         public static float DampDrawRotationOffset(float drawRotationOffset)
@@ -1027,13 +1046,27 @@ namespace AW2.Game
                 var newPos = fullUpdate
                     ? reader.ReadVector2Normalized16(MIN_GOB_COORDINATE, MAX_GOB_COORDINATE)
                     : _lastNetworkUpdatePos + reader.ReadVector2Normalized8(MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
-                Pos = _lastNetworkUpdatePos = newPos;
+                _lastNetworkUpdatePos = newPos;
                 Move = reader.ReadHalfVector2();
                 RotationSpeed = reader.ReadHalf();
-                DrawPosOffset += oldPos - Pos;
+                var posOffset = newPos - oldPos;
+                if (posOffset.LengthSquared() <= POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED)
+                {
+                    // If no external forces affect Pos on the game server and the game client, Pos on client
+                    // will converge to Pos on server.
+                    MoveOffset = (1 - POS_SMOOTH_MOVE_FADEOUT) * posOffset;
+                }
+                else
+                {
+                    Pos = newPos;
+                    DrawPosOffset -= posOffset;
+                    MoveOffset = Vector2.Zero;
+                }
                 if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
+                {
                     DrawPosOffset = Vector2.Zero;
-
+                    MoveOffset = Vector2.Zero;
+                }
                 if (IsDamageable) DamageLevel = reader.ReadByte() / (float)byte.MaxValue * MaxDamageLevel;
             }
         }

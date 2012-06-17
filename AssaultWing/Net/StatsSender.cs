@@ -148,6 +148,7 @@ namespace AW2.Net
         {
             if (args.SocketError == SocketError.Success)
             {
+                Log.Write("Connection established to statistics server");
                 _statsDataSocket = new AWTCPSocket(args.ConnectSocket, StatsMessageHandler);
                 BasicInfoSent = false;
             }

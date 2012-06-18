@@ -183,6 +183,7 @@ namespace AW2.Game.GobUtils
         public int ShotCount { get { return _shotCount; } }
         public float ShotSpacing { get { return _shotSpacing; } }
         protected bool SendDeviceReadyMessages { get; set; }
+        private bool ShootOnceAFrame { get { return _shotSpacing <= 0; } }
 
         #endregion Properties
 
@@ -281,17 +282,21 @@ namespace AW2.Game.GobUtils
 
         public virtual void Update()
         {
-            var shootOnceAFrame = _shotSpacing <= 0;
-            var shotThisFrame = false;
-            while (FiringOperator.IsItTimeToShoot && !(shootOnceAFrame && shotThisFrame))
+            if (Owner.Disabled) FiringOperator.DoneFiring();
+            PerformFiring();
+            CheckWeaponLoadedMessage();
+        }
+
+        private void PerformFiring()
+        {
+            while (FiringOperator.IsItTimeToShoot)
             {
-                shotThisFrame = true;
                 if (_fireSoundType == FiringEffectPlayType.EveryShot) PlayFiringSound();
                 if (_fireEffectType == FiringEffectPlayType.EveryShot) CreateVisuals();
                 ShootImpl();
                 FiringOperator.ShotFired();
+                if (ShootOnceAFrame) break;
             }
-            CheckWeaponLoadedMessage();
         }
 
         private void CheckWeaponLoadedMessage()

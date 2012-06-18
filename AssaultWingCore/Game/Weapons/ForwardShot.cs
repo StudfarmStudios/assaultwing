@@ -108,7 +108,7 @@ namespace AW2.Game.Weapons
         {
             if (!_shotAngleEvenDistribution) return _shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             var step = _shotAngleVariation / 2 / ShotCount;
-            var shotIndex = ShotCount - FiringOperator.ShotsLeft;
+            var shotIndex = ShotCount - FiringOperator._shotsLeft;
             var sign = (shotIndex % 2) * 2 - 1;
             return step * shotIndex * sign;
         }

@@ -11,9 +11,9 @@ namespace AW2.Game.GobUtils
         private TimeSpan _nextShot;
         private TimeSpan _loadedTime;
         private ShipDevice _device;
+        public int _shotsLeft;
 
-        public int ShotsLeft { get; private set; }
-        public bool IsItTimeToShoot { get { return _nextShot <= _device.Arena.TotalTime && ShotsLeft > 0; } }
+        public bool IsItTimeToShoot { get { return _nextShot <= _device.Arena.TotalTime && _shotsLeft > 0; } }
         public float VisualChargeUsage { get { return _device.FireCharge; } }
         public TimeSpan LoadedTime { get { return _loadedTime; } }
         public bool Loaded { get { return NextFireSkipsLoadAndCharge || _loadedTime <= _device.Arena.TotalTime; } }
@@ -34,15 +34,15 @@ namespace AW2.Game.GobUtils
                 _device.Charge -= _device.FireCharge;
                 _loadedTime = TimeSpan.MaxValue; // Make the weapon unloaded for eternity until someone calls DoneFiring()
             }
-            ShotsLeft = _device.ShotCount;
+            _shotsLeft = _device.ShotCount;
             NextFireSkipsLoadAndCharge = false;
         }
 
         public void ShotFired()
         {
             _nextShot += TimeSpan.FromSeconds(_device.ShotSpacing);
-            --ShotsLeft;
-            if (ShotsLeft == 0) DoneFiring();
+            --_shotsLeft;
+            if (_shotsLeft == 0) DoneFiring();
         }
 
         public void UseChargeForOneFrame()
@@ -50,8 +50,9 @@ namespace AW2.Game.GobUtils
             _device.Charge -= _device.FireChargePerSecond * (float)_device.Owner.Game.GameTime.ElapsedGameTime.TotalSeconds;
         }
 
-        private void DoneFiring()
+        public void DoneFiring()
         {
+            _shotsLeft = 0;
             if (!ThisFireSkipsLoadReset)
                 _loadedTime = _device.Arena.TotalTime + TimeSpan.FromSeconds(_device.LoadTime * _device.LoadTimeMultiplier);
             ThisFireSkipsLoadReset = false;

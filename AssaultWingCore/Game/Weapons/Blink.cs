@@ -41,8 +41,17 @@ namespace AW2.Game.Weapons
         private Vector2? _targetPos;
         private Vector2 _startPos;
         private TimeSpan _safetyTimeout;
+        private Vector2 _originalOwnerMove;
 
         private TimeSpan SafetyTimeoutInterval { get { return TimeSpan.FromSeconds(0.1f + _blinkDistance / _blinkMoveSpeed); } }
+        private bool BlinkTargetReached
+        {
+            get
+            {
+                return Vector2.DistanceSquared(Owner.Pos, _targetPos.Value) < BLINK_TARGET_HIT_RANGE_SQUARED
+                    || _safetyTimeout < Owner.Arena.TotalTime;
+            }
+        }
 
         /// <summary>
         /// Only for serialization.
@@ -81,15 +90,7 @@ namespace AW2.Game.Weapons
                     var targetFPS = Owner.Game.TargetFPS;
                     Owner.Move = (AWMathHelper.InterpolateTowards(Owner.Pos, _targetPos.Value, _blinkMoveSpeed / targetFPS) - Owner.Pos) * targetFPS;
                 }
-                if (Vector2.DistanceSquared(Owner.Pos, _targetPos.Value) < BLINK_TARGET_HIT_RANGE_SQUARED || _safetyTimeout < Owner.Arena.TotalTime)
-                {
-                    Owner.Move = Vector2.Zero;
-                    Owner.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
-                    Owner.Enable();
-                    _targetPos = null;
-                    _safetyTimeout = TimeSpan.Zero;
-                    if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.Remove(EFFECT_NAME);
-                }
+                if (BlinkTargetReached) FinishBlink();
             }
         }
 
@@ -109,6 +110,7 @@ namespace AW2.Game.Weapons
         {
             // Client tries to guess where blink is going
             if (Owner.Game.NetworkMode == NetworkMode.Client) _queriedTargetPosAndMove = GetBlinkTargetAndMove();
+            _originalOwnerMove = Owner.Move;
             Owner.Disable(); // re-enabled in Update()
             Owner.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Kinematic;
             _targetPos = _queriedTargetPosAndMove.Item1;
@@ -153,6 +155,16 @@ namespace AW2.Game.Weapons
             var target = from + Vector2.Normalize(direction) * _blinkDistance;
             var move = _blinkMoveSpeed * Vector2.Normalize(target - from);
             return Tuple.Create(target, move);
+        }
+
+        private void FinishBlink()
+        {
+            Owner.Move = _originalOwnerMove;
+            Owner.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
+            Owner.Enable();
+            _targetPos = null;
+            _safetyTimeout = TimeSpan.Zero;
+            if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.Remove(EFFECT_NAME);
         }
     }
 }

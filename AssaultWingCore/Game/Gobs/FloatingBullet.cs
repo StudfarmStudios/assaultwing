@@ -59,9 +59,16 @@ namespace AW2.Game.Gobs
         private bool IsHoverThrusting { get { return HoverThrustCycleFrame < Game.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
         private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }
 
-        private bool IsFriendly(Gob gob) { return gob.Owner == Owner; }
-        private bool IsNeutral(Gob gob) { return gob.Owner == null || gob.IsHidden; }
-        private bool IsHostile(Gob gob) { return !IsFriendly(gob) && !IsNeutral(gob); }
+        private bool IsAvoidable(Gob gob) { return gob.Owner == Owner && gob is FloatingBullet; }
+        private bool IsReachable(Gob gob) { return gob.Owner != Owner && !gob.IsHidden && Game.DataEngine.Minions.Contains(gob); }
+        private bool IsExplodable(CollisionArea area)
+        {
+            if (area.Owner.Owner == Owner) return false;
+            if (!area.Owner.IsDamageable) return false;
+            if (!area.Type.IsPhysical()) return false;
+            if (area.Owner.MaxDamageLevel <= 100 && area.Owner.MoveType == GobUtils.MoveType.Dynamic) return false;
+            return true;
+        }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -110,18 +117,15 @@ namespace AW2.Game.Gobs
                 .DefaultIfEmpty(0)
                 .Max();
             foreach (var gob in PhysicsHelper.GetContacting(_magnetArea).Select(area => area.Owner))
-                if (IsHostile(gob)) MoveTowards(gob.Pos, _attractionForce);
+                if (IsReachable(gob)) MoveTowards(gob.Pos, _attractionForce);
             foreach (var gob in PhysicsHelper.GetContacting(_spreadArea).Select(area => area.Owner))
-                if (IsFriendly(gob) && gob is FloatingBullet) MoveTowards(gob.Pos, -_spreadingForce);
+                if (IsAvoidable(gob)) MoveTowards(gob.Pos, -_spreadingForce);
         }
 
         public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if (myArea.Name == "Magnet" || myArea.Name == "Spread") return false;
-            if (theirArea.Owner.Owner == Owner) return false;
-            if (!theirArea.Owner.IsDamageable) return false;
-            if (!theirArea.Type.IsPhysical()) return false;
-            if (theirArea.Owner.MaxDamageLevel <= 100 && theirArea.Owner.MoveType == GobUtils.MoveType.Dynamic) return false;
+            if (!IsExplodable(theirArea)) return false;
             var hasHitSound = _hitSound != "";
             if (hasHitSound) Game.SoundEngine.PlaySound(_hitSound, this);
             var baseResult = base.CollideIrreversible(myArea, theirArea);

@@ -728,9 +728,16 @@ namespace AW2.Core
         {
             if (NetworkMode != Core.NetworkMode.Server || Stats.BasicInfoSent || DataEngine.Arena == null) return;
             Stats.Send(new { Server = Settings.Net.GameServerName, PID = GameServerGUID });
+            var instanceKeyString = MiscHelper.BytesToString(new ArraySegment<byte>(NetworkEngine.GetAssaultWingInstanceKey()));
+            var arenaUID = string.Format("{0}:{1}", instanceKeyString, DataEngine.Arena.StartTime);
             Stats.Send(new
             {
-                Arena = new { Name = DataEngine.Arena.Info.Name.Value, Size = DataEngine.Arena.Info.Dimensions },
+                Arena = new
+                {
+                    Name = DataEngine.Arena.Info.Name.Value,
+                    Size = DataEngine.Arena.Info.Dimensions,
+                    ID = arenaUID,
+                },
                 Players = DataEngine.Spectators.Select(Stats.GetStatsObject),
             });
             Stats.BasicInfoSent = true;

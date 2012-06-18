@@ -133,6 +133,11 @@ namespace AW2.Game
         public TimeSpan TotalTime { get; set; }
 
         /// <summary>
+        /// Time when the playing started at the arena. Measured in real time.
+        /// </summary>
+        public TimeSpan StartTime { get; set; }
+
+        /// <summary>
         /// Current frame number, or the number of frames elapsed since gameplay started in the arena.
         /// </summary>
         public int FrameNumber { get; set; }
@@ -224,6 +229,7 @@ namespace AW2.Game
         public void Initialize()
         {
             TotalTime = TimeSpan.Zero;
+            StartTime = Game.GameTime.TotalRealTime;
             FrameNumber = 0;
             InitializeWorld();
             InitializeGobs();

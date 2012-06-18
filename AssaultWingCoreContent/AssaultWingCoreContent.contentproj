@@ -167,7 +167,6 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
     <None Include="gobdefs\Bot_mine bot.xml">
       <Name>Bot_mine bot</Name>
@@ -2551,15 +2550,82 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="textures\p_hexagon_bubble.png">
-      <Name>p_hexagon_bubble</Name>
+    <Compile Include="sounds\shieldActivate01.wav">
+      <Name>shieldActivate01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="sounds\shieldBlock01.wav">
+      <Name>shieldBlock01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="sounds\shieldFail01.wav">
+      <Name>shieldFail01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="arenas\Arena_AlienWorld.xml">
+      <Name>Arena_AlienWorld</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\alienworld_parallax_background.png">
+      <Name>alienworld_parallax_background</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\alienworld_parallax_dust.png">
+      <Name>alienworld_parallax_dust</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\alienworld_parallax_dust_small.png">
+      <Name>alienworld_parallax_dust_small</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\alienworld_parallax_greenhaze.png">
+      <Name>alienworld_parallax_greenhaze</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="textures\menu_equip_devicename_shield.png">
+      <Name>menu_equip_devicename_shield</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_devicepicture_shield.png">
+      <Name>menu_equip_devicepicture_shield</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\menu_equip_mod_shield.png">
+      <Name>menu_equip_mod_shield</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="textures\p_bubble_reflection.png">
       <Name>p_bubble_reflection</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\p_hexagon_bubble.png">
+      <Name>p_hexagon_bubble</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -2579,6 +2645,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="particledefs\Peng_shield_block.xml">
+      <Name>Peng_shield_block</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="particledefs\Peng_shield_fail.xml">
       <Name>Peng_shield_fail</Name>
       <Importer>XmlImporter</Importer>
@@ -2587,26 +2659,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng_shield_block.xml">
-      <Name>Peng_shield_block</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_devicename_shield.png">
-      <Name>menu_equip_devicename_shield</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\menu_equip_devicepicture_shield.png">
-      <Name>menu_equip_devicepicture_shield</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\menu_equip_mod_shield.png">
-      <Name>menu_equip_mod_shield</Name>
+    <Compile Include="textures\preview_arena_alienworld.png">
+      <Name>preview_arena_alienworld</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

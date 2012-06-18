@@ -387,6 +387,7 @@ namespace AW2.Net.MessageHandling
             };
             Func<Spectator, Spectator> reconnectNewSpectator = oldSpectator =>
             {
+                // This can happen only on a game server.
                 Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
                 oldSpectator.Reconnect(newSpectator);
                 Game.Stats.Send(new { AddPlayer = oldSpectator.GetStats().LoginToken, Name = oldSpectator.Name });

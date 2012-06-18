@@ -13,7 +13,7 @@
   <birthGobTypes/>
   <deathGobTypes>
   </deathGobTypes>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <collisionAreas>
   </collisionAreas>
   <maxDamage>100</maxDamage>

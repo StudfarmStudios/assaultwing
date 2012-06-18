@@ -2,10 +2,12 @@
 <GobType type="AW2.Game.Gobs.FloatingBullet">
   <typeName>clustermine</typeName>
   <isRotating>true</isRotating>
-  <rotationSpeed>0.2</rotationSpeed>
+  <rotationSpeed>0</rotationSpeed>
   <hoverThrust>4000</hoverThrust>
   <attractionForce>55000</attractionForce>
   <spreadingForce>12000</spreadingForce>
+  <movementDamping>0.95</movementDamping>
+  <rotationDamping>0.97</rotationDamping>
   <hitSound>mineHit</hitSound>
   <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>35</lifetime>
@@ -22,7 +24,7 @@
     <Item>clustermine</Item>
   </bulletModelNames>
   <modelName>dummymodel</modelName>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <maxDamage>1000</maxDamage>
   <birthGobTypes>
     <Item>mine warning</Item>
@@ -38,9 +40,7 @@
   </thruster>
   <collisionAreas>
     <Item>
-      <type>PhysicalShip</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>MinePhysical</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">
@@ -52,9 +52,7 @@
       </area>
     </Item>
     <Item>
-      <type>Receptor</type>
-      <collidesAgainst>PhysicalDamageable</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>MineMagnet</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Magnet</name>
       <area type="AW2.Helpers.Geometric.Circle">
@@ -66,9 +64,7 @@
       </area>
     </Item>
     <Item>
-      <type>Force</type>
-      <collidesAgainst>PhysicalShip</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>MineSpread</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Spread</name>
       <area type="AW2.Helpers.Geometric.Circle">

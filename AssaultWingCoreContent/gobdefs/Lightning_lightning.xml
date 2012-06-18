@@ -41,7 +41,7 @@
   <scale>1</scale>
   <birthGobTypes/>
   <deathGobTypes/>
-  <movable>false</movable>
+  <moveType>Static</moveType>
   <networkUpdatePeriod>0</networkUpdatePeriod>
   <collisionAreas />
   <maxDamage>100</maxDamage>

@@ -1,21 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AW2.Game;
+using AW2.Game.Collisions;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
 {
     /// <summary>
-    /// A message from a game server to a game client updating
-    /// the <see cref="SerializationModeFlags.VaryingDataFromServer"/> state of a gob.
+    /// A message from a game instance to another updating the
+    /// <see cref="SerializationModeFlags.VaryingDataFromServer"/> or
+    /// <see cref="SerializationModeFlags.VaryingDataFromClient"/> state of a gob.
     /// </summary>
     [MessageType(0x24, false)]
     public class GobUpdateMessage : GameplayMessage
     {
+        private enum StateType
+        {
+            /// <summary>
+            /// Nothing has been done yet. The message is either uninitialized or just deserialized.
+            /// </summary>
+            Initial,
+
+            /// <summary>
+            /// Some gobs have been added and more gobs may be added.
+            /// </summary>
+            AddingGobs,
+
+            /// <summary>
+            /// CollisionEvents have been set. The message can be serialized.
+            /// </summary>
+            CollisionEventsSet,
+
+            /// <summary>
+            /// Gobs have been read. No more gobs can be read but collision events may be read.
+            /// </summary>
+            GobsRead,
+
+            /// <summary>
+            /// Both gobs and collision events have been read. Nothing may be done any more.
+            /// </summary>
+            CollisionEventsRead,
+        }
+
+        private StateType _state = StateType.Initial;
+        private int _collisionEventCount;
+        private List<CollisionEvent.SerializationData> _collisionEventInitDatas = new List<CollisionEvent.SerializationData>();
         private List<int> _gobIds = new List<int>();
 
         public override MessageSendType SendType { get { return MessageSendType.UDP; } }
-        public List<Arena.CollisionEvent> CollisionEvents { get; set; }
+
+        public void SetCollisionEvents(List<CollisionEvent> collisionEvents, SerializationModeFlags serializationMode)
+        {
+            if (_state != StateType.Initial && _state != StateType.AddingGobs) throw new InvalidOperationException("Cannot set collision events in state " + _state);
+            _state = StateType.CollisionEventsSet;
+            _collisionEventCount = collisionEvents.Count;
+            foreach (var collisionEvent in collisionEvents) Write(collisionEvent.GetSerializationData(), serializationMode);
+        }
+
+        public IEnumerable<CollisionEvent> ReadCollisionEvents(Func<int, Tuple<bool, Gob>> gobFinder, SerializationModeFlags serializationMode, int framesAgo)
+        {
+            if (_state != StateType.GobsRead) throw new InvalidOperationException("Cannot read collision events in state " + _state);
+            _state = StateType.CollisionEventsRead;
+            for (int i = 0; i < _collisionEventCount; i++)
+            {
+                var collisionEventData = new CollisionEvent.SerializationData();
+                Read(collisionEventData, serializationMode, framesAgo);
+                yield return new CollisionEvent(collisionEventData, gobFinder);
+            }
+        }
 
         public void AddGob(int gobId, INetworkSerializable gob, SerializationModeFlags serializationMode)
         {
@@ -24,7 +77,9 @@ namespace AW2.Net.Messages
             // Because the gob doesn't exist, the client doesn't know the type of the gob and
             // therefore has no way of knowing how many bytes in the message are for that one gob.
             // The only solution is to skip the remaining message, losing many gob updates.
-            // This is why GobUpdateMessage does not send SerializationModeFlags.ConstantData.
+            // This is why GobUpdateMessage sends only varying data.
+            if (_state != StateType.Initial && _state != StateType.AddingGobs) throw new InvalidOperationException("Cannot add a gob in state " + _state);
+            _state = StateType.AddingGobs;
             _gobIds.Add(gobId);
             Write(gob, serializationMode);
         }
@@ -32,10 +87,10 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Reads gob contents from the update message.
         /// </summary>
-        /// <param name="gobFinder">A method returning a gob for its identifier.</param>
-        /// <param name="framesAgo">How long time ago was the message current.</param>
-        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, int framesAgo, SerializationModeFlags serializationMode)
+        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, SerializationModeFlags serializationMode, int framesAgo)
         {
+            if (_state != StateType.Initial) throw new InvalidOperationException("Cannot read gobs in state " + _state);
+            _state = StateType.GobsRead;
             var gobTypes = new System.Text.StringBuilder(); // DEBUG for a rare EndOfStreamException
             try
             {
@@ -64,47 +119,25 @@ namespace AW2.Net.Messages
             {
                 base.SerializeBody(writer);
                 // Gob update (request) message structure:
-                // byte: number of collision events, N
-                // repeat N times:
-                //   short: gob 1 ID
-                //   short: gob 2 ID
-                //   byte: mixed data
-                //     bits 0..1: area 1 ID
-                //     bits 2..3: area 2 ID
-                //     bits 4..5: physical collision sound effects to play (Arena.CollisionSoundTypes)
-                //     bit 6: collision while stuck
-                //     bit 7: collide both ways (if not, then only gob 1 to gob 2)
                 // byte: number of gobs to update, K
+                // byte: number of collision events, N
+                // ushort: total byte count of gob data and collision event data
                 // K shorts: identifiers of the gobs
-                // ushort: total byte count of gob data
                 // repeat K times:
                 //   ??? bytes: serialised data of a gob (content known only by the Gob subclass in question)
+                // repeat N times:
+                //   ??? bytes: collision event
                 byte[] writeBytes = StreamedData;
 #if NETWORK_PROFILING
                 using (new NetworkProfilingScope("GobUpdateMessageHeader"))
 #endif
                     checked
                     {
-                        writer.Write((byte)CollisionEvents.Count);
-                        foreach (var collisionEvent in CollisionEvents)
-                        {
-                            writer.Write((short)collisionEvent.Gob1ID);
-                            writer.Write((short)collisionEvent.Gob2ID);
-                            if (collisionEvent.Area1ID > 0x03 || collisionEvent.Area2ID > 0x03)
-                                throw new ApplicationException("Too large collision area identifier: " + collisionEvent.Area1ID + " or " + collisionEvent.Area2ID);
-                            var mixedData = (byte)(collisionEvent.Area1ID & 0x03);
-                            mixedData |= (byte)((collisionEvent.Area2ID & 0x03) << 2);
-                            mixedData |= (byte)(((byte)collisionEvent.Sound & 0x03) << 4);
-                            if (collisionEvent.Stuck) mixedData |= 0x40;
-                            if (collisionEvent.CollideBothWays) mixedData |= 0x80;
-                            writer.Write((byte)mixedData);
-                        }
                         writer.Write((byte)_gobIds.Count);
-                        foreach (var gobId in _gobIds)
-                            writer.Write((short)gobId);
+                        writer.Write((byte)_collisionEventCount);
                         writer.Write((ushort)writeBytes.Length);
+                        foreach (var gobId in _gobIds) writer.Write((short)gobId);
                     }
-
                 writer.Write(writeBytes, 0, writeBytes.Length);
             }
         }
@@ -112,25 +145,11 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            var collisionEventCount = reader.ReadByte();
-            CollisionEvents = new List<Arena.CollisionEvent>(collisionEventCount);
-            for (int i = 0; i < collisionEventCount; i++)
-            {
-                var gob1ID = reader.ReadInt16();
-                var gob2ID = reader.ReadInt16();
-                var mixedData = reader.ReadByte();
-                var area1ID = mixedData & 0x03;
-                var area2ID = (mixedData >> 2) & 0x03;
-                var soundsToPlay = (Arena.CollisionSoundTypes)((mixedData >> 4) & 0x03);
-                var stuck = (mixedData & 0x40) != 0;
-                var collideBothWays = (mixedData & 0x80) != 0;
-                CollisionEvents.Add(new Arena.CollisionEvent(gob1ID, gob2ID, area1ID, area2ID, stuck, collideBothWays, soundsToPlay));
-            }
             var gobCount = reader.ReadByte();
-            _gobIds.Clear();
-            for (int i = 0; i < gobCount; i++)
-                _gobIds.Add(reader.ReadInt16());
+            _collisionEventCount = reader.ReadByte();
             var totalByteCount = reader.ReadUInt16();
+            _gobIds.Clear();
+            for (int i = 0; i < gobCount; i++) _gobIds.Add(reader.ReadInt16());
             StreamedData = reader.ReadBytes(totalByteCount);
         }
 

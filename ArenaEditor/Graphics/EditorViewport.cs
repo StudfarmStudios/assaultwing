@@ -38,15 +38,19 @@ namespace AW2.Graphics
 
         private void CircleGob(Gob gob)
         {
-            var projection = GetProjectionMatrix(gob.Layer.Z);
-            Graphics3D.DebugDraw(new BoundingSphere(new Vector3(gob.Pos, 0), SMALL_GOB_RADIUS), ViewMatrix, projection, Matrix.Identity);
-            Graphics3D.DebugDraw(gob.Pos, gob.Pos + SMALL_GOB_RADIUS * AWMathHelper.GetUnitVector2(gob.Rotation), ViewMatrix, projection, Matrix.Identity);
+            var context = new Graphics3D.DebugDrawContext(ViewMatrix, GetProjectionMatrix(gob.Layer.Z));
+            Graphics3D.DebugDrawCircle(context, new BoundingSphere(new Vector3(gob.Pos, 0), SMALL_GOB_RADIUS));
+            Graphics3D.DebugDrawPolyline(context, gob.Pos, gob.Pos + SMALL_GOB_RADIUS * AWMathHelper.GetUnitVector2(gob.Rotation));
         }
 
         private void DrawBoundingSphere(Gob gob)
         {
-            var projection = GetProjectionMatrix(gob.Layer.Z);
-            Graphics3D.DebugDraw(gob.DrawBounds, ViewMatrix, projection, Matrix.Identity);
+            Graphics3D.DebugDrawCircle(GetDebugDrawContext(gob), gob.DrawBounds);
+        }
+
+        private Graphics3D.DebugDrawContext GetDebugDrawContext(Gob gob)
+        {
+            return new Graphics3D.DebugDrawContext(ViewMatrix, GetProjectionMatrix(gob.Layer.Z));
         }
     }
 }

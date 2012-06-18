@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FarseerPhysics.Dynamics;
+using AW2.Game.Collisions;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
@@ -43,29 +46,30 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private CanonicalString _dockActiveEffectName;
 
-        private TimeSpan _lastDockSoundTime, _lastDockEffectTime;
         private SoundInstance _chargingSound, _dockSound;
         private List<Peng> _dockIdleEffects;
         private List<Peng> _dockActiveEffects;
         private bool _effectStateActive; // true = active; false = idle
         private Dictionary<Gob, TimeSpan> _lastRepairTimes; // in game time
-        private List<LazyProxy<int, Gob>> _repairingGobsOnClient; // used only by the game client
+        private List<LazyProxy<int, Gob>> _repairingGobsOnClient; // used only on game clients
+        private CollisionArea _dockArea;
 
         #endregion Dock fields
 
-        private bool IsSoundIdle
+        private IEnumerable<Gob> RepairingGobs
         {
-            get { return _lastDockSoundTime < Arena.TotalTime - DOCK_SOUND_STOP_DELAY; }
-        }
-
-        private bool IsEffectIdle
-        {
-            get { return _lastDockEffectTime < Arena.TotalTime - DOCK_EFFECT_STOP_DELAY; }
+            get
+            {
+                return Game.NetworkMode == Core.NetworkMode.Client
+                    ? _repairingGobsOnClient.Select(proxy => proxy.GetValue()).Where(gob => gob != null)
+                    : PhysicsHelper.GetContacting(_dockArea).Select(area => area.Owner);
+            }
         }
 
         /// This constructor is only for serialisation.
         public Dock()
         {
+            MoveType = MoveType.Static;
             _repairSpeed = -10;
             _weapon1ChargeSpeed = 100;
             _weapon2ChargeSpeed = 100;
@@ -76,7 +80,6 @@ namespace AW2.Game.Gobs
         public Dock(CanonicalString typeName)
             : base(typeName)
         {
-            Movable = false;
             Gravitating = false;
             _lastRepairTimes = new Dictionary<Gob, TimeSpan>();
             _repairingGobsOnClient = new List<LazyProxy<int, Gob>>();
@@ -88,45 +91,34 @@ namespace AW2.Game.Gobs
             CreateDockEffects();
             _chargingSound = Game.SoundEngine.CreateSound("HomeBaseLoop", this);
             _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoopLow", this);
+            _dockArea = CollisionAreas.First(area => area.Name == "Dock");
         }
 
         public override void Update()
         {
             base.Update();
-            if (IsSoundIdle) _chargingSound.Stop();
-            if (IsEffectIdle) EnsureEffectIdle();
+            if (RepairingGobs.Any(gob => _lastRepairTimes.ContainsKey(gob)))
+            {
+                _chargingSound.EnsureIsPlaying();
+                EnsureEffectActive();
+            }
+            else
+            {
+                _chargingSound.Stop();
+                EnsureEffectIdle();
+            }
             _dockSound.EnsureIsPlaying();
             CheckEndedRepairs();
-            if (Game.NetworkMode == Core.NetworkMode.Client)
-                foreach (Ship gob in _repairingGobsOnClient) if (gob != null) RepairShip(gob);
-        }
-
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
-        {
-            if (myArea.Name == "Dock" && theirArea.Owner is Ship) EnsureEffectActive();
-        }
-
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
-        {
-            var ship = theirArea.Owner as Ship;
-            if (myArea.Name != "Dock" || ship == null) return false;
-            if (Game.NetworkMode != Core.NetworkMode.Client && CanRepair(ship)) RepairShip(ship);
-            if (ShouldNotifyPlayerAboutRepairPending(ship)) ship.Owner.NotifyRepairPending();
-            return true;
+            foreach (var overlapper in RepairingGobs)
+                if (overlapper is Ship) RepairShip((Ship)overlapper);
         }
 
         public override void Dispose()
         {
-            if (_chargingSound != null)
-            {
-                _chargingSound.Dispose();
-                _chargingSound = null;
-            }
-            if (_dockSound != null)
-            {
-                _dockSound.Dispose();
-                _dockSound = null;
-            }
+            if (_chargingSound != null) _chargingSound.Dispose();
+            _chargingSound = null;
+            if (_dockSound != null) _dockSound.Dispose();
+            _dockSound = null;
             base.Dispose();
         }
 
@@ -135,16 +127,16 @@ namespace AW2.Game.Gobs
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
-            checked
-            {
-                base.Serialize(writer, mode);
-                if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+                checked
                 {
-                    writer.Write((byte)_lastRepairTimes.Count);
-                    foreach (var item in _lastRepairTimes)
-                        writer.Write((short)item.Key.ID);
+                    base.Serialize(writer, mode);
+                    if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+                    {
+                        writer.Write((byte)_lastRepairTimes.Count);
+                        foreach (var item in _lastRepairTimes)
+                            writer.Write((short)item.Key.ID);
+                    }
                 }
-            }
         }
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
@@ -200,30 +192,19 @@ namespace AW2.Game.Gobs
                 activeEffect.Emitter.Pause();
         }
 
-        private void EnsureDockSoundPlaying()
-        {
-            _lastDockSoundTime = Arena.TotalTime;
-            _chargingSound.EnsureIsPlaying();
-        }
-
         private void EnsureEffectActive()
         {
-            _lastDockEffectTime = Arena.TotalTime;
-            if (!_effectStateActive)
-            {
-                foreach (var peng in _dockIdleEffects) peng.Emitter.Pause();
-                foreach (var peng in _dockActiveEffects) peng.Emitter.Resume();
-            }
+            if (_effectStateActive) return;
+            foreach (var peng in _dockIdleEffects) peng.Emitter.Pause();
+            foreach (var peng in _dockActiveEffects) peng.Emitter.Resume();
             _effectStateActive = true;
         }
 
         private void EnsureEffectIdle()
         {
-            if (_effectStateActive)
-            {
-                foreach (var peng in _dockIdleEffects) peng.Emitter.Resume();
-                foreach (var peng in _dockActiveEffects) peng.Emitter.Pause();
-            }
+            if (!_effectStateActive) return;
+            foreach (var peng in _dockIdleEffects) peng.Emitter.Resume();
+            foreach (var peng in _dockActiveEffects) peng.Emitter.Pause();
             _effectStateActive = false;
         }
 
@@ -255,24 +236,22 @@ namespace AW2.Game.Gobs
 
         private void RepairShip(Ship ship)
         {
-            if (!IsFullyRepaired(ship))
+            if (ShouldNotifyPlayerAboutRepairPending(ship)) ship.Owner.NotifyRepairPending();
+            if (Game.NetworkMode == Core.NetworkMode.Client || !CanRepair(ship)) return;
+            if (ship.Owner != null && !_lastRepairTimes.ContainsKey(ship))
             {
-                EnsureDockSoundPlaying();
-                if (ship.Owner != null && !_lastRepairTimes.ContainsKey(ship))
+                ForcedNetworkUpdate = true;
+                Game.Stats.Send(new
                 {
-                    ForcedNetworkUpdate = true;
-                    Game.Stats.Send(new
-                    {
-                        Docking = Game.Stats.GetStatsString(ship.Owner),
-                        Pos = ship.Pos,
-                    });
-                }
-                _lastRepairTimes[ship] = Game.GameTime.TotalGameTime;
+                    Docking = Game.Stats.GetStatsString(ship.Owner),
+                    Pos = ship.Pos,
+                });
             }
-            var elapsedTime = Game.GameTime.ElapsedGameTime;
-            ship.RepairDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, elapsedTime));
-            ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, elapsedTime);
-            ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, elapsedTime);
+            _lastRepairTimes[ship] = Game.GameTime.TotalGameTime;
+            var elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            ship.RepairDamage(_repairSpeed * elapsedSeconds);
+            ship.ExtraDevice.Charge += _weapon1ChargeSpeed * elapsedSeconds;
+            ship.Weapon2.Charge += _weapon2ChargeSpeed * elapsedSeconds;
         }
     }
 }

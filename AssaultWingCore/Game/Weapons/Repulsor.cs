@@ -29,21 +29,20 @@ namespace AW2.Game.Weapons
         {
         }
 
+        public override void Update()
+        {
+            base.Update();
+            _radialFlow.Update();
+        }
+
         protected override void ShootImpl()
         {
-            _radialFlow.Activate(Owner, Arena.TotalTime);
+            _radialFlow.Activate(Owner);
         }
 
         protected override void CreateVisuals()
         {
             GobHelper.CreatePengs(_particleEngineNames, Owner);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (!_radialFlow.IsFinished(Arena.TotalTime))
-                _radialFlow.Update();
         }
     }
 }

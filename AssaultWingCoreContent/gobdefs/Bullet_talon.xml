@@ -19,7 +19,7 @@
     <Item>windlord_claw2</Item>
   </bulletModelNames>
   <modelName>dummymodel</modelName>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <maxDamage>100</maxDamage>
   <deathGobTypes>
     <Item>windlord claws</Item>
@@ -36,9 +36,7 @@
   </thruster>
   <collisionAreas>
     <Item>
-      <type>PhysicalShot</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Shot</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">

@@ -257,13 +257,12 @@ namespace AW2.Game.GobUtils
         public int Width { get { return _data.Width; } }
         public int Height { get { return _data.Height; } }
 
-        /// <summary>
-        /// Transformation matrix from wall's 3D model's coordinates to index map coordinates.
-        /// </summary>
         public Matrix WallToIndexMapTransform { get; private set; }
 
         private RemoveTriangleDelegate _removeTriangle;
 
+        /// <param name="boundingBox">Bounding box of the wall in wall coordinates.
+        /// Only the lower left corner is relevant.</param>
         public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, Vector2[] vertexPositions, short[] indexData)
             : this(removeTriangle, boundingBox)
         {
@@ -303,6 +302,7 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Returns the indices of triangles that are too small to show up in the index map.
         /// Triangle index * 3 = the index of the first vertex of the triangle in the 3D model index data.
+        /// The indices are returned in increasing order.
         /// </summary>
         public IEnumerable<int> GetVerySmallTriangles()
         {
@@ -345,6 +345,18 @@ namespace AW2.Game.GobUtils
                         foreach (TriInt value in values) writer.Write(value);
                     }
             }
+        }
+
+        public void DebugDraw(Matrix view, Matrix projection, Vector2 wallPos)
+        {
+            var pointSpacing = 4;
+            var points = Enumerable.Range(0, (Width + pointSpacing - 1) / pointSpacing)
+                .Join(Enumerable.Range(0, (Height + pointSpacing - 1) / pointSpacing), x => 0, x => 0,
+                    (x, y) => new Vector2(x * pointSpacing, y * pointSpacing))
+                .Where(p => _data.Get((int)p.X, (int)p.Y).Any());
+            var world = Matrix.Invert(WallToIndexMapTransform) * Matrix.CreateTranslation(wallPos.X, wallPos.Y, 0);
+            var context = new Graphics3D.DebugDrawContext(view, projection, world);
+            Graphics3D.DebugDrawPoints(context, points.ToArray());
         }
 
         private static Point Vector2ToPoint(Vector2 vertexPosition, Vector2 origin)

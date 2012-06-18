@@ -31,7 +31,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public SpawnPlayer()
         {
-            _spawnArea = new Everything();
+            _spawnArea = new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, new Vector2(1000, 1000));
         }
 
         public SpawnPlayer(CanonicalString typeName)
@@ -42,12 +42,11 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Positions a ship using any of the spawn areas in the arena that contains the ship.
         /// </summary>
-        public static void PositionNewShip(Ship ship)
+        public static void PositionNewShip(Ship ship, Arena arena)
         {
-            var arena = ship.Arena;
             Func<IGeomPrimitive, int, IEnumerable<Vector2>> getRandomPoses = (area, count) =>
                 Enumerable.Range(0, count)
-                .Select(x => arena.GetFreePosition(ship, area));
+                .Select(x => arena.GetFreePosition(LARGE_GOB_PHYSICAL_RADIUS, area));
             var spawnPoses = arena.Gobs.OfType<SpawnPlayer>()
                 .SelectMany(spawn => getRandomPoses(spawn._spawnArea, 5));
             var poses = spawnPoses.Any()

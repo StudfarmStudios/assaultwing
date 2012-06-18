@@ -45,6 +45,8 @@ namespace AW2.Game.GobUtils
             }
         }
 
+        private const float VISIBLE_PROPORTIONAL_THRUST_MIN = 0.2f;
+
         /// <summary>
         /// Maximum force of thrust, measured in Newtons.
         /// </summary>
@@ -136,6 +138,7 @@ namespace AW2.Game.GobUtils
         /// <param name="thrustDirection">Amplitude is irrelevant.</param>
         public void Thrust(float proportionalThrust, Vector2 thrustDirection)
         {
+            if (thrustDirection == Vector2.Zero) return;
             var exhaustDirection = (-thrustDirection).Angle() - Owner.Rotation;
             ThrustImpl(proportionalThrust, exhaustDirection, Vector2.Normalize(thrustDirection));
         }
@@ -144,8 +147,7 @@ namespace AW2.Game.GobUtils
         {
             if (proportionalThrust < -1 || proportionalThrust > 1) throw new ArgumentOutOfRangeException("proportionalThrust");
             var force = _maxForce * proportionalThrust * thrustDirectionUnit;
-            Owner.Game.PhysicsEngine.ApplyLimitedForce(Owner, force, _maxSpeed, Owner.Game.GameTime.ElapsedGameTime);
-            const float VISIBLE_PROPORTIONAL_THRUST_MIN = 0.2f;
+            PhysicsHelper.ApplyLimitedForce(Owner, force, _maxSpeed);
             var pengInput = (Math.Abs(proportionalThrust) - VISIBLE_PROPORTIONAL_THRUST_MIN) / (1 - VISIBLE_PROPORTIONAL_THRUST_MIN);
             if (proportionalThrust >= VISIBLE_PROPORTIONAL_THRUST_MIN)
                 EnableExhaustEffects(exhaustDirectionRelativeToOwner, pengInput);

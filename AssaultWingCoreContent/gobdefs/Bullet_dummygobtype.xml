@@ -30,5 +30,5 @@
     <exhaustEngineNames/>
   </thruster>
   <maxDamage>100</maxDamage>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
 </GobType>

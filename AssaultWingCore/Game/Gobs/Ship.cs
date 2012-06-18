@@ -144,11 +144,6 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private ShipInfo _shipInfo;
 
-        /// <summary>
-        /// Gobs that we have temporarily disabled while we move through them.
-        /// </summary>
-        private List<Gob> _temporarilyDisabledGobs; // TODO: Move to physics engine
-
         #endregion Ship fields related to other things
 
         #region Ship fields for signalling visual things over the network
@@ -209,6 +204,7 @@ namespace AW2.Game.Gobs
             }
         }
 
+        public override bool IsDamageable { get { return true; } }
         public float TurnSpeed { get { return _turnSpeed; } }
         public Thruster Thruster { get { return _thruster; } }
 
@@ -250,7 +246,6 @@ namespace AW2.Game.Gobs
             get { return base.TextureNames.Union(new CanonicalString[] { ShipInfo.IconEquipName }); }
         }
 
-        public event Action<Gob> PhysicalCollidedInto;
         public event ReceivingDamageEvent ReceivingDamage;
 
         private SpriteFont PlayerNameFont { get { return Game.GraphicsEngine.GameContent.ConsoleFont; } }
@@ -297,8 +292,7 @@ namespace AW2.Game.Gobs
         public Ship(CanonicalString typeName)
             : base(typeName)
         {
-            IsKeptInArenaBounds = true;
-            _temporarilyDisabledGobs = new List<Gob>();
+            DampAngularVelocity = true;
         }
 
         #endregion Ship constructors
@@ -320,8 +314,6 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == NetworkMode.Client && Owner != null && !Owner.IsLocal && LocationPredicter == null) LocationPredicter = new ShipLocationPredicter(this);
             UpdateRoll();
             base.Update();
-            foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
-            _temporarilyDisabledGobs.Clear();
             UpdateThrustInNetworkGame(); // TODO !!! Move to Thruster
             _thruster.Update();
             _coughEngine.Update();
@@ -500,21 +492,6 @@ namespace AW2.Game.Gobs
             spriteBatch.DrawString(PlayerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
         }
 
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
-        {
-            if (!stuck) return;
-            // Set the other gob as disabled while we move, then enable it after we finish moving.
-            // This works with the assumption that there are at least two moving iterations.
-            theirArea.Owner.Disable(); // re-enabled in Update()
-            _temporarilyDisabledGobs.Add(theirArea.Owner);
-        }
-
-        public override void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)
-        {
-            base.PhysicalCollisionInto(other, moveDelta, damageMultiplier);
-            if (PhysicalCollidedInto != null) PhysicalCollidedInto(other);
-        }
-
         public override void InflictDamage(float damageAmount, DamageInfo cause)
         {
             if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
@@ -608,8 +585,8 @@ namespace AW2.Game.Gobs
         private void Turn(float force, TimeSpan duration)
         {
             force = MathHelper.Clamp(force, -1f, 1f);
-            float deltaRotation = Game.PhysicsEngine.ApplyChange(force * _turnSpeed, duration);
-            Rotation += deltaRotation;
+            var durationSeconds = (float)duration.TotalSeconds;
+            Rotation += force * _turnSpeed * durationSeconds;
 
             Vector2 headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
             float moveLength = Move.Length();
@@ -623,10 +600,10 @@ namespace AW2.Game.Gobs
 
         private void UpdateRoll()
         {
-            _rollAngle.Step = Game.PhysicsEngine.ApplyChange(_rollSpeed, Game.GameTime.ElapsedGameTime);
+            var elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            _rollAngle.Step = _rollSpeed * elapsedSeconds;
             _rollAngle.Advance();
-            if (!_rollAngleGoalUpdated)
-                _rollAngle.Target = 0;
+            if (!_rollAngleGoalUpdated) _rollAngle.Target = 0;
             _rollAngleGoalUpdated = false;
         }
 

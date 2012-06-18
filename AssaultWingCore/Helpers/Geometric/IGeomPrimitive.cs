@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Collision.Shapes;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -9,6 +10,11 @@ namespace AW2.Helpers.Geometric
     /// </summary>
     public interface IGeomPrimitive : INetworkSerializable
     {
+        /// <summary>
+        /// Density of the geometric primitive. Defaults to one. Can be zero or any positive value.
+        /// </summary>
+        float Density { get; set; }
+
         /// <summary>
         /// A rectangle that contains the geometric primitive.
         /// </summary>
@@ -29,5 +35,10 @@ namespace AW2.Helpers.Geometric
         /// <returns>The shortest distance between the geometric primitive
         /// and the point.</returns>
         float DistanceTo(Vector2 point);
+
+        /// <summary>
+        /// Returns a Farseer shape in Farseer coordinates that corresponds to the IGeomPrimitive.
+        /// </summary>
+        Shape GetShape();
     }
 }

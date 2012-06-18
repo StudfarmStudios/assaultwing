@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Collision.Shapes;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -10,12 +11,13 @@ namespace AW2.Helpers.Geometric
     [LimitedSerialization]
     public class Circle : IGeomPrimitive, IConsistencyCheckable
     {
-        [TypeParameter]
+        [TypeParameter, RuntimeState]
         private Vector2 _center;
-        [TypeParameter]
+        [TypeParameter, RuntimeState]
         private float _radius;
         private Rectangle _boundingBox;
 
+        public float Density { get; set; }
         public Vector2 Center { get { return _center; } }
         public float Radius { get { return _radius; } }
 
@@ -24,6 +26,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public Circle()
         {
+            Density = 1;
             _center = Vector2.Zero;
             _radius = 0;
             UpdateBoundingBox();
@@ -31,6 +34,7 @@ namespace AW2.Helpers.Geometric
 
         public Circle(Vector2 center, float radius)
         {
+            Density = 1;
             _center = center;
             _radius = radius;
             UpdateBoundingBox();
@@ -58,6 +62,11 @@ namespace AW2.Helpers.Geometric
         {
             float distance = Vector2.Distance(_center, point) - _radius;
             return Math.Max(distance, 0);
+        }
+
+        public Shape GetShape()
+        {
+            return new CircleShape(_radius.ToFarseer(), Density) { Position = _center.ToFarseer() };
         }
 
         #endregion IGeomPrimitive Members

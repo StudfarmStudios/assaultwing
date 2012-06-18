@@ -63,7 +63,7 @@ namespace AW2.Net.MessageHandling
             var networkEngine = Game.NetworkEngine;
             yield return new MessageHandler<SpectatorUpdateMessage>(MessageHandlerBase.SourceType.Server, HandleSpectatorUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
-            yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.HandleGobCreationMessage) { OneMessageAtATime = true };
+            yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.GobCreationMessageReceived) { OneMessageAtATime = true };
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
             yield return new MessageHandler<ArenaStatisticsMessage>(MessageHandlerBase.SourceType.Server, HandleArenaStatisticsMessage);
@@ -313,29 +313,20 @@ namespace AW2.Net.MessageHandling
         private void HandleGobUpdateMessageOnClient(GobUpdateMessage mess, int framesAgo)
         {
             var arena = Game.DataEngine.Arena;
-            foreach (var collisionEvent in mess.CollisionEvents)
-            {
-                var gob1 = arena.Gobs.FirstOrDefault(gob => gob.ID == collisionEvent.Gob1ID);
-                var gob2 = arena.Gobs.FirstOrDefault(gob => gob.ID == collisionEvent.Gob2ID);
-                if (gob1 == null || gob2 == null) continue;
-                var area1 = gob1.GetCollisionArea(collisionEvent.Area1ID);
-                var area2 = gob2.GetCollisionArea(collisionEvent.Area2ID);
-                if (area1 != null && area2 != null)
-                {
-                    gob1.CollideIrreversible(area1, area2, collisionEvent.Stuck);
-                    if (collisionEvent.CollideBothWays)
-                        gob2.CollideIrreversible(area2, area1, collisionEvent.Stuck);
-                }
-                if ((collisionEvent.Sound & Arena.CollisionSoundTypes.WallCollision) != 0)
-                    arena.Game.SoundEngine.PlaySound("Collision", gob1);
-                if ((collisionEvent.Sound & Arena.CollisionSoundTypes.ShipCollision) != 0)
-                    arena.Game.SoundEngine.PlaySound("Shipcollision", gob1);
-            }
+            var updatedGobs = new HashSet<Gob>();
+            var serializationMode = SerializationModeFlags.VaryingDataFromServer;
             mess.ReadGobs(gobId =>
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
-                return theGob == null || theGob.IsDisposed ? null : theGob;
-            }, framesAgo, SerializationModeFlags.VaryingDataFromServer);
+                var result = theGob == null || theGob.IsDisposed ? null : theGob;
+                if (result != null) updatedGobs.Add(result);
+                return result;
+            }, serializationMode, framesAgo);
+            foreach (var collisionEvent in mess.ReadCollisionEvents(arena.FindGob, serializationMode, framesAgo))
+            {
+                collisionEvent.SkipReversibleSideEffects = true;
+                collisionEvent.Handle();
+            }
         }
 
         private void HandleGobUpdateMessageOnServer(GobUpdateMessage mess, int framesAgo)
@@ -347,7 +338,8 @@ namespace AW2.Net.MessageHandling
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                 return theGob == null || theGob.IsDisposed || theGob.Owner != messOwner ? null : theGob;
-            }, framesAgo, SerializationModeFlags.VaryingDataFromClient);
+            }, SerializationModeFlags.VaryingDataFromClient, framesAgo);
+            // Note: Game server intentionally doesn't call mess.ReadCollisionEvents.
         }
 
         private void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)

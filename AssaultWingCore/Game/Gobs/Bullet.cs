@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -13,6 +14,9 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Bullet : Gob
     {
+        private const float HEADING_MOVEMENT_MINIMUM_SQUARED = 1f * 1f;
+        private const float HEADING_TURN_SPEED = 1.5f;
+
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.
         /// </summary>
@@ -40,7 +44,8 @@ namespace AW2.Game.Gobs
         private float _lifetime;
 
         /// <summary>
-        /// If true, the bullet rotates by <see cref="rotationSpeed"/>.
+        /// If true, the bullet rotates by physics. Initial rotation speed comes from <see cref="rotationSpeed"/>.
+        /// If false, the bullet heads towards where it's going.
         /// </summary>
         [TypeParameter]
         private bool _isRotating;
@@ -87,6 +92,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             DeathTime = Arena.TotalTime + TimeSpan.FromSeconds(_lifetime);
+            if (_isRotating) RotationSpeed = _rotationSpeed;
             if (_bulletModelNames.Length > 0)
             {
                 int modelNameI = RandomHelper.GetRandomInt(_bulletModelNames.Length);
@@ -100,20 +106,8 @@ namespace AW2.Game.Gobs
         {
             if (Arena.TotalTime >= DeathTime) Die();
             base.Update();
-            if (_isRotating)
-            {
-                Rotation += _rotationSpeed * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-            }
-            else
-            {
-                // Fly nose first, but only if we're moving fast enough.
-                if (Move.LengthSquared() > 1 * 1) {
-                    float rotationGoal = (float)Math.Acos( Move.X / Move.Length() );
-                    if (Move.Y < 0)
-                        rotationGoal = MathHelper.TwoPi - rotationGoal;
-                    Rotation = rotationGoal;
-                }
-            }
+            if (!_isRotating && Move.LengthSquared() >= HEADING_MOVEMENT_MINIMUM_SQUARED)
+                RotationSpeed = AWMathHelper.GetAngleSpeedTowards(Rotation, Move.Angle(), HEADING_TURN_SPEED, Game.TargetElapsedTime);
             _thruster.Thrust(1);
             _thruster.Update();
         }
@@ -124,9 +118,10 @@ namespace AW2.Game.Gobs
             base.Dispose();
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
-            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+            if (!theirArea.Type.IsPhysical()) return false;
+            if (theirArea.Owner.IsDamageable)
             {
                 Game.Stats.SendHit(this, theirArea.Owner);
                 theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));

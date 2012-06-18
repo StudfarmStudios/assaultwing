@@ -132,8 +132,6 @@ namespace AW2.Game.Gobs
         public Lightning(CanonicalString typeName)
             : base(typeName)
         {
-            Shooter = new LazyProxy<int, Gob>(FindGob);
-            Target = new LazyProxy<int, Gob>(FindGob);
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -214,6 +212,8 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
+                Shooter = new LazyProxy<int, Gob>(FindGob);
+                Target = new LazyProxy<int, Gob>(FindGob);
                 Shooter.SetData(reader.ReadInt16());
                 ShooterBoneIndex = reader.ReadByte();
                 int targetID = reader.ReadInt16();

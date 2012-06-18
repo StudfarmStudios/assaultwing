@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.Collisions;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
+using AW2.Helpers.Geometric;
 
 namespace AW2.Game.GobUtils
 {
@@ -39,7 +41,6 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Area of effect of the medium flow.
         /// </summary>
-        [TypeParameter]
         private CollisionArea _collisionArea;
 
         /// <summary>
@@ -48,6 +49,10 @@ namespace AW2.Game.GobUtils
         private TimeSpan _flowEndTime;
 
         private Gob _radiator;
+
+        public bool IsActive { get { return _collisionArea != null; } }
+        private bool IsTimeUp { get { return Now >= _flowEndTime; } }
+        private TimeSpan Now { get { return _radiator.Arena.TotalTime; } }
 
         /// <summary>
         /// Only for serialization.
@@ -61,38 +66,42 @@ namespace AW2.Game.GobUtils
             _flowSpeed.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
             _flowTime = 0.5f;
             _dragMagnitude = 0.003f;
-            _collisionArea = new CollisionArea();
         }
 
-        public void Activate(Gob radiator, TimeSpan now)
+        public void Activate(Gob radiator)
         {
+            if (IsActive) throw new ApplicationException("Cannot activate an active RadialFlow");
             _radiator = radiator;
-            _collisionArea.Owner = radiator;
-            radiator.TransformUnmovableCollisionAreas(new[] { _collisionArea });
-            _flowEndTime = now + TimeSpan.FromSeconds(_flowTime);
+            _flowEndTime = Now + TimeSpan.FromSeconds(_flowTime);
+            var areaArea = new Circle(Vector2.Zero, _flowSpeed.Keys.Last().Position) { Density = 0 };
+            _collisionArea = new CollisionArea("Flow", areaArea, radiator,
+                CollisionAreaType.Flow, CollisionMaterialType.Regular);
+        }
+
+        public void Deactivate()
+        {
+            if (!IsActive) throw new ApplicationException("Cannot deactivate an inactive RadialFlow");
+            _collisionArea.Destroy();
+            _collisionArea = null;
         }
 
         public void Update()
         {
-            foreach (var gob in _radiator.Arena.GetOverlappingGobs(_collisionArea, _collisionArea.CollidesAgainst))
-                ApplyTo(gob);
-        }
-
-        public bool IsFinished(TimeSpan now)
-        {
-            return now >= _flowEndTime;
+            if (IsActive)
+            {
+                foreach (var area in PhysicsHelper.GetContacting(_collisionArea)) ApplyTo(area.Owner);
+                if (IsTimeUp) Deactivate();
+            }
         }
 
         private void ApplyTo(Gob gob)
         {
+            if (gob.MoveType != MoveType.Dynamic) return;
             var difference = gob.Pos - _radiator.Pos;
-            var differenceLength = difference.Length();
-            var differenceUnit = differenceLength > 0 ? difference / differenceLength : Vector2.Zero;
-            var flow = differenceUnit * _flowSpeed.Evaluate(differenceLength);
-            var moveBoost = _radiator.Move == Vector2.Zero
-                ? Vector2.Zero
-                : Vector2.Normalize(_radiator.Move) * Vector2.Dot(_radiator.Move, differenceUnit);
-            _radiator.Game.PhysicsEngine.ApplyDrag(gob, flow + moveBoost, _dragMagnitude);
+            var differenceUnit = difference.NormalizeOrZero();
+            var flow = differenceUnit * _flowSpeed.Evaluate(difference.Length());
+            var moveBoost = _radiator.Move.NormalizeOrZero() * Vector2.Dot(_radiator.Move, differenceUnit);
+            PhysicsHelper.ApplyDrag(gob, flow + moveBoost, _dragMagnitude);
 
             // HACK to blow rockets away
             var rocket = gob as Gobs.Rocket;

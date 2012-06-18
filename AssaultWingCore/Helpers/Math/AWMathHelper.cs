@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 
 namespace AW2.Helpers
@@ -113,6 +114,18 @@ namespace AW2.Helpers
             return difference <= MathHelper.Pi
                 ? from + Math.Min(step, difference)
                 : from - Math.Min(step, MathHelper.TwoPi - difference);
+        }
+
+        /// <summary>
+        /// Returns the angular velocity whose amplitude is at most <paramref name="speed"/> and
+        /// which changes the angle from <paramref name="from"/> towards <paramref name="to"/>
+        /// via the smaller angle. The change is limited so that it won't go past <paramref name="to"/>
+        /// in the given <paramref name="timeStep"/>.
+        /// </summary>
+        public static float GetAngleSpeedTowards(float from, float to, float speed, TimeSpan timeStep)
+        {
+            var seconds = (float)timeStep.TotalSeconds;
+            return (InterpolateTowardsAngle(from, to, speed * seconds) - from) / seconds;
         }
 
         /// <summary>
@@ -334,6 +347,16 @@ namespace AW2.Helpers
             return -MathHelper.Pi - asin;
         }
 
+        public static Vector2 ProjectXY(this Vector3 v)
+        {
+            return new Vector2(v.X, v.Y);
+        }
+
+        public static Vector2 ProjectXY(this VertexPositionNormalTexture v)
+        {
+            return v.Position.ProjectXY();
+        }
+
         /// <summary>
         /// Returns the absolute difference of two angles in radians
         /// as the smallest non-negative angle congruent to 2 * PI.
@@ -533,7 +556,7 @@ namespace AW2.Helpers
         /// </summary>
         public static Vector3 RotateZ(this Vector3 v, float radians)
         {
-            return new Vector3(new Vector2(v.X, v.Y).Rotate(radians), v.Z);
+            return new Vector3(v.ProjectXY().Rotate(radians), v.Z);
         }
 
         /// <summary>
@@ -619,6 +642,11 @@ namespace AW2.Helpers
             return new Vector2(-value.Y, value.X);
         }
 
+        public static Vector2 MirrorX(this Vector2 value)
+        {
+            return new Vector2(-value.X, value.Y);
+        }
+
         public static Vector2 MirrorY(this Vector2 value)
         {
             return new Vector2(value.X, -value.Y);
@@ -627,6 +655,27 @@ namespace AW2.Helpers
         public static Vector2 ToVector2(this Point p)
         {
             return new Vector2(p.X, p.Y);
+        }
+
+        public static float Dot(this Vector2 a, Vector2 b)
+        {
+            return a.X * b.X + a.Y * b.Y;
+        }
+
+        public static Vector2 ProjectOnto(this Vector2 value, Vector2 onto)
+        {
+            if (onto == Vector2.Zero) return Vector2.Zero;
+            return onto * value.Dot(onto) / onto.LengthSquared();
+        }
+
+        /// <summary>
+        /// Returns the normalized vector, or zero if the vector is very close to zero.
+        /// </summary>
+        public static Vector2 NormalizeOrZero(this Vector2 value)
+        {
+            return value.LengthSquared() <= 1e-10f * 1e-10f
+                ? Vector2.Zero
+                : Vector2.Normalize(value);
         }
 
         private static void Swap(ref Point point1, ref Point point2)

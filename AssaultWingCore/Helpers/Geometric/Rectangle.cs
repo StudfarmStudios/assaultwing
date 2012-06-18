@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Common;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -12,14 +14,18 @@ namespace AW2.Helpers.Geometric
     /// <summary>
     /// An axis-aligned rectangle in two-dimensional space.
     /// </summary>
+    [LimitedSerialization]
     public class Rectangle : IGeomPrimitive
     {
+        public float Density { get; set; }
+
 #if TRUSTED_VISIBILITY_BREACH
-        [SerializedName("min")]
+        [TypeParameter, RuntimeState, SerializedName("min")]
         public Vector2 Min;
-        [SerializedName("max")]
+        [TypeParameter, RuntimeState, SerializedName("max")]
         public Vector2 Max;
 #else
+        [TypeParameter, RuntimeState]
         private Vector2 _min, _max;
 #endif
 
@@ -77,6 +83,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public Rectangle()
         {
+            Density = 1;
         }
 
         /// <summary>
@@ -88,6 +95,7 @@ namespace AW2.Helpers.Geometric
         {
             if (min.X > max.X || min.Y > max.Y)
                 throw new ArgumentException("Min is not less than or equal to max");
+            Density = 1;
 #if TRUSTED_VISIBILITY_BREACH
             Min = min;
             Max = max;
@@ -108,6 +116,7 @@ namespace AW2.Helpers.Geometric
         {
             if (minX > maxX || minY > maxY)
                 throw new ArgumentException("Min is not less than or equal to max");
+            Density = 1;
 #if TRUSTED_VISIBILITY_BREACH
             Min = new Vector2(minX, minY);
             Max = new Vector2(maxX, maxY);
@@ -125,6 +134,12 @@ namespace AW2.Helpers.Geometric
             return "{" + Min + " - " + Max + "}";
         }
 
+        public bool Contains(Rectangle other)
+        {
+            return Min.X <= other.Min.X && other.Max.X <= Max.X
+                && Min.Y <= other.Min.Y && other.Max.Y <= Max.Y;
+        }
+
         #region IGeomPrimitive Members
 
         public Rectangle BoundingBox { get { return this; } }
@@ -136,15 +151,21 @@ namespace AW2.Helpers.Geometric
             var _max = Max;
 #endif
             var p1 = Vector2.Transform(_min, transformation);
-            var p2 = Vector2.Transform(new Vector2(_min.X, _max.Y), transformation);
+            var p2 = Vector2.Transform(new Vector2(_max.X, _min.Y), transformation);
             var p3 = Vector2.Transform(_max, transformation);
-            var p4 = Vector2.Transform(new Vector2(_max.X, _min.Y), transformation);
+            var p4 = Vector2.Transform(new Vector2(_min.X, _max.Y), transformation);
             return new Polygon(new Vector2[] { p1, p2, p3, p4 });
         }
 
         public float DistanceTo(Vector2 point)
         {
             return Geometry.Distance(new Point(point), this);
+        }
+
+        public Shape GetShape()
+        {
+            var corners = new[] { Min, new Vector2(Max.X, Min.Y), Max, new Vector2(Min.X, Max.Y) };
+            return new PolygonShape(PhysicsHelper.CreateVertices(corners), Density);
         }
 
         #endregion

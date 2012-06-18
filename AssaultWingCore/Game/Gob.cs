@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using FarseerPhysics.Dynamics;
 using AW2.Core;
 using AW2.Game.Arenas;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Graphics;
 using AW2.Graphics.Content;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using System.Collections.Specialized;
+using FarseerPhysics.Dynamics.Joints;
 
 namespace AW2.Game
 {
@@ -47,7 +50,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
     [System.Diagnostics.DebuggerDisplay("ID:{ID} TypeName:{TypeName} Pos:{Pos} Move:{Move}")]
-    public class Gob : Clonable, IConsistencyCheckable, INetworkSerializable, ICustomTypeDescriptor
+    public class Gob : Clonable, INetworkSerializable, ICustomTypeDescriptor
     {
         /// <summary>
         /// Type of a gob's preferred placement to arena layers.
@@ -99,6 +102,9 @@ namespace AW2.Game
         /// smoothing algorithm as a repositioning. Measured in meters.
         /// </summary>
         private const int POS_SMOOTHING_CUTOFF = 50;
+        private const float POS_SMOOTHING_FADEOUT = 0.95f; // reduces the offset to less than 5 % in 60 updates
+        private const float POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED = 6 * 6;
+        private const float POS_SMOOTH_MOVE_FADEOUT = 0.63f; // Reduces to < 10 % in 5 frames.
 
         /// <summary>
         /// Maximum gob rotation change that is not interpreted by the draw rotation
@@ -106,9 +112,19 @@ namespace AW2.Game
         /// </summary>
         public const float ROTATION_SMOOTHING_CUTOFF = MathHelper.PiOver2;
 
+        /// <summary>
+        /// Radius of the physical area of a large gob, in meters.
+        /// </summary>
+        public const float LARGE_GOB_PHYSICAL_RADIUS = 25;
+
+        /// <summary>
+        /// Radius of the physical area of a typical small gob, in meters.
+        /// </summary>
+        public const float SMALL_GOB_PHYSICAL_RADIUS = 4;
+
         private const float HIDING_ALPHA_LIMIT = 0.01f;
-        private const float MIN_GOB_COORDINATE = -Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
-        private const float MAX_GOB_COORDINATE = 16000 + Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
+        private const float MIN_GOB_COORDINATE = -Arena.GOB_DESTRUCTION_BOUNDARY;
+        private const float MAX_GOB_COORDINATE = -Arena.GOB_DESTRUCTION_BOUNDARY + 16000;
         private const float MIN_GOB_DELTA_COORDINATE = byte.MinValue / 8f;
         private const float MAX_GOB_DELTA_COORDINATE = byte.MaxValue / 8f;
         private static readonly TimeSpan FULL_NETWORK_UPDATE_INTERVAL = TimeSpan.FromSeconds(1);
@@ -143,6 +159,8 @@ namespace AW2.Game
         /// </summary>
         [RuntimeState]
         private Vector2 _pos;
+        private Vector2 _move;
+        private Vector2 _moveOffset;
 
         /// <summary>
         /// Gob rotation around the Z-axis in radians.
@@ -195,11 +213,10 @@ namespace AW2.Game
         private int _disabledCount;
 
         /// <summary>
-        /// True iff the gob moves around by the laws of physics.
+        /// The kind of movement of the gob. Not to be changed after the gob is added to an <see cref="Arena"/>.
         /// </summary>
-        /// Subclasses should set this according to their needs.
         [TypeParameter]
-        private bool _movable;
+        private MoveType _moveType;
 
         /// <summary>
         /// Preferred maximum time between the gob's state updates
@@ -236,6 +253,7 @@ namespace AW2.Game
         /// </summary>
         [TypeParameter]
         protected CollisionArea[] _collisionAreas;
+        private Body _body;
 
         #region Fields for damage
 
@@ -305,14 +323,7 @@ namespace AW2.Game
         }
 
         public bool IsDisposed { get; private set; }
-        public bool IsDamageable
-        {
-            get
-            {
-                return CollisionAreas.Any(area => (area.Type & CollisionAreaType.PhysicalDamageable) != 0);
-            }
-        }
-        public float CollisionDamageToOthersMultiplier { get; set; }
+        public virtual bool IsDamageable { get { return false; } }
 
         /// <summary>
         /// Gob drawing bleach override, between 0 and 1. If null, normal bleach behaviour is used.
@@ -396,19 +407,38 @@ namespace AW2.Game
         /// <summary>
         /// Position of the gob in the game world.
         /// </summary>
-        public virtual Vector2 Pos { get { return _pos; } set { _pos = value; } }
+        public virtual Vector2 Pos
+        {
+            get { return Body != null ? Body.Position.FromFarseer() : _pos; }
+            set { if (Body != null) Body.Position = value.ToFarseer(); else _pos = value; }
+        }
 
         /// <summary>
         /// Drawing position delta of the gob in the game world, relative to <see cref="Pos"/>.
         /// This is mostly zero except on game clients who use this to smooth out erratic gob
         /// movement caused by inconsistency between local updates and game server updates.
         /// </summary>
-        public Vector2 DrawPosOffset { get; set; }
+        public Vector2 DrawPosOffset { get; private set; }
 
         /// <summary>
-        /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/>
-        /// as if the gob appeared there instantaneously
-        /// as opposed to moving there in a continuous fashion.
+        /// Move offset for smoothly sliding <see cref="Pos"/> on a game client to the value on
+        /// the game server. <see cref="MoveOffset"/> is automatically added to <see cref="Move"/>.
+        /// </summary>
+        private Vector2 MoveOffset
+        {
+            get { return _moveOffset; }
+            set
+            {
+                Move += value - _moveOffset;
+                _moveOffset = value;
+            }
+        }
+
+        /// <summary>
+        /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/> as if the
+        /// gob appeared there instantaneously as opposed to moving there in a continuous fashion.
+        /// This method breaks some aspects of physics simulation. Only use it when initializing
+        /// gobs.
         /// </summary>
         public virtual void ResetPos(Vector2 pos, Vector2 move, float rotation)
         {
@@ -420,21 +450,27 @@ namespace AW2.Game
         /// <summary>
         /// The gob's movement in meters/second.
         /// </summary>
-        public virtual Vector2 Move { get; set; }
+        public virtual Vector2 Move
+        {
+            get { return Body != null ? Body.LinearVelocity.FromFarseer() : _move; }
+            set { if (Body != null) Body.LinearVelocity = value.ToFarseer(); else _move = value; }
+        }
 
         /// <summary>
         /// Mass of the gob, measured in kilograms.
         /// </summary>
-        public float Mass { get { return _mass; } }
+        public float Mass { get { return Body != null ? Body.Mass : _mass; } }
 
         /// <summary>
         /// Get or set the gob's rotation around the Z-axis.
         /// </summary>
         public virtual float Rotation
         {
-            get { return _rotation; }
-            set { _rotation = value % MathHelper.TwoPi; }
+            get { return Body != null ? Body.Rotation : _rotation; }
+            set { if (Body != null) Body.Rotation = value; else _rotation = value % MathHelper.TwoPi; }
         }
+
+        public float RotationSpeed { get { return Body == null ? 0 : Body.AngularVelocity; } set { if (Body != null) Body.AngularVelocity = value; } }
 
         public virtual float DrawRotation { get { return Rotation; } }
 
@@ -493,7 +529,7 @@ namespace AW2.Game
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
-        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, DrawRotation + DrawRotationOffset, _pos + DrawPosOffset); } }
+        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, DrawRotation + DrawRotationOffset, Pos + DrawPosOffset); } }
 
         /// <summary>
         /// The transform matrices of the gob's 3D model parts.
@@ -541,6 +577,27 @@ namespace AW2.Game
         /// </remarks>
         public IEnumerable<CollisionArea> CollisionAreas { get { return _collisionAreas.Where(area => area != null); } }
 
+        public Body Body
+        {
+            get { return _body; }
+            set
+            {
+                if (value == null)
+                {
+                    _pos = _body.WorldCenter.FromFarseer();
+                    _move = _body.LinearVelocity.FromFarseer();
+                    _rotation = _body.Rotation;
+                }
+                else
+                {
+                    var worldPos = _pos.ToFarseer();
+                    value.SetTransformIgnoreContacts(ref worldPos, _rotation);
+                    value.LinearVelocity = _move.ToFarseer();
+                }
+                _body = value;
+            }
+        }
+
         /// <summary>
         /// Is the gob cold.
         /// </summary>
@@ -570,9 +627,9 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// True iff the gob moves around by the laws of physics.
+        /// The kind of movement of the gob. Not to be changed after the gob is added to an <see cref="Arena"/>.
         /// </summary>
-        public bool Movable { get { return _movable; } protected set { _movable = value; } }
+        public MoveType MoveType { get { return _moveType; } set { _moveType = value; } }
 
         /// <summary>
         /// Does arena gravity affect the gob. Subclasses should set this according to their needs.
@@ -580,10 +637,14 @@ namespace AW2.Game
         public bool Gravitating { get; protected set; }
 
         /// <summary>
-        /// If true, the gob is not let outside the arena boundary. Otherwise the gob is
-        /// removed when it passes the arena boundary.
+        /// Does the physics simulation ignore changes in angular velocity in collisions.
         /// </summary>
-        public bool IsKeptInArenaBounds { get; protected set; }
+        public bool DampAngularVelocity { get; protected set; }
+
+        /// <summary>
+        /// Is the gob registered to its <see cref="Arena"/>.
+        /// </summary>
+        public bool IsRegistered { get { return Body != null; } }
 
         #endregion Gob Properties
 
@@ -645,7 +706,7 @@ namespace AW2.Game
             _deathGobTypes = new CanonicalString[0];
             _collisionAreas = new CollisionArea[0];
             _maxDamage = 100;
-            _movable = true;
+            _moveType = MoveType.Dynamic;
         }
 
         /// <summary>
@@ -658,7 +719,6 @@ namespace AW2.Game
             ResetPos(new Vector2(float.NaN), Vector2.Zero, float.NaN); // resets Pos and Rotation smoothing on game clients
             Alpha = 1;
             _previousBleach = -1;
-            CollisionDamageToOthersMultiplier = 1;
             BonusActions = new List<Gobs.BonusAction>();
         }
 
@@ -762,7 +822,6 @@ namespace AW2.Game
             LoadContent();
             if (Arena.IsForPlaying)
             {
-                TransformUnmovableCollisionAreas(_collisionAreas);
                 CreateBirthGobs();
                 CreateModelBirthGobs();
             }
@@ -782,9 +841,9 @@ namespace AW2.Game
         {
             if (IsRelevant && MayBeDifficultToPredictOnClient) ForcedNetworkUpdate = true;
             _previousMove = Move;
-            Arena.Move(this, Game.TargetElapsedTime, allowIrreversibleSideEffects: Game.NetworkMode != NetworkMode.Client);
-            DrawPosOffset *= 0.95f; // reduces the offset to less than 5 % in 60 updates
+            DrawPosOffset *= POS_SMOOTHING_FADEOUT;
             DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
+            MoveOffset *= POS_SMOOTH_MOVE_FADEOUT;
         }
 
         public static float DampDrawRotationOffset(float drawRotationOffset)
@@ -933,21 +992,22 @@ namespace AW2.Game
                     if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
                     {
                         var fullUpdate = true; // UNDONE because of bugs !!! _nextFullNetworkUdpateTime <= Game.GameTime.TotalGameTime;
-                        byte rotationAndFlags = unchecked((byte)(((int)Math.Round(_rotation / MathHelper.TwoPi * 128)) & 0x7f));
+                        byte rotationAndFlags = unchecked((byte)(((int)Math.Round(Rotation / MathHelper.TwoPi * 128)) & 0x7f));
                         if (fullUpdate)
                         {
                             rotationAndFlags |= 0x80;
                             _nextFullNetworkUdpateTime = Game.GameTime.TotalGameTime + FULL_NETWORK_UPDATE_INTERVAL;
                             writer.Write((byte)rotationAndFlags);
-                            writer.WriteNormalized16((Vector2)_pos, MIN_GOB_COORDINATE, MAX_GOB_COORDINATE);
+                            writer.WriteNormalized16((Vector2)Pos, MIN_GOB_COORDINATE, MAX_GOB_COORDINATE);
                         }
                         else
                         {
                             writer.Write((byte)rotationAndFlags);
-                            writer.WriteNormalized8((Vector2)(_pos - _lastNetworkUpdatePos), MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
-                            _lastNetworkUpdatePos = _pos;
+                            writer.WriteNormalized8((Vector2)(Pos - _lastNetworkUpdatePos), MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
+                            _lastNetworkUpdatePos = Pos;
                         }
                         writer.WriteHalf((Vector2)Move);
+                        writer.Write((Half)RotationSpeed);
                         if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
                     }
                 }
@@ -974,38 +1034,41 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
-                var oldRotation = _rotation;
+                var oldRotation = Rotation;
                 byte rotationAndFlags = reader.ReadByte();
                 var fullUpdate = true; // UNDONE !!! (rotationAndFlags & 0x80) != 0;
-                _rotation = (rotationAndFlags & 0x7f) * MathHelper.TwoPi / 128;
-                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - _rotation);
+                Rotation = (rotationAndFlags & 0x7f) * MathHelper.TwoPi / 128;
+                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - Rotation);
                 if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
                     DrawRotationOffset = 0;
 
-                var oldPos = _pos;
+                var oldPos = Pos;
                 var newPos = fullUpdate
                     ? reader.ReadVector2Normalized16(MIN_GOB_COORDINATE, MAX_GOB_COORDINATE)
                     : _lastNetworkUpdatePos + reader.ReadVector2Normalized8(MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
                 _lastNetworkUpdatePos = newPos;
-                var newMove = reader.ReadHalfVector2();
-                ExtrapolatePosAndMove(newPos, newMove, framesAgo);
-                DrawPosOffset += oldPos - _pos;
+                Move = reader.ReadHalfVector2();
+                RotationSpeed = reader.ReadHalf();
+                var posOffset = newPos - oldPos;
+                if (posOffset.LengthSquared() <= POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED)
+                {
+                    // If no external forces affect Pos on the game server and the game client, Pos on client
+                    // will converge to Pos on server.
+                    MoveOffset = (1 - POS_SMOOTH_MOVE_FADEOUT) * posOffset;
+                }
+                else
+                {
+                    Pos = newPos;
+                    DrawPosOffset -= posOffset;
+                    MoveOffset = Vector2.Zero;
+                }
                 if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
+                {
                     DrawPosOffset = Vector2.Zero;
-
+                    MoveOffset = Vector2.Zero;
+                }
                 if (IsDamageable) DamageLevel = reader.ReadByte() / (float)byte.MaxValue * MaxDamageLevel;
             }
-        }
-
-        /// <summary>
-        /// Sets the gob's position and movement by computing it from a known position
-        /// and movement some time ago.
-        /// </summary>
-        public void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, int frameCount)
-        {
-            _pos = oldPos;
-            Move = oldMove;
-            if (Arena != null) Arena.Move(this, frameCount, allowIrreversibleSideEffects: false);
         }
 
         #endregion Methods related to serialisation
@@ -1063,12 +1126,12 @@ namespace AW2.Game
                 select Tuple.Create(name, bone.Index);
         }
 
-        public int GetCollisionAreaID(CollisionArea area)
+        public virtual int GetCollisionAreaID(CollisionArea area)
         {
             return Array.IndexOf(_collisionAreas, area);
         }
 
-        public CollisionArea GetCollisionArea(int areaID)
+        public virtual CollisionArea GetCollisionArea(int areaID)
         {
             if (areaID < 0 || areaID >= _collisionAreas.Length) return null;
             return _collisionAreas[areaID];
@@ -1095,11 +1158,13 @@ namespace AW2.Game
         {
             if (_disabledCount == 0) throw new InvalidOperationException("Cannot enable a gob that is already enabled");
             --_disabledCount;
+            if (_disabledCount == 0) foreach (var area in CollisionAreas) area.Enable();
         }
 
         public void Disable()
         {
-            ++_disabledCount;
+            if (_disabledCount == 0) foreach (var area in CollisionAreas) area.Disable();
+            _disabledCount++;
         }
 
         public override string ToString()
@@ -1111,12 +1176,12 @@ namespace AW2.Game
 
         #region Gob miscellaneous protected methods
 
+        /// <summary>
+        /// Lazy wrapper around <see cref="Arena.FindGob"/>
+        /// </summary>
         protected Tuple<bool, Gob> FindGob(int id)
         {
-            var gob = id == Gob.INVALID_ID || Arena == null
-                ? null
-                : Arena.Gobs.FirstOrDefault(g => g.ID == id);
-            return Tuple.Create(gob != null, gob);
+            return Arena.FindGob(id);
         }
 
         /// <summary>
@@ -1140,22 +1205,6 @@ namespace AW2.Game
         #region Collision methods
 
         /// <summary>
-        /// The primary physical collision area of the gob or <b>null</b> if it doesn't have one.
-        /// </summary>
-        /// The primary physical collision area is used mostly for movable gobs as an
-        /// optimisation to avoid looping through all collision areas in order to find
-        /// physical ones.
-        public CollisionArea PhysicalArea
-        {
-            get
-            {
-                if (_collisionAreas.Length == 0) return null;
-                if ((_collisionAreas[0].Type & CollisionAreaType.Physical) == 0) return null;
-                return _collisionAreas[0];
-            }
-        }
-
-        /// <summary>
         /// Performs collision operations for the case when one of this gob's collision areas
         /// is overlapping one of another gob's collision areas.
         /// Called only when <b>theirArea.Type</b> matches <b>myArea.CollidesAgainst</b>.
@@ -1164,7 +1213,7 @@ namespace AW2.Game
         /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
         /// to backtrack out of the overlap. It is then up to this gob and the other gob 
         /// to resolve the overlap.</param>
-        public virtual void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public virtual void CollideReversible(CollisionArea myArea, CollisionArea theirArea)
         {
         }
 
@@ -1177,7 +1226,7 @@ namespace AW2.Game
         /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
         /// to backtrack out of the overlap. It is then up to this gob and the other gob 
         /// to resolve the overlap.</param>
-        public virtual bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public virtual bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             return false;
         }
@@ -1199,31 +1248,6 @@ namespace AW2.Game
         /// The maximum amount of damage the entity can sustain.
         /// </summary>
         public float MaxDamageLevel { get { return _maxDamage; } set { _maxDamage = value; } }
-
-        /// <summary>
-        /// Optional filter for processing damage from physical collisions (not explosions
-        /// and other active weapon damage). Parameter is damage about to be inflicted.
-        /// Return value is the remaining filtered damage.
-        /// </summary>
-        public Func<float, float> CollisionDamageFilter { get; set; }
-
-        /// <summary>
-        /// Called when the gob experiences a physical collision into another gob.
-        /// </summary>
-        public virtual void PhysicalCollisionInto(Gob other, Vector2 moveDelta, float damageMultiplier)
-        {
-            float collisionDamage = 0.0003f * damageMultiplier * CollisionDamageToOthersMultiplier * moveDelta.Length() * other.Mass;
-            other.InflictCollisionDamage(collisionDamage, new DamageInfo(this));
-        }
-
-        public virtual void InflictCollisionDamage(float damageAmount, DamageInfo info)
-        {
-            if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
-            if (CollisionDamageFilter != null)
-                damageAmount = CollisionDamageFilter(damageAmount);
-            if (damageAmount > 0)
-                InflictDamage(damageAmount, info);
-        }
 
         public virtual void InflictDamage(float damageAmount, DamageInfo info)
         {
@@ -1306,26 +1330,12 @@ namespace AW2.Game
             }
         }
 
-        /// <summary>
-        /// Pretransforms the gob's collision areas if the gob is unmovable.
-        /// </summary>
-        public void TransformUnmovableCollisionAreas(IEnumerable<CollisionArea> collisionAreas)
-        {
-            if (Movable) return;
-            foreach (var area in collisionAreas)
-            {
-                if (area.Owner != this) throw new ApplicationException("Trying to transform area to a non-owner");
-                area.AreaGob = area.AreaGob.Transform(WorldMatrix);
-            }
-        }
-
         /// <param name="forceRemove">Force removal of the dead gob. Useful for clients.</param>
         private void DieImpl(Coroner coroner, bool forceRemove)
         {
             if (Dead) throw new InvalidOperationException("Gob is already dead");
             _dead = true;
             if (Death != null) Death(coroner);
-            Arena.Gobs.Remove(this, forceRemove);
             foreach (var gobType in _deathGobTypes)
                 CreateGob<Gob>(Game, gobType, gob =>
                 {
@@ -1333,6 +1343,7 @@ namespace AW2.Game
                     gob.Owner = Owner;
                     Arena.Gobs.Add(gob);
                 });
+            Arena.Gobs.Remove(this, forceRemove);
         }
 
         /// <summary>
@@ -1381,35 +1392,10 @@ namespace AW2.Game
 
         #endregion
 
-        #region IConsistencyCheckable and Clonable Members
-
         public override void Cloned()
         {
             foreach (var area in _collisionAreas) area.Owner = this;
         }
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public virtual void MakeConsistent(Type limitationAttribute)
-        {
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Rearrange our collision areas to have a physical area be first, if there is such,
-                // and all other collision areas to be sorted in increasing order by name.
-                // Order is important because game server and game clients communicate in indices.
-                _collisionAreas = _collisionAreas.OrderBy(area => (area.Type & CollisionAreaType.Physical) != 0 ? "" : area.Name).ToArray();
-
-                // Make physical attributes sensible.
-                _mass = Math.Max(0.001f, _mass); // strictly positive mass
-            }
-        }
-
-        #endregion
 
         #region ICustomTypeDescriptor Members
 

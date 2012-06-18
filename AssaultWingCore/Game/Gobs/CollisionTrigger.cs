@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AW2.Game.Collisions;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -59,7 +60,7 @@ namespace AW2.Game.Gobs
         {
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if (ActionGob != null) ActionGob.Act();
             return true;

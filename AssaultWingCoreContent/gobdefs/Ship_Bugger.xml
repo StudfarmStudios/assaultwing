@@ -53,7 +53,7 @@
     <type>Transparent</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <modelName>bugger</modelName>
   <scale>0.064</scale>
   <birthGobTypes>
@@ -65,9 +65,7 @@
   </deathGobTypes>
   <collisionAreas>
     <Item>
-      <type>PhysicalShip</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Common</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>General</name>
       <area type="AW2.Helpers.Geometric.Circle">

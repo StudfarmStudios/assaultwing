@@ -8,34 +8,39 @@ namespace AW2.Core
 {
     public class AWGameRunner
     {
+        public delegate void UpdateAndDrawAction(AWGameTime gameTime);
+
         private AWGame _game;
         private Stopwatch _timer;
         private Action<Action> _invoker;
         private Action<Exception> _exceptionHandler;
-        private Action _draw;
-        private Action<AWGameTime> _update;
+        private UpdateAndDrawAction _updateAndDraw;
         private bool _paused;
         private bool _pauseDisabled;
         private object _pausedLock;
         private bool _exiting;
         private SemaphoreSlim _exitSemaphore;
         private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
-        private bool _readyForNextUpdate;
-        private bool _readyForNextDraw;
+        private bool _readyForNextUpdateAndDraw;
+        private TimeSpan _nextUpdate;
 
         public event Action Initialized;
 
+        /// <summary>
+        /// If true, then the next frame update should have started already; any pending frame draw
+        /// should be skipped to catch up.
+        /// </summary>
+        public bool IsTimeForNextUpdate { get { return _timer.Elapsed + Waiter.PRECISION >= _nextUpdate; } }
+
         /// <param name="invoker">A delegate that invokes a delegate in the main thread.</param>
-        /// <param name="draw">A delegate that draws the game screen.</param>
-        /// <param name="update">A delegate that updates the game world.</param>
-        public AWGameRunner(AWGame game, Action<Action> invoker, Action<Exception> exceptionHandler, Action draw, Action<AWGameTime> update)
+        /// <param name="updateAndDraw">A delegate that updates the game world and draws the game screen.</param>
+        public AWGameRunner(AWGame game, Action<Action> invoker, Action<Exception> exceptionHandler, UpdateAndDrawAction updateAndDraw)
         {
-            if (game == null || exceptionHandler == null || draw == null || update == null) throw new ArgumentNullException();
+            if (game == null || exceptionHandler == null || updateAndDraw == null) throw new ArgumentNullException();
             _game = game;
             _invoker = invoker;
             _exceptionHandler = exceptionHandler;
-            _draw = draw;
-            _update = update;
+            _updateAndDraw = updateAndDraw;
             _timer = new Stopwatch();
             _pausedLock = new object();
             _exitSemaphore = new SemaphoreSlim(1, 1);
@@ -52,19 +57,11 @@ namespace AW2.Core
         }
 
         /// <summary>
-        /// To be called when a frame update has finished.
+        /// To be called when a frame update and draw has finished.
         /// </summary>
-        public void UpdateFinished()
+        public void UpdateAndDrawFinished()
         {
-            _readyForNextUpdate = true;
-        }
-
-        /// <summary>
-        /// To be called when a frame draw has finished.
-        /// </summary>
-        public void DrawFinished()
-        {
-            _readyForNextDraw = true;
+            _readyForNextUpdateAndDraw = true;
         }
 
         /// <summary>
@@ -129,8 +126,6 @@ namespace AW2.Core
                 _game.Initialize();
                 _game.BeginRun();
             });
-            var nextUpdate = TimeSpan.Zero;
-            var lastUpdate = TimeSpan.Zero;
             var totalGameTime = TimeSpan.Zero;
             _timer.Start();
             if (Initialized != null)
@@ -138,39 +133,35 @@ namespace AW2.Core
                 Initialized();
                 Initialized = null;
             }
-            _readyForNextUpdate = true;
-            _readyForNextDraw = true;
+            _readyForNextUpdateAndDraw = true;
             while (!_exiting)
             {
                 lock (_timer)
                 {
                     var now = _timer.Elapsed;
-                    if (now + Waiter.PRECISION < nextUpdate)
+                    if (!IsTimeForNextUpdate)
                     {
                         // It's not yet time for update.
-                        Waiter.Instance.Sleep(nextUpdate - now);
+                        Waiter.Instance.Sleep(_nextUpdate - now);
                     }
-                    else if (now > nextUpdate + TimeSpan.FromSeconds(10))
+                    else if (now > _nextUpdate + TimeSpan.FromSeconds(10))
                     {
                         // Update is lagging a lot; skip over the missed updates.
-                        nextUpdate = now;
+                        _nextUpdate = now;
                     }
-                    else if (_readyForNextUpdate && _readyForNextDraw)
+                    else if (_readyForNextUpdateAndDraw)
                     {
                         var updateInterval = _game.TargetElapsedTime;
-                        var nextNextUpdate = nextUpdate + updateInterval;
-                        var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
-                        _readyForNextUpdate = false;
-                        _update(gameTime);
-                        if (now < nextNextUpdate)
-                        {
-                            // There is time left before the following update; draw in the meantime.
-                            _readyForNextDraw = false;
-                            _draw();
-                        }
-                        nextUpdate = nextNextUpdate;
-                        lastUpdate = now;
+                        var gameTime = new AWGameTime(totalGameTime, updateInterval, now);
+                        _nextUpdate += updateInterval;
                         totalGameTime += updateInterval;
+                        _readyForNextUpdateAndDraw = false;
+                        _updateAndDraw(gameTime);
+                    }
+                    else
+                    {
+                        // We didn't make it in time for a frame update. Wait for a while and try again.
+                        Waiter.Instance.Sleep(TimeSpan.FromMilliseconds(5));
                     }
                 }
             }

@@ -1,10 +1,12 @@
 //#define VERY_SMALL_TRIANGLES_ARE_COLLIDABLE // #define this only if large areas of walls become fly-through
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
@@ -59,37 +61,23 @@ namespace AW2.Game.Gobs
 
         #endregion // Wall Fields
 
-        #region Properties
-
         public static int WallActivatedCounter { get; set; }
 
-        public override Matrix WorldMatrix
+        private Matrix WorldToIndexMapTransform
         {
             get
             {
-                return Arena.IsForPlaying
-                    ? Matrix.Identity
-                    : base.WorldMatrix;
+                return Matrix.CreateTranslation(-Pos.X, -Pos.Y, 0)
+                    * _indexMap.WallToIndexMapTransform;
             }
         }
-
-        public override BoundingSphere DrawBounds
-        {
-            get
-            {
-                return Arena.IsForPlaying
-                    ? DrawBoundsInGobCoordinates
-                    : base.DrawBounds;
-            }
-        }
-
-        #endregion Properties
 
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
         public Wall()
         {
+            MoveType = MoveType.Static;
             _destructible = true;
             Set3DModel(new[] 
                 {
@@ -107,24 +95,37 @@ namespace AW2.Game.Gobs
             _removedTriangleIndices = new List<int>();
             _removedTriangleIndicesToSerialize = new List<int>();
             _removedTriangleIndicesOfAllTime = new List<int>();
-            Movable = false;
         }
 
         #region Methods related to gobs' functionality in the game world
+
+        public override int GetCollisionAreaID(CollisionArea area)
+        {
+            // Note: Walls are the only gobs to have over 4 collision areas; there can be hundreds of them.
+            // To fit collision area IDs into as few bits as possible, walls will always collide with
+            // their first collision area. This should not have a visible effect on game clients.
+            return 0;
+        }
+
+        public override CollisionArea GetCollisionArea(int areaID)
+        {
+            Debug.Assert(areaID == 0);
+            return _collisionAreas.First(area => area != null);
+        }
 
         public override void Activate()
         {
             base.Activate();
             if (Arena.IsForPlaying)
             {
-                Prepare3DModel();
                 var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
-                var boundingBox = CollisionAreas.Single(area => area.Name == "Bounding").Area.BoundingBox;
+                var gobVertices = _vertexData.Select(AWMathHelper.ProjectXY).ToArray();
+                var worldMatrix = Matrix.CreateRotationZ(Rotation); // FIXME: Use WorldMatrix or nothing
+                Vector2.Transform(gobVertices, ref worldMatrix, gobVertices);
+                var boundingBox = GetBoundingBox(gobVertices);
                 _indexMap = new WallIndexMap(_removedTriangleIndices.Add, boundingBox, binReader);
                 binReader.Close();
-#if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
-                RemoveVerySmallTrianglesFromCollisionAreas();
-#endif
+                CreateCollisionAreas();
             }
             WallActivatedCounter++;
         }
@@ -145,7 +146,7 @@ namespace AW2.Game.Gobs
                 return;
             }
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            Effect.World = Matrix.Identity;
+            Effect.World = WorldMatrix;
             Effect.Projection = projection;
             Effect.View = view;
             Effect.Texture = Texture;
@@ -167,6 +168,7 @@ namespace AW2.Game.Gobs
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             var silhouetteEffect = Game.GraphicsEngine.GameContent.WallSilhouetteEffect;
+            silhouetteEffect.World = WorldMatrix;
             silhouetteEffect.Projection = projection;
             silhouetteEffect.View = view;
             silhouetteEffect.Texture = Texture;
@@ -225,7 +227,7 @@ namespace AW2.Game.Gobs
         {
             var transformedVertexPositions = new Vector2[_vertexData.Length];
             var transformation = Matrix.CreateRotationZ(Rotation);
-            Vector2.Transform(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y)).ToArray(),
+            Vector2.Transform(_vertexData.Select(AWMathHelper.ProjectXY).ToArray(),
                 ref transformation, transformedVertexPositions);
             var indexMap = new WallIndexMap(_removedTriangleIndices.Add, Rectangle.FromVector2(transformedVertexPositions),
                 transformedVertexPositions, _indexData);
@@ -245,7 +247,7 @@ namespace AW2.Game.Gobs
         {
             if (!_destructible || holeRadius <= 0) return 0;
             if (Game.NetworkMode == NetworkMode.Client) return 0;
-            var posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
+            var posInIndexMap = Vector2.Transform(holePos, WorldToIndexMapTransform).Round();
             var removeCount = 0;
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius),
                 (x, y) => { if (_indexMap.Remove(x, y)) removeCount++; });
@@ -290,16 +292,10 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
-        private void RemoveVerySmallTrianglesFromCollisionAreas()
-        {
-            foreach (int index in _indexMap.GetVerySmallTriangles()) _collisionAreas[index] = null;
-            TriangleCount -= _indexMap.GetVerySmallTriangles().Count();
-        }
-
         private void RemoveTriangle(int index)
         {
             if (_collisionAreas[index] == null) return; // triangle already removed earlier this frame
-            Arena.Unregister(_collisionAreas[index]);
+            _collisionAreas[index].Destroy();
             _collisionAreas[index] = null;
             --TriangleCount;
 
@@ -309,37 +305,38 @@ namespace AW2.Game.Gobs
             _indexData[3 * index + 2] = 0;
         }
 
-        /// <summary>
-        /// Prepares the wall's 3D model for use in gameplay.
-        /// </summary>
-        private void Prepare3DModel()
-        {
-            TriangleCount = _indexData.Length / 3;
-            CreateCollisionAreas();
-        }
-
         private void CreateCollisionAreas()
         {
-            // Create one collision area for each triangle in the wall's 3D model.
-            _collisionAreas = new CollisionArea[_indexData.Length / 3 + 1];
+#if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
+            var verySmallTriangles = _indexMap.GetVerySmallTriangles(); // sorted in increasing order
+#else
+            var verySmallTriangles = new List<int>();
+#endif
+            TriangleCount = _indexData.Length / 3 - verySmallTriangles.Count();
+            _collisionAreas = new CollisionArea[_indexData.Length / 3];
+            var smallTriangleEnumerator = verySmallTriangles.GetEnumerator();
+            var smallTrianglesRemaining = smallTriangleEnumerator.MoveNext();
             for (int i = 0; i + 2 < _indexData.Length; i += 3)
             {
-                // Create a physical collision area for this triangle.
-                var v1 = _vertexData[_indexData[i + 0]].Position;
-                var v2 = _vertexData[_indexData[i + 1]].Position;
-                var v3 = _vertexData[_indexData[i + 2]].Position;
-                var triangleArea = new Triangle(
-                    new Vector2(v1.X, v1.Y),
-                    new Vector2(v2.X, v2.Y),
-                    new Vector2(v3.X, v3.Y));
-                _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
-                    CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
+                if (smallTrianglesRemaining && smallTriangleEnumerator.Current == i / 3)
+                {
+                    smallTrianglesRemaining = smallTriangleEnumerator.MoveNext();
+                    continue;
+                }
+                var v1 = _vertexData[_indexData[i + 0]];
+                var v2 = _vertexData[_indexData[i + 1]];
+                var v3 = _vertexData[_indexData[i + 2]];
+                var triangleArea = new Triangle(v1.ProjectXY(), v2.ProjectXY(), v3.ProjectXY());
+                _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this, CollisionAreaType.Static, CollisionMaterialType.Rough);
             }
+        }
 
-            // Create a collision bounding volume for the whole wall.
-            _collisionAreas[_collisionAreas.Length - 1] = new CollisionArea("Bounding",
-                Rectangle.FromVector2(_vertexData.Select(v => new Vector2(v.Position.X, v.Position.Y))),
-                this, CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
+        private Rectangle GetBoundingBox(IEnumerable<Vector2> vertexPositions)
+        {
+            var min = vertexPositions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
+            var max = vertexPositions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
+            var boundingArea = new Rectangle(min, max);
+            return boundingArea;
         }
 
         #endregion Private methods

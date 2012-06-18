@@ -63,10 +63,6 @@ namespace AW2.Helpers.Geometric
         /// <returns>True iff the two geometric primitives intersect.</returns>
         public static bool Intersect(IGeomPrimitive prim1, IGeomPrimitive prim2)
         {
-            // Check trivial cases.
-            if (prim1 is Everything || prim2 is Everything)
-                return true;
-
             // Check fast cases.
             if (prim1 is Point)
             {
@@ -657,8 +653,6 @@ namespace AW2.Helpers.Geometric
         /// <returns>The distance between the two geometric primitives.</returns>
         public static float Distance(IGeomPrimitive prim1, IGeomPrimitive prim2)
         {
-            if (prim1 is Everything || prim2 is Everything)
-                return 0;
             if (prim1 is Point)
             {
                 Point point1 = (Point)prim1;
@@ -1258,8 +1252,6 @@ namespace AW2.Helpers.Geometric
         /// or the zero vector in difficult cases.</returns>
         public static Vector2 GetNormal(IGeomPrimitive prim1, IGeomPrimitive prim2)
         {
-            if (prim1 is Everything || prim2 is Everything)
-                return Vector2.Zero;
             if (prim1 is Point)
             {
                 Point point1 = (Point)prim1;
@@ -1464,8 +1456,6 @@ namespace AW2.Helpers.Geometric
         public static Vector2 GetRandomLocation(IGeomPrimitive prim)
         {
             Type type = prim.GetType();
-            if (type == typeof(Everything))
-                return RandomHelper.GetRandomVector2(float.MinValue, float.MaxValue);
             if (type == typeof(Point))
                 return ((Point)prim).Location;
             if (type == typeof(Circle))

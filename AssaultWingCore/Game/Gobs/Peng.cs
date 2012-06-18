@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Game.Collisions;
+using AW2.Game.GobUtils;
 using AW2.Game.Pengs;
 using AW2.Graphics;
 using AW2.Helpers;
@@ -198,7 +200,6 @@ namespace AW2.Game.Gobs
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
 
         public SprayEmitter Emitter { get { return _emitter; } }
-        public bool IsMovable { get; set; }
 
         #endregion Peng properties
 
@@ -217,7 +218,7 @@ namespace AW2.Game.Gobs
 
             // Set better defaults than class Gob does.
             DrawMode2D = new DrawMode2D(DrawModeType2D.Transparent);
-            Movable = false;
+            MoveType = MoveType.Static;
 
             // Remove default collision areas set by class Gob so that we don't need to explicitly state
             // in each peng's XML definition that there are no collision areas.
@@ -256,7 +257,6 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _updater.Activate();
-            Movable = IsMovable; // By default, Peng stays put or moves with its leader
         }
 
         public override void Update()

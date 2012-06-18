@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -41,10 +43,11 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private string _sound;
 
-        private TimeSpan? _damageTime;
+        private bool _damageDone;
 
         public override bool Cold { get { return false; } }
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+        private CollisionArea DamageArea { get { return CollisionAreas.First(a => a.Type == CollisionAreaType.Damage); } }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -71,7 +74,7 @@ namespace AW2.Game.Gobs
         {
             Game.SoundEngine.PlaySound(_sound, this);
             GobHelper.CreateGobs(_particleEngineNames, Arena, Pos, gob => gob.Owner = Owner);
-            _radialFlow.Activate(this, Arena.TotalTime);
+            _radialFlow.Activate(this);
             Arena.MakeHole(Pos, _impactHoleRadius);
             base.Activate();
         }
@@ -79,19 +82,23 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (_radialFlow.IsFinished(Arena.TotalTime)) Die();
+            CauseDamage();
+            if (!_radialFlow.IsActive) Die();
             _radialFlow.Update();
         }
 
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        private void CauseDamage()
         {
-            if (_damageTime.HasValue && _damageTime.Value != Game.GameTime.TotalGameTime) return;
+            if (_damageDone) return;
+            foreach (var area in PhysicsHelper.GetContacting(DamageArea)) CauseDamage(area);
+            _damageDone = true;
+        }
+
+        private void CauseDamage(CollisionArea theirArea)
+        {
             Game.Stats.SendHit(this, theirArea.Owner);
-            _damageTime = Game.GameTime.TotalGameTime;
-            float distance = theirArea.Area.DistanceTo(Pos);
-            float damage = _inflictDamage.Evaluate(distance);
+            var damage = _inflictDamage.Evaluate(PhysicsHelper.Distance(theirArea, Pos));
             theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
-            myArea.Disable();
         }
     }
 }

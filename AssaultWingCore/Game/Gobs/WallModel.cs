@@ -105,14 +105,13 @@ namespace AW2.Game.Gobs
             if (data.Meshes.Length != 1) throw new ApplicationException("WallModel only supports one Mesh");
             var mesh = data.Meshes[0];
             if (mesh.MeshParts.Length != 1) throw new ApplicationException("WallModel only supports one MeshPart");
-            var worldMatrix = Matrix.Identity;
-            for (var bone = mesh.ParentBone; bone != null; bone = bone.Parent) worldMatrix *= bone.Transform;
-            if (Arena.IsForPlaying) worldMatrix *= AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
+            var mehsPartToworldMatrix = Matrix.Identity;
+            for (var bone = mesh.ParentBone; bone != null; bone = bone.Parent) mehsPartToworldMatrix *= bone.Transform;
             var meshPart = mesh.MeshParts[0];
             var vertices = meshPart.VertexBuffer.Vertices
                 .Select(vertex => new VertexPositionNormalTexture(
-                    position: Vector3.Transform(vertex.Position, worldMatrix),
-                    normal: Vector3.TransformNormal(vertex.Normal, worldMatrix),
+                    position: Vector3.Transform(vertex.Position, mehsPartToworldMatrix),
+                    normal: Vector3.TransformNormal(vertex.Normal, mehsPartToworldMatrix),
                     textureCoordinate: vertex.TextureCoordinate))
                 .ToArray();
             var effect = Game.CommandLineOptions.DedicatedServer ? null : GetEffect(Game.Content.Load<Model>(wallModelName));
@@ -138,39 +137,5 @@ namespace AW2.Game.Gobs
         {
             return GetEffect(model).Texture;
         }
-
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public override void MakeConsistent(Type limitationAttribute)
-        {
-            base.MakeConsistent(limitationAttribute);
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Make sure there's no null references.
-
-                // 'wallModelName' is actually part of our runtime state,
-                // but its value is passed onwards by 'ModelNames' even
-                // if we were only a gob template. The real problem is
-                // that we don't make a difference between gob templates
-                // and actual gob instances (that have a proper runtime state).
-                if (wallModelName == null)
-                    wallModelName = (CanonicalString)"dummymodel";
-            }
-            if (limitationAttribute == typeof(RuntimeStateAttribute))
-            {
-                // Make sure there's no null references.
-                if (wallModelName == null)
-                    wallModelName = (CanonicalString)"dummymodel";
-            }
-        }
-
-        #endregion IConsistencyCheckable Members
     }
 }

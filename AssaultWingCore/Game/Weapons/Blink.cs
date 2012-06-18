@@ -16,6 +16,7 @@ namespace AW2.Game.Weapons
     public class Blink : ShipDevice
     {
         private static readonly CanonicalString EFFECT_NAME = (CanonicalString)"gaussian_blur";
+        private const float BLINK_TARGET_HIT_RANGE_SQUARED = 1f * 1f;
 
         /// <summary>
         /// Distance of blink in meters (pixels).
@@ -36,7 +37,7 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private CanonicalString _blinkFailTargetEffect;
 
-        private Vector2 _queriedTargetPos;
+        private Tuple<Vector2, Vector2> _queriedTargetPosAndMove;
         private Vector2? _targetPos;
         private Vector2 _startPos;
         private TimeSpan _safetyTimeout;
@@ -65,14 +66,25 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_targetPos.HasValue)
             {
-                // Client corrects its blink target estimate based on the most recent Owner update
+                // Due to slight add-up errors on game servers and standalone games and due to the usual
+                // gob pos offsets on game clients, correct blink movement every frame.
                 if (Owner.Game.NetworkMode == NetworkMode.Client && Owner.Pos != _startPos)
-                    _targetPos = GetBlinkTarget(_startPos, Owner.Pos - _startPos);
-                float blinkMoveStep = Owner.Game.PhysicsEngine.ApplyChange(_blinkMoveSpeed, Owner.Game.GameTime.ElapsedGameTime);
-                var pos = AWMathHelper.InterpolateTowards(Owner.Pos, _targetPos.Value, blinkMoveStep);
-                Owner.ResetPos(pos, Owner.Move, Owner.Rotation);
-                if (pos == _targetPos.Value || _safetyTimeout < Owner.Arena.TotalTime)
                 {
+                    _queriedTargetPosAndMove = GetBlinkTargetAndMove(_startPos, Owner.Pos - _startPos);
+                    _targetPos = _queriedTargetPosAndMove.Item1;
+                    Owner.Move = _queriedTargetPosAndMove.Item2;
+                }
+                else
+                {
+                    // Due to slight add-up errors on game servers and standalone games,
+                    // correct blink movement every frame so that Owner will eventually hit _targetPos.
+                    var targetFPS = Owner.Game.TargetFPS;
+                    Owner.Move = (AWMathHelper.InterpolateTowards(Owner.Pos, _targetPos.Value, _blinkMoveSpeed / targetFPS) - Owner.Pos) * targetFPS;
+                }
+                if (Vector2.DistanceSquared(Owner.Pos, _targetPos.Value) < BLINK_TARGET_HIT_RANGE_SQUARED || _safetyTimeout < Owner.Arena.TotalTime)
+                {
+                    Owner.Move = Vector2.Zero;
+                    Owner.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
                     Owner.Enable();
                     _targetPos = null;
                     _safetyTimeout = TimeSpan.Zero;
@@ -89,19 +101,20 @@ namespace AW2.Game.Weapons
 
         protected override bool PermissionToFire()
         {
-            _queriedTargetPos = GetBlinkTarget();
-            return Arena.IsFreePosition(Owner, _queriedTargetPos);
+            _queriedTargetPosAndMove = GetBlinkTargetAndMove();
+            return Arena.IsFreePosition(new Circle(_queriedTargetPosAndMove.Item1, Gob.LARGE_GOB_PHYSICAL_RADIUS));
         }
 
         protected override void ShootImpl()
         {
             // Client tries to guess where blink is going
-            _targetPos = Owner.Game.NetworkMode == NetworkMode.Client
-                ? GetBlinkTarget()
-                : _targetPos = _queriedTargetPos;
+            if (Owner.Game.NetworkMode == NetworkMode.Client) _queriedTargetPosAndMove = GetBlinkTargetAndMove();
+            Owner.Disable(); // re-enabled in Update()
+            Owner.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Kinematic;
+            _targetPos = _queriedTargetPosAndMove.Item1;
+            Owner.Move = _queriedTargetPosAndMove.Item2;
             _safetyTimeout = Owner.Arena.TotalTime + SafetyTimeoutInterval;
             _startPos = Owner.Pos;
-            Owner.Disable(); // re-enabled in Update()
         }
 
         protected override void CreateVisuals()
@@ -114,30 +127,32 @@ namespace AW2.Game.Weapons
             if (Owner == null) return;
             Gob.CreateGob<Gobs.Peng>(Owner.Game, _blinkFailTravelEffect, peng =>
             {
-                var pengMove = _blinkFailTravelEffectSpeed * Vector2.Normalize(GetBlinkTarget() - Owner.Pos);
+                var pengMove = GetBlinkTargetAndMove().Item2 / _blinkMoveSpeed * _blinkFailTravelEffectSpeed;
                 peng.ResetPos(Owner.Pos, pengMove, Owner.Rotation);
-                var flyTime = _blinkDistance / _blinkFailTravelEffectSpeed;
+                var flyTime = (_blinkDistance - 50) / _blinkFailTravelEffectSpeed; // It looks better if it doesn't travel the full blink distance.
                 peng.Emitter.NumberToCreate = (int)Math.Round(flyTime * peng.Emitter.EmissionFrequency);
-                peng.IsMovable = true;
+                peng.MoveType = MoveType.Kinematic;
                 peng.VisibilityLimitedTo = PlayerOwner;
                 Owner.Arena.Gobs.Add(peng);
             });
             Gob.CreateGob<Gobs.Peng>(Owner.Game, _blinkFailTargetEffect, peng =>
             {
-                peng.ResetPos(GetBlinkTarget(), Vector2.Zero, Owner.Rotation);
+                peng.ResetPos(GetBlinkTargetAndMove().Item1, Vector2.Zero, Owner.Rotation);
                 peng.VisibilityLimitedTo = PlayerOwner;
                 Owner.Arena.Gobs.Add(peng);
             });
         }
 
-        private Vector2 GetBlinkTarget()
+        private Tuple<Vector2, Vector2> GetBlinkTargetAndMove()
         {
-            return GetBlinkTarget(Owner.Pos, AWMathHelper.GetUnitVector2(Owner.Rotation));
+            return GetBlinkTargetAndMove(Owner.Pos, AWMathHelper.GetUnitVector2(Owner.Rotation));
         }
 
-        private Vector2 GetBlinkTarget(Vector2 from, Vector2 direction)
+        private Tuple<Vector2, Vector2> GetBlinkTargetAndMove(Vector2 from, Vector2 direction)
         {
-            return from + Vector2.Normalize(direction) * _blinkDistance;
+            var target = from + Vector2.Normalize(direction) * _blinkDistance;
+            var move = _blinkMoveSpeed * Vector2.Normalize(target - from);
+            return Tuple.Create(target, move);
         }
     }
 }

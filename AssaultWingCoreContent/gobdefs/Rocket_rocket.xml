@@ -24,7 +24,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <maxDamage>100</maxDamage>
   <birthGobTypes>
   </birthGobTypes>
@@ -33,9 +33,7 @@
   </deathGobTypes>
   <collisionAreas>
     <Item>
-      <type>PhysicalShot</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Shot</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">

@@ -13,7 +13,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <movable>true</movable>
+  <moveType>Static</moveType>
   <maxDamage>1000</maxDamage>
   <birthGobTypes/>
   <deathGobTypes>
@@ -22,99 +22,129 @@
   <dockActiveEffectName>dockeffect occupied</dockActiveEffectName>
   <collisionAreas>
     <Item>
-      <type>PhysicalOtherUndamageableUnmovable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>Static</type>
       <collisionMaterial>Rough</collisionMaterial>
-      <name>General</name>
+      <name>GeneralBottom</name>
       <area type="AW2.Helpers.Geometric.Polygon">
         <vertices>
           <Item>
-            <X>-106.797379</X>
-            <Y>-17.9878712</Y>
-          </Item>
-          <Item>
-            <X>-108.02597</X>
-            <Y>-10.002039</Y>
-          </Item>
-          <Item>
-            <X>-66.25394</X>
-            <Y>26.2413425</Y>
-          </Item>
-          <Item>
-            <X>-74.23978</X>
-            <Y>30.5414047</Y>
-          </Item>
-          <Item>
-            <X>-74.23978</X>
-            <Y>44.05589</Y>
-          </Item>
-          <Item>
-            <X>-55.7333679</X>
-            <Y>49.76522</Y>
-          </Item>
-          <Item>
-            <X>58.8347549</X>
-            <Y>49.04113</Y>
-          </Item>
-          <Item>
-            <X>76.1755</X>
-            <Y>44.4515877</Y>
-          </Item>
-          <Item>
-            <X>76.26241</X>
-            <Y>31.7699928</Y>
-          </Item>
-          <Item>
-            <X>64.59081</X>
-            <Y>26.2413425</Y>
-          </Item>
-          <Item>
-            <X>108.205719</X>
-            <Y>-8.159159</Y>
-          </Item>
-          <Item>
-            <X>106.977142</X>
-            <Y>-18.6021671</Y>
-          </Item>
-          <Item>
-            <X>95.91983</X>
-            <Y>-22.2879353</Y>
+            <X>-54.5823441</X>
+            <Y>-51.77407</Y>
           </Item>
           <Item>
             <X>53.53351</X>
             <Y>-54.2312546</Y>
           </Item>
           <Item>
-            <X>-54.5823441</X>
-            <Y>-51.77407</Y>
+            <X>95.91983</X>
+            <Y>-22.2879353</Y>
+          </Item>
+          <Item>
+            <X>-108.02597</X>
+            <Y>-10.002039</Y>
+          </Item>
+          <Item>
+            <X>-106.797379</X>
+            <Y>-17.9878712</Y>
           </Item>
         </vertices>
       </area>
     </Item>
     <Item>
-      <type>PhysicalOtherUndamageableUnmovable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalDamageable</cannotOverlap>
+      <type>Static</type>
+      <collisionMaterial>Rough</collisionMaterial>
+      <name>GeneralMiddle</name>
+      <area type="AW2.Helpers.Geometric.Polygon">
+        <vertices>
+          <Item>
+            <X>95.91983</X>
+            <Y>-22.2879353</Y>
+          </Item>
+          <Item>
+            <X>106.977142</X>
+            <Y>-18.6021671</Y>
+          </Item>
+          <Item>
+            <X>108.205719</X>
+            <Y>-8.159159</Y>
+          </Item>
+          <Item>
+            <X>64.59081</X>
+            <Y>26.2413425</Y>
+          </Item>
+          <Item>
+            <X>-66.25394</X>
+            <Y>26.2413425</Y>
+          </Item>
+          <Item>
+            <X>-108.02597</X>
+            <Y>-10.002039</Y>
+          </Item>
+        </vertices>
+      </area>
+    </Item>
+    <Item>
+      <type>Static</type>
+      <collisionMaterial>Rough</collisionMaterial>
+      <name>GeneralTop</name>
+      <area type="AW2.Helpers.Geometric.Polygon">
+        <vertices>
+          <Item>
+            <X>64.59081</X>
+            <Y>26.2413425</Y>
+          </Item>
+          <Item>
+            <X>76.26241</X>
+            <Y>31.7699928</Y>
+          </Item>
+          <Item>
+            <X>76.1755</X>
+            <Y>44.4515877</Y>
+          </Item>
+          <Item>
+            <X>58.8347549</X>
+            <Y>49.04113</Y>
+          </Item>
+          <Item>
+            <X>-55.7333679</X>
+            <Y>49.76522</Y>
+          </Item>
+          <Item>
+            <X>-74.23978</X>
+            <Y>44.05589</Y>
+          </Item>
+          <Item>
+            <X>-74.23978</X>
+            <Y>30.5414047</Y>
+          </Item>
+          <Item>
+            <X>-66.25394</X>
+            <Y>26.2413425</Y>
+          </Item>
+        </vertices>
+      </area>
+    </Item>
+    <Item>
+      <type>Static</type>
       <collisionMaterial>Sticky</collisionMaterial>
       <name>Dock</name>
       <area type="AW2.Helpers.Geometric.Polygon">
         <vertices>
           <Item>
-            <X>57.74559</X>
-            <Y>49.4310226</Y>
-          </Item>
-          <Item>
-            <X>-55.27347</X>
-            <Y>49.8395271</Y>
+            <X>51.39166</X>
+            <Y>60.8469276</Y>
           </Item>
           <Item>
             <X>-49.58703</X>
             <Y>60.489502</Y>
           </Item>
           <Item>
-            <X>51.39166</X>
-            <Y>60.8469276</Y>
+            <X>-55.27347</X>
+            <Y>49.8395271</Y>
+          </Item>
+          <Item>
+            <X>57.74559</X>
+            <Y>49.4310226</Y>
           </Item>
         </vertices>
       </area>

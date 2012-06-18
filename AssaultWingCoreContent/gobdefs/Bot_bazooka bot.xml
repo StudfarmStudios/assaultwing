@@ -31,7 +31,7 @@
 
   <weaponName>bot bazooka</weaponName>
   <modelName>bot</modelName>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <maxDamage>2000</maxDamage>
   <birthGobTypes>
     <Item>bot birth electric ball</Item>
@@ -47,9 +47,7 @@
   </deathGobTypes>
   <collisionAreas>
     <Item>
-      <type>PhysicalDamageable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Common</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">

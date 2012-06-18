@@ -16,7 +16,7 @@
     <Item>dust_fragment_3</Item>
   </bulletModelNames>
   <modelName>dummymodel</modelName>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
     <type>None</type>
@@ -36,9 +36,7 @@
   </thruster>
   <collisionAreas>
     <Item>
-      <type>PhysicalShot</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Shot</type>
       <collisionMaterial>Bouncy</collisionMaterial>
       <name>General</name>
       <area type="AW2.Helpers.Geometric.Circle">

@@ -7,7 +7,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Overlay</layerPreference>
-  <movable>true</movable>
+  <moveType>Dynamic</moveType>
   <mass>1</mass>
   <modelName>dummymodel</modelName>
   <scale>1.0</scale>
@@ -17,17 +17,32 @@
   <deathGobTypes>
   </deathGobTypes>
   <collisionAreas>
+    <Item>
+      <type>Damage</type>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Surround</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>50</radius>
+      </area>
+    </Item>
   </collisionAreas>
-  <damagePerHit>100</damagePerHit>
+  <surroundDamage>350</surroundDamage>
+  <damagePerHit>70</damagePerHit>
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.3</hitInterval>
   <lifetime>1.1</lifetime>
-  <triHeightForDamage>330</triHeightForDamage>
-  <triHeightForWallPunches>150</triHeightForWallPunches>
-  <triWidth>270</triWidth>
-  <wallPunchRadius>14</wallPunchRadius>
-  <wallPunchesPerHit>3</wallPunchesPerHit>
+  <range>220</range>
+  <angle>0.54</angle>
+  <sliceCount>6</sliceCount>
+  <wallPunchRadius>7</wallPunchRadius>
   <textureName>lightning_2</textureName>
+  <surroundEffects>
+    <Item>selfdestruct strokes</Item>
+  </surroundEffects>
   <hitEffects>
     <Item>explo white flash</Item>
   </hitEffects>

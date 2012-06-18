@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
@@ -36,8 +37,30 @@ namespace AW2.Helpers
     /// </summary>
     public static class Graphics3D
     {
+        public struct DebugDrawContext
+        {
+            public static readonly Color DEFAULT_COLOR = Color.Aquamarine;
+
+            public Matrix View;
+            public Matrix Projection;
+            public Matrix World;
+            public Color Color;
+
+            public DebugDrawContext(Matrix view, Matrix projection)
+                :this (view, projection, Matrix.Identity)
+            {
+            }
+
+            public DebugDrawContext(Matrix view, Matrix projection, Matrix world)
+            {
+                View = view;
+                Projection = projection;
+                World = world;
+                Color = DEFAULT_COLOR;
+            }
+        }
+
         private const float DEBUG_DRAW_Z = 300;
-        private static readonly Color DEBUG_DRAW_COLOR = Color.Aquamarine;
 
         static BasicEffect debugEffect;
         static BasicEffect DebugEffect
@@ -267,7 +290,7 @@ namespace AW2.Helpers
                 {
                     prevIndex = firstIndex = faceUseCount.Key.Item1;
                     nextIndex = faceUseCount.Key.Item2;
-                    polyVertices.Add(new Vector2(firstIndex.X, firstIndex.Y));
+                    polyVertices.Add(firstIndex.ProjectXY());
                     break;
                 }
 
@@ -279,7 +302,7 @@ namespace AW2.Helpers
                     if (faceUseCount.Value == 1 && faceUseCount.Key.Item1.Equals(nextIndex)
                         && !faceUseCount.Key.Item2.Equals(prevIndex))
                     {
-                        polyVertices.Add(new Vector2(nextIndex.X, nextIndex.Y));
+                        polyVertices.Add(nextIndex.ProjectXY());
                         prevIndex = nextIndex;
                         nextIndex = faceUseCount.Key.Item2;
                         foundNext = true;
@@ -288,7 +311,7 @@ namespace AW2.Helpers
                     else if (faceUseCount.Value == 1 && faceUseCount.Key.Item2.Equals(nextIndex)
                         && !faceUseCount.Key.Item1.Equals(prevIndex))
                 {
-                    polyVertices.Add(new Vector2(nextIndex.X, nextIndex.Y));
+                    polyVertices.Add(nextIndex.ProjectXY());
                     prevIndex = nextIndex;
                     nextIndex = faceUseCount.Key.Item1;
                     foundNext = true;
@@ -304,35 +327,48 @@ namespace AW2.Helpers
 
         #region Utility methods for 3D graphics
 
-        /// <summary>
-        /// Draws a bounding sphere for debug purposes.
-        /// </summary>
-        public static void DebugDraw(BoundingSphere sphere, Matrix view, Matrix projection, Matrix world)
+        public static void DebugDrawCircle(DebugDrawContext context, BoundingSphere sphere)
         {
             VertexPositionColor[] vertexData;
-            Graphics3D.GetWireframeModelData(sphere, DEBUG_DRAW_Z, DEBUG_DRAW_COLOR, out vertexData);
-            DebugDraw(view, projection, world, vertexData);
+            Graphics3D.GetWireframeModelData(sphere, DEBUG_DRAW_Z, context.Color, out vertexData);
+            DebugDraw(context, vertexData, PrimitiveType.LineStrip);
         }
 
-        public static void DebugDraw(Vector2 p1, Vector2 p2, Matrix view, Matrix projection, Matrix world)
+        public static void DebugDrawPolyline(DebugDrawContext context, params Vector2[] vertices)
         {
-            var vertexData = new VertexPositionColor[] {
-                new VertexPositionColor(new Vector3(p1, DEBUG_DRAW_Z), DEBUG_DRAW_COLOR),
-                new VertexPositionColor(new Vector3(p2, DEBUG_DRAW_Z), DEBUG_DRAW_COLOR),
-            };
-            DebugDraw(view, projection, world, vertexData);
+            var vertexData = new VertexPositionColor[vertices.Length];
+            for (int i = 0; i < vertices.Length; i++)
+                vertexData[i] = new VertexPositionColor(new Vector3(vertices[i], DEBUG_DRAW_Z), context.Color);
+            DebugDraw(context, vertexData, PrimitiveType.LineStrip);
         }
 
-        private static void DebugDraw(Matrix view, Matrix projection, Matrix world, VertexPositionColor[] vertexData)
+        public static void DebugDrawPoints(DebugDrawContext context, params Vector2[] points)
+        {
+            var vertexData = new VertexPositionColor[points.Length * 2];
+            for (int i = 0; i < points.Length; i++)
+            {
+                vertexData[i * 2 + 0] = new VertexPositionColor(new Vector3(points[i], DEBUG_DRAW_Z), context.Color);
+                vertexData[i * 2 + 1] = new VertexPositionColor(new Vector3(points[i] + Vector2.UnitX, DEBUG_DRAW_Z), context.Color);
+            }
+            DebugDraw(context, vertexData, PrimitiveType.LineList);
+        }
+
+        private static void DebugDraw(DebugDrawContext context, VertexPositionColor[] vertexData, PrimitiveType primitiveType)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            DebugEffect.View = view;
-            DebugEffect.Projection = projection;
-            DebugEffect.World = world;
+            DebugEffect.View = context.View;
+            DebugEffect.Projection = context.Projection;
+            DebugEffect.World = context.World;
+            var primitiveCount = primitiveType == PrimitiveType.LineList ? vertexData.Length / 2
+                : primitiveType == PrimitiveType.LineStrip ? vertexData.Length - 1
+                : primitiveType == PrimitiveType.TriangleList ? vertexData.Length / 3
+                : primitiveType == PrimitiveType.TriangleStrip ? vertexData.Length - 2
+                : 0;
+            if (primitiveCount <= 0) throw new ArgumentException("Invalid primitive type or vertex count");
             foreach (var pass in DebugEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineStrip, vertexData, 0, vertexData.Length - 1);
+                gfx.DrawUserPrimitives<VertexPositionColor>(primitiveType, vertexData, 0, primitiveCount);
             }
         }
 

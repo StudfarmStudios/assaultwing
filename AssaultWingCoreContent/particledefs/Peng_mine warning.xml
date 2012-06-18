@@ -9,7 +9,7 @@
   <drawMode2D>
     <type>Transparent</type>
   </drawMode2D>
-  <coordinateSystem>Peng</coordinateSystem>
+  <coordinateSystem>Game</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
     <emissionFrequency>1.2</emissionFrequency>
@@ -28,7 +28,7 @@
   </emitter>
   <updater>
     <areParticlesImmortal>false</areParticlesImmortal>
-    <drag>0.0</drag>
+    <drag>0.95</drag>
     <particleAge type="AW2.Game.Pengs.ExpectedValue">
       <expected>1</expected>
       <variance>0.2</variance>
@@ -90,7 +90,7 @@
   </updater>
   <birthGobTypes/>
   <deathGobTypes/>
-  <movable>false</movable>
+  <moveType>Static</moveType>
   <collisionAreas/>
   <mass>1</mass>
   <modelName>dummymodel</modelName>

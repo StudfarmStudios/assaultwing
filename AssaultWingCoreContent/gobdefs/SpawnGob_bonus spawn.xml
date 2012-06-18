@@ -17,5 +17,5 @@
   <layerPreference>Front</layerPreference>
   <scale>1.0</scale>
   <maxDamage>100</maxDamage>
-  <movable>false</movable>
+  <moveType>Static</moveType>
 </GobType>

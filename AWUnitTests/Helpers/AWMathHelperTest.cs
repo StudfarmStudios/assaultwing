@@ -98,55 +98,58 @@ namespace AW2.Helpers
             // D) shortest path crosses a multiple of 2*pi
             // E) 'step' is positive/negative
             // F) shortest distance is more/less than 'step'
-            float result;
 
             // Trivial.
-            result = AWMathHelper.InterpolateTowardsAngle(0, 0, 0);
-            Assert.That(AngleEquals(result, 0));
+            AssertAngle(0, AWMathHelper.InterpolateTowardsAngle(0, 0, 0));
 
             // Trivial over 2*pi.
-            result = AWMathHelper.InterpolateTowardsAngle(MathHelper.TwoPi, MathHelper.TwoPi, MathHelper.TwoPi);
-            Assert.That(AngleEquals(result, 0));
+            AssertAngle(0, AWMathHelper.InterpolateTowardsAngle(MathHelper.TwoPi, MathHelper.TwoPi, MathHelper.TwoPi));
 
             // A) less; B) no; C) positive; D) no; E) positive; F) more
-            result = AWMathHelper.InterpolateTowardsAngle(0, MathHelper.Pi - 0.001f, MathHelper.PiOver2);
-            Assert.That(AngleEquals(result, MathHelper.PiOver2));
+            AssertAngle(MathHelper.PiOver2, AWMathHelper.InterpolateTowardsAngle(0, MathHelper.Pi - 0.001f, MathHelper.PiOver2));
 
             // A) less; B) no; C) positive; D) no; E) positive; F) less
-            result = AWMathHelper.InterpolateTowardsAngle(0, MathHelper.PiOver4, MathHelper.PiOver2);
-            Assert.That(AngleEquals(result, MathHelper.PiOver4));
+            AssertAngle(MathHelper.PiOver4, AWMathHelper.InterpolateTowardsAngle(0, MathHelper.PiOver4, MathHelper.PiOver2));
 
             // A) more; B) no; C) negative; D) no; E) positive; F) more
-            result = AWMathHelper.InterpolateTowardsAngle(MathHelper.Pi, 0.001f, MathHelper.PiOver2);
-            Assert.That(AngleEquals(result, MathHelper.PiOver2));
+            AssertAngle(MathHelper.PiOver2, AWMathHelper.InterpolateTowardsAngle(MathHelper.Pi, 0.001f, MathHelper.PiOver2));
 
             // A) more; B) no; C) negative; D) no; E) positive; F) less
-            result = AWMathHelper.InterpolateTowardsAngle(MathHelper.PiOver4, 0, MathHelper.PiOver2);
-            Assert.That(AngleEquals(result, 0));
+            AssertAngle(0, AWMathHelper.InterpolateTowardsAngle(MathHelper.PiOver4, 0, MathHelper.PiOver2));
 
             // A) more; B) yes; C) negative; D) yes; E) positive; F) more
-            result = AWMathHelper.InterpolateTowardsAngle(0, -3 * MathHelper.PiOver4, MathHelper.PiOver2);
-            Assert.That(AngleEquals(result, -MathHelper.PiOver2));
+            AssertAngle(-MathHelper.PiOver2, AWMathHelper.InterpolateTowardsAngle(0, -3 * MathHelper.PiOver4, MathHelper.PiOver2));
 
             // A) more; B) yes; C) negative; D) yes; E) positive; F) less
-            result = AWMathHelper.InterpolateTowardsAngle(0, -3 * MathHelper.PiOver4, MathHelper.Pi);
-            Assert.That(AngleEquals(result, -3 * MathHelper.PiOver4));
+            AssertAngle(-3 * MathHelper.PiOver4, AWMathHelper.InterpolateTowardsAngle(0, -3 * MathHelper.PiOver4, MathHelper.Pi));
 
             // A) less; B) no; C) negative; D) yes; E) positive; F) more
-            result = AWMathHelper.InterpolateTowardsAngle(0, 5 * MathHelper.PiOver4, MathHelper.PiOver2);
-            Assert.That(AngleEquals(result, -MathHelper.PiOver2));
+            AssertAngle(-MathHelper.PiOver2, AWMathHelper.InterpolateTowardsAngle(0, 5 * MathHelper.PiOver4, MathHelper.PiOver2));
 
             // A) less; B) no; C) negative; D) yes; E) positive; F) less
-            result = AWMathHelper.InterpolateTowardsAngle(0, 5 * MathHelper.PiOver4, MathHelper.Pi);
-            Assert.That(AngleEquals(result, -3 * MathHelper.PiOver4));
+            AssertAngle(-3 * MathHelper.PiOver4, AWMathHelper.InterpolateTowardsAngle(0, 5 * MathHelper.PiOver4, MathHelper.Pi));
         }
 
-        private bool AngleEquals(float a, float b)
+        [Test]
+        public void TestGetAngleSpeedTowards()
         {
-            float epsilon = 0.00001f;
-            a = ((a % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
-            b = ((b % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
-            return Math.Abs(a - b) < epsilon;
+            var timeStep = TimeSpan.FromSeconds(0.5);
+            AssertAngle(0, AWMathHelper.GetAngleSpeedTowards(0, 0, 0, timeStep));
+            AssertAngle(MathHelper.PiOver4, AWMathHelper.GetAngleSpeedTowards(0, MathHelper.PiOver4, MathHelper.PiOver4, timeStep));
+            AssertAngle(MathHelper.PiOver2, AWMathHelper.GetAngleSpeedTowards(0, MathHelper.PiOver4, MathHelper.Pi, timeStep));
+            AssertAngle(-MathHelper.PiOver4, AWMathHelper.GetAngleSpeedTowards(0, -MathHelper.PiOver4, MathHelper.PiOver4, timeStep));
+            AssertAngle(-MathHelper.PiOver2, AWMathHelper.GetAngleSpeedTowards(0, -MathHelper.PiOver4, MathHelper.Pi, timeStep));
+            AssertAngle(MathHelper.PiOver4, AWMathHelper.GetAngleSpeedTowards(-MathHelper.PiOver4, MathHelper.PiOver4, MathHelper.PiOver4, timeStep));
+            AssertAngle(MathHelper.Pi, AWMathHelper.GetAngleSpeedTowards(-MathHelper.PiOver4, MathHelper.PiOver4, MathHelper.TwoPi, timeStep));
+            AssertAngle(MathHelper.PiOver4, AWMathHelper.GetAngleSpeedTowards(7 * MathHelper.PiOver4, MathHelper.PiOver4, MathHelper.PiOver4, timeStep));
+            AssertAngle(MathHelper.Pi, AWMathHelper.GetAngleSpeedTowards(7 * MathHelper.PiOver4, MathHelper.PiOver4, MathHelper.TwoPi, timeStep));
+        }
+
+        private void AssertAngle(float expected, float actual)
+        {
+            var expectedNormalized = ((expected % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
+            var actualNormalized = ((actual % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
+            Assert.AreEqual(expectedNormalized, actualNormalized, 0.00001f);
         }
 
         [Test]
@@ -449,6 +452,22 @@ namespace AW2.Helpers
             Assert.AreEqual(new Vector2(1, 0), new Vector2(0, -1).Rotate90());
             Assert.AreEqual(new Vector2(-40, 90), new Vector2(90, 40).Rotate90());
             Assert.AreEqual(new Vector2(0.02f, -0.01f), new Vector2(-0.01f, -0.02f).Rotate90());
+        }
+
+        [Test]
+        public void TestProjectOnto()
+        {
+            Assert.AreEqual(new Vector2(0, 0), new Vector2(0, 0).ProjectOnto(new Vector2(0, 0)));
+            Assert.AreEqual(new Vector2(1, 0), new Vector2(1, 0).ProjectOnto(new Vector2(1, 0)));
+            Assert.AreEqual(new Vector2(2, 0), new Vector2(2, 0).ProjectOnto(new Vector2(1, 0)));
+            Assert.AreEqual(new Vector2(2, 0), new Vector2(2, 0).ProjectOnto(new Vector2(3, 0)));
+            Assert.AreEqual(new Vector2(0, 0), new Vector2(1, 0).ProjectOnto(new Vector2(0, 1)));
+            Assert.AreEqual(new Vector2(1, 0), new Vector2(1, 2).ProjectOnto(new Vector2(1, 0)));
+            Assert.AreEqual(new Vector2(0, 2), new Vector2(1, 2).ProjectOnto(new Vector2(0, 1)));
+            Assert.AreEqual(new Vector2(0, 1), new Vector2(0, 1).ProjectOnto(new Vector2(0, -1)));
+            Assert.AreEqual(new Vector2(0, -1), new Vector2(0, -1).ProjectOnto(new Vector2(0, 1)));
+            Assert.AreEqual(new Vector2(0, -1), new Vector2(0, -1).ProjectOnto(new Vector2(0, -1)));
+            Assert.AreEqual(new Vector2(1, 1), new Vector2(0, 2).ProjectOnto(new Vector2(3, 3)));
         }
 
         private void DoFillTriangleTest(Point point1, Point point2, Point point3)

@@ -9,7 +9,7 @@
   <mass>0</mass>
   <scale>1</scale>
   <modelName>dummymodel</modelName>
-  <movable>false</movable>
+  <moveType>Static</moveType>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
     <type>None</type>

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
@@ -16,6 +17,7 @@ namespace AW2.Game.Gobs
         #region Rocket fields
 
         private static readonly TimeSpan FIND_TARGET_INTERVAL = TimeSpan.FromSeconds(0.5);
+        private const float TURN_LIMIT = MathHelper.PiOver4;
 
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.
@@ -121,11 +123,13 @@ namespace AW2.Game.Gobs
             }
             base.Update();
             _thruster.Update();
+            UpdateGobTrackers();
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
-            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+            if (!theirArea.Type.IsPhysical()) return false;
+            if (theirArea.Owner.IsDamageable)
             {
                 theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
                 Game.Stats.SendHit(this, theirArea.Owner);
@@ -169,7 +173,6 @@ namespace AW2.Game.Gobs
                 int targetID = reader.ReadInt16();
                 _targetProxy = new LazyProxy<int, Gob>(FindGob);
                 _targetProxy.SetData(targetID);
-                UpdateGobTrackers();
             }
         }
 
@@ -196,10 +199,9 @@ namespace AW2.Game.Gobs
             // in a small angle from the direction it is currently moving towards.
             var rotationGoal = direction.Angle();
             var moveDirection = Move.Angle();
-            const float TURN_LIMIT = MathHelper.PiOver4;
             var rotationLimitedByMove = rotationGoal.ClampAngle(moveDirection - TURN_LIMIT, moveDirection + TURN_LIMIT);
-            Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationLimitedByMove,
-                Game.PhysicsEngine.ApplyChange(rotationSpeed, Game.GameTime.ElapsedGameTime));
+            var elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+            Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationLimitedByMove, rotationSpeed * elapsedSeconds);
         }
 
         private void CheckLoseTarget()
@@ -219,7 +221,6 @@ namespace AW2.Game.Gobs
                 RandomHelper.GetRandomFloat() < 0.9)
                 newBestTarget = null;
             if (newBestTarget != null) Target = newBestTarget;
-            UpdateGobTrackers();
             if (Game.NetworkMode == AW2.Core.NetworkMode.Server && Target != oldTarget)
                 ForcedNetworkUpdate = true;
         }

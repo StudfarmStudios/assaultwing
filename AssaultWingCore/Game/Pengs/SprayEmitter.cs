@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Gobs;
 using AW2.Helpers;
+using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Pengs
@@ -297,7 +298,7 @@ namespace AW2.Game.Pengs
                             move = Peng.Move + _initialVelocity.GetValue(0, random) * directionUnit;
 
                             // HACK: 'move' will be added to 'pos' in PhysicalUpdater during this same frame
-                            pos -= Peng.Game.PhysicsEngine.ApplyChange(move, Peng.Game.GameTime.ElapsedGameTime);
+                            pos -= move * (float)Peng.Game.GameTime.ElapsedGameTime.TotalSeconds;
 
                             switch (_facingType)
                             {
@@ -339,7 +340,7 @@ namespace AW2.Game.Pengs
                 else
                 {
                     // Bail out if the position is not free for the gob.
-                    if (!lastAttempt && !Peng.Arena.IsFreePosition(gob, pos))
+                    if (!lastAttempt && !Peng.Arena.IsFreePosition(new Circle(pos, Gob.SMALL_GOB_PHYSICAL_RADIUS)))
                     {
                         attemptOk = false;
                         continue;

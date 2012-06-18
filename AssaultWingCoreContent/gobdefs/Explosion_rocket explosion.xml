@@ -18,7 +18,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <movable>false</movable>
+  <moveType>Static</moveType>
   <mass>1</mass>
   <modelName>dummymodel</modelName>
   <scale>1.0</scale>
@@ -29,9 +29,7 @@
   </deathGobTypes>
   <collisionAreas>
     <Item>
-      <type>Receptor</type>
-      <collidesAgainst>PhysicalDamageable</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
+      <type>Damage</type>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">
@@ -86,19 +84,5 @@
         </Item>
       </keys>
     </flowSpeed>
-    <collisionArea>
-      <type>Receptor</type>
-      <collidesAgainst>PhysicalMovable</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
-      <collisionMaterial>Regular</collisionMaterial>
-      <name>Force</name>
-      <area type="AW2.Helpers.Geometric.Circle">
-        <center>
-          <X>0</X>
-          <Y>0</Y>
-        </center>
-        <radius>140</radius>
-      </area>
-    </collisionArea>
   </radialFlow>
 </GobType>

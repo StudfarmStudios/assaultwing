@@ -49,7 +49,6 @@ namespace AW2.Core
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; set; }
         public CommandLineOptions CommandLineOptions { get; private set; }
-        public PhysicsEngine PhysicsEngine { get; private set; }
         public DataEngine DataEngine { get; private set; }
         public PreFrameLogicEngine PreFrameLogicEngine { get; private set; }
         public LogicEngine LogicEngine { get; private set; }
@@ -102,7 +101,6 @@ namespace AW2.Core
         private void InitializeComponents()
         {
             DataEngine = new DataEngine(this, 0);
-            PhysicsEngine = new PhysicsEngine(this, 0);
             PreFrameLogicEngine = new PreFrameLogicEngine(this, 2);
             LogicEngine = new LogicEngine(this, 3);
             PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
@@ -150,7 +148,6 @@ namespace AW2.Core
         {
             DataEngine.Arena.TotalTime += GameTime.ElapsedGameTime;
             DataEngine.Arena.FrameNumber++;
-            DataEngine.Arena.ResetCollisionEvents();
         }
 
         private void AfterEveryFrame()

@@ -97,6 +97,7 @@ namespace AW2.Graphics
             };
             _getPostprocessEffectNames = getPostprocessEffectNames;
             ZoomRatio = 1;
+            // !!! GobDrawn += gob => game.DataEngine.Arena.DebugDrawGob(gob, ViewMatrix, GetProjectionMatrix(gob.Layer.Z));
         }
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace AW2.Graphics
             // an orthogonal projection from game world space to view space.
             var viewPos = new Vector3(pointInViewport, 0f);
             var worldPos = Viewport.Unproject(viewPos, GetProjectionMatrix(z), ViewMatrix, Matrix.Identity);
-            return new Vector2(worldPos.X, worldPos.Y);
+            return worldPos.ProjectXY();
         }
 
         /// <summary>
@@ -332,8 +333,8 @@ namespace AW2.Graphics
                     Viewport.Width / (2f * _effect.Texture.Width) / ZoomRatio,
                     Viewport.Height / (2f * _effect.Texture.Height) / ZoomRatio);
                 _vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
-                _vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
-                _vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
+                _vertexData[1].TextureCoordinate = texCenter + texCornerOffset.MirrorX();
+                _vertexData[2].TextureCoordinate = texCenter + texCornerOffset.MirrorY();
                 _vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
                 _effect.CurrentTechnique.Passes[0].Apply();
                 GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, 2);

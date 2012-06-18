@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Common;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -17,24 +19,25 @@ namespace AW2.Helpers.Geometric
     [LimitedSerialization]
     public class Triangle : IGeomPrimitive, IConsistencyCheckable
     {
+        public float Density { get; set; }
+
 #if TRUSTED_VISIBILITY_BREACH
         /// <summary>First vertex</summary>
-        [TypeParameter, SerializedName("p1")]
+        [TypeParameter, RuntimeState, SerializedName("p1")]
         public Vector2 P1;
 
         /// <summary>Second vertex</summary>
-        [TypeParameter, SerializedName("p2")]
+        [TypeParameter, RuntimeState, SerializedName("p2")]
         public Vector2 P2;
 
         /// <summary>Third vertex</summary>
-        [TypeParameter, SerializedName("p3")]
+        [TypeParameter, RuntimeState, SerializedName("p3")]
         public Vector2 P3;
 #else
-        [TypeParameter]
+        [TypeParameter, RuntimeState]
         private Vector2 _p1, _p2, _p3;
 #endif
         // Unit normals of each face.
-        [TypeParameter]
         private Vector2 _n12, _n13, _n23;
 
         /// <summary>
@@ -86,44 +89,8 @@ namespace AW2.Helpers.Geometric
         /// <param name="p3">The third corner point.</param>
         public Triangle(Vector2 p1, Vector2 p2, Vector2 p3)
         {
-            // Assign p1 as given, but possibly swap p2 and p3 to enforce
-            // clockwise order of corner points.
-            Vector2 e12LeftNormal = new Vector2(p1.Y - p2.Y, p2.X - p1.X);
-            Vector2 e23 = p3 - p2;
-            float dot = Vector2.Dot(e12LeftNormal, e23);
-            if (dot > 0)
-            {
-#if TRUSTED_VISIBILITY_BREACH
-                P1 = p1;
-                P2 = p3;
-                P3 = p2;
-#else
-                _p1 = p1;
-                _p2 = p3;
-                _p3 = p2;
-#endif
-                _n13 = -e12LeftNormal;
-                _n12 = new Vector2(p1.Y - p3.Y, p3.X - p1.X);
-                _n23 = new Vector2(p3.Y - p2.Y, p2.X - p3.X);
-            }
-            else
-            {
-#if TRUSTED_VISIBILITY_BREACH
-                P1 = p1;
-                P2 = p2;
-                P3 = p3;
-#else
-                _p1 = p1;
-                _p2 = p2;
-                _p3 = p3;
-#endif
-                _n12 = e12LeftNormal;
-                _n13 = new Vector2(p3.Y - p1.Y, p1.X - p3.X);
-                _n23 = new Vector2(p2.Y - p3.Y, p3.X - p2.X);
-            }
-            _n12.Normalize();
-            _n13.Normalize();
-            _n23.Normalize();
+            Density = 1;
+            SetPointsAndNormals(p1, p2, p3);
             UpdateBoundingBox();
         }
 
@@ -171,12 +138,19 @@ namespace AW2.Helpers.Geometric
             return Geometry.Distance(new Point(point), this);
         }
 
+        public Shape GetShape()
+        {
+            var corners = new[] { P3, P2, P1 };
+            return new PolygonShape(PhysicsHelper.CreateVertices(corners), Density);
+        }
+
         #endregion
 
         #region IConsistencyCheckable Members
 
         public void MakeConsistent(Type limitationAttribute)
         {
+            SetPointsAndNormals(P1, P2, P3);
             UpdateBoundingBox();
         }
 
@@ -226,5 +200,47 @@ namespace AW2.Helpers.Geometric
         }
 
         #endregion
+
+        private void SetPointsAndNormals(Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            // Assign p1 as given, but possibly swap p2 and p3 to enforce
+            // clockwise order of corner points.
+            Vector2 e12LeftNormal = new Vector2(p1.Y - p2.Y, p2.X - p1.X);
+            Vector2 e23 = p3 - p2;
+            float dot = Vector2.Dot(e12LeftNormal, e23);
+            if (dot > 0)
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                P1 = p1;
+                P2 = p3;
+                P3 = p2;
+#else
+                _p1 = p1;
+                _p2 = p3;
+                _p3 = p2;
+#endif
+                _n13 = -e12LeftNormal;
+                _n12 = new Vector2(p1.Y - p3.Y, p3.X - p1.X);
+                _n23 = new Vector2(p3.Y - p2.Y, p2.X - p3.X);
+            }
+            else
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                P1 = p1;
+                P2 = p2;
+                P3 = p3;
+#else
+                _p1 = p1;
+                _p2 = p2;
+                _p3 = p3;
+#endif
+                _n12 = e12LeftNormal;
+                _n13 = new Vector2(p3.Y - p1.Y, p1.X - p3.X);
+                _n23 = new Vector2(p2.Y - p3.Y, p3.X - p2.X);
+            }
+            _n12.Normalize();
+            _n13.Normalize();
+            _n23.Normalize();
+        }
     }
 }

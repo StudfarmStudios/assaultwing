@@ -464,8 +464,8 @@ namespace AW2.Game
             {
                 SeizeShip(newShip);
                 newShip.Rotation = Gob.DEFAULT_ROTATION; // must initialize rotation for SnakeShip.InitializeTailState()
+                SpawnPlayer.PositionNewShip(newShip, Game.DataEngine.Arena);
                 Game.DataEngine.Arena.Gobs.Add(newShip);
-                SpawnPlayer.PositionNewShip(newShip);
             });
             Game.Stats.Send(new
             {

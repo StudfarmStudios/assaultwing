@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -36,6 +37,8 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private CanonicalString _bonusActionTypeName;
 
+        public override bool IsDamageable { get { return true; } }
+
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
@@ -64,12 +67,10 @@ namespace AW2.Game.Gobs
                 Die();
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
-            // We assume we have only one receptor area and that's the one for
-            // bonus collection. That means that the other gob is a ship.
             var theirShip = theirArea.Owner as Ship;
-            if (myArea.Type == CollisionAreaType.Receptor && theirShip != null)
+            if (myArea.Type == CollisionAreaType.BonusCollect && theirShip != null)
             {
                 DoBonusAction(theirShip);
                 Game.SoundEngine.PlaySound("BonusCollection", this);

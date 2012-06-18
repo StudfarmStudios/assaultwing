@@ -15,7 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaEditor", "ArenaEditor\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UncompressedHost", "UncompressedHost\UncompressedHost.csproj", "{57DE33F4-542D-4FD8-B9B4-A6C776E0D218}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "NoContent", "NoContent\NoContent.contentproj", "{21210413-028F-41FD-BB17-F2421279FBF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoContent", "NoContent\NoContent.contentproj", "{21210413-028F-41FD-BB17-F2421279FBF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer Physics XNA", "Farseer Physics Engine\Farseer Physics XNA.csproj", "{0A850700-1ABB-4288-A391-6726B90EBEB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +92,15 @@ Global
 		{21210413-028F-41FD-BB17-F2421279FBF6}.Release|x86.ActiveCfg = Debug|Any CPU
 		{21210413-028F-41FD-BB17-F2421279FBF6}.ReleaseDev|Any CPU.ActiveCfg = Debug|Any CPU
 		{21210413-028F-41FD-BB17-F2421279FBF6}.ReleaseDev|x86.ActiveCfg = Debug|Any CPU
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|x86.ActiveCfg = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|x86.Build.0 = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|Any CPU.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|x86.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|x86.Build.0 = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.ReleaseDev|Any CPU.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.ReleaseDev|x86.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.ReleaseDev|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

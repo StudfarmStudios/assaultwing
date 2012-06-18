@@ -1,3 +1,4 @@
+using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -35,10 +36,9 @@ namespace AW2.Game.Gobs
             if (_deathBySlownessCounter > 3) Die();
         }
 
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
-            var collidedWithPhysical = (theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0;
-            return !collidedWithPhysical && !stuck ? false : base.CollideIrreversible(myArea, theirArea, stuck);
+            return theirArea.Owner.IsDamageable ? base.CollideIrreversible(myArea, theirArea) : false;
         }
     }
 }

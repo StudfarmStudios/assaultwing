@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
+using AW2.Game.Collisions;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
@@ -31,6 +32,18 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _spreadingForce;
 
+        /// <summary>
+        /// Damping factor of linear movement.
+        /// </summary>
+        [TypeParameter]
+        private float _movementDamping;
+
+        /// <summary>
+        /// Damping factor of angular movement.
+        /// </summary>
+        [TypeParameter]
+        private float _rotationDamping;
+
         [TypeParameter]
         private string _hitSound;
         [TypeParameter, ShallowCopy]
@@ -38,11 +51,17 @@ namespace AW2.Game.Gobs
 
         private Vector2? _hoverAroundPos;
         private Vector2 _thrustForce;
-        private List<Gob> _temporarilyDisabledGobs; // TODO: combine with Ship and move to physics engine
+        private CollisionArea _magnetArea;
+        private CollisionArea _spreadArea;
 
+        public override bool IsDamageable { get { return true; } }
         private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(Game.TargetFPS * HOVER_THRUST_INTERVAL); } }
         private bool IsHoverThrusting { get { return HoverThrustCycleFrame < Game.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
         private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }
+
+        private bool IsFriendly(Gob gob) { return gob.Owner == Owner; }
+        private bool IsNeutral(Gob gob) { return gob.Owner == null || gob.IsHidden; }
+        private bool IsHostile(Gob gob) { return !IsFriendly(gob) && !IsNeutral(gob); }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -52,6 +71,8 @@ namespace AW2.Game.Gobs
             _hoverThrust = 10000;
             _attractionForce = 50000;
             _spreadingForce = 10000;
+            _movementDamping = 0.95f;
+            _rotationDamping = 0.97f;
             _hitSound = "";
             _enemyDistanceToAlpha = new Curve();
             _enemyDistanceToAlpha.PreLoop = CurveLoopType.Constant;
@@ -65,63 +86,45 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             Gravitating = false;
-            _temporarilyDisabledGobs = new List<Gob>();
         }
 
         public override void Activate()
         {
             base.Activate();
             IsHiding = true;
+            Body.LinearDamping = _movementDamping;
+            Body.AngularDamping = _rotationDamping;
+            _magnetArea = CollisionAreas.First(area => area.Name == "Magnet");
+            _spreadArea = CollisionAreas.First(area => area.Name == "Spread");
         }
 
         public override void Update()
         {
             base.Update();
-            foreach (var gob in _temporarilyDisabledGobs) gob.Enable();
-            _temporarilyDisabledGobs.Clear();
-            Move *= 0.97f;
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
-            if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
+            if (IsHoverThrusting) PhysicsHelper.ApplyForce(this, _thrustForce);
             Alpha = Game.DataEngine.Minions
                 .Where(gob => gob.Owner != Owner && !gob.IsHidden)
                 .Select(gob => Vector2.Distance(Pos, gob.Pos))
                 .Select(_enemyDistanceToAlpha.Evaluate)
                 .DefaultIfEmpty(0)
                 .Max();
+            foreach (var gob in PhysicsHelper.GetContacting(_magnetArea).Select(area => area.Owner))
+                if (IsHostile(gob)) MoveTowards(gob.Pos, _attractionForce);
+            foreach (var gob in PhysicsHelper.GetContacting(_spreadArea).Select(area => area.Owner))
+                if (IsFriendly(gob) && gob is FloatingBullet) MoveTowards(gob.Pos, -_spreadingForce);
         }
 
-        public override void CollideReversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
-        {
-            var collidedWithFriend = theirArea.Owner.Owner == Owner;
-            var collidedWithNeutral = theirArea.Owner.Owner == null || theirArea.Owner.IsHidden;
-            var collidedWithHostile = !collidedWithNeutral && !collidedWithFriend;
-            switch (myArea.Name)
-            {
-                case "Magnet":
-                    if (collidedWithHostile) MoveTowards(theirArea.Owner.Pos, _attractionForce);
-                    break;
-                case "Spread":
-                    if (collidedWithFriend && theirArea.Owner is FloatingBullet)
-                        MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
-                    break;
-                default:
-                    if (collidedWithFriend && theirArea.Owner is FloatingBullet && stuck)
-                    {
-                        theirArea.Owner.Disable(); // re-enabled in Update()
-                        _temporarilyDisabledGobs.Add(theirArea.Owner);
-                    }
-                    break;
-            }
-        }
-
-        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)
         {
             if (myArea.Name == "Magnet" || myArea.Name == "Spread") return false;
-            var collidedWithFriend = theirArea.Owner.Owner == Owner;
-            if (collidedWithFriend || (theirArea.Owner.MaxDamageLevel <= 100 && (theirArea.Owner.Movable || !stuck))) return false;
+            if (theirArea.Owner.Owner == Owner) return false;
+            if (!theirArea.Owner.IsDamageable) return false;
+            if (!theirArea.Type.IsPhysical()) return false;
+            if (theirArea.Owner.MaxDamageLevel <= 100 && theirArea.Owner.MoveType == GobUtils.MoveType.Dynamic) return false;
             var hasHitSound = _hitSound != "";
             if (hasHitSound) Game.SoundEngine.PlaySound(_hitSound, this);
-            var baseResult = base.CollideIrreversible(myArea, theirArea, stuck);
+            var baseResult = base.CollideIrreversible(myArea, theirArea);
             return hasHitSound || baseResult;
         }
 
@@ -158,7 +161,7 @@ namespace AW2.Game.Gobs
         private void MoveTowards(Vector2 target, float force)
         {
             var forceVector = force * Vector2.Normalize(target - Pos);
-            Game.PhysicsEngine.ApplyForce(this, forceVector);
+            PhysicsHelper.ApplyForce(this, forceVector);
             _hoverAroundPos = null;
         }
 

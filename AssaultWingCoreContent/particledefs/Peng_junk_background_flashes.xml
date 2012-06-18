@@ -105,7 +105,7 @@
   </updater>
   <birthGobTypes/>
   <deathGobTypes/>
-  <movable>false</movable>
+  <moveType>Static</moveType>
   <collisionAreas/>
   <mass>1</mass>
   <modelName>dummymodel</modelName>

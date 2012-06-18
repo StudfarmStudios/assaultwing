@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Collision.Shapes;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
@@ -11,12 +12,16 @@ namespace AW2.Helpers.Geometric
     /// <summary>
     /// A point in two-dimensional space.
     /// </summary>
+    [LimitedSerialization]
     public class Point : IGeomPrimitive
     {
+        public float Density { get; set; }
+
 #if TRUSTED_VISIBILITY_BREACH
-        [SerializedName("location")]
+        [TypeParameter, RuntimeState, SerializedName("location")]
         public Vector2 Location;
 #else
+        [TypeParameter, RuntimeState]
         private Vector2 _location;
 
         public Vector2 Location { get { return _location; } set { _location = value; } }
@@ -27,6 +32,7 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public Point()
         {
+            Density = 1;
 #if TRUSTED_VISIBILITY_BREACH
             Location = Vector2.Zero;
 #else
@@ -36,6 +42,7 @@ namespace AW2.Helpers.Geometric
 
         public Point(Vector2 location)
         {
+            Density = 1;
 #if TRUSTED_VISIBILITY_BREACH
             Location = location;
 #else
@@ -75,6 +82,11 @@ namespace AW2.Helpers.Geometric
 #else
             return Vector2.Distance(_location, point);
 #endif
+        }
+
+        public Shape GetShape()
+        {
+            return new CircleShape(0.05f.ToFarseer(), Density) { Position = Location.ToFarseer() };
         }
 
         #endregion IGeomPrimitive Members

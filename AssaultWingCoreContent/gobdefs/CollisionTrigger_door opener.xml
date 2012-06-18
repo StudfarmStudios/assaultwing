@@ -7,9 +7,7 @@
   </deathGobTypes>
   <collisionAreas>
     <Item>
-      <type>PhysicalOtherUndamageableUnmovable</type>
-      <collidesAgainst>None</collidesAgainst>
-      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <type>Common</type>
       <collisionMaterial>Rough</collisionMaterial>
       <name>General</name>
       <area type="AW2.Helpers.Geometric.Circle">
@@ -30,5 +28,5 @@
   <layerPreference>Front</layerPreference>
   <birthGobTypes/>
   <maxDamage>100</maxDamage>
-  <movable>false</movable>
+  <moveType>Static</moveType>
 </GobType>

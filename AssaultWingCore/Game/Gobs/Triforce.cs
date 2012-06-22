@@ -201,8 +201,10 @@ namespace AW2.Game.Gobs
                 _hostProxy = new LazyProxy<int, Gob>(FindGob);
                 _hostProxy.SetData(hostID);
                 int wallPunchCount = reader.ReadByte();
-                for (int i = 0; i < wallPunchCount; i++)
-                    GobHelper.CreateGobs(_wallPunchEffects, Arena, reader.ReadHalfVector2());
+                var punchedPoses = new List<Vector2>(wallPunchCount);
+                for (int i = 0; i < wallPunchCount; i++) punchedPoses.Add(reader.ReadHalfVector2());
+                foreach (var pos in punchedPoses) GobHelper.CreateGobs(_wallPunchEffects, Arena, pos);
+                PlayWallHitSound(punchedPoses);
             }
         }
 
@@ -261,15 +263,20 @@ namespace AW2.Game.Gobs
         private void PunchWalls(Vector2[] relativeSliceSides)
         {
             var punchPoses = relativeSliceSides.Select(side => Pos + (_range * side).Rotate(Rotation));
-            var punchedPoses = punchPoses.Where(pos => Arena.MakeHole(pos, _wallPunchRadius) > 0).ToArray();
-            if (!punchedPoses.Any()) return;
+            var punchedPoses = punchPoses.Where(pos => Arena.MakeHole(pos, _wallPunchRadius) > 0).ToList();
             foreach (var pos in punchedPoses) GobHelper.CreateGobs(_wallPunchEffects, Arena, pos);
             if (Game.NetworkMode == Core.NetworkMode.Server)
             {
                 _wallPunchPosesForClient.AddRange(punchedPoses);
-                ForcedNetworkUpdate = true;
+                ForcedNetworkUpdate = punchedPoses.Any();
             }
-            var punchPosAverage = punchedPoses.Aggregate((a, b) => a + b) / punchedPoses.Length;
+            PlayWallHitSound(punchedPoses);
+        }
+
+        private void PlayWallHitSound(List<Vector2> punchedPoses)
+        {
+            if (!punchedPoses.Any()) return;
+            var punchPosAverage = punchedPoses.Aggregate((a, b) => a + b) / punchedPoses.Count;
             Game.SoundEngine.PlaySound(_wallHitSound, () => punchPosAverage, () => Vector2.Zero);
         }
 

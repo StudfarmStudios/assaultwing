@@ -39,6 +39,8 @@
   <angle>0.72</angle>
   <sliceCount>8</sliceCount>
   <wallPunchRadius>8</wallPunchRadius>
+  <hitSound>fusionConeHit</hitSound>
+  <wallHitSound>fusionConeHitWall</wallHitSound>
   <textureName>lightning_3</textureName>
   <surroundEffects>
     <Item>selfdestruct strokes</Item>

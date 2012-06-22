@@ -45,4 +45,7 @@
   <sound name="shieldActivate" volume="0.4"/>
   <sound name="shieldBlock" volume="0.35"/>
   <sound name="shieldFail" volume="0.5"/>
+  <sound name="fusionConeFire" volume="0.6"/>
+  <sound name="fusionConeHit" volume="0.5"/>
+  <sound name="fusionConeHitWall" volume="0.4"/>
 </group>

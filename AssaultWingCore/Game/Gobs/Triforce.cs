@@ -44,6 +44,10 @@ namespace AW2.Game.Gobs
         private TimeSpan _lifetime;
         [TypeParameter]
         private float _wallPunchRadius;
+        [TypeParameter]
+        private string _hitSound;
+        [TypeParameter]
+        private string _wallHitSound;
 
         /// <summary>
         /// Name of the triforce area texture. The name indexes the texture database in GraphicsEngine.
@@ -110,6 +114,8 @@ namespace AW2.Game.Gobs
             _textureName = (CanonicalString)"dummytexture";
             _hitEffects = new[] { (CanonicalString)"dummypeng" };
             _wallPunchEffects = new[] { (CanonicalString)"dummypeng" };
+            _hitSound = "dummysound";
+            _wallHitSound = "dummysound";
         }
 
         public Triforce(CanonicalString typeName)
@@ -241,6 +247,7 @@ namespace AW2.Game.Gobs
                     area => { if (IsHittable(area)) victims.Add(area.Owner); return true; },
                     area => area.Owner.IsDamageable);
             }
+            if (victims.Any()) Game.SoundEngine.PlaySound(_hitSound, victims.First());
             foreach (var victim in victims) Hit(victim, damage);
         }
 
@@ -253,10 +260,12 @@ namespace AW2.Game.Gobs
 
         private void PunchWalls(Vector2[] relativeSliceSides)
         {
+            var punched = false;
             foreach (var relativeSliceSide in relativeSliceSides)
             {
                 var punchCenter = Pos + (_range * relativeSliceSide).Rotate(Rotation);
                 if (Arena.MakeHole(punchCenter, _wallPunchRadius) == 0) continue;
+                punched = true;
                 GobHelper.CreateGobs(_wallPunchEffects, Arena, punchCenter);
                 if (Game.NetworkMode == Core.NetworkMode.Server)
                 {
@@ -264,6 +273,7 @@ namespace AW2.Game.Gobs
                     ForcedNetworkUpdate = true;
                 }
             }
+            if (punched) Game.SoundEngine.PlaySound(_wallHitSound, this);
         }
 
         private float GetAlphaByAge()

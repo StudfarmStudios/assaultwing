@@ -35,7 +35,7 @@ namespace AW2.Game.GobUtils
             var info = new DamageInfo(_gob2Nature).Bind(_gob1, TimeSpan.FromSeconds(10));
             var coroner = new Coroner(info);
             Assert.AreEqual(null, coroner.ScoringSpectator);
-            Assert.AreEqual(Coroner.DeathTypeType.Suicide, coroner.DeathType);
+            Assert.AreEqual(Coroner.DeathTypeType.Accident, coroner.DeathType);
             Assert.AreEqual(deathMessage, coroner.MessageToCorpse);
             Assert.AreEqual(bystanderMessage, coroner.MessageToBystander);
         }
@@ -98,18 +98,18 @@ namespace AW2.Game.GobUtils
                 Assert.AreEqual(expectedDeathType, coroner.DeathType);
                 Assert.AreEqual(expectedScoringPlayer, coroner.ScoringSpectator);
             };
-            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, DamageInfo.Unspecified), null, Coroner.DeathTypeType.Suicide);
-            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(null)), null, Coroner.DeathTypeType.Suicide);
-            assertCoroner(getCoronerFromInfo(_player1, getInfo(null), DamageInfo.Unspecified), null, Coroner.DeathTypeType.Suicide);
-            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(_player1)), null, Coroner.DeathTypeType.Suicide);
-            assertCoroner(getCoronerFromInfo(_player1, getInfo(_player1), DamageInfo.Unspecified), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, DamageInfo.Unspecified), null, Coroner.DeathTypeType.Accident);
+            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(null)), null, Coroner.DeathTypeType.Accident);
+            assertCoroner(getCoronerFromInfo(_player1, getInfo(null), DamageInfo.Unspecified), null, Coroner.DeathTypeType.Accident);
+            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(_player1)), null, Coroner.DeathTypeType.Accident);
+            assertCoroner(getCoronerFromInfo(_player1, getInfo(_player1), DamageInfo.Unspecified), null, Coroner.DeathTypeType.Accident);
             assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(_player2)), _player2, Coroner.DeathTypeType.Kill);
             assertCoroner(getCoronerFromInfo(_player1, getInfo(_player2), DamageInfo.Unspecified), _player2, Coroner.DeathTypeType.Kill);
-            assertCoroner(getCoronerFromPlayer(_player1, null, null), null, Coroner.DeathTypeType.Suicide);
-            assertCoroner(getCoronerFromPlayer(_player1, null, _player1), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromPlayer(_player1, null, null), null, Coroner.DeathTypeType.Accident);
+            assertCoroner(getCoronerFromPlayer(_player1, null, _player1), null, Coroner.DeathTypeType.Accident);
             assertCoroner(getCoronerFromPlayer(_player1, null, _player2), _player2, Coroner.DeathTypeType.Kill);
-            assertCoroner(getCoronerFromPlayer(_player1, _player1, null), null, Coroner.DeathTypeType.Suicide);
-            assertCoroner(getCoronerFromPlayer(_player1, _player1, _player1), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromPlayer(_player1, _player1, null), null, Coroner.DeathTypeType.Accident);
+            assertCoroner(getCoronerFromPlayer(_player1, _player1, _player1), null, Coroner.DeathTypeType.Accident);
             assertCoroner(getCoronerFromPlayer(_player1, _player1, _player2), _player2, Coroner.DeathTypeType.Kill);
             assertCoroner(getCoronerFromPlayer(_player1, _player2, null), _player2, Coroner.DeathTypeType.Kill);
             assertCoroner(getCoronerFromPlayer(_player1, _player2, _player1), _player2, Coroner.DeathTypeType.Kill);
@@ -123,7 +123,7 @@ namespace AW2.Game.GobUtils
             var info = DamageInfo.Unspecified.Bind(_gob1DamagedBy2, TimeSpan.FromSeconds(30));
             Assert.AreEqual(BoundDamageInfo.SourceTypeType.Unspecified, info.SourceType);
             var coroner = new Coroner(info);
-            Assert.AreEqual(Coroner.DeathTypeType.Suicide, coroner.DeathType);
+            Assert.AreEqual(Coroner.DeathTypeType.Accident, coroner.DeathType);
             Assert.AreEqual(null, coroner.ScoringSpectator);
         }
 

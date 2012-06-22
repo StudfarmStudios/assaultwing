@@ -31,7 +31,7 @@ namespace AW2.Game.GobUtils
                         Pos = coroner.DamageInfo.Target.Pos,
                     });
                     break;
-                case Coroner.DeathTypeType.Suicide:
+                case Coroner.DeathTypeType.Accident:
                     coroner.Game.Stats.Send(new
                     {
                         Suicide = stats.GetStatsString(coroner.KilledSpectator),
@@ -54,7 +54,7 @@ namespace AW2.Game.GobUtils
                     if (scoringPlayer != null) scoringPlayer.Messages.Add(new PlayerMessage(coroner.MessageToScoringPlayer, PlayerMessage.KILL_COLOR));
                     if (killedPlayer != null) killedPlayer.Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.DEATH_COLOR));
                     break;
-                case Coroner.DeathTypeType.Suicide:
+                case Coroner.DeathTypeType.Accident:
                     CreateSuicideMessage(coroner.KilledSpectator, coroner.DamageInfo.Target.Pos);
                     if (killedPlayer != null) killedPlayer.Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.SUICIDE_COLOR));
                     break;

@@ -12,7 +12,7 @@ namespace AW2.Game.GobUtils
     /// </summary>
     public class Coroner
     {
-        public enum DeathTypeType { Suicide, Kill }; // TODO: rename Suicide -> Accident
+        public enum DeathTypeType { Accident, Kill };
         private enum RecipientType { ScoringPlayer, Bystander, Corpse };
         private delegate SubjectWord SubjectWordProvider(RecipientType recipient);
 
@@ -120,7 +120,7 @@ namespace AW2.Game.GobUtils
         {
             Action markAsSuicide = () =>
             {
-                DeathType = DeathTypeType.Suicide;
+                DeathType = DeathTypeType.Accident;
                 ScoringSpectator = null;
             };
             Action<Spectator> markAsKill = killer =>
@@ -148,7 +148,7 @@ namespace AW2.Game.GobUtils
             switch (DeathType)
             {
                 default: throw new ApplicationException("Unexpected DeathType " + DeathType);
-                case Coroner.DeathTypeType.Suicide:
+                case Coroner.DeathTypeType.Accident:
                     break;
                 case Coroner.DeathTypeType.Kill:
                     ScoringSpectator.ArenaStatistics.Kills++;
@@ -175,7 +175,7 @@ namespace AW2.Game.GobUtils
             switch (DeathType)
             {
                 default: throw new ApplicationException("Unexpected DeathType " + DeathType);
-                case DeathTypeType.Suicide:
+                case DeathTypeType.Accident:
                     _killPhrase = ChoosePhrase(g_suicidePhrases);
                     _subjectNameProviders = new[] { CorpseNameProvider };
                     break;

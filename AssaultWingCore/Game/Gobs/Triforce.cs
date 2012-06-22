@@ -260,20 +260,17 @@ namespace AW2.Game.Gobs
 
         private void PunchWalls(Vector2[] relativeSliceSides)
         {
-            var punched = false;
-            foreach (var relativeSliceSide in relativeSliceSides)
+            var punchPoses = relativeSliceSides.Select(side => Pos + (_range * side).Rotate(Rotation));
+            var punchedPoses = punchPoses.Where(pos => Arena.MakeHole(pos, _wallPunchRadius) > 0).ToArray();
+            if (!punchedPoses.Any()) return;
+            foreach (var pos in punchedPoses) GobHelper.CreateGobs(_wallPunchEffects, Arena, pos);
+            if (Game.NetworkMode == Core.NetworkMode.Server)
             {
-                var punchCenter = Pos + (_range * relativeSliceSide).Rotate(Rotation);
-                if (Arena.MakeHole(punchCenter, _wallPunchRadius) == 0) continue;
-                punched = true;
-                GobHelper.CreateGobs(_wallPunchEffects, Arena, punchCenter);
-                if (Game.NetworkMode == Core.NetworkMode.Server)
-                {
-                    _wallPunchPosesForClient.Add(punchCenter);
-                    ForcedNetworkUpdate = true;
-                }
+                _wallPunchPosesForClient.AddRange(punchedPoses);
+                ForcedNetworkUpdate = true;
             }
-            if (punched) Game.SoundEngine.PlaySound(_wallHitSound, this);
+            var punchPosAverage = punchedPoses.Aggregate((a, b) => a + b) / punchedPoses.Length;
+            Game.SoundEngine.PlaySound(_wallHitSound, () => punchPosAverage, () => Vector2.Zero);
         }
 
         private float GetAlphaByAge()

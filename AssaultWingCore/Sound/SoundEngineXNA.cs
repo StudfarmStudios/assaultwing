@@ -203,7 +203,7 @@ namespace AW2.Sound
             _music.EnsureIsStopped();
         }
 
-        private SoundInstance CreateSoundInternal(string soundName, Gob parentGob)
+        private SoundInstance CreateSoundInternal(string soundName, Func<Vector2?> getEmitterPos, Func<Vector2?> getEmitterMove)
         {
             if (!Enabled) return new SoundInstanceDummy();
             soundName = soundName.ToLower(CultureInfo.InvariantCulture);
@@ -215,38 +215,51 @@ namespace AW2.Sound
             var soundEffect = cue.GetEffect();
             var instance = soundEffect.CreateInstance();
             instance.IsLooped = cue._loop;
-            return new SoundInstanceXNA(instance, parentGob, cue._volume, cue._distanceScale);
+            return new SoundInstanceXNA(instance, getEmitterPos, getEmitterMove, cue._volume, cue._distanceScale);
         }
 
-        public SoundInstance CreateSound(string soundName, Gob parentGob)
+        public SoundInstance CreateSound(string soundName, Func<Vector2?> getSoundPos, Func<Vector2?> getSoundMove)
         {
             lock (_lock)
             {
-                var instance = CreateSoundInternal(soundName, parentGob);
+                var instance = CreateSoundInternal(soundName, getSoundPos, getSoundMove);
                 _createdInstances.Add(new WeakReference(instance));
                 return instance;
             }
         }
 
-        public SoundInstance PlaySound(string soundName, Gob parentGob)
+        public SoundInstance PlaySound(string soundName, Func<Vector2?> getSoundPos, Func<Vector2?> getSoundMove)
         {
             lock (_lock)
             {
-                var instance = CreateSoundInternal(soundName, parentGob);
+                var instance = CreateSoundInternal(soundName, getSoundPos, getSoundMove);
                 instance.Play();
                 _playingInstances.Add(instance);
                 return instance;
             }
         }
 
+        public SoundInstance CreateSound(string soundName, Gob parentGob)
+        {
+            return CreateSound(soundName, () => GetPos(parentGob), () => GetMove(parentGob));
+        }
+
         public SoundInstance CreateSound(string soundName)
         {
-            return CreateSound(soundName, null);
+            return CreateSound(soundName, () => null, () => null);
+        }
+
+        public SoundInstance PlaySound(string soundName, Gob parentGob)
+        {
+            return PlaySound(soundName, () => GetPos(parentGob), () => GetMove(parentGob));
         }
 
         public SoundInstance PlaySound(string soundName)
         {
-            return PlaySound(soundName, null);
+            return PlaySound(soundName, () => null, () => null);
         }
+
+        private Vector2? GetPos(Gob gob) { return gob == null ? (Vector2?)null : gob.Pos; }
+        private Vector2? GetMove(Gob gob) { return gob == null ? (Vector2?)null : gob.Move; }
     }
 }

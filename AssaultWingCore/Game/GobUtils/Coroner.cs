@@ -23,12 +23,6 @@ namespace AW2.Game.GobUtils
         private string _specialPhrase;
         private SubjectWordProvider[] _subjectNameProviders;
 
-        /// <summary>
-        /// Raised before computing scores related to the death of a minion.
-        /// If returns true, then the computing is skipped.
-        /// </summary>
-        public event Func<bool> MinionDeath;
-
         public AssaultWingCore Game { get { return DamageInfo.Target.Game; } }
         public BoundDamageInfo DamageInfo { get; private set; }
 
@@ -144,7 +138,11 @@ namespace AW2.Game.GobUtils
 
         private void HandleMinionDeath(BoundDamageInfo info)
         {
-            if ((MinionDeath != null && MinionDeath()) || KilledSpectator == null || !KilledSpectator.Minions.Contains(info.Target)) return;
+            if (Game != null){
+                if (Game.NetworkMode == NetworkMode.Server) Game.DataEngine.EnqueueArenaStatisticsToClients();
+                if (Game.NetworkMode == NetworkMode.Client) return;
+            }
+            if (KilledSpectator == null || !KilledSpectator.Minions.Contains(info.Target)) return;
             switch (DeathType)
             {
                 default: throw new ApplicationException("Unexpected DeathType " + DeathType);

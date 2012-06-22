@@ -869,9 +869,7 @@ namespace AW2.Game
         {
             if (Dead) return;
             if (Game.NetworkMode == NetworkMode.Client && IsRelevant) return;
-            var coroner = new Coroner(info);
-            coroner.MinionDeath += Coroner_MinionDeathHandler;
-            DieImpl(coroner, false);
+            DieImpl(new Coroner(info), false);
         }
 
         public void Die()
@@ -888,9 +886,7 @@ namespace AW2.Game
         /// <seealso cref="Die(BoundDamageInfo)"/>
         public void DieOnClient()
         {
-            var coroner = new Coroner(DamageInfo.Unspecified.Bind(this, Arena.TotalTime));
-            coroner.MinionDeath += Coroner_MinionDeathHandler;
-            DieImpl(coroner, true);
+            DieImpl(new Coroner(DamageInfo.Unspecified.Bind(this, Arena.TotalTime)), true);
         }
 
         /// <summary>
@@ -1382,12 +1378,6 @@ namespace AW2.Game
             ID = Game.NetworkMode == NetworkMode.Client
                 ? g_unusedIrrelevantIDs.Dequeue()
                 : g_unusedRelevantIDs.Dequeue();
-        }
-
-        private bool Coroner_MinionDeathHandler()
-        {
-            if (Game.NetworkMode == NetworkMode.Server) Game.DataEngine.EnqueueArenaStatisticsToClients();
-            return Game.NetworkMode == NetworkMode.Client;
         }
 
         #endregion

@@ -36,6 +36,8 @@ namespace AW2.Settings
         public bool HeavyDebugLog { get { return _heavyDebugLog; } set { _heavyDebugLog = value; } } // DEBUG: catch a rare crash that seems to happen only when serializing walls.
         public bool HeavyProfileLog { get { return _heavyProfileLog; } set { _heavyProfileLog = value; } } // DEBUG
 
+        private bool IsDevPublish { get { return System.Reflection.Assembly.GetEntryAssembly().GetName().Name.EndsWith("Dev"); } }
+
         public NetSettings()
         {
             Reset();
@@ -43,11 +45,11 @@ namespace AW2.Settings
 
         public void Reset()
         {
-            _managementServerAddress = "assaultwing.com";
+            _managementServerAddress = IsDevPublish ? "assaultwing.com:16728" : "assaultwing.com";
             _dataServerAddress = "http://www.assaultwing.com";
             _statsServerAddress = "assaultwing.com";
-            _statsHttpsPort = 3002;
-            _statsDataPort = 3000;
+            _statsHttpsPort =  IsDevPublish ? 4002 : 3002;
+            _statsDataPort = IsDevPublish ? 4000 : 3000;
             _statsReportingEnabled = true;
             _gameServerName = Environment.MachineName;
             _gameServerPort = 'A' * 256 + 'W';

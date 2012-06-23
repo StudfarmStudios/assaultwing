@@ -739,7 +739,7 @@ namespace AW2.Game
         /// <seealso cref="CreateGob(CanonicalString)"/>
         public static void CreateGob<T>(AssaultWingCore game, CanonicalString typeName, Action<T> init) where T : Gob
         {
-            T gob = Clonable.Instantiate(typeName) as T;
+            T gob = Clonable.Instantiate(game, typeName) as T;
             if (gob == null) throw new ApplicationException("Gob type template " + typeName + " wasn't of expected type " + typeof(T).Name);
             gob.Game = game;
             if (game.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
@@ -754,10 +754,10 @@ namespace AW2.Game
         /// copying the runtime state fields to the new instance.
         /// <param name="runtimeState">The runtime state from where to initialise the new gob.</param>
         /// <returns>The newly created gob.</returns>
-        /// <seealso cref="CreateGob(Gob, Action&lt;Gob&gt;)"/>
+        /// <seealso cref="CreateGob(AssaultWingCore, Gob, Action&lt;Gob&gt;)"/>
         private static Gob CreateGob(Gob runtimeState)
         {
-            var gob = (Gob)Clonable.Instantiate(runtimeState.TypeName);
+            var gob = (Gob)Clonable.Instantiate(runtimeState.Game, runtimeState.TypeName);
             if (runtimeState.GetType() != gob.GetType())
                 throw new ArgumentException("Runtime gob of class " + runtimeState.GetType().Name +
                     " has type name \"" + runtimeState.TypeName + "\" which is for class " + gob.GetType().Name);

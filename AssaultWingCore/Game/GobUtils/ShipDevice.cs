@@ -213,9 +213,9 @@ namespace AW2.Game.GobUtils
             SendDeviceReadyMessages = true;
         }
 
-        public static ShipDevice Create(CanonicalString typeName)
+        public static ShipDevice Create(AssaultWingCore game, CanonicalString typeName)
         {
-            return (ShipDevice)Clonable.Instantiate(typeName);
+            return (ShipDevice)Clonable.Instantiate(game, typeName);
         }
 
         #region Public methods

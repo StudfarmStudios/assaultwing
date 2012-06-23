@@ -107,7 +107,7 @@ namespace AW2.Game.Gobs
             base.Activate();
             _thruster.Activate(this);
             _coughEngine.Activate(this);
-            _weapon = Weapon.Create(_weaponName);
+            _weapon = Weapon.Create(Game, _weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
             Game.DataEngine.Devices.Add(_weapon);
             _thrustController = new PIDController(() => _optimalTargetDistance, () => Target == null ? 0 : Vector2.Distance(Target.Pos, Pos))

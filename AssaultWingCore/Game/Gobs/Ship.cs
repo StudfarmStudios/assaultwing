@@ -548,9 +548,9 @@ namespace AW2.Game.Gobs
             ShipDevice newDevice = null;
             switch (deviceType)
             {
-                case ShipDevice.OwnerHandleType.PrimaryWeapon: newDevice = Weapon1 = Weapon.Create(typeName); break;
-                case ShipDevice.OwnerHandleType.SecondaryWeapon: newDevice = Weapon2 = Weapon.Create(typeName); break;
-                case ShipDevice.OwnerHandleType.ExtraDevice: newDevice = ExtraDevice = ShipDevice.Create(typeName); break;
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: newDevice = Weapon1 = Weapon.Create(Game, typeName); break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: newDevice = Weapon2 = Weapon.Create(Game, typeName); break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: newDevice = ExtraDevice = ShipDevice.Create(Game, typeName); break;
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
             InitializeDevice(newDevice, deviceType);

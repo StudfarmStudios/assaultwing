@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 using AW2.Game.Weapons;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -92,9 +93,9 @@ namespace AW2.Game.GobUtils
         {
         }
 
-        public static new Weapon Create(CanonicalString typeName)
+        public static new Weapon Create(AssaultWingCore game, CanonicalString typeName)
         {
-            return (Weapon)Clonable.Instantiate(typeName);
+            return (Weapon)Clonable.Instantiate(game, typeName);
         }
 
         /// <summary>

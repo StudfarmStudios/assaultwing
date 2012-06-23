@@ -366,7 +366,7 @@ namespace AW2.Core
                 (typeName, layerIndex) =>
                 {
                     if (layerIndex < 0 || layerIndex >= DataEngine.Arena.Layers.Count) return null;
-                    var gob = (Gob)Clonable.Instantiate(typeName);
+                    var gob = (Gob)Clonable.Instantiate(this, typeName);
                     gob.Game = this;
                     gob.Layer = DataEngine.Arena.Layers[layerIndex];
                     return gob;

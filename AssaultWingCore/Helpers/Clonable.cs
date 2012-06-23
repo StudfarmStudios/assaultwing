@@ -9,21 +9,24 @@ using AW2.Helpers.Serialization;
 namespace AW2.Helpers
 {
     /// <summary>
-    /// A clonable entity. Supports cloning in respect of the <see cref="TypeParameterAttribute"/>
-    /// limitation attribute.
+    /// A clonable entity.
+    /// Subclasses should mark themselves with <see cref="AW2.Helpers.Serialization.LimitedSerializationAttribute"/>
+    /// and their clonable fields with <see cref="AW2.Helpers.Serialization.TypeParameterAttribute"/>.
     /// </summary>
-    /// Subclasses only need to mark their fields with <see cref="TypeParameterAttribute"/> to
-    /// support cloning.
+    /// <seealso cref="AW2.Helpers.Serialization.Serialization"/>
     public abstract class Clonable
     {
+        private static readonly Type[] g_constructorInvokerParameterTypes = new[] { typeof(Clonable) };
+        private static readonly Type[] g_constructorParameterTypes = new[] { typeof(CanonicalString) };
+        private static Dictionary<Type, DynamicMethod> g_cloneMethods = new Dictionary<Type, DynamicMethod>();
+        private static Dictionary<Type, DynamicMethod> g_cloneMethodsWithRuntimeState = new Dictionary<Type, DynamicMethod>();
+        private static Dictionary<Type, DynamicMethod> g_constructors = new Dictionary<Type, DynamicMethod>();
+
         [TypeParameter, RuntimeState]
         private CanonicalString _typeName;
 
         private delegate void CloneDelegate(Clonable clone);
         private delegate Clonable ConstructorDelegate();
-        private static Dictionary<Type, DynamicMethod> g_cloneMethods = new Dictionary<Type, DynamicMethod>();
-        private static Dictionary<Type, DynamicMethod> g_cloneMethodsWithRuntimeState = new Dictionary<Type, DynamicMethod>();
-        private static Dictionary<Type, DynamicMethod> g_constructors = new Dictionary<Type, DynamicMethod>();
         private List<CloneDelegate> _cloneDelegates;
         private List<CloneDelegate> _cloneDelegatesWithRuntimeState;
         private ConstructorDelegate _constructorDelegate;
@@ -71,9 +74,9 @@ namespace AW2.Helpers
         /// Creates an instance of the specified type with its TypeParameter fields
         /// initialized like in the template with the <paramref name="typeName"/>.
         /// </summary>
-        public static Clonable Instantiate(CanonicalString typeName)
+        public static Clonable Instantiate(AssaultWingCore game, CanonicalString typeName)
         {
-            var template = (Clonable)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(typeName);
+            var template = (Clonable)game.DataEngine.GetTypeTemplate(typeName);
             return template.Clone();
         }
 
@@ -134,10 +137,9 @@ namespace AW2.Helpers
         private static DynamicMethod CreateConstructor(Type type)
         {
             var returnType = typeof(Clonable);
-            var parameterTypes = new[] { typeof(Clonable) };
-            var dyna = new DynamicMethod("ConstructorInvoker", returnType, parameterTypes, typeof(Clonable));
+            var dyna = new DynamicMethod("ConstructorInvoker", returnType, g_constructorInvokerParameterTypes, typeof(Clonable));
             var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            var constructor = type.GetConstructor(flags, null, new Type[] { typeof(CanonicalString) }, null);
+            var constructor = type.GetConstructor(flags, null, g_constructorParameterTypes, null);
             var typeNameField = typeof(Clonable).GetField("_typeName", flags);
             var generator = dyna.GetILGenerator();
 

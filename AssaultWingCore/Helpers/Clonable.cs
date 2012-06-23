@@ -17,7 +17,7 @@ namespace AW2.Helpers
     public abstract class Clonable
     {
         [TypeParameter, RuntimeState]
-        private CanonicalString typeName;
+        private CanonicalString _typeName;
 
         private delegate void CloneDelegate(Clonable clone);
         private delegate Clonable ConstructorDelegate();
@@ -28,7 +28,7 @@ namespace AW2.Helpers
         private List<CloneDelegate> _cloneDelegatesWithRuntimeState;
         private ConstructorDelegate _constructorDelegate;
 
-        public CanonicalString TypeName { get { return typeName; } }
+        public CanonicalString TypeName { get { return _typeName; } }
 
         static Clonable()
         {
@@ -58,19 +58,18 @@ namespace AW2.Helpers
 
         /// <summary>
         /// For serialization only.
-        /// </summary>
         /// In their parameterless constructors, subclasses should initialise
         /// all their fields marked with any limitation attribute, setting their
         /// values to representative defaults for XML templates.
+        /// </summary>
         public Clonable()
         {
-            typeName = (CanonicalString)"unknown type";
+            _typeName = (CanonicalString)"unknown type";
         }
 
         /// <summary>
-        /// Creates an instance of the specified type. Common game logic should call
-        /// <see cref="CreateGob(string, Action&lt;Gob&gt;)"/> instead of this method
-        /// to create gobs.
+        /// Creates an instance of the specified type with its TypeParameter fields
+        /// initialized like in the template with the <paramref name="typeName"/>.
         /// </summary>
         public static Clonable Instantiate(CanonicalString typeName)
         {
@@ -80,14 +79,14 @@ namespace AW2.Helpers
 
         /// <summary>
         /// Creates an instance of the specified type.
-        /// </summary>
         /// The object's serialised fields are initialised according to the template instance
         /// associated with the specified type. This applies also to fields declared
         /// in subclasses, so a subclass constructor must not initialise its fields
         /// marked with <see cref="TypeDefinitionAttribute"/>.
+        /// </summary>
         protected Clonable(CanonicalString typeName)
         {
-            this.typeName = typeName;
+            _typeName = typeName;
         }
 
         /// <summary>
@@ -134,19 +133,19 @@ namespace AW2.Helpers
 
         private static DynamicMethod CreateConstructor(Type type)
         {
-            Type returnType = typeof(Clonable);
-            Type[] parameterTypes = { typeof(Clonable) };
+            var returnType = typeof(Clonable);
+            var parameterTypes = new[] { typeof(Clonable) };
             var dyna = new DynamicMethod("ConstructorInvoker", returnType, parameterTypes, typeof(Clonable));
             var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
             var constructor = type.GetConstructor(flags, null, new Type[] { typeof(CanonicalString) }, null);
-            var gob_GetTypeName = typeof(AW2.Game.Gob).GetProperty("TypeName").GetGetMethod(); // HACK: Reference to Gob
+            var typeNameField = typeof(Clonable).GetField("_typeName", flags);
             var generator = dyna.GetILGenerator();
 
-            // HACK: get value of ((Gob)this).TypeName
+            // get type name from the Clonable instance
             generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Call, gob_GetTypeName);
+            generator.Emit(OpCodes.Ldfld, typeNameField);
 
-            // call constructor and return its return value
+            // call constructor with the type name and return its return value
             generator.Emit(OpCodes.Newobj, constructor);
             generator.Emit(OpCodes.Ret);
             return dyna;

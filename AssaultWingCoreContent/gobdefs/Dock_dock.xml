@@ -2,7 +2,7 @@
 <GobType type="AW2.Game.Gobs.Dock">
   <typeName>dock</typeName>
   <networkUpdatePeriod>2</networkUpdatePeriod>
-  <repairSpeed>100</repairSpeed>
+  <repairSpeed>220</repairSpeed>
   <weapon1ChargeSpeed>200</weapon1ChargeSpeed>
   <weapon2ChargeSpeed>200</weapon2ChargeSpeed>
   <mass>10000</mass>

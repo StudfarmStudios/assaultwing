@@ -711,9 +711,11 @@ namespace AW2.Game.Gobs
 
         private void ApplyDeviceUsages(DeviceUsages deviceUsages)
         {
-            GetDevice(ShipDevice.OwnerHandleType.PrimaryWeapon).ExecuteFiring(deviceUsages[ShipDevice.OwnerHandleType.PrimaryWeapon]);
-            GetDevice(ShipDevice.OwnerHandleType.SecondaryWeapon).ExecuteFiring(deviceUsages[ShipDevice.OwnerHandleType.SecondaryWeapon]);
-            GetDevice(ShipDevice.OwnerHandleType.ExtraDevice).ExecuteFiring(deviceUsages[ShipDevice.OwnerHandleType.ExtraDevice]);
+            Action<ShipDevice.OwnerHandleType> apply = ownerHandle =>
+                GetDevice(ownerHandle).ExecuteFiring(deviceUsages[ownerHandle]);
+            apply(ShipDevice.OwnerHandleType.PrimaryWeapon);
+            apply(ShipDevice.OwnerHandleType.SecondaryWeapon);
+            apply(ShipDevice.OwnerHandleType.ExtraDevice);
         }
 
         #endregion Private methods

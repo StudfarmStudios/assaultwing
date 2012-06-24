@@ -62,8 +62,9 @@ namespace AW2.Game.BonusActions
             {
                 // FIXME: A client might never run this. A better countermeasure is to delay activation until Host != null etc.
                 // Totally skipping activation like this may result in a client seeing he has a "rockets" upgrade but shooting berserkers.
+                var weapon2 = (Weapon)Host.Weapon2;
                 var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName
-                    : Host.Weapon2.UpgradeNames.Length > 0 ? Host.Weapon2.UpgradeNames[0]
+                    : weapon2.UpgradeNames.Length > 0 ? weapon2.UpgradeNames[0]
                     : CanonicalString.Null;
                 if (upgradeName != CanonicalString.Null)
                 {

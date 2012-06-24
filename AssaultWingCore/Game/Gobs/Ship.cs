@@ -23,26 +23,69 @@ namespace AW2.Game.Gobs
     {
         public delegate float ReceivingDamageEvent(float damageAmount, DamageInfo cause);
 
-        /// <summary>
-        /// It is valid to combine only one of Weapon1*, one of Weapon2* and one of ExtraDevice*
-        /// into one value of DeviceUsages.
-        /// </summary>
-        [Flags]
-        public enum DeviceUsages
+        public struct DeviceUsages : INetworkSerializable
         {
-            None = 0x00,
-            Weapon1Success = 0x01,
-            Weapon1Failure = 0x02,
-            Weapon1NotReady = 0x02 | 0x01,
-            Weapon1Mask = 0x02 | 0x01,
-            Weapon2Success = 0x04,
-            Weapon2Failure = 0x08,
-            Weapon2NotReady = 0x08 | 0x04,
-            Weapon2Mask = 0x08 | 0x04,
-            ExtraDeviceSuccess = 0x10,
-            ExtraDeviceFailure = 0x20,
-            ExtraDeviceNotReady = 0x20 | 0x10,
-            ExtraDeviceMask = 0x20 | 0x10,
+            public ShipDevice.FiringResult Weapon1;
+            public ShipDevice.FiringResult Weapon2;
+            public ShipDevice.FiringResult ExtraDevice;
+            public ShipDevice.FiringResult this[ShipDevice.OwnerHandleType ownerHandleType]
+            {
+                get
+                {
+                    switch (ownerHandleType)
+                    {
+                        case ShipDevice.OwnerHandleType.PrimaryWeapon: return Weapon1;
+                        case ShipDevice.OwnerHandleType.SecondaryWeapon: return Weapon2;
+                        case ShipDevice.OwnerHandleType.ExtraDevice: return ExtraDevice;
+                        default: throw new ApplicationException("Invalid owner handle " + ownerHandleType);
+                    }
+                }
+                set
+                {
+                    switch (ownerHandleType)
+                    {
+                        case ShipDevice.OwnerHandleType.PrimaryWeapon: Weapon1 = Merge(Weapon1, value); break;
+                        case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2 = Merge(Weapon2, value); break;
+                        case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDevice = Merge(ExtraDevice, value); break;
+                        default: throw new ApplicationException("Invalid owner handle " + ownerHandleType);
+                    }
+                }
+            }
+
+            public void Clear()
+            {
+                Weapon1 = ShipDevice.FiringResult.Void;
+                Weapon2 = ShipDevice.FiringResult.Void;
+                ExtraDevice = ShipDevice.FiringResult.Void;
+            }
+
+            public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+            {
+                checked
+                {
+                    var packedValue = ((int)Weapon1) | (((int)Weapon2) << 4) | (((int)ExtraDevice) << 8);
+                    writer.Write((ushort)packedValue);
+                }
+            }
+
+            public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
+            {
+                var packedValue = reader.ReadUInt16();
+                Weapon1 = (ShipDevice.FiringResult)(packedValue & 0x07);
+                if (!Enum.IsDefined(typeof(ShipDevice.FiringResult), Weapon1)) Weapon1 = ShipDevice.FiringResult.Void;
+                Weapon2 = (ShipDevice.FiringResult)((packedValue >> 4) & 0x07);
+                if (!Enum.IsDefined(typeof(ShipDevice.FiringResult), Weapon2)) Weapon2 = ShipDevice.FiringResult.Void;
+                ExtraDevice = (ShipDevice.FiringResult)((packedValue >> 8) & 0x07);
+                if (!Enum.IsDefined(typeof(ShipDevice.FiringResult), ExtraDevice)) ExtraDevice = ShipDevice.FiringResult.Void;
+            }
+
+            private ShipDevice.FiringResult Merge(ShipDevice.FiringResult a, ShipDevice.FiringResult b)
+            {
+                if (a == ShipDevice.FiringResult.Success || b == ShipDevice.FiringResult.Success) return ShipDevice.FiringResult.Success;
+                if (a == ShipDevice.FiringResult.Failure || b == ShipDevice.FiringResult.Failure) return ShipDevice.FiringResult.Failure;
+                if (a == ShipDevice.FiringResult.NotReady || b == ShipDevice.FiringResult.NotReady) return ShipDevice.FiringResult.NotReady;
+                return ShipDevice.FiringResult.Void;
+            }
         }
 
         private enum AerodynamicsType
@@ -104,7 +147,7 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _weapon2ChargeSpeed;
 
-        public DeviceUsages DeviceUsagesToClients { get; set; }
+        private DeviceUsages DeviceUsagesToClients;
 
         #endregion Ship fields related to weapons
 
@@ -217,7 +260,13 @@ namespace AW2.Game.Gobs
         /// Name of the type of main weapon the ship is using. Same as
         /// <c>Weapon1.TypeName</c> but works even when <see cref="Weapon1"/> is null.
         /// </summary>
-        public CanonicalString Weapon1Name { get { return _weapon1TypeName; } }
+        public CanonicalString Weapon1Name { get { return _weapon1TypeName; }
+            set
+            {
+                if (value != _weapon1TypeName)
+                    throw new InvalidOperationException("Primary weapon must be " + _weapon1TypeName);
+            }
+        }
 
         /// <summary>
         /// Name of the type of secondary weapon the ship is using. Same as
@@ -231,16 +280,12 @@ namespace AW2.Game.Gobs
         /// </summary>
         public CanonicalString ExtraDeviceName { get; set; }
 
-        public Weapon Weapon1 { get; private set; }
-        public Weapon Weapon2 { get; private set; }
+        public ShipDevice Weapon1 { get; private set; }
+        public ShipDevice Weapon2 { get; private set; }
         public ShipDevice ExtraDevice { get; private set; }
-
         public ShipInfo ShipInfo { get { return _shipInfo; } set { _shipInfo = value; } }
         public new Player Owner { get { return (Player)base.Owner; } set { base.Owner = value; } }
 
-        /// <summary>
-        /// Names of all textures that this gob type will ever use.
-        /// </summary>
         public override IEnumerable<CanonicalString> TextureNames
         {
             get { return base.TextureNames.Union(new CanonicalString[] { ShipInfo.IconEquipName }); }
@@ -343,6 +388,7 @@ namespace AW2.Game.Gobs
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
+            checked
             {
                 base.Serialize(writer, mode);
 
@@ -365,8 +411,8 @@ namespace AW2.Game.Gobs
                     serializeDevice(Weapon1);
                     serializeDevice(Weapon2);
                     serializeDevice(ExtraDevice);
-                    writer.Write((byte)DeviceUsagesToClients);
-                    DeviceUsagesToClients = DeviceUsages.None;
+                    DeviceUsagesToClients.Serialize(writer, mode);
+                    DeviceUsagesToClients.Clear();
                 }
                 if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromClient))
                 {
@@ -424,8 +470,9 @@ namespace AW2.Game.Gobs
                 deserializeDevice(Weapon1);
                 deserializeDevice(Weapon2);
                 deserializeDevice(ExtraDevice);
-                var deviceUsages = (DeviceUsages)reader.ReadByte();
-                ApplyDeviceUsages(deviceUsages);
+                DeviceUsagesToClients.Deserialize(reader, mode, framesAgo);
+                ApplyDeviceUsages(DeviceUsagesToClients);
+                DeviceUsagesToClients.Clear();
             }
             if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromClient))
             {
@@ -523,37 +570,26 @@ namespace AW2.Game.Gobs
             }
         }
 
+        public ShipDevice.FiringResult TryFire(ShipDevice.OwnerHandleType ownerHandleType, Control control)
+        {
+            var result = GetDevice(ownerHandleType).TryFire(control.State);
+            DeviceUsagesToClients[ownerHandleType] = result;
+            return result;
+        }
+
         public void SetDeviceType(ShipDevice.OwnerHandleType deviceType, CanonicalString typeName)
         {
             switch (deviceType)
             {
-                case ShipDevice.OwnerHandleType.PrimaryWeapon:
-                    if (typeName != _weapon1TypeName)
-                        throw new InvalidOperationException("Cannot set Ship primary weapon " + typeName +
-                            ", fixed primary weapon is " + _weapon1TypeName);
-                    break;
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: Weapon1Name = typeName; break;
                 case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2Name = typeName; break;
                 case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDeviceName = typeName; break;
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
-            ShipDevice oldDevice = null;
-            switch (deviceType)
-            {
-                case ShipDevice.OwnerHandleType.PrimaryWeapon: oldDevice = Weapon1; break;
-                case ShipDevice.OwnerHandleType.SecondaryWeapon: oldDevice = Weapon2; break;
-                case ShipDevice.OwnerHandleType.ExtraDevice: oldDevice = ExtraDevice; break;
-                default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
-            }
+            var oldDevice = GetDevice(deviceType);
             if (oldDevice != null) Game.DataEngine.Devices.Remove(oldDevice);
-            ShipDevice newDevice = null;
-            switch (deviceType)
-            {
-                case ShipDevice.OwnerHandleType.PrimaryWeapon: newDevice = Weapon1 = Weapon.Create(Game, typeName); break;
-                case ShipDevice.OwnerHandleType.SecondaryWeapon: newDevice = Weapon2 = Weapon.Create(Game, typeName); break;
-                case ShipDevice.OwnerHandleType.ExtraDevice: newDevice = ExtraDevice = ShipDevice.Create(Game, typeName); break;
-                default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
-            }
-            InitializeDevice(newDevice, deviceType);
+            var newDevice = ShipDevice.Create(Game, typeName);
+            SetDevice(deviceType, newDevice);
         }
 
         public ControlState[] GetControlStates()
@@ -573,12 +609,6 @@ namespace AW2.Game.Gobs
                 gob.Leader = this;
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });
-        }
-
-        private void InitializeDevice(ShipDevice device, ShipDevice.OwnerHandleType ownerHandle)
-        {
-            device.AttachTo(this, ownerHandle);
-            Game.DataEngine.Devices.Add(device);
         }
 
         /// <param name="force">Force of turn; (0,1] for a left turn, or [-1,0) for a right turn.</param>
@@ -655,37 +685,35 @@ namespace AW2.Game.Gobs
             });
         }
 
+        private ShipDevice GetDevice(ShipDevice.OwnerHandleType ownerHandleType)
+        {
+            switch (ownerHandleType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: return Weapon1;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: return Weapon2;
+                case ShipDevice.OwnerHandleType.ExtraDevice: return ExtraDevice;
+                default: throw new ApplicationException("Invalid owner handle " + ownerHandleType);
+            }
+        }
+
+        private void SetDevice(ShipDevice.OwnerHandleType ownerHandle, ShipDevice device)
+        {
+            switch (ownerHandle)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: Weapon1 = device; break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2 = device; break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDevice = device; break;
+                default: throw new ApplicationException("Invalid owner handle " + ownerHandle);
+            }
+            device.AttachTo(this, ownerHandle);
+            Game.DataEngine.Devices.Add(device);
+        }
+
         private void ApplyDeviceUsages(DeviceUsages deviceUsages)
         {
-            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Success)
-            {
-                Weapon1.ExecuteFiring(ShipDevice.FiringResult.Success);
-                Owner.OnWeaponFired(ShipDevice.OwnerHandleType.PrimaryWeapon);
-            }
-            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1Failure)
-                Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
-            if ((deviceUsages & DeviceUsages.Weapon1Mask) == DeviceUsages.Weapon1NotReady)
-                Weapon1.ExecuteFiring(ShipDevice.FiringResult.NotReady);
-
-            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Success)
-            {
-                Weapon2.ExecuteFiring(ShipDevice.FiringResult.Success);
-                Owner.OnWeaponFired(ShipDevice.OwnerHandleType.SecondaryWeapon);
-            }
-            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2Failure)
-                Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
-            if ((deviceUsages & DeviceUsages.Weapon2Mask) == DeviceUsages.Weapon2NotReady)
-                Weapon2.ExecuteFiring(ShipDevice.FiringResult.NotReady);
-
-            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceSuccess)
-            {
-                ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Success);
-                Owner.OnWeaponFired(ShipDevice.OwnerHandleType.ExtraDevice);
-            }
-            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceFailure)
-                ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);
-            if ((deviceUsages & DeviceUsages.ExtraDeviceMask) == DeviceUsages.ExtraDeviceNotReady)
-                ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.NotReady);
+            GetDevice(ShipDevice.OwnerHandleType.PrimaryWeapon).ExecuteFiring(deviceUsages[ShipDevice.OwnerHandleType.PrimaryWeapon]);
+            GetDevice(ShipDevice.OwnerHandleType.SecondaryWeapon).ExecuteFiring(deviceUsages[ShipDevice.OwnerHandleType.SecondaryWeapon]);
+            GetDevice(ShipDevice.OwnerHandleType.ExtraDevice).ExecuteFiring(deviceUsages[ShipDevice.OwnerHandleType.ExtraDevice]);
         }
 
         #endregion Private methods

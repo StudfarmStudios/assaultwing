@@ -17,7 +17,7 @@ namespace AW2.Game.GobUtils
     public abstract class ShipDevice : Clonable
     {
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
-        public enum FiringResult { Success, Failure, NotReady, Void };
+        public enum FiringResult { Void, Success, Failure, NotReady };
 
         public enum FiringEffectPlayType
         {
@@ -29,7 +29,7 @@ namespace AW2.Game.GobUtils
             /// <summary>
             /// Play effect once for every shot but at most once each frame.
             /// </summary>
-            EveryShot
+            EveryShot,
         }
 
         #region Fields
@@ -266,6 +266,7 @@ namespace AW2.Game.GobUtils
                         Type = TypeName.Value,
                         Pos = Owner.Pos,
                     });
+                    if (PlayerOwner != null) PlayerOwner.OnWeaponFired(OwnerHandle); // TODO !!! Make PlayerOwner work with BotPlayer, too.
                     break;
                 case FiringResult.Failure:
                     PlayFiringFailedSound();

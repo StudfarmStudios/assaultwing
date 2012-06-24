@@ -93,11 +93,6 @@ namespace AW2.Game.GobUtils
         {
         }
 
-        public static new Weapon Create(AssaultWingCore game, CanonicalString typeName)
-        {
-            return (Weapon)Clonable.Instantiate(game, typeName);
-        }
-
         /// <summary>
         /// Applies recoil to the owner of the weapon.
         /// Subclasses should call this method when they emit a new shot

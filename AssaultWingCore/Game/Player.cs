@@ -186,6 +186,7 @@ namespace AW2.Game
         public event Action<ShipDevice.OwnerHandleType> WeaponFired;
         public void OnWeaponFired(ShipDevice.OwnerHandleType ownerHandleType)
         {
+            if (ownerHandleType != ShipDevice.OwnerHandleType.ExtraDevice) Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
             if (WeaponFired != null) WeaponFired(ownerHandleType);
         }
 
@@ -389,69 +390,18 @@ namespace AW2.Game
                 Ship.TurnRight(Controls.Right.Force, Game.GameTime.ElapsedGameTime);
             if (!Ship.IsNewborn && Game.NetworkMode != NetworkMode.Client) // client shoots only when the server says so
             {
-                TryFireWeapon1();
-                TryFireWeapon2();
-                TryFireExtraDevice();
+                TryFire(ShipDevice.OwnerHandleType.PrimaryWeapon);
+                TryFire(ShipDevice.OwnerHandleType.SecondaryWeapon);
+                TryFire(ShipDevice.OwnerHandleType.ExtraDevice);
             }
         }
 
-        private void TryFireWeapon1()
+        private void TryFire(ShipDevice.OwnerHandleType ownerHandleType)
         {
-            if (!Controls.Fire1.HasSignal) return;
-            var result = Ship.Weapon1.TryFire(Controls.Fire1.State);
-            switch (result)
-            {
-                case ShipDevice.FiringResult.Success:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon1Success;
-                    Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
-                    OnWeaponFired(ShipDevice.OwnerHandleType.PrimaryWeapon);
-                    break;
-                case ShipDevice.FiringResult.Failure:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon1Failure;
-                    break;
-                case ShipDevice.FiringResult.NotReady:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon1NotReady;
-                    break;
-            }
-        }
-
-        private void TryFireWeapon2()
-        {
-            if (!Controls.Fire2.HasSignal) return;
-            var result = Ship.Weapon2.TryFire(Controls.Fire2.State);
-            switch (result)
-            {
-                case ShipDevice.FiringResult.Success:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon2Success;
-                    Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
-                    OnWeaponFired(ShipDevice.OwnerHandleType.SecondaryWeapon);
-                    break;
-                case ShipDevice.FiringResult.Failure:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon2Failure;
-                    break;
-                case ShipDevice.FiringResult.NotReady:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.Weapon2NotReady;
-                    break;
-            }
-        }
-
-        private void TryFireExtraDevice()
-        {
-            if (!Controls.Extra.HasSignal) return;
-            var result = Ship.ExtraDevice.TryFire(Controls.Extra.State);
-            switch (result)
-            {
-                case ShipDevice.FiringResult.Success:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.ExtraDeviceSuccess;
-                    OnWeaponFired(ShipDevice.OwnerHandleType.ExtraDevice);
-                    break;
-                case ShipDevice.FiringResult.Failure:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.ExtraDeviceFailure;
-                    break;
-                case ShipDevice.FiringResult.NotReady:
-                    Ship.DeviceUsagesToClients |= Ship.DeviceUsages.ExtraDeviceNotReady;
-                    break;
-            }
+            var control = Controls[ownerHandleType];
+            if (!control.HasSignal) return;
+            var result = Ship.TryFire(ownerHandleType, control);
+            if (result == ShipDevice.FiringResult.Success) OnWeaponFired(ownerHandleType);
         }
 
         /// <summary>

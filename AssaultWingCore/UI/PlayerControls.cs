@@ -57,7 +57,21 @@ namespace AW2.UI
                     case PlayerControlType.Fire1: return Fire1;
                     case PlayerControlType.Fire2: return Fire2;
                     case PlayerControlType.Extra: return Extra;
-                    default: throw new ArgumentException("Unknown control type " + Enum.GetName(typeof(PlayerControlType), type));
+                    default: throw new ArgumentException("Unknown control type " + type);
+                }
+            }
+        }
+
+        public Control this[AW2.Game.GobUtils.ShipDevice.OwnerHandleType ownerHandleType]
+        {
+            get
+            {
+                switch (ownerHandleType)
+                {
+                    case Game.GobUtils.ShipDevice.OwnerHandleType.PrimaryWeapon: return Fire1;
+                    case Game.GobUtils.ShipDevice.OwnerHandleType.SecondaryWeapon: return Fire2;
+                    case Game.GobUtils.ShipDevice.OwnerHandleType.ExtraDevice: return Extra;
+                    default: throw new ArgumentException("Unknown owner handle " + ownerHandleType);
                 }
             }
         }

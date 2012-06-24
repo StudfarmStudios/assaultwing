@@ -3,8 +3,8 @@
   <typeName>full repair</typeName>
   <networkUpdatePeriod>2</networkUpdatePeriod>
   <lifetime>30</lifetime>
-  <maxDamage>300</maxDamage>
-  <mass>50</mass>
+  <maxDamage>500</maxDamage>
+  <mass>70</mass>
   <modelName>megabonus</modelName>
   <scale>0.12</scale>
   <depthLayer2D>0.6</depthLayer2D>

@@ -116,7 +116,7 @@ namespace AW2.Core
             }
             catch (Exception)
             {
-                ShowInfoDialog("Couldn't open browser.\nPlease open this URL manually:\n" + url);
+                Logic.ShowInfoDialog("Couldn't open browser.\nPlease open this URL manually:\n" + url);
             }
         }
 
@@ -133,12 +133,6 @@ namespace AW2.Core
                 new TriggeredCallback(TriggeredCallback.CANCEL_CONTROL, CutNetworkConnections));
         }
 
-        [Obsolete("Move to Logic")]
-        public void ShowMainMenuAndResetGameplay()
-        {
-            Logic.ShowMainMenuAndResetGameplay();
-        }
-
         /// <summary>
         /// Called after all components are initialized but before the first update in the game loop. 
         /// </summary>
@@ -152,7 +146,7 @@ namespace AW2.Core
             DataEngine.GameplayMode = new GameplayMode();
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
             DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage", "shield" };
-            DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine", "fusion cone" };
+            DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine" };
             if (CommandLineOptions.DedicatedServer)
                 WebData.Feed("1D");
             else if (CommandLineOptions.QuickStart != null)

@@ -47,6 +47,11 @@ namespace AW2.Game
             }
         }
 
+        /// <summary>
+        /// Used on game servers only. Accessed from multiple threads, so remember to lock.
+        /// </summary>
+        private List<Spectator> _pendingRemoteSpectators = new List<Spectator>();
+
         public IEnumerable<Gob> Minions { get { return Spectators.SelectMany(spec => spec.Minions); } }
         public IEnumerable<Player> Players { get { return Spectators.OfType<Player>(); } }
         public Player LocalPlayer { get { return Players.FirstOrDefault(plr => plr.IsLocal); } }
@@ -143,6 +148,27 @@ namespace AW2.Game
         }
 
         #endregion type templates
+
+        #region spectators
+
+        public void AddPendingRemoteSpectator(Spectator newSpectator)
+        {
+            lock (_pendingRemoteSpectators) _pendingRemoteSpectators.Add(newSpectator);
+        }
+
+        /// <summary>
+        /// <paramref name="action"/> is to return true if the spectator is processed and is no longer pending.
+        /// </summary>
+        public void ProcessPendingRemoteSpectators(Func<Spectator, bool> action)
+        {
+            lock (_pendingRemoteSpectators)
+            {
+                foreach (var spec in _pendingRemoteSpectators.ToArray())
+                    if (action(spec)) _pendingRemoteSpectators.Remove(spec);
+            }
+        }
+
+        #endregion spectators
 
         #region viewports
 

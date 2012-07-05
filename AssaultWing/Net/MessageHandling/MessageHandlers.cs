@@ -126,15 +126,9 @@ namespace AW2.Net.MessageHandling
             var spectator = Game.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
-            {
-                var newSpectator = TryCreateAndAddNewSpectator(mess, spectatorSerializationMode);
-                newSpectator.ID = mess.SpectatorID;
-                newSpectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
-            }
+                TryCreateAndAddNewSpectatorOnClient(mess, spectatorSerializationMode);
             else if (spectator.IsRemote)
-            {
                 mess.Read(spectator, spectatorSerializationMode, 0);
-            }
             else
             {
                 if (mess.Subclass != SpectatorSettingsRequest.SubclassType.Player) throw new ApplicationException("Unexpected Spectator subclass " + mess.Subclass);
@@ -280,17 +274,7 @@ namespace AW2.Net.MessageHandling
             clientConn.ConnectionStatus.IsRequestingSpawn = mess.IsRequestingSpawn;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)
-            {
-                var newSpectator = TryCreateAndAddNewSpectator(mess, SerializationModeFlags.ConstantDataFromClient);
-                var reply = new SpectatorSettingsReply
-                {
-                    SpectatorLocalID = mess.SpectatorID,
-                    SpectatorID = newSpectator != null ? newSpectator.ID : Spectator.UNINITIALIZED_ID,
-                    FailMessage = newSpectator != null ? "" : "Pilot already in game",
-                };
-                clientConn.Send(reply);
-                Game.DataEngine.EnqueueArenaStatisticsToClients();
-            }
+                TryCreateAndAddNewSpectatorOnServer(mess, SerializationModeFlags.ConstantDataFromClient);
             else
             {
                 var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
@@ -363,14 +347,35 @@ namespace AW2.Net.MessageHandling
             return new Player(Game, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
         }
 
-        private Spectator TryCreateAndAddNewSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
+        private void TryCreateAndAddNewSpectatorOnServer(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
             var ipAddress = Game.NetworkEngine.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address;
-            Spectator newSpectator = null;
+            var newSpectator = GetSpectator(mess, mode);
+            newSpectator.LocalID = mess.SpectatorID;
+            var newStats = newSpectator.GetStats();
+            if (newStats.IsLoggedIn) Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
+            Game.DataEngine.AddPendingRemoteSpectator(newSpectator);
+        }
+
+        private void TryCreateAndAddNewSpectatorOnClient(SpectatorSettingsRequest mess, SerializationModeFlags mode)
+        {
+            var newSpectator = GetSpectator(mess, mode);
+            var newStats = newSpectator.GetStats();
+            if (newStats.IsLoggedIn) Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
+            Game.AddRemoteSpectator(newSpectator);
+            newSpectator.ID = mess.SpectatorID;
+            newSpectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
+        }
+
+        private Spectator GetSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
+        {
+            var ipAddress = Game.NetworkEngine.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address;
+            Spectator newSpectator;
             switch (mess.Subclass)
             {
                 case SpectatorSettingsRequest.SubclassType.Player:
-                    newSpectator = new Player(Game, "<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID, ipAddress);
+                    newSpectator = new Player(Game, "<uninitialised>", CanonicalString.Null, CanonicalString.Null,
+                        CanonicalString.Null, mess.ConnectionID, ipAddress);
                     break;
                 case SpectatorSettingsRequest.SubclassType.BotPlayer:
                     newSpectator = new BotPlayer(Game, mess.ConnectionID, ipAddress);
@@ -378,45 +383,7 @@ namespace AW2.Net.MessageHandling
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }
             mess.Read(newSpectator, mode, 0);
-            Func<Spectator> addNewSpectator = () =>
-            {
-                Log.Write("Adding spectator {0}", newSpectator.Name);
-                Game.DataEngine.Spectators.Add(newSpectator);
-                Game.Stats.Send(new { AddPlayer = newSpectator.GetStats().LoginToken, Name = newSpectator.Name });
-                return newSpectator;
-            };
-            Func<Spectator, Spectator> reconnectNewSpectator = oldSpectator =>
-            {
-                // This can happen only on a game server.
-                Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
-                oldSpectator.Reconnect(newSpectator);
-                Game.Stats.Send(new { AddPlayer = oldSpectator.GetStats().LoginToken, Name = oldSpectator.Name });
-                return oldSpectator;
-            };
-            Func<Spectator, Spectator> refuseNewSpectator = oldSpectator =>
-            {
-                Log.Write("Refusing spectator {0} from {1} because he's already logged in from {2}.",
-                    newSpectator.Name, ipAddress, (object)oldSpectator.IPAddress ?? "the local host");
-                return null;
-            };
-            var newStats = newSpectator.GetStats();
-            if (newStats.IsLoggedIn)
-            {
-                Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
-                var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec =>
-                    spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == newStats.PilotId);
-                if (oldSpectator == null) return addNewSpectator();
-                if (oldSpectator.IsDisconnected) return reconnectNewSpectator(oldSpectator);
-                return refuseNewSpectator(oldSpectator);
-            }
-            else
-            {
-                var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec =>
-                    spec.IPAddress.Equals(ipAddress) && spec.Name == newSpectator.Name);
-                if (oldSpectator == null) return addNewSpectator();
-                if (oldSpectator.IsDisconnected) return reconnectNewSpectator(oldSpectator);
-                return addNewSpectator();
-            }
+            return newSpectator;
         }
     }
 }

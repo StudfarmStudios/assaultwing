@@ -99,6 +99,7 @@ namespace AW2.Core
         {
             HandleGobCreationMessages();
             base.UpdateImpl();
+            ProcessPendingRemoteSpectators();
             SendServerStateToStats();
             Logic.Update();
             UpdateCustomControls();
@@ -716,6 +717,71 @@ namespace AW2.Core
                     spectator.ServerRegistration = Spectator.ServerRegistrationType.Requested;
                 foreach (var conn in connections) conn.Send(mess);
             }
+        }
+
+        public Spectator AddRemoteSpectator(Spectator newSpectator)
+        {
+            Log.Write("Adding spectator {0}", newSpectator.Name);
+            DataEngine.Spectators.Add(newSpectator);
+            Stats.Send(new { AddPlayer = newSpectator.GetStats().LoginToken, Name = newSpectator.Name });
+            return newSpectator;
+        }
+
+        public Spectator ReconnectRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
+        {
+            Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
+            oldSpectator.Reconnect(newSpectator);
+            Stats.Send(new { AddPlayer = oldSpectator.GetStats().LoginToken, Name = oldSpectator.Name });
+            return oldSpectator;
+        }
+
+        public Spectator RefuseRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
+        {
+            var ipAddress = NetworkEngine.GetConnection(newSpectator.ConnectionID).RemoteTCPEndPoint.Address;
+            Log.Write("Refusing spectator {0} from {1} because he's already logged in from {2}.",
+                newSpectator.Name, ipAddress, (object)oldSpectator.IPAddress ?? "the local host");
+            return null;
+        }
+
+        private void ProcessPendingRemoteSpectators()
+        {
+            DataEngine.ProcessPendingRemoteSpectators(spectator =>
+            {
+                var stats = spectator.GetStats();
+                Spectator resultSpectator = null;
+                if (stats.IsLoggedIn)
+                {
+                    if (stats.PilotId == null) return false;
+                    var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec =>
+                        spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == stats.PilotId);
+                    if (oldSpectator == null)
+                        resultSpectator = AddRemoteSpectator(spectator);
+                    else if (oldSpectator.IsDisconnected)
+                        resultSpectator = ReconnectRemoteSpectatorOnServer(spectator, oldSpectator);
+                    else
+                        resultSpectator = RefuseRemoteSpectatorOnServer(spectator, oldSpectator);
+                }
+                else
+                {
+                    var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec =>
+                        spec.IPAddress.Equals(spectator.IPAddress) && spec.Name == spectator.Name);
+                    if (oldSpectator == null)
+                        resultSpectator = AddRemoteSpectator(spectator);
+                    else if (oldSpectator.IsDisconnected)
+                        resultSpectator = ReconnectRemoteSpectatorOnServer(spectator, oldSpectator);
+                    else
+                        resultSpectator = AddRemoteSpectator(spectator);
+                }
+                var mess = new SpectatorSettingsReply
+                {
+                    SpectatorLocalID = spectator.LocalID,
+                    SpectatorID = resultSpectator != null ? resultSpectator.ID : Spectator.UNINITIALIZED_ID,
+                    FailMessage = resultSpectator != null ? "" : "Pilot already in game",
+                };
+                NetworkEngine.GetConnection(resultSpectator.ConnectionID).Send(mess); // FIXME !!! resultSpectator may be null !!!
+                DataEngine.EnqueueArenaStatisticsToClients();
+                return true;
+            });
         }
 
         private void SendServerStateToStats()

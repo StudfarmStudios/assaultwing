@@ -402,9 +402,7 @@ namespace AW2.Net.MessageHandling
             var newStats = newSpectator.GetStats();
             if (newStats.IsLoggedIn)
             {
-                // FIXME !!! newStats.PilotId is always null because it has not yet been fetched from the stats server.
-                // This bug allows the same logged-in pilot to enter the game many times at once.
-                // FIXME too !!! PilotId stays null even dozens of seconds. Why?
+                Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
                 var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec =>
                     spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == newStats.PilotId);
                 if (oldSpectator == null) return addNewSpectator();

@@ -354,7 +354,7 @@ namespace AW2.Net.MessageHandling
             newSpectator.LocalID = mess.SpectatorID;
             var newStats = newSpectator.GetStats();
             if (newStats.IsLoggedIn) Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
-            Game.DataEngine.AddPendingRemoteSpectator(newSpectator);
+            Game.DataEngine.AddPendingRemoteSpectatorOnServer(newSpectator);
         }
 
         private void TryCreateAndAddNewSpectatorOnClient(SpectatorSettingsRequest mess, SerializationModeFlags mode)

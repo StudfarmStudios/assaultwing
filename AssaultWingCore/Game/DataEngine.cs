@@ -50,7 +50,7 @@ namespace AW2.Game
         /// <summary>
         /// Used on game servers only. Accessed from multiple threads, so remember to lock.
         /// </summary>
-        private List<Spectator> _pendingRemoteSpectators = new List<Spectator>();
+        private List<Spectator> _pendingRemoteSpectatorsOnServer = new List<Spectator>();
 
         public IEnumerable<Gob> Minions { get { return Spectators.SelectMany(spec => spec.Minions); } }
         public IEnumerable<Player> Players { get { return Spectators.OfType<Player>(); } }
@@ -151,20 +151,20 @@ namespace AW2.Game
 
         #region spectators
 
-        public void AddPendingRemoteSpectator(Spectator newSpectator)
+        public void AddPendingRemoteSpectatorOnServer(Spectator newSpectator)
         {
-            lock (_pendingRemoteSpectators) _pendingRemoteSpectators.Add(newSpectator);
+            lock (_pendingRemoteSpectatorsOnServer) _pendingRemoteSpectatorsOnServer.Add(newSpectator);
         }
 
         /// <summary>
         /// <paramref name="action"/> is to return true if the spectator is processed and is no longer pending.
         /// </summary>
-        public void ProcessPendingRemoteSpectators(Func<Spectator, bool> action)
+        public void ProcessPendingRemoteSpectatorsOnServer(Func<Spectator, bool> action)
         {
-            lock (_pendingRemoteSpectators)
+            lock (_pendingRemoteSpectatorsOnServer)
             {
-                foreach (var spec in _pendingRemoteSpectators.ToArray())
-                    if (action(spec)) _pendingRemoteSpectators.Remove(spec);
+                foreach (var spec in _pendingRemoteSpectatorsOnServer.ToArray())
+                    if (action(spec)) _pendingRemoteSpectatorsOnServer.Remove(spec);
             }
         }
 

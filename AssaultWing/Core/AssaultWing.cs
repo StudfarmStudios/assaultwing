@@ -764,7 +764,7 @@ namespace AW2.Core
                 else
                 {
                     var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec =>
-                        spec.IPAddress.Equals(spectator.IPAddress) && spec.Name == spectator.Name);
+                        !spec.GetStats().IsLoggedIn && spec.IPAddress.Equals(spectator.IPAddress) && spec.Name == spectator.Name);
                     if (oldSpectator == null)
                         resultSpectator = AddRemoteSpectator(spectator);
                     else if (oldSpectator.IsDisconnected)

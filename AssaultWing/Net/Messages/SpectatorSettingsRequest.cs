@@ -34,8 +34,9 @@ namespace AW2.Net.Messages
         public bool IsRegisteredToServer { get; set; }
 
         /// <summary>
-        /// If <see cref="IsRegisteredToServer"/> is true, local identifier of the spectator to update.
-        /// If <see cref="IsRegisteredToServer"/> is false, global identifier of the spectator to update
+        /// The identifier of the spectator to update.
+        /// If <see cref="IsRegisteredToServer"/> is true, the identifier is global to the game, as set by the game server.
+        /// If <see cref="IsRegisteredToServer"/> is false, the identifier is local to the game client where the spectator lives.
         /// </summary>
         public int SpectatorID { get; set; }
 

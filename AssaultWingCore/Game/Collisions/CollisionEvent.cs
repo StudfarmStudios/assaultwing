@@ -9,7 +9,7 @@ namespace AW2.Game.Collisions
 {
     public class CollisionEvent
     {
-        public struct SerializationData : INetworkSerializable
+        public class SerializationData : INetworkSerializable
         {
             public int Gob1ID, Gob2ID, Area1ID, Area2ID;
             public CollisionSoundType CollisionSound;

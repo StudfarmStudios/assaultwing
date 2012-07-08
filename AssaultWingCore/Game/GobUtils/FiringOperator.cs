@@ -20,6 +20,7 @@ namespace AW2.Game.GobUtils
         public bool Charged { get { return NextFireSkipsLoadAndCharge || _device.FireCharge <= _device.Charge; } }
         public bool NextFireSkipsLoadAndCharge { get; set; }
         public bool ThisFireSkipsLoadReset { get; set; }
+        public bool IsFiring { get; private set; }
 
         public FiringOperator(ShipDevice device)
         {
@@ -36,6 +37,7 @@ namespace AW2.Game.GobUtils
             }
             _shotsLeft = _device.ShotCount;
             NextFireSkipsLoadAndCharge = false;
+            IsFiring = true;
         }
 
         public void ShotFired()
@@ -52,6 +54,8 @@ namespace AW2.Game.GobUtils
 
         public void DoneFiring()
         {
+            if (!IsFiring) return;
+            IsFiring = false;
             _shotsLeft = 0;
             if (!ThisFireSkipsLoadReset)
                 _loadedTime = _device.Arena.TotalTime + TimeSpan.FromSeconds(_device.LoadTime * _device.LoadTimeMultiplier);

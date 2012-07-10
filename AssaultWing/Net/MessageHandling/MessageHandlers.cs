@@ -231,10 +231,9 @@ namespace AW2.Net.MessageHandling
 
         private void HandleSpectatorUpdateMessage(SpectatorUpdateMessage mess)
         {
-            var framesAgo = Game.NetworkEngine.GetMessageAge(mess);
             var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
             if (player == null) return; // Silently ignoring update for an unknown player
-            mess.Read(player, SerializationModeFlags.VaryingDataFromServer, framesAgo);
+            mess.Read(player, SerializationModeFlags.VaryingDataFromServer, Game.NetworkEngine.GetMessageAge(mess));
         }
 
         private void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)

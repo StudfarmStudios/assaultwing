@@ -30,8 +30,7 @@ namespace AW2.Net.MessageHandling
             {
                 try
                 {
-                    var framesAgo = _networkEngine.GetMessageAge(message, connection);
-                    _action(message, framesAgo);
+                    _action(message, _networkEngine.GetMessageAge(message));
                     if (OneMessageAtATime) break;
                 }
                 catch (Exception e)

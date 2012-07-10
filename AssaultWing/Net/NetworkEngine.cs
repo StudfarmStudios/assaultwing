@@ -304,19 +304,7 @@ namespace AW2.Net
         /// </summary>
         public int GetMessageAge(GameplayMessage message)
         {
-            return GetMessageAge(message, GetConnection(message.ConnectionID));
-        }
-
-        /// <summary>
-        /// Returns the number of frames elapsed since the message was sent,
-        /// given the connection the message was sent on.
-        /// </summary>
-        public int GetMessageAge(GameplayMessage message, Connection connection)
-        {
-            if (connection.ID != message.ConnectionID) throw new ArgumentException("Wrong connection");
-            var localFrameCountOnReceive = Game.DataEngine.ArenaFrameCount;
-            var localFrameCountOnSend = message.FrameNumber + connection.PingInfo.PingTime.Divide(2).Frames();
-            return localFrameCountOnReceive - localFrameCountOnSend;
+            return Math.Max(0, Game.DataEngine.ArenaFrameCount - message.FrameNumber);
         }
 
         /// <summary>

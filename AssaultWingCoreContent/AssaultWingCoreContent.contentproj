@@ -44,11 +44,6 @@
       <Name>Arena_Lumipesu</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="assaultwingsounds.xap">
-      <Name>assaultwingsounds</Name>
-      <Importer>XactImporter</Importer>
-      <Processor>XactProcessor</Processor>
-    </Compile>
     <Compile Include="effects\basicshaders.fx">
       <Name>basicshaders</Name>
       <Importer>EffectImporter</Importer>

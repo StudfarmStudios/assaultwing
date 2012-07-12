@@ -425,9 +425,15 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             var oldRotation = Rotation;
-            var oldDrawRotationOffset = DrawRotationOffset;
             base.Deserialize(reader, mode, framesAgo);
             if (Owner != null) Owner.SeizeShip(this);
+
+            // Client alone decides on the rotation of his own ship.
+            if (LocationPredicter == null)
+            {
+                if (!float.IsNaN(oldRotation)) Rotation = oldRotation;
+                DrawRotationOffset = 0;
+            }
 
             // HACK to avoid null references:
             //   - ForwardShot using Ship.Model before LoadContent() is called
@@ -435,29 +441,6 @@ namespace AW2.Game.Gobs
             var shipMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
                 ? mode & ~SerializationModeFlags.VaryingDataFromServer
                 : mode;
-
-            // HACK: superclass Gob deserializes old Pos and Move and calculates them forward;
-            // class Ship must calculate Rotation from old value to current.
-            if (LocationPredicter != null)
-            {
-                LocationPredicter.UpdateOldShipLocation(new ShipLocationEntry
-                {
-                    GameTime = Game.DataEngine.ArenaTotalTime - Game.TargetElapsedTime.Multiply(framesAgo),
-                    Pos = Pos,
-                    Move = Move,
-                    Rotation = Rotation,
-                    ControlStates = null,
-                });
-                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(oldDrawRotationOffset + oldRotation - Rotation);
-                if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > Gob.ROTATION_SMOOTHING_CUTOFF)
-                    DrawRotationOffset = 0;
-            }
-            else
-            {
-                // Client alone decides on the rotation of his own ship.
-                if (!float.IsNaN(oldRotation)) Rotation = oldRotation;
-                DrawRotationOffset = 0;
-            }
 
             if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
@@ -484,6 +467,24 @@ namespace AW2.Game.Gobs
         #endregion Methods related to serialisation
 
         #region Ship public methods
+
+        public override void SmoothJitterOnClient(Arena.GobUpdateData data)
+        {
+            var oldDrawRotationOffset = DrawRotationOffset;
+            base.SmoothJitterOnClient(data);
+            if (LocationPredicter == null) return;
+            LocationPredicter.UpdateOldShipLocation(new ShipLocationEntry
+            {
+                GameTime = Game.DataEngine.ArenaTotalTime - Game.TargetElapsedTime.Multiply(data.FramesAgo),
+                Pos = Pos,
+                Move = Move,
+                Rotation = Rotation,
+                ControlStates = null,
+            });
+            DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(oldDrawRotationOffset + data.OldRotation - Rotation);
+            if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > Gob.ROTATION_SMOOTHING_CUTOFF)
+                DrawRotationOffset = 0;
+        }
 
         /// <summary>
         /// Thrusts the ship.

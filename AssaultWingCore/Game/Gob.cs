@@ -98,10 +98,10 @@ namespace AW2.Game
         private static readonly TimeSpan WARM_UP_TIME = TimeSpan.FromSeconds(0.2);
 
         /// <summary>
-        /// Maximum gob displacement that is not interpreted by the draw position
+        /// Square of maximum gob displacement that is not interpreted by the draw position
         /// smoothing algorithm as a repositioning. Measured in meters.
         /// </summary>
-        private const int POS_SMOOTHING_CUTOFF = 50;
+        private const int POS_SMOOTHING_CUTOFF_SQUARED = 50 * 50;
         private const float POS_SMOOTHING_FADEOUT = 0.95f; // reduces the offset to less than 5 % in 60 updates
         private const float POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED = 6 * 6;
         private const float POS_SMOOTH_MOVE_FADEOUT = 0.63f; // Reduces to < 10 % in 5 frames.
@@ -317,7 +317,7 @@ namespace AW2.Game
         {
             get
             {
-                return Vector2.DistanceSquared(_previousMove, Move) > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF * 0.95f
+                return Vector2.DistanceSquared(_previousMove, Move) > POS_SMOOTHING_CUTOFF_SQUARED * 0.95f
                     && _birthTime + TimeSpan.FromSeconds(0.1) < Arena.TotalTime;
             }
         }
@@ -1030,39 +1030,14 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
-                var oldRotation = Rotation;
                 byte rotationAndFlags = reader.ReadByte();
                 var fullUpdate = true; // UNDONE !!! (rotationAndFlags & 0x80) != 0;
                 Rotation = (rotationAndFlags & 0x7f) * MathHelper.TwoPi / 128;
-                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - Rotation);
-                if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
-                    DrawRotationOffset = 0;
-
-                var oldPos = Pos;
-                var newPos = fullUpdate
+                Pos = _lastNetworkUpdatePos = fullUpdate
                     ? reader.ReadVector2Normalized16(MIN_GOB_COORDINATE, MAX_GOB_COORDINATE)
                     : _lastNetworkUpdatePos + reader.ReadVector2Normalized8(MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
-                _lastNetworkUpdatePos = newPos;
                 Move = reader.ReadHalfVector2();
                 RotationSpeed = reader.ReadHalf();
-                var posOffset = newPos - oldPos;
-                if (posOffset.LengthSquared() <= POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED)
-                {
-                    // If no external forces affect Pos on the game server and the game client, Pos on client
-                    // will converge to Pos on server.
-                    MoveOffset = (1 - POS_SMOOTH_MOVE_FADEOUT) * posOffset;
-                }
-                else
-                {
-                    Pos = newPos;
-                    DrawPosOffset -= posOffset;
-                    MoveOffset = Vector2.Zero;
-                }
-                if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
-                {
-                    DrawPosOffset = Vector2.Zero;
-                    MoveOffset = Vector2.Zero;
-                }
                 if (IsDamageable) DamageLevel = reader.ReadByte() / (float)byte.MaxValue * MaxDamageLevel;
             }
         }
@@ -1070,6 +1045,33 @@ namespace AW2.Game
         #endregion Methods related to serialisation
 
         #region Gob public methods
+
+        public virtual void SmoothJitterOnClient(Arena.GobUpdateData data)
+        {
+            var newPos = Pos;
+            var oldPos = data.OldPos;
+            var posOffset = newPos - oldPos;
+            if (posOffset.LengthSquared() <= POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED)
+            {
+                // If no external forces affect Pos on the game server and the game client, Pos on client
+                // will converge to Pos on server.
+                MoveOffset = (1 - Gob.POS_SMOOTH_MOVE_FADEOUT) * posOffset;
+            }
+            else
+            {
+                Pos = newPos;
+                DrawPosOffset -= posOffset;
+                MoveOffset = Vector2.Zero;
+            }
+            if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF_SQUARED)
+            {
+                DrawPosOffset = Vector2.Zero;
+                MoveOffset = Vector2.Zero;
+            }
+            DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + data.OldRotation - Rotation);
+            if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
+                DrawRotationOffset = 0;
+        }
 
         /// <summary>
         /// Returns the game world location of a named position on the gob's 3D model.

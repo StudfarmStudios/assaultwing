@@ -70,6 +70,18 @@ namespace FarseerPhysics.Dynamics
         IgnoreCCD = (1 << 7),
     }
 
+    /// <summary>
+    /// For temporarily marking a Body Static.
+    /// </summary>
+    internal class BodyDynamicsData
+    {
+        public BodyType BodyType;
+        public Vector2 LinearVelocity;
+        public float AngularVelocity;
+        public Vector2 Force;
+        public float Torque;
+    }
+
     public class Body : IDisposable
     {
         private static int _bodyIdCounter;
@@ -691,6 +703,35 @@ namespace FarseerPhysics.Dynamics
         }
 
         #endregion
+
+        /// <summary>
+        /// Sets the <see cref="BodyType"/> to <see cref="BodyType.Static"/>.
+        /// To restore the BodyType and dynamics of the Body, call <see cref="RestoreTemporaryStatic"/>
+        /// with the return value of this method.
+        /// </summary>
+        public object SetTemporaryStatic()
+        {
+            var savedData = new BodyDynamicsData
+            {
+                BodyType = BodyType,
+                LinearVelocity = LinearVelocity,
+                AngularVelocity = AngularVelocity,
+                Force = Force,
+                Torque = Torque,
+            };
+            BodyType = BodyType.Static;
+            return savedData;
+        }
+
+        public void RestoreTemporaryStatic(object savedData)
+        {
+            var data = (BodyDynamicsData)savedData;
+            BodyType = data.BodyType;
+            LinearVelocity = data.LinearVelocity;
+            AngularVelocity = data.AngularVelocity;
+            Force = data.Force;
+            Torque = data.Torque;
+        }
 
         /// <summary>
         /// Resets the dynamics of this body.

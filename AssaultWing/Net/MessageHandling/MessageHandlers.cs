@@ -296,13 +296,13 @@ namespace AW2.Net.MessageHandling
         private void HandleGobUpdateMessageOnClient(GobUpdateMessage mess, int framesAgo)
         {
             var arena = Game.DataEngine.Arena;
-            var updatedGobs = new HashSet<Gob>();
+            var updatedGobs = new HashSet<Arena.GobUpdateData>();
             var serializationMode = SerializationModeFlags.VaryingDataFromServer;
             mess.ReadGobs(gobId =>
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                 var result = theGob == null || theGob.IsDisposed ? null : theGob;
-                if (result != null) updatedGobs.Add(result);
+                if (result != null) updatedGobs.Add(new Arena.GobUpdateData(result, framesAgo));
                 return result;
             }, serializationMode, framesAgo);
             foreach (var collisionEvent in mess.ReadCollisionEvents(arena.FindGob, serializationMode, framesAgo))
@@ -310,6 +310,7 @@ namespace AW2.Net.MessageHandling
                 collisionEvent.SkipReversibleSideEffects = true;
                 collisionEvent.Handle();
             }
+            arena.FinalizeGobUpdatesOnClient(updatedGobs, framesAgo);
         }
 
         private void HandleGobUpdateMessageOnServer(GobUpdateMessage mess, int framesAgo)

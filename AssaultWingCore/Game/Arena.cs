@@ -34,6 +34,22 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("{Info.Name} Dimensions:{Info.Dimensions} Layers:{Layers.Count} Gobs:{Gobs.Count}")]
     public class Arena : IConsistencyCheckable
     {
+        [System.Diagnostics.DebuggerDisplay("Gob:{Gob} OldPos:{OldPos} OldMove:{OldMove}")]
+        public class GobUpdateData
+        {
+            public Gob Gob { get; private set; }
+            public Vector2 OldPos { get; private set; }
+            public float OldRotation { get; private set; }
+            public int FramesAgo { get; private set; }
+            public GobUpdateData(Gob gob, int framesAgo)
+            {
+                Gob = gob;
+                OldPos = gob.Pos;
+                OldRotation = gob.Rotation;
+                FramesAgo = framesAgo;
+            }
+        }
+
         [System.Diagnostics.DebuggerDisplay("Gob1:{_gob1ID} Gob2:{_gob2ID}")]
         private struct CollisionEventKey
         {
@@ -250,23 +266,18 @@ namespace AW2.Game
                         gob.Die();
         }
 
-        public void UpdateSomeGobs(HashSet<Gob> gobsToUpdate, int frameCount)
+        public void FinalizeGobUpdatesOnClient(HashSet<GobUpdateData> gobsToUpdate, int frameCount)
         {
-            var frozenGobs = new List<Tuple<Gob, AW2.Game.GobUtils.MoveType, Vector2, float>>();
+            var frozenGobs = new List<Tuple<Gob, object>>();
             foreach (var gob in GobsInRelevantLayers)
             {
                 if (gob.MoveType == AW2.Game.GobUtils.MoveType.Static) continue;
-                if (gobsToUpdate.Contains(gob)) return;
-                frozenGobs.Add(Tuple.Create(gob, gob.MoveType, gob.Move, gob.RotationSpeed));
-                gob.MoveType = AW2.Game.GobUtils.MoveType.Static;
+                if (gobsToUpdate.Any(data => data.Gob == gob)) continue;
+                frozenGobs.Add(Tuple.Create(gob, gob.Body.SetTemporaryStatic()));
             }
             for (int i = 0; i < frameCount; i++) Update();
-            foreach (var tuple in frozenGobs)
-            {
-                tuple.Item1.MoveType = tuple.Item2;
-                tuple.Item1.Move = tuple.Item3;
-                tuple.Item1.RotationSpeed = tuple.Item4;
-            }
+            foreach (var tuple in frozenGobs) tuple.Item1.Body.RestoreTemporaryStatic(tuple.Item2);
+            foreach (var data in gobsToUpdate) data.Gob.SmoothJitterOnClient(data);
         }
 
         public IEnumerable<CollisionEvent> GetCollisionEvents()

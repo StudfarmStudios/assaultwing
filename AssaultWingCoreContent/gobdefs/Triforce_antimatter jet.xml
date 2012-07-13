@@ -41,12 +41,12 @@
   <wallPunchRadius>8</wallPunchRadius>
   <hitSound>fusionConeHit</hitSound>
   <wallHitSound>fusionConeHitWall</wallHitSound>
-  <textureName>lightning_3</textureName>
+  <textureName>p_fusioncone_2</textureName>
   <surroundEffects>
-    <Item>fusioncone surround</Item>
+    <Item>antimattercone surround</Item>
   </surroundEffects>
   <hitEffects>
-    <Item>fusioncone hit 1</Item>
+    <Item>antimattercone hit 1</Item>
   </hitEffects>
   <wallPunchEffects>
     <Item>fragment explo</Item>

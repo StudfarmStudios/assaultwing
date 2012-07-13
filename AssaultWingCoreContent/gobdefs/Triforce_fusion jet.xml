@@ -41,7 +41,7 @@
   <wallPunchRadius>7</wallPunchRadius>
   <hitSound>fusionConeHit</hitSound>
   <wallHitSound>fusionConeHitWall</wallHitSound>
-  <textureName>lightning_2</textureName>
+  <textureName>p_fusioncone_1</textureName>
   <surroundEffects>
     <Item>fusioncone surround</Item>
   </surroundEffects>

@@ -46,7 +46,7 @@
     <Item>selfdestruct strokes</Item>
   </surroundEffects>
   <hitEffects>
-    <Item>explo white flash</Item>
+    <Item>fusioncone hit 1</Item>
   </hitEffects>
   <wallPunchEffects>
     <Item>fragment explo</Item>

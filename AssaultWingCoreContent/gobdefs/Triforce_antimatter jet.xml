@@ -43,7 +43,7 @@
   <wallHitSound>fusionConeHitWall</wallHitSound>
   <textureName>lightning_3</textureName>
   <surroundEffects>
-    <Item>selfdestruct strokes</Item>
+    <Item>fusioncone surround</Item>
   </surroundEffects>
   <hitEffects>
     <Item>fusioncone hit 1</Item>

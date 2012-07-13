@@ -325,7 +325,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         private VertexPositionTexture[] CreateVertexData(Vector2[] relativeSliceSides)
         {
-            var relativeMaxHeight = (float)Math.Sin(_angle);
+            var relativeMaxHeight = (float)Math.Sin(_angle / 2);
             return GetSlices(relativeSliceSides)
                 .Select(v => new VertexPositionTexture(
                     _range * new Vector3(v, 0),

@@ -69,7 +69,6 @@ namespace AW2.Game.Gobs
         private AWTimer _nextHitTimer;
         private LazyProxy<int, Gob> _hostProxy;
         private List<Vector2> _wallPunchPosesForClient;
-        private bool _surroundHitDone;
 
         public override Matrix WorldMatrix
         {
@@ -102,11 +101,11 @@ namespace AW2.Game.Gobs
         {
             _surroundEffects = new[] { (CanonicalString)"dummypeng" };
             _collisionAreas = new[] { new CollisionArea("Hit", new Circle(Vector2.Zero, 100), null, CollisionAreaType.Damage, CollisionMaterialType.Regular) };
-            _surroundDamage = 500;
-            _range = 500;
+            _surroundDamage = 200;
+            _range = 200;
             _angle = MathHelper.PiOver4;
             _sliceCount = 15;
-            _damagePerHit = 200;
+            _damagePerHit = 100;
             _firstHitDelay = TimeSpan.FromSeconds(0.1);
             _hitInterval = TimeSpan.FromSeconds(0.3);
             _lifetime = TimeSpan.FromSeconds(1.1);
@@ -230,14 +229,11 @@ namespace AW2.Game.Gobs
 
         private void PerformHits()
         {
-            if (!_surroundHitDone) HitInNamedAreas("Surround", _surroundDamage);
-            _surroundHitDone = true;
-            if (!IsFadingOut && _nextHitTimer.IsElapsed)
-            {
-                UpdateConeCollisionAreas(RelativeSliceSides);
-                HitInNamedAreas("Cone", _damagePerHit);
-                PunchWalls(RelativeSliceSides);
-            }
+            if (IsFadingOut || !_nextHitTimer.IsElapsed) return;
+            HitInNamedAreas("Surround", _surroundDamage);
+            UpdateConeCollisionAreas(RelativeSliceSides);
+            HitInNamedAreas("Cone", _damagePerHit);
+            PunchWalls(RelativeSliceSides);
         }
 
         private void HitInNamedAreas(string areaName, float damage)

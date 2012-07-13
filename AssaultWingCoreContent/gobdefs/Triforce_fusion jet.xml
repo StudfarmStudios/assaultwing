@@ -30,7 +30,7 @@
       </area>
     </Item>
   </collisionAreas>
-  <surroundDamage>350</surroundDamage>
+  <surroundDamage>140</surroundDamage>
   <damagePerHit>70</damagePerHit>
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.3</hitInterval>

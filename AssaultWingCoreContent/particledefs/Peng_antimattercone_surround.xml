@@ -12,8 +12,8 @@
   <coordinateSystem>Peng</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
-    <emissionFrequency>3</emissionFrequency>
-    <numberToCreate>1</numberToCreate>
+    <emissionFrequency>3.8</emissionFrequency>
+    <numberToCreate>4</numberToCreate>
     <radius>0</radius>
     <sprayAngle>0.0</sprayAngle>
     <facingType>Directed</facingType>
@@ -30,7 +30,7 @@
     <areParticlesImmortal>false</areParticlesImmortal>
     <drag>0.0</drag>
     <particleAge type="AW2.Game.Pengs.ExpectedValue">
-      <expected>0.5</expected>
+      <expected>0.4</expected>
       <variance>0</variance>
     </particleAge>
     <accelerationInputScale>0</accelerationInputScale>
@@ -112,14 +112,14 @@
                 </Item>
                 <Item>
                   <position>0.15</position>
-                  <internalValue>0.6</internalValue>
+                  <internalValue>0.7</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>
                 </Item>
                 <Item>
                   <position>0.55</position>
-                  <internalValue>0.8</internalValue>
+                  <internalValue>0.95</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>

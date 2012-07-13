@@ -33,7 +33,7 @@
   <fireSound>FusionConeFire</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>
-  <iconName>dummytexture</iconName>
+  <iconName>b_icon_antimattercone</iconName>
   <shotTypeName>antimatter jet</shotTypeName>
   <recoilMomentum>0</recoilMomentum>
   <loadTime>3.1</loadTime>

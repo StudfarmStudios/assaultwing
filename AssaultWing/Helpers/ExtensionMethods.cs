@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Win32;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 using AW2.Game;
 using AW2.Net;
@@ -35,6 +36,11 @@ namespace AW2.Helpers
         public static string GetString(this RegistryKey key, string name)
         {
             return (string)key.GetValue(name);
+        }
+
+        public static Rectangle ToXnaRectangle(this System.Drawing.Rectangle a)
+        {
+            return new Rectangle(a.X, a.Y, a.Width, a.Height);
         }
     }
 }

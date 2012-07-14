@@ -201,11 +201,6 @@ namespace AW2.Game
         private CanonicalString[] _deathGobTypes;
 
         /// <summary>
-        /// Time of birth of the gob, in game time.
-        /// </summary>
-        private TimeSpan _birthTime;
-
-        /// <summary>
         /// True iff the Die() has been called for this gob.
         /// </summary>
         private bool _dead;
@@ -318,7 +313,7 @@ namespace AW2.Game
             get
             {
                 return Vector2.DistanceSquared(_previousMove, Move) > POS_SMOOTHING_CUTOFF_SQUARED * 0.95f
-                    && _birthTime + TimeSpan.FromSeconds(0.1) < Arena.TotalTime;
+                    && BirthTime + TimeSpan.FromSeconds(0.1) < Arena.TotalTime;
             }
         }
 
@@ -521,8 +516,12 @@ namespace AW2.Game
         /// </summary>
         public bool IsHiding { get; set; }
 
-        public float AgeInGameSeconds { get { return _birthTime.SecondsAgoGameTime(); } }
-        public TimeSpan Age { get { return Game.DataEngine.ArenaTotalTime - _birthTime; } }
+        /// <summary>
+        /// Time of birth of the gob, in arena time.
+        /// </summary>
+        public TimeSpan BirthTime { get; set; }
+        public float AgeInGameSeconds { get { return BirthTime.SecondsAgoGameTime(); } }
+        public TimeSpan Age { get { return Game.DataEngine.ArenaTotalTime - BirthTime; } }
         public Vector2 BirthPos { get; private set; }
 
         /// <summary>
@@ -816,7 +815,7 @@ namespace AW2.Game
         public virtual void Activate()
         {
             EnsureHasID();
-            _birthTime = Arena.TotalTime;
+            if (BirthTime == TimeSpan.Zero) BirthTime = Arena.TotalTime;
             BirthPos = Pos;
             LastNetworkUpdate = Arena.TotalTime;
             LoadContent();

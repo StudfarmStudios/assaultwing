@@ -42,14 +42,13 @@ namespace AW2.Core
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            var clientSize = GetClientSize();
             var beginDrawError = DesignMode
                 ? Text + "\n\n" + GetType()
-                : GraphicsDeviceService.BeginDraw(clientSize, false);
+                : GraphicsDeviceService.BeginDraw(GetClientSize(), false);
             if (beginDrawError == null)
             {
                 if (Draw != null) Draw();
-                GraphicsDeviceService.EndDraw(clientSize, Handle);
+                GraphicsDeviceService.EndDraw(GetClientSize(), Handle);
             }
             else
             {

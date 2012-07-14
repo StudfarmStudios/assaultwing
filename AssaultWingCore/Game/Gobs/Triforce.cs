@@ -31,6 +31,8 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _range;
         [TypeParameter]
+        private float _sectorStartOffset;
+        [TypeParameter]
         private float _angle;
         [TypeParameter]
         private int _sliceCount;
@@ -70,15 +72,8 @@ namespace AW2.Game.Gobs
         private LazyProxy<int, Gob> _hostProxy;
         private List<Vector2> _wallPunchPosesForClient;
 
-        public override Matrix WorldMatrix
-        {
-            get
-            {
-                if (Host == null) return base.WorldMatrix;
-                return AWMathHelper.CreateWorldMatrix(1, Host.DrawRotation + Host.DrawRotationOffset, Host.Pos + Host.DrawPosOffset);
-            }
-        }
         public Gob Host { get { return _hostProxy != null ? _hostProxy.GetValue() : null; } set { _hostProxy = value; } }
+        public int HostBoneIndex { get; set; }
         private TimeSpan FadeTime { get { return _firstHitDelay; } }
         private bool IsFadingOut { get { return Arena.TotalTime + FadeTime >= _deathTime; } }
         private bool IsHittable(CollisionArea area) { return area.Type.IsPhysical() && area.Owner.IsDamageable && area.Owner != Host; }
@@ -103,6 +98,7 @@ namespace AW2.Game.Gobs
             _collisionAreas = new[] { new CollisionArea("Hit", new Circle(Vector2.Zero, 100), null, CollisionAreaType.Damage, CollisionMaterialType.Regular) };
             _surroundDamage = 200;
             _range = 200;
+            _sectorStartOffset = -2;
             _angle = MathHelper.PiOver4;
             _sliceCount = 15;
             _damagePerHit = 100;
@@ -179,10 +175,14 @@ namespace AW2.Game.Gobs
                 checked
                 {
                     base.Serialize(writer, mode);
-                    if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
                     {
                         var hostID = Host != null ? Host.ID : Gob.INVALID_ID;
                         writer.Write((short)hostID);
+                        writer.Write((byte)HostBoneIndex);
+                    }
+                    if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+                    {
                         writer.Write((byte)_wallPunchPosesForClient.Count);
                         foreach (var wallPunchPos in _wallPunchPosesForClient)
                             writer.WriteHalf(wallPunchPos);
@@ -194,11 +194,15 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 int hostID = reader.ReadInt16();
                 _hostProxy = new LazyProxy<int, Gob>(FindGob);
                 _hostProxy.SetData(hostID);
+                HostBoneIndex = reader.ReadByte();
+            }
+            if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+            {
                 int wallPunchCount = reader.ReadByte();
                 var punchedPoses = new List<Vector2>(wallPunchCount);
                 for (int i = 0; i < wallPunchCount; i++) punchedPoses.Add(reader.ReadHalfVector2());
@@ -210,8 +214,7 @@ namespace AW2.Game.Gobs
         private void UpdateLocation()
         {
             if (Host == null) return;
-            Pos = Host.Pos + Host.DrawPosOffset;
-            Rotation = Host.Rotation + Host.DrawRotationOffset;
+            ResetPos(Host.GetNamedPosition(HostBoneIndex), Vector2.Zero, Host.GetBoneRotation(HostBoneIndex));
         }
 
         private void UpdateGeometry()
@@ -331,14 +334,14 @@ namespace AW2.Game.Gobs
 
         /// <summary>
         /// Returns the slices of the triforce as triangles.
-        /// The triangle coordinates are relative to the triforce height.
+        /// The triangle coordinates are relative to triforce range.
         /// The triangles are returned vertex by vertex as a triangle list.
         /// </summary>
         private IEnumerable<Vector2> GetSlices(Vector2[] relativeSliceSides)
         {
             for (int i = 0; i < relativeSliceSides.Length - 1; i++)
             {
-                yield return Vector2.Zero;
+                yield return new Vector2(_sectorStartOffset / _range, 0);
                 yield return relativeSliceSides[i + 1];
                 yield return relativeSliceSides[i];
             }

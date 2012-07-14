@@ -437,6 +437,9 @@ namespace AW2.Game
         /// </summary>
         public virtual void ResetPos(Vector2 pos, Vector2 move, float rotation)
         {
+            MoveOffset = Vector2.Zero;
+            DrawPosOffset = Vector2.Zero;
+            DrawRotationOffset = 0;
             Pos = pos;
             Move = move;
             Rotation = rotation;

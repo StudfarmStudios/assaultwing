@@ -36,6 +36,7 @@
   <hitInterval>0.27</hitInterval>
   <lifetime>1.28</lifetime>
   <range>260</range>
+  <sectorStartOffset>-2</sectorStartOffset>
   <angle>0.72</angle>
   <sliceCount>8</sliceCount>
   <wallPunchRadius>8</wallPunchRadius>

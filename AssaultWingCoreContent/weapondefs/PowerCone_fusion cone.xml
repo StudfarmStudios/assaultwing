@@ -31,6 +31,7 @@
   </upgradeNames>
 
   <typeName>fusion cone</typeName>
+  <gunBarrels>Middle</gunBarrels>
   <fireSound>FusionConeFire</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>

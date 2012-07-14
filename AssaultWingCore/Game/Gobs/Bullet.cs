@@ -15,7 +15,7 @@ namespace AW2.Game.Gobs
     public class Bullet : Gob
     {
         private const float HEADING_MOVEMENT_MINIMUM_SQUARED = 1f * 1f;
-        private const float HEADING_TURN_SPEED = 1.5f;
+        private const float HEADING_TURN_SPEED = 3.0f;
 
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.

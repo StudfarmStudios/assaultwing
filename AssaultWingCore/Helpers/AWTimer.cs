@@ -4,9 +4,10 @@ namespace AW2.Helpers
 {
     /// <summary>
     /// Measures regular intervals in game time. The current interval may be set to some
-    /// irregular length. Missed IsElaped moments do not stack up; if IsElapsed is checked
-    /// after two or more intervals have passed, the next interval starts from the current
-    /// time.
+    /// irregular length. Missed IsElaped moments stack up by default; <see cref="IsElapsed"/>
+    /// will return true as many times as there are past intervals since the previous call to
+    /// IsElapsed. Set <see cref="SkipPastIntervals"/> to true to make the next interval
+    /// start from the current time each time IsElapsed returns true.
     /// </summary>
     public class AWTimer
     {

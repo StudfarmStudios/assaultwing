@@ -24,7 +24,7 @@ namespace AW2.Core
     public class AssaultWing : AssaultWingCore
     {
         private TimeSpan _lastGameSettingsSent;
-        private TimeSpan _lastFrameNumberSynchronization;
+        private AWTimer _frameNumberSynchronizationTimer;
         private byte _nextArenaID;
         private GobDeletionMessage _pendingGobDeletionMessage;
         private List<Tuple<GobCreationMessage, int>> _gobCreationMessages = new List<Tuple<GobCreationMessage, int>>();
@@ -74,6 +74,7 @@ namespace AW2.Core
                 Logic = new UserControlledLogic(this);
             ArenaLoadTask = new BackgroundTask();
             NetworkingErrors = new Queue<string>();
+            _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
 
             NetworkEngine = new NetworkEngine(this, 30);
             WebData = new WebData(this, 21);
@@ -446,8 +447,7 @@ namespace AW2.Core
         {
             if (NetworkMode != NetworkMode.Client) return;
             if (!NetworkEngine.IsConnectedToGameServer) return;
-            if (_lastFrameNumberSynchronization + TimeSpan.FromSeconds(1) > GameTime.TotalRealTime) return;
-            _lastFrameNumberSynchronization = GameTime.TotalRealTime;
+            if (!_frameNumberSynchronizationTimer.IsElapsed) return;
             var remoteFrameNumberOffset = NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
             DataEngine.Arena.FrameNumber -= remoteFrameNumberOffset;
             NetworkEngine.GameServerConnection.PingInfo.AdjustRemoteFrameNumberOffset(remoteFrameNumberOffset);

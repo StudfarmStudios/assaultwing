@@ -30,12 +30,12 @@
       </area>
     </Item>
   </collisionAreas>
-  <surroundDamage>170</surroundDamage>
-  <damagePerHit>85</damagePerHit>
+  <surroundDamage>90</surroundDamage>
+  <damagePerHit>60</damagePerHit>
   <firstHitDelay>0.1</firstHitDelay>
   <hitInterval>0.27</hitInterval>
   <lifetime>1.28</lifetime>
-  <range>260</range>
+  <range>220</range>
   <sectorStartOffset>-2</sectorStartOffset>
   <angle>0.72</angle>
   <sliceCount>8</sliceCount>

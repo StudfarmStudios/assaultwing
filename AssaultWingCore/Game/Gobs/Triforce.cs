@@ -132,7 +132,7 @@ namespace AW2.Game.Gobs
             _nextHitTimer = new AWTimer(() => Arena.TotalTime, _hitInterval);
             _nextHitTimer.SetCurrentInterval(_firstHitDelay);
             _wallPunchPosesForClient = new List<Vector2>();
-            GobHelper.CreatePengs(_surroundEffects, this);
+            GobHelper.CreatePengs(_surroundEffects, Host);
             InitializeCollisionAreas();
         }
 

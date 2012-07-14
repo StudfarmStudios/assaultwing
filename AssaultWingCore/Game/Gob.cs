@@ -103,8 +103,10 @@ namespace AW2.Game
         /// </summary>
         private const int POS_SMOOTHING_CUTOFF_SQUARED = 50 * 50;
         private const float POS_SMOOTHING_FADEOUT = 0.95f; // reduces the offset to less than 5 % in 60 updates
-        private const float POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED = 6 * 6;
-        private const float POS_SMOOTH_MOVE_FADEOUT = 0.63f; // Reduces to < 10 % in 5 frames.
+        private const float POS_SMOOTH_MOVE_MAX_POS_OFFSET = 6;
+        private const float POS_SMOOTH_MOVE_CUTOFF = 0.5f; // MoveOffset is small enough to stop using it.
+        private const float POS_SMOOTH_MOVE_FADEOUT = 0.4367f; // Reduces pos offset from POS_SMOOTH_MOVE_MAX_POS_OFFSET below POS_SMOOTH_MOVE_CUTOFF in 3 frames.
+        private const float POS_SMOOTH_MOVE_START_DIVISOR = 1 + POS_SMOOTH_MOVE_FADEOUT + POS_SMOOTH_MOVE_FADEOUT * POS_SMOOTH_MOVE_FADEOUT;
 
         /// <summary>
         /// Maximum gob rotation change that is not interpreted by the draw rotation
@@ -160,7 +162,6 @@ namespace AW2.Game
         [RuntimeState]
         private Vector2 _pos;
         private Vector2 _move;
-        private Vector2 _moveOffset;
 
         /// <summary>
         /// Gob rotation around the Z-axis in radians.
@@ -417,17 +418,9 @@ namespace AW2.Game
 
         /// <summary>
         /// Move offset for smoothly sliding <see cref="Pos"/> on a game client to the value on
-        /// the game server. <see cref="MoveOffset"/> is automatically added to <see cref="Move"/>.
+        /// the game server.
         /// </summary>
-        private Vector2 MoveOffset
-        {
-            get { return _moveOffset; }
-            set
-            {
-                Move += value - _moveOffset;
-                _moveOffset = value;
-            }
-        }
+        private Vector2 MoveOffset { get; set; }
 
         /// <summary>
         /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/> as if the
@@ -845,7 +838,10 @@ namespace AW2.Game
             _previousMove = Move;
             DrawPosOffset *= POS_SMOOTHING_FADEOUT;
             DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
+            Move -= MoveOffset;
             MoveOffset *= POS_SMOOTH_MOVE_FADEOUT;
+            if (MoveOffset.LengthSquared() < POS_SMOOTH_MOVE_CUTOFF * POS_SMOOTH_MOVE_CUTOFF) MoveOffset = Vector2.Zero;
+            Move += MoveOffset;
         }
 
         public static float DampDrawRotationOffset(float drawRotationOffset)
@@ -1053,23 +1049,20 @@ namespace AW2.Game
             var newPos = Pos;
             var oldPos = data.OldPos;
             var posOffset = newPos - oldPos;
-            if (posOffset.LengthSquared() <= POS_SMOOTH_MOVE_MAX_OFFSET_SQUARED)
+            if (posOffset.LengthSquared() <= POS_SMOOTH_MOVE_MAX_POS_OFFSET * POS_SMOOTH_MOVE_MAX_POS_OFFSET)
             {
                 // If no external forces affect Pos on the game server and the game client, Pos on client
                 // will converge to Pos on server.
-                MoveOffset = (1 - Gob.POS_SMOOTH_MOVE_FADEOUT) * posOffset;
+                Pos = oldPos;
+                MoveOffset = posOffset / POS_SMOOTH_MOVE_START_DIVISOR;
+                Move += MoveOffset;
             }
             else
             {
-                Pos = newPos;
                 DrawPosOffset -= posOffset;
-                MoveOffset = Vector2.Zero;
             }
             if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF_SQUARED)
-            {
                 DrawPosOffset = Vector2.Zero;
-                MoveOffset = Vector2.Zero;
-            }
             DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + data.OldRotation - Rotation);
             if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
                 DrawRotationOffset = 0;

@@ -1259,7 +1259,7 @@ namespace AW2.Game
                 LastDamager = boundInfo.Cause.Owner;
                 LastDamagerTimeout = Arena.TotalTime + TimeSpan.FromSeconds(6);
             }
-            DamageLevel = Math.Min(_maxDamage, DamageLevel + damageAmount);
+            if (Game.NetworkMode != NetworkMode.Client) DamageLevel = Math.Min(_maxDamage, DamageLevel + damageAmount);
             _bleachDamage += damageAmount;
             if (DamageLevel == _maxDamage) Die(boundInfo);
         }

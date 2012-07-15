@@ -16,20 +16,25 @@ namespace AW2.Game
     /// </summary>
     public class LogicEngine : AWGameComponent
     {
-        private static readonly TimeSpan PLAYER_DISCONNECT_DROP_DELAY = TimeSpan.FromMinutes(3);
+        private struct GobKillData
+        {
+            public int GobID;
+            public TimeSpan KillTime; // In arena time
+        }
 
+        private static readonly TimeSpan PLAYER_DISCONNECT_DROP_DELAY = TimeSpan.FromMinutes(3);
+        private static readonly TimeSpan GOB_KILL_TIMEOUT_ON_CLIENT = TimeSpan.FromSeconds(5);
+
+        private List<GobKillData> _gobsToKillOnClient;
         private Control _helpControl;
 #if DEBUG
         private Control _showOnlyPlayer1Control, _showOnlyPlayer2Control, _showEverybodyControl;
-        private int _unfoundGobsToDeleteOnClientReportLimit = 10;
 #endif
-
-        public List<int> GobsToKillOnClient { get; private set; }
  
         public LogicEngine(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
-            GobsToKillOnClient = new List<int>();
+            _gobsToKillOnClient = new List<GobKillData>();
             _helpControl = new KeyboardKey(Keys.F1);
 #if DEBUG
             _showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
@@ -64,7 +69,7 @@ namespace AW2.Game
 
         public void Reset()
         {
-            GobsToKillOnClient.Clear();
+            _gobsToKillOnClient.Clear();
         }
 
         public override void Update()
@@ -86,26 +91,24 @@ namespace AW2.Game
             }
         }
 
+        public void KillGobsOnClient(IEnumerable<int> gobIDs)
+        {
+            foreach (var gobID in gobIDs)
+                _gobsToKillOnClient.Add(new GobKillData { GobID = gobID, KillTime = Game.DataEngine.ArenaTotalTime });
+        }
+
         private void KillGobsOnClient()
         {
-            var unfoundGobs = new List<int>();
-            foreach (var gobID in GobsToKillOnClient)
+            var remainingKills = new List<GobKillData>();
+            foreach (var data in _gobsToKillOnClient)
             {
-                var gob = Game.DataEngine.Arena.Gobs.FirstOrDefault(gobb => gobb.ID == gobID);
+                var gob = Game.DataEngine.Arena.Gobs.FirstOrDefault(gobb => gobb.ID == data.GobID);
                 if (gob != null)
                     gob.DieOnClient();
-                else
-                    unfoundGobs.Add(gobID);
+                else if (data.KillTime + GOB_KILL_TIMEOUT_ON_CLIENT > Game.DataEngine.ArenaTotalTime)
+                    remainingKills.Add(data);
             }
-            GobsToKillOnClient = unfoundGobs;
-#if DEBUG
-            // TODO !!! Add a timestamp to each gob-to-kill. Remove the gob if older than, say, 10 seconds.
-            if (GobsToKillOnClient.Count() >= _unfoundGobsToDeleteOnClientReportLimit )
-            {
-                Log.Write("WARNING: {0} unfound gobs to kill on client", GobsToKillOnClient.Count());
-                _unfoundGobsToDeleteOnClientReportLimit *= 2;
-            }
-#endif
+            _gobsToKillOnClient = remainingKills;
         }
 
         private void RemoveInactivePlayers()

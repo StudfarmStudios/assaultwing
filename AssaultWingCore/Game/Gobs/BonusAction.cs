@@ -93,7 +93,8 @@ namespace AW2.Game.Gobs
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
+            var baseMode = mode & SerializationModeFlags.ConstantDataFromServer;
+            base.Serialize(writer, baseMode);
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 writer.Write((short)Host.ID);
@@ -107,7 +108,8 @@ namespace AW2.Game.Gobs
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, framesAgo);
+            var baseMode = mode & SerializationModeFlags.ConstantDataFromServer;
+            base.Deserialize(reader, baseMode, framesAgo);
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 var hostID = reader.ReadInt16();

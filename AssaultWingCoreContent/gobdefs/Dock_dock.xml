@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Dock">
   <typeName>dock</typeName>
-  <networkUpdatePeriod>2</networkUpdatePeriod>
+  <networkUpdatePeriod>0</networkUpdatePeriod>
   <repairSpeed>190</repairSpeed>
   <weapon1ChargeSpeed>200</weapon1ChargeSpeed>
   <weapon2ChargeSpeed>200</weapon2ChargeSpeed>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Bonus">
   <typeName>full repair</typeName>
-  <networkUpdatePeriod>2</networkUpdatePeriod>
+  <networkUpdatePeriod>1.5</networkUpdatePeriod>
   <lifetime>30</lifetime>
   <maxDamage>500</maxDamage>
   <mass>70</mass>

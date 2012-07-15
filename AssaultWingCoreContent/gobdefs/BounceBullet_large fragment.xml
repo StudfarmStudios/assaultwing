@@ -3,7 +3,7 @@
   <typeName>large fragment</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>5.0</rotationSpeed>
-  <networkUpdatePeriod>2</networkUpdatePeriod>
+  <networkUpdatePeriod>2.5</networkUpdatePeriod>
   <lifetime>0.33</lifetime>
   <maxDamage>100</maxDamage>
   <impactDamage>5</impactDamage>

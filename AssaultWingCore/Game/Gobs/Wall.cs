@@ -188,8 +188,8 @@ namespace AW2.Game.Gobs
             using (new NetworkProfilingScope(this))
 #endif
             {
-                // HACK to reduce network traffic
-                var reducedMode = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+                // Wall doesn't move, so Pos, Move and Rotation are needed only at creation.
+                var reducedMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
                     ? SerializationModeFlags.AllFromServer
                     : SerializationModeFlags.None;
                 base.Serialize(writer, reducedMode);
@@ -197,7 +197,7 @@ namespace AW2.Game.Gobs
                 {
                     if (mode != SerializationModeFlags.None)
                     {
-                        var indices = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+                        var indices = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
                             ? _removedTriangleIndicesOfAllTime
                             : _removedTriangleIndicesToSerialize;
                         writer.Write((short)indices.Count());
@@ -210,8 +210,7 @@ namespace AW2.Game.Gobs
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            // HACK to reduce network traffic
-            var reducedMode = (mode & SerializationModeFlags.ConstantDataFromServer) != 0
+            var reducedMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
                 ? SerializationModeFlags.AllFromServer
                 : SerializationModeFlags.None;
             base.Deserialize(reader, reducedMode, framesAgo);

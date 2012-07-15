@@ -129,7 +129,11 @@ namespace AW2.Game.Gobs
 #endif
                 checked
                 {
-                    base.Serialize(writer, mode);
+                    // Dock doesn't move, so Pos, Move and Rotation are needed only at creation.
+                    var reducedMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
+                        ? SerializationModeFlags.AllFromServer
+                        : SerializationModeFlags.None;
+                    base.Serialize(writer, reducedMode);
                     if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                     {
                         writer.Write((byte)_lastRepairTimes.Count);
@@ -141,7 +145,10 @@ namespace AW2.Game.Gobs
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, framesAgo);
+            var reducedMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
+                ? SerializationModeFlags.AllFromServer
+                : SerializationModeFlags.None;
+            base.Deserialize(reader, reducedMode, framesAgo);
             if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 var repairingCount = reader.ReadByte();

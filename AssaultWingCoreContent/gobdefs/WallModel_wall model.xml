@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.WallModel">
   <typeName>wall model</typeName>
-   <networkUpdatePeriod>2</networkUpdatePeriod>
+  <networkUpdatePeriod>0</networkUpdatePeriod>
   <scale>1</scale>
   <deathGobTypes>
   </deathGobTypes>
@@ -11,7 +11,7 @@
   <modelName>dummymodel</modelName>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>None</type>
+    <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <birthGobTypes/>

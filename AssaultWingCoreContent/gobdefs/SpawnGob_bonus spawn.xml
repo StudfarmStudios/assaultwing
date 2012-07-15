@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.SpawnGob">
   <typeName>bonus spawn</typeName>
-   <networkUpdatePeriod>2</networkUpdatePeriod>
+  <networkUpdatePeriod>0</networkUpdatePeriod>
   <birthGobTypes>
   </birthGobTypes>
   <deathGobTypes>
@@ -12,7 +12,7 @@
   <modelName>dummymodel</modelName>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>None</type>
+    <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <scale>1.0</scale>

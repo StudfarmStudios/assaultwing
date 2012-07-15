@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.PropModel">
   <typeName>prop model</typeName>
-   <networkUpdatePeriod>2</networkUpdatePeriod>
+  <networkUpdatePeriod>0</networkUpdatePeriod>
   <mass>1</mass>
   <modelName>dummymodel</modelName>
   <scale>1</scale>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>None</type>
+    <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <birthGobTypes/>

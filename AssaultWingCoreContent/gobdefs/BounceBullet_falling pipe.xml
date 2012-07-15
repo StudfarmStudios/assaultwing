@@ -3,7 +3,7 @@
   <typeName>falling pipe</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>2.0</rotationSpeed>
-  <networkUpdatePeriod>2</networkUpdatePeriod>
+  <networkUpdatePeriod>2.5</networkUpdatePeriod>
   <lifetime>30</lifetime>
   <maxDamage>100</maxDamage>
   <impactDamage>10</impactDamage>

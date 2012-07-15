@@ -24,6 +24,7 @@ namespace AW2.Game.Gobs
     {
         private static readonly TimeSpan MOVE_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(11);
         private static readonly TimeSpan AIM_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
+        private static readonly TimeSpan TRY_FIRE_INTERVAL = TimeSpan.FromSeconds(0.9);
         private const float FAN_ANGLE_SPEED_MAX = 30;
         private const float FAN_ANGLE_SPEED_FADEOUT = 0.9873f; // slow down to 10 % in 180 updates (i.e. 3 seconds)
         private const int WALL_SCAN_DIRS = 16;
@@ -134,6 +135,7 @@ namespace AW2.Game.Gobs
             {
                 _timedActions.Add(new TimedAction(MOVE_TARGET_UPDATE_INTERVAL, UpdateMoveTarget));
                 _timedActions.Add(new TimedAction(AIM_TARGET_UPDATE_INTERVAL, UpdateAimTarget));
+                _timedActions.Add(new TimedAction(TRY_FIRE_INTERVAL, Shoot));
             }
         }
 
@@ -143,7 +145,6 @@ namespace AW2.Game.Gobs
             foreach (var act in _timedActions) act.Update(Arena.TotalTime);
             MoveAround();
             Aim();
-            Shoot();
             _thruster.Update();
             _coughEngine.Update();
             MoveFan();
@@ -272,7 +273,10 @@ namespace AW2.Game.Gobs
         {
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Target == null) return;
-            if (Vector2.DistanceSquared(Target.Pos, Pos) > _shootRange * _shootRange) return;
+            var targetDistanceSquared = Vector2.DistanceSquared(Target.Pos, Pos);
+            if (targetDistanceSquared > _shootRange * _shootRange) return;
+            var obstacleDistance = Arena.GetDistanceToClosest(Pos, Target.Pos, area => area.Owner.MoveType != GobUtils.MoveType.Dynamic);
+            if (obstacleDistance * obstacleDistance < targetDistanceSquared) return;
             _weapon.TryFire(new UI.ControlState(1, true));
         }
 

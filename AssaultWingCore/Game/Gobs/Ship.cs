@@ -713,7 +713,10 @@ namespace AW2.Game.Gobs
         private void ApplyDeviceUsages(DeviceUsages deviceUsages)
         {
             Action<ShipDevice.OwnerHandleType> apply = ownerHandle =>
-                GetDevice(ownerHandle).ExecuteFiring(deviceUsages[ownerHandle]);
+            {
+                var device = GetDevice(ownerHandle);
+                if (device != null) device.ExecuteFiring(deviceUsages[ownerHandle]);
+            };
             apply(ShipDevice.OwnerHandleType.PrimaryWeapon);
             apply(ShipDevice.OwnerHandleType.SecondaryWeapon);
             apply(ShipDevice.OwnerHandleType.ExtraDevice);

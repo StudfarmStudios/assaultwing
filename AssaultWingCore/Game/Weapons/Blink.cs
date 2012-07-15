@@ -43,7 +43,7 @@ namespace AW2.Game.Weapons
         private TimeSpan _safetyTimeout;
         private Vector2 _originalOwnerMove;
 
-        private TimeSpan SafetyTimeoutInterval { get { return TimeSpan.FromSeconds(0.1f + _blinkDistance / _blinkMoveSpeed); } }
+        private TimeSpan SafetyTimeoutInterval { get { return TimeSpan.FromSeconds(0.01f + _blinkDistance / _blinkMoveSpeed); } }
         private bool BlinkTargetReached
         {
             get
@@ -75,15 +75,7 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_targetPos.HasValue)
             {
-                // Due to slight add-up errors on game servers and standalone games and due to the usual
-                // gob pos offsets on game clients, correct blink movement every frame.
-                if (Owner.Game.NetworkMode == NetworkMode.Client && Owner.Pos != _startPos)
-                {
-                    _queriedTargetPosAndMove = GetBlinkTargetAndMove(_startPos, Owner.Pos - _startPos);
-                    _targetPos = _queriedTargetPosAndMove.Item1;
-                    Owner.Move = _queriedTargetPosAndMove.Item2;
-                }
-                else
+                if (Owner.Game.NetworkMode != NetworkMode.Client)
                 {
                     // Due to slight add-up errors on game servers and standalone games,
                     // correct blink movement every frame so that Owner will eventually hit _targetPos.
@@ -152,8 +144,9 @@ namespace AW2.Game.Weapons
 
         private Tuple<Vector2, Vector2> GetBlinkTargetAndMove(Vector2 from, Vector2 direction)
         {
-            var target = from + Vector2.Normalize(direction) * _blinkDistance;
-            var move = _blinkMoveSpeed * Vector2.Normalize(target - from);
+            var directionUnit = Vector2.Normalize(direction);
+            var target = from + _blinkDistance * directionUnit;
+            var move = _blinkMoveSpeed * directionUnit;
             return Tuple.Create(target, move);
         }
 

@@ -18,6 +18,7 @@ namespace AW2.Game
         private static CanonicalString[] g_botTypes = new[]
         {
             (CanonicalString)"rocket bot",
+            (CanonicalString)"fusion cone bot",
             (CanonicalString)"bazooka bot",
             (CanonicalString)"mine bot",
         };

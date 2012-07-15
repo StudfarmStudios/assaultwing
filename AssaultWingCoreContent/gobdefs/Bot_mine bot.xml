@@ -16,7 +16,7 @@
 
   <thruster>
     <maxForce>55000</maxForce>
-    <maxSpeed>220</maxSpeed>
+    <maxSpeed>180</maxSpeed>
     <runningSound></runningSound>
     <exhaustEngineNames>
       <Item>bot thrust</Item>

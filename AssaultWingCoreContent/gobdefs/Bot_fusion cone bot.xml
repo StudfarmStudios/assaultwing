@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Bot">
-  <typeName>rocket bot</typeName>
+  <typeName>fusion cone bot</typeName>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <mass>700</mass>
   <scale>0.047</scale>
@@ -9,14 +9,14 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <rotationSpeed>0.8</rotationSpeed>
-  <aimRange>800</aimRange>
-  <shootRange>650</shootRange>
-  <optimalTargetDistance>450</optimalTargetDistance>
+  <rotationSpeed>1.05</rotationSpeed>
+  <aimRange>500</aimRange>
+  <shootRange>220</shootRange>
+  <optimalTargetDistance>150</optimalTargetDistance>
 
   <thruster>
     <maxForce>55000</maxForce>
-    <maxSpeed>100</maxSpeed>
+    <maxSpeed>210</maxSpeed>
     <runningSound></runningSound>
     <exhaustEngineNames>
       <Item>bot thrust</Item>
@@ -29,10 +29,10 @@
     </pengNames>
   </coughEngine>
 
-  <weaponName>bot rockets</weaponName>
+  <weaponName>bot fusion cone</weaponName>
   <modelName>bot</modelName>
   <moveType>Dynamic</moveType>
-  <maxDamage>1700</maxDamage>
+  <maxDamage>2300</maxDamage>
   <birthGobTypes>
     <Item>bot birth electric ball</Item>
     <Item>bot birth electric streaks</Item>

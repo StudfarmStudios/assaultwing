@@ -95,7 +95,8 @@ namespace AW2.Game.Weapons
         protected override bool PermissionToFire()
         {
             _queriedTargetPosAndMove = GetBlinkTargetAndMove();
-            return Arena.IsFreePosition(new Circle(_queriedTargetPosAndMove.Item1, Gob.LARGE_GOB_PHYSICAL_RADIUS));
+            return Arena.IsFreePosition(new Circle(_queriedTargetPosAndMove.Item1, Gob.SMALL_GOB_PHYSICAL_RADIUS),
+                area => area.Owner.MoveType != MoveType.Dynamic);
         }
 
         protected override void ShootImpl()

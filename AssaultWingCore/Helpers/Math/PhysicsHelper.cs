@@ -87,7 +87,11 @@ namespace AW2.Helpers
             SetMove(gob, (1 - drag) * (gob.Move - flow) + flow);
         }
 
-        public static bool IsFreePosition(World world, IGeomPrimitive area)
+        /// <summary>
+        /// Returns true if <paramref name="area"/> is free of overlappers. A CollisionArea won't be
+        /// an overlapper if <paramref name="filter"/> returns false for it.
+        /// </summary>
+        public static bool IsFreePosition(World world, IGeomPrimitive area, Func<CollisionArea, bool> filter = null)
         {
             var shape = area.GetShape();
             AABB shapeAabb;
@@ -99,7 +103,9 @@ namespace AW2.Helpers
             world.QueryAABB(otherFixture =>
             {
                 otherFixture.Body.GetTransform(out fixtureTransform);
-                if (!otherFixture.IsSensor && AABB.TestOverlap(otherFixture.Shape, 0, shape, 0, ref fixtureTransform, ref shapeTransform))
+                if (!otherFixture.IsSensor &&
+                    (filter == null || filter((CollisionArea)otherFixture.UserData)) &&
+                    AABB.TestOverlap(otherFixture.Shape, 0, shape, 0, ref fixtureTransform, ref shapeTransform))
                     isFree = false;
                 return isFree;
             }, ref shapeAabb);

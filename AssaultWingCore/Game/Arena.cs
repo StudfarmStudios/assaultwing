@@ -323,12 +323,13 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Is an area free of physical gobs.
+        /// Is an area free of physical gobs. If <paramref name="filter"/> returns false for
+        /// a CollisionArea, it is not considered as an obstacle.
         /// </summary>
-        public bool IsFreePosition(IGeomPrimitive area)
+        public bool IsFreePosition(IGeomPrimitive area, Func<CollisionArea, bool> filter = null)
         {
             if (!BoundedAreaNormal.Contains(area.BoundingBox)) return false;
-            return PhysicsHelper.IsFreePosition(_world, area);
+            return PhysicsHelper.IsFreePosition(_world, area, filter);
         }
 
         /// <summary>

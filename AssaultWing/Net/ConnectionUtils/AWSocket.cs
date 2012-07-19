@@ -1,5 +1,4 @@
-﻿//#define DEBUG_SENT_BYTE_COUNT // dumps to log an itemised count of sent bytes every second
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,8 +28,6 @@ namespace AW2.Net.ConnectionUtils
         private static readonly TimeSpan RECEIVE_TIMEOUT = TimeSpan.FromSeconds(10);
         private static readonly IPEndPoint UNSPECIFIED_IP_ENDPOINT = new IPEndPoint(IPAddress.Any, 0);
 
-        private static TimeSpan g_sentByteCountLastPrintTime = new TimeSpan(-1);
-        private static Dictionary<Type, int> g_sentByteCountsByMessageType = new Dictionary<Type, int>();
         private static Stack<SocketAsyncEventArgs> g_sendArgs = new Stack<SocketAsyncEventArgs>();
 
         protected MessageHandler _messageHandler;
@@ -129,7 +126,6 @@ namespace AW2.Net.ConnectionUtils
             {
                 var bytesWritten = (int)sendArgsAndWriter.Item2.GetBaseStream().Position;
                 var sendArgs = sendArgsAndWriter.Item1;
-                DebugPrintSentByteCount(sendArgs.Buffer, bytesWritten);
                 sendArgs.SetBuffer(0, bytesWritten);
                 UseSocket(socket =>
                 {
@@ -175,26 +171,6 @@ namespace AW2.Net.ConnectionUtils
             {
                 if (!IsDisposed) action(_socket);
             }
-        }
-
-        [System.Diagnostics.Conditional("DEBUG_SENT_BYTE_COUNT")]
-        private static void DebugPrintSentByteCount(byte[] messageBuffer, int messageByteCount)
-        {
-            var now = AW2.Core.AssaultWing.Instance.GameTime.TotalRealTime;
-            var messageType = Message.GetMessageSubclass(new ArraySegment<byte>(messageBuffer)) ?? typeof(ManagementMessage);
-            if (g_sentByteCountLastPrintTime + TimeSpan.FromSeconds(1) < now)
-            {
-                g_sentByteCountLastPrintTime = now;
-                AW2.Helpers.Log.Write("------ SENT_BYTE_COUNT dump");
-                foreach (var pair in g_sentByteCountsByMessageType)
-                    AW2.Helpers.Log.Write(pair.Key.Name + ": " + pair.Value + " bytes");
-                AW2.Helpers.Log.Write("Total " + g_sentByteCountsByMessageType.Sum(pair => pair.Value) + " bytes");
-                g_sentByteCountsByMessageType.Clear();
-            }
-            if (!g_sentByteCountsByMessageType.ContainsKey(messageType))
-                g_sentByteCountsByMessageType.Add(messageType, messageByteCount);
-            else
-                g_sentByteCountsByMessageType[messageType] += messageByteCount;
         }
 
         private static void ConfigureSocket(Socket socket)

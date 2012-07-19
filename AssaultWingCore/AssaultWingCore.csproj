@@ -262,6 +262,7 @@
     <Compile Include="Helpers\Math\PIDController.cs" />
     <Compile Include="Helpers\Math\PIDController2.cs" />
     <Compile Include="Helpers\Math\PIDControllerBase.cs" />
+    <Compile Include="Helpers\Math\RunningSequence.cs" />
     <Compile Include="Helpers\MiscHelper.cs" />
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Helpers\AWTimer.cs" />

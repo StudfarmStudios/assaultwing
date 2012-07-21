@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
 using AW2.Helpers;
+using AW2.Helpers.Collections;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Net.ConnectionUtils
@@ -18,6 +20,14 @@ namespace AW2.Net.ConnectionUtils
     /// </summary>
     public abstract class AWSocket
     {
+        private class SendData
+        {
+            public byte[] Buffer;
+            public NetworkBinaryWriter Writer;
+            public int ByteCount;
+            public EndPoint RemoteEndPoint;
+        }
+
         /// <summary>
         /// Returns the number of bytes that were handled. The remaining bytes will be available at the next call.
         /// </summary>
@@ -28,11 +38,12 @@ namespace AW2.Net.ConnectionUtils
         private static readonly TimeSpan RECEIVE_TIMEOUT = TimeSpan.FromSeconds(10);
         private static readonly IPEndPoint UNSPECIFIED_IP_ENDPOINT = new IPEndPoint(IPAddress.Any, 0);
 
-        private static Stack<SocketAsyncEventArgs> g_sendArgs = new Stack<SocketAsyncEventArgs>();
+        private static ConcurrentQueue<SendData> g_sendDatas = new ConcurrentQueue<SendData>();
 
         protected MessageHandler _messageHandler;
         private Socket _socket;
-        private Dictionary<IPEndPoint, Tuple<SocketAsyncEventArgs, NetworkBinaryWriter>> _sendCache;
+        private Dictionary<IPEndPoint, SendData> _sendCache;
+        private WorkQueue<SendData> _sendQueue;
         private int _isDisposed;
         private IPEndPoint _privateLocalEndPoint;
         private byte[] _macAddress;
@@ -90,7 +101,8 @@ namespace AW2.Net.ConnectionUtils
             if (socket == null) throw new ArgumentNullException("socket", "Null socket argument");
             Application.ApplicationExit += ApplicationExitCallback;
             _socket = socket;
-            _sendCache = new Dictionary<IPEndPoint, Tuple<SocketAsyncEventArgs, NetworkBinaryWriter>>();
+            _sendCache = new Dictionary<IPEndPoint, SendData>();
+            _sendQueue = new WorkQueue<SendData>(SendItem, DisposeSocket);
             ConfigureSocket(_socket);
             _messageHandler = messageHandler;
             Errors = new ThreadSafeWrapper<Queue<string>>(new Queue<string>());
@@ -122,36 +134,37 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public void FlushSendBuffer()
         {
-            foreach (var sendArgsAndWriter in _sendCache.Values)
+            foreach (var sendData in _sendCache.Values)
             {
-                var bytesWritten = (int)sendArgsAndWriter.Item2.GetBaseStream().Position;
-                var sendArgs = sendArgsAndWriter.Item1;
-                sendArgs.SetBuffer(0, bytesWritten);
-                UseSocket(socket =>
-                {
-                    var isPending = socket.SendToAsync(sendArgs);
-                    if (!isPending) SendToCompleted(socket, sendArgs);
-                });
+                var bytesWritten = (int)sendData.Writer.GetBaseStream().Position;
+                sendData.ByteCount = bytesWritten;
+                _sendQueue.Enqueue(sendData);
             }
             _sendCache.Clear();
         }
 
         public void Dispose()
         {
-            UseSocket(socket =>
+            if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
+            _sendQueue.NoMoreWork();
+        }
+
+        private void DisposeSocket()
+        {
+            // Note: Don't use UseSocket() because IsDisposed is already true but the socket isn't disposed.
+            lock (_socket)
             {
-                Log.Write("Disposing {0} socket", socket.ProtocolType);
-                if (socket.Connected)
+                Log.Write("Disposing {0} socket", _socket.ProtocolType);
+                if (_socket.Connected)
                     try
                     {
                         // Shutdown may throw "System.Net.Sockets.SocketException (0x80004005): An existing connection was forcibly closed by the remote host"
-                        socket.Shutdown(SocketShutdown.Both);
+                        _socket.Shutdown(SocketShutdown.Both);
                     }
                     catch (SocketException) { }
-            });
-            if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
-            Application.ApplicationExit -= ApplicationExitCallback;
-            UseSocket(socket => socket.Close());
+                Application.ApplicationExit -= ApplicationExitCallback;
+                _socket.Close();
+            }
         }
 
         protected abstract void StartReceiving();
@@ -222,35 +235,28 @@ namespace AW2.Net.ConnectionUtils
             return null;
         }
 
-        private SocketAsyncEventArgs GetSendArgs(IPEndPoint remoteEndPoint)
+        private SendData GetSendData(IPEndPoint remoteEndPoint)
         {
-            SocketAsyncEventArgs sendArgs = null;
-            lock (g_sendArgs)
+            SendData sendData = null;
+            if (!g_sendDatas.TryDequeue(out sendData))
             {
-                if (g_sendArgs.Any()) sendArgs = g_sendArgs.Pop();
+                sendData = new SendData { Buffer = new byte[BUFFER_LENGTH] };
+                sendData.Writer = NetworkBinaryWriter.Create(new MemoryStream(sendData.Buffer));
             }
-            if (sendArgs == null)
-            {
-                sendArgs = new SocketAsyncEventArgs();
-                sendArgs.Completed += SendToCompleted;
-                sendArgs.SetBuffer(new byte[BUFFER_LENGTH], 0, BUFFER_LENGTH);
-            }
-            // Note: SocketAsyncEventArgs.RemoteEndPoint is ignored by TCP sockets
-            sendArgs.RemoteEndPoint = remoteEndPoint;
-            return sendArgs;
+            sendData.Writer.Seek(0, SeekOrigin.Begin);
+            sendData.RemoteEndPoint = remoteEndPoint; // Note: SendData.RemoteEndPoint is ignored by TCP sockets
+            return sendData;
         }
 
         private void AddToSendBuffer(Action<NetworkBinaryWriter> writeData, IPEndPoint remoteEndPoint)
         {
-            Tuple<SocketAsyncEventArgs, NetworkBinaryWriter> sendArgsAndWriter = null;
-            if (!_sendCache.TryGetValue(remoteEndPoint, out sendArgsAndWriter))
+            SendData sendData = null;
+            if (!_sendCache.TryGetValue(remoteEndPoint, out sendData))
             {
-                var sendArgs = GetSendArgs(remoteEndPoint);
-                var writer = NetworkBinaryWriter.Create(new MemoryStream(sendArgs.Buffer));
-                sendArgsAndWriter = Tuple.Create(sendArgs, writer);
-                _sendCache[remoteEndPoint] = sendArgsAndWriter;
+                sendData = GetSendData(remoteEndPoint);
+                _sendCache[remoteEndPoint] = sendData;
             }
-            writeData(sendArgsAndWriter.Item2);
+            writeData(sendData.Writer);
         }
 
         private byte[] GetMACAddress()
@@ -263,13 +269,27 @@ namespace AW2.Net.ConnectionUtils
             return addresses.First();
         }
 
-        private void SendToCompleted(object sender, SocketAsyncEventArgs args)
+        /// <summary>
+        /// Called from a worker thread in <see cref="WorkQueue<SendData>"/>.
+        /// </summary>
+        private void SendItem(SendData sendData)
         {
-            CheckSocketError(args);
-            lock (g_sendArgs)
+            try
             {
-                g_sendArgs.Push(args);
+                UseSocket(socket =>
+                {
+                    var sentByteCount = socket.SendTo(sendData.Buffer, sendData.ByteCount, SocketFlags.None, sendData.RemoteEndPoint);
+                    if (sentByteCount != sendData.ByteCount) throw new NetworkException("Only " + sentByteCount + " bytes of " + sendData.ByteCount + " were sent");
+                });
             }
+            catch (SocketException e)
+            {
+                if (e.SocketErrorCode == SocketError.ConnectionReset)
+                    Errors.Do(queue => queue.Enqueue(string.Format("Connection reset during send")));
+                else
+                    Errors.Do(queue => queue.Enqueue(string.Format("Error during send: {0}", e.SocketErrorCode)));
+            }
+            g_sendDatas.Enqueue(sendData);
         }
 
         private void ApplicationExitCallback(object caller, EventArgs args)

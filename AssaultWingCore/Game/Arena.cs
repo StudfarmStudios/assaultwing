@@ -268,6 +268,10 @@ namespace AW2.Game
 
         public void FinalizeGobUpdatesOnClient(HashSet<GobUpdateData> gobsToUpdate, int frameCount)
         {
+            if (frameCount > 5){
+                Log.Write("!!! Arena.FrameNumber={0}, frameCount={1} equals {2} ms lag",
+                    FrameNumber, frameCount, Game.TargetElapsedTime.Multiply(frameCount).TotalMilliseconds);
+            }
             var frozenGobs = new List<Tuple<Gob, object>>();
             foreach (var gob in GobsInRelevantLayers)
             {

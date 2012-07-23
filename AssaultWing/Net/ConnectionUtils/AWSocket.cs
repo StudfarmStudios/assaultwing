@@ -1,4 +1,5 @@
-﻿﻿using System;
+﻿#define DEBUG_PRINT_SENDING
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,17 @@ namespace AW2.Net.ConnectionUtils
         private static readonly IPEndPoint UNSPECIFIED_IP_ENDPOINT = new IPEndPoint(IPAddress.Any, 0);
 
         private static Stack<SocketAsyncEventArgs> g_sendArgs = new Stack<SocketAsyncEventArgs>();
+#if DEBUG_PRINT_SENDING
+        private static System.Diagnostics.Stopwatch g_stopWatch = new System.Diagnostics.Stopwatch();
+        private static RunningSequence<TimeSpan> g_sendTimes = new RunningSequence<TimeSpan>(TimeSpan.FromSeconds(1),
+            timeSpans => new TimeSpan((long)timeSpans.Select(x => x.Ticks).Sum()),
+            (timeSpan, divisor) => new TimeSpan((long)(timeSpan.Ticks / divisor)));
+        private static RunningSequence<float> g_sendCounts = new RunningSequence<float>(TimeSpan.FromSeconds(1),
+            Enumerable.Sum, (x, y) => x / y);
+        private static AWTimer g_debugTimer = new AWTimer(
+            () => AW2.Core.AssaultWing.Instance == null ? TimeSpan.Zero : AW2.Core.AssaultWing.Instance.GameTime.TotalRealTime,
+            TimeSpan.FromSeconds(1));
+#endif
 
         protected MessageHandler _messageHandler;
         private Socket _socket;
@@ -38,6 +50,13 @@ namespace AW2.Net.ConnectionUtils
         private byte[] _macAddress;
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
+
+#if DEBUG_PRINT_SENDING
+        static AWSocket()
+        {
+            g_stopWatch.Start();
+        }
+#endif
 
         /// <summary>
         /// The local end point of the socket in this host's local network.
@@ -127,6 +146,10 @@ namespace AW2.Net.ConnectionUtils
                 var bytesWritten = (int)sendArgsAndWriter.Item2.GetBaseStream().Position;
                 var sendArgs = sendArgsAndWriter.Item1;
                 sendArgs.SetBuffer(0, bytesWritten);
+#if DEBUG_PRINT_SENDING
+                lock (g_sendCounts) g_sendCounts.Add(1, g_stopWatch.Elapsed);
+                sendArgs.UserToken = g_stopWatch.Elapsed;
+#endif
                 UseSocket(socket =>
                 {
                     var isPending = socket.SendToAsync(sendArgs);
@@ -265,6 +288,16 @@ namespace AW2.Net.ConnectionUtils
 
         private void SendToCompleted(object sender, SocketAsyncEventArgs args)
         {
+#if DEBUG_PRINT_SENDING
+            var now = g_stopWatch.Elapsed;
+            var elapsedTime = now - (TimeSpan)args.UserToken;
+            lock (g_sendTimes) lock (g_sendCounts)
+                {
+                    g_sendTimes.Add(elapsedTime, now);
+                    if (g_debugTimer.IsElapsed) Log.Write("!!! SendCount={0}, SendTimes Min={1} Max={2} Avg={3}",
+                        g_sendCounts.Sum, g_sendTimes.Min, g_sendTimes.Max, g_sendTimes.Average);
+                }
+#endif
             CheckSocketError(args);
             lock (g_sendArgs)
             {

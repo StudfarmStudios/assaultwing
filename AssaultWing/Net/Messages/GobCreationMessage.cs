@@ -7,8 +7,7 @@ using AW2.Helpers.Serialization;
 namespace AW2.Net.Messages
 {
     /// <summary>
-    /// A message from a game server to a game client notifying
-    /// of the creation of a gob while gameplay is in progress.
+    /// A message from a game server to a game client notifying of the creation of some gobs.
     /// </summary>
     [MessageType(0x23, false)]
     public class GobCreationMessage : GameplayMessage

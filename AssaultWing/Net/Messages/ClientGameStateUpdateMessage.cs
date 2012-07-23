@@ -7,10 +7,11 @@ namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game client to a game server containing
-    /// the state of the controls of a player at the client.
+    /// the state of the controls of a player at the client
+    /// and the client-controlled state of his minions.
     /// </summary>
     [MessageType(0x22, false)]
-    public class PlayerControlsMessage : GameplayMessage
+    public class ClientGameStateUpdateMessage : GobUpdateMessage
     {
         /// <summary>
         /// Identifier of the player the message is about.
@@ -34,7 +35,7 @@ namespace AW2.Net.Messages
             ControlStates[(int)controlType] = state;
         }
 
-        public PlayerControlsMessage()
+        public ClientGameStateUpdateMessage()
         {
             ControlStates = new ControlState[PlayerControls.CONTROL_COUNT];
         }
@@ -45,7 +46,6 @@ namespace AW2.Net.Messages
             using (new NetworkProfilingScope(this))
 #endif
             {
-
                 base.SerializeBody(writer);
                 checked
                 {

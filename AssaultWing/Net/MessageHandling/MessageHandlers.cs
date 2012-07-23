@@ -79,7 +79,7 @@ namespace AW2.Net.MessageHandling
         public IEnumerable<MessageHandlerBase> GetServerGameplayHandlers()
         {
             var networkEngine = Game.NetworkEngine;
-            yield return new MessageHandler<PlayerControlsMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerControlsMessage);
+            yield return new MessageHandler<ClientGameStateUpdateMessage>(MessageHandlerBase.SourceType.Client, HandleClientGameStateUpdateMessage);
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Client, networkEngine, HandleGobUpdateMessageOnServer);
         }
 
@@ -184,7 +184,7 @@ namespace AW2.Net.MessageHandling
             Game.FinishArena();
         }
 
-        private void HandlePlayerControlsMessage(PlayerControlsMessage mess)
+        private void HandleClientGameStateUpdateMessage(ClientGameStateUpdateMessage mess)
         {
             var player = Game.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
             if (player == null || player.ConnectionID != mess.ConnectionID)

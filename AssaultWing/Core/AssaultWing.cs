@@ -549,7 +549,8 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Server) return;
             SendGobCreationMessageOnServer();
             SendGameSettingsOnServer();
-            SendGobUpdatesToRemote(DataEngine.Arena.GobsInRelevantLayers, SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
+            SendGobUpdatesToRemote(new GobUpdateMessage(), DataEngine.Arena.GobsInRelevantLayers,
+                SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
             SendPlayerUpdatesOnServer();
             SendGobDeletionsOnServer();
             SendArenaStatisticsOnServer();
@@ -557,11 +558,12 @@ namespace AW2.Core
 
         private void SendMessagesOnClient()
         {
-            if (NetworkMode != NetworkMode.Client || !NetworkEngine.IsConnectedToGameServer) return;
+            if (NetworkMode != NetworkMode.Client || !NetworkEngine.IsConnectedToGameServer || !IsShipControlsEnabled) return;
             SendGameSettingsOnClient();
-            SendGobUpdatesToRemote(DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
+            var message = new ClientGameStateUpdateMessage();
+            SetPlayerControls(message);
+            SendGobUpdatesToRemote(message, DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
                 SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
-            SendPlayerUpdatesOnClient();
         }
 
         private void SendArenaStatisticsOnServer()
@@ -598,17 +600,13 @@ namespace AW2.Core
             }
         }
 
-        private void SendPlayerUpdatesOnClient()
+        private void SetPlayerControls(ClientGameStateUpdateMessage message)
         {
-            if (!IsShipControlsEnabled) return;
-            foreach (var player in DataEngine.Players.Where(plr => plr.IsLocal && plr.ID != Spectator.UNINITIALIZED_ID))
-            {
-                var message = new PlayerControlsMessage();
-                message.PlayerID = player.ID;
-                foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
-                    message.SetControlState(controlType, player.Controls[controlType].State);
-                NetworkEngine.GameServerConnection.Send(message);
-            }
+            var player = DataEngine.LocalPlayer;
+            if (player == null || player.ID == Spectator.UNINITIALIZED_ID) return;
+            message.PlayerID = player.ID;
+            foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
+                message.SetControlState(controlType, player.Controls[controlType].State);
         }
 
         private void SendGobCreationMessageOnServer()
@@ -629,11 +627,10 @@ namespace AW2.Core
             }
         }
 
-        private void SendGobUpdatesToRemote(IEnumerable<Gob> gobs, SerializationModeFlags serializationMode, IEnumerable<Connection> connections)
+        private void SendGobUpdatesToRemote(GobUpdateMessage gobMessage, IEnumerable<Gob> gobs, SerializationModeFlags serializationMode, IEnumerable<Connection> connections)
         {
             if (serializationMode.HasFlag(SerializationModeFlags.VaryingDataFromServer) && (DataEngine.ArenaFrameCount % 3) != 0) return;
             var now = DataEngine.ArenaTotalTime;
-            var gobMessage = new GobUpdateMessage();
             var debugMessage = gobs.OfType<AW2.Game.Gobs.Wall>().Any(wall => wall.ForcedNetworkUpdate)
                 ? new System.Text.StringBuilder("Gob update ")
                 : null; // DEBUG: catch a rare crash that seems to happen only when serializing walls.

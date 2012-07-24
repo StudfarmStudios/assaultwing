@@ -162,7 +162,12 @@ namespace AW2.Net.MessageHandling
                 spectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
                 spectator.ID = mess.SpectatorID;
                 // If we reconnected, remove the duplicate spectator that was sent by the server earlier.
-                Game.DataEngine.Spectators.Remove(spec => spec.ID == spectator.ID && spec != spectator);
+                var oldSpectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.ID == spectator.ID && spec != spectator);
+                if (oldSpectator != null)
+                {
+                    spectator.ReconnectOnClient(oldSpectator);
+                    Game.DataEngine.Spectators.Remove(oldSpectator);
+                }
             }
             else
                 Game.NetworkingErrors.Enqueue(string.Format("Server refused {0}:\n{1}", spectator.Name, mess.FailMessage)); // TODO: Proper line wrapping in dialogs

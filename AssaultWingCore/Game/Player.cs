@@ -324,6 +324,15 @@ namespace AW2.Game
             ship.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
         }
 
+        public override void ReconnectOnClient(Spectator oldSpectator)
+        {
+            var oldPlayer = oldSpectator as Player;
+            if (oldPlayer == null || oldPlayer.Ship == null) return;
+            oldPlayer.Ship.Death -= oldPlayer.ShipDeathHandler;
+            oldPlayer.Ship.Death -= MinionDeathHandler.OnMinionDeath;
+            SeizeShip(oldPlayer.Ship);
+        }
+
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING

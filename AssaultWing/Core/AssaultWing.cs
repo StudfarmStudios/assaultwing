@@ -740,7 +740,7 @@ namespace AW2.Core
         public void ReconnectRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
         {
             Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
-            oldSpectator.Reconnect(newSpectator);
+            oldSpectator.ReconnectOnServer(newSpectator);
             Stats.Send(new { AddPlayer = oldSpectator.GetStats().LoginToken, Name = oldSpectator.Name });
         }
 

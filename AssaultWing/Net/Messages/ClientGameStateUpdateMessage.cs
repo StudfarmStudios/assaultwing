@@ -30,9 +30,9 @@ namespace AW2.Net.Messages
             return ControlStates[(int)controlType];
         }
 
-        public void SetControlState(PlayerControlType controlType, ControlState state)
+        public void AddControlState(PlayerControlType controlType, ControlState state)
         {
-            ControlStates[(int)controlType] = state;
+            ControlStates[(int)controlType] = ControlStates[(int)controlType].Add(state);
         }
 
         public ClientGameStateUpdateMessage()

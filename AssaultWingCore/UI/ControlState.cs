@@ -28,6 +28,15 @@ namespace AW2.UI
             Pulse = pulse;
         }
 
+        /// <summary>
+        /// Merge two ControlStates together additively;
+        /// control pulses are OR'ed; control forces are MAX'ed.
+        /// </summary>
+        public ControlState Add(ControlState other)
+        {
+            return new ControlState(Math.Max(Force, other.Force), Pulse || other.Pulse);
+        }
+
         public override string ToString()
         {
             return string.Format("{0}/{1}", Pulse, Force);

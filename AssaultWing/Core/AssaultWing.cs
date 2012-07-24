@@ -27,6 +27,7 @@ namespace AW2.Core
         private AWTimer _frameNumberSynchronizationTimer;
         private byte _nextArenaID;
         private GobDeletionMessage _pendingGobDeletionMessage;
+        private ClientGameStateUpdateMessage _pendingClientGameStateUpdateMessage;
         private List<Tuple<GobCreationMessage, int>> _gobCreationMessages = new List<Tuple<GobCreationMessage, int>>();
         private List<CollisionEvent> _collisionEventsToRemote;
         private byte[] _debugBuffer = new byte[65536]; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
@@ -206,11 +207,16 @@ namespace AW2.Core
         {
             Stats.BasicInfoSent = false;
             WebData.Feed("2" + (int)NetworkMode);
-            if (NetworkMode == NetworkMode.Server)
+            switch (NetworkMode)
             {
-                MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-                _pendingGobDeletionMessage = new GobDeletionMessage();
-                DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
+                case NetworkMode.Server:
+                    MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+                    _pendingGobDeletionMessage = new GobDeletionMessage();
+                    DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
+                    break;
+                case NetworkMode.Client:
+                    _pendingClientGameStateUpdateMessage = new ClientGameStateUpdateMessage();
+                    break;
             }
             Logic.StartArena();
         }
@@ -549,8 +555,9 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Server) return;
             SendGobCreationMessageOnServer();
             SendGameSettingsOnServer();
-            SendGobUpdatesToRemote(new GobUpdateMessage(), DataEngine.Arena.GobsInRelevantLayers,
-                SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
+            if ((DataEngine.ArenaFrameCount % 3) == 0)
+                SendGobUpdatesToRemote(new GobUpdateMessage(), DataEngine.Arena.GobsInRelevantLayers,
+                    SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
             SendPlayerUpdatesOnServer();
             SendGobDeletionsOnServer();
             SendArenaStatisticsOnServer();
@@ -560,10 +567,14 @@ namespace AW2.Core
         {
             if (NetworkMode != NetworkMode.Client || !NetworkEngine.IsConnectedToGameServer || !IsShipControlsEnabled) return;
             SendGameSettingsOnClient();
-            var message = new ClientGameStateUpdateMessage();
-            SetPlayerControls(message);
-            SendGobUpdatesToRemote(message, DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
-                SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
+            SetPlayerControls(_pendingClientGameStateUpdateMessage);
+            if ((DataEngine.ArenaFrameCount % 2) == 0)
+            {
+                SendGobUpdatesToRemote(_pendingClientGameStateUpdateMessage,
+                    DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
+                    SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
+                _pendingClientGameStateUpdateMessage = new ClientGameStateUpdateMessage();
+            }
         }
 
         private void SendArenaStatisticsOnServer()
@@ -606,7 +617,7 @@ namespace AW2.Core
             if (player == null || player.ID == Spectator.UNINITIALIZED_ID) return;
             message.PlayerID = player.ID;
             foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
-                message.SetControlState(controlType, player.Controls[controlType].State);
+                message.AddControlState(controlType, player.Controls[controlType].State);
         }
 
         private void SendGobCreationMessageOnServer()
@@ -629,7 +640,6 @@ namespace AW2.Core
 
         private void SendGobUpdatesToRemote(GobUpdateMessage gobMessage, IEnumerable<Gob> gobs, SerializationModeFlags serializationMode, IEnumerable<Connection> connections)
         {
-            if (serializationMode.HasFlag(SerializationModeFlags.VaryingDataFromServer) && (DataEngine.ArenaFrameCount % 3) != 0) return;
             var now = DataEngine.ArenaTotalTime;
             var debugMessage = gobs.OfType<AW2.Game.Gobs.Wall>().Any(wall => wall.ForcedNetworkUpdate)
                 ? new System.Text.StringBuilder("Gob update ")

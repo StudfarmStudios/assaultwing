@@ -35,8 +35,8 @@ namespace AW2.Net.ConnectionUtils
         private static RunningSequence<TimeSpan> g_sendTimes = new RunningSequence<TimeSpan>(TimeSpan.FromSeconds(1),
             timeSpans => new TimeSpan((long)timeSpans.Select(x => x.Ticks).Sum()),
             (timeSpan, divisor) => new TimeSpan((long)(timeSpan.Ticks / divisor)));
-        private static RunningSequence<float> g_sendCounts = new RunningSequence<float>(TimeSpan.FromSeconds(1),
-            Enumerable.Sum, (x, y) => x / y);
+        private static RunningSequence<float> g_sendCounts = new RunningSequence<float>(TimeSpan.FromSeconds(1), Enumerable.Sum, (x, y) => x / y);
+        private static RunningSequence<float> g_pendingSendCounts = new RunningSequence<float>(TimeSpan.FromSeconds(1), Enumerable.Sum, (x, y) => x / y);
         private static AWTimer g_debugTimer = new AWTimer(
             () => AW2.Core.AssaultWing.Instance == null ? TimeSpan.Zero : AW2.Core.AssaultWing.Instance.GameTime.TotalRealTime,
             TimeSpan.FromSeconds(1));
@@ -154,6 +154,9 @@ namespace AW2.Net.ConnectionUtils
                 {
                     var isPending = socket.SendToAsync(sendArgs);
                     if (!isPending) SendToCompleted(socket, sendArgs);
+#if DEBUG_PRINT_SENDING
+                    else lock (g_pendingSendCounts) g_pendingSendCounts.Add(1, g_stopWatch.Elapsed);
+#endif
                 });
             }
             _sendCache.Clear();
@@ -291,12 +294,13 @@ namespace AW2.Net.ConnectionUtils
 #if DEBUG_PRINT_SENDING
             var now = g_stopWatch.Elapsed;
             var elapsedTime = now - (TimeSpan)args.UserToken;
-            lock (g_sendTimes) lock (g_sendCounts)
-                {
-                    g_sendTimes.Add(elapsedTime, now);
-                    if (g_debugTimer.IsElapsed) Log.Write("!!! SendCount={0}, SendTimes Min={1} Max={2} Avg={3}",
-                        g_sendCounts.Sum, g_sendTimes.Min, g_sendTimes.Max, g_sendTimes.Average);
-                }
+            lock (g_sendTimes) lock (g_sendCounts) lock (g_pendingSendCounts)
+            {
+                g_sendTimes.Add(elapsedTime, now);
+                if (g_debugTimer.IsElapsed) Log.Write("!!! SendCount={0}, Pending={4:P2}, SendTimes Min={1} Max={2} Avg={3}",
+                    g_sendCounts.Sum, g_sendTimes.Min, g_sendTimes.Max, g_sendTimes.Average,
+                    g_pendingSendCounts.Sum / g_sendCounts.Sum);
+            }
 #endif
             CheckSocketError(args);
             lock (g_sendArgs)

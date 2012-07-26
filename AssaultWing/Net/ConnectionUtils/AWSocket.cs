@@ -32,13 +32,22 @@ namespace AW2.Net.ConnectionUtils
         private static Stack<SocketAsyncEventArgs> g_sendArgs = new Stack<SocketAsyncEventArgs>();
 #if DEBUG_PRINT_SENDING
         private static System.Diagnostics.Stopwatch g_stopWatch = new System.Diagnostics.Stopwatch();
-        private static RunningSequence<TimeSpan> g_sendTimes = new RunningSequence<TimeSpan>(TimeSpan.FromSeconds(1),
+        private static RunningSequence<TimeSpan> g_sendTimesUDP = new RunningSequence<TimeSpan>(TimeSpan.FromSeconds(1),
             timeSpans => new TimeSpan((long)timeSpans.Select(x => x.Ticks).Sum()),
             (timeSpan, divisor) => new TimeSpan((long)(timeSpan.Ticks / divisor)));
-        private static RunningSequence<float> g_sendCounts = new RunningSequence<float>(TimeSpan.FromSeconds(1), Enumerable.Sum, (x, y) => x / y);
+        private static RunningSequence<TimeSpan> g_sendTimesTCP = new RunningSequence<TimeSpan>(TimeSpan.FromSeconds(1),
+            timeSpans => new TimeSpan((long)timeSpans.Select(x => x.Ticks).Sum()),
+            (timeSpan, divisor) => new TimeSpan((long)(timeSpan.Ticks / divisor)));
+        private static RunningSequence<float> g_sendCountsUDP = new RunningSequence<float>(TimeSpan.FromSeconds(1), Enumerable.Sum, (x, y) => x / y);
+        private static RunningSequence<float> g_sendCountsTCP = new RunningSequence<float>(TimeSpan.FromSeconds(1), Enumerable.Sum, (x, y) => x / y);
         private static AWTimer g_debugTimer = new AWTimer(
             () => AW2.Core.AssaultWing.Instance == null ? TimeSpan.Zero : AW2.Core.AssaultWing.Instance.GameTime.TotalRealTime,
             TimeSpan.FromSeconds(1));
+        private struct ProtocolAndSendTime
+        {
+            public ProtocolType Protocol;
+            public TimeSpan SendTime;
+        }
 #endif
 
         protected MessageHandler _messageHandler;
@@ -147,8 +156,10 @@ namespace AW2.Net.ConnectionUtils
                 sendArgs.SetBuffer(0, bytesWritten);
 #if DEBUG_PRINT_SENDING
                 var now = g_stopWatch.Elapsed;
-                lock (g_sendCounts) g_sendCounts.Add(1, now);
-                sendArgs.UserToken = now;
+                var sendCounts = this is AWUDPSocket ? g_sendCountsUDP : g_sendCountsTCP;
+                var protocol = this is AWUDPSocket ? ProtocolType.Udp : ProtocolType.Tcp;
+                lock (g_stopWatch) sendCounts.Add(1, now);
+                sendArgs.UserToken = new ProtocolAndSendTime { Protocol = protocol, SendTime = now };
 #endif
                 UseSocket(socket =>
                 {
@@ -289,13 +300,26 @@ namespace AW2.Net.ConnectionUtils
         private void SendToCompleted(object sender, SocketAsyncEventArgs args)
         {
 #if DEBUG_PRINT_SENDING
-            var now = g_stopWatch.Elapsed;
-            var elapsedTime = now - (TimeSpan)args.UserToken;
-            lock (g_sendTimes) lock (g_sendCounts)
+            try
             {
-                g_sendTimes.Add(elapsedTime, now);
-                if (g_debugTimer.IsElapsed) Log.Write("!!! SendCount={0}, SendTimes Min={1} Max={2} Avg={3}",
-                    g_sendCounts.Sum, g_sendTimes.Min, g_sendTimes.Max, g_sendTimes.Average);
+                var protocolAndSendTime = (ProtocolAndSendTime)args.UserToken;
+                Func<TimeSpan, string> ms = timeSpan => string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} ms", timeSpan.TotalMilliseconds);
+                lock (g_stopWatch)
+                {
+                    var now = g_stopWatch.Elapsed;
+                    var elapsedTime = now - protocolAndSendTime.SendTime;
+                    if (protocolAndSendTime.Protocol == ProtocolType.Udp) g_sendTimesUDP.Add(elapsedTime, now);
+                    if (protocolAndSendTime.Protocol == ProtocolType.Tcp) g_sendTimesTCP.Add(elapsedTime, now);
+                    if (g_debugTimer.IsElapsed) Log.Write(
+                        "!!! UDP: {0} sends took Min={1} Max={2} Avg={3}" +
+                        "\t  TCP: {4} sends took Min={5} Max={6} Avg={7}",
+                        g_sendCountsUDP.Sum, ms(g_sendTimesUDP.Min), ms(g_sendTimesUDP.Max), ms(g_sendTimesUDP.Average),
+                        g_sendCountsTCP.Sum, ms(g_sendTimesTCP.Min), ms(g_sendTimesTCP.Max), ms(g_sendTimesTCP.Average));
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write("Error during debug print", e);
             }
 #endif
             CheckSocketError(args);

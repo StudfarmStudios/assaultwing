@@ -22,10 +22,10 @@ namespace AW2.Helpers
         private Func<T, float, T> _divide;
         private TimeSpan _lastEntryTime;
 
-        public T Min { get { return RawValues.Min(); } }
-        public T Max { get { return RawValues.Max(); } }
+        public T Min { get { return RawValues.Any() ? RawValues.Min() : default(T); } }
+        public T Max { get { return RawValues.Any() ? RawValues.Max() : default(T); } }
         public T Sum { get { return _sum(RawValues); } }
-        public T Average { get { return _divide(Sum, RawValues.Count()); } }
+        public T Average { get { return RawValues.Any() ? _divide(Sum, RawValues.Count()) : default(T); } }
 
         private IEnumerable<T> RawValues { get { return _values.Select(x => x.Value); } }
 

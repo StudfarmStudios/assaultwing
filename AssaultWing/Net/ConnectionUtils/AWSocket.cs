@@ -1,5 +1,6 @@
 ﻿#define DEBUG_PRINT_SENDING
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace AW2.Net.ConnectionUtils
         private static readonly TimeSpan RECEIVE_TIMEOUT = TimeSpan.FromSeconds(10);
         private static readonly IPEndPoint UNSPECIFIED_IP_ENDPOINT = new IPEndPoint(IPAddress.Any, 0);
 
-        private static Stack<SocketAsyncEventArgs> g_sendArgs = new Stack<SocketAsyncEventArgs>();
+        private static ConcurrentStack<SocketAsyncEventArgs> g_sendArgs = new ConcurrentStack<SocketAsyncEventArgs>();
 #if DEBUG_PRINT_SENDING
         private static System.Diagnostics.Stopwatch g_stopWatch = new System.Diagnostics.Stopwatch();
         private static RunningSequence<TimeSpan> g_sendTimesUDP = new RunningSequence<TimeSpan>(TimeSpan.FromSeconds(1),
@@ -201,10 +202,7 @@ namespace AW2.Net.ConnectionUtils
 
         protected void UseSocket(Action<Socket> action)
         {
-            lock (_socket)
-            {
-                if (!IsDisposed) action(_socket);
-            }
+            if (!IsDisposed) action(_socket);
         }
 
         private static void ConfigureSocket(Socket socket)
@@ -259,11 +257,7 @@ namespace AW2.Net.ConnectionUtils
         private SocketAsyncEventArgs GetSendArgs(IPEndPoint remoteEndPoint)
         {
             SocketAsyncEventArgs sendArgs = null;
-            lock (g_sendArgs)
-            {
-                if (g_sendArgs.Any()) sendArgs = g_sendArgs.Pop();
-            }
-            if (sendArgs == null)
+            if (!g_sendArgs.TryPop(out sendArgs))
             {
                 sendArgs = new SocketAsyncEventArgs();
                 sendArgs.Completed += SendToCompleted;
@@ -323,10 +317,7 @@ namespace AW2.Net.ConnectionUtils
             }
 #endif
             CheckSocketError(args);
-            lock (g_sendArgs)
-            {
-                g_sendArgs.Push(args);
-            }
+            g_sendArgs.Push(args);
         }
 
         private void ApplicationExitCallback(object caller, EventArgs args)

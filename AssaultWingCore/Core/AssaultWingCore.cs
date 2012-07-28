@@ -46,7 +46,6 @@ namespace AW2.Core
         /// </summary>
         public static AssaultWingCore Instance { get; set; }
 
-        public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; set; }
         public CommandLineOptions CommandLineOptions { get; private set; }
         public DataEngine DataEngine { get; private set; }
@@ -88,7 +87,6 @@ namespace AW2.Core
             : base(graphicsDeviceService)
         {
             Log.Write("Assault Wing version " + MiscHelper.Version);
-            ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             CommandLineOptions = args;
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);

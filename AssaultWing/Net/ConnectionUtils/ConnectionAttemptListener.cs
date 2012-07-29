@@ -49,7 +49,6 @@ namespace AW2.Net.ConnectionUtils
         {
             try
             {
-                CheckThread();
                 if (_serverSocket != null) throw new InvalidOperationException("Already listening to incoming connections");
                 CreateServerSocket(tcpPort);
                 if (StaticPortMapper.IsSupported)
@@ -90,7 +89,6 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public void StopListening()
         {
-            CheckThread();
             if (StaticPortMapper.IsSupported)
             {
                 Log.Write("Removing previous UPnP port mappings");
@@ -118,12 +116,6 @@ namespace AW2.Net.ConnectionUtils
                 serverSocketToClose.Close();
             }
             _listenResult = null;
-        }
-
-        private static void CheckThread()
-        {
-            if (Thread.CurrentThread.ManagedThreadId != AssaultWingCore.Instance.ManagedThreadID)
-                throw new InvalidOperationException("Method called from outside the main thread");
         }
 
         private void CreateServerSocket(int port)

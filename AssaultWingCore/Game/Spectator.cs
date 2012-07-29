@@ -143,12 +143,20 @@ namespace AW2.Game
         /// Copies connection information from a new instance. Use this method on a game server
         /// when a spectator on a game client reconnects.
         /// </summary>
-        public void Reconnect(Spectator newSpectator)
+        public void ReconnectOnServer(Spectator newSpectator)
         {
             ConnectionID = newSpectator.ConnectionID;
             ConnectionStatus = ConnectionStatusType.Remote;
             StatsData = newSpectator.StatsData;
             ClientUpdateRequest |= ClientUpdateType.ToEveryone;
+        }
+
+        /// <summary>
+        /// Steals minion ownership from the old spectator. Use this method on a game client
+        /// when the spectator has reconnected.
+        /// </summary>
+        public virtual void ReconnectOnClient(Spectator oldSpectator)
+        {
         }
 
         /// <summary>

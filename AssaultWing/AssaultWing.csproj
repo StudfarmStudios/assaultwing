@@ -214,7 +214,7 @@
     <Compile Include="Net\Messages\GobUpdateMessage.cs" />
     <Compile Include="Net\Messages\PingReplyMessage.cs" />
     <Compile Include="Net\Messages\PingRequestMessage.cs" />
-    <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
+    <Compile Include="Net\Messages\ClientGameStateUpdateMessage.cs" />
     <Compile Include="Net\Messages\PlayerDeletionMessage.cs" />
     <Compile Include="Net\Messages\PlayerMessageMessage.cs" />
     <Compile Include="Net\Messages\SpectatorSettingsReply.cs" />

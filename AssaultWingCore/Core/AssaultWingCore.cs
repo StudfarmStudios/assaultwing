@@ -24,8 +24,8 @@ namespace AW2.Core
         #region AssaultWing fields
 
         private UIEngineImpl _uiEngine;
-        private TimeSpan _lastFramerateCheck;
-        private int _framesSinceLastCheck;
+        private AWTimer _framerateTimer;
+        private RunningSequenceSingle _frameDraws;
         private bool _arenaFinished;
 
         #endregion AssaultWing fields
@@ -46,7 +46,6 @@ namespace AW2.Core
         /// </summary>
         public static AssaultWingCore Instance { get; set; }
 
-        public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; set; }
         public CommandLineOptions CommandLineOptions { get; private set; }
         public DataEngine DataEngine { get; private set; }
@@ -88,11 +87,12 @@ namespace AW2.Core
             : base(graphicsDeviceService)
         {
             Log.Write("Assault Wing version " + MiscHelper.Version);
-            ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             CommandLineOptions = args;
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
             NetworkMode = NetworkMode.Standalone;
+            _framerateTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
+            _frameDraws = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
             InitializeComponents();
         }
 
@@ -264,16 +264,11 @@ namespace AW2.Core
 
         public override void Draw()
         {
-            var secondsSinceLastFramerateCheck = (GameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds;
-            if (secondsSinceLastFramerateCheck < 1)
+            var now = GameTime.TotalRealTime;
+            _frameDraws.Add(1, now);
+            if (_framerateTimer.IsElapsed)
             {
-                ++_framesSinceLastCheck;
-            }
-            else
-            {
-                _lastFramerateCheck = secondsSinceLastFramerateCheck < 2
-                    ? _lastFramerateCheck + TimeSpan.FromSeconds(1)
-                    : GameTime.TotalRealTime;
+                _frameDraws.Prune(now);
                 Window.Impl.SetTitle(GetStatusText());
             }
             base.Draw();
@@ -281,12 +276,7 @@ namespace AW2.Core
 
         protected virtual string GetStatusText()
         {
-            var newStatusText = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
-            _framesSinceLastCheck = 1;
-#if DEBUG
-            if (DataEngine.ArenaFrameCount > 0)
-                newStatusText += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
-#endif
+            var newStatusText = "Assault Wing [~" + _frameDraws.Sum + " fps]";
             return newStatusText;
         }
 

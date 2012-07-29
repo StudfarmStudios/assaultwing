@@ -68,18 +68,28 @@ namespace AW2.Helpers
         [Test]
         public void TestDontSkipPastIntervals()
         {
-            AssertIsElapsed(true, 2);
-            AssertIsElapsed(true, 2);
-            AssertIsElapsed(false, 2);
+            AssertIsElapsed(true, 3);
+            AssertIsElapsed(true, 3);
+            AssertIsElapsed(true, 3);
+            AssertIsElapsed(false, 3);
         }
 
         [Test]
         public void TestSkipPastIntervals()
         {
             Timer.SkipPastIntervals = true;
+            AssertIsElapsed(true, 3);
+            AssertIsElapsed(true, 3);
+            AssertIsElapsed(false, 3);
+        }
+
+        [Test]
+        public void TestDontSkipIntervalBeginning()
+        {
+            Timer.SkipPastIntervals = true;
             AssertIsElapsed(true, 2);
-            AssertIsElapsed(false, 2);
-            AssertIsElapsed(false, 2);
+            AssertIsElapsed(true, 3.2);
+            AssertIsElapsed(true, 4.1);
         }
     }
 }

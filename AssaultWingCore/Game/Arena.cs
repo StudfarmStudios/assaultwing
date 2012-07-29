@@ -103,6 +103,7 @@ namespace AW2.Game
         private Vector2 _gravity;
 
         private List<SoundInstance> _ambientSounds = new List<SoundInstance>();
+        private RunningSequenceSingle _gobUpdateLags = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
 
         #endregion General fields
 
@@ -268,6 +269,7 @@ namespace AW2.Game
 
         public void FinalizeGobUpdatesOnClient(HashSet<GobUpdateData> gobsToUpdate, int frameCount)
         {
+            if (Game.Settings.Net.LagLog) _gobUpdateLags.Add(frameCount, Game.GameTime.TotalRealTime);
             var frozenGobs = new List<Tuple<Gob, object>>();
             foreach (var gob in GobsInRelevantLayers)
             {
@@ -278,6 +280,13 @@ namespace AW2.Game
             for (int i = 0; i < frameCount; i++) Update();
             foreach (var tuple in frozenGobs) tuple.Item1.Body.RestoreTemporaryStatic(tuple.Item2);
             foreach (var data in gobsToUpdate) data.Gob.SmoothJitterOnClient(data);
+        }
+
+        public string GetDebugPrintLagStringOrNull()
+        {
+            var gobUpdateLags = _gobUpdateLags.Prune(Game.GameTime.TotalRealTime);
+            return gobUpdateLags.Count == 0 ? null : string.Format("{0} updates' frame lag Min={1} Max={2} Avg={3}",
+                gobUpdateLags.Count, gobUpdateLags.Min, gobUpdateLags.Max, gobUpdateLags.Average);
         }
 
         public IEnumerable<CollisionEvent> GetCollisionEvents()

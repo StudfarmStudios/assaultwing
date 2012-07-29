@@ -28,8 +28,13 @@ namespace AW2.Helpers
             get
             {
                 if (!IsIntervalFinished) return false;
-                _currentStart = SkipPastIntervals ? _getTime() : _currentStart + _currentInterval;
+                _currentStart = _currentStart + _currentInterval;
                 _currentInterval = _regularInterval;
+                if (SkipPastIntervals)
+                {
+                    var missedTime = _getTime() - (_currentStart + _currentInterval);
+                    if (missedTime > TimeSpan.Zero) _currentStart += missedTime;
+                }
                 return true;
             }
         }

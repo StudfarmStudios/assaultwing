@@ -19,6 +19,7 @@ namespace AW2.Settings
         private TimeSpan[] _dedicatedServerArenaTimeoutMessages;
         private bool _heavyDebugLog; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
         private bool _heavyProfileLog; // DEBUG
+        private bool _lagLog; // DEBUG
 
         public string ManagementServerAddress { get { return _managementServerAddress; } set { _managementServerAddress = value; } }
         public string DataServerAddress { get { return _dataServerAddress; } set { _dataServerAddress = value; } }
@@ -35,6 +36,7 @@ namespace AW2.Settings
         public TimeSpan[] DedicatedServerArenaTimeoutMessages { get { return _dedicatedServerArenaTimeoutMessages; } set { _dedicatedServerArenaTimeoutMessages = value; } }
         public bool HeavyDebugLog { get { return _heavyDebugLog; } set { _heavyDebugLog = value; } } // DEBUG: catch a rare crash that seems to happen only when serializing walls.
         public bool HeavyProfileLog { get { return _heavyProfileLog; } set { _heavyProfileLog = value; } } // DEBUG
+        public bool LagLog { get { return _lagLog; } set { _lagLog = value; } } // DEBUG
 
         private bool IsDevPublish { get { return System.Reflection.Assembly.GetEntryAssembly().GetName().Name.EndsWith("Dev"); } }
 

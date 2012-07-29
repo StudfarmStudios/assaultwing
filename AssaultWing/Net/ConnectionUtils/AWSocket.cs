@@ -43,7 +43,7 @@ namespace AW2.Net.ConnectionUtils
         private static RunningSequence<float> g_sendCountsTCP = new RunningSequence<float>(TimeSpan.FromSeconds(1), Enumerable.Sum, (x, y) => x / y);
         private static AWTimer g_debugTimer = new AWTimer(
             () => AW2.Core.AssaultWing.Instance == null ? TimeSpan.Zero : AW2.Core.AssaultWing.Instance.GameTime.TotalRealTime,
-            TimeSpan.FromSeconds(1));
+            TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
         private struct ProtocolAndSendTime
         {
             public ProtocolType Protocol;

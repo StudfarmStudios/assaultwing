@@ -148,6 +148,7 @@ namespace AW2.Game.Gobs
         private float _weapon2ChargeSpeed;
 
         private DeviceUsages DeviceUsagesToClients;
+        private AWTimer _deviceTypeNameUpdateTimer;
 
         #endregion Ship fields related to weapons
 
@@ -349,6 +350,7 @@ namespace AW2.Game.Gobs
             base.Activate();
             _thruster.Activate(this);
             _coughEngine.Activate(this);
+            _deviceTypeNameUpdateTimer = new AWTimer(() => Game.GameTime.TotalGameTime, TimeSpan.FromSeconds(1.5));
             CreateGlow();
             IsNewborn = true;
             Game.SoundEngine.PlaySound(SHIP_BIRTH_SOUND, this);
@@ -401,12 +403,16 @@ namespace AW2.Game.Gobs
 
                 if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                 {
-                    writer.Write((byte)MathHelper.Clamp(_visualThrustForce * 255, 0, 255));
+                    var visualThrustForceAndFlags = (byte)MathHelper.Clamp(_visualThrustForce * 127, 0, 127);
+                    var updateDeviceTypes = _deviceTypeNameUpdateTimer.IsElapsed;
+                    if (updateDeviceTypes) visualThrustForceAndFlags |= 0x80;
+                    writer.Write((byte)visualThrustForceAndFlags);
                     _visualThrustForceSerializedThisFrame = true;
                     Action<ShipDevice> serializeDevice = device =>
                     {
                         var chargeData = device == null ? 0 : byte.MaxValue * device.Charge / device.ChargeMax;
                         writer.Write((byte)chargeData);
+                        if (updateDeviceTypes) writer.Write((CanonicalString)device.TypeName);
                     };
                     serializeDevice(Weapon1);
                     serializeDevice(Weapon2);
@@ -444,11 +450,17 @@ namespace AW2.Game.Gobs
 
             if (shipMode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
-                _visualThrustForce = reader.ReadByte() / 255f;
+                var visualThrustForceAndFlags = reader.ReadByte();
+                _visualThrustForce = (visualThrustForceAndFlags & 0x7f) / 127f;
+                var updateDeviceTypes = (visualThrustForceAndFlags & 0x80) != 0;
                 Action<ShipDevice> deserializeDevice = device =>
                 {
                     var data = reader.ReadByte();
-                    if (device != null) device.Charge = data * device.ChargeMax / byte.MaxValue;
+                    if (device == null) return;
+                    device.Charge = data * device.ChargeMax / byte.MaxValue;
+                    if (!updateDeviceTypes) return;
+                    var deviceTypeName = reader.ReadCanonicalString();
+                    if (deviceTypeName != device.TypeName) SetDeviceType(device.OwnerHandle, deviceTypeName);
                 };
                 deserializeDevice(Weapon1);
                 deserializeDevice(Weapon2);

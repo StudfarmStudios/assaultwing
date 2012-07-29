@@ -358,7 +358,7 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            if (Game.NetworkMode == NetworkMode.Client && Owner != null && !Owner.IsLocal && LocationPredicter == null) LocationPredicter = new ShipLocationPredicter(this);
+            SetLocationPredicter();
             UpdateRoll();
             base.Update();
             UpdateThrustInNetworkGame(); // TODO !!! Move to Thruster
@@ -639,6 +639,15 @@ namespace AW2.Game.Gobs
                 Vector2.Dot(headingNormal, Move / moveLength);
             _rollAngle.Target = -_rollMax * force * headingFactor;
             _rollAngleGoalUpdated = true;
+        }
+
+        private void SetLocationPredicter()
+        {
+            if (Game.NetworkMode == NetworkMode.Client && Owner != null)
+            {
+                if (!Owner.IsLocal && LocationPredicter == null) LocationPredicter = new ShipLocationPredicter(this);
+                if (Owner.IsLocal && LocationPredicter != null) LocationPredicter = null;
+            }
         }
 
         private void UpdateRoll()

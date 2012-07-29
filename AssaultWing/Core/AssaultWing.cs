@@ -455,8 +455,11 @@ namespace AW2.Core
         private void DebugPrintLag()
         {
             if (!Settings.Net.LagLog || !_debugPrintLagTimer.IsElapsed) return;
-            var lagStringOrNull = AW2.Net.ConnectionUtils.AWSocket.GetDebugPrintLagStringOrNull();
-            if (lagStringOrNull != null) Log.Write(lagStringOrNull);
+            var socketLag = AW2.Net.ConnectionUtils.AWSocket.GetDebugPrintLagStringOrNull();
+            var gobUpdateLag = DataEngine.Arena == null ? null : DataEngine.Arena.GetDebugPrintLagStringOrNull();
+            var lagString = gobUpdateLag != null && socketLag != null ? gobUpdateLag + "\t" + socketLag
+                : gobUpdateLag ?? socketLag ?? null;
+            if (lagString != null) Log.Write(lagString);
         }
 
         private void SynchronizeFrameNumber()

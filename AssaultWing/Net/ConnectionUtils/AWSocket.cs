@@ -202,7 +202,10 @@ namespace AW2.Net.ConnectionUtils
 
         protected void UseSocket(Action<Socket> action)
         {
-            if (!IsDisposed) action(_socket);
+            lock (_socket)
+            {
+                if (!IsDisposed) action(_socket);
+            }
         }
 
         private static void ConfigureSocket(Socket socket)

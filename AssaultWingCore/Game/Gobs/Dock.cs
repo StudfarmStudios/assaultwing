@@ -244,7 +244,7 @@ namespace AW2.Game.Gobs
         private void RepairShip(Ship ship)
         {
             if (ShouldNotifyPlayerAboutRepairPending(ship)) ship.Owner.NotifyRepairPending();
-            if (!CanRepair(ship)) return;
+            if (!CanRepair(ship) || IsFullyRepaired(ship)) return;
             if (ship.Owner != null && !_lastRepairTimes.ContainsKey(ship))
             {
                 ForcedNetworkUpdate = true;

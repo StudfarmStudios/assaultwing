@@ -24,8 +24,8 @@ namespace AW2.Core
         #region AssaultWing fields
 
         private UIEngineImpl _uiEngine;
-        private TimeSpan _lastFramerateCheck;
-        private int _framesSinceLastCheck;
+        private AWTimer _framerateTimer;
+        private RunningSequenceSingle _frameDraws;
         private bool _arenaFinished;
 
         #endregion AssaultWing fields
@@ -91,6 +91,8 @@ namespace AW2.Core
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
             NetworkMode = NetworkMode.Standalone;
+            _framerateTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
+            _frameDraws = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
             InitializeComponents();
         }
 
@@ -262,29 +264,14 @@ namespace AW2.Core
 
         public override void Draw()
         {
-            var secondsSinceLastFramerateCheck = (GameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds;
-            if (secondsSinceLastFramerateCheck < 1)
-            {
-                ++_framesSinceLastCheck;
-            }
-            else
-            {
-                _lastFramerateCheck = secondsSinceLastFramerateCheck < 2
-                    ? _lastFramerateCheck + TimeSpan.FromSeconds(1)
-                    : GameTime.TotalRealTime;
-                Window.Impl.SetTitle(GetStatusText());
-            }
+            _frameDraws.Add(1, GameTime.TotalRealTime);
+            if (_framerateTimer.IsElapsed) Window.Impl.SetTitle(GetStatusText());
             base.Draw();
         }
 
         protected virtual string GetStatusText()
         {
-            var newStatusText = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
-            _framesSinceLastCheck = 1;
-#if DEBUG
-            if (DataEngine.ArenaFrameCount > 0)
-                newStatusText += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
-#endif
+            var newStatusText = "Assault Wing [~" + _frameDraws.Sum + " fps]";
             return newStatusText;
         }
 

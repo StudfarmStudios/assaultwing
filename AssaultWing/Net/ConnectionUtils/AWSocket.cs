@@ -33,14 +33,10 @@ namespace AW2.Net.ConnectionUtils
         private static ConcurrentStack<SocketAsyncEventArgs> g_sendArgs = new ConcurrentStack<SocketAsyncEventArgs>();
 #if DEBUG_PRINT_SENDING
         private static System.Diagnostics.Stopwatch g_stopWatch = new System.Diagnostics.Stopwatch();
-        private static RunningSequence<TimeSpan> g_sendTimesUDP = new RunningSequence<TimeSpan>(TimeSpan.FromSeconds(1),
-            timeSpans => new TimeSpan((long)timeSpans.Select(x => x.Ticks).Sum()),
-            (timeSpan, divisor) => new TimeSpan((long)(timeSpan.Ticks / divisor)));
-        private static RunningSequence<TimeSpan> g_sendTimesTCP = new RunningSequence<TimeSpan>(TimeSpan.FromSeconds(1),
-            timeSpans => new TimeSpan((long)timeSpans.Select(x => x.Ticks).Sum()),
-            (timeSpan, divisor) => new TimeSpan((long)(timeSpan.Ticks / divisor)));
-        private static RunningSequence<float> g_sendCountsUDP = new RunningSequence<float>(TimeSpan.FromSeconds(1), Enumerable.Sum, (x, y) => x / y);
-        private static RunningSequence<float> g_sendCountsTCP = new RunningSequence<float>(TimeSpan.FromSeconds(1), Enumerable.Sum, (x, y) => x / y);
+        private static RunningSequenceTimeSpan g_sendTimesUDP = new RunningSequenceTimeSpan(TimeSpan.FromSeconds(1));
+        private static RunningSequenceTimeSpan g_sendTimesTCP = new RunningSequenceTimeSpan(TimeSpan.FromSeconds(1));
+        private static RunningSequenceSingle g_sendCountsUDP = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
+        private static RunningSequenceSingle g_sendCountsTCP = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
         private static AWTimer g_debugTimer = new AWTimer(
             () => AW2.Core.AssaultWing.Instance == null ? TimeSpan.Zero : AW2.Core.AssaultWing.Instance.GameTime.TotalRealTime,
             TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };

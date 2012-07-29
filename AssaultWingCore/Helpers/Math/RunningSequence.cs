@@ -44,4 +44,22 @@ namespace AW2.Helpers
             while (_values.Peek().EntryTime + _valueTimeout <= entryTime) _values.Dequeue();
         }
     }
+
+    public class RunningSequenceTimeSpan : RunningSequence<TimeSpan>
+    {
+        public RunningSequenceTimeSpan(TimeSpan valueTimeout)
+            : base(valueTimeout,
+                timeSpans => new TimeSpan((long)timeSpans.Select(x => x.Ticks).Sum()),
+                (timeSpan, divisor) => new TimeSpan((long)(timeSpan.Ticks / divisor)))
+        {
+        }
+    }
+
+    public class RunningSequenceSingle : RunningSequence<float>
+    {
+        public RunningSequenceSingle(TimeSpan valueTimeout)
+            : base(valueTimeout, Enumerable.Sum, (x, divisor) => x / divisor)
+        {
+        }
+    }
 }

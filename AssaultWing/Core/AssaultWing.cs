@@ -30,6 +30,7 @@ namespace AW2.Core
         private ClientGameStateUpdateMessage _pendingClientGameStateUpdateMessage;
         private List<Tuple<GobCreationMessage, int>> _gobCreationMessages = new List<Tuple<GobCreationMessage, int>>();
         private List<CollisionEvent> _collisionEventsToRemote;
+        private AWTimer _debugPrintLagTimer;
         private byte[] _debugBuffer = new byte[65536]; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
 
         // Debug keys, used only #if DEBUG
@@ -85,6 +86,7 @@ namespace AW2.Core
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
+            _debugPrintLagTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
@@ -106,6 +108,7 @@ namespace AW2.Core
             Logic.Update();
             UpdateCustomControls();
             UpdateDebugKeys();
+            DebugPrintLag();
         }
 
         /// <summary>
@@ -447,6 +450,13 @@ namespace AW2.Core
                 LogicEngine.Enabled = PreFrameLogicEngine.Enabled = PostFrameLogicEngine.Enabled = false;
                 _frameStep = true;
             }
+        }
+
+        private void DebugPrintLag()
+        {
+            if (!Settings.Net.LagLog || !_debugPrintLagTimer.IsElapsed) return;
+            var lagStringOrNull = AW2.Net.ConnectionUtils.AWSocket.GetDebugPrintLagStringOrNull();
+            if (lagStringOrNull != null) Log.Write(lagStringOrNull);
         }
 
         private void SynchronizeFrameNumber()

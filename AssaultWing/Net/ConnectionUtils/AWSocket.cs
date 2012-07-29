@@ -1,5 +1,4 @@
-﻿#define DEBUG_PRINT_SENDING
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -31,21 +30,17 @@ namespace AW2.Net.ConnectionUtils
         private static readonly IPEndPoint UNSPECIFIED_IP_ENDPOINT = new IPEndPoint(IPAddress.Any, 0);
 
         private static ConcurrentStack<SocketAsyncEventArgs> g_sendArgs = new ConcurrentStack<SocketAsyncEventArgs>();
-#if DEBUG_PRINT_SENDING
+
+        #region For "LagLog" debug printing
         private static System.Diagnostics.Stopwatch g_stopWatch = new System.Diagnostics.Stopwatch();
         private static RunningSequenceTimeSpan g_sendTimesUDP = new RunningSequenceTimeSpan(TimeSpan.FromSeconds(1));
         private static RunningSequenceTimeSpan g_sendTimesTCP = new RunningSequenceTimeSpan(TimeSpan.FromSeconds(1));
-        private static RunningSequenceSingle g_sendCountsUDP = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
-        private static RunningSequenceSingle g_sendCountsTCP = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
-        private static AWTimer g_debugTimer = new AWTimer(
-            () => AW2.Core.AssaultWing.Instance == null ? TimeSpan.Zero : AW2.Core.AssaultWing.Instance.GameTime.TotalRealTime,
-            TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
         private struct ProtocolAndSendTime
         {
             public ProtocolType Protocol;
             public TimeSpan SendTime;
         }
-#endif
+        #endregion
 
         protected MessageHandler _messageHandler;
         private Socket _socket;
@@ -56,12 +51,10 @@ namespace AW2.Net.ConnectionUtils
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
-#if DEBUG_PRINT_SENDING
         static AWSocket()
         {
             g_stopWatch.Start();
         }
-#endif
 
         /// <summary>
         /// The local end point of the socket in this host's local network.
@@ -104,6 +97,18 @@ namespace AW2.Net.ConnectionUtils
         }
 
         public ThreadSafeWrapper<Queue<string>> Errors { get; private set; }
+
+        public static string GetDebugPrintLagStringOrNull()
+        {
+            var now = g_stopWatch.Elapsed;
+            var sendTimesUDP = g_sendTimesUDP.Prune(now).Clone();
+            var sendTimesTCP = g_sendTimesTCP.Prune(now).Clone();
+            if (sendTimesUDP.Count == 0 && sendTimesTCP.Count == 0) return null;
+            return string.Format("UDP: {0} sends took Min={1} Max={2} Avg={3}" +
+                "\tTCP: {4} sends took Min={5} Max={6} Avg={7}",
+                sendTimesUDP.Count, sendTimesUDP.Min.Ms(), sendTimesUDP.Max.Ms(), sendTimesUDP.Average.Ms(),
+                sendTimesTCP.Count, sendTimesTCP.Min.Ms(), sendTimesTCP.Max.Ms(), sendTimesTCP.Average.Ms());
+        }
 
         /// <param name="socket">A socket to the remote host. This <see cref="AWSocket"/>
         /// instance owns the socket and will dispose of it.</param>
@@ -151,13 +156,11 @@ namespace AW2.Net.ConnectionUtils
                 var bytesWritten = (int)sendArgsAndWriter.Item2.GetBaseStream().Position;
                 var sendArgs = sendArgsAndWriter.Item1;
                 sendArgs.SetBuffer(0, bytesWritten);
-#if DEBUG_PRINT_SENDING
-                var now = g_stopWatch.Elapsed;
-                var sendCounts = this is AWUDPSocket ? g_sendCountsUDP : g_sendCountsTCP;
-                var protocol = this is AWUDPSocket ? ProtocolType.Udp : ProtocolType.Tcp;
-                lock (g_stopWatch) sendCounts.Add(1, now);
-                sendArgs.UserToken = new ProtocolAndSendTime { Protocol = protocol, SendTime = now };
-#endif
+                sendArgs.UserToken = new ProtocolAndSendTime
+                {
+                    Protocol = this is AWUDPSocket ? ProtocolType.Udp : ProtocolType.Tcp,
+                    SendTime = g_stopWatch.Elapsed,
+                };
                 UseSocket(socket =>
                 {
                     var isPending = socket.SendToAsync(sendArgs);
@@ -292,31 +295,29 @@ namespace AW2.Net.ConnectionUtils
 
         private void SendToCompleted(object sender, SocketAsyncEventArgs args)
         {
-#if DEBUG_PRINT_SENDING
+            SendToCompleted_DebugPrintLag(args);
+            CheckSocketError(args);
+            g_sendArgs.Push(args);
+        }
+
+        private static void SendToCompleted_DebugPrintLag(SocketAsyncEventArgs args)
+        {
+            if (!AW2.Core.AssaultWing.Instance.Settings.Net.LagLog) return;
             try
             {
                 var protocolAndSendTime = (ProtocolAndSendTime)args.UserToken;
-                Func<TimeSpan, string> ms = timeSpan => string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} ms", timeSpan.TotalMilliseconds);
-                lock (g_stopWatch)
+                lock (g_stopWatch) // Lock ensures that entries to g_sendTimesXXX are always in temporal order.
                 {
                     var now = g_stopWatch.Elapsed;
                     var elapsedTime = now - protocolAndSendTime.SendTime;
                     if (protocolAndSendTime.Protocol == ProtocolType.Udp) g_sendTimesUDP.Add(elapsedTime, now);
                     if (protocolAndSendTime.Protocol == ProtocolType.Tcp) g_sendTimesTCP.Add(elapsedTime, now);
-                    if (g_debugTimer.IsElapsed) Log.Write(
-                        "!!! UDP: {0} sends took Min={1} Max={2} Avg={3}" +
-                        "\t  TCP: {4} sends took Min={5} Max={6} Avg={7}",
-                        g_sendCountsUDP.Sum, ms(g_sendTimesUDP.Min), ms(g_sendTimesUDP.Max), ms(g_sendTimesUDP.Average),
-                        g_sendCountsTCP.Sum, ms(g_sendTimesTCP.Min), ms(g_sendTimesTCP.Max), ms(g_sendTimesTCP.Average));
                 }
             }
             catch (Exception e)
             {
                 Log.Write("Error during debug print", e);
             }
-#endif
-            CheckSocketError(args);
-            g_sendArgs.Push(args);
         }
 
         private void ApplicationExitCallback(object caller, EventArgs args)

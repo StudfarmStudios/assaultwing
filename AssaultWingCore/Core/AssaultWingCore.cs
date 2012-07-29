@@ -264,8 +264,13 @@ namespace AW2.Core
 
         public override void Draw()
         {
-            _frameDraws.Add(1, GameTime.TotalRealTime);
-            if (_framerateTimer.IsElapsed) Window.Impl.SetTitle(GetStatusText());
+            var now = GameTime.TotalRealTime;
+            _frameDraws.Add(1, now);
+            if (_framerateTimer.IsElapsed)
+            {
+                _frameDraws.Prune(now);
+                Window.Impl.SetTitle(GetStatusText());
+            }
             base.Draw();
         }
 

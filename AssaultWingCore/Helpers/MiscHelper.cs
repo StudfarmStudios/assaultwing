@@ -121,6 +121,15 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns the time span in the form "X ms", where X is a decimal representation of the time span
+        /// in milliseconds.
+        /// </summary>
+        public static string Ms(this TimeSpan timeSpan)
+        {
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} ms", timeSpan.TotalMilliseconds);
+        }
+
+        /// <summary>
         /// Like <see cref="System.Web.HttpUtility.ParseQueryString"/> but works with .NET 4.0 Client Profile
         /// instead of the full .NET 4.0 Framework.
         /// </summary>

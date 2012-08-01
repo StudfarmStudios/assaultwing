@@ -89,6 +89,7 @@ namespace AW2.Net
 
         private ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>> _udpMessagesToHandle;
         private ConnectionAttemptListener _connectionAttemptListener;
+        private RunningSequenceSingle _gobUpdateLags = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
 
         #endregion Fields
 
@@ -304,7 +305,17 @@ namespace AW2.Net
         /// </summary>
         public int GetMessageAge(GameplayMessage message)
         {
-            return Math.Max(0, Game.DataEngine.ArenaFrameCount - message.FrameNumber);
+            var messageAgeInFrames = Game.DataEngine.ArenaFrameCount - message.FrameNumber;
+            // Crude assumption for LagLog: GetMessageAge is called only once for each received message.
+            if (Game.Settings.Net.LagLog) _gobUpdateLags.Add(messageAgeInFrames, Game.GameTime.TotalRealTime);
+            return Math.Max(0, messageAgeInFrames);
+        }
+
+        public string GetDebugPrintLagStringOrNull()
+        {
+            var gobUpdateLags = _gobUpdateLags.Prune(Game.GameTime.TotalRealTime);
+            return gobUpdateLags.Count == 0 ? null : string.Format("{0} updates' frame lag Min={1} Max={2} Avg={3}",
+                gobUpdateLags.Count, gobUpdateLags.Min, gobUpdateLags.Max, gobUpdateLags.Average);
         }
 
         /// <summary>

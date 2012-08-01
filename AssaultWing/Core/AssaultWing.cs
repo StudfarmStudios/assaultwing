@@ -214,7 +214,7 @@ namespace AW2.Core
             {
                 case NetworkMode.Server:
                     MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-                    _pendingGobDeletionMessage = new GobDeletionMessage();
+                    _pendingGobDeletionMessage = null;
                     DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
                     break;
                 case NetworkMode.Client:
@@ -456,7 +456,7 @@ namespace AW2.Core
         {
             if (!Settings.Net.LagLog || !_debugPrintLagTimer.IsElapsed) return;
             var socketLag = AW2.Net.ConnectionUtils.AWSocket.GetDebugPrintLagStringOrNull();
-            var gobUpdateLag = DataEngine.Arena == null ? null : DataEngine.Arena.GetDebugPrintLagStringOrNull();
+            var gobUpdateLag = NetworkEngine.GetDebugPrintLagStringOrNull();
             var lagString = gobUpdateLag != null && socketLag != null ? gobUpdateLag + "\t" + socketLag
                 : gobUpdateLag ?? socketLag ?? null;
             if (lagString != null) Log.Write(lagString);
@@ -475,6 +475,7 @@ namespace AW2.Core
         private void GobRemovedFromArenaHandler(Gob gob)
         {
             if (!gob.IsRelevant) return;
+            _pendingGobDeletionMessage =_pendingGobDeletionMessage ?? new GobDeletionMessage();
             _pendingGobDeletionMessage.GobIDs.Add(gob.ID);
         }
 
@@ -603,9 +604,9 @@ namespace AW2.Core
         private void SendGobDeletionsOnServer()
         {
             if ((DataEngine.ArenaFrameCount % 3) != 0) return;
-            if (!_pendingGobDeletionMessage.GobIDs.Any()) return;
+            if (_pendingGobDeletionMessage == null) return;
             NetworkEngine.SendToGameClients(_pendingGobDeletionMessage);
-            _pendingGobDeletionMessage = new GobDeletionMessage();
+            _pendingGobDeletionMessage = null;
         }
 
         private void SendPlayerUpdatesOnServer()

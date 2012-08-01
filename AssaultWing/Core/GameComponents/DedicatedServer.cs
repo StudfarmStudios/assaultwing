@@ -100,6 +100,7 @@ namespace AW2.Core.GameComponents
                     _nextEvent = arenaFinishTime;
                     _nextEventType = EventType.ARENA_FINISH;
                     Game.LoadSelectedArena();
+                    foreach (var conn in Game.NetworkEngine.GameClientConnections) conn.PingInfo.AllowLatePingsForAWhile();
                     Game.DataEngine.Arena.Initialize();
                     Game.StartArena();
                     Game.DataEngine.ArenaFinishTime = arenaFinishTime;

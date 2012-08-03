@@ -48,6 +48,7 @@ namespace AW2.Net.Messages
         private List<CollisionEvent.SerializationData> _collisionEventInitDatas = new List<CollisionEvent.SerializationData>();
         private List<int> _gobIds = new List<int>();
 
+        public bool HasContent { get { return _collisionEventCount > 0 || _gobIds.Any(); } }
         public override MessageSendType SendType { get { return MessageSendType.UDP; } }
 
         public void SetCollisionEvents(List<CollisionEvent> collisionEvents, SerializationModeFlags serializationMode)

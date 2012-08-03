@@ -674,7 +674,7 @@ namespace AW2.Core
             }
             gobMessage.SetCollisionEvents(_collisionEventsToRemote, serializationMode);
             _collisionEventsToRemote = new List<CollisionEvent>();
-            foreach (var conn in connections) conn.Send(gobMessage);
+            if (gobMessage.HasContent) foreach (var conn in connections) conn.Send(gobMessage);
 
             if (Settings.Net.HeavyDebugLog && connections.Any() && debugMessage != null) // DEBUG: catch a rare crash that seems to happen only when serializing walls.
             {

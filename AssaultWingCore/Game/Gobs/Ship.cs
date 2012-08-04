@@ -359,7 +359,7 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             SetLocationPredicter();
-            UpdateRoll();
+            UpdateTurning();
             base.Update();
             UpdateThrustInNetworkGame(); // TODO !!! Move to Thruster
             _thruster.Update();
@@ -502,11 +502,10 @@ namespace AW2.Game.Gobs
         /// Thrusts the ship.
         /// </summary>
         /// <param name="force">Thrust force factor relative to ship's maximum thrust.</param>
-        public void Thrust(float force, TimeSpan duration)
+        public void Thrust(float proportionalForce)
         {
-            System.Diagnostics.Debug.Assert(force >= 0 && force <= 1);
+            System.Diagnostics.Debug.Assert(proportionalForce >= 0 && proportionalForce <= 1);
             if (Disabled) return;
-            var proportionalForce = force;
             switch (_aerodynamics)
             {
                 case AerodynamicsType.ThrustTowardsHeading:
@@ -523,19 +522,17 @@ namespace AW2.Game.Gobs
         }
 
         /// <param name="force">Force of turn; between 0 and 1.</param>
-        public void TurnLeft(float force, TimeSpan duration)
+        public void TurnLeft(float force)
         {
             if (Disabled) return;
-            force = MathHelper.Clamp(force, 0f, 1f);
-            Turn(force, duration);
+            Turn(MathHelper.Clamp(force, 0f, 1f));
         }
 
         /// <param name="force">Force of turn; between 0 and 1.</param>
-        public void TurnRight(float force, TimeSpan duration)
+        public void TurnRight(float force)
         {
             if (Disabled) return;
-            force = MathHelper.Clamp(force, 0f, 1f);
-            Turn(-force, duration);
+            Turn(-MathHelper.Clamp(force, 0f, 1f));
         }
 
         #endregion Ship public methods
@@ -625,15 +622,13 @@ namespace AW2.Game.Gobs
         }
 
         /// <param name="force">Force of turn; (0,1] for a left turn, or [-1,0) for a right turn.</param>
-        private void Turn(float force, TimeSpan duration)
+        private void Turn(float force)
         {
             force = MathHelper.Clamp(force, -1f, 1f);
-            var durationSeconds = (float)duration.TotalSeconds;
-            Rotation += force * _turnSpeed * durationSeconds;
-
-            Vector2 headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
-            float moveLength = Move.Length();
-            float headingFactor = // fancy roll
+            RotationSpeed = force * _turnSpeed;
+            var headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
+            var moveLength = Move.Length();
+            var headingFactor = // fancy roll
                 moveLength == 0 ? 0 :
                 moveLength <= _thruster.MaxSpeed ? Vector2.Dot(headingNormal, Move / _thruster.MaxSpeed) :
                 Vector2.Dot(headingNormal, Move / moveLength);
@@ -650,13 +645,14 @@ namespace AW2.Game.Gobs
             }
         }
 
-        private void UpdateRoll()
+        private void UpdateTurning()
         {
             var elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
             _rollAngle.Step = _rollSpeed * elapsedSeconds;
             _rollAngle.Advance();
             if (!_rollAngleGoalUpdated) _rollAngle.Target = 0;
             _rollAngleGoalUpdated = false;
+            RotationSpeed = 0;
         }
 
         private void UpdateThrustInNetworkGame() // TODO !!! Move to Thruster
@@ -664,17 +660,13 @@ namespace AW2.Game.Gobs
             switch (Game.NetworkMode)
             {
                 case NetworkMode.Client:
-                    if (_visualThrustForce > 0)
-                        Thrust(_visualThrustForce, Game.GameTime.ElapsedGameTime);
-                    _visualThrustForce *= 0.977f; // fade down to half force in 30 frames (0.5 seconds)
+                    if (_visualThrustForce > 0) Thrust(_visualThrustForce);
+                    _visualThrustForce *= 0.933f; // fade down to half force in 10 frames (0.1667 seconds)
                     if (_visualThrustForce < 0.5f) _visualThrustForce = 0;
                     break;
                 case NetworkMode.Server:
-                    if (_visualThrustForceSerializedThisFrame)
-                    {
-                        _visualThrustForceSerializedThisFrame = false;
-                        _visualThrustForce = 0;
-                    }
+                    if (_visualThrustForceSerializedThisFrame) _visualThrustForce = 0;
+                    _visualThrustForceSerializedThisFrame = false;
                     break;
             }
         }

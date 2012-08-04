@@ -41,6 +41,13 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _weapon2ChargeSpeed;
 
+        /// <summary>
+        /// Factor of slowdown that is applied to ships that are in need of repair.
+        /// Slowdown makes it easier to land on a dock and stay there.
+        /// </summary>
+        [TypeParameter]
+        private float _repairingMoveSlowdownFactor;
+
         [TypeParameter]
         private CanonicalString _dockIdleEffectName;
         [TypeParameter]
@@ -73,6 +80,7 @@ namespace AW2.Game.Gobs
             _repairSpeed = -10;
             _weapon1ChargeSpeed = 100;
             _weapon2ChargeSpeed = 100;
+            _repairingMoveSlowdownFactor = 0.85f;
             _dockIdleEffectName = (CanonicalString)"dummypeng";
             _dockActiveEffectName = (CanonicalString)"dummypeng";
         }
@@ -244,7 +252,9 @@ namespace AW2.Game.Gobs
         private void RepairShip(Ship ship)
         {
             if (ShouldNotifyPlayerAboutRepairPending(ship)) ship.Owner.NotifyRepairPending();
-            if (!CanRepair(ship) || IsFullyRepaired(ship)) return;
+            if (IsFullyRepaired(ship)) return;
+            ship.Move *= _repairingMoveSlowdownFactor;
+            if (!CanRepair(ship)) return;
             if (ship.Owner != null && !_lastRepairTimes.ContainsKey(ship))
             {
                 ForcedNetworkUpdate = true;

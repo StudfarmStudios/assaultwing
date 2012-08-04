@@ -21,7 +21,7 @@ namespace AW2.Game.Collisions
             g_collisionMaterials[(int)CollisionMaterialType.Regular] = new CollisionMaterial
             {
                 Elasticity = 0.2f,
-                Friction = 0.6f,
+                Friction = 0.45f,
                 Damage = 1.0f,
             };
             g_collisionMaterials[(int)CollisionMaterialType.Rough] = new CollisionMaterial
@@ -33,13 +33,13 @@ namespace AW2.Game.Collisions
             g_collisionMaterials[(int)CollisionMaterialType.Bouncy] = new CollisionMaterial
             {
                 Elasticity = 0.4f,
-                Friction = 0.6f,
+                Friction = 0.5f,
                 Damage = 1.0f,
             };
             g_collisionMaterials[(int)CollisionMaterialType.Sticky] = new CollisionMaterial
             {
                 Elasticity = 0.0f,
-                Friction = 4.0f,
+                Friction = 1.0f,
                 Damage = 0.0f,
             };
 

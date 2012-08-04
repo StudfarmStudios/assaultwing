@@ -5,6 +5,7 @@
   <repairSpeed>190</repairSpeed>
   <weapon1ChargeSpeed>200</weapon1ChargeSpeed>
   <weapon2ChargeSpeed>200</weapon2ChargeSpeed>
+  <repairingMoveSlowdownFactor>0.85</repairingMoveSlowdownFactor>
   <mass>10000</mass>
   <scale>0.58</scale>
   <modelName>dock</modelName>

@@ -391,12 +391,9 @@ namespace AW2.Game
             {
                 Ship.LocationPredicter.StoreControlStates(Controls.GetStates(), Game.GameTime.TotalGameTime);
             }
-            if (Controls.Thrust.Force > 0)
-                Ship.Thrust(Controls.Thrust.Force, Game.GameTime.ElapsedGameTime);
-            if (Controls.Left.Force > 0)
-                Ship.TurnLeft(Controls.Left.Force, Game.GameTime.ElapsedGameTime);
-            if (Controls.Right.Force > 0)
-                Ship.TurnRight(Controls.Right.Force, Game.GameTime.ElapsedGameTime);
+            if (Controls.Thrust.Force > 0) Ship.Thrust(Controls.Thrust.Force);
+            if (Controls.Left.Force > 0) Ship.TurnLeft(Controls.Left.Force);
+            if (Controls.Right.Force > 0) Ship.TurnRight(Controls.Right.Force);
             if (!Ship.IsNewborn && Game.NetworkMode != NetworkMode.Client) // client shoots only when the server says so
             {
                 TryFire(ShipDevice.OwnerHandleType.PrimaryWeapon);

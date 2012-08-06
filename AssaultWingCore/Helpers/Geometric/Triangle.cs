@@ -135,7 +135,7 @@ namespace AW2.Helpers.Geometric
 
         public float DistanceTo(Vector2 point)
         {
-            return Geometry.Distance(new Point(point), this);
+            return Geometry.Distance(point, this);
         }
 
         public Shape GetShape()

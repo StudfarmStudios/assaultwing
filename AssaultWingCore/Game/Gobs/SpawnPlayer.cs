@@ -71,12 +71,11 @@ namespace AW2.Game.Gobs
         private static float GetThreat(Gob gob, Vector2 pos)
         {
             const float SAFE_DISTANCE = 2000;
-            var testPoint = new Point(pos);
             var threats =
                 from plr in gob.Game.DataEngine.Players
                 let ship = plr.Ship
                 where plr != gob.Owner && ship != null
-                let distance = Geometry.Distance(testPoint, new Point(ship.Pos))
+                let distance = Vector2.Distance(pos, ship.Pos)
                 select Math.Max(0, SAFE_DISTANCE - distance);
             return threats.Sum();
         }

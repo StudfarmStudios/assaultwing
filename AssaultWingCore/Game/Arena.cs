@@ -17,7 +17,6 @@ using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
-using Point = AW2.Helpers.Geometric.Point;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game
@@ -263,9 +262,12 @@ namespace AW2.Game
             _world.Step((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
             PerformCustomCollisions();
             if (Game.NetworkMode != NetworkMode.Client)
+            {
+                var boundedAreaExtreme = BoundedAreaExtreme;
                 foreach (var gob in Gobs.GameplayLayer.Gobs)
-                    if (!Geometry.Intersect(BoundedAreaExtreme, new Point(gob.Pos)))
+                    if (!Geometry.Intersect(gob.Pos, boundedAreaExtreme))
                         gob.Die();
+            }
         }
 
         public void FinalizeGobUpdatesOnClient(HashSet<GobUpdateData> gobsToUpdate, int frameCount)

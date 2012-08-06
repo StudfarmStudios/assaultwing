@@ -569,9 +569,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Server) return;
             SendGobCreationMessageOnServer();
             SendGameSettingsOnServer();
-            if ((DataEngine.ArenaFrameCount % 3) == 0)
-                SendGobUpdatesToRemote(new GobUpdateMessage(), DataEngine.Arena.GobsInRelevantLayers,
-                    SerializationModeFlags.VaryingDataFromServer, NetworkEngine.GameClientConnections);
+            SendGobUpdateMessageOnServer();
             SendPlayerUpdatesOnServer();
             SendGobDeletionsOnServer();
             SendArenaStatisticsOnServer();
@@ -582,13 +580,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Client || !NetworkEngine.IsConnectedToGameServer || !IsShipControlsEnabled) return;
             SendGameSettingsOnClient();
             SetPlayerControls(_pendingClientGameStateUpdateMessage);
-            if ((DataEngine.ArenaFrameCount % 2) == 0)
-            {
-                SendGobUpdatesToRemote(_pendingClientGameStateUpdateMessage,
-                    DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
-                    SerializationModeFlags.VaryingDataFromClient, new[] { NetworkEngine.GameServerConnection });
-                _pendingClientGameStateUpdateMessage = new ClientGameStateUpdateMessage();
-            }
+            SendGobUpdateMessageOnClient();
         }
 
         private void SendArenaStatisticsOnServer()
@@ -652,7 +644,25 @@ namespace AW2.Core
             }
         }
 
-        private void SendGobUpdatesToRemote(GobUpdateMessage gobMessage, IEnumerable<Gob> gobs, SerializationModeFlags serializationMode, IEnumerable<Connection> connections)
+        private void SendGobUpdateMessageOnServer()
+        {
+            if ((DataEngine.ArenaFrameCount % 3) != 0) return;
+            var gobUpdateMessage = new GobUpdateMessage();
+            PopulateGobUpdateMessage(gobUpdateMessage, DataEngine.Arena.GobsInRelevantLayers, SerializationModeFlags.VaryingDataFromServer);
+            if (gobUpdateMessage.HasContent) foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(gobUpdateMessage);
+        }
+
+        private void SendGobUpdateMessageOnClient()
+        {
+            if ((DataEngine.ArenaFrameCount % 2) != 0) return;
+            PopulateGobUpdateMessage(_pendingClientGameStateUpdateMessage,
+                DataEngine.Minions.Where(gob => gob.Owner != null && gob.Owner.IsLocal),
+                SerializationModeFlags.VaryingDataFromClient);
+            NetworkEngine.GameServerConnection.Send(_pendingClientGameStateUpdateMessage);
+            _pendingClientGameStateUpdateMessage = new ClientGameStateUpdateMessage();
+        }
+
+        private void PopulateGobUpdateMessage(GobUpdateMessage gobMessage, IEnumerable<Gob> gobs, SerializationModeFlags serializationMode)
         {
             var now = DataEngine.ArenaTotalTime;
             var debugMessage = gobs.OfType<AW2.Game.Gobs.Wall>().Any(wall => wall.ForcedNetworkUpdate)
@@ -674,9 +684,8 @@ namespace AW2.Core
             }
             gobMessage.SetCollisionEvents(_collisionEventsToRemote, serializationMode);
             _collisionEventsToRemote = new List<CollisionEvent>();
-            foreach (var conn in connections) conn.Send(gobMessage);
 
-            if (Settings.Net.HeavyDebugLog && connections.Any() && debugMessage != null) // DEBUG: catch a rare crash that seems to happen only when serializing walls.
+            if (Settings.Net.HeavyDebugLog && debugMessage != null) // DEBUG: catch a rare crash that seems to happen only when serializing walls.
             {
                 var writer = new NetworkBinaryWriter(new System.IO.MemoryStream(_debugBuffer));
                 gobMessage.Serialize(writer);

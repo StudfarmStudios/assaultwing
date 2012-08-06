@@ -19,6 +19,8 @@ public class Element<T>
 
 public class QuadTree<T>
 {
+    private static Stack<QuadTree<T>> g_queryAabbStack = new Stack<QuadTree<T>>();
+
     public int MaxBucket;
     public int MaxDepth;
     public List<Element<T>> Nodes;
@@ -194,24 +196,27 @@ public class QuadTree<T>
 
     public void QueryAABB(Func<Element<T>, bool> callback, ref AABB searchR)
     {
-        Stack<QuadTree<T>> stack = new Stack<QuadTree<T>>();
-        stack.Push(this);
-
-        while (stack.Count > 0)
+        if (g_queryAabbStack.Count > 0) throw new InvalidOperationException("QuadTree query already in progress");
+        g_queryAabbStack.Push(this);
+        while (g_queryAabbStack.Count > 0)
         {
-            QuadTree<T> qt = stack.Pop();
+            QuadTree<T> qt = g_queryAabbStack.Pop();
             if (!AABB.TestOverlap(ref searchR, ref qt.Span))
                 continue;
 
             foreach (Element<T> n in qt.Nodes)
                 if (AABB.TestOverlap(ref searchR, ref n.Span))
                 {
-                    if (!callback(n)) return;
+                    if (!callback(n))
+                    {
+                        g_queryAabbStack.Clear();
+                        return;
+                    }
                 }
 
             if (qt.IsPartitioned)
                 foreach (QuadTree<T> st in qt.SubTrees)
-                    stack.Push(st);
+                    g_queryAabbStack.Push(st);
         }
     }
 

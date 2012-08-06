@@ -30,6 +30,7 @@ adduser sakari
 adduser burana
 adduser neongoon
 adduser jiippa
+adduser mokki
 
 adduser ville admin
 adduser ville cvsd
@@ -43,7 +44,7 @@ adduser sakari cvsd
 adduser burana cvsd
 adduser neongoon cvsd
 adduser jiippa cvsd
-
+adduser mokki cvsd
 
 
 

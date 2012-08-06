@@ -9,233 +9,43 @@ namespace AW2.Helpers.Geometric
     /// </summary>
     public class Geometry
     {
-        #region Type definitions
-
-        /// <summary>
-        /// Kinds of intersection volumes that two lines can have.
-        /// </summary>
-        public enum LineIntersectionType
-        {
-            /// <summary>
-            /// The lines don't intersect.
-            /// </summary>
-            None,
-            /// <summary>
-            /// The lines intersect at one point.
-            /// </summary>
-            Point,
-            /// <summary>
-            /// The lines intersect at a line interval (infinitely many points).
-            /// </summary>
-            Segment,
-        }
-
-        /// <summary>
-        /// Type of stand of a point relative to the directed edge of a geometric object.
-        /// </summary>
-        public enum StandType
-        {
-            /// <summary>
-            /// The point stands on the left hand side of the directed edge.
-            /// </summary>
-            Left,
-
-            /// <summary>
-            /// The point stands on the right hand side of the directed edge.
-            /// </summary>
-            Right,
-
-            /// <summary>
-            /// The point stands on the edge.
-            /// </summary>
-            Edge,
-        }
-
-        #endregion Type definitions
-
         #region Intersection methods
 
         /// <summary>
-        /// Returns true iff the two geometric primitives intersect.
+        /// Returns true iff the point is contained in the geometric primitive.
         /// </summary>
-        /// <param name="prim1">One primitive.</param>
-        /// <param name="prim2">The other primitive</param>
-        /// <returns>True iff the two geometric primitives intersect.</returns>
-        public static bool Intersect(IGeomPrimitive prim1, IGeomPrimitive prim2)
+        public static bool Intersect(Vector2 point, IGeomPrimitive prim)
         {
-            // Check fast cases.
-            if (prim1 is Point)
-            {
-                Point point1 = (Point)prim1;
-                if (prim2 is Point) return point1.Location.Equals(((Point)prim2).Location);
-                if (prim2 is Circle) return Intersect(point1, (Circle)prim2);
-                if (prim2 is Rectangle) return Intersect(point1, (Rectangle)prim2);
-            }
-            if (prim1 is Circle)
-            {
-                Circle circle1 = (Circle)prim1;
-                if (prim2 is Point) return Intersect((Point)prim2, circle1);
-                if (prim2 is Circle) return Intersect(circle1, (Circle)prim2);
-                if (prim2 is Rectangle) return Intersect(circle1, (Rectangle)prim2);
-            }
-            if (prim1 is Rectangle)
-            {
-                Rectangle rectangle1 = (Rectangle)prim1;
-                if (prim2 is Point) return Intersect((Point)prim2, rectangle1);
-                if (prim2 is Circle) return Intersect((Circle)prim2, rectangle1);
-                if (prim2 is Rectangle) return Intersect((Rectangle)prim2, rectangle1);
-            }
-
-            // Prune further checks by bounding boxes.
-            if (!Intersect(prim1.BoundingBox, prim2.BoundingBox)) return false;
-
-            // Check remaining, slow cases.
-            if (prim1 is Point)
-            {
-                Point point1 = (Point)prim1;
-                if (prim2 is Triangle) return Intersect(point1, (Triangle)prim2);
-                if (prim2 is Polygon) return Intersect(point1, (Polygon)prim2);
-            }
-            if (prim1 is Circle)
-            {
-                Circle circle1 = (Circle)prim1;
-                if (prim2 is Triangle) return Intersect(circle1, (Triangle)prim2);
-                if (prim2 is Polygon) return Intersect(circle1, (Polygon)prim2);
-            }
-            if (prim1 is Triangle)
-            {
-                Triangle triangle1 = (Triangle)prim1;
-                if (prim2 is Point) return Intersect((Point)prim2, triangle1);
-                if (prim2 is Circle) return Intersect((Circle)prim2, triangle1);
-                if (prim2 is Rectangle) return Intersect((Rectangle)prim2, triangle1);
-                if (prim2 is Triangle) return Intersect(triangle1, (Triangle)prim2);
-                if (prim2 is Polygon) return Intersect(triangle1, (Polygon)prim2);
-            }
-            if (prim1 is Polygon)
-            {
-                Polygon polygon1 = (Polygon)prim1;
-                if (prim2 is Point) return Intersect((Point)prim2, polygon1);
-                if (prim2 is Circle) return Intersect((Circle)prim2, polygon1);
-                if (prim2 is Rectangle) return Intersect((Rectangle)prim2, polygon1);
-                if (prim2 is Triangle) return Intersect((Triangle)prim2, polygon1);
-                if (prim2 is Polygon) return Intersect(polygon1, (Polygon)prim2);
-            }
-            throw new Exception("Unknown geometric primitives in Geometry.Intersect(): " +
-                prim1.GetType().Name + " " + prim2.GetType().Name);
+            if (prim is Point) return point == ((Point)prim).Location;
+            if (prim is Circle) return Intersect(point, (Circle)prim);
+            if (prim is Rectangle) return Intersect(point, (Rectangle)prim);
+            if (prim is Triangle) return Intersect(point, (Triangle)prim);
+            if (prim is Polygon) return Intersect(point, (Polygon)prim);
+            throw new NotImplementedException("Geometry.Intersect not implemented for Vector2 and " + prim.GetType().Name);
         }
 
         /// <summary>
-        /// Returns true iff the point is in the circle.
+        /// Returns true iff the point is in the solid circle.
         /// </summary>
-        /// The circle is thought of as a solid disc that contains also its edge.
-        /// <param name="point">The point.</param>
-        /// <param name="circle">The circle.</param>
-        /// <returns>True iff the point is in the circle.</returns>
-        public static bool Intersect(Point point, Circle circle)
+        public static bool Intersect(Vector2 point, Circle circle)
         {
-            return Vector2.DistanceSquared(point.Location, circle.Center) <= circle.Radius * circle.Radius;
+            return Vector2.DistanceSquared(point, circle.Center) <= circle.Radius * circle.Radius;
         }
 
         /// <summary>
-        /// Returns true iff the two circles intersect.
+        /// Returns if a point and a solid rectangle intersect.
         /// </summary>
-        /// The circles are thought of as solid discs that contain also their edges.
-        /// <param name="circle1">One circle.</param>
-        /// <param name="circle2">The other circle.</param>
-        /// <returns>True iff the circles intersect.</returns>
-        public static bool Intersect(Circle circle1, Circle circle2)
-        {
-            // The circles intersect iff their centers are at most the sum of
-            // their radii apart. We can just as well compare the squares of the distances.
-            float radiiSum = circle1.Radius + circle2.Radius;
-            return Vector2.DistanceSquared(circle1.Center, circle2.Center) <= radiiSum * radiiSum;
-        }
-
-        /// <summary>
-        /// Returns if a point and a rectangle intersect.
-        /// </summary>
-        /// The rectangle is considered solid.
-        /// <param name="point">The point.</param>
-        /// <param name="rectangle">The rectangle.</param>
-        /// <returns><c>true</c> if the point and the rectangle intersect,
-        /// <c>false</c> otherwise.</returns>
-        public static bool Intersect(Point point, Rectangle rectangle)
+        public static bool Intersect(Vector2 point, Rectangle rectangle)
         {
             return
-                rectangle.Min.X <= point.Location.X && point.Location.X <= rectangle.Max.X &&
-                rectangle.Min.Y <= point.Location.Y && point.Location.Y <= rectangle.Max.Y;
-        }
-
-        /// <summary>
-        /// Returns if a circle and a rectangle intersect.
-        /// </summary>
-        /// The primitives are considered solid.
-        /// <param name="circle">The circle.</param>
-        /// <param name="rectangle">The rectangle.</param>
-        /// <returns><c>true</c> if the circle and the rectangle intersect,
-        /// <c>false</c> otherwise.</returns>
-        public static bool Intersect(Circle circle, Rectangle rectangle)
-        {
-            // Adapted from the C function
-            // Fast Circle-Rectangle Intersection Checking
-            // by Clifford A. Shaffer
-            // from http://tog.acm.org/GraphicsGems/gems/CircleRect.c
-            // on 2008-06-19, implemented after the article in
-            // "Graphics Gems", Academic Press, 1990.
-
-            // Rectangle corners relative to the circle's center.
-            Vector2 relativeMin = rectangle.Min - circle.Center;
-            Vector2 relativeMax = rectangle.Max - circle.Center;
-
-            float radius2 = circle.Radius * circle.Radius;
-            if (relativeMax.X < 0)          /* R to left of circle center */
-                if (relativeMax.Y < 0)      /* R in lower left corner */
-                    return (relativeMax.X * relativeMax.X + relativeMax.Y * relativeMax.Y) <= radius2;
-                else if (relativeMin.Y > 0) /* R in upper left corner */
-                    return (relativeMax.X * relativeMax.X + relativeMin.Y * relativeMin.Y) <= radius2;
-                else                        /* R due West of circle */
-                    return -relativeMax.X <= circle.Radius;
-            else if (relativeMin.X > 0)     /* R to right of circle center */
-                if (relativeMax.Y < 0)      /* R in lower right corner */
-                    return (relativeMin.X * relativeMin.X + relativeMax.Y * relativeMax.Y) <= radius2;
-                else if (relativeMin.Y > 0) /* R in upper right corner */
-                    return (relativeMin.X * relativeMin.X + relativeMin.Y * relativeMin.Y) <= radius2;
-                else                        /* R due East of circle */
-                    return relativeMin.X <= circle.Radius;
-            else                            /* R on circle vertical centerline */
-                if (relativeMax.Y < 0)      /* R due South of circle */
-                    return -relativeMax.Y <= circle.Radius;
-                else if (relativeMin.Y > 0) /* R due North of circle */
-                    return relativeMin.Y <= circle.Radius;
-                else                        /* R contains circle centerpoint */
-                    return true;
-        }
-
-        /// <summary>
-        /// Returns if two rectangles intersect.
-        /// </summary>
-        /// The rectangles are considered solid.
-        /// <param name="rectangle1">One rectangle.</param>
-        /// <param name="rectangle2">The other rectangle.</param>
-        /// <returns><c>true</c> if the rectangles intersect,
-        /// <c>false</c> otherwise.</returns>
-        public static bool Intersect(Rectangle rectangle1, Rectangle rectangle2)
-        {
-            return !(
-                rectangle1.Max.X < rectangle2.Min.X ||
-                rectangle1.Max.Y < rectangle2.Min.Y ||
-                rectangle2.Max.X < rectangle1.Min.X ||
-                rectangle2.Max.Y < rectangle1.Min.Y);
+                rectangle.Min.X <= point.X && point.X <= rectangle.Max.X &&
+                rectangle.Min.Y <= point.Y && point.Y <= rectangle.Max.Y;
         }
 
         /// <summary>
         /// Returns if a point lies inside a triangle.
         /// </summary>
-        /// <param name="point">The point.</param>
-        /// <param name="triangle">The triangle.</param>
-        /// <returns><b>true</b>if the point lies inside the triangle, 
-        /// <b>false</b> otherwise.</returns>
-        public static bool Intersect(Point point, Triangle triangle)
+        public static bool Intersect(Vector2 point, Triangle triangle)
         {
             // Adapted from C code by Eric Haines, from http://www.graphicsgems.org/.
 
@@ -245,57 +55,20 @@ namespace AW2.Helpers.Geometric
             Vector2 p1 = triangle.P1;
             Vector2 p2 = triangle.P2;
             Vector2 p3 = triangle.P3;
-            bool yflag1 = p1.Y >= point.Location.Y;
-            bool yflag2 = p2.Y >= point.Location.Y;
-            bool yflag3 = p3.Y >= point.Location.Y;
+            bool yflag1 = p1.Y >= point.Y;
+            bool yflag2 = p2.Y >= point.Y;
+            bool yflag3 = p3.Y >= point.Y;
             bool inside_flag = false;
             if (yflag1 != yflag2 &&
-                yflag2 == ((p2.Y - point.Location.Y) * (p1.X - p2.X) >= (p2.X - point.Location.X) * (p1.Y - p2.Y)))
+                yflag2 == ((p2.Y - point.Y) * (p1.X - p2.X) >= (p2.X - point.X) * (p1.Y - p2.Y)))
                 inside_flag = !inside_flag;
             if (yflag2 != yflag3 &&
-                yflag3 == ((p3.Y - point.Location.Y) * (p2.X - p3.X) >= (p3.X - point.Location.X) * (p2.Y - p3.Y)))
+                yflag3 == ((p3.Y - point.Y) * (p2.X - p3.X) >= (p3.X - point.X) * (p2.Y - p3.Y)))
                 inside_flag = !inside_flag;
             if (yflag3 != yflag1 &&
-                yflag1 == ((p1.Y - point.Location.Y) * (p3.X - p1.X) >= (p1.X - point.Location.X) * (p3.Y - p1.Y)))
+                yflag1 == ((p1.Y - point.Y) * (p3.X - p1.X) >= (p1.X - point.X) * (p3.Y - p1.Y)))
                 inside_flag = !inside_flag;
             return inside_flag;
-        }
-
-        /// <summary>
-        /// Returns if a circle intersects a triangle.
-        /// </summary>
-        /// <param name="circle">The circle.</param>
-        /// <param name="triangle">The triangle.</param>
-        /// <returns><b>true</b>if the circle intersects the triangle, 
-        /// <b>false</b> otherwise.</returns>
-        public static bool Intersect(Circle circle, Triangle triangle)
-        {
-            float radius = circle.Radius;
-            return DistanceSquared(new Point(circle.Center), triangle) <= radius * radius;
-        }
-
-        /// <summary>
-        /// Returns if a rectangle and a triangle intersect.
-        /// </summary>
-        /// <param name="rectangle">The rectangle.</param>
-        /// <param name="triangle">The triangle.</param>
-        /// <returns><b>true</b>if the rectangle and the triangle intersect, 
-        /// <b>false</b> otherwise.</returns>
-        public static bool Intersect(Rectangle rectangle, Triangle triangle)
-        {
-            throw new NotImplementedException("Method not implemented: Intersect(Rectangle, Triangle)");
-        }
-
-        /// <summary>
-        /// Returns if two triangles intersect.
-        /// </summary>
-        /// <param name="triangle1">One triangle.</param>
-        /// <param name="triangle2">Another triangle.</param>
-        /// <returns><b>true</b>if the two triangles intersect, 
-        /// <b>false</b> otherwise.</returns>
-        public static bool Intersect(Triangle triangle1, Triangle triangle2)
-        {
-            throw new NotImplementedException("Method not implemented: Intersect(Triangle, Triangle)");
         }
 
         /// <summary>
@@ -401,98 +174,9 @@ namespace AW2.Helpers.Geometric
         }
 
         /// <summary>
-        /// Returns the kind of intersection of the two line segments ab and cd.
+        /// Returns true iff the point is inside the polygon.
         /// </summary>
-        /// <param name="a">One end of the first line segment.</param>
-        /// <param name="b">The other end of the first line segment.</param>
-        /// <param name="c">One end of the second line segment.</param>
-        /// <param name="d">The other end of the second line segment.</param>
-        /// <returns>How the two line segments intersect, if at all.</returns>
-        public static LineIntersectionType Intersect(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
-        {
-            // This algorithm is adapted from C code by Franklin Antonio 
-            // at http://www.graphicsgems.org
-            float x1lo, x1hi, y1lo, y1hi;
-            float Ax = b.X - a.X;
-            float Bx = c.X - d.X;
-
-            // X bound box test
-            if (Ax < 0)
-            {
-                x1lo = b.X;
-                x1hi = a.X;
-            }
-            else
-            {
-                x1hi = b.X;
-                x1lo = a.X;
-            }
-            if (Bx > 0)
-            {
-                if (x1hi < d.X || c.X < x1lo) return LineIntersectionType.None;
-            }
-            else
-            {
-                if (x1hi < c.X || d.X < x1lo) return LineIntersectionType.None;
-            }
-
-            float Ay = b.Y - a.Y;
-            float By = c.Y - d.Y;
-
-            // Y bound box test
-            if (Ay < 0)
-            {
-                y1lo = b.Y;
-                y1hi = a.Y;
-            }
-            else
-            {
-                y1hi = b.Y;
-                y1lo = a.Y;
-            }
-            if (By > 0)
-            {
-                if (y1hi < d.Y || c.Y < y1lo) return LineIntersectionType.None;
-            }
-            else
-            {
-                if (y1hi < c.Y || d.Y < y1lo) return LineIntersectionType.None;
-            }
-
-            float Cx = a.X - c.X;
-            float Cy = a.Y - c.Y;
-            float val1 = By * Cx - Bx * Cy;
-            float val3 = Ay * Bx - Ax * By;
-            if (val3 > 0)
-            {
-                if (val1 < 0 || val1 > val3) return LineIntersectionType.None;
-            }
-            else
-            {
-                if (val1 > 0 || val1 < val3) return LineIntersectionType.None;
-            }
-            float val2 = Ax * Cy - Ay * Cx;
-            if (val3 > 0)
-            {
-                if (val2 < 0 || val2 > val3) return LineIntersectionType.None;
-            }
-            else
-            {
-                if (val2 > 0 || val2 < val3) return LineIntersectionType.None;
-            }
-
-            if (val3 == 0) return LineIntersectionType.Segment; // TODO: Fix case of point intersection
-            return LineIntersectionType.Point;
-        }
-
-        /// <summary>
-        /// Returns true iff the point is in the area defined by the polygon.
-        /// </summary>
-        /// Edges are considered to belong to the polygon.
-        /// <param name="point">The point to check.</param>
-        /// <param name="polygon">The polygon to check.</param>
-        /// <returns>True iff the point is in the polygon.</returns>
-        public static bool Intersect(Point point, Polygon polygon)
+        public static bool Intersect(Vector2 point, Polygon polygon)
         {
             // Adapted from C code by Eric Haines, from http://www.graphicsgems.org/.
 
@@ -522,12 +206,12 @@ namespace AW2.Helpers.Geometric
             Vector2 vPrev = polygon.Vertices[polygon.Vertices.Length - 1];
 
             // Get test bit for above/below X axis.
-            bool yflag0 = vPrev.Y >= point.Location.Y;
+            bool yflag0 = vPrev.Y >= point.Y;
 
             bool inside_flag = false;
             foreach (Vector2 v in polygon.Vertices)
             {
-                bool yflag1 = v.Y >= point.Location.Y;
+                bool yflag1 = v.Y >= point.Y;
 
                 // Check if endpoints straddle (are on opposite sides) of X axis
                 // (i.e. the Y's differ); if so, +X ray could intersect this edge.
@@ -548,8 +232,8 @@ namespace AW2.Helpers.Geometric
                      * by Joseph Samosky's and Mark Haigh-Hutchinson's different
                      * polygon inclusion tests.
                      */
-                    if (((v.Y - point.Location.Y) * (vPrev.X - v.X) >=
-                        (v.X - point.Location.X) * (vPrev.Y - v.Y)) == yflag1)
+                    if (((v.Y - point.Y) * (vPrev.X - v.X) >=
+                        (v.X - point.X) * (vPrev.Y - v.Y)) == yflag1)
                     {
                         inside_flag = !inside_flag;
                     }
@@ -560,54 +244,6 @@ namespace AW2.Helpers.Geometric
                 vPrev = v;
             }
             return inside_flag;
-        }
-
-        /// <summary>
-        /// Returns true iff the circle intersects the polygon.
-        /// </summary>
-        /// The circle and the polygon are considered to contain their respective edges.
-        /// <param name="circle">The circle to check.</param>
-        /// <param name="polygon">The polygon to check.</param>
-        /// <returns>True iff the circle intersects the polygon.</returns>
-        public static bool Intersect(Circle circle, Polygon polygon)
-        {
-            return DistanceSquared(new Point(circle.Center), polygon) < circle.Radius * circle.Radius;
-        }
-
-        /// <summary>
-        /// Returns if a rectangle and a polygon intersect.
-        /// </summary>
-        /// <param name="rectangle">The rectangle.</param>
-        /// <param name="polygon">The polygon.</param>
-        /// <returns><b>true</b>if the rectangle and the polygon intersect, 
-        /// <b>false</b> otherwise.</returns>
-        public static bool Intersect(Rectangle rectangle, Polygon polygon)
-        {
-            throw new NotImplementedException("Method not implemented: Intersect(Rectangle, Polygon)");
-        }
-
-        /// <summary>
-        /// Returns if a triangle intersects a polygon.
-        /// </summary>
-        /// <param name="triangle">The triangle.</param>
-        /// <param name="polygon">The polygon.</param>
-        /// <returns><b>true</b>if the circle intersects the polygon, 
-        /// <b>false</b> otherwise.</returns>
-        public static bool Intersect(Triangle triangle, Polygon polygon)
-        {
-            throw new NotImplementedException("Method not implemented: Intersect(Triangle, Polygon)");
-        }
-
-        /// <summary>
-        /// Returns true iff the two polygons intersect.
-        /// </summary>
-        /// The polygons are considered to contain their respective edges.
-        /// <param name="polygon1">One polygon.</param>
-        /// <param name="polygon2">The other polygon.</param>
-        /// <returns>True iff the two polygons intersect.</returns>
-        public static bool Intersect(Polygon polygon1, Polygon polygon2)
-        {
-            throw new NotImplementedException("Method not implemented: Intersect(Polygon, Polygon)");
         }
 
         /// <summary>
@@ -644,64 +280,17 @@ namespace AW2.Helpers.Geometric
         }
 
         /// <summary>
-        /// Returns the distance between two geometric primitives.
+        /// Returns the length of the shortest line segment that connects
+        /// the geometric primitive to the point.
         /// </summary>
-        /// Distance is the length of the shortest line segment that connects
-        /// the geometric primitives.
-        /// <param name="prim1">One primitive.</param>
-        /// <param name="prim2">The other primitive</param>
-        /// <returns>The distance between the two geometric primitives.</returns>
-        public static float Distance(IGeomPrimitive prim1, IGeomPrimitive prim2)
+        public static float Distance(Vector2 point, IGeomPrimitive prim)
         {
-            if (prim1 is Point)
-            {
-                Point point1 = (Point)prim1;
-                if (prim2 is Point) return (point1.Location - ((Point)prim2).Location).Length();
-                if (prim2 is Circle) return Distance(point1, (Circle)prim2);
-                if (prim2 is Rectangle) return Distance(point1, (Rectangle)prim2);
-                if (prim2 is Triangle) return Distance(point1, (Triangle)prim2);
-                if (prim2 is Polygon) return Distance(point1, (Polygon)prim2);
-            }
-            if (prim1 is Circle)
-            {
-                Circle circle1 = (Circle)prim1;
-                if (prim2 is Point) return Distance((Point)prim2, circle1);
-                if (prim2 is Circle) return Distance(circle1, (Circle)prim2);
-                if (prim2 is Rectangle) return Distance(circle1, (Rectangle)prim2);
-                if (prim2 is Triangle) return Distance(circle1, (Triangle)prim2);
-            }
-            if (prim1 is Rectangle)
-            {
-                Rectangle rectangle1 = (Rectangle)prim1;
-                if (prim2 is Point) return Distance((Point)prim2, rectangle1);
-                if (prim2 is Circle) return Distance((Circle)prim2, rectangle1);
-            }
-            if (prim1 is Triangle)
-            {
-                Triangle triangle1 = (Triangle)prim1;
-                if (prim2 is Point) return Distance((Point)prim2, triangle1);
-                if (prim2 is Circle) return Distance((Circle)prim2, triangle1);
-            }
-            if (prim1 is Polygon)
-            {
-                Polygon polygon1 = (Polygon)prim1;
-                if (prim2 is Point) return Distance((Point)prim2, polygon1);
-                if (prim2 is Circle) return Distance((Circle)prim2, polygon1);
-            }
-            throw new NotImplementedException("Geometry.Distance() not implemented for " +
-                prim1.GetType().Name + " and " + prim2.GetType().Name);
-        }
-
-        /// <summary>
-        /// Returns the distance between 'point' and the line segment ab.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <param name="a">One end of the line segment.</param>
-        /// <param name="b">The other end of the line segment.</param>
-        /// <returns>The distance between 'point' and the line segment ab.</returns>
-        public static float Distance(Point point, Vector2 a, Vector2 b)
-        {
-            return (float)Math.Sqrt(DistanceSquared(point, a, b));
+            if (prim is Point) return Vector2.Distance(point, ((Point)prim).Location);
+            if (prim is Circle) return Distance(point, (Circle)prim);
+            if (prim is Rectangle) return Distance(point, (Rectangle)prim);
+            if (prim is Triangle) return Distance(point, (Triangle)prim);
+            if (prim is Polygon) return Distance(point, (Polygon)prim);
+            throw new NotImplementedException("Geometry.Distance() not implemented for Vector2 and " + prim.GetType().Name);
         }
 
         /// <summary>
@@ -711,13 +300,13 @@ namespace AW2.Helpers.Geometric
         /// <param name="a">One end of the line segment.</param>
         /// <param name="b">The other end of the line segment.</param>
         /// <returns>The squared distance between 'point' and the line segment ab.</returns>
-        public static float DistanceSquared(Point point, Vector2 a, Vector2 b)
+        public static float DistanceSquared(Vector2 point, Vector2 a, Vector2 b)
         {
             // There's three cases to consider, depending on the point's projection
             // on the line that a and b define.
             Vector2 ab = b - a;
-            Vector2 ap = point.Location - a;
-            Vector2 bp = point.Location - b;
+            Vector2 ap = point - a;
+            Vector2 bp = point - b;
             float dot1 = Vector2.Dot(ab, ap);
             float dot2 = Vector2.Dot(ab, bp);
 
@@ -743,7 +332,7 @@ namespace AW2.Helpers.Geometric
         /// <param name="b">The other end of the line segment.</param>
         /// <param name="point">The point.</param>
         /// <returns>A point on the line segment that is maximally close to the given point.</returns>
-        public static Point GetClosestPoint(Vector2 a, Vector2 b, Point point)
+        public static Vector2 GetClosestPoint(Vector2 a, Vector2 b, Vector2 point)
         {
             float distance;
             return GetClosestPoint(a, b, point, out distance);
@@ -761,33 +350,33 @@ namespace AW2.Helpers.Geometric
         /// <param name="point">The point.</param>
         /// <param name="distance">Where to store the distance between the given point and the returned point.</param>
         /// <returns>A point on the line segment that is maximally close to the given point.</returns>
-        public static Point GetClosestPoint(Vector2 a, Vector2 b, Point point, out float distance)
+        public static Vector2 GetClosestPoint(Vector2 a, Vector2 b, Vector2 point, out float distance)
         {
             // There's three cases to consider, depending on the point's projection
             // on the line that a and b define.
             Vector2 ab = b - a;
-            Vector2 ap = point.Location - a;
-            Vector2 bp = point.Location - b;
+            Vector2 ap = point - a;
+            Vector2 bp = point - b;
             float dot1 = Vector2.Dot(ab, ap);
             float dot2 = Vector2.Dot(ab, bp);
-            Point closestPoint;
+            Vector2 closestPoint;
 
             // Case 1: Point's projection is outside the line segment, closer to a than b.
             if (dot1 <= 0)
-                closestPoint = new Point(a);
+                closestPoint = a;
 
             // Case 2: Point's projection is outside the line segment, closer to b than a.
             else if (dot2 >= 0)
-                closestPoint = new Point(b);
+                closestPoint = b;
 
             // Case 3: Point's projection is on the line segment.
             else
             {
                 Vector2 apProjectedToAb = ab * Vector2.Dot(ap, ab) / ab.LengthSquared();
-                closestPoint = new Point(a + apProjectedToAb);
+                closestPoint = a + apProjectedToAb;
             }
 
-            distance = (point.Location - closestPoint.Location).Length();
+            distance = (point - closestPoint).Length();
             return closestPoint;
         }
 
@@ -798,9 +387,9 @@ namespace AW2.Helpers.Geometric
         /// <param name="point">The point.</param>
         /// <param name="circle">The circle.</param>
         /// <returns>The distance from the point to the circle.</returns>
-        public static float Distance(Point point, Circle circle)
+        public static float Distance(Vector2 point, Circle circle)
         {
-            return Math.Max(0, (point.Location - circle.Center).Length() - circle.Radius);
+            return Math.Max(0, Vector2.Distance(point, circle.Center) - circle.Radius);
         }
 
         /// <summary>
@@ -810,7 +399,7 @@ namespace AW2.Helpers.Geometric
         /// <param name="point">The point.</param>
         /// <param name="triangle">The triangle.</param>
         /// <returns>The distance from the point to the triangle.</returns>
-        public static float Distance(Point point, Triangle triangle)
+        public static float Distance(Vector2 point, Triangle triangle)
         {
             // First test corners for being the closest points on the triangle.
             // This should cover the most probable cases, assuming the triangle
@@ -825,28 +414,28 @@ namespace AW2.Helpers.Geometric
             Vector2 p3 = triangle.P3;
 
             // Is 't.P1' the closest point?
-            Vector2 p1p = point.Location - p1;
+            Vector2 p1p = point - p1;
             Vector2 e12 = p2 - p1;
             Vector2 e13 = p3 - p1;
             float halfplane12 = Vector2.Dot(p1p, e12);
             float halfplane13 = Vector2.Dot(p1p, e13);
             if (halfplane12 <= 0 && halfplane13 <= 0)
-                return Vector2.Distance(point.Location, p1);
+                return Vector2.Distance(point, p1);
 
             // Is 't.P2' the closest point?
-            Vector2 p2p = point.Location - p2;
+            Vector2 p2p = point - p2;
             Vector2 e23 = p3 - p2;
             float halfplane21 = -Vector2.Dot(p2p, e12);
             float halfplane23 = Vector2.Dot(p2p, e23);
             if (halfplane21 <= 0 && halfplane23 <= 0)
-                return Vector2.Distance(point.Location, p2);
+                return Vector2.Distance(point, p2);
 
             // Is 't.P3' the closest point?
-            Vector2 p3p = point.Location - p3;
+            Vector2 p3p = point - p3;
             float halfplane31 = -Vector2.Dot(p3p, e13);
             float halfplane32 = -Vector2.Dot(p3p, e23);
             if (halfplane31 <= 0 && halfplane32 <= 0)
-                return Vector2.Distance(point.Location, p3);
+                return Vector2.Distance(point, p3);
 
             // Is the closest point on the edge between 't.P2' and 't.P3'?
             float distance23 = Vector2.Dot(triangle.Normal23, p2p);
@@ -871,10 +460,7 @@ namespace AW2.Helpers.Geometric
         /// Returns the squared distance from a point to a triangle.
         /// If the point is inside the triangle, the distance is zero.
         /// </summary>
-        /// <param name="point">The point.</param>
-        /// <param name="triangle">The triangle.</param>
-        /// <returns>The squared distance from the point to the triangle.</returns>
-        public static float DistanceSquared(Point point, Triangle triangle)
+        public static float DistanceSquared(Vector2 point, Triangle triangle)
         {
             // First, test corners for being the closest points on the triangle.
             // This should cover the most probable cases, assuming the triangle
@@ -889,28 +475,28 @@ namespace AW2.Helpers.Geometric
             Vector2 p3 = triangle.P3;
 
             // Is 'p1' the closest point?
-            Vector2 p1p = point.Location - p1;
+            Vector2 p1p = point - p1;
             Vector2 e12 = p2 - p1;
             Vector2 e13 = p3 - p1;
             float halfplane12 = Vector2.Dot(p1p, e12);
             float halfplane13 = Vector2.Dot(p1p, e13);
             if (halfplane12 <= 0 && halfplane13 <= 0)
-                return Vector2.DistanceSquared(point.Location, p1);
+                return Vector2.DistanceSquared(point, p1);
 
             // Is 'p2' the closest point?
-            Vector2 p2p = point.Location - p2;
+            Vector2 p2p = point - p2;
             Vector2 e23 = p3 - p2;
             float halfplane21 = -Vector2.Dot(p2p, e12);
             float halfplane23 = Vector2.Dot(p2p, e23);
             if (halfplane21 <= 0 && halfplane23 <= 0)
-                return Vector2.DistanceSquared(point.Location, p2);
+                return Vector2.DistanceSquared(point, p2);
 
             // Is 'p3' the closest point?
-            Vector2 p3p = point.Location - p3;
+            Vector2 p3p = point - p3;
             float halfplane31 = -Vector2.Dot(p3p, e13);
             float halfplane32 = -Vector2.Dot(p3p, e23);
             if (halfplane31 <= 0 && halfplane32 <= 0)
-                return Vector2.DistanceSquared(point.Location, p3);
+                return Vector2.DistanceSquared(point, p3);
 
             // Is the closest point on the edge between 'p2' and 'p3'?
             float distance23 = Vector2.Dot(triangle.Normal23, p2p);
@@ -937,31 +523,28 @@ namespace AW2.Helpers.Geometric
         /// The distance is the least distance between the point and any
         /// point that lies in the rectangle. In particular, if the point itself
         /// lies inside the rectangle, zero will be returned.
-        /// <param name="point">The point.</param>
-        /// <param name="rectangle">The rectangle.</param>
-        /// <returns>The distance between the point and the rectangle.</returns>
-        public static float Distance(Point point, Rectangle rectangle)
+        public static float Distance(Vector2 point, Rectangle rectangle)
         {
-            bool left = point.Location.X < rectangle.Min.X;
-            bool right = rectangle.Max.X < point.Location.X;
-            bool under = point.Location.Y < rectangle.Min.Y;
-            bool over = rectangle.Max.Y < point.Location.Y;
+            bool left = point.X < rectangle.Min.X;
+            bool right = rectangle.Max.X < point.X;
+            bool under = point.Y < rectangle.Min.Y;
+            bool over = rectangle.Max.Y < point.Y;
 
             // Is the shortest distance measured from a face?
             if (!left && !right)
             {
                 if (under)
-                    return rectangle.Min.Y - point.Location.Y;
+                    return rectangle.Min.Y - point.Y;
                 if (over)
-                    return point.Location.Y - rectangle.Max.Y;
+                    return point.Y - rectangle.Max.Y;
                 return 0;
             }
             if (!under && !over)
             {
                 if (left)
-                    return rectangle.Min.X - point.Location.X;
+                    return rectangle.Min.X - point.X;
                 if (right)
-                    return point.Location.X - rectangle.Max.X;
+                    return point.X - rectangle.Max.X;
                 return 0;
             }
 
@@ -970,23 +553,23 @@ namespace AW2.Helpers.Geometric
             {
                 if (under)
                     return (float)Math.Sqrt(
-                        (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
-                        (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y));
+                        (rectangle.Min.X - point.X) * (rectangle.Min.X - point.X) +
+                        (rectangle.Min.Y - point.Y) * (rectangle.Min.Y - point.Y));
                 else // over
                     return (float)Math.Sqrt(
-                        (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
-                        (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y));
+                        (rectangle.Min.X - point.X) * (rectangle.Min.X - point.X) +
+                        (point.Y - rectangle.Max.Y) * (point.Y - rectangle.Max.Y));
             }
             else // right
             {
                 if (under)
                     return (float)Math.Sqrt(
-                        (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
-                        (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y));
+                        (point.X - rectangle.Max.X) * (point.X - rectangle.Max.X) +
+                        (rectangle.Min.Y - point.Y) * (rectangle.Min.Y - point.Y));
                 else // over
                     return (float)Math.Sqrt(
-                        (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
-                        (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y));
+                        (point.X - rectangle.Max.X) * (point.X - rectangle.Max.X) +
+                        (point.Y - rectangle.Max.Y) * (point.Y - rectangle.Max.Y));
             }
         }
 
@@ -999,28 +582,28 @@ namespace AW2.Helpers.Geometric
         /// <param name="point">The point.</param>
         /// <param name="rectangle">The rectangle.</param>
         /// <returns>The squared distance between the point and the rectangle.</returns>
-        public static float DistanceSquared(Point point, Rectangle rectangle)
+        public static float DistanceSquared(Vector2 point, Rectangle rectangle)
         {
-            bool left = point.Location.X < rectangle.Min.X;
-            bool right = rectangle.Max.X < point.Location.X;
-            bool under = point.Location.Y < rectangle.Min.Y;
-            bool over = rectangle.Max.Y < point.Location.Y;
+            bool left = point.X < rectangle.Min.X;
+            bool right = rectangle.Max.X < point.X;
+            bool under = point.Y < rectangle.Min.Y;
+            bool over = rectangle.Max.Y < point.Y;
 
             // Is the shortest distance measured from a face?
             if (!left && !right)
             {
                 if (under)
-                    return (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y);
+                    return (rectangle.Min.Y - point.Y) * (rectangle.Min.Y - point.Y);
                 if (over)
-                    return (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y);
+                    return (point.Y - rectangle.Max.Y) * (point.Y - rectangle.Max.Y);
                 return 0;
             }
             if (!under && !over)
             {
                 if (left)
-                    return (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X);
+                    return (rectangle.Min.X - point.X) * (rectangle.Min.X - point.X);
                 if (right)
-                    return (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X);
+                    return (point.X - rectangle.Max.X) * (point.X - rectangle.Max.X);
                 return 0;
             }
 
@@ -1029,23 +612,23 @@ namespace AW2.Helpers.Geometric
             {
                 if (under)
                     return
-                        (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
-                        (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y);
+                        (rectangle.Min.X - point.X) * (rectangle.Min.X - point.X) +
+                        (rectangle.Min.Y - point.Y) * (rectangle.Min.Y - point.Y);
                 else // over
                     return
-                        (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
-                        (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y);
+                        (rectangle.Min.X - point.X) * (rectangle.Min.X - point.X) +
+                        (point.Y - rectangle.Max.Y) * (point.Y - rectangle.Max.Y);
             }
             else // right
             {
                 if (under)
                     return
-                        (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
-                        (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y);
+                        (point.X - rectangle.Max.X) * (point.X - rectangle.Max.X) +
+                        (rectangle.Min.Y - point.Y) * (rectangle.Min.Y - point.Y);
                 else // over
                     return
-                        (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
-                        (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y);
+                        (point.X - rectangle.Max.X) * (point.X - rectangle.Max.X) +
+                        (point.Y - rectangle.Max.Y) * (point.Y - rectangle.Max.Y);
             }
         }
 
@@ -1058,7 +641,7 @@ namespace AW2.Helpers.Geometric
         /// <param name="point">The point.</param>
         /// <param name="polygon">The polygon.</param>
         /// <returns>The distance between the given point and polygon.</returns>
-        public static float Distance(Point point, Polygon polygon)
+        public static float Distance(Vector2 point, Polygon polygon)
         {
             return (float)Math.Sqrt(DistanceSquared(point, polygon));
         }
@@ -1072,10 +655,9 @@ namespace AW2.Helpers.Geometric
         /// <param name="point">The point.</param>
         /// <param name="polygon">The polygon.</param>
         /// <returns>The squared distance between the given point and polygon.</returns>
-        public static float DistanceSquared(Point point, Polygon polygon)
+        public static float DistanceSquared(Vector2 point, Polygon polygon)
         {
-            if (Intersect(point, polygon))
-                return 0;
+            if (Intersect(point, polygon)) return 0;
             Vector2[] vertices = polygon.Vertices;
             if (polygon.FaceStrips != null)
             {
@@ -1110,11 +692,12 @@ namespace AW2.Helpers.Geometric
                     else
                     {
                         // Seek out the closest face strip of those that don't contain the query point.
-                        float[] cornerDistsSquared = new float[4] { 
-                            Vector2.DistanceSquared(point.Location, new Vector2(strip.BoundingBox.Min.X, strip.BoundingBox.Min.Y)),
-                            Vector2.DistanceSquared(point.Location, new Vector2(strip.BoundingBox.Min.X, strip.BoundingBox.Max.Y)),
-                            Vector2.DistanceSquared(point.Location, new Vector2(strip.BoundingBox.Max.X, strip.BoundingBox.Min.Y)),
-                            Vector2.DistanceSquared(point.Location, new Vector2(strip.BoundingBox.Max.X, strip.BoundingBox.Max.Y))
+                        float[] cornerDistsSquared = new float[4]
+                        { 
+                            Vector2.DistanceSquared(point, new Vector2(strip.BoundingBox.Min.X, strip.BoundingBox.Min.Y)),
+                            Vector2.DistanceSquared(point, new Vector2(strip.BoundingBox.Min.X, strip.BoundingBox.Max.Y)),
+                            Vector2.DistanceSquared(point, new Vector2(strip.BoundingBox.Max.X, strip.BoundingBox.Min.Y)),
+                            Vector2.DistanceSquared(point, new Vector2(strip.BoundingBox.Max.X, strip.BoundingBox.Max.Y))
                         };
                         Array.Sort(cornerDistsSquared);
                         stripDistancesSquared[stripI] = DistanceSquared(point, strip.BoundingBox);
@@ -1156,294 +739,6 @@ namespace AW2.Helpers.Geometric
             }
         }
 
-        /// <summary>
-        /// Returns the distance between two circles.
-        /// If the circles intersect, the distance is zero.
-        /// </summary>
-        /// <param name="circle1">One circle.</param>
-        /// <param name="circle2">The other circle.</param>
-        /// <returns>The distance between the circles.</returns>
-        public static float Distance(Circle circle1, Circle circle2)
-        {
-            return Math.Max(0, (circle1.Center - circle2.Center).Length() - circle1.Radius - circle2.Radius);
-        }
-
-        /// <summary>
-        /// Returns the distance between a circle and a rectangle.
-        /// If the circle and rectangle intersect, the distance is zero.
-        /// </summary>
-        /// <param name="circle">The circle.</param>
-        /// <param name="rectangle">The rectangle.</param>
-        /// <returns>The distance between the circle and the rectangle.</returns>
-        public static float Distance(Circle circle, Rectangle rectangle)
-        {
-            return Math.Max(0, Distance(new Point(circle.Center), rectangle) - circle.Radius);
-        }
-
-        /// <summary>
-        /// Returns the distance between a circle and a triangle.
-        /// If the circle and triangle intersect, the distance is zero.
-        /// </summary>
-        /// <param name="circle">The circle.</param>
-        /// <param name="triangle">The triangle.</param>
-        /// <returns>The distance between the circle and the triangle.</returns>
-        public static float Distance(Circle circle, Triangle triangle)
-        {
-            return Math.Max(0, Distance(new Point(circle.Center), triangle) - circle.Radius);
-        }
-
-        /// <summary>
-        /// Returns a point in the polygon that is maximally close to the given point.
-        /// </summary>
-        /// There may not be a unique closest point. In such a case the exact return
-        /// value is undefined but will still meet the definition of the return value.
-        /// If the given point is inside the polygon, the same point is returned.
-        /// <param name="polygon">The polygon.</param>
-        /// <param name="point">The point.</param>
-        /// <returns>A point in the polygon that is maximally close to the given point.</returns>
-        public static Point GetClosestPoint(Polygon polygon, Point point)
-        {
-            float distance;
-            return GetClosestPoint(polygon, point, out distance);
-        }
-
-        /// <summary>
-        /// Returns a point in the polygon that is maximally close to the given point.
-        /// Also computes the distance from the polygon to the returned point.
-        /// </summary>
-        /// There may not be a unique closest point. In such a case the exact return
-        /// value is undefined but will still meet the definition of the return value.
-        /// If the given point is inside the polygon, the same point is returned.
-        /// <param name="polygon">The polygon.</param>
-        /// <param name="point">The point.</param>
-        /// <param name="distance">Where to store the distance between the polygon and the returned point.</param>
-        /// <returns>A point in the polygon that is maximally close to the given point.</returns>
-        public static Point GetClosestPoint(Polygon polygon, Point point, out float distance)
-        {
-            if (Intersect(point, polygon))
-            {
-                distance = 0;
-                return point;
-            }
-            float bestDistance = Single.MaxValue;
-            Point bestPoint = point;
-            int oldI = polygon.Vertices.Length - 1;
-            for (int i = 0; i < polygon.Vertices.Length; oldI = i++)
-            {
-                float currentDistance;
-                Point closestPoint = GetClosestPoint(polygon.Vertices[oldI], polygon.Vertices[i], point, out currentDistance);
-                if (currentDistance < bestDistance)
-                {
-                    bestDistance = currentDistance;
-                    bestPoint = closestPoint;
-                }
-            }
-            distance = bestDistance;
-            return bestPoint;
-        }
-
-        /// <summary>
-        /// Returns a normalised vector pointing from an area toward another,
-        /// or the zero vector if there's no candidate for the normal.
-        /// </summary>
-        /// <param name="prim1">The area to point from.</param>
-        /// <param name="prim2">The area to point to.</param>
-        /// <returns>A normalised vector pointing from an the first area toward the other,
-        /// or the zero vector in difficult cases.</returns>
-        public static Vector2 GetNormal(IGeomPrimitive prim1, IGeomPrimitive prim2)
-        {
-            if (prim1 is Point)
-            {
-                Point point1 = (Point)prim1;
-                if (prim2 is Point)
-                {
-                    Vector2 difference = ((Point)prim2).Location - point1.Location;
-                    return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
-                }
-                if (prim2 is Circle)
-                {
-                    Vector2 difference = ((Circle)prim2).Center - point1.Location;
-                    return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
-                }
-                if (prim2 is Rectangle) throw new Exception("Geometry.GetNormal(Point, Rectangle) not implemented");
-                if (prim2 is Triangle) return -GetNormal((Triangle)prim2, point1);
-                if (prim2 is Polygon) return -GetNormal((Polygon)prim2, point1);
-            }
-            if (prim1 is Circle)
-            {
-                Circle circle1 = (Circle)prim1;
-                if (prim2 is Point)
-                {
-                    Vector2 difference = ((Point)prim2).Location - circle1.Center;
-                    return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
-                }
-                if (prim2 is Circle)
-                {
-                    Vector2 difference = ((Circle)prim2).Center - circle1.Center;
-                    return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
-                }
-                if (prim2 is Rectangle) throw new Exception("Geometry.GetNormal(Circle, Rectangle) not implemented");
-                if (prim2 is Triangle) return -GetNormal((Triangle)prim2, new Point(circle1.Center));
-                if (prim2 is Polygon) return -GetNormal((Polygon)prim2, new Point(circle1.Center));
-            }
-            if (prim1 is Triangle)
-            {
-                Triangle triangle1 = (Triangle)prim1;
-                if (prim2 is Point) return GetNormal(triangle1, (Point)prim2);
-                if (prim2 is Circle) return GetNormal(triangle1, new Point(((Circle)prim2).Center));
-                if (prim2 is Rectangle) throw new Exception("Geometry.GetNormal(Rectangle, Triangle) not implemented");
-                if (prim2 is Triangle) throw new Exception("Geometry.GetNormal(Triangle, Triangle) not implemented");
-                if (prim2 is Polygon) throw new Exception("Geometry.GetNormal(Triangle, Polygon) not implemented");
-            }
-            if (prim1 is Polygon)
-            {
-                Polygon polygon1 = (Polygon)prim1;
-                if (prim2 is Point) return GetNormal(polygon1, (Point)prim2);
-                if (prim2 is Circle) return GetNormal(polygon1, new Point(((Circle)prim2).Center));
-                if (prim2 is Rectangle) throw new Exception("Geometry.GetNormal(Rectangle, Polygon) not implemented");
-                if (prim2 is Triangle) throw new Exception("Geometry.GetNormal(Polygon, Triangle) not implemented");
-                if (prim2 is Polygon) throw new Exception("Geometry.GetNormal(Polygon, Polygon) not implemented");
-            }
-            throw new Exception("Unknown geometric primitives in Geometry.GetNormal(): " +
-                      prim1.GetType().Name + " " + prim2.GetType().Name);
-        }
-
-        /// <summary>
-        /// Returns a unit normal vector from a triangle pointing towards a point.
-        /// </summary>
-        /// The returned vector will be normalised, it will be parallel to a shortest
-        /// line segment that connects the triangle and the point, and it will
-        /// point from the triangle towards the point. If the point lies inside
-        /// the triangle, the zero vector will be returned.
-        /// <param name="triangle">The triangle.</param>
-        /// <param name="point">The point for the normal to point to.</param>
-        /// <returns>A unit normal pointing to the given location.</returns>
-        public static Vector2 GetNormal(Triangle triangle, Point point)
-        {
-            // First test corners for being the closest points on the triangle.
-            // This should cover the most probable cases, assuming the triangle
-            // is small relative to the distance 'p' is from 't' on average
-            // over several calls to this method.
-            // The second most probable case is that the closest point lies
-            // on an edge of 't'.
-            // The least probable case is that 'p' lies inside 't'.
-
-            Vector2 p1 = triangle.P1;
-            Vector2 p2 = triangle.P2;
-            Vector2 p3 = triangle.P3;
-
-            // Is 't.P1' the closest point?
-            Vector2 p1p = point.Location - p1;
-            Vector2 e12 = p2 - p1;
-            Vector2 e13 = p3 - p1;
-            float halfplane12 = Vector2.Dot(p1p, e12);
-            float halfplane13 = Vector2.Dot(p1p, e13);
-            if (halfplane12 <= 0 && halfplane13 <= 0)
-                return Vector2.Normalize(point.Location - p1);
-
-            // Is 't.P2' the closest point?
-            Vector2 p2p = point.Location - p2;
-            Vector2 e23 = p3 - p2;
-            float halfplane21 = -Vector2.Dot(p2p, e12);
-            float halfplane23 = Vector2.Dot(p2p, e23);
-            if (halfplane21 <= 0 && halfplane23 <= 0)
-                return Vector2.Normalize(point.Location - p2);
-
-            // Is 't.P3' the closest point?
-            Vector2 p3p = point.Location - p3;
-            float halfplane31 = -Vector2.Dot(p3p, e13);
-            float halfplane32 = -Vector2.Dot(p3p, e23);
-            if (halfplane31 <= 0 && halfplane32 <= 0)
-                return Vector2.Normalize(point.Location - p3);
-
-            // Is the closest point on the edge between 't.P2' and 't.P3'?
-            float distance23 = Vector2.Dot(triangle.Normal23, p2p);
-            if (distance23 >= 0 && halfplane23 >= 0 && halfplane32 >= 0)
-                return triangle.Normal23;
-
-            // Is the closest point on the edge between 't.P1' and 't.P3'?
-            float distance13 = Vector2.Dot(triangle.Normal13, p1p);
-            if (distance13 >= 0 && halfplane13 >= 0 && halfplane31 >= 0)
-                return triangle.Normal13;
-
-            // Is the closest point on the edge between 't.P1' and 't.P2'?
-            float distance12 = Vector2.Dot(triangle.Normal12, p1p);
-            if (distance12 >= 0 && halfplane12 >= 0 && halfplane21 >= 0)
-                return triangle.Normal12;
-
-            // Otherwise 'p' lies inside 't'.
-            return Vector2.Zero;
-        }
-
-        /// <summary>
-        /// Returns a unit normal vector from a polygon pointing towards a point.
-        /// </summary>
-        /// The returned vector will be normalised, it will be parallel to a shortest
-        /// line segment that connects the polygon and the point, and it will
-        /// point from the polygon towards the point. If the point lies inside
-        /// the polygon, the zero vector will be returned.
-        /// Note that the normal is not unique in all cases. In ambiguous cases the exact
-        /// result is undefined but will obey the specified return conditions.
-        /// <param name="polygon">The polygon.</param>
-        /// <param name="point">The point for the normal to point to.</param>
-        /// <returns>A unit normal pointing to the given location.</returns>
-        public static Vector2 GetNormal(Polygon polygon, Point point)
-        {
-            Point closestPoint = GetClosestPoint(polygon, point);
-            Vector2 difference = point.Location - closestPoint.Location;
-            if (difference == Vector2.Zero)
-                return Vector2.Zero;
-            return Vector2.Normalize(difference);
-        }
-
-        /// <summary>
-        /// Returns a unit normal vector from a set of polygons pointing towards a point.
-        /// </summary>
-        /// The returned vector will be normalised, it will be parallel to a shortest
-        /// line segment that connects the polygons and the point, and it will
-        /// point from the closest polygon towards the point. If the point lies inside
-        /// a polygon, the zero vector will be returned.
-        /// Note that the normal is not unique in all cases. In ambiguous cases the exact
-        /// result is undefined but will obey the specified return conditions.
-        /// <param name="polygons">The polygons.</param>
-        /// <param name="point">The point the normal will point to.</param>
-        /// <returns>A unit normal pointing to the given location.</returns>
-        public static Vector2 GetNormal(IEnumerable<Polygon> polygons, Point point)
-        {
-            float bestDistance = float.MaxValue;
-            Point bestPoint = null;
-            foreach (Polygon polygon in polygons)
-            {
-                float distance;
-                Point closestPoint = GetClosestPoint(polygon, point, out distance);
-                if (distance < bestDistance)
-                {
-                    bestDistance = distance;
-                    bestPoint = closestPoint;
-                }
-            }
-            return Vector2.Normalize(point.Location - bestPoint.Location);
-        }
-
-        /// <summary>
-        /// Returns where point p stands relative to the 
-        /// directed line defined by the vector from a to b.
-        /// </summary>
-        /// <param name="p">The point.</param>
-        /// <param name="a">The tail of the vector.</param>
-        /// <param name="b">The head of the vector.</param>
-        /// <returns>The stand of p relative to the
-        /// directed line defined by the vector from a to b.</returns>
-        public static StandType Stand(Vector2 p, Vector2 a, Vector2 b)
-        {
-            Vector2 dir = b - a;
-            Vector2 leftNormal = new Vector2(-dir.Y, dir.X);
-            float dot = Vector2.Dot(leftNormal, p - a);
-            return dot < 0 ? StandType.Right
-                : dot > 0 ? StandType.Left
-                : StandType.Edge;
-        }
-
         #endregion Location and distance query methods
 
         #region Random location methods
@@ -1456,10 +751,8 @@ namespace AW2.Helpers.Geometric
         public static Vector2 GetRandomLocation(IGeomPrimitive prim)
         {
             Type type = prim.GetType();
-            if (type == typeof(Point))
-                return ((Point)prim).Location;
-            if (type == typeof(Circle))
-                return GetRandomLocation((Circle)prim);
+            if (type == typeof(Point)) return ((Point)prim).Location;
+            if (type == typeof(Circle)) return GetRandomLocation((Circle)prim);
             if (type == typeof(Rectangle))
             {
                 Rectangle rectangle = (Rectangle)prim;
@@ -1472,9 +765,8 @@ namespace AW2.Helpers.Geometric
             Rectangle boundingBox = prim.BoundingBox;
             for (int i = 0; i < 1000000; ++i)
             {
-                Vector2 pos = RandomHelper.GetRandomVector2(boundingBox.Min, boundingBox.Max);
-                if (Intersect(new Point(pos), prim))
-                    return pos;
+                var pos = RandomHelper.GetRandomVector2(boundingBox.Min, boundingBox.Max);
+                if (Intersect(pos, prim)) return pos;
             }
             throw new NotImplementedException("GetRandomLocation not properly implemented for " + type.Name);
         }

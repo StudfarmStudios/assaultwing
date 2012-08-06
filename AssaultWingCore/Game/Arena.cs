@@ -17,7 +17,6 @@ using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
-using Point = AW2.Helpers.Geometric.Point;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game
@@ -40,12 +39,14 @@ namespace AW2.Game
             public Gob Gob { get; private set; }
             public Vector2 OldPos { get; private set; }
             public float OldRotation { get; private set; }
+            public float OldRotationSpeed { get; private set; }
             public int FramesAgo { get; private set; }
             public GobUpdateData(Gob gob, int framesAgo)
             {
                 Gob = gob;
                 OldPos = gob.Pos;
                 OldRotation = gob.Rotation;
+                OldRotationSpeed = gob.RotationSpeed;
                 FramesAgo = framesAgo;
             }
         }
@@ -261,9 +262,12 @@ namespace AW2.Game
             _world.Step((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
             PerformCustomCollisions();
             if (Game.NetworkMode != NetworkMode.Client)
+            {
+                var boundedAreaExtreme = BoundedAreaExtreme;
                 foreach (var gob in Gobs.GameplayLayer.Gobs)
-                    if (!Geometry.Intersect(BoundedAreaExtreme, new Point(gob.Pos)))
+                    if (!Geometry.Intersect(gob.Pos, boundedAreaExtreme))
                         gob.Die();
+            }
         }
 
         public void FinalizeGobUpdatesOnClient(HashSet<GobUpdateData> gobsToUpdate, int frameCount)
@@ -275,8 +279,12 @@ namespace AW2.Game
                 if (gobsToUpdate.Any(data => data.Gob == gob)) continue;
                 frozenGobs.Add(Tuple.Create(gob, gob.Body.SetTemporaryStatic()));
             }
+            // Rotation of local ships is already up to date.
+            var localShips = gobsToUpdate.Where(data => data.Gob is Gobs.Ship && data.Gob.Owner != null && data.Gob.Owner.IsLocal);
+            foreach (var data in localShips) data.Gob.RotationSpeed = 0;
             for (int i = 0; i < frameCount; i++) Update();
             foreach (var tuple in frozenGobs) tuple.Item1.Body.RestoreTemporaryStatic(tuple.Item2);
+            foreach (var data in localShips) data.Gob.RotationSpeed = data.OldRotationSpeed;
             foreach (var data in gobsToUpdate) data.Gob.SmoothJitterOnClient(data);
         }
 

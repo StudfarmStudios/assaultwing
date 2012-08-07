@@ -841,7 +841,7 @@ namespace AW2.Game
             Move -= MoveOffset;
             MoveOffset *= POS_SMOOTH_MOVE_FADEOUT;
             if (MoveOffset.LengthSquared() < POS_SMOOTH_MOVE_CUTOFF * POS_SMOOTH_MOVE_CUTOFF) MoveOffset = Vector2.Zero;
-            Move += MoveOffset;
+            else Move += MoveOffset;
         }
 
         public static float DampDrawRotationOffset(float drawRotationOffset)

@@ -70,14 +70,14 @@ namespace AW2.Game.GobUtils
 
         private void AssertRemove(WallIndexMap map)
         {
-            Assert.IsFalse(map.Remove(-1, -1));
-            Assert.IsFalse(map.Remove(2, 0));
-            Assert.IsFalse(map.Remove(0, 2));
-            Assert.IsTrue(map.Remove(0, 0));
+            Assert.IsFalse(map.Remove(-1, -1, 1));
+            Assert.IsFalse(map.Remove(2, 0, 1));
+            Assert.IsFalse(map.Remove(0, 2, 1));
+            Assert.IsTrue(map.Remove(0, 0, 1));
             Assert.IsEmpty(_removedTriangles);
-            Assert.IsTrue(map.Remove(0, 0));
+            Assert.IsTrue(map.Remove(0, 0, 1));
             Assert.IsEmpty(_removedTriangles);
-            Assert.IsTrue(map.Remove(0, 0));
+            Assert.IsTrue(map.Remove(0, 0, 1));
             Assert.AreEqual(new[] { 0 }, _removedTriangles);
         }
     }

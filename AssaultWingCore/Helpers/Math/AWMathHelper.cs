@@ -16,6 +16,7 @@ namespace AW2.Helpers
     public static class AWMathHelper
     {
         public delegate void PointPlotDelegate(int x, int y);
+        public delegate void HorizontalLinePlotDelegate(int x, int y, int width);
 
         private struct Scanline
         {
@@ -225,7 +226,7 @@ namespace AW2.Helpers
         /// <param name="y0">Center Y coordinate of the circle.</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="plot">The plot method to be called at each circle point.</param>
-        public static void FillCircle(int x0, int y0, int radius, PointPlotDelegate plot)
+        public static void FillCircle(int x0, int y0, int radius, HorizontalLinePlotDelegate plot)
         {
             // Midpoint circle algorithm, a.k.a. Bresenham's circle algorithm.
             // Implementation adapted from code in Wikipedia, 
@@ -239,8 +240,7 @@ namespace AW2.Helpers
             int y = radius;
 
             // Plot the horizontal diameter.
-            for (int i = x0 - radius; i <= x0 + radius; ++i)
-                plot(i, y0);
+            plot(x0 - radius, y0, radius * 2 + 1);
 
             while (x < y)
             {
@@ -249,11 +249,8 @@ namespace AW2.Helpers
                     // Plot horizontal rows starting from top and bottom and
                     // proceeding symmetrically towards the horizontal diameter
                     // on each successive entry to this code block.
-                    for (int i = x0 - x; i <= x0 + x; ++i)
-                    {
-                        plot(i, y0 - y);
-                        plot(i, y0 + y);
-                    }
+                    plot(x0 - x, y0 - y, x * 2 + 1);
+                    plot(x0 - x, y0 + y, x * 2 + 1);
                     y--;
                     ddF_y += 2;
                     f += ddF_y;
@@ -266,11 +263,8 @@ namespace AW2.Helpers
                 // Plot horizontal rows starting immediately above and below
                 // the horizontal diameter and proceeding symmetrically towards
                 // the top and bottom of the circle.
-                for (int i = x0 - y; i <= x0 + y; ++i)
-                {
-                    plot(i, y0 - x);
-                    plot(i, y0 + x);
-                }
+                plot(x0 - y, y0 - x, y * 2 + 1);
+                plot(x0 - y, y0 + x, y * 2 + 1);
             }
         }
 

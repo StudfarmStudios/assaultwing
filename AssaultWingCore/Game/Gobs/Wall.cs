@@ -247,9 +247,10 @@ namespace AW2.Game.Gobs
             if (!_destructible || holeRadius <= 0) return 0;
             if (Game.NetworkMode == NetworkMode.Client) return 0;
             var posInIndexMap = Vector2.Transform(holePos, WorldToIndexMapTransform).Round();
+            // FIXME: change removeCount int->bool + fix fallout
             var removeCount = 0;
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius),
-                (x, y) => { if (_indexMap.Remove(x, y)) removeCount++; });
+                (x, y, width) => { if (_indexMap.Remove(x, y, width)) removeCount++; });
             if (Game.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {
                 _removedTriangleIndicesToSerialize.AddRange(_removedTriangleIndices);

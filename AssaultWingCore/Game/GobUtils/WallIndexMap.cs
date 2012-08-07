@@ -286,15 +286,20 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Returns true if something was removed.
         /// </summary>
-        public bool Remove(int x, int y)
+        public bool Remove(int x, int y, int width)
         {
-            if (x < 0 || y < 0 || x >= Width || y >= Height) return false;
+            if (y < 0 || y >= Height) return false;
+            if (x + width < 0 || x >= Width) return false;
             var success = false;
-            foreach (TriInt index in _data.Get(x, y))
+            int end = Math.Min(Width, x + width);
+            for (int i = Math.Max(x, 0); i < end; i++)
             {
-                var coverLeft = --_triangleCovers[index];
-                success |= coverLeft >= 0;
-                if (coverLeft == 0) _removeTriangle(index);
+                foreach (TriInt index in _data.Get(i, y))
+                {
+                    var coverLeft = --_triangleCovers[index];
+                    success |= coverLeft >= 0;
+                    if (coverLeft == 0) _removeTriangle(index);
+                }
             }
             return success;
         }

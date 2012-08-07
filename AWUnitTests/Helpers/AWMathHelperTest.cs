@@ -29,6 +29,12 @@ namespace AW2.Helpers
                 ++_data[y, x];
             }
 
+            public void PlotLine(int x, int y, int width)
+            {
+                while (width-- > 0)
+                    Plot(x++, y);
+            }
+
             public void DebugDraw()
             {
                 for (int y = 0; y < Height; ++y)
@@ -491,7 +497,7 @@ namespace AW2.Helpers
             int x0 = radius;
             int y0 = radius;
             var data = new PlotData(2 * radius + 1, 2 * radius + 1);
-            AWMathHelper.FillCircle(x0, y0, radius, data.Plot);
+            AWMathHelper.FillCircle(x0, y0, radius, data.PlotLine);
             if (radius < 9) data.DebugDraw();
             var duplicate = data.GetFirstDuplicatePlotPoint();
             Assert.That(!duplicate.HasValue, "FillCircle plotted " + duplicate + " several times");

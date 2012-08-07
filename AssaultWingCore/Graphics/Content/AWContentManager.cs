@@ -43,18 +43,18 @@ namespace AW2.Graphics.Content
             object item;
             if (typeof(T) == typeof(ModelGeometry))
             {
+                if (_loadedModelSkeletons.TryGetValue(assetName, out item)) return (T)item;
                 var assetFilename = GetAssetFilename<T>(assetName);
-                if (_loadedModelSkeletons.TryGetValue(assetFilename, out item)) return (T)item;
                 item = XNBReader.Read<T>(assetFilename);
-                _loadedModelSkeletons.Add(assetFilename, item);
+                _loadedModelSkeletons.Add(assetName, item);
             }
             else
             {
+                if (_loadedContent.TryGetValue(assetName, out item)) return (T)item;
                 if (_ignoreGraphicsContent) return default(T);
                 var assetFullName = GetAssetFullName<T>(assetName);
-                if (_loadedContent.TryGetValue(assetFullName, out item)) return (T)item;
                 item = ReadAsset<T>(assetFullName, null);
-                _loadedContent.Add(assetFullName, item);
+                _loadedContent.Add(assetName, item);
             }
             return (T)item;
         }

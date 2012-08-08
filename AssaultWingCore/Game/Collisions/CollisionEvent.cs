@@ -76,6 +76,12 @@ namespace AW2.Game.Collisions
             {
                 var area1 = gob1.GetCollisionArea(initData.Area1ID);
                 var area2 = gob2.GetCollisionArea(initData.Area2ID);
+                if (area1 == null || area2 == null) throw new ArgumentNullException("area1, area2", string.Format(
+                    "area1 is {0}, area2 is {1}, area1ID={2}, area2ID={3}, count1={4}, count2={5}",
+                    area1 == null ? "null" : "not null",
+                    area2 == null ? "null" : "not null",
+                    initData.Area1ID, initData.Area2ID,
+                    gob1.CollisionAreas.Count(), gob2.CollisionAreas.Count()));
                 SetCollisionAreas(area1, area2);
             }
             SetCollisionSound(initData.CollisionSound);
@@ -87,6 +93,7 @@ namespace AW2.Game.Collisions
             _area2 = area2;
             var gob1 = area1.Owner;
             var gob2 = area2.Owner;
+            if (gob1 == null || gob2 == null) throw new ArgumentNullException((gob1 == null ? "gob1" : "") + (gob2 == null ? " gob2" : ""));
             _gob1ID = gob1.ID;
             _gob2ID = gob2.ID;
             _area1ID = gob1.GetCollisionAreaID(area1);

@@ -309,7 +309,7 @@ namespace AW2.Game
         {
             if (Game.GameTime.TotalGameTime < _lastRepairPendingNotify + Dock.UNDAMAGED_TIME_REQUIRED) return;
             _lastRepairPendingNotify = Game.GameTime.TotalGameTime;
-            Messages.Add(new PlayerMessage("Repair pending until you can behave!", PlayerMessage.DEFAULT_COLOR));
+            Messages.Add(new PlayerMessage("To repair, avoid damage and don't shoot", PlayerMessage.DEFAULT_COLOR));
         }
 
         public void SeizeShip(Ship ship)

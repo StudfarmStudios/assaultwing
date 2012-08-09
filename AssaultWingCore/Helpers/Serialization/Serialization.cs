@@ -301,8 +301,6 @@ namespace AW2.Helpers.Serialization
         /// <summary>
         /// Returns a deep copy of an object.
         /// </summary>
-        /// <param name="obj">The object.</param>
-        /// <returns>A deep copy of the object.</returns>
         public static object DeepCopy(object obj)
         {
             if (obj == null) return null;
@@ -363,6 +361,39 @@ namespace AW2.Helpers.Serialization
                     field.SetValue(copy, DeepCopy(field.GetValue(obj)));
             }
             return copy;
+        }
+
+        public static bool DeepEquals(object a, object b)
+        {
+            if (a == null || b == null) return a == null && b == null;
+            var type = a.GetType();
+            if (type != b.GetType()) return false;
+            if (type.IsValueType) return a.Equals(b);
+            if (type == typeof(string)) return a == b;
+            if (type.GetInterfaces().Contains(typeof(IEnumerable)))
+            {
+                var enumerableA = (IEnumerable)a;
+                var enumerableB = (IEnumerable)b;
+                var enumA = enumerableA.GetEnumerator();
+                var enumB = enumerableB.GetEnumerator();
+                while (enumA.MoveNext())
+                {
+                    if (!enumB.MoveNext()) return false; // B has too few elements
+                    if (!DeepEquals(enumA.Current, enumB.Current)) return false; // elements in A and B differ
+                }
+                if (enumB.MoveNext()) return false; // B has too many elements
+                return true;
+            }
+            // The remaining cases are non-enumerable reference types; compare them field by field.
+            var fields = GetFields(type, null, typeof(ExcludeFromDeepCopyAttribute));
+            foreach (var field in fields)
+            {
+                var fieldValueA = field.GetValue(a);
+                var fieldValueB = field.GetValue(b);
+                if (field.IsDefined(typeof(ShallowCopyAttribute), false) && fieldValueA != fieldValueB) return false;
+                else if (!DeepEquals(fieldValueA, fieldValueB)) return false;
+            }
+            return true;
         }
 
         #endregion // public methods

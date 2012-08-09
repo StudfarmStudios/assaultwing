@@ -43,28 +43,27 @@ namespace AW2.Game
 #endif
         }
 
-        public override void Initialize()
+        public static IEnumerable<object> LoadTemplates()
         {
-            Log.Write("Loading user-defined types");
-
             var gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.GOBS);
             var deviceLoader = new TypeLoader(typeof(ShipDevice), Helpers.Paths.DEVICES);
             var particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.PARTICLES);
             var arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.ARENAS);
+            return gobLoader.LoadTemplates().Union(
+                deviceLoader.LoadTemplates().Union(
+                particleLoader.LoadTemplates().Union(
+                arenaLoader.LoadTemplates())));
+        }
 
-            DeleteTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
-
-            foreach (Gob gob in gobLoader.LoadTemplates())
-                Game.DataEngine.AddTypeTemplate(gob.TypeName, gob);
-            foreach (ShipDevice device in deviceLoader.LoadTemplates())
-                Game.DataEngine.AddTypeTemplate(device.TypeName, device);
-            foreach (Gob particleEngine in particleLoader.LoadTemplates())
-                Game.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
-            foreach (Arena arena in arenaLoader.LoadTemplates())
-                Game.DataEngine.AddTypeTemplate(arena.Info.Name, arena);
-
-            SaveTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
-            base.Initialize();
+        public override void Initialize()
+        {
+            foreach (var template in LoadTemplates())
+            {
+                var name = template is Clonable ? ((Clonable)template).TypeName
+                    : template is Arena ? ((Arena)template).Info.Name
+                    : (CanonicalString)null;
+                Game.DataEngine.AddTypeTemplate(name, template);
+            }
         }
 
         public void Reset()
@@ -133,7 +132,7 @@ namespace AW2.Game
 #endif
         }
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [Obsolete, System.Diagnostics.Conditional("DEBUG")]
         private void DeleteTemplates(params TypeLoader[] typeLoaders)
         {
             if (!Game.CommandLineOptions.DeleteTemplates) return;
@@ -142,7 +141,7 @@ namespace AW2.Game
             Log.Write("...templates deleted");
         }
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [Obsolete, System.Diagnostics.Conditional("DEBUG")]
         private void SaveTemplates(params TypeLoader[] typeLoaders)
         {
             if (!Game.CommandLineOptions.SaveTemplates) return;

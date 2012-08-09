@@ -137,7 +137,6 @@ namespace AW2.Game.Collisions
         {
             var gob1 = _area1.Owner;
             var gob2 = _area2.Owner;
-            var targetFPS = gob1.Game.TargetFPS;
             var gob1Damage = _area2.Damage * COLLISION_DAMAGE_PER_ACCELERATION * Math.Max(0, GetAcceleration(gob1, _impulse) - COLLISION_DAMAGE_ACCELERATION_MIN);
             var gob2Damage = _area1.Damage * COLLISION_DAMAGE_PER_ACCELERATION * Math.Max(0, GetAcceleration(gob2, _impulse) - COLLISION_DAMAGE_ACCELERATION_MIN);
             if (gob1.IsDamageable) gob1.InflictDamage(gob1Damage, new GobUtils.DamageInfo(gob2));
@@ -175,7 +174,7 @@ namespace AW2.Game.Collisions
 
         private float GetAcceleration(Gob gob, float impulse)
         {
-            var force = impulse * gob.Game.TargetFPS;
+            var force = impulse * AssaultWingCore.TargetFPS;
             return force / gob.Mass;
         }
     }

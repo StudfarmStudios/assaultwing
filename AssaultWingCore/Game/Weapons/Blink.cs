@@ -79,7 +79,7 @@ namespace AW2.Game.Weapons
                 {
                     // Due to slight add-up errors on game servers and standalone games,
                     // correct blink movement every frame so that Owner will eventually hit _targetPos.
-                    var targetFPS = Owner.Game.TargetFPS;
+                    var targetFPS = AssaultWingCore.TargetFPS;
                     Owner.Move = (AWMathHelper.InterpolateTowards(Owner.Pos, _targetPos.Value, _blinkMoveSpeed / targetFPS) - Owner.Pos) * targetFPS;
                 }
                 if (BlinkTargetReached) FinishBlink();

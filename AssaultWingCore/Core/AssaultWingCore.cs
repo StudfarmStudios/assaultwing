@@ -239,7 +239,6 @@ namespace AW2.Core
         public override void Initialize()
         {
             Log.Write("Assault Wing initializing");
-            TargetFPS = 60;
             base.Initialize();
             if (!CanonicalString.IsForLocalUseOnly) FreezeCanonicalStrings();
         }

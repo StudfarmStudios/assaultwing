@@ -55,8 +55,8 @@ namespace AW2.Game.Gobs
         private CollisionArea _spreadArea;
 
         public override bool IsDamageable { get { return true; } }
-        private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(Game.TargetFPS * HOVER_THRUST_INTERVAL); } }
-        private bool IsHoverThrusting { get { return HoverThrustCycleFrame < Game.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
+        private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(AssaultWingCore.TargetFPS * HOVER_THRUST_INTERVAL); } }
+        private bool IsHoverThrusting { get { return HoverThrustCycleFrame < AssaultWingCore.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
         private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }
 
         private bool IsAvoidable(Gob gob) { return gob.Owner == Owner && gob is FloatingBullet; }
@@ -172,7 +172,7 @@ namespace AW2.Game.Gobs
         private void SetNewTargetPos()
         {
             if (!_hoverAroundPos.HasValue) _hoverAroundPos = Pos;
-            float targetAngle = MathHelper.TwoPi / (2.5f * Game.TargetFPS * HOVER_THRUST_INTERVAL) * (ID * 7 + Arena.FrameNumber);
+            float targetAngle = MathHelper.TwoPi / (2.5f * AssaultWingCore.TargetFPS * HOVER_THRUST_INTERVAL) * (ID * 7 + Arena.FrameNumber);
             var targetPos = _hoverAroundPos.Value + 50 * AWMathHelper.GetUnitVector2(targetAngle);
             _thrustForce = _hoverThrust * Vector2.Normalize(targetPos - Pos);
         }

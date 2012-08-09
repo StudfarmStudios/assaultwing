@@ -46,7 +46,7 @@ namespace AW2.Graphics
         public Rectangle OnScreen { get { return new Rectangle(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height); } }
 
         public Vector2 CurrentLookAt { get; protected set; }
-        public Vector2 Move { get { return Game.TargetFPS * (CurrentLookAt - _previousLookAt); } }
+        public Vector2 Move { get { return AssaultWingCore.TargetFPS * (CurrentLookAt - _previousLookAt); } }
         public event Func<ArenaLayer, bool> LayerDrawing;
         public event Action<Gob> GobDrawn;
 

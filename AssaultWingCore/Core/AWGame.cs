@@ -14,13 +14,14 @@ namespace AW2.Core
     /// </summary>
     public class AWGame : IDisposable
     {
+        public const int TargetFPS = 60;
+
         public GraphicsDeviceService GraphicsDeviceService { get; private set; }
         public RenderTarget2D DefaultRenderTarget { get; private set; }
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
         public AWGameComponentCollection Components { get; private set; }
         public TimeSpan TargetElapsedTime { get { return TimeSpan.FromSeconds(1f / TargetFPS); } }
-        public int TargetFPS { get; set; }
 
         /// <summary>
         /// The current game time.
@@ -36,7 +37,6 @@ namespace AW2.Core
             Services = new GameServiceContainer();
             if (graphicsDeviceService != null) Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
             Components = new AWGameComponentCollection();
-            TargetFPS = 60;
             GameTime = new AWGameTime();
         }
 

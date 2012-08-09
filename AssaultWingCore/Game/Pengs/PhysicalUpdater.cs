@@ -170,7 +170,7 @@ namespace AW2.Game.Pengs
                 var precalcs =
                     from dummy in Enumerable.Range(0, PRECALC_COUNT)
                     let random = RandomHelper.GetRandomInt()
-                    let ageInFrames = (int)Math.Ceiling(_particleAge.GetValue(0, random) * AssaultWingCore.Instance.TargetFPS)
+                    let ageInFrames = (int)Math.Ceiling(_particleAge.GetValue(0, random) * AssaultWingCore.TargetFPS)
                     select new ParticleValues
                     {
                         AgeInFrames = ageInFrames,

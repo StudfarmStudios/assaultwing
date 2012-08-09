@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 using AW2.Game;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
@@ -71,8 +72,8 @@ namespace AW2.Graphics
             var VIEW_MASS = 0.05f;
             var VIEW_DRAG = 0.5f;
             var lookAtAcceleration = (_lookAtController.Output - VIEW_DRAG * _lookAtSpeed) / VIEW_MASS;
-            _lookAtSpeed += lookAtAcceleration / Game.TargetFPS;
-            CurrentLookAt += _lookAtSpeed / Game.TargetFPS;
+            _lookAtSpeed += lookAtAcceleration / AssaultWingCore.TargetFPS;
+            CurrentLookAt += _lookAtSpeed / AssaultWingCore.TargetFPS;
             _shakeSign = -_shakeSign;
         }
 

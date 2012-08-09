@@ -6,3 +6,4 @@ bin
 obj
 publish
 AWUnitTests/TestResult.xml
+AWUnitTests/AssaultWing.VisualState.xml

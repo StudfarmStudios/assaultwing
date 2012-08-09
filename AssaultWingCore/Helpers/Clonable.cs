@@ -35,27 +35,6 @@ namespace AW2.Helpers
 
         static Clonable()
         {
-            Log.Write("Checking Clonable subclass constructors...");
-            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
-            {
-                if (!typeof(Clonable).IsAssignableFrom(type)) continue;
-                if (type.IsAbstract) continue;
-                var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Instance;
-                if (null == type.GetConstructor(flags, null, Type.EmptyTypes, null))
-                {
-                    string message = "BUG: Missing constructor " + type.Name + "()";
-                    Log.Write(message);
-                    throw new ApplicationException(message);
-                }
-                if (null == type.GetConstructor(flags, null, new Type[] { typeof(CanonicalString) }, null))
-                {
-                    string message = "BUG: Missing constructor " + type.Name + "(CanonicalString)";
-                    Log.Write(message);
-                    throw new ApplicationException(message);
-                }
-            }
-            Log.Write("...Clonable subclass constructors are OK");
-
             CreateCloneMethods();
         }
 

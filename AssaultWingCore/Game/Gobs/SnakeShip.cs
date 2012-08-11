@@ -41,6 +41,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             Thrusting = StraightenTail;
+            IsModelBonesMoving = true;
         }
 
         public override void Activate()

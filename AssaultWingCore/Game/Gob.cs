@@ -527,18 +527,26 @@ namespace AW2.Game
         public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, DrawRotation + DrawRotationOffset, Pos + DrawPosOffset); } }
 
         /// <summary>
+        /// Are the bones of the 3D model moving relative to each other.
+        /// If not, <see cref="ModelPartTransforms"/> need not be updated every frame.
+        /// </summary>
+        protected bool IsModelBonesMoving { get; set; }
+
+        /// <summary>
         /// The transform matrices of the gob's 3D model parts.
         /// </summary>
         private Matrix[] ModelPartTransforms
         {
             get
             {
+                var mustUpdateTransforms = IsModelBonesMoving;
                 if (_modelPartTransforms == null || _modelPartTransforms.Length != ModelSkeleton.Bones.Length)
                 {
                     _modelPartTransforms = new Matrix[ModelSkeleton.Bones.Length];
                     _modelPartTransformsUpdated = new TimeSpan(-1);
+                    mustUpdateTransforms = true;
                 }
-                if (_modelPartTransformsUpdated < Arena.TotalTime)
+                if (mustUpdateTransforms && _modelPartTransformsUpdated < Arena.TotalTime)
                 {
                     _modelPartTransformsUpdated = Arena.TotalTime;
                     CopyAbsoluteBoneTransformsTo(ModelSkeleton, _modelPartTransforms);

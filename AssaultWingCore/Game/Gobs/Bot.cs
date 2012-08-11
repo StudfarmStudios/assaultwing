@@ -101,6 +101,7 @@ namespace AW2.Game.Gobs
         {
             DampAngularVelocity = true;
             Gravitating = false;
+            IsModelBonesMoving = true;
         }
 
         public override void Activate()

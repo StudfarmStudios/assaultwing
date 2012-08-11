@@ -19,15 +19,14 @@ namespace AW2.Game.Gobs
     public class WallModel : Wall
     {
         /// <summary>
-        /// The name of the 3D model to draw the wall with.
+        /// The name of the 3D model to draw the wall with. Overrides <see cref="Gob._modelName"/>.
         /// </summary>
-        /// Note: This field overrides the type parameter Gob.modelName.
         [RuntimeState]
-        private CanonicalString wallModelName;
+        private CanonicalString _wallModelName;
 
         public override IEnumerable<CanonicalString> ModelNames
         {
-            get { return base.ModelNames.Union(new CanonicalString[] { wallModelName }); }
+            get { return base.ModelNames.Union(new CanonicalString[] { _wallModelName }); }
         }
 
         /// <summary>
@@ -35,13 +34,12 @@ namespace AW2.Game.Gobs
         /// </summary>
         public WallModel()
         {
-            wallModelName = (CanonicalString)"dummymodel";
+            _wallModelName = (CanonicalString)"dummymodel";
         }
 
         public WallModel(CanonicalString typeName)
             : base(typeName)
         {
-            wallModelName = (CanonicalString)"dummymodel";
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -54,7 +52,7 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            if (!Arena.IsForPlaying) ModelName = wallModelName;
+            if (!Arena.IsForPlaying) ModelName = _wallModelName;
             base.Activate();
         }
 
@@ -71,7 +69,7 @@ namespace AW2.Game.Gobs
                 base.Serialize(writer, mode);
                 if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
                 {
-                    writer.Write((CanonicalString)wallModelName);
+                    writer.Write((CanonicalString)_wallModelName);
                 }
             }
         }
@@ -81,8 +79,8 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantDataFromServer) != 0)
             {
-                wallModelName = reader.ReadCanonicalString();
-                var model = Game.Content.Load<Model>(wallModelName);
+                _wallModelName = reader.ReadCanonicalString();
+                var model = Game.Content.Load<Model>(_wallModelName);
                 Effect = GetEffect(model);
                 Texture = GetTexture(model);
             }
@@ -90,18 +88,18 @@ namespace AW2.Game.Gobs
 
         public override void Cloned()
         {
-            wallModelName = ModelName;
+            _wallModelName = ModelName;
             base.Cloned();
         }
 
         #endregion Methods related to serialisation
 
         /// <summary>
-        /// Sets the wall's 3D model based on 'wallModelName'.
+        /// Sets the wall's 3D model based on '_wallModelName'.
         /// </summary>
         private void Set3DModel()
         {
-            var data = Game.Content.Load<ModelGeometry>(wallModelName);
+            var data = Game.Content.Load<ModelGeometry>(_wallModelName);
             if (data.Meshes.Length != 1) throw new ApplicationException("WallModel only supports one Mesh");
             var mesh = data.Meshes[0];
             if (mesh.MeshParts.Length != 1) throw new ApplicationException("WallModel only supports one MeshPart");
@@ -114,7 +112,7 @@ namespace AW2.Game.Gobs
                     normal: Vector3.TransformNormal(vertex.Normal, mehsPartToworldMatrix),
                     textureCoordinate: vertex.TextureCoordinate))
                 .ToArray();
-            var effect = Game.CommandLineOptions.DedicatedServer ? null : GetEffect(Game.Content.Load<Model>(wallModelName));
+            var effect = Game.CommandLineOptions.DedicatedServer ? null : GetEffect(Game.Content.Load<Model>(_wallModelName));
             var texture = effect == null ? null : effect.Texture;
             var indices = new short[meshPart.PrimitiveCount * 3];
             Array.Copy(meshPart.IndexBuffer.Indices, meshPart.StartIndex, indices, 0, indices.Length);

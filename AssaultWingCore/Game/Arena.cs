@@ -81,6 +81,7 @@ namespace AW2.Game
         private AssaultWingCore _game;
         private GobCollection _gobs;
         private World _world;
+        private AWTimer _areaBoundaryCheckTimer;
 
         /// <summary>
         /// Layers of the arena.
@@ -261,7 +262,7 @@ namespace AW2.Game
             ResetCollisionEvents();
             _world.Step((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
             PerformCustomCollisions();
-            if (Game.NetworkMode != NetworkMode.Client)
+            if (_areaBoundaryCheckTimer.IsElapsed && Game.NetworkMode != NetworkMode.Client)
             {
                 var boundedAreaExtreme = BoundedAreaExtreme;
                 foreach (var gob in Gobs.GameplayLayer.Gobs)
@@ -534,6 +535,7 @@ namespace AW2.Game
             _world = PhysicsHelper.CreateWorld(_gravity, BoundedAreaExtreme.Min, BoundedAreaExtreme.Max);
             _world.ContactManager.PostSolve += PostSolveHandler;
             _world.ContactManager.BeginContact += BeginContactHandler;
+            _areaBoundaryCheckTimer = new AWTimer(() => TotalTime, TimeSpan.FromSeconds(10));
         }
 
         /// <summary>

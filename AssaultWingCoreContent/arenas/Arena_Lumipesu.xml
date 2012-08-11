@@ -133,7 +133,6 @@
       <gobs>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>400</X>
@@ -144,7 +143,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>1453.5</X>
@@ -155,7 +153,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>1000</X>

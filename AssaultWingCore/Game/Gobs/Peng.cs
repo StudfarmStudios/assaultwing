@@ -85,7 +85,6 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Currently active particles of this peng.
         /// </summary>
-        [RuntimeState]
         private List<Particle> _particles;
 
         /// <summary>

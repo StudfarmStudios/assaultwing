@@ -627,7 +627,6 @@
       <gobs>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>683.149963</X>
@@ -638,7 +637,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>2483.1</X>
@@ -3156,7 +3154,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>1531</X>
@@ -3167,7 +3164,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>2636</X>
@@ -3178,7 +3174,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>741.0001</X>
@@ -4962,7 +4957,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>723.999939</X>
@@ -4973,7 +4967,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>2640</X>
@@ -4984,7 +4977,6 @@
         </Item>
         <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
-          <particles />
           <staticID>0</staticID>
           <pos>
             <X>1531</X>

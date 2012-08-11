@@ -9,8 +9,6 @@ using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 
-using Point = AW2.Helpers.Geometric.Point;
-
 namespace AW2.Game.Gobs
 {
     /// <summary>

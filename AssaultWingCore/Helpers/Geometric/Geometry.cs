@@ -16,7 +16,6 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public static bool Intersect(Vector2 point, IGeomPrimitive prim)
         {
-            if (prim is Point) return point == ((Point)prim).Location;
             if (prim is Circle) return Intersect(point, (Circle)prim);
             if (prim is Rectangle) return Intersect(point, (Rectangle)prim);
             if (prim is Triangle) return Intersect(point, (Triangle)prim);
@@ -285,7 +284,6 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public static float Distance(Vector2 point, IGeomPrimitive prim)
         {
-            if (prim is Point) return Vector2.Distance(point, ((Point)prim).Location);
             if (prim is Circle) return Distance(point, (Circle)prim);
             if (prim is Rectangle) return Distance(point, (Rectangle)prim);
             if (prim is Triangle) return Distance(point, (Triangle)prim);
@@ -750,19 +748,18 @@ namespace AW2.Helpers.Geometric
         /// <returns>A random location inside the area.</returns>
         public static Vector2 GetRandomLocation(IGeomPrimitive prim)
         {
-            Type type = prim.GetType();
-            if (type == typeof(Point)) return ((Point)prim).Location;
+            var type = prim.GetType();
             if (type == typeof(Circle)) return GetRandomLocation((Circle)prim);
             if (type == typeof(Rectangle))
             {
-                Rectangle rectangle = (Rectangle)prim;
+                var rectangle = (Rectangle)prim;
                 return RandomHelper.GetRandomVector2(rectangle.Min, rectangle.Max);
             }
 
             // For any other geometric primitive, randomise points in its bounding box
             // until we hit inside the primitive. This is generic but can be increasingly
             // inefficient with certain primitives.
-            Rectangle boundingBox = prim.BoundingBox;
+            var boundingBox = prim.BoundingBox;
             for (int i = 0; i < 1000000; ++i)
             {
                 var pos = RandomHelper.GetRandomVector2(boundingBox.Min, boundingBox.Max);

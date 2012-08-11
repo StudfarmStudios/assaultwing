@@ -12,7 +12,6 @@ using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
-using AWPoint = AW2.Helpers.Geometric.Point;
 
 namespace AW2.Game.Gobs
 {

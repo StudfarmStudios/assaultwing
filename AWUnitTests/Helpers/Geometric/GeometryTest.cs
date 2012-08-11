@@ -10,8 +10,8 @@ namespace AW2.Helpers.Geometric
         [Test]
         public void TestGeneralIntersect()
         {
-            var p1 = new Point(new Vector2(10f, 10f));
-            var p2 = new Point(new Vector2(30f, 90f));
+            var p1 = new Vector2(10f, 10f);
+            var p2 = new Vector2(30f, 90f);
             var c1 = new Circle(new Vector2(20f, 10f), 20f);
             var q1 = new Vector2(0f, 0f);
             var q2 = new Vector2(30f, 10f);
@@ -20,18 +20,13 @@ namespace AW2.Helpers.Geometric
             var q5 = new Vector2(-10f, 20f);
             var poly1 = new Polygon(new[] { q1, q2, q3, q4, q5 });
 
-            // Point-point
-            Assert.IsTrue(Geometry.Intersect(p1.Location, (IGeomPrimitive)p1));
-            Assert.IsTrue(Geometry.Intersect(p1.Location, (IGeomPrimitive)new Point(new Vector2(10f, 10f))));
-            Assert.IsFalse(Geometry.Intersect(p1.Location, (IGeomPrimitive)p2));
-
             // Point-circle
-            Assert.IsTrue(Geometry.Intersect(p1.Location, (IGeomPrimitive)c1));
-            Assert.IsFalse(Geometry.Intersect(p2.Location, (IGeomPrimitive)c1));
+            Assert.IsTrue(Geometry.Intersect(p1, (IGeomPrimitive)c1));
+            Assert.IsFalse(Geometry.Intersect(p2, (IGeomPrimitive)c1));
 
             // Point-polygon
-            Assert.IsTrue(Geometry.Intersect(p1.Location, (IGeomPrimitive)poly1));
-            Assert.IsFalse(Geometry.Intersect(p2.Location, (IGeomPrimitive)poly1));
+            Assert.IsTrue(Geometry.Intersect(p1, (IGeomPrimitive)poly1));
+            Assert.IsFalse(Geometry.Intersect(p2, (IGeomPrimitive)poly1));
         }
 
         [Test]
@@ -173,20 +168,13 @@ namespace AW2.Helpers.Geometric
         {
             var prims = new IGeomPrimitive[]
             {
-                new Point(new Vector2(10, 20)),
                 new Circle(new Vector2(30, 40), 50),
                 new Rectangle(60, 70, 80, 90),
                 new Triangle(new Vector2(10, 60), new Vector2(-90, -10), new Vector2(-30, 20)),
                 new Polygon(new[] { new Vector2(15, 25), new Vector2(35, 45), new Vector2(55, 65) }),
             };
             foreach (var prim2 in prims)
-                try
-                {
-                    Assert.LessOrEqual(0, Geometry.Distance(new Vector2(10, 20), prim2));
-                }
-                catch (NotImplementedException)
-                {
-                }
+                Assert.LessOrEqual(0, Geometry.Distance(new Vector2(10, 20), prim2));
         }
 
         [Test]

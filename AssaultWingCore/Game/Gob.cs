@@ -843,13 +843,16 @@ namespace AW2.Game
         public virtual void Update()
         {
             if (IsRelevant && MayBeDifficultToPredictOnClient) ForcedNetworkUpdate = true;
-            _previousMove = Move;
-            DrawPosOffset *= POS_SMOOTHING_FADEOUT;
-            DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
-            Move -= MoveOffset;
-            MoveOffset *= POS_SMOOTH_MOVE_FADEOUT;
-            if (MoveOffset.LengthSquared() < POS_SMOOTH_MOVE_CUTOFF * POS_SMOOTH_MOVE_CUTOFF) MoveOffset = Vector2.Zero;
-            else Move += MoveOffset;
+            if (Game.NetworkMode == NetworkMode.Client && MoveType != GobUtils.MoveType.Static)
+            {
+                _previousMove = Move;
+                DrawPosOffset *= POS_SMOOTHING_FADEOUT;
+                DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
+                Move -= MoveOffset;
+                MoveOffset *= POS_SMOOTH_MOVE_FADEOUT;
+                if (MoveOffset.LengthSquared() < POS_SMOOTH_MOVE_CUTOFF * POS_SMOOTH_MOVE_CUTOFF) MoveOffset = Vector2.Zero;
+                else Move += MoveOffset;
+            }
         }
 
         public static float DampDrawRotationOffset(float drawRotationOffset)

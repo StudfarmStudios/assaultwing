@@ -95,16 +95,25 @@ namespace AW2.Game.Gobs
             get { return base.TextureNames.Concat(_textureNames); }
         }
 
-        public override BoundingSphere DrawBounds
+        public override void GetDraw3DBounds(out Vector2 min, out Vector2 max)
         {
-            get
+            var shooter = Shooter.GetValue();
+            if (shooter == null)
             {
-                var shooter = Shooter.GetValue();
-                if (shooter == null) return new BoundingSphere(Vector3.Zero, 0);
-                var target = Target.GetValue();
-                if (target == null) return new BoundingSphere(new Vector3(shooter.Pos, 0), BLANK_SHOT_RANGE);
-                return new BoundingSphere(new Vector3((shooter.Pos + target.Pos) / 2, 0), Vector2.Distance(shooter.Pos, target.Pos));
+                min = max = new Vector2(float.NaN);
+                return;
             }
+            var target = Target.GetValue();
+            if (target == null)
+            {
+                min = Pos - new Vector2(BLANK_SHOT_RANGE);
+                max = Pos + new Vector2(BLANK_SHOT_RANGE);
+                return;
+            }
+            var shooterPos = shooter.Pos;
+            var targetPos = target.Pos;
+            min = Vector2.Min(shooterPos, targetPos);
+            max = Vector2.Max(shooterPos, targetPos);
         }
 
         private Texture2D Texture { get { return _textures[ChainIndex.Modulo(_textures.Length)]; } }

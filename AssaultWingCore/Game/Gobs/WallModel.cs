@@ -93,24 +93,13 @@ namespace AW2.Game.Gobs
         /// </summary>
         private void Set3DModel()
         {
-            var data = Game.Content.Load<ModelGeometry>(_wallModelName);
-            if (data.Meshes.Length != 1) throw new ApplicationException("WallModel only supports one Mesh");
-            var mesh = data.Meshes[0];
-            if (mesh.MeshParts.Length != 1) throw new ApplicationException("WallModel only supports one MeshPart");
-            var mehsPartToworldMatrix = Matrix.Identity;
-            for (var bone = mesh.ParentBone; bone != null; bone = bone.Parent) mehsPartToworldMatrix *= bone.Transform;
-            var meshPart = mesh.MeshParts[0];
-            var vertices = meshPart.VertexBuffer.Vertices
-                .Select(vertex => new VertexPositionNormalTexture(
-                    position: Vector3.Transform(vertex.Position, mehsPartToworldMatrix),
-                    normal: Vector3.TransformNormal(vertex.Normal, mehsPartToworldMatrix),
-                    textureCoordinate: vertex.TextureCoordinate))
-                .ToArray();
+            var modelGeometry = Game.Content.Load<ModelGeometry>(_wallModelName);
+            VertexPositionNormalTexture[] vertexData;
+            short[] indexData;
+            Graphics3D.GetVertexAndIndexData(modelGeometry, out vertexData, out indexData);
             var effect = Game.CommandLineOptions.DedicatedServer ? null : GetEffect(Game.Content.Load<Model>(_wallModelName));
             var texture = effect == null ? null : effect.Texture;
-            var indices = new short[meshPart.PrimitiveCount * 3];
-            Array.Copy(meshPart.IndexBuffer.Indices, meshPart.StartIndex, indices, 0, indices.Length);
-            Set3DModel(vertices, indices, texture, effect);
+            Set3DModel(vertexData, indexData, texture, effect);
         }
 
         private static BasicEffect GetEffect(Model model)

@@ -406,10 +406,17 @@ namespace AW2.UI.WPF
         private IEnumerable<Gob> FindGobs(AWViewport viewport, Vector2 pointInViewport, ArenaLayer layer)
         {
             var ray = viewport.ToRay(pointInViewport, layer.Z);
+            Func<Gob, BoundingBox> getDrawBounds = gob =>
+            {
+                Vector2 min, max;
+                gob.GetDraw3DBounds(out min, out max);
+                return new BoundingBox(new Vector3(min, layer.Z - 100), new Vector3(max, layer.Z + 100));
+            };
             return
                 from gob in layer.Gobs
                 let distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, layer.Z))
-                let t = gob.DrawBounds.Intersects(ray)
+                let drawBounds = getDrawBounds(gob)
+                let t = drawBounds.Intersects(ray)
                 where distance < 20 || t.HasValue
                 orderby distance ascending
                 select gob;

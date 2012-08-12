@@ -31,6 +31,7 @@ namespace AW2.Graphics
         private TexturePostprocessor _postprocessor;
         private Func<IEnumerable<CanonicalString>> _getPostprocessEffectNames;
         private Vector2 _previousLookAt;
+        private Vector2[] _gobBounds = new Vector2[500];
 
         public AssaultWingCore Game { get; private set; }
         public virtual Player Owner { get { return null; } }
@@ -243,18 +244,32 @@ namespace AW2.Graphics
             if (Game.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
             var layerIndex = Game.DataEngine.Arena.Layers.Count();
             GraphicsDevice.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
+            var view = ViewMatrix;
+            ComputeGob3DBounds(ref _gobBounds, ref view);
+            var gobBoundsIndex = 0;
             foreach (var layer in Game.DataEngine.Arena.Layers)
             {
                 var translationMatrix = Matrix.CreateTranslation(0, 0, -1024 * layerIndex--);
-                var view = Matrix.Multiply(ViewMatrix, translationMatrix);
+                var viewWithZ = Matrix.Multiply(view, translationMatrix);
                 if (LayerDrawing != null && !LayerDrawing(layer)) continue;
                 var layerScale = GetScale(layer.Z);
                 var projection = GetProjectionMatrix(layer.Z);
                 DrawParallax(layer);
-                Draw3D(layer, ref view, ref projection);
+                Draw3D(layer, ref viewWithZ, ref projection, _gobBounds, ref gobBoundsIndex);
                 Draw2D(layer, layerScale);
                 if (GobDrawn != null) foreach (var gob in layer.Gobs) GobDrawn(gob);
             }
+        }
+
+        private void ComputeGob3DBounds(ref Vector2[] gobBounds, ref Matrix view)
+        {
+            var arena = Game.DataEngine.Arena;
+            if (gobBounds.Length < arena.Gobs.Count * 2) gobBounds = new Vector2[arena.Gobs.Count * 3]; // take a little extra space
+            var gobBoundsIndex = 0;
+            foreach (var layer in arena.Layers)
+                foreach (var gob in layer.Gobs)
+                    gob.GetDraw3DBounds(out gobBounds[gobBoundsIndex++], out gobBounds[gobBoundsIndex++]);
+            Vector2.Transform(gobBounds, 0, ref view, _gobBounds, 0, arena.Gobs.Count * 2);
         }
 
         private void DoInMyViewport(Action action)
@@ -265,20 +280,37 @@ namespace AW2.Graphics
             GraphicsDevice.Viewport = oldViewport;
         }
 
-        private void Draw3D(ArenaLayer layer, ref Matrix view, ref Matrix projection)
+        private void Draw3D(ArenaLayer layer, ref Matrix view, ref Matrix projection, Vector2[] gobBounds, ref int gobBoundsIndex)
         {
+            var zFactor = 2 * ZoomRatio * GetScale(layer.Z);
             foreach (var gob in layer.Gobs)
             {
-                var bounds = gob.DrawBounds;
-                if (bounds.Radius <= 0 || !Intersects(bounds.Transform(view), layer.Z)) continue;
+                var min = gobBounds[gobBoundsIndex++];
+                var max = gobBounds[gobBoundsIndex++];
+                if (float.IsNaN(min.X) || !Intersects(min, max, zFactor)) continue;
                 gob.Draw3D(view, projection, Owner);
             }
+        }
+
+        /// <summary>
+        /// Does the viewport intersect the given bounding rectangle.
+        /// </summary>
+        /// <param name="zFactor">2 * ZoomRatio * DepthScale</param>
+        private bool Intersects(Vector2 min, Vector2 max, float zFactor)
+        {
+            var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / zFactor;
+            if (max.X < -halfDiagonal.X) return false;
+            if (max.Y < -halfDiagonal.Y) return false;
+            if (halfDiagonal.X < min.X) return false;
+            if (halfDiagonal.Y < min.Y) return false;
+            return true;
         }
 
         /// <summary>
         /// Checks if a bounding volume might be visible in the viewport at a certain depth.
         /// Returns false if the bounding volume definitely cannot be seen in the viewport.
         /// </summary>
+        [Obsolete]
         private bool Intersects(BoundingSphere volume, float z)
         {
             var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));

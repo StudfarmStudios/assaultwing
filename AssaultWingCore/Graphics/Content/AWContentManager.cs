@@ -20,8 +20,6 @@ namespace AW2.Graphics.Content
         private Dictionary<string, object> _loadedModelSkeletons = new Dictionary<string, object>();
         private bool _ignoreGraphicsContent;
 
-        public Dictionary<string, Tuple<VertexPositionNormalTexture[], short[]>> ModelCache { get; private set; }
-
         public AWContentManager(IServiceProvider serviceProvider)
             : base(serviceProvider, ".\\")
         {
@@ -74,13 +72,8 @@ namespace AW2.Graphics.Content
 
         public void LoadAllGraphicsContent()
         {
-            ModelCache = new Dictionary<string, Tuple<VertexPositionNormalTexture[], short[]>>();
             foreach (var filename in Directory.GetFiles(Paths.MODELS, "*.xnb"))
-                if (!IsModelTextureFilename(filename))
-                {
-                    var model = Load<Model>(Path.GetFileNameWithoutExtension(filename));
-                    CacheModelData(Path.GetFileNameWithoutExtension(filename), model);
-                }
+                if (!IsModelTextureFilename(filename)) Load<Model>(Path.GetFileNameWithoutExtension(filename));
             foreach (var filename in Directory.GetFiles(Paths.TEXTURES, "*.xnb"))
                 Load<Texture2D>(Path.GetFileNameWithoutExtension(filename));
             foreach (var filename in Directory.GetFiles(Paths.FONTS, "*.xnb"))
@@ -90,18 +83,6 @@ namespace AW2.Graphics.Content
         private static string GetAssetFilename<T>(string assetName)
         {
             return Path.ChangeExtension(GetAssetFullName<T>(assetName), ".xnb");
-        }
-
-        private void CacheModelData(string modelName, Model model)
-        {
-            // HACK: Cache 3D model data. During arena startup, the game server uses the wall
-            // model data to create collision areas for the wall. If the GraphicsDevice is in a bad
-            // state at that moment, the model data is crippled and that results in crippled gameplay
-            // where most walls are not collidable.
-            VertexPositionNormalTexture[] vertexData;
-            short[] indexData;
-            Graphics3D.GetModelData(model, out vertexData, out indexData);
-            ModelCache[modelName] = Tuple.Create(vertexData, indexData);
         }
 
         private bool IsModelTextureFilename(string filename)

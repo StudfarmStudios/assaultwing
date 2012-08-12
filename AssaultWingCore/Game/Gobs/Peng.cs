@@ -193,10 +193,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(1, Rotation + DrawRotationOffset, Pos); } }
 
-        /// <summary>
-        /// Bounding volume of the 3D visuals of the gob, in world coordinates.
-        /// </summary>
-        public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+        public override void GetDraw3DBounds(out Vector2 min, out Vector2 max) { min = max = new Vector2(float.NaN); }
 
         public SprayEmitter Emitter { get { return _emitter; } }
 

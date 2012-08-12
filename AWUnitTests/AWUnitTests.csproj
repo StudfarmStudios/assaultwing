@@ -84,7 +84,6 @@
     <Compile Include="Helpers\Geometric\GeometryTest.cs" />
     <Compile Include="Helpers\Geometric\PolygonTest.cs" />
     <Compile Include="Helpers\Geometric\RectangleTest.cs" />
-    <Compile Include="Helpers\Graphics3DTest.cs" />
     <Compile Include="Helpers\LazyProxyTest.cs" />
     <Compile Include="Helpers\MiscHelperTest.cs" />
     <Compile Include="Helpers\RandomHelperTest.cs" />

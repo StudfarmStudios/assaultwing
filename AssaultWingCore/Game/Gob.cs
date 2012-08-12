@@ -115,6 +115,11 @@ namespace AW2.Game
         public const float ROTATION_SMOOTHING_CUTOFF = MathHelper.PiOver2;
 
         /// <summary>
+        /// Radius of the visual area of a large gob, in meters.
+        /// </summary>
+        public const float LARGE_GOB_VISUAL_RADIUS = 50;
+
+        /// <summary>
         /// Radius of the physical area of a large gob, in meters.
         /// </summary>
         public const float LARGE_GOB_PHYSICAL_RADIUS = 25;
@@ -234,11 +239,6 @@ namespace AW2.Game
         /// </summary>
         private TimeSpan _modelPartTransformsUpdated;
 
-        /// <summary>
-        /// Bounding volume of the visuals of the gob, in gob coordinates.
-        /// </summary>
-        private BoundingSphere _drawBounds;
-
         private int[] _barrelBoneIndices;
         private Vector2 _previousMove;
 
@@ -353,26 +353,6 @@ namespace AW2.Game
         /// Preferred placement of gob to arena layers.
         /// </summary>
         public LayerPreferenceType LayerPreference { get { return _layerPreference; } }
-
-        /// <summary>
-        /// Bounding volume of the visuals of the gob, in world coordinates.
-        /// </summary>
-        public virtual BoundingSphere DrawBounds
-        {
-            get
-            {
-                return new BoundingSphere(DrawBoundsInGobCoordinates.Center.RotateZ(DrawRotation + DrawRotationOffset) + new Vector3(Pos + DrawPosOffset, 0), DrawBoundsInGobCoordinates.Radius);
-            }
-        }
-
-        protected BoundingSphere DrawBoundsInGobCoordinates
-        {
-            get
-            {
-                if (_drawBounds.Radius == -1) _drawBounds = CreateDrawBounds();
-                return _drawBounds;
-            }
-        }
 
         protected CanonicalString[] DeathGobTypes { get { return _deathGobTypes; } set { _deathGobTypes = value; } }
 
@@ -834,7 +814,6 @@ namespace AW2.Game
                     foreach (BasicEffect be in mesh.Effects)
                         Arena.PrepareEffect(be);
             }
-            _drawBounds.Radius = -1;
         }
 
         /// <summary>
@@ -910,6 +889,16 @@ namespace AW2.Game
                 g_unusedRelevantIDs.Enqueue(ID);
             else if (ID < 0)
                 g_unusedIrrelevantIDs.Enqueue(ID);
+        }
+
+        /// <summary>
+        /// Returns draw bounds of 3D graphics in world coordinates in <paramref name="min"/> and <paramref name="max"/>.
+        /// If there is nothing 3D to draw, sets the coordinates to float.NaN.
+        /// </summary>
+        public virtual void GetDraw3DBounds(out Vector2 min, out Vector2 max)
+        {
+            min = Pos - new Vector2(LARGE_GOB_VISUAL_RADIUS);
+            max = Pos + new Vector2(LARGE_GOB_VISUAL_RADIUS);
         }
 
         public virtual void Draw3D(Matrix view, Matrix projection, Player viewer)
@@ -1194,14 +1183,6 @@ namespace AW2.Game
         protected virtual void CopyAbsoluteBoneTransformsTo(ModelGeometry skeleton, Matrix[] transforms)
         {
             skeleton.CopyAbsoluteBoneTransformsTo(transforms);
-        }
-
-        protected virtual BoundingSphere CreateDrawBounds()
-        {
-            VertexPositionNormalTexture[] vertexData;
-            short[] indexData;
-            Graphics3D.GetModelData(Model, out vertexData, out indexData);
-            return BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position * _scale));
         }
 
         #endregion Gob miscellaneous protected methods

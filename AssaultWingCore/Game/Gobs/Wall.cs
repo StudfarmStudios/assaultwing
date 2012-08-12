@@ -43,6 +43,8 @@ namespace AW2.Game.Gobs
         private List<int> _removedTriangleIndices;
         private List<int> _removedTriangleIndicesToSerialize;
         private List<int> _removedTriangleIndicesOfAllTime;
+        private Vector2 _drawBoundsMin;
+        private Vector2 _drawBoundsMax;
 
         /// <summary>
         /// The number of triangles in the wall's 3D model not yet removed.
@@ -118,11 +120,13 @@ namespace AW2.Game.Gobs
             base.Activate();
             if (Arena.IsForPlaying)
             {
-                var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
                 var gobVertices = _vertexData.Select(AWMathHelper.ProjectXY).ToArray();
                 var worldMatrix = Matrix.CreateRotationZ(Rotation); // FIXME: Use WorldMatrix or nothing
                 Vector2.Transform(gobVertices, ref worldMatrix, gobVertices);
-                var boundingBox = GetBoundingBox(gobVertices);
+                var boundingBox = gobVertices.GetBoundingBox();
+                _drawBoundsMin = boundingBox.Min + Pos;
+                _drawBoundsMax = boundingBox.Max + Pos;
+                var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
                 _indexMap = new WallIndexMap(_removedTriangleIndices.Add, boundingBox, binReader);
                 binReader.Close();
                 CreateCollisionAreas();
@@ -270,11 +274,15 @@ namespace AW2.Game.Gobs
 
         #region Protected methods
 
-        protected override BoundingSphere CreateDrawBounds()
+        public override void GetDraw3DBounds(out Vector2 min, out Vector2 max)
         {
-            return Arena.IsForPlaying
-                ? BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position))
-                : base.CreateDrawBounds();
+            if (Arena.IsForPlaying)
+            {
+                min = _drawBoundsMin;
+                max = _drawBoundsMax;
+            }
+            else
+                base.GetDraw3DBounds(out min, out max);
         }
 
         /// <summary>
@@ -329,14 +337,6 @@ namespace AW2.Game.Gobs
                 var triangleArea = new Triangle(v1.ProjectXY(), v2.ProjectXY(), v3.ProjectXY());
                 _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this, CollisionAreaType.Static, CollisionMaterialType.Rough);
             }
-        }
-
-        private Rectangle GetBoundingBox(IEnumerable<Vector2> vertexPositions)
-        {
-            var min = vertexPositions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
-            var max = vertexPositions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
-            var boundingArea = new Rectangle(min, max);
-            return boundingArea;
         }
 
         #endregion Private methods

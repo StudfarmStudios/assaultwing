@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game;
+using AW2.Game.Gobs;
 using AW2.Helpers;
 
 namespace AW2.Graphics
@@ -20,7 +21,7 @@ namespace AW2.Graphics
             _spectator = spectator;
             GobDrawn += gob =>
             {
-                if (IsCirclingSmallAndInvisibleGobs && gob.DrawBounds.Radius < SMALL_GOB_RADIUS)
+                if (IsCirclingSmallAndInvisibleGobs && !(gob is Wall || gob is PropModel))
                     CircleGob(gob);
             };
         }
@@ -41,11 +42,6 @@ namespace AW2.Graphics
             var context = new Graphics3D.DebugDrawContext(ViewMatrix, GetProjectionMatrix(gob.Layer.Z));
             Graphics3D.DebugDrawCircle(context, new BoundingSphere(new Vector3(gob.Pos, 0), SMALL_GOB_RADIUS));
             Graphics3D.DebugDrawPolyline(context, gob.Pos, gob.Pos + SMALL_GOB_RADIUS * AWMathHelper.GetUnitVector2(gob.Rotation));
-        }
-
-        private void DrawBoundingSphere(Gob gob)
-        {
-            Graphics3D.DebugDrawCircle(GetDebugDrawContext(gob), gob.DrawBounds);
         }
 
         private Graphics3D.DebugDrawContext GetDebugDrawContext(Gob gob)

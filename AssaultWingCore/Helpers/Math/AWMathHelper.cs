@@ -672,6 +672,14 @@ namespace AW2.Helpers
                 : Vector2.Normalize(value);
         }
 
+        public static Geometric.Rectangle GetBoundingBox(this IEnumerable<Vector2> vertexPositions)
+        {
+            var min = vertexPositions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
+            var max = vertexPositions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
+            var boundingArea = new Geometric.Rectangle(min, max);
+            return boundingArea;
+        }
+
         private static void Swap(ref Point point1, ref Point point2)
         {
             var swap = point1;

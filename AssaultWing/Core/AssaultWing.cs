@@ -665,7 +665,7 @@ namespace AW2.Core
         private void PopulateGobUpdateMessage(GobUpdateMessage gobMessage, IEnumerable<Gob> gobs, SerializationModeFlags serializationMode)
         {
             var now = DataEngine.ArenaTotalTime;
-            var debugMessage = gobs.OfType<AW2.Game.Gobs.Wall>().Any(wall => wall.ForcedNetworkUpdate)
+            var debugMessage = Settings.Net.HeavyDebugLog && gobs.OfType<AW2.Game.Gobs.Wall>().Any(wall => wall.ForcedNetworkUpdate)
                 ? new System.Text.StringBuilder("Gob update ")
                 : null; // DEBUG: catch a rare crash that seems to happen only when serializing walls.
             foreach (var gob in gobs)
@@ -685,7 +685,7 @@ namespace AW2.Core
             gobMessage.SetCollisionEvents(_collisionEventsToRemote, serializationMode);
             _collisionEventsToRemote = new List<CollisionEvent>();
 
-            if (Settings.Net.HeavyDebugLog && debugMessage != null) // DEBUG: catch a rare crash that seems to happen only when serializing walls.
+            if (debugMessage != null) // DEBUG: catch a rare crash that seems to happen only when serializing walls.
             {
                 var writer = new NetworkBinaryWriter(new System.IO.MemoryStream(_debugBuffer));
                 gobMessage.Serialize(writer);

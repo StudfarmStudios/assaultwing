@@ -21,7 +21,7 @@ namespace AW2.Core
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
         public AWGameComponentCollection Components { get; private set; }
-        public TimeSpan TargetElapsedTime { get { return TimeSpan.FromSeconds(1f / TargetFPS); } }
+        public TimeSpan TargetElapsedTime { get { return TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS); } }
 
         /// <summary>
         /// The current game time.

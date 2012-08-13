@@ -12,6 +12,7 @@ namespace AW2.Helpers
     /// </summary>
     public class RunningSequence<T>
     {
+        [System.Diagnostics.DebuggerDisplay("{Value} @ {EntryTime}")]
         private struct ValueData
         {
             public T Value;

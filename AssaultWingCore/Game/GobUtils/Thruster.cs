@@ -130,6 +130,8 @@ namespace AW2.Game.GobUtils
         /// and 1 (full thrust forward).</param>
         public void Thrust(float proportionalThrust)
         {
+            if (proportionalThrust == 0) return;
+            if (_maxForce == 0 && _exhaustEngines.Length == 0) return;
             ThrustImpl(proportionalThrust, MathHelper.Pi, AWMathHelper.GetUnitVector2(Owner.Rotation));
         }
 

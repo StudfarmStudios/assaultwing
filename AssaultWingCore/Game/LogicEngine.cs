@@ -81,6 +81,7 @@ namespace AW2.Game
             foreach (var player in data.Spectators) player.Update();
             KillGobsOnClient();
             RemoveInactivePlayers();
+            data.Arena.Gobs.FinishAddsAndRemoves();
 
             // Check for arena end. Network games end when the game server presses Esc.
             if (Game.NetworkMode == NetworkMode.Standalone)

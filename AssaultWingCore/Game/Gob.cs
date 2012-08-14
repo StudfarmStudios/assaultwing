@@ -730,25 +730,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Creates unconditionally a new gob from the given runtime state.
-        /// </summary>
-        /// Use this method to revive gobs whose runtime state you have deserialised.
-        /// This method will create the gob properly, initialising all fields and then
-        /// copying the runtime state fields to the new instance.
-        /// <param name="runtimeState">The runtime state from where to initialise the new gob.</param>
-        /// <returns>The newly created gob.</returns>
-        /// <seealso cref="CreateGob(AssaultWingCore, Gob, Action&lt;Gob&gt;)"/>
-        private static Gob CreateGob(Gob runtimeState)
-        {
-            var gob = (Gob)Clonable.Instantiate(runtimeState.Game, runtimeState.TypeName);
-            if (runtimeState.GetType() != gob.GetType())
-                throw new ArgumentException("Runtime gob of class " + runtimeState.GetType().Name +
-                    " has type name \"" + runtimeState.TypeName + "\" which is for class " + gob.GetType().Name);
-            gob.SetRuntimeState(runtimeState);
-            return gob;
-        }
-
-        /// <summary>
         /// Creates a new gob from the given runtime state and performs a given initialisation on it.
         /// This method is for game logic; gob init is skipped appropriately on clients.
         /// </summary>
@@ -764,10 +745,13 @@ namespace AW2.Game
         /// <seealso cref="CreateGob(Gob)"/>
         public static void CreateGob(AssaultWingCore game, Gob runtimeState, Action<Gob> init)
         {
-            var gob = CreateGob(runtimeState);
+            var gob = (Gob)Clonable.Instantiate(game, runtimeState.TypeName);
+            if (runtimeState.GetType() != gob.GetType())
+                throw new ArgumentException("Runtime gob of class " + runtimeState.GetType().Name +
+                    " has type name \"" + runtimeState.TypeName + "\" which is for class " + gob.GetType().Name);
+            gob.SetRuntimeState(runtimeState);
             gob.Game = game;
-            if (game.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
-                init(gob);
+            if (game.NetworkMode != NetworkMode.Client || !gob.IsRelevant) init(gob);
         }
 
         #endregion Gob constructors and static constructor-like methods
@@ -1170,11 +1154,11 @@ namespace AW2.Game
         #region Gob miscellaneous protected methods
 
         /// <summary>
-        /// Lazy wrapper around <see cref="Arena.FindGob"/>
+        /// Lazy wrapper around <see cref="Arena.Gobs.get_Item"/>
         /// </summary>
         protected Gob FindGob(int id)
         {
-            return Arena.FindGob(id);
+            return Arena.Gobs[id];
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Helpers.Collections;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Arenas
 {
@@ -11,30 +12,47 @@ namespace AW2.Game.Arenas
     /// and vice versa, operations on the <see cref="GobCollection"/> are forwarded
     /// to the underlying arena layers.
     /// </summary>
+    [LimitedSerialization]
     public class GobCollection : IEnumerable<Gob>, IObservableCollection<object, Gob>
     {
         /// <summary>
         /// The arena layers that contain the gobs.
         /// </summary>
+        [RuntimeState]
         private IList<ArenaLayer> _arenaLayers;
+
+        /// <summary>
+        /// All gobs in all layers by gob IDs.
+        /// </summary>
+        private Dictionary<int, Gob> _gobDictionary;
 
         /// <summary>
         /// The arena layer where the gameplay takes place.
         /// </summary>
-        /// <seealso cref="_arenaLayers"/>
         public ArenaLayer GameplayLayer { get; set; }
 
         /// <summary>
         /// The arena layer right behind the gameplay layer.
         /// </summary>
-        /// <seealso cref="GameplayLayer"/>
         public ArenaLayer GameplayBackLayer { get; set; }
 
         /// <summary>
         /// The arena layer right in front of the gameplay layer.
         /// </summary>
-        /// <seealso cref="GameplayLayer"/>
         public ArenaLayer GameplayOverlayLayer { get; set; }
+
+        /// <summary>
+        /// Returns the gob with <paramref name="gobID"/> or null if no such gob exists.
+        /// </summary>
+        public Gob this[int gobID]
+        {
+            get
+            {
+                Gob gob;
+                _gobDictionary.TryGetValue(gobID, out gob);
+                return gob;
+            }
+        }
 
         /// <summary>
         /// Creates a new gob collection that reflects the gobs on some arena layers.
@@ -43,28 +61,23 @@ namespace AW2.Game.Arenas
         {
             if (arenaLayers == null) throw new ArgumentNullException();
             _arenaLayers = arenaLayers;
-        }
-
-        /// <summary>
-        /// Removes items that satisfy a condition.
-        /// </summary>
-        /// <param name="condition">The condition by which to remove items.</param>
-        public void Remove(Predicate<Gob> condition)
-        {
-            foreach (var layer in _arenaLayers) layer.Gobs.Remove(condition);
+            _gobDictionary = new Dictionary<int, Gob>();
+            // Note: There may be gobs in _arenaLayers but _gobDictionary holds no references to them.
+            // This happens only when an arena template is loaded from XML. When an arena is started
+            // for playing, all the gobs are added by calling Add() whence _gobDictionary is filled.
         }
 
         /// <summary>
         /// Removes the first occurrence of a specific element from the collection.
         /// </summary>
-        /// <param name="gob">The element to remove.</param>
-        /// <param name="force">Remove the element regardless of how 
-        /// <see cref="Removing"/> evaluates on the element.</param>
-        public bool Remove(Gob gob, bool force)
+        /// <param name="force">Remove the element regardless of how <see cref="Removing"/>
+        /// evaluates on the element.</param>
+        public void Remove(Gob gob, bool force)
         {
-            if (gob.Layer == null) return false;
-            if (Removing != null && !Removing(gob) && !force) return false;
-            return gob.Layer.Gobs.Remove(gob);
+            if (gob.Layer == null) return;
+            if (Removing != null && !Removing(gob) && !force) return;
+            _gobDictionary.Remove(gob.ID);
+            gob.Layer.Gobs.Remove(gob);
         }
 
         /// <summary>
@@ -73,8 +86,6 @@ namespace AW2.Game.Arenas
         /// and the item will stay in the collection.
         /// </summary>
         public event Predicate<Gob> Removing;
-
-        #region IObservableCollection<object, Gob> Members
 
         public event Action<Gob> Added
         {
@@ -97,13 +108,6 @@ namespace AW2.Game.Arenas
             remove { foreach (var layer in _arenaLayers) layer.Gobs.NotFound -= value; }
         }
 
-        #endregion
-
-        #region ICollection<Gob> Members
-
-        /// <summary>
-        /// Adds an item to the collection.
-        /// </summary>
         public void Add(Gob gob)
         {
             if (gob.Layer == null)
@@ -115,61 +119,31 @@ namespace AW2.Game.Arenas
                     default: throw new ApplicationException("Unexpected layer preference " + gob.LayerPreference);
                 }
             gob.Layer.Gobs.Add(gob);
+            _gobDictionary.Add(gob.ID, gob);
         }
 
-        /// <summary>
-        /// Removes all items from the collection.
-        /// </summary>
         public void Clear()
         {
+            _gobDictionary.Clear();
             foreach (var layer in _arenaLayers) layer.Gobs.Clear();
         }
 
         /// <summary>
-        /// Determines whether the collection contains a specific value.
-        /// </summary>
-        public bool Contains(Gob gob)
-        {
-            return gob.Layer.Gobs.Contains(gob);
-        }
-
-        /// <summary>
-        /// Copies the elements of the collection to an array, starting at a particular array index.
-        /// </summary>
-        public void CopyTo(Gob[] array, int arrayIndex)
-        {
-            foreach (var layer in _arenaLayers)
-            {
-                layer.Gobs.CopyTo(array, arrayIndex);
-                arrayIndex += layer.Gobs.Count;
-            }
-        }
-
-        /// <summary>
-        /// The number of elements contained in the collection.
-        /// </summary>
-        public int Count { get { return _arenaLayers.Sum(layer => layer.Gobs.Count); } }
-
-        /// <summary>
-        /// Is the collection read-only.
-        /// </summary>
-        public bool IsReadOnly { get { return false; } }
-
-        /// <summary>
         /// Removes the first occurrence of a specific element from the collection.
         /// </summary>
-        public bool Remove(Gob gob)
+        public void Remove(Gob gob)
         {
-            return Remove(gob, false);
+            Remove(gob, false);
         }
 
-        #endregion
-
-        #region IEnumerable<Gob> Members
-
         /// <summary>
-        /// Returns an enumerator that iterates through the collection.
+        /// To be called every frame at a time when no-one is operating on the collection.
         /// </summary>
+        public void FinishAddsAndRemoves()
+        {
+            foreach (var layer in _arenaLayers) layer.Gobs.FinishAddsAndRemoves();
+        }
+
         public IEnumerator<Gob> GetEnumerator()
         {
             foreach (var layer in _arenaLayers)
@@ -177,18 +151,9 @@ namespace AW2.Game.Arenas
                     yield return gob;
         }
 
-        #endregion
-
-        #region IEnumerable Members
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
-
-        #endregion
     }
 }

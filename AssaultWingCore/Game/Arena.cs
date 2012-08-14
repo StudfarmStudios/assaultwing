@@ -362,13 +362,6 @@ namespace AW2.Game
             PhysicsHelper.QueryOverlappers(_world, area, action, preFilter);
         }
 
-        public Gob FindGob(int id)
-        {
-            return id == Gob.INVALID_ID
-                ? null
-                : Gobs.FirstOrDefault(g => g.ID == id);
-        }
-
         /// <summary>
         /// Returns the number of pixels removed.
         /// </summary>
@@ -549,6 +542,7 @@ namespace AW2.Game
             _layers = new List<ArenaLayer>();
             foreach (var layer in oldLayers)
             {
+                layer.Gobs.FinishAddsAndRemoves();
                 _layers.Add(layer.EmptyCopy());
                 foreach (var gob in layer.Gobs)
                     gob.Layer = layer;
@@ -561,6 +555,7 @@ namespace AW2.Game
                     gobb.Layer = _layers[oldLayers.IndexOf(gob.Layer)];
                     Gobs.Add(gobb);
                 });
+            Gobs.FinishAddsAndRemoves();
         }
 
         private void InitializeSpecialLayers()

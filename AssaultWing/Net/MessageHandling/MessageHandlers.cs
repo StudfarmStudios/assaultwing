@@ -303,14 +303,14 @@ namespace AW2.Net.MessageHandling
             var arena = Game.DataEngine.Arena;
             var updatedGobs = new HashSet<Arena.GobUpdateData>();
             var serializationMode = SerializationModeFlags.VaryingDataFromServer;
-            mess.ReadGobs(gobId =>
+            mess.ReadGobs(gobID =>
             {
-                var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
+                var theGob = arena.Gobs[gobID];
                 var result = theGob == null || theGob.IsDisposed ? null : theGob;
                 if (result != null) updatedGobs.Add(new Arena.GobUpdateData(result, framesAgo));
                 return result;
             }, serializationMode, framesAgo);
-            foreach (var collisionEvent in mess.ReadCollisionEvents(arena.FindGob, serializationMode, framesAgo))
+            foreach (var collisionEvent in mess.ReadCollisionEvents(id => arena.Gobs[id], serializationMode, framesAgo))
             {
                 collisionEvent.SkipReversibleSideEffects = true;
                 collisionEvent.Handle();
@@ -323,9 +323,9 @@ namespace AW2.Net.MessageHandling
             var arena = Game.DataEngine.Arena;
             var messOwner = Game.DataEngine.Spectators.SingleOrDefault(plr => plr.ConnectionID == mess.ConnectionID);
             if (messOwner == null) return;
-            mess.ReadGobs(gobId =>
+            mess.ReadGobs(gobID =>
             {
-                var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
+                var theGob = arena.Gobs[gobID];
                 return theGob == null || theGob.IsDisposed || theGob.Owner != messOwner ? null : theGob;
             }, SerializationModeFlags.VaryingDataFromClient, framesAgo);
             // Note: Game server intentionally doesn't call mess.ReadCollisionEvents.

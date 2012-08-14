@@ -67,11 +67,11 @@ namespace AW2.Game.Collisions
             _area1ID = _area2ID = -1;
         }
 
-        public CollisionEvent(SerializationData initData, Func<int, Tuple<bool, Gob>> gobFinder)
+        public CollisionEvent(SerializationData initData, Func<int, Gob> gobFinder)
             : this()
         {
-            var gob1 = gobFinder(initData.Gob1ID).Item2;
-            var gob2 = gobFinder(initData.Gob2ID).Item2;
+            var gob1 = gobFinder(initData.Gob1ID);
+            var gob2 = gobFinder(initData.Gob2ID);
             if (gob1 != null && gob2 != null)
             {
                 var area1 = gob1.GetCollisionArea(initData.Area1ID);

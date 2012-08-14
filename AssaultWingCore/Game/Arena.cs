@@ -362,13 +362,11 @@ namespace AW2.Game
             PhysicsHelper.QueryOverlappers(_world, area, action, preFilter);
         }
 
-        /// <returns>(true, gob) if a gob was found by the ID, or (false, null) if a gob was not found.</returns>
-        public Tuple<bool, Gob> FindGob(int id)
+        public Gob FindGob(int id)
         {
-            var gob = id == Gob.INVALID_ID
+            return id == Gob.INVALID_ID
                 ? null
-                : Gobs.FirstOrDefault(g => g.ID == id); // TODO !!! Use Dictionary for faster retrieval.
-            return Tuple.Create(gob != null, gob);
+                : Gobs.FirstOrDefault(g => g.ID == id);
         }
 
         /// <summary>

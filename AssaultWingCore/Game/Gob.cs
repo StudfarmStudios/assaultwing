@@ -1023,7 +1023,7 @@ namespace AW2.Game
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt16();
                 int ownerID = reader.ReadSByte();
-                OwnerProxy = new LazyProxy<int, Spectator>(FindPlayer);
+                OwnerProxy = new LazyProxy<int, Spectator>(FindSpectator);
                 OwnerProxy.SetData(ownerID);
             }
             if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
@@ -1172,7 +1172,7 @@ namespace AW2.Game
         /// <summary>
         /// Lazy wrapper around <see cref="Arena.FindGob"/>
         /// </summary>
-        protected Tuple<bool, Gob> FindGob(int id)
+        protected Gob FindGob(int id)
         {
             return Arena.FindGob(id);
         }
@@ -1264,11 +1264,11 @@ namespace AW2.Game
 
         #region Private methods
 
-        private Tuple<bool, Spectator> FindPlayer(int id)
+        private Spectator FindSpectator(int id)
         {
-            if (id == Spectator.UNINITIALIZED_ID) return Tuple.Create(false, (Spectator)null);
-            var player = Game.DataEngine.Spectators.FirstOrDefault(p => p.ID == id);
-            return Tuple.Create(player != null, player);
+            return id == Spectator.UNINITIALIZED_ID
+                ? null
+                : Game.DataEngine.Spectators.FirstOrDefault(p => p.ID == id);
         }
 
         /// <summary>

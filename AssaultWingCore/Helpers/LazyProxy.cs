@@ -2,22 +2,25 @@
 
 namespace AW2.Helpers
 {
-    public class LazyProxy<TData, TValue>
+    public class LazyProxy<TData, TValue> where TValue : class
     {
-        private Func<TData, Tuple<bool, TValue>> _getValue;
+        /// <summary>
+        /// If <see cref="_getValue"/> returns null, it will be called again on every
+        /// <see cref="NULL_WAIT_RETRY_COUNT"/>'th call to <see cref="GetValue"/>.
+        /// This is an optimization so that not too much time is spent in <see cref="_getValue"/>.
+        /// </summary>
+        public const int NULL_WAIT_RETRY_COUNT = 30;
+
+        private Func<TData, TValue> _getValue;
         private TData _data;
         private TValue _value;
-        private TValue _defaultValue;
         private bool _hasData;
         private bool _hasValue;
+        private int _nullRetryCount;
 
-        /// <param name="getValue">Returns the value for given data.
-        /// Returns (false, _) if value wasn't available.
-        /// Otherwise returns (true, value).</param>
-        public LazyProxy(Func<TData, Tuple<bool, TValue>> getValue, TValue defaultValue = default(TValue))
+        public LazyProxy(Func<TData, TValue> getValue)
         {
             _getValue = getValue;
-            _defaultValue = defaultValue;
         }
 
         public LazyProxy(TValue value)
@@ -46,14 +49,12 @@ namespace AW2.Helpers
 
         public TValue GetValue()
         {
-            if (!_hasValue)
-            {
-                if (!_hasData) return _defaultValue;
-                var result = _getValue(_data);
-                if (!result.Item1) return _defaultValue;
-                _value = result.Item2;
-                _hasValue = true;
-            }
+            if (_hasValue) return _value;
+            if (!_hasData) return null;
+            if (_nullRetryCount-- > 0) return null;
+            _nullRetryCount = NULL_WAIT_RETRY_COUNT;
+            _value = _getValue(_data);
+            _hasValue = _value != null;
             return _value;
         }
     }

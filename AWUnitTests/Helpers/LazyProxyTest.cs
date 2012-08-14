@@ -7,19 +7,17 @@ namespace AW2.Helpers
     public class LazyProxyTest
     {
         [Test]
-        public void TestLazyInt()
+        public void TestSetDataTwice()
         {
-            var proxy = new LazyProxy<int, int>(x => Tuple.Create(true, 2 * x), -1);
-            Assert.AreEqual(-1, proxy.GetValue());
-            proxy.SetData(3);
-            Assert.AreEqual(6, proxy.GetValue());
-            Assert.Throws<InvalidOperationException>(() => proxy.SetData(42));
+            var proxy = new LazyProxy<int, string>(x => new System.Text.StringBuilder().Append('x', x).ToString());
+            proxy.SetData(5);
+            Assert.Throws<InvalidOperationException>(() => proxy.SetData(6));
         }
 
         [Test]
         public void TestLazyString()
         {
-            var proxy = new LazyProxy<int, string>(x => Tuple.Create(true, new System.Text.StringBuilder().Append('x', x).ToString()));
+            var proxy = new LazyProxy<int, string>(x => new System.Text.StringBuilder().Append('x', x).ToString());
             Assert.AreEqual(null, proxy.GetValue());
             proxy.SetData(5);
             string proxyValue = proxy;
@@ -29,26 +27,39 @@ namespace AW2.Helpers
         [Test]
         public void TestEager()
         {
-            var proxy = new LazyProxy<int, int>(6);
-            Assert.AreEqual(6, proxy.GetValue());
+            var proxy = new LazyProxy<int, string>("6");
+            Assert.AreEqual("6", proxy.GetValue());
             Assert.Throws<InvalidOperationException>(() => proxy.SetData(42));
         }
 
         [Test]
         public void TestUnavailableValue()
         {
-            int importantNumber = 42;
-            var proxy = new LazyProxy<int, int>(
-                x => importantNumber < 50
-                    ? Tuple.Create(false, 0)
-                    : Tuple.Create(true, 2 * x));
-            Assert.AreEqual(0, proxy.GetValue());
+            var funcCalled = false;
+            Action<Action> assertThatFuncIsCalled = action =>
+            {
+                Assert.IsFalse(funcCalled);
+                action();
+                Assert.IsTrue(funcCalled);
+                funcCalled = false;
+            };
+
+            var importantNumber = 42;
+            var proxy = new LazyProxy<int, string>(x =>
+            {
+                funcCalled = true;
+                return importantNumber < 50 ? null : x.ToString();
+            });
+            Assert.AreEqual(null, proxy.GetValue());
             proxy.SetData(3);
-            Assert.AreEqual(0, proxy.GetValue());
+            assertThatFuncIsCalled(() => Assert.AreEqual(null, proxy.GetValue()));
+            for (int i = 0; i < LazyProxy<int, string>.NULL_WAIT_RETRY_COUNT; i++)
+                Assert.AreEqual(null, proxy.GetValue());
             importantNumber = 69;
-            Assert.AreEqual(6, proxy.GetValue());
+            assertThatFuncIsCalled(() => Assert.AreEqual("3", proxy.GetValue()));
             importantNumber = 0; // doesn't affect GetValue any more
-            Assert.AreEqual(6, proxy.GetValue());
+            Assert.AreEqual("3", proxy.GetValue());
+            Assert.IsFalse(funcCalled);
         }
     }
 }

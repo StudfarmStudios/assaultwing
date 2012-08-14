@@ -59,7 +59,7 @@ namespace AW2.Net.Messages
             foreach (var collisionEvent in collisionEvents) Write(collisionEvent.GetSerializationData(), serializationMode);
         }
 
-        public IEnumerable<CollisionEvent> ReadCollisionEvents(Func<int, Tuple<bool, Gob>> gobFinder, SerializationModeFlags serializationMode, int framesAgo)
+        public IEnumerable<CollisionEvent> ReadCollisionEvents(Func<int, Gob> gobFinder, SerializationModeFlags serializationMode, int framesAgo)
         {
             if (_state != StateType.GobsRead) throw new InvalidOperationException("Cannot read collision events in state " + _state);
             _state = StateType.CollisionEventsRead;

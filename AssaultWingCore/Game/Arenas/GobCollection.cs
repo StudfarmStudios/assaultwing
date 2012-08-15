@@ -41,6 +41,8 @@ namespace AW2.Game.Arenas
         /// </summary>
         public ArenaLayer GameplayOverlayLayer { get; set; }
 
+        public int Count { get { return _gobDictionary.Count > 0 ? _gobDictionary.Count : _arenaLayers.Sum(l => l.Gobs.Count); } }
+
         /// <summary>
         /// Returns the gob with <paramref name="gobID"/> or null if no such gob exists.
         /// </summary>
@@ -62,9 +64,10 @@ namespace AW2.Game.Arenas
             if (arenaLayers == null) throw new ArgumentNullException();
             _arenaLayers = arenaLayers;
             _gobDictionary = new Dictionary<int, Gob>();
-            // Note: There may be gobs in _arenaLayers but _gobDictionary holds no references to them.
-            // This happens only when an arena template is loaded from XML. When an arena is started
-            // for playing, all the gobs are added by calling Add() whence _gobDictionary is filled.
+            // Note: There may be gobs in _arenaLayers but _gobDictionary is uninitialized.
+            // This happens only when an arena template is loaded from XML, in which case the gobs
+            // don't even have proper IDs. When an arena is started for playing, all the gobs are added
+            // by calling Add() whence _gobDictionary is filled.
         }
 
         /// <summary>

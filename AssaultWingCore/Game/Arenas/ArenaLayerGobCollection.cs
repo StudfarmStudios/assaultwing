@@ -32,6 +32,8 @@ namespace AW2.Game.Arenas
         /// and secondarily by natural order of <c>Gob.DrawMode2D</c>.
         private List<Gob> gobsSort2D = new List<Gob>();
 
+        public int Count { get { return _gobs.Count; } }
+
         public static explicit operator List<Gob>(ArenaLayerGobCollection gobs)
         {
             return new List<Gob>(gobs._gobs);

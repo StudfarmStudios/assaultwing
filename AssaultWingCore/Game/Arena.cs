@@ -387,6 +387,7 @@ namespace AW2.Game
         public void MakeConsistent(Type limitationAttribute)
         {
             Gobs = new GobCollection(Layers);
+            Gobs.FinishAddsAndRemoves();
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
                 SetGameAndArenaToGobs();

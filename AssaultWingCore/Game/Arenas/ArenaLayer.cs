@@ -7,12 +7,11 @@ using AW2.Helpers.Serialization;
 namespace AW2.Game.Arenas
 {
     /// <summary>
-    /// An arena layer.
-    /// </summary>
     /// Arena layers are a means to visualise depth in spite of the
     /// orthogonal projection of 3D graphics.
+    /// </summary>
     [LimitedSerialization]
-    [System.Diagnostics.DebuggerDisplay("Z:{Z} Gobs:{Gobs._gobs.Count} IsGameplay:{isGameplayLayer} Parallax:{parallaxName}")]
+    [System.Diagnostics.DebuggerDisplay("Z:{Z} Gobs:{Gobs._gobs.Count} IsGameplay:{_isGameplayLayer} Parallax:{_parallaxName}")]
     public class ArenaLayer
     {
         [TypeParameter]

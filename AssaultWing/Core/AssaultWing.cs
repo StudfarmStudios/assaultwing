@@ -577,8 +577,9 @@ namespace AW2.Core
 
         private void SendMessagesOnClient()
         {
-            if (NetworkMode != NetworkMode.Client || !NetworkEngine.IsConnectedToGameServer || !IsShipControlsEnabled) return;
+            if (NetworkMode != NetworkMode.Client || !NetworkEngine.IsConnectedToGameServer) return;
             SendGameSettingsOnClient();
+            if (!IsShipControlsEnabled) return;
             SetPlayerControls(_pendingClientGameStateUpdateMessage);
             SendGobUpdateMessageOnClient();
         }

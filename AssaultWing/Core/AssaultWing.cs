@@ -367,7 +367,7 @@ namespace AW2.Core
         private void HandleGobCreationMessage(GobCreationMessage message, int framesAgo)
         {
             if (message.ArenaID != DataEngine.Arena.ID) return;
-            var updatedGobs = new HashSet<Arena.GobUpdateData>();
+            var updatedGobs = new Dictionary<int, Arena.GobUpdateData>();
             message.ReadGobs(framesAgo,
                 (typeName, layerIndex) =>
                 {
@@ -376,10 +376,13 @@ namespace AW2.Core
                     gob.Game = this;
                     gob.Layer = DataEngine.Arena.Layers[layerIndex];
                     gob.BirthTime = DataEngine.ArenaTotalTime - TargetElapsedTime.Multiply(framesAgo);
-                    updatedGobs.Add(new Arena.GobUpdateData(gob, framesAgo));
                     return gob;
                 },
-                DataEngine.Arena.Gobs.Add);
+                gob =>
+                {
+                    DataEngine.Arena.Gobs.Add(gob);
+                    updatedGobs.Add(gob.ID, new Arena.GobUpdateData(gob, framesAgo));
+                });
             DataEngine.Arena.FinalizeGobUpdatesOnClient(updatedGobs, framesAgo);
         }
 

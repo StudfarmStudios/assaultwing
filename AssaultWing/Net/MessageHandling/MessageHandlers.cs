@@ -301,13 +301,13 @@ namespace AW2.Net.MessageHandling
         private void HandleGobUpdateMessageOnClient(GobUpdateMessage mess, int framesAgo)
         {
             var arena = Game.DataEngine.Arena;
-            var updatedGobs = new HashSet<Arena.GobUpdateData>();
+            var updatedGobs = new Dictionary<int, Arena.GobUpdateData>();
             var serializationMode = SerializationModeFlags.VaryingDataFromServer;
             mess.ReadGobs(gobID =>
             {
                 var theGob = arena.Gobs[gobID];
                 var result = theGob == null || theGob.IsDisposed ? null : theGob;
-                if (result != null) updatedGobs.Add(new Arena.GobUpdateData(result, framesAgo));
+                if (result != null) updatedGobs.Add(result.ID, new Arena.GobUpdateData(result, framesAgo));
                 return result;
             }, serializationMode, framesAgo);
             foreach (var collisionEvent in mess.ReadCollisionEvents(id => arena.Gobs[id], serializationMode, framesAgo))

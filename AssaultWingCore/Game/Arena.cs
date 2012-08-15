@@ -76,12 +76,20 @@ namespace AW2.Game
             }
         }
 
+        private struct GobUpdateFinalizationData
+        {
+            public Gob Gob;
+            public object TemporaryStaticData;
+            public GobUpdateFinalizationData(Gob gob, object temporaryStaticData) { Gob = gob; TemporaryStaticData = temporaryStaticData; }
+        }
+
         #region General fields
 
         private AssaultWingCore _game;
         private GobCollection _gobs;
         private World _world;
         private AWTimer _areaBoundaryCheckTimer;
+        private List<GobUpdateFinalizationData> _gobUpdateFinalizationDatas = new List<GobUpdateFinalizationData>();
 
         /// <summary>
         /// Layers of the arena.
@@ -271,22 +279,22 @@ namespace AW2.Game
             }
         }
 
-        public void FinalizeGobUpdatesOnClient(HashSet<GobUpdateData> gobsToUpdate, int frameCount)
+        public void FinalizeGobUpdatesOnClient(Dictionary<int, GobUpdateData> gobsToUpdate, int frameCount)
         {
-            var frozenGobs = new List<Tuple<Gob, object>>();
             foreach (var gob in GobsInRelevantLayers)
             {
                 if (gob.MoveType == AW2.Game.GobUtils.MoveType.Static) continue;
-                if (gobsToUpdate.Any(data => data.Gob == gob)) continue;
-                frozenGobs.Add(Tuple.Create(gob, gob.Body.SetTemporaryStatic()));
+                if (gobsToUpdate.ContainsKey(gob.ID)) continue;
+                _gobUpdateFinalizationDatas.Add(new GobUpdateFinalizationData(gob, gob.Body.SetTemporaryStatic()));
             }
             // Rotation of local ships is already up to date.
-            var localShips = gobsToUpdate.Where(data => data.Gob is Gobs.Ship && data.Gob.Owner != null && data.Gob.Owner.IsLocal).ToArray();
+            var localShips = gobsToUpdate.Values.Where(data => data.Gob is Gobs.Ship && data.Gob.Owner != null && data.Gob.Owner.IsLocal).ToArray();
             foreach (var data in localShips) data.Gob.RotationSpeed = 0;
             for (int i = 0; i < frameCount; i++) Update();
-            foreach (var tuple in frozenGobs) tuple.Item1.Body.RestoreTemporaryStatic(tuple.Item2);
+            foreach (var x in _gobUpdateFinalizationDatas) x.Gob.Body.RestoreTemporaryStatic(x.TemporaryStaticData);
+            _gobUpdateFinalizationDatas.Clear();
             foreach (var data in localShips) data.Gob.RotationSpeed = data.OldRotationSpeed;
-            foreach (var data in gobsToUpdate) data.Gob.SmoothJitterOnClient(data);
+            foreach (var data in gobsToUpdate.Values) data.Gob.SmoothJitterOnClient(data);
         }
 
         public IEnumerable<CollisionEvent> GetCollisionEvents()

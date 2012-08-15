@@ -260,7 +260,7 @@ namespace AW2.Game
         public void Update()
         {
             ResetCollisionEvents();
-            _world.Step((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
+            _world.Step((float)Game.TargetElapsedTime.TotalSeconds);
             PerformCustomCollisions();
             if (_areaBoundaryCheckTimer.IsElapsed && Game.NetworkMode != NetworkMode.Client)
             {
@@ -281,7 +281,7 @@ namespace AW2.Game
                 frozenGobs.Add(Tuple.Create(gob, gob.Body.SetTemporaryStatic()));
             }
             // Rotation of local ships is already up to date.
-            var localShips = gobsToUpdate.Where(data => data.Gob is Gobs.Ship && data.Gob.Owner != null && data.Gob.Owner.IsLocal);
+            var localShips = gobsToUpdate.Where(data => data.Gob is Gobs.Ship && data.Gob.Owner != null && data.Gob.Owner.IsLocal).ToArray();
             foreach (var data in localShips) data.Gob.RotationSpeed = 0;
             for (int i = 0; i < frameCount; i++) Update();
             foreach (var tuple in frozenGobs) tuple.Item1.Body.RestoreTemporaryStatic(tuple.Item2);

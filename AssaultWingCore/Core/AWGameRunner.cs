@@ -123,8 +123,15 @@ namespace AW2.Core
         {
             _invoker(() =>
             {
-                _game.Initialize();
-                _game.BeginRun();
+                try
+                {
+                    _game.Initialize();
+                    _game.BeginRun();
+                }
+                catch (Exception e)
+                {
+                    _exceptionHandler(e);
+                }
             });
             var totalGameTime = TimeSpan.Zero;
             _timer.Start();

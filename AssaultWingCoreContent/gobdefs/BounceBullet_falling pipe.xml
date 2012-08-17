@@ -13,6 +13,9 @@
   <bulletModelNames>
     <Item>junk_falling_pipe</Item>
   </bulletModelNames>
+  <backgroundTextureName></backgroundTextureName>
+  <backgroundScale>1</backgroundScale>
+  <backgroundAlpha>1</backgroundAlpha>
   <modelName>dummymodel</modelName>
   <moveType>Dynamic</moveType>
   <depthLayer2D>0.5</depthLayer2D>

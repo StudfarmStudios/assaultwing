@@ -11,13 +11,16 @@
   <scale>0.06</scale>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-    <type>None</type>
+    <type>Additive</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <bulletModelNames>
     <Item>windlord_claw</Item>
     <Item>windlord_claw2</Item>
   </bulletModelNames>
+  <backgroundTextureName>p_explo_center</backgroundTextureName>
+  <backgroundScale>0.15</backgroundScale>
+  <backgroundAlpha>0.15</backgroundAlpha>
   <modelName>dummymodel</modelName>
   <moveType>Dynamic</moveType>
   <maxDamage>100</maxDamage>
@@ -26,7 +29,6 @@
     <Item>star flash</Item>
   </deathGobTypes>
   <birthGobTypes>
-    <Item>bullet glow</Item>
   </birthGobTypes>
   <thruster>
     <maxSpeed>0</maxSpeed>

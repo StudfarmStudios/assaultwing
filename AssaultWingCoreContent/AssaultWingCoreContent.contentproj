@@ -198,6 +198,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="gobdefs\Bullet_bomb.xml">
       <Name>Bullet_bomb</Name>
@@ -563,12 +564,6 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="particledefs\Peng_bullet glow.xml">
-      <Name>Peng_bullet glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="particledefs\Peng_dock effect occupied.xml">
       <Name>Peng_dock effect occupied</Name>
       <Importer>XmlImporter</Importer>
@@ -665,12 +660,6 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="particledefs\Peng_fragment glow.xml">
-      <Name>Peng_fragment glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="particledefs\Peng_fragment smoke.xml">
       <Name>Peng_fragment smoke</Name>
       <Importer>XmlImporter</Importer>
@@ -719,12 +708,6 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="particledefs\Peng_large fragment glow.xml">
-      <Name>Peng_large fragment glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="particledefs\Peng_large fragments.xml">
       <Name>Peng_large fragments</Name>
       <Importer>XmlImporter</Importer>
@@ -733,12 +716,6 @@
     </None>
     <None Include="particledefs\Peng_lava spray.xml">
       <Name>Peng_lava spray</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\Peng_lavachunkglow.xml">
-      <Name>Peng_lavachunkglow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

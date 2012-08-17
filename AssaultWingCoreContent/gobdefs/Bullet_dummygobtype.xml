@@ -13,6 +13,9 @@
   <bulletModelNames>
     <Item>dummymodel</Item>
   </bulletModelNames>
+  <backgroundTextureName></backgroundTextureName>
+  <backgroundScale>1</backgroundScale>
+  <backgroundAlpha>1</backgroundAlpha>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
     <type>None</type>

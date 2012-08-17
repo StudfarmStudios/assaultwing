@@ -10,6 +10,9 @@
   <bulletModelNames>
     <Item>snake_bullet</Item>
   </bulletModelNames>
+  <backgroundTextureName></backgroundTextureName>
+  <backgroundScale>1</backgroundScale>
+  <backgroundAlpha>1</backgroundAlpha>
   <depthLayer2D>0.3</depthLayer2D>
   <drawMode2D>
     <type>None</type>

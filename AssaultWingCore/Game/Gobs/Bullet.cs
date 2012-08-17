@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
@@ -12,7 +13,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// A simple bullet.
     /// </summary>
-    public class Bullet : Gob
+    public class Bullet : Gob, IConsistencyCheckable
     {
         private const float HEADING_MOVEMENT_MINIMUM_SQUARED = 1f * 1f;
         private const float HEADING_TURN_SPEED = 3.0f;
@@ -37,6 +38,24 @@ namespace AW2.Game.Gobs
         private CanonicalString[] _bulletModelNames;
 
         /// <summary>
+        /// Name of the texture to draw behind the bullet, or null if there's no texture.
+        /// </summary>
+        [TypeParameter]
+        private CanonicalString _backgroundTextureName;
+
+        /// <summary>
+        /// Scale of the background texture.
+        /// </summary>
+        [TypeParameter]
+        private float _backgroundScale;
+
+        /// <summary>
+        /// Alpha of the background texture.
+        /// </summary>
+        [TypeParameter]
+        private float _backgroundAlpha;
+
+        /// <summary>
         /// Lifetime of the bounce bullet, in game time seconds.
         /// Death is inevitable when lifetime has passed.
         /// </summary>
@@ -59,17 +78,21 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private Thruster _thruster;
 
+        private Texture2D _backgroundTexture;
+
         /// <summary>
         /// Time of certain death of the bullet, in game time.
         /// </summary>
         private TimeSpan DeathTime { get; set; }
 
-        /// <summary>
-        /// Names of all 3D models that this gob type will ever use.
-        /// </summary>
         public override IEnumerable<CanonicalString> ModelNames
         {
             get { return base.ModelNames.Union(_bulletModelNames); }
+        }
+
+        public override IEnumerable<CanonicalString> TextureNames
+        {
+            get { return _backgroundTextureName.IsNull ? base.TextureNames : base.TextureNames.Union(new[] { _backgroundTextureName }); }
         }
 
         /// This constructor is only for serialisation.
@@ -77,7 +100,10 @@ namespace AW2.Game.Gobs
         {
             _impactDamage = 10;
             _impactHoleRadius = 10;
-            _bulletModelNames = new CanonicalString[] { (CanonicalString)"dummymodel" };
+            _bulletModelNames = new[] { (CanonicalString)"dummymodel" };
+            _backgroundTextureName = CanonicalString.Null;
+            _backgroundScale = 1;
+            _backgroundAlpha = 1;
             _lifetime = 60;
             _isRotating = false;
             _rotationSpeed = 5;
@@ -87,6 +113,12 @@ namespace AW2.Game.Gobs
         public Bullet(CanonicalString typeName)
             : base(typeName)
         {
+        }
+
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            if (!_backgroundTextureName.IsNull) _backgroundTexture = Game.Content.Load<Texture2D>(_backgroundTextureName);
         }
 
         public override void Activate()
@@ -112,6 +144,17 @@ namespace AW2.Game.Gobs
             _thruster.Update();
         }
 
+        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
+        {
+            if (_backgroundTexture == null) return;
+            var screenCenter = Vector2.Transform(Pos, gameToScreen);
+            var drawRotation = -Rotation; // negated, because screen Y coordinates are reversed
+            var color = Color.Multiply(Color.White, Alpha * _backgroundAlpha);
+            spriteBatch.Draw(_backgroundTexture, screenCenter, null, color, drawRotation,
+                new Vector2(_backgroundTexture.Width, _backgroundTexture.Height) / 2, _backgroundScale,
+                SpriteEffects.None, 0.5f);
+        }
+
         public override void Dispose()
         {
             _thruster.Dispose();
@@ -129,6 +172,14 @@ namespace AW2.Game.Gobs
             Arena.MakeHole(Pos, _impactHoleRadius);
             Die();
             return true;
+        }
+
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                if (_backgroundTextureName == "") _backgroundTextureName = CanonicalString.Null;
+            }
         }
     }
 }

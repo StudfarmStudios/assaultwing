@@ -16,18 +16,20 @@
     <Item>bloodbowl_lavachunk1</Item>
     <Item>bloodbowl_lavachunk2</Item>
   </bulletModelNames>
+  <backgroundTextureName>p_explo_center</backgroundTextureName>
+  <backgroundScale>0.2</backgroundScale>
+  <backgroundAlpha>0.41</backgroundAlpha>
   <modelName>dummymodel</modelName>
   <moveType>Dynamic</moveType>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-    <type>None</type>
+    <type>Additive</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <deathGobTypes>
     <Item>large fragment explo</Item>
   </deathGobTypes>
   <birthGobTypes>
-    <Item>large fragment glow</Item>
   </birthGobTypes>
   <thruster>
     <maxSpeed>0</maxSpeed>

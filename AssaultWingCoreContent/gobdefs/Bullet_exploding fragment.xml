@@ -11,12 +11,15 @@
   <scale>0.04</scale>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-    <type>None</type>
+    <type>Additive</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <bulletModelNames>
     <Item>fragment</Item>
   </bulletModelNames>
+  <backgroundTextureName>p_explo_center</backgroundTextureName>
+  <backgroundScale>0.1</backgroundScale>
+  <backgroundAlpha>0.5</backgroundAlpha>
   <modelName>dummymodel</modelName>
   <moveType>Dynamic</moveType>
   <maxDamage>100</maxDamage>
@@ -24,7 +27,6 @@
     <Item>fragment explo</Item>
   </deathGobTypes>
   <birthGobTypes>
-    <Item>fragment glow</Item>
     <Item>fragment smoke</Item>
   </birthGobTypes>
   <thruster>

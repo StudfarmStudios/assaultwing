@@ -23,6 +23,9 @@
   <bulletModelNames>
     <Item>clustermine</Item>
   </bulletModelNames>
+  <backgroundTextureName></backgroundTextureName>
+  <backgroundScale>1</backgroundScale>
+  <backgroundAlpha>1</backgroundAlpha>
   <modelName>dummymodel</modelName>
   <moveType>Dynamic</moveType>
   <maxDamage>1000</maxDamage>

@@ -17,6 +17,12 @@ namespace AW2.Graphics
     /// <c>LoadContent</c> must be called before a viewport is used.
     public abstract class AWViewport : IDisposable
     {
+        [DebuggerDisplay("{Min} - {Max}")]
+        public struct RectangleSingle
+        {
+            public Vector2 Min, Max;
+        }
+
         /// <summary>
         /// Effect for drawing parallaxes as 3D primitives.
         /// </summary>
@@ -31,6 +37,7 @@ namespace AW2.Graphics
         private TexturePostprocessor _postprocessor;
         private Func<IEnumerable<CanonicalString>> _getPostprocessEffectNames;
         private Vector2 _previousLookAt;
+        public List<RectangleSingle> LayerVisibleAreas { get; private set; }
 
         public AssaultWingCore Game { get; private set; }
         public virtual Player Owner { get { return null; } }
@@ -97,6 +104,8 @@ namespace AW2.Graphics
             };
             _getPostprocessEffectNames = getPostprocessEffectNames;
             ZoomRatio = 1;
+            LayerVisibleAreas = new List<RectangleSingle>();
+            UpdateLayerVisibleAreas();
             // !!! GobDrawn += gob => game.DataEngine.Arena.DebugDrawGob(gob, ViewMatrix, GetProjectionMatrix(gob.Layer.Z));
         }
 
@@ -159,6 +168,7 @@ namespace AW2.Graphics
         {
             _previousLookAt = CurrentLookAt;
             foreach (var component in _overlayComponents) component.Update();
+            UpdateLayerVisibleAreas();
         }
 
         public abstract void Reset(Vector2 lookAtPos);
@@ -258,6 +268,22 @@ namespace AW2.Graphics
             }
         }
 
+        private void UpdateLayerVisibleAreas()
+        {
+            LayerVisibleAreas.Clear();
+            if (Game.DataEngine.Arena == null) return;
+            var zoomedHalfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio);
+            foreach (var layer in Game.DataEngine.Arena.Layers)
+            {
+                var zoomedHalfDiagonalInDepth = zoomedHalfDiagonal / GetScale(layer.Z);
+                LayerVisibleAreas.Add(new RectangleSingle
+                {
+                    Min = CurrentLookAt - zoomedHalfDiagonalInDepth,
+                    Max = CurrentLookAt + zoomedHalfDiagonalInDepth,
+                });
+            }
+        }
+
         private void DoInMyViewport(Action action)
         {
             var oldViewport = GraphicsDevice.Viewport;
@@ -268,18 +294,16 @@ namespace AW2.Graphics
 
         private void Draw3D(ArenaLayer layer, ref Matrix view, ref Matrix projection)
         {
-            var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(layer.Z));
-            var viewMin = CurrentLookAt - halfDiagonal;
-            var viewMax = CurrentLookAt + halfDiagonal;
+            var visible = LayerVisibleAreas[layer.Index];
             Vector2 gobMin, gobMax;
             foreach (var gob in layer.Gobs)
             {
                 gob.GetDraw3DBounds(out gobMin, out gobMax);
                 if (float.IsNaN(gobMin.X)) continue;
-                if (gobMax.X < viewMin.X ||
-                    gobMax.Y < viewMin.Y ||
-                    viewMax.X < gobMin.X ||
-                    viewMax.Y < gobMin.Y) continue;
+                if (gobMax.X < visible.Min.X ||
+                    gobMax.Y < visible.Min.Y ||
+                    visible.Max.X < gobMin.X ||
+                    visible.Max.Y < gobMin.Y) continue;
                 gob.Draw3D(view, projection, Owner);
             }
         }

@@ -75,6 +75,15 @@ namespace AW2.Game.Gobs
         private bool _dieImmediatelyWithLeader;
 
         /// <summary>
+        /// The distance between <see cref="Pos"/> and any <see cref="AW2.Graphics.AWViewport"/>
+        /// after which the particles of the peng cease to be meaningful. Small values (50) make the
+        /// game faster. Large values (500) reduce visual artifacts especially if the peng covers
+        /// a large area or its particles light up slowly.
+        /// </summary>
+        [TypeParameter]
+        private float _visibilityRadius;
+
+        /// <summary>
         /// External input argument of the peng, between 0 and 1.
         /// </summary>
         /// This value can be set by anyone and it may affect the behaviour
@@ -210,6 +219,7 @@ namespace AW2.Game.Gobs
             _playerRelated = false;
             _disregardHidingLeader = false;
             _dieImmediatelyWithLeader = false;
+            _visibilityRadius = 50;
             _particles = new List<Particle>();
 
             // Set better defaults than class Gob does.
@@ -258,9 +268,13 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
+            var isVisible = Game.DataEngine.IsVisible(Layer, Pos, _visibilityRadius);
             UpdateOldDrawPos();
-            CreateParticles();
-            UpdateAndKillParticles();
+            CreateParticles(isVisible);
+            if (isVisible)
+                UpdateParticles();
+            else
+                KillOrFreezeParticles();
             CheckLeaderDeath();
             CheckDeath();
         }
@@ -311,14 +325,24 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
-        private void CreateParticles()
+        private void CreateParticles(bool isVisible)
         {
-            var newParticles = _emitter.Emit();
-            if (newParticles != null)
-                _particles.AddRange(newParticles);
+            var newParticles = _emitter.Emit(!isVisible && !_updater.AreParticlesImmortal);
+            if (newParticles != null) _particles.AddRange(newParticles);
         }
 
-        private void UpdateAndKillParticles()
+        private void KillOrFreezeParticles()
+        {
+            // Note: There are two cases of pengs that would look bad if their particles were killed:
+            // - pengs with immortal particles (which tend to exist in limited amounts), and
+            // - endless pengs that have long living particles.
+            // In those cases, keep what has been created but just don't update them.
+            if (_updater.AreParticlesImmortal) return;
+            if (_emitter.IsEndless && _updater.AreParticlesLongLived) return;
+            _particles.Clear();
+        }
+
+        private void UpdateParticles()
         {
             int write = 0;
             for (int read = 0; read < _particles.Count; read++)

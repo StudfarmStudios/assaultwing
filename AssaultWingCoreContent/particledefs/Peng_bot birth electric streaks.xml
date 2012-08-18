@@ -3,6 +3,7 @@
   <typeName>bot birth electric streaks</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
+  <visibilityRadius>50</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <layerPreference>Front</layerPreference>
   <depthLayer2D>0.58</depthLayer2D>

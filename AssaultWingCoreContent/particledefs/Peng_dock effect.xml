@@ -3,6 +3,7 @@
   <typeName>dockeffect</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>100</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.25</depthLayer2D>
   <drawMode2D>

@@ -41,6 +41,11 @@ namespace AW2.Game.Arenas
         public bool IsGameplayLayer { get { return _isGameplayLayer; } }
 
         /// <summary>
+        /// The index of the layer in the layer list of the parent arena.
+        /// </summary>
+        public int Index { get; set; }
+
+        /// <summary>
         /// Z coordinate of the layer.
         /// </summary>
         /// The Z coordinate of the gameplay layer is 0. Negative coordinates

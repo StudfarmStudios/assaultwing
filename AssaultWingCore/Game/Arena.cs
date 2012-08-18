@@ -556,6 +556,7 @@ namespace AW2.Game
                 foreach (var gob in layer.Gobs)
                     gob.Layer = layer;
             }
+            for (int layerIndex = 0; layerIndex < _layers.Count; layerIndex++) _layers[layerIndex].Index = layerIndex;
             Gobs = new GobCollection(_layers);
             InitializeSpecialLayers();
             foreach (var gob in new GobCollection(oldLayers))

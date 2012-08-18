@@ -3,6 +3,7 @@
   <typeName>dumbfirethrust1</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
+  <visibilityRadius>50</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.40</depthLayer2D>
   <drawMode2D>

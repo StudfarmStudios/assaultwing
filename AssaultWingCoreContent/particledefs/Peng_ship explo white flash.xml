@@ -3,6 +3,7 @@
   <typeName>ship explo white flash</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>75</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.18</depthLayer2D>
   <drawMode2D>

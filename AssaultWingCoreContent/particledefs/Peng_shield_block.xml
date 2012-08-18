@@ -3,6 +3,7 @@
   <typeName>shield block</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>100</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.03</depthLayer2D>
   <drawMode2D>

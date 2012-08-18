@@ -147,8 +147,8 @@ namespace AW2.Game.Gobs
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
         {
             if (_backgroundTexture == null) return;
-            var screenCenter = Vector2.Transform(Pos, gameToScreen);
-            var drawRotation = -Rotation; // negated, because screen Y coordinates are reversed
+            var screenCenter = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
+            var drawRotation = -(Rotation + DrawRotationOffset); // negated, because screen Y coordinates are reversed
             var color = Color.Multiply(Color.White, Alpha * _backgroundAlpha);
             spriteBatch.Draw(_backgroundTexture, screenCenter, null, color, drawRotation,
                 new Vector2(_backgroundTexture.Width, _backgroundTexture.Height) / 2, _backgroundScale,

@@ -3,6 +3,7 @@
   <typeName>amazon rainfall</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>600</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>

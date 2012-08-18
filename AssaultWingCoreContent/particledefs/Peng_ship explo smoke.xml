@@ -3,6 +3,7 @@
   <typeName>ship explo smoke</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>200</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.6</depthLayer2D>
   <drawMode2D>

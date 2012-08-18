@@ -3,6 +3,7 @@
   <typeName>mine warning</typeName>
   <disregardHidingLeader>true</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>500</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <layerPreference>Front</layerPreference>
   <depthLayer2D>0.5</depthLayer2D>

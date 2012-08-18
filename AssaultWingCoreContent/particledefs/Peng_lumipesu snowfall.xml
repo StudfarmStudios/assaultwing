@@ -3,6 +3,7 @@
   <typeName>lumipesu snowfall</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>2000</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
@@ -37,8 +38,8 @@
       <expected>8.88</expected>
       <variance>3.08</variance>
     </particleAge>
-    <accelerationInputScale>0</accelerationInputScale>	
-	<acceleration type="AW2.Game.Pengs.SimpleCurve">
+    <accelerationInputScale>0</accelerationInputScale>
+    <acceleration type="AW2.Game.Pengs.SimpleCurve">
       <randomAmplitude>15</randomAmplitude>
       <randomMixer>1</randomMixer>
       <keys>
@@ -59,8 +60,8 @@
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
       <value>-0.5</value>
     </rotationSpeed>
-    <scaleInputScale>0</scaleInputScale>	
-	<scale type="AW2.Game.Pengs.SimpleCurve">
+    <scaleInputScale>0</scaleInputScale>
+    <scale type="AW2.Game.Pengs.SimpleCurve">
       <randomAmplitude>0.15</randomAmplitude>
       <randomMixer>3</randomMixer>
       <keys>
@@ -78,7 +79,7 @@
       </keys>
     </scale>
     <alphaInputScale>0</alphaInputScale>
-	<alpha type="AW2.Game.Pengs.SimpleCurve">
+    <alpha type="AW2.Game.Pengs.SimpleCurve">
       <randomAmplitude>0.3</randomAmplitude>
       <randomMixer>4</randomMixer>
       <keys>

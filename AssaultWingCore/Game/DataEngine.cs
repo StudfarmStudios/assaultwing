@@ -183,6 +183,21 @@ namespace AW2.Game
             }
         }
 
+        public bool IsVisible(ArenaLayer layer, Vector2 pos, float radius)
+        {
+            var min = pos - new Vector2(radius);
+            var max = pos + new Vector2(radius);
+            foreach (var viewport in _viewports)
+            {
+                var visible = viewport.LayerVisibleAreas[layer.Index];
+                if (max.X >= visible.Min.X &&
+                    max.Y >= visible.Min.Y &&
+                    visible.Max.X >= min.X &&
+                    visible.Max.Y >= min.Y) return true;
+            }
+            return false;
+        }
+
         public void RearrangeViewports()
         {
             var playerCount = Game.DataEngine.Spectators.Where(player => player.NeedsViewport).Count();

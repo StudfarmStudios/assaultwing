@@ -3,6 +3,7 @@
   <typeName>antimattercone hit 1</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>50</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.03</depthLayer2D>
   <drawMode2D>

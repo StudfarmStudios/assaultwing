@@ -3,6 +3,7 @@
   <typeName>amazon steam</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
+  <visibilityRadius>300</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.25</depthLayer2D>
   <drawMode2D>
@@ -19,7 +20,6 @@
     <facingType>Random</facingType>
     <textureNames>
       <Item>p_smoke</Item>
-      <!--<Item>p_dark_smoke</Item> -->
     </textureNames>
     <gobTypeNames>
     </gobTypeNames>

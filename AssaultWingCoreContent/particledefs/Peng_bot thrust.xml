@@ -3,6 +3,7 @@
   <typeName>bot thrust</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
+  <visibilityRadius>50</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.57</depthLayer2D>
   <drawMode2D>

@@ -133,6 +133,7 @@ namespace AW2.Game.Pengs
         /// Number of particles to create, or negative for no limit.
         /// </summary>
         public int NumberToCreate { set { _numberToCreate = value; } }
+        public bool IsEndless { get { return _numberToCreate < 0; } }
         public float EmissionFrequency { get { return _emissionFrequency; } }
 
         /// <summary>
@@ -187,7 +188,7 @@ namespace AW2.Game.Pengs
         /// Returns created particles, adds created gobs to <c>DataEngine</c>.
         /// Returns <c>null</c> if no particles were created.
         /// </summary>
-        public IEnumerable<Particle> Emit()
+        public IEnumerable<Particle> Emit(bool skipParticles)
         {
             if (Paused) return null;
             if (Finished) return null;
@@ -206,17 +207,17 @@ namespace AW2.Game.Pengs
             }
             _nextBirth += TimeSpan.FromSeconds(createCount / _emissionFrequency);
 
-            if (createCount > 0 && _textureNames.Length > 0)
+            if (!skipParticles && createCount > 0 && _textureNames.Length > 0)
                 particles = new List<Particle>();
 
             // Create the particles. They are created 
             // with an even distribution over the circle sector
             // defined by 'radius', the origin and 'sprayAngle'.
-
             for (int i = 0; i < createCount; ++i)
             {
                 // Find out type of emitted thing (which gob or particle) and create it.
                 int emitType = RandomHelper.GetRandomInt(_textureNames.Length + _gobTypeNames.Length);
+                if (skipParticles && emitType < _textureNames.Length) continue;
 
                 // The emitted thing init routine must be an Action<Gob>
                 // so that it can be passed to Gob.CreateGob. Particle init

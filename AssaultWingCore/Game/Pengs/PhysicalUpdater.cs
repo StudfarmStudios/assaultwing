@@ -10,8 +10,6 @@ namespace AW2.Game.Pengs
     /// <summary>
     /// Moves particles in a fashion that mimics physical laws.
     /// </summary>
-    /// Physical updater uses the following:
-    /// - Particle.timeout is the time of death of the particle
     [LimitedSerialization]
     public class PhysicalUpdater : IConsistencyCheckable
     {
@@ -25,6 +23,8 @@ namespace AW2.Game.Pengs
         }
 
         private const int PRECALC_COUNT = 10;
+        private const int PARTICLE_LONG_LIFE_FRAMES_TRESHOLD = 1 * AssaultWingCore.TargetFPS;
+
         private List<ParticleValues> _precalculatedValues;
 
         /// <summary>
@@ -98,6 +98,7 @@ namespace AW2.Game.Pengs
         private float _elapsedSeconds;
 
         public bool AreParticlesImmortal { get { return _areParticlesImmortal; } }
+        public bool AreParticlesLongLived { get; private set; }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -132,7 +133,7 @@ namespace AW2.Game.Pengs
             if (particle.AgeInFrames >= values.AgeInFrames)
             {
                 if (_areParticlesImmortal)
-                    particle.AgeInFrames -= values.AgeInFrames;
+                    particle.AgeInFrames -= values.AgeInFrames; // Restart iteration through precalculated values.
                 else
                     return true;
             }
@@ -180,6 +181,7 @@ namespace AW2.Game.Pengs
                         Acceleration = getValues(ageInFrames, random, _acceleration),
                     };
                 _precalculatedValues = precalcs.ToList();
+                AreParticlesLongLived = _precalculatedValues.Max(values => values.AgeInFrames) > PARTICLE_LONG_LIFE_FRAMES_TRESHOLD;
             }
         }
     }

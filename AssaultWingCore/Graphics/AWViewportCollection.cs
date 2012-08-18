@@ -47,7 +47,7 @@ namespace AW2.Graphics
 
         public IEnumerator<AWViewport> GetEnumerator()
         {
-            if (_lastGraphicsDeviceViewportSize != CurrentGraphicsDeviceViewportSize) CreateAll();
+            if (_graphicsDeviceService != null && _lastGraphicsDeviceViewportSize != CurrentGraphicsDeviceViewportSize) CreateAll();
             return _items.GetEnumerator();
         }
 

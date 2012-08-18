@@ -103,8 +103,8 @@ namespace AW2.Game
             var remainingKills = new List<GobKillData>();
             foreach (var data in _gobsToKillOnClient)
             {
-                var gob = Game.DataEngine.Arena.Gobs.FirstOrDefault(gobb => gobb.ID == data.GobID);
-                if (gob != null)
+                var gob = Game.DataEngine.Arena.Gobs[data.GobID];
+                if (gob != null && !gob.Dead)
                     gob.DieOnClient();
                 else if (data.KillTime + GOB_KILL_TIMEOUT_ON_CLIENT > Game.DataEngine.ArenaTotalTime)
                     remainingKills.Add(data);

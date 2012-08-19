@@ -81,6 +81,7 @@
     <Compile Include="Helpers\AWMathHelperTest.cs" />
     <Compile Include="Helpers\AWTimerTest.cs" />
     <Compile Include="Helpers\ClonableTest.cs" />
+    <Compile Include="Helpers\ConverterTest.cs" />
     <Compile Include="Helpers\Geometric\GeometryTest.cs" />
     <Compile Include="Helpers\Geometric\PolygonTest.cs" />
     <Compile Include="Helpers\Geometric\RectangleTest.cs" />

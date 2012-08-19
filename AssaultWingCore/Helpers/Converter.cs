@@ -3,67 +3,42 @@
 namespace AW2.Helpers
 {
     /// <summary>
-    /// Contains static methods for converting values by
-    /// reinterpreting their bit representations.
+    /// Contains static methods for converting values by reinterpreting their bit representations.
     /// </summary>
     public static class Converter
     {
         /// <summary>
-        /// A way to switch the interpretation of 32 bits between int and float.
+        /// A helper struct to reinterpret the bit representation of an Int32 as Single and vice versa.
         /// </summary>
         /// Idea from Jon Skeet's post on 
         /// http://bytes.com/groups/net-c/274876-how-do-bitconverter-singletoint32bits
         [StructLayout(LayoutKind.Explicit)]
-        struct Int32SingleUnion
+        private struct Int32SingleUnion
         {
-            /// <summary>
-            /// Initialises bits with a float value.
-            /// </summary>
-            public Int32SingleUnion(float x) { i = 0; f = x; }
+            public Int32SingleUnion(float x) { _int = 0; _float = x; }
+            public Int32SingleUnion(int x) { _float = 0; _int = x; }
 
-            /// <summary>
-            /// Initialises bits with an int value.
-            /// </summary>
-            /// <param name="x"></param>
-            public Int32SingleUnion(int x) { f = 0; i = x; }
-
-            /// <summary>
-            /// Int32 version of the value.
-            /// </summary>
             [FieldOffset(0)]
-            public int i;
+            public int _int;
 
-            /// <summary>
-            /// Single version of the value.
-            /// </summary>
             [FieldOffset(0)]
-            public float f;
+            public float _float;
         }
 
+        /// <summary>
+        /// A helper struct to reinterpret the bit representation of an Int16 as <see cref="Half"/> and vice versa.
+        /// </summary>
         [StructLayout(LayoutKind.Explicit)]
-        struct Int16HalfUnion
+        private struct Int16HalfUnion
         {
-            /// <summary>
-            /// Initialises bits with a Half value.
-            /// </summary>
-            public Int16HalfUnion(Half x) { i = 0; f = x; }
+            public Int16HalfUnion(Half x) { _short = 0; _half = x; }
+            public Int16HalfUnion(short x) { _half = new Half(0); _short = x; }
 
-            /// <summary>
-            /// Initialises bits with an int value.
-            /// </summary>
-            public Int16HalfUnion(short x) { f = new Half(0); i = x; }
-
-            /// <summary>
-            /// Int32 version of the value.
-            /// </summary>
             [FieldOffset(0)]
-            public short i;
+            public short _short;
 
-            /// <summary>
-            /// Half version of the value.
-            /// </summary>
             [FieldOffset(0)]
-            public Half f;
+            public Half _half;
         }
 
         /// <summary>
@@ -71,8 +46,7 @@ namespace AW2.Helpers
         /// </summary>
         public static float IntToFloat(int x)
         {
-            var converter = new Int32SingleUnion(x);
-            return converter.f;
+            return new Int32SingleUnion(x)._float;
         }
 
         /// <summary>
@@ -80,8 +54,7 @@ namespace AW2.Helpers
         /// </summary>
         public static int FloatToInt(float x)
         {
-            var converter = new Int32SingleUnion(x);
-            return converter.i;
+            return new Int32SingleUnion(x)._int;
         }
 
         /// <summary>
@@ -89,8 +62,7 @@ namespace AW2.Helpers
         /// </summary>
         public static Half ShortToHalf(short x)
         {
-            var converter = new Int16HalfUnion(x);
-            return converter.f;
+            return new Int16HalfUnion(x)._half;
         }
 
         /// <summary>
@@ -98,8 +70,7 @@ namespace AW2.Helpers
         /// </summary>
         public static short HalfToShort(Half x)
         {
-            var converter = new Int16HalfUnion(x);
-            return converter.i;
+            return new Int16HalfUnion(x)._short;
         }
     }
 }

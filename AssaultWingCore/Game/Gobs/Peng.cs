@@ -269,14 +269,22 @@ namespace AW2.Game.Gobs
         {
             base.Update();
             var isVisible = Game.DataEngine.IsVisible(Layer, Pos, _visibilityRadius);
+            var isFrozen = false;
             UpdateOldDrawPos();
             CreateParticles(isVisible);
             if (isVisible)
                 UpdateParticles();
             else
-                KillOrFreezeParticles();
+            {
+                // Note: There are two cases of pengs that would look bad if their particles were killed:
+                // - pengs with immortal particles (which tend to exist in limited amounts), and
+                // - endless pengs that have long living particles.
+                // In those cases, keep what has been created but just don't update them.
+                isFrozen = _updater.AreParticlesImmortal || (_emitter.IsEndless && _updater.AreParticlesLongLived);
+                if (!isFrozen) _particles.Clear();
+            }
             CheckLeaderDeath();
-            CheckDeath();
+            CheckDeath(isFrozen);
         }
 
         private Color Color
@@ -331,17 +339,6 @@ namespace AW2.Game.Gobs
             if (newParticles != null) _particles.AddRange(newParticles);
         }
 
-        private void KillOrFreezeParticles()
-        {
-            // Note: There are two cases of pengs that would look bad if their particles were killed:
-            // - pengs with immortal particles (which tend to exist in limited amounts), and
-            // - endless pengs that have long living particles.
-            // In those cases, keep what has been created but just don't update them.
-            if (_updater.AreParticlesImmortal) return;
-            if (_emitter.IsEndless && _updater.AreParticlesLongLived) return;
-            _particles.Clear();
-        }
-
         private void UpdateParticles()
         {
             int write = 0;
@@ -366,9 +363,9 @@ namespace AW2.Game.Gobs
                 DetachFromLeader();
         }
 
-        private void CheckDeath()
+        private void CheckDeath(bool isFrozen)
         {
-            if (_particles.Count == 0 && _emitter.Finished) Die();
+            if (_emitter.Finished && (_particles.Count == 0 || isFrozen)) Die();
         }
 
         /// <summary>

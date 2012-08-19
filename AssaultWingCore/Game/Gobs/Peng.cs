@@ -365,7 +365,9 @@ namespace AW2.Game.Gobs
 
         private void CheckDeath(bool isFrozen)
         {
-            if (_emitter.Finished && (_particles.Count == 0 || isFrozen)) Die();
+            if (!_emitter.Finished) return;
+            if (_particles.Count == 0) Die();
+            else if (isFrozen && !_updater.AreParticlesImmortal) Die();
         }
 
         /// <summary>

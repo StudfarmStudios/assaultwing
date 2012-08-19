@@ -3,7 +3,7 @@
   <typeName>explo shockwave</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
-  <visibilityRadius>100</visibilityRadius>
+  <visibilityRadius>150</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.13</depthLayer2D>
   <drawMode2D>

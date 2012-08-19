@@ -3,7 +3,7 @@
   <typeName>explo white flash</typeName>
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
-  <visibilityRadius>50</visibilityRadius>
+  <visibilityRadius>100</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
   <depthLayer2D>0.18</depthLayer2D>
   <drawMode2D>

@@ -10,38 +10,37 @@ namespace AW2.Helpers
     /// of 3 significant digits. Value range is -65504...65504.
     public struct Half
     {
-        /// <summary>
-        /// Bitwise correct contents of the half-precision floating point value.
-        /// </summary>
-        private ushort _value;
-
-        public static readonly Half MaxValue = new Half(65504);
-        public static readonly Half MinValue = new Half(-65504);
+        public static readonly Half MaxValue = new Half(HALF_MAX_VALUE);
+        public static readonly Half MinValue = new Half(HALF_MIN_VALUE);
         public static readonly Half Zero = new Half(0);
-        public static readonly Half Epsilon = new Half(6.10352e-5f);
+        public static readonly Half Epsilon = new Half(HALF_SMALLEST_POSITIVE_NORMAL_VALUE);
         public static readonly Half PositiveInfinity = new Half(float.PositiveInfinity);
         public static readonly Half NegativeInfinity = new Half(float.NegativeInfinity);
         public static readonly Half NaN = new Half(float.NaN);
 
+        private const float HALF_MAX_VALUE = 65504;
+        private const float HALF_MIN_VALUE = -65504;
+        private const float HALF_SMALLEST_POSITIVE_NORMAL_VALUE = 0.000061035156f;
+
         /// <summary>
-        /// The bit representation of the Half.
+        /// Bitwise correct contents of the half-precision floating point value.
         /// </summary>
-        public ushort BitRepresentation { get { return _value; } set { this._value = value; } }
+        private int _value; // Note: Profiling shows that int is 15 times faster here than short.
 
         /// <summary>
         /// Creates a Half with a known value.
         /// </summary>
         public Half(float x)
         {
-            if (float.IsPositiveInfinity(x) || x > 65504)
+            if (float.IsPositiveInfinity(x) || x > HALF_MAX_VALUE)
                 _value = 0x7c00; // positive infinity and positive overflow
-            else if (float.IsNegativeInfinity(x) || x < -65504)
+            else if (float.IsNegativeInfinity(x) || x < HALF_MIN_VALUE)
                 _value = 0xfc00; // negative infinity and negative overflow
             else if (float.IsNaN(x))
                 _value = 0x7e00; // not a number
             else if (x == 0f ||
-                (x > 0f && x < 0.000061035156f) ||
-                (x < 0f && x > -0.000061035156f))
+                (x > 0f && x < HALF_SMALLEST_POSITIVE_NORMAL_VALUE) ||
+                (x < 0f && x > -HALF_SMALLEST_POSITIVE_NORMAL_VALUE))
                 _value = 0x0000; // negative zero, positive zero, negative underflow and positive underflow
             else // a regular number
             {

@@ -964,8 +964,7 @@ namespace AW2.Game
                     }
                     if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
                     {
-                        var rotation = unchecked((byte)(((int)Math.Round(Rotation / MathHelper.TwoPi * 128)) & 0x7f));
-                        writer.Write((byte)rotation);
+                        writer.WriteAngle8((float)Rotation);
                         writer.WriteNormalized16((Vector2)Pos, MIN_GOB_COORDINATE, MAX_GOB_COORDINATE);
                         writer.WriteHalf((Vector2)Move);
                         writer.Write((Half)RotationSpeed);
@@ -995,8 +994,7 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
-                var rotationByte = reader.ReadByte();
-                Rotation = (rotationByte & 0x7f) * MathHelper.TwoPi / 128;
+                Rotation = reader.ReadAngle8();
                 Pos = reader.ReadVector2Normalized16(MIN_GOB_COORDINATE, MAX_GOB_COORDINATE);
                 Move = reader.ReadHalfVector2();
                 RotationSpeed = reader.ReadHalf();

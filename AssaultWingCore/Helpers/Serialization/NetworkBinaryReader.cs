@@ -37,6 +37,11 @@ namespace AW2.Helpers.Serialization
             return Converter.IntToFloat(ReadInt32());
         }
 
+        public float ReadAngle8()
+        {
+            return ReadByte() * MathHelper.TwoPi / (byte.MaxValue + 1);
+        }
+
         /// <summary>
         /// Reads a 16-bit floating point value.
         /// </summary>

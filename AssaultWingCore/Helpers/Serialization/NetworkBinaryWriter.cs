@@ -125,6 +125,14 @@ namespace AW2.Helpers.Serialization
             Write(Converter.FloatToInt(value));
         }
 
+        public void WriteAngle8(float angle)
+        {
+            unchecked
+            {
+                Write((byte)(angle / MathHelper.TwoPi * (byte.MaxValue + 1)));
+            }
+        }
+
         /// <summary>
         /// Writes a 16-bit floating point value.
         /// </summary>

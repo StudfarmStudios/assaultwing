@@ -92,23 +92,11 @@ namespace AW2.Net.Messages
         {
             if (_state != StateType.Initial) throw new InvalidOperationException("Cannot read gobs in state " + _state);
             _state = StateType.GobsRead;
-            var gobTypes = new System.Text.StringBuilder(); // DEBUG for a rare EndOfStreamException
-            try
+            for (int i = 0; i < _gobIds.Count; ++i)
             {
-                for (int i = 0; i < _gobIds.Count; ++i)
-                {
-                    var gob = gobFinder(_gobIds[i]);
-                    if (gob == null) break;
-                    gobTypes.Append(gob.GetType().Name);
-                    if (gob is Gob) gobTypes.AppendFormat(" [{0}]", ((Gob)gob).TypeName);
-                    gobTypes.Append(", ");
-                    Read(gob, serializationMode, framesAgo);
-                }
-            }
-            catch (Exception)
-            {
-                AW2.Helpers.Log.Write("Exception during GobUpdateMessage.ReadGobs. Gob types were " + gobTypes);
-                throw;
+                var gob = gobFinder(_gobIds[i]);
+                if (gob == null) break;
+                Read(gob, serializationMode, framesAgo);
             }
         }
 

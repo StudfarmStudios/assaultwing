@@ -15,8 +15,6 @@ public class QuadTreeBroadPhase : IBroadPhase
     private List<Pair> _pairBuffer;
     private QuadTree<FixtureProxy> _quadTreeNonstatic;
     private QuadTree<FixtureProxy> _quadTreeStatic;
-    private int _treeMoveNumNonstatic;
-    private int _treeMoveNumStatic;
 
     /// <summary>
     /// Creates a new quad tree broadphase with the specified span.
@@ -254,22 +252,14 @@ public class QuadTreeBroadPhase : IBroadPhase
 
     private void ReinsertNode(Element<FixtureProxy> qtnode)
     {
-        if (qtnode.Value.IsStatic)
-            ReinsertNodeImpl(qtnode, true, ref _treeMoveNumStatic);
-        else
-            ReinsertNodeImpl(qtnode, false, ref _treeMoveNumNonstatic);
-    }
-
-    private void ReinsertNodeImpl(Element<FixtureProxy> qtnode, bool isStatic, ref int treeMoveNum)
-    {
-        var quadTree = isStatic ? _quadTreeStatic : _quadTreeNonstatic;
+        var quadTree = qtnode.Value.IsStatic ? _quadTreeStatic : _quadTreeNonstatic;
         quadTree.RemoveNode(qtnode);
         quadTree.AddNode(qtnode);
 
-        if (++treeMoveNum > TreeUpdateThresh)
+        if (++quadTree.MoveCount > TreeUpdateThresh)
         {
-            ReconstructTree(isStatic);
-            treeMoveNum = 0;
+            ReconstructTree(qtnode.Value.IsStatic);
+            quadTree.MoveCount = 0;
         }
     }
 

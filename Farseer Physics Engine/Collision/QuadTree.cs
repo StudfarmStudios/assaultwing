@@ -23,6 +23,7 @@ public class QuadTree<T>
 
     public int MaxBucket;
     public int MaxDepth;
+    public int MoveCount;
     public List<Element<T>> Nodes;
     public AABB Span; // fat span
     public QuadTree<T>[] SubTrees;

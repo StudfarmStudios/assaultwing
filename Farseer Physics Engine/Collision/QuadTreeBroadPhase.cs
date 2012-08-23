@@ -9,6 +9,7 @@ public class QuadTreeBroadPhase : IBroadPhase
 {
     private const int TreeUpdateThresh = 10000;
     private int _currID;
+    private int _lastMovedProxyID = -1;
     private Dictionary<int, Element<FixtureProxy>> _idRegister;
     private List<Element<FixtureProxy>> _moveBuffer;
     private List<Pair> _pairBuffer;
@@ -58,6 +59,7 @@ public class QuadTreeBroadPhase : IBroadPhase
             Query(proxyID => PairBufferQueryCallback(proxyID, qtnode.Value.ProxyId), ref qtnode.Span, includeStatic: !qtnode.Value.IsStatic);
         }
         _moveBuffer.Clear();
+        _lastMovedProxyID = -1;
 
         // Sort the pair buffer to expose duplicates.
         _pairBuffer.Sort();
@@ -273,7 +275,9 @@ public class QuadTreeBroadPhase : IBroadPhase
 
     private void BufferMove(Element<FixtureProxy> proxy)
     {
-        _moveBuffer.Add(proxy);
+        // It's not uncommon to add the same proxy twice consecutively in the frame it was created.
+        if (proxy.Value.ProxyId != _lastMovedProxyID) _moveBuffer.Add(proxy);
+        _lastMovedProxyID = proxy.Value.ProxyId;
     }
 
     private void UnbufferMove(Element<FixtureProxy> proxy)

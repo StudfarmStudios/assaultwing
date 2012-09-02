@@ -82,10 +82,7 @@ namespace AW2.Game.Gobs
         [RuntimeState]
         private SpawnType[] _spawnTypes;
 
-        /// <summary>
-        /// Time of next spawn, in game time.
-        /// </summary>
-        private TimeSpan _nextSpawn;
+        private AWTimer _spawnTimer;
 
         #endregion SpawnGob fields
 
@@ -108,7 +105,7 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(_spawnInterval);
+            _spawnTimer = new AWTimer(() => Arena.TotalTime, TimeSpan.FromSeconds(_spawnInterval)) { SkipPastIntervals = false };
             base.Activate();
         }
 
@@ -128,16 +125,13 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            while (_nextSpawn <= Arena.TotalTime)
-            {
-                _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(_spawnInterval);
+            while (_spawnTimer.IsElapsed)
                 Gob.CreateGob<Gob>(Game, GetRandomSpawnType(), newGob =>
                 {
                     var spawnPos = Arena.GetFreePosition(LARGE_GOB_PHYSICAL_RADIUS, _spawnArea);
                     newGob.ResetPos(spawnPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                     Arena.Gobs.Add(newGob);
                 });
-            }
             base.Update();
         }
 

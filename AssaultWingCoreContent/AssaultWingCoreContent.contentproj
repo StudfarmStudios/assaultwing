@@ -2632,43 +2632,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="textures\preview_arena_alienworld.png">
-      <Name>preview_arena_alienworld</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="gobdefs\Triforce_fusion jet.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Triforce_fusion jet</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\alienworld_parallax_background.png">
-      <Name>alienworld_parallax_background</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\alienworld_parallax_dust.png">
-      <Name>alienworld_parallax_dust</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\alienworld_parallax_greenhaze.png">
-      <Name>alienworld_parallax_greenhaze</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\alienworld_parallax_dust_small.png">
-      <Name>alienworld_parallax_dust_small</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="gobdefs\Triforce_antimatter jet.xml">
@@ -2710,14 +2679,6 @@
       <Processor>SoundEffectProcessor</Processor>
       <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="arenas\Arena_AlienWorld.xml">
-      <Name>Arena_AlienWorld</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="textures\preview_arena_alienworld.png">

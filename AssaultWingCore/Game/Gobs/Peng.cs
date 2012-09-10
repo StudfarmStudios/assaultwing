@@ -422,9 +422,7 @@ namespace AW2.Game.Gobs
             var moveWithLeader = Move;
             var rotationWithLeader = Rotation;
             Leader = null;
-            Pos = posWithLeader;
-            Move = moveWithLeader;
-            Rotation = rotationWithLeader;
+            ResetPos(posWithLeader, moveWithLeader, rotationWithLeader);
         }
 
         #endregion Private methods

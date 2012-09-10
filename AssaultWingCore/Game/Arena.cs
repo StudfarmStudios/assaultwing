@@ -353,9 +353,9 @@ namespace AW2.Game
         /// Returns distance to the closest collision area, if any, along a directed line segment.
         /// Collision areas for whom <paramref name="filter"/> returns false are ignored.
         /// </summary>
-        public float? GetDistanceToClosest(Vector2 from, Vector2 to, Func<CollisionArea, bool> filter)
+        public float? GetDistanceToClosest(Vector2 from, Vector2 to, Func<CollisionArea, bool> filter, CollisionAreaType[] areaTypes)
         {
-            return PhysicsHelper.GetDistanceToClosest(_world, from, to, filter);
+            return PhysicsHelper.GetDistanceToClosest(_world, from, to, filter, areaTypes);
         }
 
         /// <summary>

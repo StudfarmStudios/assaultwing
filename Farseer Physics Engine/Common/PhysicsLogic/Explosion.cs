@@ -123,7 +123,7 @@ namespace FarseerPhysics.Common.PhysicsLogic
         /// A dictionnary containing all the "exploded" fixtures
         /// with a list of the applied impulses
         /// </returns>
-        public Dictionary<Fixture, List<Vector2>> Activate(Vector2 pos, float radius, float maxForce)
+        public Dictionary<Fixture, List<Vector2>> Activate(Vector2 pos, float radius, float maxForce, Category categories)
         {
             _exploded.Clear();
 
@@ -285,7 +285,7 @@ namespace FarseerPhysics.Common.PhysicsLogic
                                       hitClosest = true;
                                       shape = f;
                                       return fr;
-                                  }, p1, p2);
+                                  }, p1, p2, categories);
 
                 //draws radius points
                 if ((hitClosest) && (shape.Body.BodyType == BodyType.Dynamic))

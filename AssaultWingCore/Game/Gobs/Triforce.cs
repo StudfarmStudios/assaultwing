@@ -22,6 +22,8 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Triforce : Gob
     {
+        private static readonly CollisionAreaType[] GEOMETRY_LIMIT_TYPES = new[] { CollisionAreaType.Static };
+
         [TypeParameter]
         private CanonicalString[] _surroundEffects;
         [TypeParameter]
@@ -222,7 +224,7 @@ namespace AW2.Game.Gobs
             {
                 var relativeRayUnit = AWMathHelper.GetUnitVector2(_angle * ray / _sliceCount - _angle / 2);
                 var worldRay = (_range * relativeRayUnit).Rotate(Rotation);
-                var rayLength = Arena.GetDistanceToClosest(Pos, Pos + worldRay, area => area.Owner is Gobs.Wall);
+                var rayLength = Arena.GetDistanceToClosest(Pos, Pos + worldRay, null, GEOMETRY_LIMIT_TYPES);
                 var relativeRayLength = rayLength.HasValue ? rayLength.Value / _range : 1f;
                 RelativeSliceSides[ray] = relativeRayLength * relativeRayUnit;
             }

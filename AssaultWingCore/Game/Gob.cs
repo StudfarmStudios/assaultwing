@@ -408,9 +408,14 @@ namespace AW2.Game
             MoveOffset = Vector2.Zero;
             DrawPosOffset = Vector2.Zero;
             DrawRotationOffset = 0;
-            Pos = pos;
             Move = move;
-            Rotation = rotation;
+            if (Body != null)
+                Body.SetTransform(pos.ToFarseer(), rotation);
+            else
+            {
+                Pos = pos;
+                Rotation = rotation;
+            }
         }
 
         /// <summary>

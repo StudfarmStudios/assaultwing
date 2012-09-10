@@ -110,11 +110,10 @@ namespace AW2.Game.Collisions
             var gob = Owner;
             var areaArea = AreaGob;
             if (scale != 1) areaArea = areaArea.Transform(Matrix.CreateScale(scale));
-            var fixture = gob.Body.CreateFixture(areaArea.GetShape(), this);
+            var fixture = gob.Body.CreateFixture(areaArea.GetShape(), this, Type.Category());
             fixture.Friction = Friction;
             fixture.Restitution = Elasticity;
             fixture.IsSensor = !Type.IsPhysical();
-            fixture.CollisionCategories = Type.Category();
             fixture.CollidesWith = Type.CollidesWith();
             Fixture = fixture;
         }

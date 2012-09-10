@@ -131,7 +131,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
         /// <param name="start">The startpoint.</param>
         /// <param name="end">The endpoint.</param>
         /// <param name="thickness">The thickness of the cut</param>
-        public static void Cut(World world, Vector2 start, Vector2 end, float thickness)
+        public static void Cut(World world, Vector2 start, Vector2 end, float thickness, Category categories)
         {
             List<Fixture> fixtures = new List<Fixture>();
             List<Vector2> entryPoints = new List<Vector2>();
@@ -147,14 +147,14 @@ namespace FarseerPhysics.Common.PolygonManipulation
                                   fixtures.Add(f);
                                   entryPoints.Add(p);
                                   return 1;
-                              }, start, end);
+                              }, start, end, categories);
 
             //Reverse the ray to get the exitpoints
             world.RayCast((f, p, n, fr) =>
                               {
                                   exitPoints.Add(p);
                                   return 1;
-                              }, end, start);
+                              }, end, start, categories);
 
             //We only have a single point. We need at least 2
             if (entryPoints.Count + exitPoints.Count < 2)

@@ -81,7 +81,7 @@ namespace FarseerPhysics.Dynamics
         public int ChildIndex;
         public Fixture Fixture;
         public int ProxyId;
-        public bool IsStatic;
+        public int CategoryIndex;
     }
 
     /// <summary>
@@ -131,17 +131,14 @@ namespace FarseerPhysics.Dynamics
         {
         }
 
-        public Fixture(Body body, Shape shape)
-            : this(body, shape, null)
+        public Fixture(Body body, Shape shape, Category collisionCategories)
+            : this(body, shape, null, collisionCategories)
         {
         }
 
-        public Fixture(Body body, Shape shape, object userData)
+        public Fixture(Body body, Shape shape, object userData, Category collisionCategories)
         {
-            if (Settings.UseFPECollisionCategories)
-                _collisionCategories = Category.All;
-            else
-                _collisionCategories = Category.Cat1;
+            _collisionCategories = collisionCategories;
 
             _collidesWith = Category.All;
             _collisionGroup = 0;
@@ -226,8 +223,28 @@ namespace FarseerPhysics.Dynamics
                 if (_collisionCategories == value)
                     return;
 
+                DestroyProxies(Body.World.ContactManager.BroadPhase);
                 _collisionCategories = value;
-                Refilter();
+                CreateProxies(Body.World.ContactManager.BroadPhase, ref Body.Xf);
+            }
+        }
+
+        public int CategoryIndex
+        {
+            get
+            {
+                // Algorithm from Warren Jr., Henry S. (2002), Hacker's Delight,
+                // Addison Wesley, pp. pp. 215, ISBN 978-0201914658,
+                // as presented on Wikipedia on 2008-06-09.
+                var index = 0;
+                var value = (int)_collisionCategories;
+                if (value >= 1 << 16) { value >>= 16; index += 16; }
+                if (value >= 1 << 8) { value >>= 8; index += 8; }
+                if (value >= 1 << 4) { value >>= 4; index += 4; }
+                if (value >= 1 << 2) { value >>= 2; index += 2; }
+                if (value >= 1 << 1) { index += 1; }
+                Debug.Assert(1 << index == (int)CollisionCategories);
+                return index;
             }
         }
 
@@ -550,7 +567,7 @@ namespace FarseerPhysics.Dynamics
 
                 proxy.Fixture = this;
                 proxy.ChildIndex = i;
-                proxy.IsStatic = Body.IsStatic;
+                proxy.CategoryIndex = CategoryIndex;
                 proxy.ProxyId = broadPhase.AddProxy(ref proxy);
 
                 Proxies[i] = proxy;

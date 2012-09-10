@@ -84,6 +84,8 @@ namespace FarseerPhysics.Dynamics
 
     public class Body : IDisposable
     {
+        private readonly Category DefaultCollisionCategories = Settings.UseFPECollisionCategories ? Category.All : Category.Cat1;
+
         private static int _bodyIdCounter;
         internal float AngularVelocityInternal;
         public int BodyId;
@@ -755,7 +757,12 @@ namespace FarseerPhysics.Dynamics
         /// <returns></returns>
         public Fixture CreateFixture(Shape shape)
         {
-            return new Fixture(this, shape);
+            return CreateFixture(shape, DefaultCollisionCategories);
+        }
+
+        public Fixture CreateFixture(Shape shape, Category collisionCategories)
+        {
+            return new Fixture(this, shape, collisionCategories);
         }
 
         /// <summary>
@@ -769,7 +776,12 @@ namespace FarseerPhysics.Dynamics
         /// <returns></returns>
         public Fixture CreateFixture(Shape shape, object userData)
         {
-            return new Fixture(this, shape, userData);
+            return CreateFixture(shape, userData, DefaultCollisionCategories);
+        }
+
+        public Fixture CreateFixture(Shape shape, object userData, Category collisionCategories)
+        {
+            return new Fixture(this, shape, userData, collisionCategories);
         }
 
         /// <summary>

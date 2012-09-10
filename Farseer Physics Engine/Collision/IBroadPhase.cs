@@ -26,7 +26,7 @@ namespace FarseerPhysics.Collision
 
         void Query(Func<int, bool> callback, ref AABB aabb);
 
-        void RayCast(Func<RayCastInput, int, float> callback, ref RayCastInput input);
+        void RayCast(Func<RayCastInput, int, float> callback, ref RayCastInput input, Category categories);
 
         void GetSpans(ref List<Tuple<AABB, int>> spansAndElementCounts);
     }

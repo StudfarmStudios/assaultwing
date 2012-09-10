@@ -23,6 +23,8 @@ namespace AW2.Game.Gobs
         private static readonly TimeSpan MOVE_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(11);
         private static readonly TimeSpan AIM_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
         private static readonly TimeSpan TRY_FIRE_INTERVAL = TimeSpan.FromSeconds(0.9);
+        private static readonly CollisionAreaType[] WALL_TYPES = new[] { CollisionAreaType.Static };
+        private static readonly CollisionAreaType[] OBSTACLE_TYPES = new[] { CollisionAreaType.Static };
         private const float FAN_ANGLE_SPEED_MAX = 30;
         private const float FAN_ANGLE_SPEED_FADEOUT = 0.9873f; // slow down to 10 % in 180 updates (i.e. 3 seconds)
         private const int WALL_SCAN_DIRS = 16;
@@ -248,7 +250,7 @@ namespace AW2.Game.Gobs
         {
             _wallScanDir = (_wallScanDir + WALL_SCAN_DIR_ROTATION) % WALL_SCAN_DIRS;
             var distance = Arena.GetDistanceToClosest(Pos, Pos + WALL_SCAN_RANGE * g_wallScanUnits[_wallScanDir],
-                area => area.Owner.MoveType != MoveType.Dynamic && area.Type.IsPhysical());
+                area => area.Owner.MoveType != MoveType.Dynamic && area.Type.IsPhysical(), WALL_TYPES);
             _wallTripAccumulator *= WALL_THRUST_FADEOUT;
             _wallThrust *= WALL_THRUST_FADEOUT;
             if (distance.HasValue)
@@ -274,7 +276,7 @@ namespace AW2.Game.Gobs
             if (Target == null) return;
             var targetDistanceSquared = Vector2.DistanceSquared(Target.Pos, Pos);
             if (targetDistanceSquared > _shootRange * _shootRange) return;
-            var obstacleDistance = Arena.GetDistanceToClosest(Pos, Target.Pos, area => area.Owner.MoveType != GobUtils.MoveType.Dynamic);
+            var obstacleDistance = Arena.GetDistanceToClosest(Pos, Target.Pos, area => area.Owner.MoveType != GobUtils.MoveType.Dynamic, OBSTACLE_TYPES);
             if (obstacleDistance * obstacleDistance < targetDistanceSquared) return;
             _weapon.TryFire(new UI.ControlState(1, true));
         }

@@ -116,15 +116,17 @@ namespace AW2.Helpers
         /// Returns distance to the closest collision area, if any, along a directed line segment.
         /// Collision areas for whom <paramref name="filter"/> returns false are ignored.
         /// </summary>
-        public static float? GetDistanceToClosest(World world, Vector2 from, Vector2 to, Func<CollisionArea, bool> filter)
+        public static float? GetDistanceToClosest(World world, Vector2 from, Vector2 to, Func<CollisionArea, bool> filter, CollisionAreaType[] areaTypes)
         {
+            Category categories = 0;
+            foreach (var areaType in areaTypes) categories |= areaType.Category();
             Vector2? closestPoint = null;
             world.RayCast((Fixture fixture, Vector2 point, Vector2 normal, float fraction) =>
             {
                 var area = (CollisionArea)fixture.UserData;
                 if (filter(area)) closestPoint = point / FARSEER_SCALE;
                 return fraction; // Skip everything that is farther away.
-            }, from * FARSEER_SCALE, to * FARSEER_SCALE);
+            }, from * FARSEER_SCALE, to * FARSEER_SCALE, categories);
             return closestPoint.HasValue ? Vector2.Distance(from, closestPoint.Value) : (float?)null;
         }
 

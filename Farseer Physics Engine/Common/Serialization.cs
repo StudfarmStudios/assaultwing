@@ -720,12 +720,11 @@ namespace FarseerPhysics.Common
                                         foreach (XMLFragmentElement v in sn.Elements)
                                         {
                                             Fixture blueprint = _fixtures[int.Parse(v.Value)];
-                                            Fixture f = new Fixture(body, blueprint.Shape);
+                                            Fixture f = new Fixture(body, blueprint.Shape, blueprint.CollisionCategories);
                                             f.Restitution = blueprint.Restitution;
                                             f.UserData = blueprint.UserData;
                                             f.Friction = blueprint.Friction;
                                             f.CollidesWith = blueprint.CollidesWith;
-                                            f.CollisionCategories = blueprint.CollisionCategories;
                                             f.CollisionGroup = blueprint.CollisionGroup;
                                         }
                                         break;

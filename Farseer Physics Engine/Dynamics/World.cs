@@ -808,7 +808,7 @@ namespace FarseerPhysics.Dynamics
         /// <param name="callback">A user implemented callback class.</param>
         /// <param name="point1">The ray starting point.</param>
         /// <param name="point2">The ray ending point.</param>
-        public void RayCast(RayCastCallback callback, Vector2 point1, Vector2 point2)
+        public void RayCast(RayCastCallback callback, Vector2 point1, Vector2 point2, Category categories)
         {
             RayCastInput input = new RayCastInput();
             input.MaxFraction = 1.0f;
@@ -832,7 +832,7 @@ namespace FarseerPhysics.Dynamics
                                                       }
 
                                                       return rayCastInput.MaxFraction;
-                                                  }, ref input);
+                                                  }, ref input, categories);
         }
 
         private void Solve(ref TimeStep step)

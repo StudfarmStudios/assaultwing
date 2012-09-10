@@ -250,10 +250,8 @@ namespace FarseerPhysics.Collision
                 }
             }
 
-            // Try to keep the nonstatic tree balanced. The static tree doesn't need as much balancing
-            // because it isn't supposed to change much. However, it may be in bad balance from the start.
+            // Try to keep the nonstatic tree balanced. The static tree shouldn't change, so don't balance it.
             _treeNonstatic.Rebalance(4);
-            _treeStatic.Rebalance(1);
         }
 
         /// <summary>

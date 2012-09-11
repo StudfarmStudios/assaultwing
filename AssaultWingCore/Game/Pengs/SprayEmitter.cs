@@ -196,7 +196,10 @@ namespace AW2.Game.Pengs
 
             // Initialise 'nextBirth'.
             if (_nextBirth.Ticks < 0)
-                _nextBirth = Peng.Arena.TotalTime;
+            {
+                // Start half an emit step back to prevent rounding errors when one emission per frame is wanted.
+                _nextBirth = Peng.Arena.TotalTime - TimeSpan.FromSeconds(0.5f / _emissionFrequency);
+            }
 
             // Count how many to create.
             int createCount = Math.Max(0, (int)(1 + _emissionFrequency * (Peng.Arena.TotalTime - _nextBirth).TotalSeconds));
@@ -205,7 +208,8 @@ namespace AW2.Game.Pengs
                 createCount = Math.Min(createCount, _numberToCreate);
                 _numberCreated += createCount;
             }
-            _nextBirth += TimeSpan.FromSeconds(createCount / _emissionFrequency);
+            // Note: TimeSpan.FromSeconds rounds to the nearest millisecond which may be too inaccurate.
+            _nextBirth += TimeSpan.FromMilliseconds(1000 * createCount / _emissionFrequency);
 
             if (!skipParticles && createCount > 0 && _textureNames.Length > 0)
                 particles = new List<Particle>();

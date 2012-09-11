@@ -42,6 +42,7 @@ namespace AW2.Game.Weapons
         private Vector2 _startPos;
         private TimeSpan _safetyTimeout;
         private Vector2 _originalOwnerMove;
+        private Gobs.Peng _failEffect;
 
         private TimeSpan SafetyTimeoutInterval { get { return TimeSpan.FromSeconds(0.01f + _blinkDistance / _blinkMoveSpeed); } }
         private bool BlinkTargetReached
@@ -73,17 +74,8 @@ namespace AW2.Game.Weapons
         public override void Update()
         {
             base.Update();
-            if (_targetPos.HasValue)
-            {
-                if (Owner.Game.NetworkMode != NetworkMode.Client)
-                {
-                    // Due to slight add-up errors on game servers and standalone games,
-                    // correct blink movement every frame so that Owner will eventually hit _targetPos.
-                    var targetFPS = AssaultWingCore.TargetFPS;
-                    Owner.Move = (AWMathHelper.InterpolateTowards(Owner.Pos, _targetPos.Value, _blinkMoveSpeed / targetFPS) - Owner.Pos) * targetFPS;
-                }
-                if (BlinkTargetReached) FinishBlink();
-            }
+            UpdateFailEffect();
+            UpdateTarget();
         }
 
         public override void Dispose()
@@ -128,6 +120,7 @@ namespace AW2.Game.Weapons
                 peng.Emitter.NumberToCreate = (int)Math.Round(flyTime * peng.Emitter.EmissionFrequency);
                 peng.MoveType = MoveType.Kinematic;
                 peng.VisibilityLimitedTo = PlayerOwner;
+                _failEffect = peng;
                 Owner.Arena.Gobs.Add(peng);
             });
             Gob.CreateGob<Gobs.Peng>(Owner.Game, _blinkFailTargetEffect, peng =>
@@ -149,6 +142,28 @@ namespace AW2.Game.Weapons
             var target = from + _blinkDistance * directionUnit;
             var move = _blinkMoveSpeed * directionUnit;
             return Tuple.Create(target, move);
+        }
+
+        private void UpdateFailEffect()
+        {
+            if (_failEffect == null) return;
+            // When the emitter is finished, stop the peng so that its particles don't fall
+            // outside its visibility radius.
+            if (_failEffect.Emitter.Finished) _failEffect.Move = Vector2.Zero;
+            if (_failEffect.Dead) _failEffect = null;
+        }
+
+        private void UpdateTarget()
+        {
+            if (!_targetPos.HasValue) return;
+            if (Owner.Game.NetworkMode != NetworkMode.Client)
+            {
+                // Due to slight add-up errors on game servers and standalone games,
+                // correct blink movement every frame so that Owner will eventually hit _targetPos.
+                var targetFPS = AssaultWingCore.TargetFPS;
+                Owner.Move = (AWMathHelper.InterpolateTowards(Owner.Pos, _targetPos.Value, _blinkMoveSpeed / targetFPS) - Owner.Pos) * targetFPS;
+            }
+            if (BlinkTargetReached) FinishBlink();
         }
 
         private void FinishBlink()

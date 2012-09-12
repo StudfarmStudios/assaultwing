@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AW2.Core;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
@@ -60,8 +61,10 @@ namespace AW2.Game.BonusActions
             base.Activate();
             if (Host != null && Host.Owner != null && Host.Weapon2 != null)
             {
-                // FIXME: A client might never run this. A better countermeasure is to delay activation until Host != null etc.
-                // Totally skipping activation like this may result in a client seeing he has a "rockets" upgrade but shooting berserkers.
+                // Old upgrades must be disposed first to avoid their Dispose overriding the weapon we choose.
+                foreach (var oldAction in Host.BonusActions.OfType<Weapon2UpgradeBonusAction>().ToArray())
+                    if (oldAction != this) oldAction.Dispose();
+
                 var weapon2 = (Weapon)Host.Weapon2;
                 var upgradeName = _fixedWeaponName != "" ? _fixedWeaponName
                     : weapon2.UpgradeNames.Length > 0 ? weapon2.UpgradeNames[0]

@@ -281,6 +281,7 @@ namespace AW2.Game
 
         public void FinalizeGobUpdatesOnClient(Dictionary<int, GobUpdateData> gobsToUpdate, int frameCount)
         {
+            Gobs.FinishAddsAndRemoves();
             foreach (var gob in GobsInRelevantLayers)
             {
                 if (gob.MoveType == AW2.Game.GobUtils.MoveType.Static) continue;

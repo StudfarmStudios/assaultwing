@@ -190,7 +190,6 @@
     <Compile Include="Game\Pengs\SprayEmitter.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\PlayerMessage.cs" />
-    <Compile Include="Game\PostprocessEffectNameContainer.cs" />
     <Compile Include="Game\Spectator.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />
     <Compile Include="Game\Weapons\Cloak.cs" />

@@ -69,13 +69,14 @@ namespace AW2.Game.BonusActions
                 if (upgradeName != CanonicalString.Null)
                 {
                     Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
-                    if (_effectName != "") Host.Owner.PostprocessEffectNames.EnsureContains(_effectName);
+                    if (_effectName != "") Host.Owner.PostprocessEffectNames.Add(_effectName);
                 }
             }
         }
 
         public override void Dispose()
         {
+            if (IsDisposed) return;
             if (Host != null && Host.Owner != null)
             {
                 Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Host.Owner.Weapon2Name);

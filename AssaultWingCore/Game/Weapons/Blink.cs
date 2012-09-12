@@ -45,6 +45,7 @@ namespace AW2.Game.Weapons
         private Gobs.Peng _failEffect;
 
         private TimeSpan SafetyTimeoutInterval { get { return TimeSpan.FromSeconds(0.01f + _blinkDistance / _blinkMoveSpeed); } }
+        private bool BlinkActive { get { return _targetPos.HasValue; } }
         private bool BlinkTargetReached
         {
             get
@@ -80,7 +81,7 @@ namespace AW2.Game.Weapons
 
         public override void Dispose()
         {
-            if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.Remove(EFFECT_NAME);
+            if (BlinkActive) FinishBlink();
             base.Dispose();
         }
 
@@ -106,7 +107,7 @@ namespace AW2.Game.Weapons
 
         protected override void CreateVisuals()
         {
-            if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
+            if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.Add(EFFECT_NAME);
         }
 
         protected override void ShowFiringFailedEffect()
@@ -155,7 +156,7 @@ namespace AW2.Game.Weapons
 
         private void UpdateTarget()
         {
-            if (!_targetPos.HasValue) return;
+            if (!BlinkActive) return;
             if (Owner.Game.NetworkMode != NetworkMode.Client)
             {
                 // Due to slight add-up errors on game servers and standalone games,
@@ -168,9 +169,12 @@ namespace AW2.Game.Weapons
 
         private void FinishBlink()
         {
-            Owner.Move = _originalOwnerMove;
-            Owner.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
-            Owner.Enable();
+            if (Owner != null)
+            {
+                Owner.Move = _originalOwnerMove;
+                Owner.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
+                Owner.Enable();
+            }
             _targetPos = null;
             _safetyTimeout = TimeSpan.Zero;
             if (PlayerOwner != null) PlayerOwner.PostprocessEffectNames.Remove(EFFECT_NAME);

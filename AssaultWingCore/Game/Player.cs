@@ -163,7 +163,7 @@ namespace AW2.Game
         /// </summary>
         public MessageContainer Messages { get; private set; }
 
-        public PostprocessEffectNameContainer PostprocessEffectNames { get; private set; }
+        public List<CanonicalString> PostprocessEffectNames { get; private set; }
 
         public Func<bool> IsAllowedToCreateShip { get; set; }
 
@@ -269,7 +269,7 @@ namespace AW2.Game
             Controls = controls;
             Messages = new MessageContainer(Game);
             Color = Color.Gray;
-            PostprocessEffectNames = new PostprocessEffectNameContainer(this);
+            PostprocessEffectNames = new List<CanonicalString>();
             GobTrackerItems = new List<GobTrackerItem>();
         }
 

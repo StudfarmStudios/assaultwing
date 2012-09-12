@@ -69,6 +69,8 @@ namespace AW2.Game.Arenas
         public void Remove(Gob gob)
         {
             _removedGobs.Add(gob);
+            // Note: Don't call Removed yet. It may Dispose the gob and we may still be in the middle
+            // of a gob update loop. The disposed gob may be referenced during the iteration.
         }
 
         /// <summary>

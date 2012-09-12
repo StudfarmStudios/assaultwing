@@ -41,6 +41,9 @@ namespace AW2.Game.Gobs
                     return (T)oldAction;
                 }
                 sameTypeActions.First().Die();
+                // The new bonus action may expect the old action to have been disposed first.
+                // This is so at least with Weapon2UpgradeBonusAction.
+                sameTypeActions.First().Dispose();
             }
             T result = null;
             Gob.CreateGob<T>(host.Game, typeName, gob =>

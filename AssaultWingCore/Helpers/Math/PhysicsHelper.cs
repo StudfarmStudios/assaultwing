@@ -124,7 +124,7 @@ namespace AW2.Helpers
             world.RayCast((Fixture fixture, Vector2 point, Vector2 normal, float fraction) =>
             {
                 var area = (CollisionArea)fixture.UserData;
-                if (filter(area)) closestPoint = point / FARSEER_SCALE;
+                if (filter == null || filter(area)) closestPoint = point / FARSEER_SCALE;
                 return fraction; // Skip everything that is farther away.
             }, from * FARSEER_SCALE, to * FARSEER_SCALE, categories);
             return closestPoint.HasValue ? Vector2.Distance(from, closestPoint.Value) : (float?)null;

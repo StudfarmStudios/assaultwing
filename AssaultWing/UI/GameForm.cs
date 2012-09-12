@@ -77,6 +77,7 @@ namespace AW2.UI
         }
         public GraphicsDeviceControl GameView { get { return _gameView; } }
         public AssaultWing Game { get { return _game; } }
+        private bool HasFocus { get { return Focused || _gameView.Focused || _logView.Focused || _splitContainer.Focused; } }
 
         public GameForm(CommandLineOptions commandLineOptions)
         {
@@ -130,9 +131,9 @@ namespace AW2.UI
             try
             {
                 if (_isFullScreen && width == ClientSize.Width && height == ClientSize.Height) return;
-                if (!Focused)
+                if (!HasFocus)
                 {
-                    // without focus we may lose the window completely. Wait for GotFocus event.
+                    // Without focus we may lose the window completely. Wait for GotFocus event.
                     _pendingFullScreenSize = Tuple.Create(width, height);
                     return;
                 }
@@ -355,7 +356,7 @@ namespace AW2.UI
 
         private void FinishPendingFullScreen()
         {
-            if (_pendingFullScreenSize == null || !Focused) return;
+            if (_pendingFullScreenSize == null || !HasFocus) return;
             var width = _pendingFullScreenSize.Item1;
             var height = _pendingFullScreenSize.Item2;
             _pendingFullScreenSize = null;

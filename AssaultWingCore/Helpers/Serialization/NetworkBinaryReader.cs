@@ -13,10 +13,6 @@ namespace AW2.Helpers.Serialization
     /// </summary>
     public class NetworkBinaryReader : BinaryReader
     {
-        /// <summary>
-        /// Creates a new network binary reader that writes to an output stream.
-        /// </summary>
-        /// <param name="input">The stream to read from.</param>
         public NetworkBinaryReader(Stream input)
             : base(input, Encoding.UTF8)
         {

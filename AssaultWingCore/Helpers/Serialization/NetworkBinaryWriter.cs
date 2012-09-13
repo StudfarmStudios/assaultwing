@@ -14,10 +14,12 @@ namespace AW2.Helpers.Serialization
     public class NetworkBinaryWriter
     {
         /// <summary>
-        /// Creates a new network binary writer that writes to an output stream.
+        /// Only <see cref="WriteBytes"/> is allowed to use <see cref="_writer"/> directly.
+        /// Note: BinaryWriter is included and not inherited in order to prevent accidental
+        /// calling of BinaryWriter methods.
         /// </summary>
-        /// <param name="output">The stream to write to.</param>
-        /// 
+        private BinaryWriter _writer;
+
         public static NetworkBinaryWriter Create(Stream output)
         {
 #if NETWORK_PROFILING
@@ -26,39 +28,40 @@ namespace AW2.Helpers.Serialization
             return new NetworkBinaryWriter(output);
 #endif
         }
-        
-         public NetworkBinaryWriter(Stream output)
+
+        public NetworkBinaryWriter(Stream output)
         {
-            writer = new BinaryWriter(output, Encoding.UTF8);
+            _writer = new BinaryWriter(output, Encoding.UTF8);
         }
 
-         public void Write(bool p)
-         {
-             Write(BitConverter.GetBytes(p));
-         }
+        public void Write(bool p)
+        {
+            Write(BitConverter.GetBytes(p));
+        }
 
-         public void Write(byte b)
-         {
-             Write(new byte[] { b });
-         }
+        public void Write(byte b)
+        {
+            Write(new byte[] { b });
+        }
 
-         public void Write(byte[] bytes)
-         {
-             WriteBytes(bytes, 0, bytes.Length);
-         }
-        public void Write(Char ch)
+        public void Write(byte[] bytes)
+        {
+            WriteBytes(bytes, 0, bytes.Length);
+        }
+
+        public void Write(char ch)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(new char[] { ch });
             Write(bytes);
         }
 
-        public void Write(Char[] chars)
+        public void Write(char[] chars)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(chars);
             Write(bytes);
         }
 
-        public void Write(Decimal d)
+        public void Write(decimal d)
         {
             throw new NotSupportedException();
         }
@@ -145,22 +148,22 @@ namespace AW2.Helpers.Serialization
 
         public void Flush()
         {
-            writer.Flush();
+            _writer.Flush();
         }
-        
+
         public void Close()
         {
-            writer.Close();
+            _writer.Close();
         }
-        
+
         public long Seek(int offset, SeekOrigin origin)
         {
-            return writer.Seek(offset, origin);
+            return _writer.Seek(offset, origin);
         }
 
         public Stream GetBaseStream()
         {
-            return writer.BaseStream;
+            return _writer.BaseStream;
         }
 
         public void Write(CanonicalString value)
@@ -237,17 +240,10 @@ namespace AW2.Helpers.Serialization
         {
             WriteBytes(writeBytes, idx, count);
         }
-        
-        // ONLY WriteBytes is allowed to call writer.Write methods!
 
         protected virtual void WriteBytes(byte[] bytes, int index, int count)
         {
-            writer.Write(bytes, index, count);
+            _writer.Write(bytes, index, count);
         }
-
-        // Delegate to writer instead of inheriting, to prevent calling BinaryWriter methods.
-
-        private BinaryWriter writer;
-
     }
 }

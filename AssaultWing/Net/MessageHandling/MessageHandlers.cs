@@ -275,7 +275,7 @@ namespace AW2.Net.MessageHandling
         {
             var clientConn = Game.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
             if (clientConn.ConnectionStatus.State == ConnectionUtils.GameClientStatus.StateType.Dropped) return;
-            clientConn.ConnectionStatus.IsRequestingSpawn = mess.IsRequestingSpawn;
+            clientConn.ConnectionStatus.IsRequestingSpawnForArenaID = mess.IsRequestingSpawnForArenaID;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
             if (!mess.IsRegisteredToServer)
                 TryCreateAndAddNewSpectatorOnServer(mess, SerializationModeFlags.ConstantDataFromClient);

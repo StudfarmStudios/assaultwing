@@ -490,7 +490,13 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;
             if (player == null) return;
-            player.IsAllowedToCreateShip = () => player.IsRemote && NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsRequestingSpawn;
+            player.IsAllowedToCreateShip = () =>
+            {
+                if (!player.IsRemote) return false;
+                var arenaID = NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsRequestingSpawnForArenaID;
+                if (!arenaID.HasValue || DataEngine.Arena == null) return false;
+                return arenaID.Value == DataEngine.Arena.ID;
+            };
             player.Messages.NewChatMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
             player.Messages.NewCombatLogMessage += mess => SendPlayerMessageToRemoteSpectator(mess, player);
         }
@@ -724,7 +730,7 @@ namespace AW2.Core
             Func<Spectator, SpectatorSettingsRequest> newPlayerSettingsRequest = spec => new SpectatorSettingsRequest
             {
                 IsRegisteredToServer = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes,
-                IsRequestingSpawn = Logic.IsGameplay,
+                IsRequestingSpawnForArenaID = Logic.IsGameplay ? DataEngine.Arena.ID : (byte?)null,
                 IsGameClientReadyToStartArena = IsReadyToStartArena,
                 SpectatorID = spec.ServerRegistration == Spectator.ServerRegistrationType.Yes ? spec.ID : spec.LocalID,
                 Subclass = SpectatorSettingsRequest.GetSubclassType(spec),

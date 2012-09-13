@@ -38,6 +38,11 @@ namespace AW2.Helpers.Serialization
             return ReadByte() * MathHelper.TwoPi / (byte.MaxValue + 1);
         }
 
+        public byte? ReadNullableByte()
+        {
+            return ReadBoolean() ? ReadByte() : (byte?)null;
+        }
+
         /// <summary>
         /// Reads a 16-bit floating point value.
         /// </summary>

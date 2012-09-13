@@ -41,10 +41,11 @@ namespace AW2.Net.Messages
         public int SpectatorID { get; set; }
 
         /// <summary>
-        /// As <see cref="GameClientStatus.IsRequestingSpawn"/>.
+        /// If null, the client is not requesting spawn. Otherwise the value is the <see cref="Arena.ID"/>
+        /// of the arena into which the client is requesting to be spawned.
         /// Used only in messages from a game client to a game server.
         /// </summary>
-        public bool IsRequestingSpawn { get; set; }
+        public byte? IsRequestingSpawnForArenaID { get; set; }
 
         /// <summary>
         /// Is the client in menus, ready to start playing an arena.
@@ -62,14 +63,14 @@ namespace AW2.Net.Messages
                 {
                     // Spectator settings request structure:
                     // bool: has the spectator been registered to the server
-                    // bool: is the game client playing the current arena
+                    // byte?: the ID of the arena the game client wants to spawn to, or null if no spawn is wanted
                     // bool: is the game client ready to play the next arena
                     // byte: spectator identifier
                     // byte: spectator subclass
                     // word: data length N
                     // N bytes: serialised data of the spectator
                     writer.Write((bool)IsRegisteredToServer);
-                    writer.Write((bool)IsRequestingSpawn);
+                    writer.Write((byte?)IsRequestingSpawnForArenaID);
                     writer.Write((bool)IsGameClientReadyToStartArena);
                     writer.Write((byte)SpectatorID);
                     writer.Write((byte)Subclass);
@@ -82,7 +83,7 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             IsRegisteredToServer = reader.ReadBoolean();
-            IsRequestingSpawn = reader.ReadBoolean();
+            IsRequestingSpawnForArenaID = reader.ReadNullableByte();
             IsGameClientReadyToStartArena = reader.ReadBoolean();
             SpectatorID = reader.ReadByte();
             Subclass = (SubclassType)reader.ReadByte();

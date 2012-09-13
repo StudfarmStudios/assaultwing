@@ -16,10 +16,11 @@
         public bool IsRunningArena { get { return CurrentArenaName != ""; } }
 
         /// <summary>
-        /// If true, the game client requests to spawn his ship. If the client already has a ship,
+        /// If null, the client is not requesting spawn. Otherwise the value is the <see cref="Arena.ID"/>
+        /// of the arena into which the client is requesting to be spawned. If the client already has a ship,
         /// the value of this flag has no effect.
         /// </summary>
-        public bool IsRequestingSpawn { get; set; }
+        public byte? IsRequestingSpawnForArenaID { get; set; }
 
         /// <summary>
         /// Is the game client ready to start the next arena.

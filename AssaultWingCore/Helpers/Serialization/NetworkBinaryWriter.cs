@@ -136,6 +136,12 @@ namespace AW2.Helpers.Serialization
             }
         }
 
+        public void Write(byte? value)
+        {
+            Write((bool)value.HasValue);
+            if (value.HasValue) Write((byte)value.Value);
+        }
+
         /// <summary>
         /// Writes a 16-bit floating point value.
         /// </summary>

@@ -129,8 +129,8 @@ namespace AW2.Game.GobUtils
             };
             if (info.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
                 markAsKill(info.Cause.Owner);
-            else if (info.Target.LastDamagerTimeout > info.Time && info.Target.LastDamager != null)
-                markAsKill(info.Target.LastDamager);
+            else if (info.Target.LastDamagerOrNull != null)
+                markAsKill(info.Target.LastDamagerOrNull);
             else
                 markAsSuicide();
             KilledSpectator = info.Target.Owner;

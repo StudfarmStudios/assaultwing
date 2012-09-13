@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using AW2.Game.BonusActions;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
@@ -11,12 +10,14 @@ namespace AW2.Game.Weapons
     public class SelfDestruct : Weapon
     {
         [TypeParameter, ShallowCopy]
-        CanonicalString[] deathGobTypes;
+        private CanonicalString[] _deathGobTypes;
 
+        /// <summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public SelfDestruct()
         {
-            deathGobTypes = new CanonicalString[0];
+            _deathGobTypes = new CanonicalString[0];
         }
 
         public SelfDestruct(CanonicalString typeName)
@@ -26,9 +27,9 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            Owner.ResetLastDamager();
-            GobHelper.CreateGobs(deathGobTypes, Arena, Owner.Pos, gob => gob.Owner = PlayerOwner);
-            var suicideBomberBonus = Owner.BonusActions.FirstOrDefault(act => act is Weapon2UpgradeBonusAction);
+            Owner.IgnoreLastDamagerFor(TimeSpan.FromSeconds(0.1));
+            GobHelper.CreateGobs(_deathGobTypes, Arena, Owner.Pos, gob => gob.Owner = PlayerOwner);
+            var suicideBomberBonus = Owner.BonusActions.OfType<Weapon2UpgradeBonusAction>().FirstOrDefault();
             if (suicideBomberBonus != null) suicideBomberBonus.TimeOut();
         }
     }

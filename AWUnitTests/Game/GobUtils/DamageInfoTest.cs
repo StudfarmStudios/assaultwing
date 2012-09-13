@@ -22,12 +22,12 @@ namespace AW2.Game.GobUtils
             _gob1DamagedBy2 = new Gob { ID = 11, Owner = _player1, MaxDamageLevel = 100, Arena = _arena };
             _gob2 = new Gob { ID = 2, Owner = _player2, MaxDamageLevel = 100, Arena = _arena };
             _gobNature = new Gob { ID = 3, Owner = null, MaxDamageLevel = 100, Arena = _arena };
-            _info1 = new DamageInfo(_gob1).Bind(_gob1, TimeSpan.FromSeconds(10));
-            _info2 = new DamageInfo(_gob2).Bind(_gob1, TimeSpan.FromSeconds(10));
-            _info3 = new DamageInfo(_gobNature).Bind(_gob1, TimeSpan.FromSeconds(10));
+            _info1 = new DamageInfo(_gob1).Bind(_gob1);
+            _info2 = new DamageInfo(_gob2).Bind(_gob1);
+            _info3 = new DamageInfo(_gobNature).Bind(_gob1);
             _arena.TotalTime = TimeSpan.FromSeconds(10);
             _gob1DamagedBy2.InflictDamage(10, new DamageInfo(_gob2));
-            _info1DamagedBy2 = DamageInfo.Unspecified.Bind(_gob1DamagedBy2, TimeSpan.FromSeconds(11));
+            _info1DamagedBy2 = DamageInfo.Unspecified.Bind(_gob1DamagedBy2);
         }
 
         [Test]

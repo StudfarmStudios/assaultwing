@@ -28,10 +28,10 @@ namespace AW2.Game.GobUtils
 
         private DamageInfo() { }
 
-        public BoundDamageInfo Bind(Gob target, TimeSpan time)
+        public BoundDamageInfo Bind(Gob target)
         {
             if (target == null) throw new ArgumentNullException("target");
-            return new BoundDamageInfo(this, target, time);
+            return new BoundDamageInfo(this, target);
         }
     }
 
@@ -40,7 +40,6 @@ namespace AW2.Game.GobUtils
         public enum SourceTypeType { Unspecified, OwnPlayer, EnemyPlayer };
 
         public Gob Target { get; private set; }
-        public TimeSpan Time { get; private set; }
         public SourceTypeType SourceType
         {
             get
@@ -52,12 +51,11 @@ namespace AW2.Game.GobUtils
             }
         }
 
-        public BoundDamageInfo(DamageInfo info, Gob target, TimeSpan time)
+        public BoundDamageInfo(DamageInfo info, Gob target)
             : base(info)
         {
             if (target == null) throw new ArgumentNullException("target");
             Target = target;
-            Time = time;
         }
     }
 }

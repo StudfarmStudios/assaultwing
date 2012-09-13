@@ -254,6 +254,10 @@ namespace AW2.Game
         [TypeParameter]
         private float _maxDamage;
 
+        private Spectator _lastDamager;
+        private TimeSpan _lastDamagerValidFrom;
+        private TimeSpan _lastDamagerValidUntil;
+
         #endregion Fields for damage
 
         #region Fields for bleach
@@ -327,15 +331,10 @@ namespace AW2.Game
         /// </summary>
         public float DepthLayer2D { get { return _depthLayer2D; } set { _depthLayer2D = value; } }
 
-        /// <summary>
-        /// The last player to damage this gob
-        /// </summary>
-        public Spectator LastDamager { get; private set; }
-
-        /// <summary>
-        /// Last time when <see cref="LastDamager"/> is relevant, in game time.
-        /// </summary>
-        public TimeSpan LastDamagerTimeout { get; private set; }
+        public Spectator LastDamagerOrNull
+        {
+            get { return _lastDamagerValidFrom <= Arena.TotalTime && Arena.TotalTime <= _lastDamagerValidUntil ? _lastDamager : null; }
+        }
 
         public List<Gobs.BonusAction> BonusActions { get; private set; }
 
@@ -846,7 +845,7 @@ namespace AW2.Game
 
         public void Die()
         {
-            Die(DamageInfo.Unspecified.Bind(this, Arena.TotalTime));
+            Die(DamageInfo.Unspecified.Bind(this));
         }
 
         /// <summary>
@@ -858,7 +857,7 @@ namespace AW2.Game
         /// <seealso cref="Die(BoundDamageInfo)"/>
         public void DieOnClient()
         {
-            DieImpl(new Coroner(DamageInfo.Unspecified.Bind(this, Arena.TotalTime)), true);
+            DieImpl(new Coroner(DamageInfo.Unspecified.Bind(this)), true);
         }
 
         /// <summary>
@@ -1205,11 +1204,11 @@ namespace AW2.Game
         {
             if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
             if (damageAmount == 0) return;
-            var boundInfo = info.Bind(this, Arena.TotalTime);
+            var boundInfo = info.Bind(this);
             if (boundInfo.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
             {
-                LastDamager = boundInfo.Cause.Owner;
-                LastDamagerTimeout = Arena.TotalTime + TimeSpan.FromSeconds(6);
+                _lastDamager = boundInfo.Cause.Owner;
+                _lastDamagerValidUntil = Arena.TotalTime + TimeSpan.FromSeconds(6);
             }
             if (Game != null && Game.NetworkMode != NetworkMode.Client) DamageLevel = Math.Min(_maxDamage, DamageLevel + damageAmount);
             _bleachDamage += damageAmount;
@@ -1222,9 +1221,9 @@ namespace AW2.Game
             DamageLevel = Math.Max(0, DamageLevel - repairAmount);
         }
 
-        public void ResetLastDamager()
+        public void IgnoreLastDamagerFor(TimeSpan duration)
         {
-            LastDamagerTimeout = Arena.TotalTime;
+            _lastDamagerValidFrom = Arena.TotalTime + duration;
         }
 
         #endregion Damage methods

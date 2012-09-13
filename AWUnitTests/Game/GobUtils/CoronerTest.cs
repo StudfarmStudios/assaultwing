@@ -32,7 +32,7 @@ namespace AW2.Game.GobUtils
         private void AssertSuicideMessages(string suicidePhrase, string deathMessage, string bystanderMessage)
         {
             Coroner.SetPhraseSets(new[] { suicidePhrase }, new[] { "dummy" }, new string[0]);
-            var info = new DamageInfo(_gob2Nature).Bind(_gob1, TimeSpan.FromSeconds(10));
+            var info = new DamageInfo(_gob2Nature).Bind(_gob1);
             var coroner = new Coroner(info);
             Assert.AreEqual(null, coroner.ScoringSpectator);
             Assert.AreEqual(Coroner.DeathTypeType.Accident, coroner.DeathType);
@@ -43,7 +43,7 @@ namespace AW2.Game.GobUtils
         private void AssertKillMessages(string killPhrase, string killMessage, string deathMessage, string bystanderMessage)
         {
             Coroner.SetPhraseSets(new[] { "dummy" }, new[] { killPhrase }, new string[0]);
-            var info = new DamageInfo(_gob2).Bind(_gob1, TimeSpan.FromSeconds(10));
+            var info = new DamageInfo(_gob2).Bind(_gob1);
             var coroner = new Coroner(info);
             Assert.AreEqual(_player2, coroner.ScoringSpectator);
             Assert.AreEqual(Coroner.DeathTypeType.Kill, coroner.DeathType);
@@ -88,7 +88,8 @@ namespace AW2.Game.GobUtils
                 var target = getGob(targetPlayer);
                 _arena.TotalTime = TimeSpan.FromSeconds(10);
                 target.InflictDamage(10, damageInfo1);
-                var info = damageInfo2.Bind(target, TimeSpan.FromSeconds(11));
+                _arena.TotalTime = TimeSpan.FromSeconds(11);
+                var info = damageInfo2.Bind(target);
                 return new Coroner(info);
             };
             Func<Player, Player, Player, Coroner> getCoronerFromPlayer = (targetPlayer, sourcePlayer1, sourcePlayer2) =>
@@ -120,7 +121,8 @@ namespace AW2.Game.GobUtils
         [Test]
         public void TestLastDamagerTooLate()
         {
-            var info = DamageInfo.Unspecified.Bind(_gob1DamagedBy2, TimeSpan.FromSeconds(30));
+            _arena.TotalTime = TimeSpan.FromSeconds(30);
+            var info = DamageInfo.Unspecified.Bind(_gob1DamagedBy2);
             Assert.AreEqual(BoundDamageInfo.SourceTypeType.Unspecified, info.SourceType);
             var coroner = new Coroner(info);
             Assert.AreEqual(Coroner.DeathTypeType.Accident, coroner.DeathType);
@@ -130,7 +132,7 @@ namespace AW2.Game.GobUtils
         [Test]
         public void TestBystandersKill()
         {
-            var info = new DamageInfo(_gob2).Bind(_gob1, TimeSpan.FromSeconds(10));
+            var info = new DamageInfo(_gob2).Bind(_gob1);
             var coroner = new Coroner(info);
             var bystanders = coroner.GetBystandingPlayers(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player3 }, bystanders);
@@ -139,7 +141,7 @@ namespace AW2.Game.GobUtils
         [Test]
         public void TestBystandersUnspecifiedDeath()
         {
-            var info = DamageInfo.Unspecified.Bind(_gob1, TimeSpan.FromSeconds(10));
+            var info = DamageInfo.Unspecified.Bind(_gob1);
             var coroner = new Coroner(info);
             var bystanders = coroner.GetBystandingPlayers(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player2, _player3 }, bystanders);
@@ -148,7 +150,7 @@ namespace AW2.Game.GobUtils
         [Test]
         public void TestBystandersSuicide()
         {
-            var info = new DamageInfo(_gob1).Bind(_gob1, TimeSpan.FromSeconds(10));
+            var info = new DamageInfo(_gob1).Bind(_gob1);
             var coroner = new Coroner(info);
             var bystanders = coroner.GetBystandingPlayers(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player2, _player3 }, bystanders);
@@ -157,7 +159,8 @@ namespace AW2.Game.GobUtils
         [Test]
         public void TestBystandersKillLastDamager()
         {
-            var info = DamageInfo.Unspecified.Bind(_gob1DamagedBy2, TimeSpan.FromSeconds(11));
+            _arena.TotalTime = TimeSpan.FromSeconds(11);
+            var info = DamageInfo.Unspecified.Bind(_gob1DamagedBy2);
             var coroner = new Coroner(info);
             var bystanders = coroner.GetBystandingPlayers(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player3 }, bystanders);

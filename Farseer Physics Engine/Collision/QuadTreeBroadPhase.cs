@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 public class QuadTreeBroadPhase : IBroadPhase
 {
-    private const int TreeUpdateThresh = 10000;
+    private const int TreeUpdateThresh = 100000;
     private int _currID;
     private int _lastMovedProxyID = -1;
     private Dictionary<int, Element<FixtureProxy>> _idRegister;
@@ -237,12 +237,7 @@ public class QuadTreeBroadPhase : IBroadPhase
 
     private void ReconstructTree(int categoryIndex)
     {
-        var quadTree = _quadTrees[categoryIndex];
-        //this is faster than quadTree.Reconstruct(), since the quadtree method runs a recusive query to find all nodes.
-        quadTree.Clear();
-        foreach (Element<FixtureProxy> elem in _idRegister.Values)
-            if (elem.Value.CategoryIndex == categoryIndex)
-                quadTree.AddNode(elem);
+        _quadTrees[categoryIndex].Reconstruct();
     }
 
     private void ReinsertNode(Element<FixtureProxy> qtnode)

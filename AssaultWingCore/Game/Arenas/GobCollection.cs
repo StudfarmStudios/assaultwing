@@ -122,6 +122,9 @@ namespace AW2.Game.Arenas
                     default: throw new ApplicationException("Unexpected layer preference " + gob.LayerPreference);
                 }
             gob.Layer.Gobs.Add(gob);
+            if (_gobDictionary.ContainsKey(gob.ID)) // This bug crashes game servers occasionally (2012-09-16).
+                throw new ApplicationException(string.Format("Cannot add {0} (at {1}) because {2} (at {3}) exists",
+                    gob, gob.BirthTime, _gobDictionary[gob.ID], _gobDictionary[gob.ID].BirthTime));
             _gobDictionary.Add(gob.ID, gob);
         }
 

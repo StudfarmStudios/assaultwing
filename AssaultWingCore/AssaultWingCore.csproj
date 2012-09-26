@@ -126,7 +126,7 @@
     <Compile Include="Game\Collisions\CollisionSoundType.cs" />
     <Compile Include="Game\DataEngine.cs" />
     <Compile Include="Game\GameContent.cs" />
-    <Compile Include="Game\GameplayMode.cs" />
+    <Compile Include="Game\Logic\GameplayMode.cs" />
     <Compile Include="Game\Gob.cs" />
     <Compile Include="Game\Gobs\ArenaMessage.cs" />
     <Compile Include="Game\Gobs\Bonus.cs" />
@@ -175,6 +175,8 @@
     <Compile Include="Game\GobUtils\Weapon.cs" />
     <Compile Include="Game\GobUtils\WeaponInfo.cs" />
     <Compile Include="Game\LogicEngine.cs" />
+    <Compile Include="Game\Logic\SpectatorArenaStatistics.cs" />
+    <Compile Include="Game\Logic\Standing.cs" />
     <Compile Include="Game\MessageBeeper.cs" />
     <Compile Include="Game\MessageContainer.cs" />
     <Compile Include="Game\MockStats.cs" />

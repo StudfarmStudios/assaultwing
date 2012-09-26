@@ -195,20 +195,6 @@ namespace AW2.Core
         }
 
         /// <summary>
-        /// Rearranges player viewports, optionally so that 
-        /// the whole screen area is given to only one player.
-        /// </summary>
-        /// <param name="player">The player to give all the screen space to,
-        /// or <b>-1</b> to share the screen equally.</param>
-        public void ShowOnlyPlayer(int player)
-        {
-            if (player < 0)
-                DataEngine.RearrangeViewports();
-            else
-                DataEngine.RearrangeViewports(player);
-        }
-
-        /// <summary>
         /// Loads graphical content required by an arena to DataEngine.
         /// </summary>
         public void LoadArenaContent(Arena arena)

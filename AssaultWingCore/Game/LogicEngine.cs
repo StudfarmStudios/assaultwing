@@ -27,20 +27,12 @@ namespace AW2.Game
 
         private List<GobKillData> _gobsToKillOnClient;
         private Control _helpControl;
-#if DEBUG
-        private Control _showOnlyPlayer1Control, _showOnlyPlayer2Control, _showEverybodyControl;
-#endif
  
         public LogicEngine(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
             _gobsToKillOnClient = new List<GobKillData>();
             _helpControl = new KeyboardKey(Keys.F1);
-#if DEBUG
-            _showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
-            _showOnlyPlayer2Control = new KeyboardKey(Keys.F12);
-            _showEverybodyControl = new KeyboardKey(Keys.F9);
-#endif
         }
 
         public static IEnumerable<object> LoadTemplates()
@@ -124,32 +116,6 @@ namespace AW2.Game
         private void UpdateControls()
         {
             if (_helpControl.Pulse) Game.ShowPlayerHelp();
-#if DEBUG
-            if (_showEverybodyControl.Pulse)
-                Game.ShowOnlyPlayer(-1);
-            if (_showOnlyPlayer1Control.Pulse)
-                Game.ShowOnlyPlayer(0);
-            if (_showOnlyPlayer2Control.Pulse && Game.DataEngine.Spectators.Count > 1)
-                Game.ShowOnlyPlayer(1);
-#endif
-        }
-
-        [Obsolete, System.Diagnostics.Conditional("DEBUG")]
-        private void DeleteTemplates(params TypeLoader[] typeLoaders)
-        {
-            if (!Game.CommandLineOptions.DeleteTemplates) return;
-            Log.Write("Deleting templates now...");
-            foreach (var typeLoader in typeLoaders) typeLoader.DeleteTemplates();
-            Log.Write("...templates deleted");
-        }
-
-        [Obsolete, System.Diagnostics.Conditional("DEBUG")]
-        private void SaveTemplates(params TypeLoader[] typeLoaders)
-        {
-            if (!Game.CommandLineOptions.SaveTemplates) return;
-            Log.Write("Saving templates now...");
-            foreach (var typeLoader in typeLoaders) typeLoader.SaveTemplateExamples();
-            Log.Write("...templates saved");
         }
     }
 }

@@ -11,8 +11,7 @@
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <OutputPath>bin\$(Platform)\$(Configuration)</OutputPath>
     <ContentRootDirectory>CoreContent</ContentRootDirectory>
-  </PropertyGroup>
-  <PropertyGroup>
+    <PlatformTarget>x86</PlatformTarget>
     <RootNamespace>AssaultWingCoreContent</RootNamespace>
   </PropertyGroup>
   <ItemGroup>

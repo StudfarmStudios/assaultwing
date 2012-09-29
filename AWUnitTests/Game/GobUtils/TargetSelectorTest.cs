@@ -104,7 +104,7 @@ namespace AW2.Game.GobUtils
             var gobs = new[] { _hostileGob1 };
             Action<Vector2> accept = pos => { _hostileGob1.Pos = pos; Assert.NotNull(_targetSelector.ChooseTarget(gobs, _source, 0)); };
             Action<Vector2> reject = pos => { _hostileGob1.Pos = pos; Assert.IsNull(_targetSelector.ChooseTarget(gobs, _source, 0)); };
-            Action<Action<Vector2>, IEnumerable<Vector2>> apply = (act, list) => { foreach (var x in list) { Console.WriteLine(x); act(x); } };
+            Action<Action<Vector2>, IEnumerable<Vector2>> apply = (act, list) => { foreach (var x in list) act(x); };
             _targetSelector.MaxAngle = MathHelper.PiOver2;
             apply(accept, new[] { new Vector2(100, 0), new Vector2(100, 100), new Vector2(1, 100), new Vector2(1, -100), new Vector2(100, -100), Vector2.Zero });
             apply(reject, new[] { new Vector2(-100, 0), new Vector2(-100, 100), new Vector2(-1, 100), new Vector2(-1, -100), new Vector2(-100, -100) });

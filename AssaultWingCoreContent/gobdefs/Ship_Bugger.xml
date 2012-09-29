@@ -78,128 +78,22 @@
     </Item>
   </collisionAreas>
   <birthAlpha>
-    <preLoop>Constant</preLoop>
-    <postLoop>Constant</postLoop>
-    <keys>
-      <Item>
-        <position>0</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>0.25</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>0.5</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>0.75</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>1.0</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>1.25</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>1.5</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>1.75</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>2.0</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>2.125</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>2.25</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>2.375</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>2.5</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>2.625</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>2.75</position>
-        <internalValue>0.2</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>2.875</position>
-        <internalValue>0.8</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-      <Item>
-        <position>3.0</position>
-        <internalValue>1.0</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Step</continuity>
-      </Item>
-    </keys>
+    0 0.2 0 0 Step
+    0.25 0.8 0 0 Step
+    0.5 0.2 0 0 Step
+    0.75 0.8 0 0 Step
+    1.0 0.2 0 0 Step
+    1.25 0.8 0 0 Step
+    1.5 0.2 0 0 Step
+    1.75 0.8 0 0 Step
+    2.0 0.2 0 0 Step
+    2.125 0.8 0 0 Step
+    2.25 0.2 0 0 Step
+    2.375 0.8 0 0 Step
+    2.5 0.2 0 0 Step
+    2.625 0.8 0 0 Step
+    2.75 0.2 0 0 Step
+    2.875 0.8 0 0 Step
+    3.0 1.0 0 0 Step
   </birthAlpha>
 </GobType>

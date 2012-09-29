@@ -50,17 +50,7 @@
                <Item type="AW2.Game.Pengs.CurveLerpKey">
                   <input>0</input>
                   <curve>
-                     <preLoop>Constant</preLoop>
-                     <postLoop>Constant</postLoop>
-                     <keys>
-                        <Item>
-                           <position>0</position>
-                           <internalValue>-0.245</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                     </keys>
+                      0 -0.245 0 0 Smooth
                   </curve>
                </Item>
             </keys>
@@ -77,31 +67,9 @@
                <Item type="AW2.Game.Pengs.CurveLerpKey">
                   <input>0</input>
                   <curve>
-                     <preLoop>Constant</preLoop>
-                     <postLoop>Constant</postLoop>
-                     <keys>
-                        <Item>
-                           <position>0</position>
-                           <internalValue>0.0</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                        <Item>
-                           <position>0.2</position>
-                           <internalValue>0.48</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                        <Item>
-                           <position>1</position>
-                           <internalValue>0.0</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                     </keys>
+                      0 0.0 0 0 Smooth
+                      0.2 0.48 0 0 Smooth
+                      1 0.0 0 0 Smooth
                   </curve>
                </Item>
             </keys>
@@ -118,31 +86,9 @@
                <Item type="AW2.Game.Pengs.CurveLerpKey">
                   <input>0</input>
                   <curve>
-                     <preLoop>Constant</preLoop>
-                     <postLoop>Constant</postLoop>
-                     <keys>
-                        <Item>
-                           <position>0</position>
-                           <internalValue>0.0</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                        <Item>
-                           <position>0.2</position>
-                           <internalValue>0.55</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                        <Item>
-                           <position>1</position>
-                           <internalValue>0.0</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                     </keys>
+                      0 0.0 0 0 Smooth
+                      0.2 0.55 0 0 Smooth
+                      1 0.0 0 0 Smooth
                   </curve>
                </Item>
             </keys>

@@ -53,31 +53,9 @@
           <Item type="AW2.Game.Pengs.CurveLerpKey">
             <input>0</input>
             <curve>
-              <preLoop>Constant</preLoop>
-              <postLoop>Constant</postLoop>
-              <keys>
-                <Item>
-                  <position>0</position>
-                  <internalValue>0.0</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.15</position>
-                  <internalValue>0.43</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>1</position>
-                  <internalValue>0.24</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-              </keys>
+              0 0.0 0 0 Smooth
+              0.15 0.43 0 0 Smooth
+              1 0.24 0 0 Smooth
             </curve>
           </Item>
         </keys>
@@ -94,38 +72,10 @@
           <Item type="AW2.Game.Pengs.CurveLerpKey">
             <input>0</input>
             <curve>
-              <preLoop>Constant</preLoop>
-              <postLoop>Constant</postLoop>
-              <keys>
-                <Item>
-                  <position>0</position>
-                  <internalValue>0.1</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.2</position>
-                  <internalValue>0.45</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.4</position>
-                  <internalValue>0.26</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>1</position>
-                  <internalValue>0.0</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-              </keys>
+              0 0.1 0 0 Smooth
+              0.2 0.45 0 0 Smooth
+              0.4 0.26 0 0 Smooth
+              1 0.0 0 0 Smooth
             </curve>
           </Item>
         </keys>

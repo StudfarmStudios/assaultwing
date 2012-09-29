@@ -21,38 +21,10 @@
     <dragMagnitude>0.03</dragMagnitude>
     <flowTime>1.0</flowTime>
     <flowSpeed>
-      <preLoop>Constant</preLoop>
-      <postLoop>Constant</postLoop>
-      <keys>
-        <Item>
-          <position>0</position>
-          <internalValue>300</internalValue>
-          <tangentIn>0</tangentIn>
-          <tangentOut>-20</tangentOut>
-          <continuity>Smooth</continuity>
-        </Item>
-        <Item>
-          <position>200</position>
-          <internalValue>280</internalValue>
-          <tangentIn>-20</tangentIn>
-          <tangentOut>-260</tangentOut>
-          <continuity>Smooth</continuity>
-        </Item>
-        <Item>
-          <position>350</position>
-          <internalValue>20</internalValue>
-          <tangentIn>-260</tangentIn>
-          <tangentOut>-20</tangentOut>
-          <continuity>Smooth</continuity>
-        </Item>
-        <Item>
-          <position>450</position>
-          <internalValue>0</internalValue>
-          <tangentIn>-20</tangentIn>
-          <tangentOut>0</tangentOut>
-          <continuity>Smooth</continuity>
-        </Item>
-      </keys>
+      0 300 0 -20 Smooth
+      200 280 -20 -260 Smooth
+      350 20 -260 -20 Smooth
+      450 0 -20 0 Smooth
     </flowSpeed>
   </radialFlow>
   <particleEngineNames>

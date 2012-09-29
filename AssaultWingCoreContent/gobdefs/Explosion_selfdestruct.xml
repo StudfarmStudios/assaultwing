@@ -54,54 +54,16 @@
   for a second with shields on before triggering the suicide bomber.
   -->
   <inflictDamage>
-    <preLoop>Constant</preLoop>
-    <postLoop>Constant</postLoop>
-    <keys>
-      <Item>
-        <position>0</position>
-        <internalValue>2100</internalValue>
-        <tangentIn>0</tangentIn>
-        <tangentOut>0</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>147.774</position>
-        <internalValue>1512.638</internalValue>
-        <tangentIn>-1034.418</tangentIn>
-        <tangentOut>-1065.582</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>300</position>
-        <internalValue>0</internalValue>
-        <tangentIn>-1512.638</tangentIn>
-        <tangentOut>0</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-    </keys>
+    0 2100 0 0 Smooth
+    147.774 1512.638 -1034.418 -1065.582 Smooth
+    300 0 -1512.638 0 Smooth
   </inflictDamage>
   <radialFlow>
     <dragMagnitude>0.003</dragMagnitude>
     <flowTime>0.35</flowTime>
     <flowSpeed>
-      <preLoop>Constant</preLoop>
-      <postLoop>Constant</postLoop>
-      <keys>
-        <Item>
-          <position>0</position>
-          <internalValue>2000</internalValue>
-          <tangentOut>-2000</tangentOut>
-          <tangentIn>0</tangentIn>
-          <continuity>Smooth</continuity>
-        </Item>
-        <Item>
-          <position>250</position>
-          <internalValue>0</internalValue>
-          <tangentOut>0</tangentOut>
-          <tangentIn>-2000</tangentIn>
-          <continuity>Smooth</continuity>
-        </Item>
-      </keys>
+      0 2000 0 -2000 Smooth
+      250 0 -2000 0 Smooth
     </flowSpeed>
   </radialFlow>
 </GobType>

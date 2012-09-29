@@ -21,38 +21,10 @@
 
   <typeName>catmoflage</typeName>
   <cloakStrengthForVelocity>
-    <preLoop>Constant</preLoop>
-    <postLoop>Constant</postLoop>
-    <keys>
-      <Item>
-        <position>0</position>
-        <internalValue>1</internalValue>
-        <tangentIn>0</tangentIn>
-        <tangentOut>0</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>250</position>
-        <internalValue>0.99</internalValue>
-        <tangentIn>-0.00999999</tangentIn>
-        <tangentOut>-0.04000002</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>350</position>
-        <internalValue>0.95</internalValue>
-        <tangentIn>-0.04000002</tangentIn>
-        <tangentOut>-0.25</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>550</position>
-        <internalValue>0.7</internalValue>
-        <tangentIn>-0.25</tangentIn>
-        <tangentOut>0</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-    </keys>
+    0 1 0 0 Smooth
+    250 0.99 -0.00999999 -0.04000002 Smooth
+    350 0.95 -0.04000002 -0.25 Smooth
+    550 0.7 -0.25 0 Smooth
   </cloakStrengthForVelocity>
   <fadeOutDuration>1</fadeOutDuration>
   <fadeInDuration>0.5</fadeInDuration>

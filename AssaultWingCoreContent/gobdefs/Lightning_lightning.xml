@@ -17,24 +17,8 @@
     <Item>lightning_3</Item>
   </textureNames>
   <alphaCurve>
-    <preLoop>Constant</preLoop>
-    <postLoop>Constant</postLoop>
-    <keys>
-      <Item>
-        <position>0</position>
-        <internalValue>1</internalValue>
-        <tangentOut>-0.0465796478</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>0.3</position>
-        <internalValue>0</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>-2.71247</tangentIn>
-        <continuity>Smooth</continuity>
-      </Item>
-    </keys>
+    0 1 0 -0.0465796478 Smooth
+    0.3 0 -2.71247 0 Smooth
   </alphaCurve>
   <mass>1</mass>
   <modelName>dummymodel</modelName>

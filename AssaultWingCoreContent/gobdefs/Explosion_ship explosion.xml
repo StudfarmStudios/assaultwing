@@ -45,54 +45,16 @@
     </Item>
   </collisionAreas>
   <inflictDamage>
-    <preLoop>Constant</preLoop>
-    <postLoop>Constant</postLoop>
-    <keys>
-      <Item>
-        <position>0</position>
-        <internalValue>150</internalValue>
-        <tangentIn>0</tangentIn>
-        <tangentOut>-74.16101</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>40.70653</position>
-        <internalValue>75.83899</internalValue>
-        <tangentIn>-26.54774</tangentIn>
-        <tangentOut>-123.4523</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>230</position>
-        <internalValue>0</internalValue>
-        <tangentIn>-75.83899</tangentIn>
-        <tangentOut>0</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-    </keys>
+    0 150 0 -74.16101 Smooth
+    40.70653 75.83899 -26.54774 -123.4523 Smooth
+    230 0 -75.83899 0 Smooth
   </inflictDamage>
   <radialFlow>
     <dragMagnitude>0.003</dragMagnitude>
     <flowTime>0.35</flowTime>
     <flowSpeed>
-      <preLoop>Constant</preLoop>
-      <postLoop>Constant</postLoop>
-      <keys>
-        <Item>
-          <position>0</position>
-          <internalValue>2000</internalValue>
-          <tangentOut>-2000</tangentOut>
-          <tangentIn>0</tangentIn>
-          <continuity>Smooth</continuity>
-        </Item>
-        <Item>
-          <position>250</position>
-          <internalValue>0</internalValue>
-          <tangentOut>0</tangentOut>
-          <tangentIn>-2000</tangentIn>
-          <continuity>Smooth</continuity>
-        </Item>
-      </keys>
+      0 2000 0 -2000 Smooth
+      250 0 -2000 0 Smooth
     </flowSpeed>
   </radialFlow>
 </GobType>

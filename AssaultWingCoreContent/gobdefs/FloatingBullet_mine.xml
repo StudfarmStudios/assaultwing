@@ -80,44 +80,10 @@
     </Item>
   </collisionAreas>
   <enemyDistanceToAlpha>
-    <preLoop>Constant</preLoop>
-    <postLoop>Constant</postLoop>
-    <keys>
-      <Item>
-        <position>30</position>
-        <internalValue>1</internalValue>
-        <tangentIn>0</tangentIn>
-        <tangentOut>-0.6</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>60</position>
-        <internalValue>0.4</internalValue>
-        <tangentIn>-0.3642857</tangentIn>
-        <tangentOut>-0.4857143</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>100</position>
-        <internalValue>0.15</internalValue>
-        <tangentIn>-0.09428572</tangentIn>
-        <tangentOut>-0.2357143</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>200</position>
-        <internalValue>0.07</internalValue>
-        <tangentIn>-0.075</tangentIn>
-        <tangentOut>-0.075</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>300</position>
-        <internalValue>0</internalValue>
-        <tangentIn>-0.07</tangentIn>
-        <tangentOut>0</tangentOut>
-        <continuity>Smooth</continuity>
-      </Item>
-    </keys>
+    30 1 0 -0.6 Smooth
+    60 0.4 -0.3642857 -0.4857143 Smooth
+    100 0.15 -0.09428572 -0.2357143 Smooth
+    200 0.07 -0.075 -0.075 Smooth
+    300 0 -0.07 0 Smooth
   </enemyDistanceToAlpha>
 </GobType>

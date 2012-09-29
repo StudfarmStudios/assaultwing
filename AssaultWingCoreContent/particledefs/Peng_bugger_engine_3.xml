@@ -50,17 +50,7 @@
                <Item type="AW2.Game.Pengs.CurveLerpKey">
                   <input>0</input>
                   <curve>
-                     <preLoop>Constant</preLoop>
-                     <postLoop>Constant</postLoop>
-                     <keys>
-                        <Item>
-                           <position>0</position>
-                           <internalValue>2.5</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                     </keys>
+                      0 2.5 0 0 Smooth
                   </curve>
                </Item>
             </keys>
@@ -77,24 +67,8 @@
                <Item type="AW2.Game.Pengs.CurveLerpKey">
                   <input>0</input>
                   <curve>
-                     <preLoop>Constant</preLoop>
-                     <postLoop>Constant</postLoop>
-                     <keys>
-                        <Item>
-                           <position>0</position>
-                           <internalValue>0.8</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                        <Item>
-                           <position>1</position>
-                           <internalValue>0.2</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                     </keys>
+                      0 0.8 0 0 Smooth
+                      1 0.2 0 0 Smooth
                   </curve>
                </Item>
             </keys>
@@ -111,31 +85,9 @@
                <Item type="AW2.Game.Pengs.CurveLerpKey">
                   <input>0</input>
                   <curve>
-                     <preLoop>Constant</preLoop>
-                     <postLoop>Constant</postLoop>
-                     <keys>
-                        <Item>
-                           <position>0</position>
-                           <internalValue>0.82</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                        <Item>
-                           <position>0.7</position>
-                           <internalValue>0.3</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                        <Item>
-                           <position>1</position>
-                           <internalValue>0.0</internalValue>
-                           <tangentOut>0</tangentOut>
-                           <tangentIn>0</tangentIn>
-                           <continuity>Smooth</continuity>
-                        </Item>
-                     </keys>
+                      0 0.82 0 0 Smooth
+                      0.7 0.3 0 0 Smooth
+                      1 0.0 0 0 Smooth
                   </curve>
                </Item>
             </keys>

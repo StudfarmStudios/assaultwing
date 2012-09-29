@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Xna.Framework;
 using TypeTriple = System.Tuple<System.Type, System.Type, System.Type>;
@@ -87,6 +89,14 @@ namespace AW2.Helpers.Serialization
                 var timeSpan = (TimeSpan)castObj;
                 writer.WriteValue(timeSpan.TotalSeconds);
             }
+            else if (type == typeof(Curve))
+            {
+                var curve = (Curve)castObj;
+                var curveKeys = new StringBuilder();
+                foreach (var curveKey in curve.Keys) curveKeys.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
+                    "{0} {1} {2} {3} {4}\n", curveKey.Position, curveKey.Value, curveKey.TangentIn, curveKey.TangentOut, curveKey.Continuity);
+                writer.WriteString(curveKeys.ToString());
+            }
             else if (typeof(IEnumerable).IsAssignableFrom(type))
                 foreach (object item in (IEnumerable)castObj)
                     SerializeXml(writer, "Item", item, limitationAttribute, typeof(object));
@@ -137,8 +147,10 @@ namespace AW2.Helpers.Serialization
                     returnValue = DeserializeXmlEnum(reader, writtenType);
                 else if (writtenType == typeof(Color))
                     returnValue = DeserializeXmlColor(reader, limitationAttribute, tolerant);
-                else if (writtenType == typeof(TimeSpan) && !reader.IsStartElement()) // Note: IsStartElement() is to support old style TimeSpan serialization with <ticks> element at release 1.8.0.0. Remove support after a few versions.
+                else if (writtenType == typeof(TimeSpan))
                     returnValue = TimeSpan.FromSeconds(reader.ReadContentAsDouble());
+                else if (writtenType == typeof(Curve))
+                    returnValue = DeserializeXmlCurve(reader, limitationAttribute, tolerant);
                 else if (IsIEnumerable(writtenType))
                     returnValue = DeserializeXmlIEnumerable(reader, objType, limitationAttribute, writtenType, tolerant);
                 else
@@ -202,6 +214,31 @@ namespace AW2.Helpers.Serialization
             byte b = (byte)DeserializeXml(reader, "B", typeof(byte), limitationAttribute, tolerant);
             byte a = (byte)DeserializeXml(reader, "A", typeof(byte), limitationAttribute, tolerant);
             return new Color(r, g, b, a);
+        }
+
+        private static object DeserializeXmlCurve(XmlReader reader, Type limitationAttribute, bool tolerant)
+        {
+            var curve = new Curve();
+            curve.PostLoop = curve.PreLoop = CurveLoopType.Constant;
+            foreach (var keyLine in reader.ReadContentAsString().Split('\n'))
+            {
+                if (keyLine.Trim() == "") continue;
+                var errorMessage = "Invalid curve key '" + keyLine + "'";
+                var errorElementName = "[text content]";
+                var match = Regex.Match(keyLine, @"\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*");
+                if (!match.Success) throw new MemberSerializationException(errorMessage, errorElementName);
+                float position = 0, value = 0, tangentIn = 0, tangentOut = 0;
+                CurveContinuity continuity = 0;
+                var success =
+                    float.TryParse(match.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out position) &&
+                    float.TryParse(match.Groups[2].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out value) &&
+                    float.TryParse(match.Groups[3].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out tangentIn) &&
+                    float.TryParse(match.Groups[4].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out tangentOut) &&
+                    Enum.TryParse<CurveContinuity>(match.Groups[5].Value, out continuity);
+                if (!success) throw new MemberSerializationException(errorMessage, errorElementName);
+                curve.Keys.Add(new CurveKey(position, value, tangentIn, tangentOut, continuity));
+            }
+            return curve;
         }
 
         private static object DeserializeXmlIEnumerable(XmlReader reader, Type objType, Type limitationAttribute, Type writtenType, bool tolerant)

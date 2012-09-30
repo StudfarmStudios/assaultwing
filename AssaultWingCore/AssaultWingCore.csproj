@@ -268,7 +268,8 @@
     <Compile Include="Helpers\AWTimer.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
     <Compile Include="Helpers\Serialization\ExcludeFromDeepCopyAttribute.cs" />
-    <Compile Include="Helpers\Serialization\FieldFinder.cs" />
+    <Compile Include="Helpers\Serialization\FieldAndPropertyFinder.cs" />
+    <Compile Include="Helpers\Serialization\FieldOrPropertyInfo.cs" />
     <Compile Include="Helpers\Serialization\IAWSerializable.cs" />
     <Compile Include="Helpers\Serialization\IConsistencyCheckable.cs" />
     <Compile Include="Helpers\Serialization\INetworkSerializable.cs" />

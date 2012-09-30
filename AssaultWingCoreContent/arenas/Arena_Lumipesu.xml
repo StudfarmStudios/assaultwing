@@ -16,8 +16,8 @@
           <propModelName>lumipesu_bg_wall1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>723.840454</X>
-            <Y>885.12</Y>
+            <x>723.840454</x>
+            <y>885.12</y>
           </pos>
           <rotation>4.35480165</rotation>
           <typeName>prop model</typeName>
@@ -26,8 +26,8 @@
           <propModelName>lumipesu_bg_wall2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>280.320129</X>
-            <Y>1703.04</Y>
+            <x>280.320129</x>
+            <y>1703.04</y>
           </pos>
           <rotation>5.897508</rotation>
           <typeName>prop model</typeName>
@@ -36,8 +36,8 @@
           <propModelName>lumipesu_bg_wall3</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1449.60071</X>
-            <Y>263.039978</Y>
+            <x>1449.60071</x>
+            <y>263.039978</y>
           </pos>
           <rotation>4.271858</rotation>
           <typeName>prop model</typeName>
@@ -46,8 +46,8 @@
           <propModelName>lumipesu_bg_wall2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1822.15955</X>
-            <Y>1292.24023</Y>
+            <x>1822.15955</x>
+            <y>1292.24023</y>
           </pos>
           <rotation>2.378294</rotation>
           <typeName>prop model</typeName>
@@ -56,8 +56,8 @@
           <propModelName>lumipesu_bg_wall3</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-414.6394</X>
-            <Y>771.9201</Y>
+            <x>-414.6394</x>
+            <y>771.9201</y>
           </pos>
           <rotation>5.34439</rotation>
           <typeName>prop model</typeName>
@@ -66,8 +66,8 @@
           <propModelName>lumipesu_bg_wall3</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1468.95972</X>
-            <Y>2010.40112</Y>
+            <x>1468.95972</x>
+            <y>2010.40112</y>
           </pos>
           <rotation>3.54722524</rotation>
           <typeName>prop model</typeName>
@@ -76,8 +76,8 @@
           <propModelName>lumipesu_bg_wall2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>702.8796</X>
-            <Y>-226.399948</Y>
+            <x>702.8796</x>
+            <y>-226.399948</y>
           </pos>
           <rotation>4.52717924</rotation>
           <typeName>prop model</typeName>
@@ -86,8 +86,8 @@
           <propModelName>lumipesu_bg_wall1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2833.04028</X>
-            <Y>1581.91992</Y>
+            <x>2833.04028</x>
+            <y>1581.91992</y>
           </pos>
           <rotation>0.7849513</rotation>
           <typeName>prop model</typeName>
@@ -96,8 +96,8 @@
           <propModelName>lumipesu_bg_wall1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-730.9591</X>
-            <Y>2013.11951</Y>
+            <x>-730.9591</x>
+            <y>2013.11951</y>
           </pos>
           <rotation>3.96578622</rotation>
           <typeName>prop model</typeName>
@@ -106,8 +106,8 @@
           <propModelName>lumipesu_bg_wall1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>111.640419</X>
-            <Y>-780.8803</Y>
+            <x>111.640419</x>
+            <y>-780.8803</y>
           </pos>
           <rotation>5.485597</rotation>
           <typeName>prop model</typeName>
@@ -135,8 +135,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>400</X>
-            <Y>2465.5</Y>
+            <x>400</x>
+            <y>2465.5</y>
           </pos>
           <rotation>4.6857667</rotation>
           <typeName>lumipesu snowfall</typeName>
@@ -145,8 +145,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1453.5</X>
-            <Y>2436</Y>
+            <x>1453.5</x>
+            <y>2436</y>
           </pos>
           <rotation>4.6857667</rotation>
           <typeName>lumipesu snowfall</typeName>
@@ -155,8 +155,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1000</X>
-            <Y>1400</Y>
+            <x>1000</x>
+            <y>1400</y>
           </pos>
           <rotation>4.6857667</rotation>
           <typeName>lumipesu snowfall</typeName>
@@ -174,8 +174,8 @@
           <destructible>false</destructible>
           <staticID>625</staticID>
           <pos>
-            <X>100</X>
-            <Y>200</Y>
+            <x>100</x>
+            <y>200</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -185,8 +185,8 @@
           <destructible>false</destructible>
           <staticID>626</staticID>
           <pos>
-            <X>0</X>
-            <Y>545</Y>
+            <x>0</x>
+            <y>545</y>
           </pos>
           <rotation>-1.56</rotation>
           <typeName>wall model</typeName>
@@ -196,8 +196,8 @@
           <destructible>false</destructible>
           <staticID>627</staticID>
           <pos>
-            <X>400</X>
-            <Y>0</Y>
+            <x>400</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -207,8 +207,8 @@
           <destructible>false</destructible>
           <staticID>628</staticID>
           <pos>
-            <X>800</X>
-            <Y>150</Y>
+            <x>800</x>
+            <y>150</y>
           </pos>
           <rotation>3.14</rotation>
           <typeName>wall model</typeName>
@@ -218,8 +218,8 @@
           <destructible>false</destructible>
           <staticID>629</staticID>
           <pos>
-            <X>-204.999954</X>
-            <Y>1547</Y>
+            <x>-204.999954</x>
+            <y>1547</y>
           </pos>
           <rotation>4.936933</rotation>
           <typeName>wall model</typeName>
@@ -229,8 +229,8 @@
           <destructible>false</destructible>
           <staticID>630</staticID>
           <pos>
-            <X>1979.00012</X>
-            <Y>1793.00012</Y>
+            <x>1979.00012</x>
+            <y>1793.00012</y>
           </pos>
           <rotation>-1.94</rotation>
           <typeName>wall model</typeName>
@@ -240,8 +240,8 @@
           <destructible>false</destructible>
           <staticID>631</staticID>
           <pos>
-            <X>1150</X>
-            <Y>22</Y>
+            <x>1150</x>
+            <y>22</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -251,8 +251,8 @@
           <destructible>false</destructible>
           <staticID>632</staticID>
           <pos>
-            <X>1440</X>
-            <Y>110</Y>
+            <x>1440</x>
+            <y>110</y>
           </pos>
           <rotation>1.51</rotation>
           <typeName>wall model</typeName>
@@ -262,8 +262,8 @@
           <destructible>false</destructible>
           <staticID>633</staticID>
           <pos>
-            <X>1881</X>
-            <Y>70</Y>
+            <x>1881</x>
+            <y>70</y>
           </pos>
           <rotation>0.21</rotation>
           <typeName>wall model</typeName>
@@ -273,8 +273,8 @@
           <destructible>false</destructible>
           <staticID>634</staticID>
           <pos>
-            <X>1930</X>
-            <Y>360</Y>
+            <x>1930</x>
+            <y>360</y>
           </pos>
           <rotation>1.56</rotation>
           <typeName>wall model</typeName>
@@ -284,8 +284,8 @@
           <destructible>false</destructible>
           <staticID>635</staticID>
           <pos>
-            <X>1830</X>
-            <Y>760</Y>
+            <x>1830</x>
+            <y>760</y>
           </pos>
           <rotation>-1.56</rotation>
           <typeName>wall model</typeName>
@@ -295,8 +295,8 @@
           <destructible>false</destructible>
           <staticID>636</staticID>
           <pos>
-            <X>1970</X>
-            <Y>1161</Y>
+            <x>1970</x>
+            <y>1161</y>
           </pos>
           <rotation>1.56</rotation>
           <typeName>wall model</typeName>
@@ -306,8 +306,8 @@
           <destructible>false</destructible>
           <staticID>637</staticID>
           <pos>
-            <X>1960</X>
-            <Y>1530</Y>
+            <x>1960</x>
+            <y>1530</y>
           </pos>
           <rotation>1.56</rotation>
           <typeName>wall model</typeName>
@@ -317,8 +317,8 @@
           <destructible>false</destructible>
           <staticID>638</staticID>
           <pos>
-            <X>1888</X>
-            <Y>1920</Y>
+            <x>1888</x>
+            <y>1920</y>
           </pos>
           <rotation>1.56</rotation>
           <typeName>wall model</typeName>
@@ -328,8 +328,8 @@
           <destructible>false</destructible>
           <staticID>639</staticID>
           <pos>
-            <X>1530</X>
-            <Y>1965</Y>
+            <x>1530</x>
+            <y>1965</y>
           </pos>
           <rotation>1.16</rotation>
           <typeName>wall model</typeName>
@@ -339,8 +339,8 @@
           <destructible>false</destructible>
           <staticID>640</staticID>
           <pos>
-            <X>1150</X>
-            <Y>1975</Y>
+            <x>1150</x>
+            <y>1975</y>
           </pos>
           <rotation>-0.86</rotation>
           <typeName>wall model</typeName>
@@ -350,8 +350,8 @@
           <destructible>false</destructible>
           <staticID>641</staticID>
           <pos>
-            <X>682</X>
-            <Y>1805</Y>
+            <x>682</x>
+            <y>1805</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -361,8 +361,8 @@
           <destructible>false</destructible>
           <staticID>642</staticID>
           <pos>
-            <X>310</X>
-            <Y>1970</Y>
+            <x>310</x>
+            <y>1970</y>
           </pos>
           <rotation>3.14</rotation>
           <typeName>wall model</typeName>
@@ -372,8 +372,8 @@
           <destructible>false</destructible>
           <staticID>643</staticID>
           <pos>
-            <X>40</X>
-            <Y>1860</Y>
+            <x>40</x>
+            <y>1860</y>
           </pos>
           <rotation>3.2</rotation>
           <typeName>wall model</typeName>
@@ -383,8 +383,8 @@
           <destructible>false</destructible>
           <staticID>644</staticID>
           <pos>
-            <X>30</X>
-            <Y>1473</Y>
+            <x>30</x>
+            <y>1473</y>
           </pos>
           <rotation>2.85</rotation>
           <typeName>wall model</typeName>
@@ -394,8 +394,8 @@
           <destructible>false</destructible>
           <staticID>645</staticID>
           <pos>
-            <X>31.0000153</X>
-            <Y>1026</Y>
+            <x>31.0000153</x>
+            <y>1026</y>
           </pos>
           <rotation>-1.61</rotation>
           <typeName>wall model</typeName>
@@ -405,8 +405,8 @@
           <destructible>false</destructible>
           <staticID>646</staticID>
           <pos>
-            <X>2153</X>
-            <Y>1084.99976</Y>
+            <x>2153</x>
+            <y>1084.99976</y>
           </pos>
           <rotation>3.87715554</rotation>
           <typeName>wall model</typeName>
@@ -416,8 +416,8 @@
           <destructible>false</destructible>
           <staticID>647</staticID>
           <pos>
-            <X>650.9999</X>
-            <Y>-101.999992</Y>
+            <x>650.9999</x>
+            <y>-101.999992</y>
           </pos>
           <rotation>5.64947557</rotation>
           <typeName>wall model</typeName>
@@ -427,8 +427,8 @@
           <destructible>false</destructible>
           <staticID>648</staticID>
           <pos>
-            <X>2108.99976</X>
-            <Y>1719.99988</Y>
+            <x>2108.99976</x>
+            <y>1719.99988</y>
           </pos>
           <rotation>0.51</rotation>
           <typeName>wall model</typeName>
@@ -438,8 +438,8 @@
           <destructible>false</destructible>
           <staticID>649</staticID>
           <pos>
-            <X>1674</X>
-            <Y>2138</Y>
+            <x>1674</x>
+            <y>2138</y>
           </pos>
           <rotation>0.913253</rotation>
           <typeName>wall model</typeName>
@@ -449,8 +449,8 @@
           <destructible>false</destructible>
           <staticID>650</staticID>
           <pos>
-            <X>-114.000008</X>
-            <Y>-77.00004</Y>
+            <x>-114.000008</x>
+            <y>-77.00004</y>
           </pos>
           <rotation>4.57302237</rotation>
           <typeName>wall model</typeName>
@@ -460,8 +460,8 @@
           <destructible>false</destructible>
           <staticID>651</staticID>
           <pos>
-            <X>1573.99988</X>
-            <Y>-121.999969</Y>
+            <x>1573.99988</x>
+            <y>-121.999969</y>
           </pos>
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
@@ -471,8 +471,8 @@
           <destructible>true</destructible>
           <staticID>652</staticID>
           <pos>
-            <X>199</X>
-            <Y>32.00004</Y>
+            <x>199</x>
+            <y>32.00004</y>
           </pos>
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
@@ -482,8 +482,8 @@
           <destructible>true</destructible>
           <staticID>653</staticID>
           <pos>
-            <X>1013</X>
-            <Y>2135.00049</Y>
+            <x>1013</x>
+            <y>2135.00049</y>
           </pos>
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
@@ -493,8 +493,8 @@
           <destructible>false</destructible>
           <staticID>654</staticID>
           <pos>
-            <X>3.99999237</X>
-            <Y>1957</Y>
+            <x>3.99999237</x>
+            <y>1957</y>
           </pos>
           <rotation>3.89878774</rotation>
           <typeName>wall model</typeName>
@@ -504,8 +504,8 @@
           <destructible>false</destructible>
           <staticID>655</staticID>
           <pos>
-            <X>-42.9999924</X>
-            <Y>1000.99988</Y>
+            <x>-42.9999924</x>
+            <y>1000.99988</y>
           </pos>
           <rotation>2.232044</rotation>
           <typeName>wall model</typeName>
@@ -515,8 +515,8 @@
           <destructible>false</destructible>
           <staticID>656</staticID>
           <pos>
-            <X>2058</X>
-            <Y>749.000061</Y>
+            <x>2058</x>
+            <y>749.000061</y>
           </pos>
           <rotation>5.469986</rotation>
           <typeName>wall model</typeName>
@@ -526,8 +526,8 @@
           <destructible>false</destructible>
           <staticID>657</staticID>
           <pos>
-            <X>-53.00007</X>
-            <Y>597</Y>
+            <x>-53.00007</x>
+            <y>597</y>
           </pos>
           <rotation>1.29395688</rotation>
           <typeName>wall model</typeName>
@@ -537,8 +537,8 @@
           <destructible>false</destructible>
           <staticID>658</staticID>
           <pos>
-            <X>611</X>
-            <Y>1975</Y>
+            <x>611</x>
+            <y>1975</y>
           </pos>
           <rotation>0.602353752</rotation>
           <typeName>wall model</typeName>
@@ -548,8 +548,8 @@
           <destructible>false</destructible>
           <staticID>659</staticID>
           <pos>
-            <X>1982.00037</X>
-            <Y>753.000061</Y>
+            <x>1982.00037</x>
+            <y>753.000061</y>
           </pos>
           <rotation>5.29101753</rotation>
           <typeName>wall model</typeName>
@@ -559,8 +559,8 @@
           <destructible>false</destructible>
           <staticID>660</staticID>
           <pos>
-            <X>990.9999</X>
-            <Y>35.00007</Y>
+            <x>990.9999</x>
+            <y>35.00007</y>
           </pos>
           <rotation>3.41069078</rotation>
           <typeName>wall model</typeName>
@@ -568,8 +568,8 @@
         <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
-            <X>214</X>
-            <Y>1644.99988</Y>
+            <x>214</x>
+            <y>1644.99988</y>
           </pos>
           <rotation>0</rotation>
           <typeName>dock</typeName>
@@ -577,8 +577,8 @@
         <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
-            <X>1645</X>
-            <Y>121</Y>
+            <x>1645</x>
+            <y>121</y>
           </pos>
           <rotation>0</rotation>
           <typeName>dock</typeName>
@@ -588,8 +588,8 @@
           <destructible>true</destructible>
           <staticID>667</staticID>
           <pos>
-            <X>277.999939</X>
-            <Y>1383</Y>
+            <x>277.999939</x>
+            <y>1383</y>
           </pos>
           <rotation>2.19772458</rotation>
           <typeName>wall model</typeName>
@@ -599,8 +599,8 @@
           <destructible>false</destructible>
           <staticID>668</staticID>
           <pos>
-            <X>186.000031</X>
-            <Y>1471</Y>
+            <x>186.000031</x>
+            <y>1471</y>
           </pos>
           <rotation>2.36109543</rotation>
           <typeName>wall model</typeName>
@@ -610,8 +610,8 @@
           <destructible>false</destructible>
           <staticID>669</staticID>
           <pos>
-            <X>339.999847</X>
-            <Y>1504.99988</Y>
+            <x>339.999847</x>
+            <y>1504.99988</y>
           </pos>
           <rotation>1.23146141</rotation>
           <typeName>wall model</typeName>
@@ -621,8 +621,8 @@
           <destructible>false</destructible>
           <staticID>670</staticID>
           <pos>
-            <X>818</X>
-            <Y>1618</Y>
+            <x>818</x>
+            <y>1618</y>
           </pos>
           <rotation>0.5279445</rotation>
           <typeName>wall model</typeName>
@@ -632,8 +632,8 @@
           <destructible>false</destructible>
           <staticID>671</staticID>
           <pos>
-            <X>326.999878</X>
-            <Y>1826.00012</Y>
+            <x>326.999878</x>
+            <y>1826.00012</y>
           </pos>
           <rotation>6.03705025</rotation>
           <typeName>wall model</typeName>
@@ -643,8 +643,8 @@
           <destructible>false</destructible>
           <staticID>672</staticID>
           <pos>
-            <X>1757</X>
-            <Y>562</Y>
+            <x>1757</x>
+            <y>562</y>
           </pos>
           <rotation>0.4413664</rotation>
           <typeName>wall model</typeName>
@@ -654,8 +654,8 @@
           <destructible>false</destructible>
           <staticID>673</staticID>
           <pos>
-            <X>1343</X>
-            <Y>221.999969</Y>
+            <x>1343</x>
+            <y>221.999969</y>
           </pos>
           <rotation>1.14243448</rotation>
           <typeName>wall model</typeName>
@@ -665,8 +665,8 @@
           <destructible>true</destructible>
           <staticID>674</staticID>
           <pos>
-            <X>1530</X>
-            <Y>537.999939</Y>
+            <x>1530</x>
+            <y>537.999939</y>
           </pos>
           <rotation>3.92508626</rotation>
           <typeName>wall model</typeName>
@@ -676,8 +676,8 @@
           <destructible>false</destructible>
           <staticID>675</staticID>
           <pos>
-            <X>1725.99988</X>
-            <Y>339</Y>
+            <x>1725.99988</x>
+            <y>339</y>
           </pos>
           <rotation>3.26220465</rotation>
           <typeName>wall model</typeName>
@@ -687,8 +687,8 @@
           <destructible>true</destructible>
           <staticID>676</staticID>
           <pos>
-            <X>918.999756</X>
-            <Y>810.9999</Y>
+            <x>918.999756</x>
+            <y>810.9999</y>
           </pos>
           <rotation>0.193351835</rotation>
           <typeName>wall model</typeName>
@@ -698,8 +698,8 @@
           <destructible>true</destructible>
           <staticID>677</staticID>
           <pos>
-            <X>871</X>
-            <Y>915</Y>
+            <x>871</x>
+            <y>915</y>
           </pos>
           <rotation>1.10358894</rotation>
           <typeName>wall model</typeName>
@@ -709,8 +709,8 @@
           <destructible>false</destructible>
           <staticID>678</staticID>
           <pos>
-            <X>1157</X>
-            <Y>1110</Y>
+            <x>1157</x>
+            <y>1110</y>
           </pos>
           <rotation>5.600427</rotation>
           <typeName>wall model</typeName>
@@ -720,8 +720,8 @@
           <destructible>true</destructible>
           <staticID>679</staticID>
           <pos>
-            <X>819</X>
-            <Y>952.999939</Y>
+            <x>819</x>
+            <y>952.999939</y>
           </pos>
           <rotation>3.92508626</rotation>
           <typeName>wall model</typeName>
@@ -731,8 +731,8 @@
           <destructible>true</destructible>
           <staticID>680</staticID>
           <pos>
-            <X>1289</X>
-            <Y>1187</Y>
+            <x>1289</x>
+            <y>1187</y>
           </pos>
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
@@ -742,8 +742,8 @@
           <destructible>true</destructible>
           <staticID>681</staticID>
           <pos>
-            <X>1180</X>
-            <Y>1252</Y>
+            <x>1180</x>
+            <y>1252</y>
           </pos>
           <rotation>6.087346</rotation>
           <typeName>wall model</typeName>
@@ -753,8 +753,8 @@
           <destructible>true</destructible>
           <staticID>682</staticID>
           <pos>
-            <X>1224.99988</X>
-            <Y>1202</Y>
+            <x>1224.99988</x>
+            <y>1202</y>
           </pos>
           <rotation>5.96244049</rotation>
           <typeName>wall model</typeName>
@@ -764,8 +764,8 @@
           <destructible>true</destructible>
           <staticID>683</staticID>
           <pos>
-            <X>828.9999</X>
-            <Y>887.000061</Y>
+            <x>828.9999</x>
+            <y>887.000061</y>
           </pos>
           <rotation>1.76578414</rotation>
           <typeName>wall model</typeName>
@@ -775,8 +775,8 @@
           <destructible>true</destructible>
           <staticID>684</staticID>
           <pos>
-            <X>89.0000153</X>
-            <Y>1346.00012</Y>
+            <x>89.0000153</x>
+            <y>1346.00012</y>
           </pos>
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
@@ -786,8 +786,8 @@
           <destructible>true</destructible>
           <staticID>685</staticID>
           <pos>
-            <X>444</X>
-            <Y>1334</Y>
+            <x>444</x>
+            <y>1334</y>
           </pos>
           <rotation>6.102842</rotation>
           <typeName>wall model</typeName>
@@ -797,8 +797,8 @@
           <destructible>true</destructible>
           <staticID>686</staticID>
           <pos>
-            <X>1072.99988</X>
-            <Y>1152</Y>
+            <x>1072.99988</x>
+            <y>1152</y>
           </pos>
           <rotation>5.71052551</rotation>
           <typeName>wall model</typeName>
@@ -808,8 +808,8 @@
           <destructible>true</destructible>
           <staticID>687</staticID>
           <pos>
-            <X>91.00003</X>
-            <Y>73.000145</Y>
+            <x>91.00003</x>
+            <y>73.000145</y>
           </pos>
           <rotation>5.64872026</rotation>
           <typeName>wall model</typeName>
@@ -819,8 +819,8 @@
           <destructible>true</destructible>
           <staticID>688</staticID>
           <pos>
-            <X>738.999939</X>
-            <Y>928</Y>
+            <x>738.999939</x>
+            <y>928</y>
           </pos>
           <rotation>0.266424328</rotation>
           <typeName>wall model</typeName>
@@ -830,8 +830,8 @@
           <destructible>true</destructible>
           <staticID>689</staticID>
           <pos>
-            <X>950</X>
-            <Y>142.000061</Y>
+            <x>950</x>
+            <y>142.000061</y>
           </pos>
           <rotation>5.98240376</rotation>
           <typeName>wall model</typeName>
@@ -841,8 +841,8 @@
           <destructible>true</destructible>
           <staticID>690</staticID>
           <pos>
-            <X>734.0001</X>
-            <Y>56.00006</Y>
+            <x>734.0001</x>
+            <y>56.00006</y>
           </pos>
           <rotation>0.2487417</rotation>
           <typeName>wall model</typeName>
@@ -852,8 +852,8 @@
           <destructible>true</destructible>
           <staticID>691</staticID>
           <pos>
-            <X>829</X>
-            <Y>72.00006</Y>
+            <x>829</x>
+            <y>72.00006</y>
           </pos>
           <rotation>0.867469668</rotation>
           <typeName>wall model</typeName>
@@ -863,8 +863,8 @@
           <destructible>true</destructible>
           <staticID>692</staticID>
           <pos>
-            <X>1228.99988</X>
-            <Y>1288</Y>
+            <x>1228.99988</x>
+            <y>1288</y>
           </pos>
           <rotation>0.701341152</rotation>
           <typeName>wall model</typeName>
@@ -874,8 +874,8 @@
           <destructible>true</destructible>
           <staticID>693</staticID>
           <pos>
-            <X>699</X>
-            <Y>173.000122</Y>
+            <x>699</x>
+            <y>173.000122</y>
           </pos>
           <rotation>0.287265271</rotation>
           <typeName>wall model</typeName>
@@ -885,8 +885,8 @@
           <destructible>true</destructible>
           <staticID>694</staticID>
           <pos>
-            <X>46.0000076</X>
-            <Y>510.000122</Y>
+            <x>46.0000076</x>
+            <y>510.000122</y>
           </pos>
           <rotation>5.4284153</rotation>
           <typeName>wall model</typeName>
@@ -896,8 +896,8 @@
           <destructible>true</destructible>
           <staticID>695</staticID>
           <pos>
-            <X>-17.9999924</X>
-            <Y>589.000061</Y>
+            <x>-17.9999924</x>
+            <y>589.000061</y>
           </pos>
           <rotation>0.148040682</rotation>
           <typeName>wall model</typeName>
@@ -907,8 +907,8 @@
           <destructible>true</destructible>
           <staticID>696</staticID>
           <pos>
-            <X>397.999878</X>
-            <Y>1298</Y>
+            <x>397.999878</x>
+            <y>1298</y>
           </pos>
           <rotation>1.000001</rotation>
           <typeName>wall model</typeName>
@@ -918,8 +918,8 @@
           <destructible>true</destructible>
           <staticID>697</staticID>
           <pos>
-            <X>858</X>
-            <Y>768.0001</Y>
+            <x>858</x>
+            <y>768.0001</y>
           </pos>
           <rotation>2.92862129</rotation>
           <typeName>wall model</typeName>
@@ -929,8 +929,8 @@
           <destructible>true</destructible>
           <staticID>698</staticID>
           <pos>
-            <X>1527</X>
-            <Y>601.0001</Y>
+            <x>1527</x>
+            <y>601.0001</y>
           </pos>
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
@@ -940,8 +940,8 @@
           <destructible>true</destructible>
           <staticID>699</staticID>
           <pos>
-            <X>1902</X>
-            <Y>1379.00012</Y>
+            <x>1902</x>
+            <y>1379.00012</y>
           </pos>
           <rotation>2.26481342</rotation>
           <typeName>wall model</typeName>
@@ -951,8 +951,8 @@
           <destructible>true</destructible>
           <staticID>700</staticID>
           <pos>
-            <X>1976</X>
-            <Y>1494</Y>
+            <x>1976</x>
+            <y>1494</y>
           </pos>
           <rotation>1.09408867</rotation>
           <typeName>wall model</typeName>
@@ -962,8 +962,8 @@
           <destructible>true</destructible>
           <staticID>701</staticID>
           <pos>
-            <X>1952</X>
-            <Y>1437</Y>
+            <x>1952</x>
+            <y>1437</y>
           </pos>
           <rotation>1.55349469</rotation>
           <typeName>wall model</typeName>
@@ -973,8 +973,8 @@
           <destructible>true</destructible>
           <staticID>702</staticID>
           <pos>
-            <X>1017.99988</X>
-            <Y>751</Y>
+            <x>1017.99988</x>
+            <y>751</y>
           </pos>
           <rotation>4.283094</rotation>
           <typeName>wall model</typeName>
@@ -984,8 +984,8 @@
           <destructible>true</destructible>
           <staticID>703</staticID>
           <pos>
-            <X>233</X>
-            <Y>1375.00012</Y>
+            <x>233</x>
+            <y>1375.00012</y>
           </pos>
           <rotation>3.29627013</rotation>
           <typeName>wall model</typeName>
@@ -995,8 +995,8 @@
           <destructible>true</destructible>
           <staticID>704</staticID>
           <pos>
-            <X>1950.99988</X>
-            <Y>911</Y>
+            <x>1950.99988</x>
+            <y>911</y>
           </pos>
           <rotation>0.782596767</rotation>
           <typeName>wall model</typeName>
@@ -1006,8 +1006,8 @@
           <destructible>true</destructible>
           <staticID>705</staticID>
           <pos>
-            <X>1094</X>
-            <Y>1214</Y>
+            <x>1094</x>
+            <y>1214</y>
           </pos>
           <rotation>0.2223829</rotation>
           <typeName>wall model</typeName>
@@ -1017,8 +1017,8 @@
           <destructible>true</destructible>
           <staticID>706</staticID>
           <pos>
-            <X>1393</X>
-            <Y>1955</Y>
+            <x>1393</x>
+            <y>1955</y>
           </pos>
           <rotation>3.656542</rotation>
           <typeName>wall model</typeName>
@@ -1028,8 +1028,8 @@
           <destructible>true</destructible>
           <staticID>707</staticID>
           <pos>
-            <X>124</X>
-            <Y>1566.00012</Y>
+            <x>124</x>
+            <y>1566.00012</y>
           </pos>
           <rotation>0.9702403</rotation>
           <typeName>wall model</typeName>
@@ -1039,8 +1039,8 @@
           <destructible>true</destructible>
           <staticID>708</staticID>
           <pos>
-            <X>664.0001</X>
-            <Y>1575.00012</Y>
+            <x>664.0001</x>
+            <y>1575.00012</y>
           </pos>
           <rotation>4.59663963</rotation>
           <typeName>wall model</typeName>
@@ -1050,8 +1050,8 @@
           <destructible>true</destructible>
           <staticID>709</staticID>
           <pos>
-            <X>1286</X>
-            <Y>225.999985</Y>
+            <x>1286</x>
+            <y>225.999985</y>
           </pos>
           <rotation>5.93344831</rotation>
           <typeName>wall model</typeName>
@@ -1061,8 +1061,8 @@
           <destructible>true</destructible>
           <staticID>710</staticID>
           <pos>
-            <X>1533</X>
-            <Y>1952</Y>
+            <x>1533</x>
+            <y>1952</y>
           </pos>
           <rotation>4.194876</rotation>
           <typeName>wall model</typeName>
@@ -1072,8 +1072,8 @@
           <destructible>true</destructible>
           <staticID>711</staticID>
           <pos>
-            <X>790</X>
-            <Y>1544.00012</Y>
+            <x>790</x>
+            <y>1544.00012</y>
           </pos>
           <rotation>1.60762393</rotation>
           <typeName>wall model</typeName>
@@ -1083,8 +1083,8 @@
           <destructible>true</destructible>
           <staticID>712</staticID>
           <pos>
-            <X>1789</X>
-            <Y>1920</Y>
+            <x>1789</x>
+            <y>1920</y>
           </pos>
           <rotation>1.17813051</rotation>
           <typeName>wall model</typeName>
@@ -1094,8 +1094,8 @@
           <destructible>true</destructible>
           <staticID>713</staticID>
           <pos>
-            <X>1901</X>
-            <Y>1915</Y>
+            <x>1901</x>
+            <y>1915</y>
           </pos>
           <rotation>2.90417</rotation>
           <typeName>wall model</typeName>
@@ -1105,8 +1105,8 @@
           <destructible>true</destructible>
           <staticID>714</staticID>
           <pos>
-            <X>19.99974</X>
-            <Y>639</Y>
+            <x>19.99974</x>
+            <y>639</y>
           </pos>
           <rotation>5.19202232</rotation>
           <typeName>wall model</typeName>
@@ -1116,8 +1116,8 @@
           <destructible>true</destructible>
           <staticID>715</staticID>
           <pos>
-            <X>1932.99988</X>
-            <Y>1555</Y>
+            <x>1932.99988</x>
+            <y>1555</y>
           </pos>
           <rotation>1.36547077</rotation>
           <typeName>wall model</typeName>
@@ -1127,8 +1127,8 @@
           <destructible>true</destructible>
           <staticID>716</staticID>
           <pos>
-            <X>1316.99988</X>
-            <Y>294</Y>
+            <x>1316.99988</x>
+            <y>294</y>
           </pos>
           <rotation>5.21245956</rotation>
           <typeName>wall model</typeName>
@@ -1138,8 +1138,8 @@
           <destructible>true</destructible>
           <staticID>717</staticID>
           <pos>
-            <X>349</X>
-            <Y>4.00009727</Y>
+            <x>349</x>
+            <y>4.00009727</y>
           </pos>
           <rotation>0.102851868</rotation>
           <typeName>wall model</typeName>
@@ -1149,8 +1149,8 @@
           <destructible>true</destructible>
           <staticID>718</staticID>
           <pos>
-            <X>1985</X>
-            <Y>1149.00012</Y>
+            <x>1985</x>
+            <y>1149.00012</y>
           </pos>
           <rotation>5.625443</rotation>
           <typeName>wall model</typeName>
@@ -1160,8 +1160,8 @@
           <destructible>true</destructible>
           <staticID>719</staticID>
           <pos>
-            <X>1887.99988</X>
-            <Y>781.0001</Y>
+            <x>1887.99988</x>
+            <y>781.0001</y>
           </pos>
           <rotation>1.408745</rotation>
           <typeName>wall model</typeName>
@@ -1171,8 +1171,8 @@
           <destructible>true</destructible>
           <staticID>720</staticID>
           <pos>
-            <X>15.9999924</X>
-            <Y>845.000061</Y>
+            <x>15.9999924</x>
+            <y>845.000061</y>
           </pos>
           <rotation>5.36987543</rotation>
           <typeName>wall model</typeName>
@@ -1182,8 +1182,8 @@
           <destructible>false</destructible>
           <staticID>721</staticID>
           <pos>
-            <X>1656</X>
-            <Y>2173</Y>
+            <x>1656</x>
+            <y>2173</y>
           </pos>
           <rotation>0.121960044</rotation>
           <typeName>wall model</typeName>
@@ -1193,8 +1193,8 @@
           <destructible>true</destructible>
           <staticID>722</staticID>
           <pos>
-            <X>-355</X>
-            <Y>1461.00012</Y>
+            <x>-355</x>
+            <y>1461.00012</y>
           </pos>
           <rotation>2.25332022</rotation>
           <typeName>wall model</typeName>
@@ -1204,8 +1204,8 @@
           <destructible>false</destructible>
           <staticID>723</staticID>
           <pos>
-            <X>1998</X>
-            <Y>11</Y>
+            <x>1998</x>
+            <y>11</y>
           </pos>
           <rotation>5.05617857</rotation>
           <typeName>wall model</typeName>
@@ -1215,8 +1215,8 @@
           <destructible>false</destructible>
           <staticID>724</staticID>
           <pos>
-            <X>2216</X>
-            <Y>972</Y>
+            <x>2216</x>
+            <y>972</y>
           </pos>
           <rotation>3.363173</rotation>
           <typeName>wall model</typeName>
@@ -1226,8 +1226,8 @@
           <destructible>false</destructible>
           <staticID>725</staticID>
           <pos>
-            <X>120.000008</X>
-            <Y>1102</Y>
+            <x>120.000008</x>
+            <y>1102</y>
           </pos>
           <rotation>3.92590976</rotation>
           <typeName>wall model</typeName>
@@ -1237,8 +1237,8 @@
           <destructible>false</destructible>
           <staticID>726</staticID>
           <pos>
-            <X>-88.00006</X>
-            <Y>32.0000763</Y>
+            <x>-88.00006</x>
+            <y>32.0000763</y>
           </pos>
           <rotation>0.786540747</rotation>
           <typeName>wall model</typeName>
@@ -1248,8 +1248,8 @@
           <destructible>true</destructible>
           <staticID>727</staticID>
           <pos>
-            <X>1049.99988</X>
-            <Y>2007</Y>
+            <x>1049.99988</x>
+            <y>2007</y>
           </pos>
           <rotation>3.38036</rotation>
           <typeName>wall model</typeName>
@@ -1259,8 +1259,8 @@
           <destructible>true</destructible>
           <staticID>728</staticID>
           <pos>
-            <X>1325.99988</X>
-            <Y>2000.99988</Y>
+            <x>1325.99988</x>
+            <y>2000.99988</y>
           </pos>
           <rotation>2.31224513</rotation>
           <typeName>wall model</typeName>
@@ -1270,8 +1270,8 @@
           <destructible>false</destructible>
           <staticID>729</staticID>
           <pos>
-            <X>365.999878</X>
-            <Y>2012</Y>
+            <x>365.999878</x>
+            <y>2012</y>
           </pos>
           <rotation>0.4531524</rotation>
           <typeName>wall model</typeName>
@@ -1281,8 +1281,8 @@
           <destructible>false</destructible>
           <staticID>730</staticID>
           <pos>
-            <X>1902.99988</X>
-            <Y>43.00007</Y>
+            <x>1902.99988</x>
+            <y>43.00007</y>
           </pos>
           <rotation>2.72640014</rotation>
           <typeName>wall model</typeName>
@@ -1292,8 +1292,8 @@
           <destructible>false</destructible>
           <staticID>731</staticID>
           <pos>
-            <X>2020</X>
-            <Y>24.0001488</Y>
+            <x>2020</x>
+            <y>24.0001488</y>
           </pos>
           <rotation>4.54008245</rotation>
           <typeName>wall model</typeName>
@@ -1301,18 +1301,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>340</X>
-              <Y>80</Y>
+              <x>340</x>
+              <y>80</y>
             </min>
             <max>
-              <X>650</X>
-              <Y>150</Y>
+              <x>650</x>
+              <y>150</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1320,18 +1320,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>150</X>
-              <Y>420</Y>
+              <x>150</x>
+              <y>420</y>
             </min>
             <max>
-              <X>240</X>
-              <Y>630</Y>
+              <x>240</x>
+              <y>630</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1339,18 +1339,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>90</X>
-              <Y>810</Y>
+              <x>90</x>
+              <y>810</y>
             </min>
             <max>
-              <X>165</X>
-              <Y>1040</Y>
+              <x>165</x>
+              <y>1040</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1358,18 +1358,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1600</X>
-              <Y>880</Y>
+              <x>1600</x>
+              <y>880</y>
             </min>
             <max>
-              <X>1750</X>
-              <Y>980</Y>
+              <x>1750</x>
+              <y>980</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1377,18 +1377,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1830</X>
-              <Y>1080</Y>
+              <x>1830</x>
+              <y>1080</y>
             </min>
             <max>
-              <X>1915</X>
-              <Y>1250</Y>
+              <x>1915</x>
+              <y>1250</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1396,18 +1396,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1850</X>
-              <Y>330</Y>
+              <x>1850</x>
+              <y>330</y>
             </min>
             <max>
-              <X>1930</X>
-              <Y>482</Y>
+              <x>1930</x>
+              <y>482</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1415,18 +1415,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1880</X>
-              <Y>1630</Y>
+              <x>1880</x>
+              <y>1630</y>
             </min>
             <max>
-              <X>1930</X>
-              <Y>1715</Y>
+              <x>1930</x>
+              <y>1715</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1434,18 +1434,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1630</X>
-              <Y>1800</Y>
+              <x>1630</x>
+              <y>1800</y>
             </min>
             <max>
-              <X>1780</X>
-              <Y>1840</Y>
+              <x>1780</x>
+              <y>1840</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1453,18 +1453,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1330</X>
-              <Y>1850</Y>
+              <x>1330</x>
+              <y>1850</y>
             </min>
             <max>
-              <X>1470</X>
-              <Y>1890</Y>
+              <x>1470</x>
+              <y>1890</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1472,18 +1472,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1120</X>
-              <Y>1850</Y>
+              <x>1120</x>
+              <y>1850</y>
             </min>
             <max>
-              <X>1230</X>
-              <Y>1900</Y>
+              <x>1230</x>
+              <y>1900</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1491,18 +1491,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>280</X>
-              <Y>1905</Y>
+              <x>280</x>
+              <y>1905</y>
             </min>
             <max>
-              <X>360</X>
-              <Y>1950</Y>
+              <x>360</x>
+              <y>1950</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -1510,12 +1510,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>80</X>
-              <Y>270</Y>
+              <x>80</x>
+              <y>270</y>
             </min>
             <max>
-              <X>100</X>
-              <Y>290</Y>
+              <x>100</x>
+              <y>290</y>
             </max>
           </spawnArea>
           <spawnInterval>30</spawnInterval>
@@ -1535,8 +1535,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -1544,12 +1544,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1320</X>
-              <Y>100</Y>
+              <x>1320</x>
+              <y>100</y>
             </min>
             <max>
-              <X>1340</X>
-              <Y>120</Y>
+              <x>1340</x>
+              <y>120</y>
             </max>
           </spawnArea>
           <spawnInterval>32</spawnInterval>
@@ -1573,8 +1573,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -1582,12 +1582,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1780</X>
-              <Y>610</Y>
+              <x>1780</x>
+              <y>610</y>
             </min>
             <max>
-              <X>1800</X>
-              <Y>630</Y>
+              <x>1800</x>
+              <y>630</y>
             </max>
           </spawnArea>
           <spawnInterval>30</spawnInterval>
@@ -1607,8 +1607,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -1616,12 +1616,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>700</X>
-              <Y>1720</Y>
+              <x>700</x>
+              <y>1720</y>
             </min>
             <max>
-              <X>720</X>
-              <Y>1740</Y>
+              <x>720</x>
+              <y>1740</y>
             </max>
           </spawnArea>
           <spawnInterval>32</spawnInterval>
@@ -1645,8 +1645,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -1654,12 +1654,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>105</X>
-              <Y>1120</Y>
+              <x>105</x>
+              <y>1120</y>
             </min>
             <max>
-              <X>125</X>
-              <Y>1140</Y>
+              <x>125</x>
+              <y>1140</y>
             </max>
           </spawnArea>
           <spawnInterval>30</spawnInterval>
@@ -1679,8 +1679,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -1691,8 +1691,8 @@
   <info>
     <name>Lumipesu</name>
     <dimensions>
-      <X>2000</X>
-      <Y>2000</Y>
+      <x>2000</x>
+      <y>2000</y>
     </dimensions>
     <docks>2</docks>
     <previewName>preview_arena_annalunta</previewName>
@@ -1712,57 +1712,57 @@ your end.</infoText>
   </backgroundMusic>
   <binFilename>Arena_Lumipesu.bin</binFilename>
   <gravity>
-    <X>0</X>
-    <Y>-30</Y>
+    <x>0</x>
+    <y>-30</y>
   </gravity>
   <lighting>
     <light0DiffuseColor>
-      <X>1</X>
-      <Y>1</Y>
-      <Z>1</Z>
+      <x>1</x>
+      <y>1</y>
+      <z>1</z>
     </light0DiffuseColor>
     <light0Direction>
-      <X>-0.4082483</X>
-      <Y>-0.4082483</Y>
-      <Z>-0.8164966</Z>
+      <x>-0.4082483</x>
+      <y>-0.4082483</y>
+      <z>-0.8164966</z>
     </light0Direction>
     <light0Enabled>true</light0Enabled>
     <light0SpecularColor>
-      <X>0.956862748</X>
-      <Y>0.8627451</Y>
-      <Z>0.494117647</Z>
+      <x>0.956862748</x>
+      <y>0.8627451</y>
+      <z>0.494117647</z>
     </light0SpecularColor>
     <light1DiffuseColor>
-      <X>0</X>
-      <Y>0.2</Y>
-      <Z>0.6</Z>
+      <x>0</x>
+      <y>0.2</y>
+      <z>0.6</z>
     </light1DiffuseColor>
     <light1Direction>
-      <X>0.4082483</X>
-      <Y>-0.4082483</Y>
-      <Z>-0.8164966</Z>
+      <x>0.4082483</x>
+      <y>-0.4082483</y>
+      <z>-0.8164966</z>
     </light1Direction>
     <light1Enabled>true</light1Enabled>
     <light1SpecularColor>
-      <X>0</X>
-      <Y>0.2</Y>
-      <Z>0.6</Z>
+      <x>0</x>
+      <y>0.2</y>
+      <z>0.6</z>
     </light1SpecularColor>
     <light2DiffuseColor>
-      <X>0</X>
-      <Y>0.5</Y>
-      <Z>0.9</Z>
+      <x>0</x>
+      <y>0.5</y>
+      <z>0.9</z>
     </light2DiffuseColor>
     <light2Direction>
-      <X>0.4082483</X>
-      <Y>0.4082483</Y>
-      <Z>0.8164966</Z>
+      <x>0.4082483</x>
+      <y>0.4082483</y>
+      <z>0.8164966</z>
     </light2Direction>
     <light2Enabled>false</light2Enabled>
     <light2SpecularColor>
-      <X>0</X>
-      <Y>0.5</Y>
-      <Z>0.9</Z>
+      <x>0</x>
+      <y>0.5</y>
+      <z>0.9</z>
     </light2SpecularColor>
   </lighting>
 </ArenaType>

@@ -279,10 +279,10 @@ namespace AW2.UI.WPF
 
         #region Helpers
 
-        private static IEnumerable<Attribute> GetPropertyAttributes(System.Reflection.FieldInfo field)
+        private static IEnumerable<Attribute> GetPropertyAttributes(FieldOrPropertyInfo member)
         {
-            if (field.Name.ToLower(CultureInfo.InvariantCulture).Contains("rotation")) yield return new EditorAttribute(typeof(RotationEditor), typeof(PropertyValueEditor));
-            if (field.FieldType == typeof(Vector2)) yield return new EditorAttribute(typeof(Vector2Editor), typeof(PropertyValueEditor));
+            if (member.Name.ToLowerInvariant().Contains("rotation")) yield return new EditorAttribute(typeof(RotationEditor), typeof(PropertyValueEditor));
+            if (member.ValueType == typeof(Vector2)) yield return new EditorAttribute(typeof(Vector2Editor), typeof(PropertyValueEditor));
         }
 
         private void InitializeGraphicsDeviceService()

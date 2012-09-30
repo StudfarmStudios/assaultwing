@@ -6,31 +6,16 @@ using AW2.Helpers.Serialization;
 
 namespace AW2.Settings
 {
-    [LimitedSerialization]
     public class AWSettings
     {
-        [TypeParameter]
-        private SoundSettings _sound;
-        [TypeParameter]
-        private NetSettings _net;
-        [TypeParameter]
-        private GraphicsSettings _graphics;
-        [TypeParameter]
-        private PlayerSettings _players;
-        [TypeParameter]
-        private ControlsSettings _controls;
-        [TypeParameter]
-        private SystemSettings _system;
-
-        public SoundSettings Sound { get { return _sound; } private set { _sound = value; } }
-        public NetSettings Net { get { return _net; } private set { _net = value; } }
-        public GraphicsSettings Graphics { get { return _graphics; } private set { _graphics = value; } }
-        public PlayerSettings Players { get { return _players; } private set { _players = value; } }
-        public ControlsSettings Controls { get { return _controls; } private set { _controls = value; } }
-        public SystemSettings System { get { return _system; } private set { _system = value; } }
+        public SoundSettings Sound { get; private set; }
+        public NetSettings Net { get; private set; }
+        public GraphicsSettings Graphics { get; private set; }
+        public PlayerSettings Players { get; private set; }
+        public ControlsSettings Controls { get; private set; }
+        public SystemSettings System { get; private set; }
 
         private string Filename { get; set; }
-
         private static string GetSettingsFilename(string directory) { return Path.Combine(directory, "AssaultWing_config.xml"); }
 
         public static AWSettings FromFile(AssaultWingCore game, string directory)
@@ -38,7 +23,7 @@ namespace AW2.Settings
             var filename = GetSettingsFilename(directory);
             if (File.Exists(filename))
             {
-                var settings = (AWSettings)TypeLoader.LoadTemplate(filename, typeof(AWSettings), null, true);
+                var settings = (AWSettings)TypeLoader.LoadTemplate(filename, typeof(AWSettings), typeof(TypeParameterAttribute), true);
                 if (settings != null)
                 {
                     settings.Filename = filename;

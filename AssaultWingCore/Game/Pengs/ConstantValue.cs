@@ -1,9 +1,12 @@
 ﻿using System;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Pengs
 {
+    [LimitedSerialization]
     public class ConstantValue : PengParameter
     {
+        [TypeParameter]
         private float _value;
 
         /// <summary>

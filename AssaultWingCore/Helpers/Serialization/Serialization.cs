@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Xna.Framework;
+using TypeTuple = System.Tuple<System.Type, System.Type>;
 using TypeTriple = System.Tuple<System.Type, System.Type, System.Type>;
 
 namespace AW2.Helpers.Serialization
@@ -19,37 +20,41 @@ namespace AW2.Helpers.Serialization
     /// These serialisation and deserialisation methods work only with each other
     /// and not with .NET's serialisation classes.
     /// 
-    /// Objects are serialised to XML so that each element name corresponds to a field name
+    /// Objects are serialised to XML so that each element name corresponds to a field or property name
     /// and every element has attribute 'type' that tells the runtime type of the value
-    /// stored to that field. The value can be of any type that can be casted to the field's
-    /// type. The field's type is not stored in the XML. Only instance fields are serialised,
-    /// no properties, methods or static members.
+    /// stored to that member. The value can be of any type that can be casted to the type of the
+    /// member. The type of the member is not stored in the XML. Only instance members are serialised.
     /// 
     /// Partial serialisation is supported via <b>limitation attributes</b>. 
-    /// To limit the (de)serialisation of an object to a certain set of fields, apply
-    /// an attribute to those fields and then pass the attribute's type to the 
-    /// (de)serialisation method. The objects will have only those fields
+    /// To limit the (de)serialisation of an object to a certain set of members, apply
+    /// an attribute to those members and then pass the attribute's type to the 
+    /// (de)serialisation method. The objects will have only those members
     /// (de)serialised that have the specified attribute. The same limitation attribute
-    /// will also apply to fields in deeper levels of (de)serialisation, i.e., when
-    /// (de)serialising the fields of the value of a field in the original object.
+    /// will also apply to members in deeper levels of (de)serialisation, i.e., when
+    /// (de)serialising the members of the value of a member in the original object.
     /// 
     /// The chosen limitation attribute can be switched to another during (de)serialisation
-    /// for any chosen field. To do this, apply LimitationSwitchAttribute.
-    /// <seealso cref="LimitationSwitchAttribute"/>
+    /// for any chosen member. To do this, apply <see cref="LimitationSwitchAttribute"/>.
     public static class Serialization
     {
         /// <summary>
-        /// Cache for field infos of fields that must be copied deeply.
-        /// An array of field infos is stored for
-        /// each pair (type1, type2), where type1 is the type whose fields
-        /// we are talking about, and type2 is the limiting attribute that
-        /// the fields must have, or <c>null</c> to list all fields.
+        /// Keys are (TYPE1, TYPE2, TYPE3) where
+        /// TYPE1 is the type whose fields we are talking about,
+        /// TYPE2 is the limiting attribute that the members must have, or null to include all members, and
+        /// TYPE3 is the exclusion attribute that the members must not have, or null to not exclude any members.
+        /// </summary>
+        /// <seealso cref="GetFieldsAndProperties(object, Type)"/>
+        private static readonly Dictionary<TypeTriple, IEnumerable<FieldOrPropertyInfo>> g_typeFieldsAndProperties = new Dictionary<TypeTriple, IEnumerable<FieldOrPropertyInfo>>();
+
+        /// <summary>
+        /// Keys are (TYPE1, TYPE2) where
+        /// TYPE1 is the type whose fields we are talking about,
+        /// TYPE2 is the exclusion attribute that the fields must not have, or null to not exclude any fields.
         /// </summary>
         /// <seealso cref="GetFields(object, Type)"/>
-        private static readonly Dictionary<TypeTriple, IEnumerable<FieldInfo>> g_typeFields = new Dictionary<TypeTriple, IEnumerable<FieldInfo>>();
+        private static readonly Dictionary<TypeTuple, IEnumerable<FieldInfo>> g_typeFields = new Dictionary<TypeTuple, IEnumerable<FieldInfo>>();
 
         private static Dictionary<Tuple<Type, Type>, bool> g_isAssignableFromCache = new Dictionary<Tuple<Type, Type>, bool>();
-        private static Dictionary<Tuple<Type, Type>, FieldInfo[]> g_fieldCache = new Dictionary<Tuple<Type, Type>, FieldInfo[]>();
         private static Dictionary<string, Type> g_typeNameToType = new Dictionary<string, Type>();
 
         #region public methods
@@ -60,7 +65,7 @@ namespace AW2.Helpers.Serialization
         /// <param name="writer">Where to write the serialised data.</param>
         /// <param name="elementName">Name of the XML element where the object is stored.</param>
         /// <param name="obj">The object whose partial state to serialise.</param>
-        /// <param name="limitationAttribute">Limit the serialisation to fields with this attribute.</param>
+        /// <param name="limitationAttribute">Limit the serialisation to members with this attribute.</param>
         /// <param name="baseType">Expected type of the object. The given object must be convertible to this type.
         /// If null, then the type of the given object is the base type.</param>
         public static void SerializeXml(XmlWriter writer, string elementName, object obj, Type limitationAttribute, Type baseType = null)
@@ -108,14 +113,14 @@ namespace AW2.Helpers.Serialization
         /// <summary>
         /// Restores the specified part of the state of a serialised object from an XML stream.
         /// </summary>
-        /// Fields that don't have a serialised value are left untouched.
+        /// Members that don't have a serialised value are left untouched.
         /// Unknown XML elements are reported to <see cref="AW2.Helpers.Log"/>.
-        /// If deserialised object is of a type that implements <see cref="IConsistencyCheckable"/>,
+        /// If the deserialised object is of a type that implements <see cref="IConsistencyCheckable"/>,
         /// the object is made consistent after deserialisation.
         /// <param name="reader">Where to read the serialised data.</param>
         /// <param name="elementName">Name of the XML element where the object is stored.</param>
         /// <param name="objType">Type of the value to deserialise.</param>
-        /// <param name="limitationAttribute">Limit the deserialisation to fields with this attribute.</param>
+        /// <param name="limitationAttribute">Limit the deserialisation to members with this attribute.</param>
         /// <param name="tolerant">If true, errors are not raised for missing or extra XML elements.</param>
         /// <returns>The deserialised object.</returns>
         public static object DeserializeXml(XmlReader reader, string elementName, Type objType, Type limitationAttribute, bool tolerant)
@@ -197,7 +202,7 @@ namespace AW2.Helpers.Serialization
         private static object DeserializeXmlOther(XmlReader reader, Type limitationAttribute, Type writtenType, bool tolerant)
         {
             var returnValue = Serialization.CreateInstance(writtenType);
-            DeserializeFieldsXml(reader, returnValue, limitationAttribute, tolerant);
+            DeserializeFieldsAndPropertiesXml(reader, returnValue, limitationAttribute, tolerant);
             return returnValue;
         }
 
@@ -262,47 +267,68 @@ namespace AW2.Helpers.Serialization
                 return Serialization.CreateInstance(writtenType, array);
         }
 
-        public static string GetSerializedName(FieldInfo field)
+        public static string GetSerializedName(FieldOrPropertyInfo member)
         {
-            var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
-            return serializedNameAttribute != null ? serializedNameAttribute.SerializedName
-                : field.Name.StartsWith("_") ? field.Name.Substring(1)
-                : field.Name;
+            var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(member.MemberInfo, typeof(SerializedNameAttribute));
+            var name = new StringBuilder(serializedNameAttribute != null ? serializedNameAttribute.SerializedName : member.Name);
+            if (name[0] == '_') name.Remove(0, 1);
+            name[0] = char.ToLower(name[0]);
+            return name.ToString();
         }
 
         /// <summary>
-        /// Returns the serialisable members of a type.
-        /// The search includes the object's public and non-public fields declared in its 
-        /// type and all base types.
-        /// The search is limited to members with <paramref name="limitationAttribute"/>, unless the parameter is null.
-        /// Members with <paramref name="exclusionAttribute"/> are excluded, unless the parameter is null.
+        /// Returns all fields of the type except for the fields that have <paramref name="exclusionAttribute"/> attached.
         /// </summary>
-        public static IEnumerable<FieldInfo> GetFields(Type objType, Type limitationAttribute, Type exclusionAttribute)
+        public static IEnumerable<FieldInfo> GetFields(Type objType, Type exclusionAttribute)
         {
-            var key = new TypeTriple(objType, limitationAttribute, exclusionAttribute);
+            var key = new TypeTuple(objType, exclusionAttribute);
             IEnumerable<FieldInfo> result;
             if (g_typeFields.TryGetValue(key, out result)) return result;
-            result = Attribute.IsDefined(objType, typeof(LimitedSerializationAttribute), true)
-                ? GetFieldsImpl(objType, limitationAttribute, exclusionAttribute)
-                : GetFieldsImpl(objType, null, exclusionAttribute);
+            result = GetFieldsCore(objType, exclusionAttribute);
             g_typeFields.Add(key, result);
             return result;
         }
 
         /// <summary>
-        /// Returns the declared instance fields of the given object that optionally have the given attribute.
+        /// Returns the serialisable members of a type.
+        /// If <paramref name="limitationAttribute"/> is not null and the type has <paramref name="LimitedSerializationAttribute"/>,
+        /// then all public and non-public members that have the limitation attribute are returned.
+        /// Otherwise only public members are returned.
+        /// The search includes members declared in the type and all its base types.
+        /// Members with <paramref name="exclusionAttribute"/> are excluded, unless the parameter is null.
         /// </summary>
-        /// The search includes the object's public and non-public fields declared in its 
-        /// type (excluding fields declared in any base types). Do not modify the returned array.
-        /// <param name="type">The type whose fields to scan for.</param>
-        /// <param name="limitationAttribute">If not <c>null</c>, return only fields with this attribute.</param>
-        /// <param name="exclusionAttribute">If not <c>null</c>, return only fields without this attribute.</param>
-        public static IEnumerable<FieldInfo> GetDeclaredFields(Type type, Type limitationAttribute, Type exclusionAttribute)
+        public static IEnumerable<FieldOrPropertyInfo> GetFieldsAndProperties(Type objType, Type limitationAttribute, Type exclusionAttribute)
         {
-            return type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(field =>
-                    (limitationAttribute == null || field.IsDefined(limitationAttribute, false)) &&
-                    (exclusionAttribute == null || !field.IsDefined(exclusionAttribute, false)));
+            var key = new TypeTriple(objType, limitationAttribute, exclusionAttribute);
+            IEnumerable<FieldOrPropertyInfo> result;
+            if (g_typeFieldsAndProperties.TryGetValue(key, out result)) return result;
+            result = Attribute.IsDefined(objType, typeof(LimitedSerializationAttribute), true)
+                ? GetFieldsAndPropertiesCore(objType, limitationAttribute, exclusionAttribute)
+                : GetFieldsAndPropertiesCore(objType, null, exclusionAttribute);
+            g_typeFieldsAndProperties.Add(key, result);
+            return result;
+        }
+
+        /// <summary>
+        /// Returns declared instance fields and properties of the given object.
+        /// The result doesn't include members declared in any base types.
+        /// If <paramref name="limitationAttribute"/> is null, only public members are returned.
+        /// Otherwise all public and non-public members with the limitation attribute are returned.
+        /// If <paramref name="exclusionAttribute"/> is not null, only members without the exclusion
+        /// attribute are returned.
+        /// </summary>
+        public static IEnumerable<FieldOrPropertyInfo> GetDeclaredFieldsAndProperties(Type type, Type limitationAttribute, Type exclusionAttribute)
+        {
+            var flags = limitationAttribute == null
+                ? BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public
+                : BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic;
+            return
+                from member in type.GetFields(flags).Cast<MemberInfo>().Union(type.GetProperties(flags))
+                where (limitationAttribute == null || member.IsDefined(limitationAttribute, false)) &&
+                      (exclusionAttribute == null || !member.IsDefined(exclusionAttribute, false))
+                select member is FieldInfo
+                    ? new FieldOrPropertyInfo((FieldInfo)member)
+                    : new FieldOrPropertyInfo((PropertyInfo)member);
         }
 
         /// <summary>
@@ -387,15 +413,16 @@ namespace AW2.Helpers.Serialization
                 return CreateInstance(type, list);
             }
 
-            // Other class instances are copied field by field.
-            object copy = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
-            var fields = GetFields(type, null, typeof(ExcludeFromDeepCopyAttribute));
-            foreach (var field in fields)
+            // Other class instances are copied member by member.
+            var copy = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
+            var members = GetFields(type, typeof(ExcludeFromDeepCopyAttribute));
+            foreach (var member in members)
             {
-                if (field.IsDefined(typeof(ShallowCopyAttribute), false))
-                    field.SetValue(copy, field.GetValue(obj));
+
+                if (member.IsDefined(typeof(ShallowCopyAttribute), false))
+                    member.SetValue(copy, member.GetValue(obj));
                 else
-                    field.SetValue(copy, DeepCopy(field.GetValue(obj)));
+                    member.SetValue(copy, DeepCopy(member.GetValue(obj)));
             }
             return copy;
         }
@@ -421,14 +448,14 @@ namespace AW2.Helpers.Serialization
                 if (enumB.MoveNext()) return false; // B has too many elements
                 return true;
             }
-            // The remaining cases are non-enumerable reference types; compare them field by field.
-            var fields = GetFields(type, null, typeof(ExcludeFromDeepCopyAttribute));
-            foreach (var field in fields)
+            // The remaining cases are non-enumerable reference types; compare them member by member.
+            var members = GetFields(type, typeof(ExcludeFromDeepCopyAttribute));
+            foreach (var member in members)
             {
-                var fieldValueA = field.GetValue(a);
-                var fieldValueB = field.GetValue(b);
-                if (field.IsDefined(typeof(ShallowCopyAttribute), false) && fieldValueA != fieldValueB) return false;
-                else if (!DeepEquals(fieldValueA, fieldValueB)) return false;
+                var valueA = member.GetValue(a);
+                var valueB = member.GetValue(b);
+                if (member.IsDefined(typeof(ShallowCopyAttribute), false) && valueA != valueB) return false;
+                else if (!DeepEquals(valueA, valueB)) return false;
             }
             return true;
         }
@@ -443,58 +470,63 @@ namespace AW2.Helpers.Serialization
         /// then serialisation is limited to members that have the specified limitation attribute.
         /// </summary>
         /// <param name="writer">Where to write the serialised values.</param>
-        /// <param name="obj">The object whose fields to serialise.</param>
-        /// <param name="limitationAttribute">Limit the serialisation to fields with this attribute,
-        /// or serialise all fields if limitationAttribute is a null reference.</param>
+        /// <param name="obj">The object whose members to serialise.</param>
+        /// <param name="limitationAttribute">Limit the serialisation to members with this attribute,
+        /// or serialise all members if limitationAttribute is a null reference.</param>
         private static void SerializeMembersXml(XmlWriter writer, object obj, Type limitationAttribute)
         {
-            var fields = GetFields(obj.GetType(), limitationAttribute, null);
-            foreach (var field in fields)
+            var members = GetFieldsAndProperties(obj.GetType(), limitationAttribute, null);
+            foreach (var member in members)
                 SerializeXml(writer,
-                    GetSerializedName(field),
-                    field.GetValue(obj),
-                    GetFieldLimitationAttribute(field, limitationAttribute),
-                    GetSerializedType(field.FieldType));
+                    GetSerializedName(member),
+                    member.GetValue(obj),
+                    GetLimitationAttribute(member, limitationAttribute),
+                    GetSerializedType(member.ValueType));
         }
 
         /// <summary>
-        /// Reads in fields of an object from an XML reader.
+        /// Reads in fields and properties of an object from an XML reader.
         /// </summary>
-        /// You can limit the deserialisation to fields that have the specified limitation attribute.
-        /// This limitation is applied only on instances of classes that have 
+        /// <remarks>
+        /// <para>
+        /// You can limit the deserialisation to members that have the specified limitation attribute.
+        /// This limitation is applied only to instances of classes that have 
         /// LimitedSerializationAttribute.
-        ///
+        ///</para>
+        ///<para>
         /// The XML reader is assumed to be positioned on the first child element of 
         /// the root element of the serialised 'obj' to be read. At successful return, 
         /// the XML reader will be positioned at the end element of the serialised 'obj'.
-        /// A log message is produced if an unknown serialised field is encountered.
-        /// It is guaranteed that all fields (marked with <c>limitationAttribute</c>)
+        /// A log message is produced if an unknown serialised member is encountered.
+        /// It is guaranteed that all fields and properties (marked with <paramref name="limitationAttribute"/>
         /// get a value exactly once, lest an exception is thrown.
+        /// </para>
+        /// </remarks>
         /// <param name="reader">Where to read the serialised values.</param>
-        /// <param name="obj">The object whose fields to deserialise.</param>
-        /// <param name="limitationAttribute">Limit the deserialisation to fields with this attribute,
-        /// or deserialise all fields if limitationAttribute is a null reference.</param>
+        /// <param name="obj">The object whose members to deserialise.</param>
+        /// <param name="limitationAttribute">Limit the deserialisation to members with this attribute,
+        /// or deserialise all members if limitationAttribute is a null reference.</param>
         /// <seealso cref="AW2.Helpers.LimitedSerializationAttribute"/>
-        private static void DeserializeFieldsXml(XmlReader reader, object obj, Type limitationAttribute, bool tolerant)
+        private static void DeserializeFieldsAndPropertiesXml(XmlReader reader, object obj, Type limitationAttribute, bool tolerant)
         {
             try
             {
                 var type = obj.GetType();
-                var fieldFinder = new FieldFinder(obj.GetType(), limitationAttribute, tolerant);
-                // NOTE: There is no guarantee about the order of the fields.
+                var finder = new FieldAndPropertyFinder(obj.GetType(), limitationAttribute, tolerant);
+                // NOTE: There is no guarantee about the order of the members.
                 while (reader.IsStartElement())
                 {
-                    var field = fieldFinder.Find(reader.Name);
-                    if (field == null)
+                    var member = finder.Find(reader.Name);
+                    if (member == null)
                     {
                         reader.Skip();
                         continue;
                     }
-                    var fieldLimitationAttribute = GetFieldLimitationAttribute(field, limitationAttribute);
-                    var value = DeserializeXml(reader, reader.Name, field.FieldType, fieldLimitationAttribute, tolerant);
-                    field.SetValue(obj, value);
+                    var memberLimitationAttribute = GetLimitationAttribute(member, limitationAttribute);
+                    var value = DeserializeXml(reader, reader.Name, member.ValueType, memberLimitationAttribute, tolerant);
+                    member.SetValue(obj, value);
                 }
-                fieldFinder.CheckForMissing();
+                finder.CheckForMissing();
             }
             catch (MemberSerializationException e)
             {
@@ -503,9 +535,9 @@ namespace AW2.Helpers.Serialization
             }
         }
 
-        private static Type GetFieldLimitationAttribute(FieldInfo field, Type limitationAttribute)
+        private static Type GetLimitationAttribute(FieldOrPropertyInfo member, Type limitationAttribute)
         {
-            var limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
+            var limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(member.MemberInfo, typeof(LimitationSwitchAttribute));
             if (limitationSwitchAttribute != null && limitationSwitchAttribute.From == limitationAttribute)
                 return limitationSwitchAttribute.To;
             return limitationAttribute;
@@ -702,12 +734,26 @@ namespace AW2.Helpers.Serialization
             return g_isAssignableFromCache[cacheKey] = result;
         }
 
-        private static IEnumerable<FieldInfo> GetFieldsImpl(Type objType, Type limitationAttribute, Type exclusionAttribute)
+        private static IEnumerable<FieldInfo> GetFieldsCore(Type objType, Type exclusionAttribute)
         {
-            var fields = GetDeclaredFields(objType, limitationAttribute, exclusionAttribute);
+            var result = GetDeclaredFields(objType, exclusionAttribute);
             for (var type = objType.BaseType; type != null; type = type.BaseType)
-                fields = fields.Concat(GetDeclaredFields(type, limitationAttribute, exclusionAttribute));
-            return fields;
+                result = result.Concat(GetDeclaredFields(type, exclusionAttribute));
+            return result;
+        }
+
+        private static IEnumerable<FieldOrPropertyInfo> GetFieldsAndPropertiesCore(Type objType, Type limitationAttribute, Type exclusionAttribute)
+        {
+            var result = GetDeclaredFieldsAndProperties(objType, limitationAttribute, exclusionAttribute);
+            for (var type = objType.BaseType; type != null; type = type.BaseType)
+                result = result.Concat(GetDeclaredFieldsAndProperties(type, limitationAttribute, exclusionAttribute));
+            return result;
+        }
+
+        private static IEnumerable<FieldInfo> GetDeclaredFields(Type type, Type exclusionAttribute)
+        {
+            var flags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic;
+            return type.GetFields(flags).Where(field => !field.IsDefined(exclusionAttribute, false));
         }
 
         #endregion // private methods

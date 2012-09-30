@@ -4,9 +4,7 @@ namespace AW2.Settings
 {
     public class SystemSettings
     {
-        private string _arenaEditorDefaultDirectory;
-
-        public string ArenaEditorDefaultDirectory { get { return _arenaEditorDefaultDirectory; } set { _arenaEditorDefaultDirectory = value; } }
+        public string ArenaEditorDefaultDirectory { get; set; }
 
         public SystemSettings()
         {
@@ -15,7 +13,7 @@ namespace AW2.Settings
 
         public void Reset()
         {
-            _arenaEditorDefaultDirectory = Environment.CurrentDirectory;
+            ArenaEditorDefaultDirectory = Environment.CurrentDirectory;
         }
     }
 }

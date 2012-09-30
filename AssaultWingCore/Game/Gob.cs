@@ -927,7 +927,7 @@ namespace AW2.Game
         /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
         protected virtual void SetRuntimeState(Gob runtimeState)
         {
-            var fields = Serialization.GetFields(GetType(), typeof(RuntimeStateAttribute), null);
+            var fields = Serialization.GetFieldsAndProperties(GetType(), typeof(RuntimeStateAttribute), null);
             foreach (var field in fields)
             {
                 var value = field.GetValue(runtimeState);
@@ -1396,7 +1396,7 @@ namespace AW2.Game
 
         public PropertyDescriptorCollection GetProperties()
         {
-            var props = Serialization.GetFields(GetType(), typeof(RuntimeStateAttribute), null)
+            var props = Serialization.GetFieldsAndProperties(GetType(), typeof(RuntimeStateAttribute), null)
                 .Select(m => new GobPropertyDescriptor(m));
             return new PropertyDescriptorCollection(props.ToArray());
         }

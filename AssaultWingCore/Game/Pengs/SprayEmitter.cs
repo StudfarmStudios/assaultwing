@@ -41,18 +41,6 @@ namespace AW2.Game.Pengs
 
         #region SprayEmitter fields
 
-        /// <summary>
-        /// Names of textures of particles to emit.
-        /// </summary>
-        [TypeParameter]
-        private CanonicalString[] _textureNames;
-
-        /// <summary>
-        /// Names of types of gobs to emit.
-        /// </summary>
-        [TypeParameter]
-        private CanonicalString[] _gobTypeNames;
-
         [ExcludeFromDeepCopy]
         private Peng _peng;
 
@@ -112,12 +100,14 @@ namespace AW2.Game.Pengs
         /// <summary>
         /// Names of textures of particles to emit.
         /// </summary>
-        public CanonicalString[] TextureNames { get { return _textureNames; } }
+        [TypeParameter]
+        public CanonicalString[] TextureNames { get; private set; }
 
         /// <summary>
         /// Names of types of gobs to emit.
         /// </summary>
-        public CanonicalString[] GobTypeNames { get { return _gobTypeNames; } }
+        [TypeParameter]
+        public CanonicalString[] GobTypeNames { get; private set; }
 
         /// <summary>
         /// The peng this emitter belongs to.
@@ -148,8 +138,8 @@ namespace AW2.Game.Pengs
         /// </summary>
         public SprayEmitter()
         {
-            _textureNames = new[] { (CanonicalString)"dummytexture" };
-            _gobTypeNames = new[] { (CanonicalString)"dummygob" };
+            TextureNames = new[] { (CanonicalString)"dummytexture" };
+            GobTypeNames = new[] { (CanonicalString)"dummygob" };
             _radius = 15;
             _sprayAngle = MathHelper.PiOver4;
             _facingType = FacingType.Random;
@@ -211,7 +201,7 @@ namespace AW2.Game.Pengs
             // Note: TimeSpan.FromSeconds rounds to the nearest millisecond which may be too inaccurate.
             _nextBirth += TimeSpan.FromMilliseconds(1000 * createCount / _emissionFrequency);
 
-            if (!skipParticles && createCount > 0 && _textureNames.Length > 0)
+            if (!skipParticles && createCount > 0 && TextureNames.Length > 0)
                 particles = new List<Particle>();
 
             // Create the particles. They are created 
@@ -220,17 +210,17 @@ namespace AW2.Game.Pengs
             for (int i = 0; i < createCount; ++i)
             {
                 // Find out type of emitted thing (which gob or particle) and create it.
-                int emitType = RandomHelper.GetRandomInt(_textureNames.Length + _gobTypeNames.Length);
-                if (skipParticles && emitType < _textureNames.Length) continue;
+                int emitType = RandomHelper.GetRandomInt(TextureNames.Length + GobTypeNames.Length);
+                if (skipParticles && emitType < TextureNames.Length) continue;
 
                 // The emitted thing init routine must be an Action<Gob>
                 // so that it can be passed to Gob.CreateGob. Particle init
                 // is included in the same routine because of large similarities.
                 Action<Gob> emittedThingInit = gob => GobCreation(gob, createCount, i, emitType, ref particles);
-                if (emitType < _textureNames.Length)
+                if (emitType < TextureNames.Length)
                     emittedThingInit(null);
                 else
-                    Gob.CreateGob<Gob>(Peng.Game, _gobTypeNames[emitType - _textureNames.Length], emittedThingInit);
+                    Gob.CreateGob<Gob>(Peng.Game, GobTypeNames[emitType - TextureNames.Length], emittedThingInit);
             }
             return particles;
         }
@@ -325,7 +315,7 @@ namespace AW2.Game.Pengs
                 }
 
                 // Set the thing's parameters.
-                if (emitType < _textureNames.Length)
+                if (emitType < TextureNames.Length)
                 {
                     var particle = new Particle
                     {

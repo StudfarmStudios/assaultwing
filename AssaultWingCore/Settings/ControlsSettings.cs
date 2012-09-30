@@ -12,87 +12,78 @@ namespace AW2.Settings
 
     public class KeyControlType : IControlType
     {
-        private Keys _key;
+        public Keys Key { get; private set; }
 
         public KeyControlType(Keys key)
         {
-            _key = key;
+            Key = key;
         }
 
         public Control GetControl()
         {
-            return new KeyboardKey(_key);
+            return new KeyboardKey(Key);
         }
 
         public override string ToString()
         {
-            return _key.ToString();
+            return Key.ToString();
         }
     }
 
     public class GamePadButtonControlType : IControlType
     {
-        private int _gamePad;
-        private GamePadButtonType _button;
-
-        public GamePadButtonType Button { get { return _button; } }
+        public int GamePad { get; private set; }
+        public GamePadButtonType Button { get; private set; }
 
         public GamePadButtonControlType(int gamePad, GamePadButtonType button)
         {
-            _gamePad = gamePad;
-            _button = button;
+            GamePad = gamePad;
+            Button = button;
         }
 
         public Control GetControl()
         {
-            return new GamePadButton(_gamePad, _button);
+            return new GamePadButton(GamePad, Button);
         }
 
         public override string ToString()
         {
-            return string.Format("Pad{0} {1}", _gamePad + 1, _button);
+            return string.Format("Pad{0} {1}", GamePad + 1, Button);
         }
     }
 
     public class GamePadStickDirectionControlType : IControlType
     {
-        private int _gamePad;
-        private GamePadStickType _stick;
-        private GamePadStickDirectionType _direction;
+        public int GamePad { get; private set; }
+        public GamePadStickType Stick { get; private set; }
+        public GamePadStickDirectionType Direction { get; private set; }
 
         public GamePadStickDirectionControlType(int gamePad, GamePadStickType stick, GamePadStickDirectionType direction)
         {
-            _gamePad = gamePad;
-            _stick = stick;
-            _direction = direction;
+            GamePad = gamePad;
+            Stick = stick;
+            Direction = direction;
         }
 
         public Control GetControl()
         {
-            return new GamePadStickDirection(_gamePad, _stick, _direction);
+            return new GamePadStickDirection(GamePad, Stick, Direction);
         }
 
         public override string ToString()
         {
-            return string.Format("Pad{0} {1} {2}", _gamePad + 1, _stick, _direction);
+            return string.Format("Pad{0} {1} {2}", GamePad + 1, Stick, Direction);
         }
     }
 
     public class PlayerControlsSettings
     {
-        private IControlType _thrust;
-        private IControlType _left;
-        private IControlType _right;
-        private IControlType _fire1;
-        private IControlType _fire2;
-        private IControlType _extra;
-
-        public IControlType Thrust { get { return _thrust; } set { _thrust = value; } }
-        public IControlType Left { get { return _left; } set { _left = value; } }
-        public IControlType Right { get { return _right; } set { _right = value; } }
-        public IControlType Fire1 { get { return _fire1; } set { _fire1 = value; } }
-        public IControlType Fire2 { get { return _fire2; } set { _fire2 = value; } }
-        public IControlType Extra { get { return _extra; } set { _extra = value; } }
+        public IControlType Thrust { get; set; }
+        public IControlType Left { get; set; }
+        public IControlType Right { get; set; }
+        public IControlType Fire1 { get; set; }
+        public IControlType Fire2 { get; set; }
+        public IControlType Extra { get; set; }
 
         public void CopyFrom(PlayerControlsSettings other)
         {
@@ -144,13 +135,9 @@ namespace AW2.Settings
             Extra = new GamePadButtonControlType(1, GamePadButtonType.RTrigger),
         };
 
-        private PlayerControlsSettings _player1;
-        private PlayerControlsSettings _player2;
-        private IControlType _chat;
-
-        public PlayerControlsSettings Player1 { get { return _player1; } }
-        public PlayerControlsSettings Player2 { get { return _player2; } }
-        public IControlType Chat { get { return _chat; } set { _chat = value; } }
+        public PlayerControlsSettings Player1 { get; private set; }
+        public PlayerControlsSettings Player2 { get; private set; }
+        public IControlType Chat { get; set; }
 
         public ControlsSettings()
         {
@@ -159,9 +146,9 @@ namespace AW2.Settings
 
         public void Reset()
         {
-            _player1 = PRESET_KEYBOARD_RIGHT;
-            _player2 = PRESET_KEYBOARD_LEFT;
-            _chat = new KeyControlType(Keys.Enter);
+            Player1 = PRESET_KEYBOARD_RIGHT;
+            Player2 = PRESET_KEYBOARD_LEFT;
+            Chat = new KeyControlType(Keys.Enter);
         }
     }
 }

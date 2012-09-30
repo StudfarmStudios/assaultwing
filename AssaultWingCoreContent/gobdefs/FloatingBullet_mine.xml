@@ -48,8 +48,8 @@
       <name>Hit</name>
       <area type="AW2.Helpers.Geometric.Circle">
         <center>
-          <X>0</X>
-          <Y>0</Y>
+          <x>0</x>
+          <y>0</y>
         </center>
         <radius>240</radius>
       </area>
@@ -60,8 +60,8 @@
       <name>Magnet</name>
       <area type="AW2.Helpers.Geometric.Circle">
         <center>
-          <X>0</X>
-          <Y>0</Y>
+          <x>0</x>
+          <y>0</y>
         </center>
         <radius>2500</radius>
       </area>
@@ -72,8 +72,8 @@
       <name>Spread</name>
       <area type="AW2.Helpers.Geometric.Circle">
         <center>
-          <X>0</X>
-          <Y>0</Y>
+          <x>0</x>
+          <y>0</y>
         </center>
         <radius>1500</radius>
       </area>

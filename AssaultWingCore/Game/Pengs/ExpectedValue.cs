@@ -1,11 +1,15 @@
+using AW2.Helpers.Serialization;
 namespace AW2.Game.Pengs
 {
     /// <summary>
     /// Represents a random variable with a given expected value and variance.
     /// </summary>
+    [LimitedSerialization]
     public class ExpectedValue : PengParameter
     {
+        [TypeParameter]
         private float _expected;
+        [TypeParameter]
         private float _variance;
 
         /// <summary>

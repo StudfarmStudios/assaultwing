@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -16,8 +17,10 @@ namespace AW2.Helpers
     /// <seealso cref="AW2.Helpers.Serialization.Serialization"/>
     public abstract class Clonable
     {
-        private static readonly Type[] g_constructorInvokerParameterTypes = new[] { typeof(Clonable) };
-        private static readonly Type[] g_constructorParameterTypes = new[] { typeof(CanonicalString) };
+        private static readonly Type g_cloneMethodReturnType = null;
+        private static readonly Type[] g_cloneMethodParameterTypes = { typeof(Clonable), typeof(Clonable) };
+        private static readonly Type[] g_constructorInvokerParameterTypes = { typeof(Clonable) };
+        private static readonly Type[] g_constructorParameterTypes = { typeof(CanonicalString) };
         private static Dictionary<Type, DynamicMethod> g_cloneMethods = new Dictionary<Type, DynamicMethod>();
         private static Dictionary<Type, DynamicMethod> g_cloneMethodsWithRuntimeState = new Dictionary<Type, DynamicMethod>();
         private static Dictionary<Type, DynamicMethod> g_constructors = new Dictionary<Type, DynamicMethod>();
@@ -134,37 +137,52 @@ namespace AW2.Helpers
 
         private static DynamicMethod CreateCloneMethod(Type type, params Type[] cloneFieldAttributes)
         {
-            Type returnType = null;
-            Type[] parameterTypes = { typeof(Clonable), typeof(Clonable) };
-            var dyna = new DynamicMethod("Clone", returnType, parameterTypes, type);
+            var dyna = new DynamicMethod("Clone", g_cloneMethodReturnType, g_cloneMethodParameterTypes, type);
             var generator = dyna.GetILGenerator();
             var deepCopyMethod = typeof(AW2.Helpers.Serialization.Serialization).GetMethod("DeepCopy");
 
             // copy all fields from this to parameter
-            var fields = cloneFieldAttributes.SelectMany(att => AW2.Helpers.Serialization.Serialization.GetDeclaredFields(type, att, null));
-            foreach (var field in fields) EmitFieldCopyIL(generator, deepCopyMethod, field);
+            var members = cloneFieldAttributes.SelectMany(att => AW2.Helpers.Serialization.Serialization.GetDeclaredFieldsAndProperties(type, att, null));
+            foreach (var member in members) EmiFieldOrPropertyCopyIL(generator, deepCopyMethod, member);
             generator.Emit(OpCodes.Ret);
             return dyna;
         }
 
-        private static void EmitFieldCopyIL(ILGenerator generator, MethodInfo deepCopyMethod, FieldInfo field)
+        private static void EmiFieldOrPropertyCopyIL(ILGenerator generator, MethodInfo deepCopyMethod, FieldOrPropertyInfo member)
         {
-            if (field.FieldType.IsValueType || field.IsDefined(typeof(ShallowCopyAttribute), false))
+            Debug.Assert(member.MemberInfo is FieldInfo || member.MemberInfo is PropertyInfo, "Field or property expected");
+            if (member.ValueType.IsValueType || member.IsDefined(typeof(ShallowCopyAttribute), false))
             {
                 // shallow copy - copy value by simple assignment
                 generator.Emit(OpCodes.Ldarg_1);
                 generator.Emit(OpCodes.Ldarg_0);
-                generator.Emit(OpCodes.Ldfld, field);
-                generator.Emit(OpCodes.Stfld, field);
+                if (member.MemberInfo is FieldInfo)
+                {
+                    var field = (FieldInfo)member.MemberInfo;
+                    generator.Emit(OpCodes.Ldfld, field);
+                    generator.Emit(OpCodes.Stfld, field);
+                }
+                else
+                {
+                    var property = (PropertyInfo)member.MemberInfo;
+                    generator.Emit(OpCodes.Call, property.GetGetMethod());
+                    generator.Emit(OpCodes.Call, property.GetSetMethod());
+                }
             }
             else
             {
                 // deep copy - call special method for obtaining a deep copy
                 generator.Emit(OpCodes.Ldarg_1);
                 generator.Emit(OpCodes.Ldarg_0);
-                generator.Emit(OpCodes.Ldfld, field);
+                if (member.MemberInfo is FieldInfo)
+                    generator.Emit(OpCodes.Ldfld, (FieldInfo)member.MemberInfo);
+                else
+                    generator.Emit(OpCodes.Call, ((PropertyInfo)member.MemberInfo).GetGetMethod());
                 generator.Emit(OpCodes.Call, deepCopyMethod);
-                generator.Emit(OpCodes.Stfld, field);
+                if (member.MemberInfo is FieldInfo)
+                    generator.Emit(OpCodes.Stfld, (FieldInfo)member.MemberInfo);
+                else
+                    generator.Emit(OpCodes.Call, ((PropertyInfo)member.MemberInfo).GetSetMethod());
             }
         }
     }

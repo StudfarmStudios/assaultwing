@@ -38,7 +38,7 @@ namespace AW2.Helpers
             AssertClone(x => x.CloneWithRuntimeState(), GetRuntimeState);
         }
 
-        private void AssertClone(Func<Clonable, Clonable> getClone, Func<Type, IEnumerable<FieldInfo>> getFields)
+        private void AssertClone(Func<Clonable, Clonable> getClone, Func<Type, IEnumerable<FieldOrPropertyInfo>> getFieldsAndProperties)
         {
             CanonicalString.IsForLocalUseOnly = true;
             foreach (var type in ClonableSubclasses)
@@ -46,10 +46,10 @@ namespace AW2.Helpers
                 Clonable template;
                 if (!Templates.TryGetValue(type, out template)) continue; // No need to test types that don't have templates
                 var clone = getClone(template);
-                foreach (var field in getFields(type))
-                    Assert.That(Serialization.Serialization.DeepEquals(field.GetValue(template), field.GetValue(clone)),
-                        type.FullName + "." + field.Name + " wasn't cloned: " +
-                        field.GetValue(template) + " != " + field.GetValue(clone));
+                foreach (var member in getFieldsAndProperties(type))
+                    Assert.That(Serialization.Serialization.DeepEquals(member.GetValue(template), member.GetValue(clone)),
+                        type.FullName + "." + member.Name + " wasn't cloned: " +
+                        member.GetValue(template) + " != " + member.GetValue(clone));
             }
         }
 
@@ -77,24 +77,24 @@ namespace AW2.Helpers
             }
         }
 
-        private IEnumerable<FieldInfo> GetTypeParameters(Type type)
+        private IEnumerable<FieldOrPropertyInfo> GetTypeParameters(Type type)
         {
-            return Serialization.Serialization.GetDeclaredFields(type, typeof(Serialization.TypeParameterAttribute), null);
+            return Serialization.Serialization.GetDeclaredFieldsAndProperties(type, typeof(Serialization.TypeParameterAttribute), null);
         }
 
-        private IEnumerable<FieldInfo> GetRuntimeState(Type type)
+        private IEnumerable<FieldOrPropertyInfo> GetRuntimeState(Type type)
         {
-            return Serialization.Serialization.GetDeclaredFields(type, typeof(Serialization.RuntimeStateAttribute), null);
+            return Serialization.Serialization.GetDeclaredFieldsAndProperties(type, typeof(Serialization.RuntimeStateAttribute), null);
         }
 
         /// <summary>
-        /// Returns <paramref name="obj"/>, modified with mock values in its fields marked
+        /// Returns <paramref name="obj"/>, modified with mock values in its fields and properties marked
         /// with <paramref name="limitationAttribute"/>.
         /// </summary>
         private static T Mock<T>(T obj, Type limitationAttribute)
         {
-            foreach (var field in Serialization.Serialization.GetFields(obj.GetType(), limitationAttribute, null))
-                field.SetValue(obj, GetMockValue(field.FieldType, limitationAttribute));
+            foreach (var member in Serialization.Serialization.GetFieldsAndProperties(obj.GetType(), limitationAttribute, null))
+                member.SetValue(obj, GetMockValue(member.ValueType, limitationAttribute));
             return obj;
         }
 

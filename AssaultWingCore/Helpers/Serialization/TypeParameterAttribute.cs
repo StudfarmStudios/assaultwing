@@ -10,7 +10,7 @@ namespace AW2.Helpers.Serialization
     /// as limiting the (de)serialisation of an object.
     /// <seealso cref="Serialization.SerializeXml"/>
     /// <seealso cref="Serialization.DeserializeXml"/>
-    [AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class TypeParameterAttribute : Attribute
     {
     }

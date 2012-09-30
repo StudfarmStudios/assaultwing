@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Graphics
 {
@@ -39,20 +40,21 @@ namespace AW2.Graphics
     /// <summary>
     /// Draw mode of 2D graphics.
     /// </summary>
+    [LimitedSerialization]
     public struct DrawMode2D : IComparable<DrawMode2D>
     {
-        private DrawModeType2D _type;
-
-        public DrawModeType2D Type { get { return _type; } }
+        [TypeParameter]
+        public DrawModeType2D Type { get; private set; }
 
         /// <summary>
         /// Is there any 2D graphics.
         /// </summary>
-        public bool IsDrawn { get { return _type != DrawModeType2D.None; } }
+        public bool IsDrawn { get { return Type != DrawModeType2D.None; } }
 
         public DrawMode2D(DrawModeType2D type)
+            : this()
         {
-            _type = type;
+            Type = type;
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace AW2.Graphics
         /// <param name="spriteBatch">The sprite batch whose <c>Begin</c> to call.</param>
         public void BeginDraw(AssaultWingCore game, SpriteBatch spriteBatch)
         {
-            switch (_type)
+            switch (Type)
             {
                 case DrawModeType2D.None:
                     // We're not going to draw anything, so we don't need to Begin the sprite batch.
@@ -79,7 +81,7 @@ namespace AW2.Graphics
                     spriteBatch.Begin(SpriteSortMode.Immediate, GraphicsEngineImpl.SubtractiveBlend);
                     break;
                 default:
-                    throw new Exception("DrawMode2D: Unknown type of draw mode, " + _type);
+                    throw new Exception("DrawMode2D: Unknown type of draw mode, " + Type);
             }
         }
 
@@ -90,7 +92,7 @@ namespace AW2.Graphics
         /// <param name="spriteBatch">The sprite batch whose <c>End</c> to call.</param>
         public void EndDraw(AssaultWingCore game, SpriteBatch spriteBatch)
         {
-            switch (_type)
+            switch (Type)
             {
                 case DrawModeType2D.None:
                     // We never called SpriteBatch.Begin, so we won't call SpriteBatch.End.
@@ -104,7 +106,7 @@ namespace AW2.Graphics
                     game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.AlphaBlend;
                     break;
                 default:
-                    throw new Exception("DrawMode2D: Unknown type of draw mode, " + _type);
+                    throw new Exception("DrawMode2D: Unknown type of draw mode, " + Type);
             }
         }
 
@@ -119,7 +121,7 @@ namespace AW2.Graphics
         /// Greater than zero if this is greater than other.</returns>
         public int CompareTo(DrawMode2D other)
         {
-            return _type.CompareTo(other._type);
+            return Type.CompareTo(other.Type);
         }
 
         #endregion

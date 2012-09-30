@@ -10,24 +10,21 @@ namespace AW2.Game.Pengs
     [Obsolete]
     public class CurveLerpKey : IConsistencyCheckable
     {
-        private float _input;
-        private Curve _curve;
-
         /// <summary>
         /// The external peng input value the key corresponds to.
         /// </summary>
-        public float Input { get { return _input; } }
+        public float Input { get; private set; }
 
         /// <summary>
         /// The curve representing the particle management parameter with the 
         /// associated external peng input value.
         /// </summary>
-        public Curve Curve { get { return _curve; } }
+        public Curve Curve { get; private set; }
 
         public CurveLerpKey(float input, Curve curve)
         {
-            _input = input;
-            _curve = curve;
+            Input = input;
+            Curve = curve;
         }
 
         public void MakeConsistent(Type limitationAttribute)
@@ -35,7 +32,7 @@ namespace AW2.Game.Pengs
             // Rewrite our curve by linear interpolation between keys.
             // This is a temporary hack to simplify curve editing in serialised XML.
             // TODO !!! Replace CurveLerp by SimpleCurve
-            _curve.ComputeTangents(CurveTangent.Linear);
+            Curve.ComputeTangents(CurveTangent.Linear);
         }
     }
 }

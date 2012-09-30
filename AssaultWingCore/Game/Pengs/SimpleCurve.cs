@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Pengs
 {
@@ -9,19 +10,23 @@ namespace AW2.Game.Pengs
     /// A particle management parameter that consists of one piecewise linear curve.
     /// The definition points (keys) of the curve are spread at even intervals.
     /// </summary>
+    [LimitedSerialization]
     public class SimpleCurve : PengParameter
     {
         /// <summary>
         /// The maximum shift a particle's random seed can cause in the
         /// value of the parameter.
         /// </summary>
+        [TypeParameter]
         private float _randomAmplitude;
 
         /// <summary>
         /// Mixing value of particle random values.
         /// </summary>
+        [TypeParameter]
         private int _randomMixer;
 
+        [TypeParameter]
         private float[] _keys;
 
         /// <summary>

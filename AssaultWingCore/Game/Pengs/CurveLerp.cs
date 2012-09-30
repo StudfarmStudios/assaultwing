@@ -23,32 +23,38 @@ namespace AW2.Game.Pengs
     /// and picks the n'th value in this sequence.
     /// </summary>
     [Obsolete("SimpleCurve can do everything CurveLerp can do")]
+    [LimitedSerialization]
     public class CurveLerp : PengParameter, IConsistencyCheckable
     {
         /// <summary>
         /// The least possible value of the parameter. 
         /// </summary>
+        [TypeParameter]
         private float _min;
 
         /// <summary>
         /// The greatest possible value of the parameter. 
         /// </summary>
+        [TypeParameter]
         private float _max;
 
         /// <summary>
         /// The maximum shift a particle's random seed can cause in the
         /// value of the parameter.
         /// </summary>
+        [TypeParameter]
         private float _randomAmplitude;
 
         /// <summary>
         /// Mixing value of particle random values.
         /// </summary>
+        [TypeParameter]
         private int _randomMixer;
 
         /// <summary>
         /// The curve lerp's keys.
         /// </summary>
+        [TypeParameter]
         private CurveLerpKeyCollection _keys;
 
         /// <summary>

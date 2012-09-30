@@ -23,8 +23,8 @@
       <name>Surround</name>
       <area type="AW2.Helpers.Geometric.Circle">
         <center>
-          <X>0</X>
-          <Y>0</Y>
+          <x>0</x>
+          <y>0</y>
         </center>
         <radius>50</radius>
       </area>

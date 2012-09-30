@@ -1,22 +1,17 @@
 ﻿using System;
-using AW2.Helpers;
 using AW2.Core;
+using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Settings
 {
     public class PlayerSettingsItem
     {
-        private string _name;
-        private string _shipName;
-        private string _weapon2Name;
-        private string _extraDeviceName;
-        private string _password;
-
-        public string Name { get { return _name; } set { _name = value; } }
-        public string ShipName { get { return _shipName; } set { _shipName = value; } }
-        public string Weapon2Name { get { return _weapon2Name; } set { _weapon2Name = value; } }
-        public string ExtraDeviceName { get { return _extraDeviceName; } set { _extraDeviceName = value; } }
-        public string Password { get { return _password; } set { _password = value; } }
+        public string Name { get; set; }
+        public string ShipName { get; set; }
+        public string Weapon2Name { get; set; }
+        public string ExtraDeviceName { get; set; }
+        public string Password { get; set; }
     }
 
     public class PlayerSettings
@@ -42,15 +37,10 @@ namespace AW2.Settings
         };
         public const string BOTS_NAME = "The Bots";
 
-        private PlayerSettingsItem _player1;
-        private PlayerSettingsItem _player2;
-        private bool _botsEnabled;
-        private string _botsPassword;
-
-        public PlayerSettingsItem Player1 { get { return _player1; } }
-        public PlayerSettingsItem Player2 { get { return _player2; } }
-        public bool BotsEnabled { get { return _botsEnabled; } set { _botsEnabled = value; } }
-        public string BotsPassword { get { return _botsPassword; } set { _botsPassword = value; } }
+        public PlayerSettingsItem Player1 { get; private set; }
+        public PlayerSettingsItem Player2 { get; private set; }
+        public bool BotsEnabled { get; set; }
+        public string BotsPassword { get; set; }
 
         public PlayerSettings()
         {
@@ -59,10 +49,10 @@ namespace AW2.Settings
 
         public void Reset()
         {
-            _player1 = PLAYER1DEFAULT;
-            _player2 = PLAYER2DEFAULT;
-            _botsEnabled = true;
-            _botsPassword = "";
+            Player1 = PLAYER1DEFAULT;
+            Player2 = PLAYER2DEFAULT;
+            BotsEnabled = true;
+            BotsPassword = "";
         }
 
         public void Validate(AssaultWingCore game)

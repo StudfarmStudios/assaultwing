@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Pengs
 {
@@ -8,11 +9,13 @@ namespace AW2.Game.Pengs
     /// A collection of <see cref="CurveLerpKey"/>s.
     /// </summary>
     [Obsolete]
+    [LimitedSerialization]
     public class CurveLerpKeyCollection
     {
         /// <summary>
         /// The keys, sorted by <see cref="CurveLerpKey.Input"/>
         /// </summary>
+        [TypeParameter]
         private List<CurveLerpKey> _keys;
 
         public int Count { get { return _keys.Count; } }

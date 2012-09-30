@@ -7,15 +7,10 @@ namespace AW2.Settings
 {
     public class GraphicsSettings
     {
-        private int _fullscreenWidth;
-        private int _fullscreenHeight;
-        private bool _isVerticalSynced;
-        private bool _inGameFullscreen;
-
-        public int FullscreenWidth { get { return _fullscreenWidth; } set { _fullscreenWidth = value; } }
-        public int FullscreenHeight { get { return _fullscreenHeight; } set { _fullscreenHeight = value; } }
-        public bool IsVerticalSynced { get { return _isVerticalSynced; } set { _isVerticalSynced = value; } }
-        public bool InGameFullscreen { get { return _inGameFullscreen; } set { _inGameFullscreen = value; } }
+        public int FullscreenWidth { get; set; }
+        public int FullscreenHeight { get; set; }
+        public bool IsVerticalSynced { get; set; }
+        public bool InGameFullscreen { get; set; }
 
         public static IEnumerable<Tuple<int, int>> GetDisplayModes()
         {
@@ -48,12 +43,12 @@ namespace AW2.Settings
 
         public void Validate()
         {
-            if (GetDisplayModes().Contains(Tuple.Create(_fullscreenWidth, _fullscreenHeight))) return;
+            if (GetDisplayModes().Contains(Tuple.Create(FullscreenWidth, FullscreenHeight))) return;
 
             // Find a close match to the requested display mode.
-            var mode = GetDisplayModes().OrderBy(size => Math.Abs(size.Item1 * size.Item2 - _fullscreenWidth * _fullscreenHeight)).First();
-            _fullscreenWidth = mode.Item1;
-            _fullscreenHeight = mode.Item2;
+            var mode = GetDisplayModes().OrderBy(size => Math.Abs(size.Item1 * size.Item2 - FullscreenWidth * FullscreenHeight)).First();
+            FullscreenWidth = mode.Item1;
+            FullscreenHeight = mode.Item2;
         }
 
         private static Tuple<int, int> GetDefaultFullscreenResolution()

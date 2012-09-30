@@ -16,8 +16,8 @@
           <propModelName>amazon_rock_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>620</X>
-            <Y>2850</Y>
+            <x>620</x>
+            <y>2850</y>
           </pos>
           <rotation>-0.3</rotation>
           <typeName>prop model</typeName>
@@ -26,8 +26,8 @@
           <propModelName>amazon_rock_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2546.00049</X>
-            <Y>1000</Y>
+            <x>2546.00049</x>
+            <y>1000</y>
           </pos>
           <rotation>4.88318539</rotation>
           <typeName>prop model</typeName>
@@ -36,8 +36,8 @@
           <propModelName>amazon_rock_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>296</X>
-            <Y>-204</Y>
+            <x>296</x>
+            <y>-204</y>
           </pos>
           <rotation>1.4</rotation>
           <typeName>prop model</typeName>
@@ -53,8 +53,8 @@
           <propModelName>amazon_rock_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1300</X>
-            <Y>1550</Y>
+            <x>1300</x>
+            <y>1550</y>
           </pos>
           <rotation>0.6</rotation>
           <typeName>prop model</typeName>
@@ -63,8 +63,8 @@
           <propModelName>amazon_rock_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3796.6</X>
-            <Y>3850</Y>
+            <x>3796.6</x>
+            <y>3850</y>
           </pos>
           <rotation>1.6</rotation>
           <typeName>prop model</typeName>
@@ -73,8 +73,8 @@
           <propModelName>amazon_rock_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>4614</X>
-            <Y>1997.80322</Y>
+            <x>4614</x>
+            <y>1997.80322</y>
           </pos>
           <rotation>3</rotation>
           <typeName>prop model</typeName>
@@ -90,8 +90,8 @@
           <propModelName>amazon_temple_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-100</X>
-            <Y>2500</Y>
+            <x>-100</x>
+            <y>2500</y>
           </pos>
           <rotation>0.6</rotation>
           <typeName>prop model</typeName>
@@ -107,8 +107,8 @@
           <propModelName>amazon_temple_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>950</X>
-            <Y>600</Y>
+            <x>950</x>
+            <y>600</y>
           </pos>
           <rotation>0</rotation>
           <typeName>prop model</typeName>
@@ -117,8 +117,8 @@
           <propModelName>amazon_temple_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2300</X>
-            <Y>2600</Y>
+            <x>2300</x>
+            <y>2600</y>
           </pos>
           <rotation>5.78318548</rotation>
           <typeName>prop model</typeName>
@@ -134,8 +134,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3566.55151</X>
-            <Y>2960</Y>
+            <x>3566.55151</x>
+            <y>2960</y>
           </pos>
           <rotation>2.84</rotation>
           <typeName>prop model</typeName>
@@ -144,8 +144,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3620</X>
-            <Y>2965</Y>
+            <x>3620</x>
+            <y>2965</y>
           </pos>
           <rotation>0.5</rotation>
           <typeName>prop model</typeName>
@@ -154,8 +154,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3590</X>
-            <Y>2940</Y>
+            <x>3590</x>
+            <y>2940</y>
           </pos>
           <rotation>-0.6</rotation>
           <typeName>prop model</typeName>
@@ -164,8 +164,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>800</X>
-            <Y>900</Y>
+            <x>800</x>
+            <y>900</y>
           </pos>
           <rotation>0.4</rotation>
           <typeName>prop model</typeName>
@@ -174,8 +174,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>780</X>
-            <Y>840</Y>
+            <x>780</x>
+            <y>840</y>
           </pos>
           <rotation>-1.2</rotation>
           <typeName>prop model</typeName>
@@ -184,8 +184,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>770</X>
-            <Y>920</Y>
+            <x>770</x>
+            <y>920</y>
           </pos>
           <rotation>2.1</rotation>
           <typeName>prop model</typeName>
@@ -194,8 +194,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1200</X>
-            <Y>1600</Y>
+            <x>1200</x>
+            <y>1600</y>
           </pos>
           <rotation>2.7</rotation>
           <typeName>prop model</typeName>
@@ -204,8 +204,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>440</X>
-            <Y>1350</Y>
+            <x>440</x>
+            <y>1350</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>prop model</typeName>
@@ -214,8 +214,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>50</X>
-            <Y>50</Y>
+            <x>50</x>
+            <y>50</y>
           </pos>
           <rotation>0.6</rotation>
           <typeName>prop model</typeName>
@@ -224,8 +224,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>30</X>
-            <Y>30</Y>
+            <x>30</x>
+            <y>30</y>
           </pos>
           <rotation>-2</rotation>
           <typeName>prop model</typeName>
@@ -234,8 +234,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1850</X>
-            <Y>260</Y>
+            <x>1850</x>
+            <y>260</y>
           </pos>
           <rotation>1.6</rotation>
           <typeName>prop model</typeName>
@@ -244,8 +244,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1840</X>
-            <Y>240</Y>
+            <x>1840</x>
+            <y>240</y>
           </pos>
           <rotation>-2.3</rotation>
           <typeName>prop model</typeName>
@@ -254,8 +254,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-200</X>
-            <Y>800</Y>
+            <x>-200</x>
+            <y>800</y>
           </pos>
           <rotation>-0.3</rotation>
           <typeName>prop model</typeName>
@@ -264,8 +264,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-200</X>
-            <Y>800</Y>
+            <x>-200</x>
+            <y>800</y>
           </pos>
           <rotation>1.8</rotation>
           <typeName>prop model</typeName>
@@ -274,8 +274,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2010</X>
-            <Y>1970</Y>
+            <x>2010</x>
+            <y>1970</y>
           </pos>
           <rotation>-2.22</rotation>
           <typeName>prop model</typeName>
@@ -284,8 +284,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2000</X>
-            <Y>2050</Y>
+            <x>2000</x>
+            <y>2050</y>
           </pos>
           <rotation>1.3</rotation>
           <typeName>prop model</typeName>
@@ -294,8 +294,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>970</X>
-            <Y>-320</Y>
+            <x>970</x>
+            <y>-320</y>
           </pos>
           <rotation>1.74</rotation>
           <typeName>prop model</typeName>
@@ -304,8 +304,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2070</X>
-            <Y>1060</Y>
+            <x>2070</x>
+            <y>1060</y>
           </pos>
           <rotation>2.84</rotation>
           <typeName>prop model</typeName>
@@ -314,8 +314,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2120</X>
-            <Y>1065</Y>
+            <x>2120</x>
+            <y>1065</y>
           </pos>
           <rotation>0.5</rotation>
           <typeName>prop model</typeName>
@@ -324,8 +324,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2090</X>
-            <Y>1040</Y>
+            <x>2090</x>
+            <y>1040</y>
           </pos>
           <rotation>-0.6</rotation>
           <typeName>prop model</typeName>
@@ -334,8 +334,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2600</X>
-            <Y>2000</Y>
+            <x>2600</x>
+            <y>2000</y>
           </pos>
           <rotation>5.78318548</rotation>
           <typeName>prop model</typeName>
@@ -344,8 +344,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2580</X>
-            <Y>2020</Y>
+            <x>2580</x>
+            <y>2020</y>
           </pos>
           <rotation>3.28318548</rotation>
           <typeName>prop model</typeName>
@@ -354,8 +354,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>980</X>
-            <Y>2430</Y>
+            <x>980</x>
+            <y>2430</y>
           </pos>
           <rotation>-2.5</rotation>
           <typeName>prop model</typeName>
@@ -364,8 +364,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>990</X>
-            <Y>2420</Y>
+            <x>990</x>
+            <y>2420</y>
           </pos>
           <rotation>-1.3</rotation>
           <typeName>prop model</typeName>
@@ -374,8 +374,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>985</X>
-            <Y>2460</Y>
+            <x>985</x>
+            <y>2460</y>
           </pos>
           <rotation>1.45</rotation>
           <typeName>prop model</typeName>
@@ -384,8 +384,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1610</X>
-            <Y>2870</Y>
+            <x>1610</x>
+            <y>2870</y>
           </pos>
           <rotation>1.86</rotation>
           <typeName>prop model</typeName>
@@ -394,8 +394,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1650</X>
-            <Y>2880</Y>
+            <x>1650</x>
+            <y>2880</y>
           </pos>
           <rotation>-1.78</rotation>
           <typeName>prop model</typeName>
@@ -404,8 +404,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1670</X>
-            <Y>2880</Y>
+            <x>1670</x>
+            <y>2880</y>
           </pos>
           <rotation>-0.13</rotation>
           <typeName>prop model</typeName>
@@ -414,8 +414,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-170</X>
-            <Y>1780</Y>
+            <x>-170</x>
+            <y>1780</y>
           </pos>
           <rotation>1.1</rotation>
           <typeName>prop model</typeName>
@@ -424,8 +424,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-150</X>
-            <Y>1700</Y>
+            <x>-150</x>
+            <y>1700</y>
           </pos>
           <rotation>-1.49</rotation>
           <typeName>prop model</typeName>
@@ -434,8 +434,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1960</X>
-            <Y>2000</Y>
+            <x>1960</x>
+            <y>2000</y>
           </pos>
           <rotation>2.85</rotation>
           <typeName>prop model</typeName>
@@ -444,8 +444,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>30</X>
-            <Y>2710</Y>
+            <x>30</x>
+            <y>2710</y>
           </pos>
           <rotation>-0.8</rotation>
           <typeName>prop model</typeName>
@@ -454,8 +454,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2860</X>
-            <Y>2690</Y>
+            <x>2860</x>
+            <y>2690</y>
           </pos>
           <rotation>-2.5</rotation>
           <typeName>prop model</typeName>
@@ -464,8 +464,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3710</X>
-            <Y>1370</Y>
+            <x>3710</x>
+            <y>1370</y>
           </pos>
           <rotation>1.86</rotation>
           <typeName>prop model</typeName>
@@ -474,8 +474,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3750</X>
-            <Y>1380</Y>
+            <x>3750</x>
+            <y>1380</y>
           </pos>
           <rotation>-1.78</rotation>
           <typeName>prop model</typeName>
@@ -484,8 +484,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3585.51733</X>
-            <Y>2213.44824</Y>
+            <x>3585.51733</x>
+            <y>2213.44824</y>
           </pos>
           <rotation>3.7553668</rotation>
           <typeName>prop model</typeName>
@@ -494,8 +494,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3635.51733</X>
-            <Y>2263.44824</Y>
+            <x>3635.51733</x>
+            <y>2263.44824</y>
           </pos>
           <rotation>6.1245513</rotation>
           <typeName>prop model</typeName>
@@ -504,8 +504,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3640.6897</X>
-            <Y>2273.79321</Y>
+            <x>3640.6897</x>
+            <y>2273.79321</y>
           </pos>
           <rotation>2.03232336</rotation>
           <typeName>prop model</typeName>
@@ -514,8 +514,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3168.27563</X>
-            <Y>3791.03467</Y>
+            <x>3168.27563</x>
+            <y>3791.03467</y>
           </pos>
           <rotation>0</rotation>
           <typeName>prop model</typeName>
@@ -524,8 +524,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3132.0686</X>
-            <Y>3677.2417</Y>
+            <x>3132.0686</x>
+            <y>3677.2417</y>
           </pos>
           <rotation>5.09300661</rotation>
           <typeName>prop model</typeName>
@@ -534,8 +534,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2987.24121</X>
-            <Y>3684.13818</Y>
+            <x>2987.24121</x>
+            <y>3684.13818</y>
           </pos>
           <rotation>3.693034</rotation>
           <typeName>prop model</typeName>
@@ -544,8 +544,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3001.03418</X>
-            <Y>3751.37964</Y>
+            <x>3001.03418</x>
+            <y>3751.37964</y>
           </pos>
           <rotation>1.44452953</rotation>
           <typeName>prop model</typeName>
@@ -554,8 +554,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2858.62061</X>
-            <Y>244.482758</Y>
+            <x>2858.62061</x>
+            <y>244.482758</y>
           </pos>
           <rotation>1.8</rotation>
           <typeName>prop model</typeName>
@@ -564,8 +564,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2786.20679</X>
-            <Y>187.586182</Y>
+            <x>2786.20679</x>
+            <y>187.586182</y>
           </pos>
           <rotation>3.5</rotation>
           <typeName>prop model</typeName>
@@ -574,8 +574,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2879.3103</X>
-            <Y>206.551743</Y>
+            <x>2879.3103</x>
+            <y>206.551743</y>
           </pos>
           <rotation>5.5</rotation>
           <typeName>prop model</typeName>
@@ -584,8 +584,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>902.7585</X>
-            <Y>3494.48315</Y>
+            <x>902.7585</x>
+            <y>3494.48315</y>
           </pos>
           <rotation>4</rotation>
           <typeName>prop model</typeName>
@@ -594,8 +594,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>861.3795</X>
-            <Y>3694.48315</Y>
+            <x>861.3795</x>
+            <y>3694.48315</y>
           </pos>
           <rotation>1</rotation>
           <typeName>prop model</typeName>
@@ -604,8 +604,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>809.6554</X>
-            <Y>3630.69</Y>
+            <x>809.6554</x>
+            <y>3630.69</y>
           </pos>
           <rotation>2.5</rotation>
           <typeName>prop model</typeName>
@@ -614,8 +614,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>926.8967</X>
-            <Y>3516.897</Y>
+            <x>926.8967</x>
+            <y>3516.897</y>
           </pos>
           <rotation>6</rotation>
           <typeName>prop model</typeName>
@@ -624,8 +624,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2130.34424</X>
-            <Y>3815.173</Y>
+            <x>2130.34424</x>
+            <y>3815.173</y>
           </pos>
           <rotation>2.3</rotation>
           <typeName>prop model</typeName>
@@ -634,8 +634,8 @@
           <propModelName>amazon_trunk</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2175.17188</X>
-            <Y>3735.863</Y>
+            <x>2175.17188</x>
+            <y>3735.863</y>
           </pos>
           <rotation>4.7</rotation>
           <typeName>prop model</typeName>
@@ -651,8 +651,8 @@
           <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3740</X>
-            <Y>1375</Y>
+            <x>3740</x>
+            <y>1375</y>
           </pos>
           <rotation>1.65</rotation>
           <typeName>prop model</typeName>
@@ -661,8 +661,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3550</X>
-            <Y>2960</Y>
+            <x>3550</x>
+            <y>2960</y>
           </pos>
           <rotation>0.9</rotation>
           <typeName>prop model</typeName>
@@ -671,8 +671,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2576.33984</X>
-            <Y>1991.55</Y>
+            <x>2576.33984</x>
+            <y>1991.55</y>
           </pos>
           <rotation>0.9</rotation>
           <typeName>prop model</typeName>
@@ -681,8 +681,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1020</X>
-            <Y>-350</Y>
+            <x>1020</x>
+            <y>-350</y>
           </pos>
           <rotation>2.31</rotation>
           <typeName>prop model</typeName>
@@ -691,8 +691,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>800</X>
-            <Y>900</Y>
+            <x>800</x>
+            <y>900</y>
           </pos>
           <rotation>0.45</rotation>
           <typeName>prop model</typeName>
@@ -701,8 +701,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>500</X>
-            <Y>1300</Y>
+            <x>500</x>
+            <y>1300</y>
           </pos>
           <rotation>1.55</rotation>
           <typeName>prop model</typeName>
@@ -711,8 +711,8 @@
           <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>50</X>
-            <Y>50</Y>
+            <x>50</x>
+            <y>50</y>
           </pos>
           <rotation>2.112</rotation>
           <typeName>prop model</typeName>
@@ -721,8 +721,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2100</X>
-            <Y>1050</Y>
+            <x>2100</x>
+            <y>1050</y>
           </pos>
           <rotation>4.99318552</rotation>
           <typeName>prop model</typeName>
@@ -731,8 +731,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1900</X>
-            <Y>250</Y>
+            <x>1900</x>
+            <y>250</y>
           </pos>
           <rotation>-1.89</rotation>
           <typeName>prop model</typeName>
@@ -741,8 +741,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-200</X>
-            <Y>800</Y>
+            <x>-200</x>
+            <y>800</y>
           </pos>
           <rotation>1.421</rotation>
           <typeName>prop model</typeName>
@@ -751,8 +751,8 @@
           <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2000</X>
-            <Y>2000</Y>
+            <x>2000</x>
+            <y>2000</y>
           </pos>
           <rotation>2.421</rotation>
           <typeName>prop model</typeName>
@@ -761,8 +761,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>981.690063</X>
-            <Y>2430</Y>
+            <x>981.690063</x>
+            <y>2430</y>
           </pos>
           <rotation>1.121</rotation>
           <typeName>prop model</typeName>
@@ -771,8 +771,8 @@
           <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-134.790131</X>
-            <Y>1708.45</Y>
+            <x>-134.790131</x>
+            <y>1708.45</y>
           </pos>
           <rotation>-1.621</rotation>
           <typeName>prop model</typeName>
@@ -781,8 +781,8 @@
           <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1650</X>
-            <Y>2880</Y>
+            <x>1650</x>
+            <y>2880</y>
           </pos>
           <rotation>0.321</rotation>
           <typeName>prop model</typeName>
@@ -791,8 +791,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>30</X>
-            <Y>2710</Y>
+            <x>30</x>
+            <y>2710</y>
           </pos>
           <rotation>1.943</rotation>
           <typeName>prop model</typeName>
@@ -801,8 +801,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2860</X>
-            <Y>2690</Y>
+            <x>2860</x>
+            <y>2690</y>
           </pos>
           <rotation>2.443</rotation>
           <typeName>prop model</typeName>
@@ -811,8 +811,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3628.74976</X>
-            <Y>2276.24</Y>
+            <x>3628.74976</x>
+            <y>2276.24</y>
           </pos>
           <rotation>5.100876</rotation>
           <typeName>prop model</typeName>
@@ -821,8 +821,8 @@
           <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3086.96</X>
-            <Y>3738.60986</Y>
+            <x>3086.96</x>
+            <y>3738.60986</y>
           </pos>
           <rotation>3.642269</rotation>
           <typeName>prop model</typeName>
@@ -831,8 +831,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2840.63013</X>
-            <Y>205.360016</Y>
+            <x>2840.63013</x>
+            <y>205.360016</y>
           </pos>
           <rotation>2</rotation>
           <typeName>prop model</typeName>
@@ -841,8 +841,8 @@
           <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>868.520264</X>
-            <Y>3594.17</Y>
+            <x>868.520264</x>
+            <y>3594.17</y>
           </pos>
           <rotation>2</rotation>
           <typeName>prop model</typeName>
@@ -851,8 +851,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2158.92</X>
-            <Y>3798.19971</Y>
+            <x>2158.92</x>
+            <y>3798.19971</y>
           </pos>
           <rotation>4</rotation>
           <typeName>prop model</typeName>
@@ -861,8 +861,8 @@
           <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1237.83</X>
-            <Y>1574.77</Y>
+            <x>1237.83</x>
+            <y>1574.77</y>
           </pos>
           <rotation>4</rotation>
           <typeName>prop model</typeName>
@@ -884,8 +884,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>500</X>
-            <Y>400</Y>
+            <x>500</x>
+            <y>400</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon rain</typeName>
@@ -894,8 +894,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1300</X>
-            <Y>1240</Y>
+            <x>1300</x>
+            <y>1240</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon rain</typeName>
@@ -904,8 +904,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1550</X>
-            <Y>2560</Y>
+            <x>1550</x>
+            <y>2560</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon rain</typeName>
@@ -914,8 +914,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3500</X>
-            <Y>3100</Y>
+            <x>3500</x>
+            <y>3100</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon rain</typeName>
@@ -924,8 +924,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3300</X>
-            <Y>1600</Y>
+            <x>3300</x>
+            <y>1600</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon rain</typeName>
@@ -941,8 +941,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3206.75</X>
-            <Y>3580.32983</Y>
+            <x>3206.75</x>
+            <y>3580.32983</y>
           </pos>
           <rotation>-1.021</rotation>
           <typeName>prop model</typeName>
@@ -951,8 +951,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>184.180084</X>
-            <Y>149.450272</Y>
+            <x>184.180084</x>
+            <y>149.450272</y>
           </pos>
           <rotation>5.70549536</rotation>
           <typeName>prop model</typeName>
@@ -961,8 +961,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>800.2498</X>
-            <Y>319.509155</Y>
+            <x>800.2498</x>
+            <y>319.509155</y>
           </pos>
           <rotation>1.2</rotation>
           <typeName>prop model</typeName>
@@ -971,8 +971,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2671.24</X>
-            <Y>3793.44019</Y>
+            <x>2671.24</x>
+            <y>3793.44019</y>
           </pos>
           <rotation>0.32</rotation>
           <typeName>prop model</typeName>
@@ -981,8 +981,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>451.529968</X>
-            <Y>3265.73047</Y>
+            <x>451.529968</x>
+            <y>3265.73047</y>
           </pos>
           <rotation>2.8</rotation>
           <typeName>prop model</typeName>
@@ -991,8 +991,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>400.610046</X>
-            <Y>3747.30981</Y>
+            <x>400.610046</x>
+            <y>3747.30981</y>
           </pos>
           <rotation>3.96318555</rotation>
           <typeName>prop model</typeName>
@@ -1001,8 +1001,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3650.2998</X>
-            <Y>3489.79932</Y>
+            <x>3650.2998</x>
+            <y>3489.79932</y>
           </pos>
           <rotation>-2.45</rotation>
           <typeName>prop model</typeName>
@@ -1011,8 +1011,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3790.82983</X>
-            <Y>3515.4397</Y>
+            <x>3790.82983</x>
+            <y>3515.4397</y>
           </pos>
           <rotation>1.35</rotation>
           <typeName>prop model</typeName>
@@ -1021,8 +1021,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>350.639954</X>
-            <Y>3196.25977</Y>
+            <x>350.639954</x>
+            <y>3196.25977</y>
           </pos>
           <rotation>2.4</rotation>
           <typeName>prop model</typeName>
@@ -1031,8 +1031,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3181.80981</X>
-            <Y>3482.59</Y>
+            <x>3181.80981</x>
+            <y>3482.59</y>
           </pos>
           <rotation>2.62</rotation>
           <typeName>prop model</typeName>
@@ -1041,8 +1041,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>89.74985</X>
-            <Y>3158.18</Y>
+            <x>89.74985</x>
+            <y>3158.18</y>
           </pos>
           <rotation>-1.8</rotation>
           <typeName>prop model</typeName>
@@ -1051,8 +1051,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>169.0792</X>
-            <Y>563.48</Y>
+            <x>169.0792</x>
+            <y>563.48</y>
           </pos>
           <rotation>3.49998641</rotation>
           <typeName>prop model</typeName>
@@ -1061,8 +1061,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3412.779</X>
-            <Y>3510.7</Y>
+            <x>3412.779</x>
+            <y>3510.7</y>
           </pos>
           <rotation>4.4153533</rotation>
           <typeName>prop model</typeName>
@@ -1071,8 +1071,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3647.12915</X>
-            <Y>3602.25952</Y>
+            <x>3647.12915</x>
+            <y>3602.25952</y>
           </pos>
           <rotation>2.24855876</rotation>
           <typeName>prop model</typeName>
@@ -1081,8 +1081,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>293.05954</X>
-            <Y>272.169861</Y>
+            <x>293.05954</x>
+            <y>272.169861</y>
           </pos>
           <rotation>4.10157061</rotation>
           <typeName>prop model</typeName>
@@ -1091,8 +1091,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2949.39</X>
-            <Y>3361.23</Y>
+            <x>2949.39</x>
+            <y>3361.23</y>
           </pos>
           <rotation>4.8</rotation>
           <typeName>prop model</typeName>
@@ -1101,8 +1101,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3465.16016</X>
-            <Y>525.37915</Y>
+            <x>3465.16016</x>
+            <y>525.37915</y>
           </pos>
           <rotation>-1.4</rotation>
           <typeName>prop model</typeName>
@@ -1111,8 +1111,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3715.72</X>
-            <Y>670.209656</Y>
+            <x>3715.72</x>
+            <y>670.209656</y>
           </pos>
           <rotation>2.6</rotation>
           <typeName>prop model</typeName>
@@ -1121,8 +1121,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3659.04028</X>
-            <Y>549.2191</Y>
+            <x>3659.04028</x>
+            <y>549.2191</y>
           </pos>
           <rotation>-1.7</rotation>
           <typeName>prop model</typeName>
@@ -1131,8 +1131,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3109.68066</X>
-            <Y>371.549377</Y>
+            <x>3109.68066</x>
+            <y>371.549377</y>
           </pos>
           <rotation>4.6</rotation>
           <typeName>prop model</typeName>
@@ -1141,8 +1141,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3222.90063</X>
-            <Y>543.629333</Y>
+            <x>3222.90063</x>
+            <y>543.629333</y>
           </pos>
           <rotation>2.4</rotation>
           <typeName>prop model</typeName>
@@ -1151,8 +1151,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1717.47083</X>
-            <Y>768.0293</Y>
+            <x>1717.47083</x>
+            <y>768.0293</y>
           </pos>
           <rotation>2.2</rotation>
           <typeName>prop model</typeName>
@@ -1161,8 +1161,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1627.95081</X>
-            <Y>173.839325</Y>
+            <x>1627.95081</x>
+            <y>173.839325</y>
           </pos>
           <rotation>3.7</rotation>
           <typeName>prop model</typeName>
@@ -1171,8 +1171,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>182.470032</X>
-            <Y>3787.5</Y>
+            <x>182.470032</x>
+            <y>3787.5</y>
           </pos>
           <rotation>1.9</rotation>
           <typeName>prop model</typeName>
@@ -1181,8 +1181,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2477.27979</X>
-            <Y>3331.65967</Y>
+            <x>2477.27979</x>
+            <y>3331.65967</y>
           </pos>
           <rotation>2</rotation>
           <typeName>prop model</typeName>
@@ -1191,8 +1191,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1427.25</X>
-            <Y>3526.99</Y>
+            <x>1427.25</x>
+            <y>3526.99</y>
           </pos>
           <rotation>-1.6</rotation>
           <typeName>prop model</typeName>
@@ -1201,8 +1201,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2238.63062</X>
-            <Y>665.7094</Y>
+            <x>2238.63062</x>
+            <y>665.7094</y>
           </pos>
           <rotation>4</rotation>
           <typeName>prop model</typeName>
@@ -1211,8 +1211,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1580.80054</X>
-            <Y>3512.68</Y>
+            <x>1580.80054</x>
+            <y>3512.68</y>
           </pos>
           <rotation>1.9</rotation>
           <typeName>prop model</typeName>
@@ -1221,8 +1221,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>997.3999</X>
-            <Y>354.249146</Y>
+            <x>997.3999</x>
+            <y>354.249146</y>
           </pos>
           <rotation>5</rotation>
           <typeName>prop model</typeName>
@@ -1231,8 +1231,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>588.5104</X>
-            <Y>705.0893</Y>
+            <x>588.5104</x>
+            <y>705.0893</y>
           </pos>
           <rotation>3</rotation>
           <typeName>prop model</typeName>
@@ -1241,8 +1241,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2145.97949</X>
-            <Y>207.909332</Y>
+            <x>2145.97949</x>
+            <y>207.909332</y>
           </pos>
           <rotation>2.5</rotation>
           <typeName>prop model</typeName>
@@ -1251,8 +1251,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2601.4</X>
-            <Y>3728.27979</Y>
+            <x>2601.4</x>
+            <y>3728.27979</y>
           </pos>
           <rotation>3.2</rotation>
           <typeName>prop model</typeName>
@@ -1261,8 +1261,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2288.569</X>
-            <Y>3273.74976</Y>
+            <x>2288.569</x>
+            <y>3273.74976</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>prop model</typeName>
@@ -1271,8 +1271,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2041.00012</X>
-            <Y>3832.77979</Y>
+            <x>2041.00012</x>
+            <y>3832.77979</y>
           </pos>
           <rotation>2.7</rotation>
           <typeName>prop model</typeName>
@@ -1281,8 +1281,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>374.25</X>
-            <Y>3297.44946</Y>
+            <x>374.25</x>
+            <y>3297.44946</y>
           </pos>
           <rotation>5.8</rotation>
           <typeName>prop model</typeName>
@@ -1291,8 +1291,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>351.220062</X>
-            <Y>3763.82935</Y>
+            <x>351.220062</x>
+            <y>3763.82935</y>
           </pos>
           <rotation>7</rotation>
           <typeName>prop model</typeName>
@@ -1301,8 +1301,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>41.7200775</X>
-            <Y>2433.58</Y>
+            <x>41.7200775</x>
+            <y>2433.58</y>
           </pos>
           <rotation>4.8</rotation>
           <typeName>prop model</typeName>
@@ -1311,8 +1311,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3774.82983</X>
-            <Y>2838.92041</Y>
+            <x>3774.82983</x>
+            <y>2838.92041</y>
           </pos>
           <rotation>2</rotation>
           <typeName>prop model</typeName>
@@ -1321,8 +1321,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1212.66089</X>
-            <Y>809.3093</Y>
+            <x>1212.66089</x>
+            <y>809.3093</y>
           </pos>
           <rotation>3.7</rotation>
           <typeName>prop model</typeName>
@@ -1331,8 +1331,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3830.03027</X>
-            <Y>202.4591</Y>
+            <x>3830.03027</x>
+            <y>202.4591</y>
           </pos>
           <rotation>3</rotation>
           <typeName>prop model</typeName>
@@ -1341,8 +1341,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3151.10034</X>
-            <Y>99.04909</Y>
+            <x>3151.10034</x>
+            <y>99.04909</y>
           </pos>
           <rotation>-2.7</rotation>
           <typeName>prop model</typeName>
@@ -1351,8 +1351,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>208.830109</X>
-            <Y>685.159851</Y>
+            <x>208.830109</x>
+            <y>685.159851</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1361,8 +1361,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>819.23</X>
-            <Y>744.0198</Y>
+            <x>819.23</x>
+            <y>744.0198</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1371,8 +1371,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1936.48</X>
-            <Y>507.490082</Y>
+            <x>1936.48</x>
+            <y>507.490082</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1381,8 +1381,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3241.21045</X>
-            <Y>783.2593</Y>
+            <x>3241.21045</x>
+            <y>783.2593</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1391,8 +1391,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3744.79</X>
-            <Y>741.839539</Y>
+            <x>3744.79</x>
+            <y>741.839539</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1401,8 +1401,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>423.419861</X>
-            <Y>3939.761</Y>
+            <x>423.419861</x>
+            <y>3939.761</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1411,8 +1411,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1039.26978</X>
-            <Y>3862.37158</Y>
+            <x>1039.26978</x>
+            <y>3862.37158</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1421,8 +1421,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2953.30981</X>
-            <Y>3885.2605</Y>
+            <x>2953.30981</x>
+            <y>3885.2605</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1431,8 +1431,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3623.65967</X>
-            <Y>3892.891</Y>
+            <x>3623.65967</x>
+            <y>3892.891</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1441,8 +1441,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>519.3401</X>
-            <Y>739.519836</Y>
+            <x>519.3401</x>
+            <y>739.519836</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1451,8 +1451,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3500.49048</X>
-            <Y>778.7593</Y>
+            <x>3500.49048</x>
+            <y>778.7593</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1461,8 +1461,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3300.87964</X>
-            <Y>3928.721</Y>
+            <x>3300.87964</x>
+            <y>3928.721</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1471,8 +1471,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>731.749939</X>
-            <Y>3987.581</Y>
+            <x>731.749939</x>
+            <y>3987.581</y>
           </pos>
           <rotation>-1.57079637</rotation>
           <typeName>amazon rainfall</typeName>
@@ -1488,8 +1488,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-97</X>
-            <Y>762</Y>
+            <x>-97</x>
+            <y>762</y>
           </pos>
           <rotation>1.48</rotation>
           <typeName>prop model</typeName>
@@ -1498,8 +1498,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-66.0000458</X>
-            <Y>1611</Y>
+            <x>-66.0000458</x>
+            <y>1611</y>
           </pos>
           <rotation>-2.98</rotation>
           <typeName>prop model</typeName>
@@ -1508,8 +1508,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-40.00006</X>
-            <Y>2398</Y>
+            <x>-40.00006</x>
+            <y>2398</y>
           </pos>
           <rotation>2.99</rotation>
           <typeName>prop model</typeName>
@@ -1518,8 +1518,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-147.999969</X>
-            <Y>470</Y>
+            <x>-147.999969</x>
+            <y>470</y>
           </pos>
           <rotation>-2.6</rotation>
           <typeName>prop model</typeName>
@@ -1528,8 +1528,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1994</X>
-            <Y>-18.0000057</Y>
+            <x>1994</x>
+            <y>-18.0000057</y>
           </pos>
           <rotation>-1.4</rotation>
           <typeName>prop model</typeName>
@@ -1538,8 +1538,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2832</X>
-            <Y>-66.99999</Y>
+            <x>2832</x>
+            <y>-66.99999</y>
           </pos>
           <rotation>5.123781</rotation>
           <typeName>prop model</typeName>
@@ -1548,8 +1548,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2485.99951</X>
-            <Y>-23.0000076</Y>
+            <x>2485.99951</x>
+            <y>-23.0000076</y>
           </pos>
           <rotation>4.91532564</rotation>
           <typeName>prop model</typeName>
@@ -1558,8 +1558,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1411</X>
-            <Y>-73.0000153</Y>
+            <x>1411</x>
+            <y>-73.0000153</y>
           </pos>
           <rotation>5.62682</rotation>
           <typeName>prop model</typeName>
@@ -1568,8 +1568,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1549</X>
-            <Y>2.00000763</Y>
+            <x>1549</x>
+            <y>2.00000763</y>
           </pos>
           <rotation>4.99990463</rotation>
           <typeName>prop model</typeName>
@@ -1578,8 +1578,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1088</X>
-            <Y>4007</Y>
+            <x>1088</x>
+            <y>4007</y>
           </pos>
           <rotation>1.30002737</rotation>
           <typeName>prop model</typeName>
@@ -1588,8 +1588,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2330.00024</X>
-            <Y>4030.99976</Y>
+            <x>2330.00024</x>
+            <y>4030.99976</y>
           </pos>
           <rotation>1.8</rotation>
           <typeName>prop model</typeName>
@@ -1598,8 +1598,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>37.9999275</X>
-            <Y>2961</Y>
+            <x>37.9999275</x>
+            <y>2961</y>
           </pos>
           <rotation>2.7</rotation>
           <typeName>prop model</typeName>
@@ -1608,8 +1608,8 @@
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-19.00008</X>
-            <Y>2025.00012</Y>
+            <x>-19.00008</x>
+            <y>2025.00012</y>
           </pos>
           <rotation>3.4</rotation>
           <typeName>prop model</typeName>
@@ -1626,8 +1626,8 @@
           <destructible>true</destructible>
           <staticID>1221</staticID>
           <pos>
-            <X>2715</X>
-            <Y>3696</Y>
+            <x>2715</x>
+            <y>3696</y>
           </pos>
           <rotation>2.8</rotation>
           <typeName>wall model</typeName>
@@ -1637,8 +1637,8 @@
           <destructible>true</destructible>
           <staticID>1222</staticID>
           <pos>
-            <X>1560</X>
-            <Y>162.000061</Y>
+            <x>1560</x>
+            <y>162.000061</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>wall model</typeName>
@@ -1648,8 +1648,8 @@
           <destructible>true</destructible>
           <staticID>1223</staticID>
           <pos>
-            <X>769</X>
-            <Y>67.00003</Y>
+            <x>769</x>
+            <y>67.00003</y>
           </pos>
           <rotation>2.1</rotation>
           <typeName>wall model</typeName>
@@ -1659,8 +1659,8 @@
           <destructible>true</destructible>
           <staticID>1224</staticID>
           <pos>
-            <X>1751</X>
-            <Y>4020.00024</Y>
+            <x>1751</x>
+            <y>4020.00024</y>
           </pos>
           <rotation>1.65</rotation>
           <typeName>wall model</typeName>
@@ -1670,8 +1670,8 @@
           <destructible>true</destructible>
           <staticID>1225</staticID>
           <pos>
-            <X>1195</X>
-            <Y>3091</Y>
+            <x>1195</x>
+            <y>3091</y>
           </pos>
           <rotation>2.9</rotation>
           <typeName>wall model</typeName>
@@ -1681,8 +1681,8 @@
           <destructible>true</destructible>
           <staticID>1226</staticID>
           <pos>
-            <X>2166</X>
-            <Y>82</Y>
+            <x>2166</x>
+            <y>82</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -1692,8 +1692,8 @@
           <destructible>true</destructible>
           <staticID>1227</staticID>
           <pos>
-            <X>3611</X>
-            <Y>3873</Y>
+            <x>3611</x>
+            <y>3873</y>
           </pos>
           <rotation>4.56318569</rotation>
           <typeName>wall model</typeName>
@@ -1703,8 +1703,8 @@
           <destructible>true</destructible>
           <staticID>1228</staticID>
           <pos>
-            <X>78.00003</X>
-            <Y>3541</Y>
+            <x>78.00003</x>
+            <y>3541</y>
           </pos>
           <rotation>2.876875</rotation>
           <typeName>wall model</typeName>
@@ -1714,8 +1714,8 @@
           <destructible>true</destructible>
           <staticID>1229</staticID>
           <pos>
-            <X>3977</X>
-            <Y>443</Y>
+            <x>3977</x>
+            <y>443</y>
           </pos>
           <rotation>2.5</rotation>
           <typeName>wall model</typeName>
@@ -1725,8 +1725,8 @@
           <destructible>true</destructible>
           <staticID>1230</staticID>
           <pos>
-            <X>3968</X>
-            <Y>2050</Y>
+            <x>3968</x>
+            <y>2050</y>
           </pos>
           <rotation>2.84</rotation>
           <typeName>wall model</typeName>
@@ -1736,8 +1736,8 @@
           <destructible>true</destructible>
           <staticID>1231</staticID>
           <pos>
-            <X>3821</X>
-            <Y>2530</Y>
+            <x>3821</x>
+            <y>2530</y>
           </pos>
           <rotation>-2.84</rotation>
           <typeName>wall model</typeName>
@@ -1747,8 +1747,8 @@
           <destructible>true</destructible>
           <staticID>1232</staticID>
           <pos>
-            <X>3599</X>
-            <Y>2987</Y>
+            <x>3599</x>
+            <y>2987</y>
           </pos>
           <rotation>-1.94</rotation>
           <typeName>wall model</typeName>
@@ -1758,8 +1758,8 @@
           <destructible>true</destructible>
           <staticID>1233</staticID>
           <pos>
-            <X>1086</X>
-            <Y>3941</Y>
+            <x>1086</x>
+            <y>3941</y>
           </pos>
           <rotation>-1.55</rotation>
           <typeName>wall model</typeName>
@@ -1769,8 +1769,8 @@
           <destructible>true</destructible>
           <staticID>1234</staticID>
           <pos>
-            <X>3719.00024</X>
-            <Y>3018</Y>
+            <x>3719.00024</x>
+            <y>3018</y>
           </pos>
           <rotation>4.833185</rotation>
           <typeName>wall model</typeName>
@@ -1780,8 +1780,8 @@
           <destructible>true</destructible>
           <staticID>1235</staticID>
           <pos>
-            <X>1565</X>
-            <Y>3911.99951</Y>
+            <x>1565</x>
+            <y>3911.99951</y>
           </pos>
           <rotation>-1.41</rotation>
           <typeName>wall model</typeName>
@@ -1791,8 +1791,8 @@
           <destructible>true</destructible>
           <staticID>1236</staticID>
           <pos>
-            <X>1559</X>
-            <Y>2987</Y>
+            <x>1559</x>
+            <y>2987</y>
           </pos>
           <rotation>-1.61</rotation>
           <typeName>wall model</typeName>
@@ -1802,8 +1802,8 @@
           <destructible>true</destructible>
           <staticID>1237</staticID>
           <pos>
-            <X>2929.99976</X>
-            <Y>3158</Y>
+            <x>2929.99976</x>
+            <y>3158</y>
           </pos>
           <rotation>1.76</rotation>
           <typeName>wall model</typeName>
@@ -1813,8 +1813,8 @@
           <destructible>true</destructible>
           <staticID>1238</staticID>
           <pos>
-            <X>528</X>
-            <Y>3098</Y>
+            <x>528</x>
+            <y>3098</y>
           </pos>
           <rotation>0.2</rotation>
           <typeName>wall model</typeName>
@@ -1824,8 +1824,8 @@
           <destructible>true</destructible>
           <staticID>1239</staticID>
           <pos>
-            <X>3516</X>
-            <Y>223.000046</Y>
+            <x>3516</x>
+            <y>223.000046</y>
           </pos>
           <rotation>-2.87</rotation>
           <typeName>wall model</typeName>
@@ -1835,8 +1835,8 @@
           <destructible>true</destructible>
           <staticID>1240</staticID>
           <pos>
-            <X>1538</X>
-            <Y>3265</Y>
+            <x>1538</x>
+            <y>3265</y>
           </pos>
           <rotation>1.3</rotation>
           <typeName>wall model</typeName>
@@ -1846,8 +1846,8 @@
           <destructible>true</destructible>
           <staticID>1241</staticID>
           <pos>
-            <X>416.999939</X>
-            <Y>2939</Y>
+            <x>416.999939</x>
+            <y>2939</y>
           </pos>
           <rotation>4.78318548</rotation>
           <typeName>wall model</typeName>
@@ -1857,8 +1857,8 @@
           <destructible>true</destructible>
           <staticID>1242</staticID>
           <pos>
-            <X>615</X>
-            <Y>753</Y>
+            <x>615</x>
+            <y>753</y>
           </pos>
           <rotation>-1.3</rotation>
           <typeName>wall model</typeName>
@@ -1868,8 +1868,8 @@
           <destructible>true</destructible>
           <staticID>1243</staticID>
           <pos>
-            <X>1493</X>
-            <Y>84.9999847</Y>
+            <x>1493</x>
+            <y>84.9999847</y>
           </pos>
           <rotation>2.95</rotation>
           <typeName>wall model</typeName>
@@ -1879,8 +1879,8 @@
           <destructible>true</destructible>
           <staticID>1244</staticID>
           <pos>
-            <X>593</X>
-            <Y>-1.99999237</Y>
+            <x>593</x>
+            <y>-1.99999237</y>
           </pos>
           <rotation>1.8</rotation>
           <typeName>wall model</typeName>
@@ -1890,8 +1890,8 @@
           <destructible>true</destructible>
           <staticID>1245</staticID>
           <pos>
-            <X>1026</X>
-            <Y>3133</Y>
+            <x>1026</x>
+            <y>3133</y>
           </pos>
           <rotation>1.7</rotation>
           <typeName>wall model</typeName>
@@ -1901,8 +1901,8 @@
           <destructible>true</destructible>
           <staticID>1246</staticID>
           <pos>
-            <X>592.999939</X>
-            <Y>2959</Y>
+            <x>592.999939</x>
+            <y>2959</y>
           </pos>
           <rotation>-1.4</rotation>
           <typeName>wall model</typeName>
@@ -1912,8 +1912,8 @@
           <destructible>false</destructible>
           <staticID>1247</staticID>
           <pos>
-            <X>85</X>
-            <Y>3689</Y>
+            <x>85</x>
+            <y>3689</y>
           </pos>
           <rotation>1.41</rotation>
           <typeName>wall model</typeName>
@@ -1923,8 +1923,8 @@
           <destructible>false</destructible>
           <staticID>1248</staticID>
           <pos>
-            <X>90.00002</X>
-            <Y>3077</Y>
+            <x>90.00002</x>
+            <y>3077</y>
           </pos>
           <rotation>4.87318563</rotation>
           <typeName>wall model</typeName>
@@ -1934,8 +1934,8 @@
           <destructible>true</destructible>
           <staticID>1249</staticID>
           <pos>
-            <X>2736.99976</X>
-            <Y>3057</Y>
+            <x>2736.99976</x>
+            <y>3057</y>
           </pos>
           <rotation>5.87318563</rotation>
           <typeName>wall model</typeName>
@@ -1945,8 +1945,8 @@
           <destructible>false</destructible>
           <staticID>1250</staticID>
           <pos>
-            <X>1779.00024</X>
-            <Y>51.000042</Y>
+            <x>1779.00024</x>
+            <y>51.000042</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -1956,8 +1956,8 @@
           <destructible>false</destructible>
           <staticID>1251</staticID>
           <pos>
-            <X>1751</X>
-            <Y>3980.99976</Y>
+            <x>1751</x>
+            <y>3980.99976</y>
           </pos>
           <rotation>0.4</rotation>
           <typeName>wall model</typeName>
@@ -1967,8 +1967,8 @@
           <destructible>false</destructible>
           <staticID>1252</staticID>
           <pos>
-            <X>45.0000038</X>
-            <Y>2422</Y>
+            <x>45.0000038</x>
+            <y>2422</y>
           </pos>
           <rotation>-1.63</rotation>
           <typeName>wall model</typeName>
@@ -1978,8 +1978,8 @@
           <destructible>false</destructible>
           <staticID>1253</staticID>
           <pos>
-            <X>612</X>
-            <Y>3949</Y>
+            <x>612</x>
+            <y>3949</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -1989,8 +1989,8 @@
           <destructible>false</destructible>
           <staticID>1254</staticID>
           <pos>
-            <X>17.9999828</X>
-            <Y>1231</Y>
+            <x>17.9999828</x>
+            <y>1231</y>
           </pos>
           <rotation>-1.4</rotation>
           <typeName>wall model</typeName>
@@ -2000,8 +2000,8 @@
           <destructible>false</destructible>
           <staticID>1255</staticID>
           <pos>
-            <X>3753.00024</X>
-            <Y>82</Y>
+            <x>3753.00024</x>
+            <y>82</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2011,8 +2011,8 @@
           <destructible>false</destructible>
           <staticID>1256</staticID>
           <pos>
-            <X>2612</X>
-            <Y>-5.000001</Y>
+            <x>2612</x>
+            <y>-5.000001</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -2022,8 +2022,8 @@
           <destructible>true</destructible>
           <staticID>1257</staticID>
           <pos>
-            <X>3510</X>
-            <Y>3258</Y>
+            <x>3510</x>
+            <y>3258</y>
           </pos>
           <rotation>2.1</rotation>
           <typeName>wall model</typeName>
@@ -2033,8 +2033,8 @@
           <destructible>true</destructible>
           <staticID>1258</staticID>
           <pos>
-            <X>2895</X>
-            <Y>2959</Y>
+            <x>2895</x>
+            <y>2959</y>
           </pos>
           <rotation>3.3</rotation>
           <typeName>wall model</typeName>
@@ -2044,8 +2044,8 @@
           <destructible>true</destructible>
           <staticID>1259</staticID>
           <pos>
-            <X>3251.99951</X>
-            <Y>3088</Y>
+            <x>3251.99951</x>
+            <y>3088</y>
           </pos>
           <rotation>3.33318543</rotation>
           <typeName>wall model</typeName>
@@ -2055,8 +2055,8 @@
           <destructible>true</destructible>
           <staticID>1260</staticID>
           <pos>
-            <X>3610</X>
-            <Y>3050</Y>
+            <x>3610</x>
+            <y>3050</y>
           </pos>
           <rotation>0.7</rotation>
           <typeName>wall model</typeName>
@@ -2066,8 +2066,8 @@
           <destructible>false</destructible>
           <staticID>1261</staticID>
           <pos>
-            <X>3936</X>
-            <Y>1640</Y>
+            <x>3936</x>
+            <y>1640</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2077,8 +2077,8 @@
           <destructible>false</destructible>
           <staticID>1262</staticID>
           <pos>
-            <X>2839</X>
-            <Y>3999</Y>
+            <x>2839</x>
+            <y>3999</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2088,8 +2088,8 @@
           <destructible>true</destructible>
           <staticID>1263</staticID>
           <pos>
-            <X>3617</X>
-            <Y>3350</Y>
+            <x>3617</x>
+            <y>3350</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2099,8 +2099,8 @@
           <destructible>true</destructible>
           <staticID>1264</staticID>
           <pos>
-            <X>3414</X>
-            <Y>3824</Y>
+            <x>3414</x>
+            <y>3824</y>
           </pos>
           <rotation>1.24772573</rotation>
           <typeName>wall model</typeName>
@@ -2110,8 +2110,8 @@
           <destructible>false</destructible>
           <staticID>1265</staticID>
           <pos>
-            <X>4062</X>
-            <Y>137</Y>
+            <x>4062</x>
+            <y>137</y>
           </pos>
           <rotation>0.842</rotation>
           <typeName>wall model</typeName>
@@ -2121,8 +2121,8 @@
           <destructible>false</destructible>
           <staticID>1266</staticID>
           <pos>
-            <X>4088</X>
-            <Y>969</Y>
+            <x>4088</x>
+            <y>969</y>
           </pos>
           <rotation>6</rotation>
           <typeName>wall model</typeName>
@@ -2132,8 +2132,8 @@
           <destructible>false</destructible>
           <staticID>1267</staticID>
           <pos>
-            <X>3308</X>
-            <Y>9.999993</Y>
+            <x>3308</x>
+            <y>9.999993</y>
           </pos>
           <rotation>0.5</rotation>
           <typeName>wall model</typeName>
@@ -2143,8 +2143,8 @@
           <destructible>false</destructible>
           <staticID>1268</staticID>
           <pos>
-            <X>3985</X>
-            <Y>1410</Y>
+            <x>3985</x>
+            <y>1410</y>
           </pos>
           <rotation>5.98318529</rotation>
           <typeName>wall model</typeName>
@@ -2154,8 +2154,8 @@
           <destructible>false</destructible>
           <staticID>1269</staticID>
           <pos>
-            <X>3992</X>
-            <Y>2150</Y>
+            <x>3992</x>
+            <y>2150</y>
           </pos>
           <rotation>1.53</rotation>
           <typeName>wall model</typeName>
@@ -2165,8 +2165,8 @@
           <destructible>false</destructible>
           <staticID>1270</staticID>
           <pos>
-            <X>3895</X>
-            <Y>2670</Y>
+            <x>3895</x>
+            <y>2670</y>
           </pos>
           <rotation>3.14</rotation>
           <typeName>wall model</typeName>
@@ -2176,8 +2176,8 @@
           <destructible>false</destructible>
           <staticID>1271</staticID>
           <pos>
-            <X>3890</X>
-            <Y>3050</Y>
+            <x>3890</x>
+            <y>3050</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2187,8 +2187,8 @@
           <destructible>false</destructible>
           <staticID>1272</staticID>
           <pos>
-            <X>3841</X>
-            <Y>3451</Y>
+            <x>3841</x>
+            <y>3451</y>
           </pos>
           <rotation>1.63</rotation>
           <typeName>wall model</typeName>
@@ -2198,8 +2198,8 @@
           <destructible>false</destructible>
           <staticID>1273</staticID>
           <pos>
-            <X>3790</X>
-            <Y>3850</Y>
+            <x>3790</x>
+            <y>3850</y>
           </pos>
           <rotation>3.14</rotation>
           <typeName>wall model</typeName>
@@ -2209,8 +2209,8 @@
           <destructible>false</destructible>
           <staticID>1274</staticID>
           <pos>
-            <X>3321</X>
-            <Y>3901</Y>
+            <x>3321</x>
+            <y>3901</y>
           </pos>
           <rotation>3.14318538</rotation>
           <typeName>wall model</typeName>
@@ -2220,8 +2220,8 @@
           <destructible>true</destructible>
           <staticID>1275</staticID>
           <pos>
-            <X>2950</X>
-            <Y>3790</Y>
+            <x>2950</x>
+            <y>3790</y>
           </pos>
           <rotation>-0.8</rotation>
           <typeName>wall model</typeName>
@@ -2231,8 +2231,8 @@
           <destructible>true</destructible>
           <staticID>1276</staticID>
           <pos>
-            <X>2391</X>
-            <Y>2957</Y>
+            <x>2391</x>
+            <y>2957</y>
           </pos>
           <rotation>3.3</rotation>
           <typeName>wall model</typeName>
@@ -2242,8 +2242,8 @@
           <destructible>true</destructible>
           <staticID>1277</staticID>
           <pos>
-            <X>1246</X>
-            <Y>3160</Y>
+            <x>1246</x>
+            <y>3160</y>
           </pos>
           <rotation>-3.77</rotation>
           <typeName>wall model</typeName>
@@ -2253,8 +2253,8 @@
           <destructible>false</destructible>
           <staticID>1278</staticID>
           <pos>
-            <X>194.000122</X>
-            <Y>3373</Y>
+            <x>194.000122</x>
+            <y>3373</y>
           </pos>
           <rotation>-0.3</rotation>
           <typeName>wall model</typeName>
@@ -2264,8 +2264,8 @@
           <destructible>false</destructible>
           <staticID>1279</staticID>
           <pos>
-            <X>1301</X>
-            <Y>66.00007</Y>
+            <x>1301</x>
+            <y>66.00007</y>
           </pos>
           <rotation>2.1</rotation>
           <typeName>wall model</typeName>
@@ -2275,8 +2275,8 @@
           <destructible>true</destructible>
           <staticID>1280</staticID>
           <pos>
-            <X>307</X>
-            <Y>3067</Y>
+            <x>307</x>
+            <y>3067</y>
           </pos>
           <rotation>3</rotation>
           <typeName>wall model</typeName>
@@ -2286,8 +2286,8 @@
           <destructible>true</destructible>
           <staticID>1281</staticID>
           <pos>
-            <X>994</X>
-            <Y>3021</Y>
+            <x>994</x>
+            <y>3021</y>
           </pos>
           <rotation>3.05</rotation>
           <typeName>wall model</typeName>
@@ -2297,8 +2297,8 @@
           <destructible>false</destructible>
           <staticID>1282</staticID>
           <pos>
-            <X>2529</X>
-            <Y>3994</Y>
+            <x>2529</x>
+            <y>3994</y>
           </pos>
           <rotation>3.2</rotation>
           <typeName>wall model</typeName>
@@ -2308,8 +2308,8 @@
           <destructible>false</destructible>
           <staticID>1283</staticID>
           <pos>
-            <X>2223</X>
-            <Y>26.0000172</Y>
+            <x>2223</x>
+            <y>26.0000172</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2319,8 +2319,8 @@
           <destructible>false</destructible>
           <staticID>1284</staticID>
           <pos>
-            <X>246</X>
-            <Y>3991</Y>
+            <x>246</x>
+            <y>3991</y>
           </pos>
           <rotation>3.1</rotation>
           <typeName>wall model</typeName>
@@ -2330,8 +2330,8 @@
           <destructible>false</destructible>
           <staticID>1285</staticID>
           <pos>
-            <X>320</X>
-            <Y>0</Y>
+            <x>320</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2341,8 +2341,8 @@
           <destructible>true</destructible>
           <staticID>1286</staticID>
           <pos>
-            <X>1678</X>
-            <Y>3215</Y>
+            <x>1678</x>
+            <y>3215</y>
           </pos>
           <rotation>2.01152158</rotation>
           <typeName>wall model</typeName>
@@ -2352,8 +2352,8 @@
           <destructible>false</destructible>
           <staticID>1287</staticID>
           <pos>
-            <X>1037.00012</X>
-            <Y>3922.00024</Y>
+            <x>1037.00012</x>
+            <y>3922.00024</y>
           </pos>
           <rotation>0.521</rotation>
           <typeName>wall model</typeName>
@@ -2363,8 +2363,8 @@
           <destructible>false</destructible>
           <staticID>1288</staticID>
           <pos>
-            <X>1.00003052</X>
-            <Y>400</Y>
+            <x>1.00003052</x>
+            <y>400</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2374,8 +2374,8 @@
           <destructible>false</destructible>
           <staticID>1289</staticID>
           <pos>
-            <X>69.9999847</X>
-            <Y>1958</Y>
+            <x>69.9999847</x>
+            <y>1958</y>
           </pos>
           <rotation>-1.6</rotation>
           <typeName>wall model</typeName>
@@ -2385,8 +2385,8 @@
           <destructible>false</destructible>
           <staticID>1290</staticID>
           <pos>
-            <X>1291.99988</X>
-            <Y>3899</Y>
+            <x>1291.99988</x>
+            <y>3899</y>
           </pos>
           <rotation>3.2</rotation>
           <typeName>wall model</typeName>
@@ -2396,8 +2396,8 @@
           <destructible>false</destructible>
           <staticID>1291</staticID>
           <pos>
-            <X>-78.00002</X>
-            <Y>834</Y>
+            <x>-78.00002</x>
+            <y>834</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>wall model</typeName>
@@ -2407,8 +2407,8 @@
           <destructible>false</destructible>
           <staticID>1292</staticID>
           <pos>
-            <X>691</X>
-            <Y>25</Y>
+            <x>691</x>
+            <y>25</y>
           </pos>
           <rotation>0.4</rotation>
           <typeName>wall model</typeName>
@@ -2418,8 +2418,8 @@
           <destructible>false</destructible>
           <staticID>1293</staticID>
           <pos>
-            <X>0</X>
-            <Y>70</Y>
+            <x>0</x>
+            <y>70</y>
           </pos>
           <rotation>-1.9</rotation>
           <typeName>wall model</typeName>
@@ -2429,8 +2429,8 @@
           <destructible>false</destructible>
           <staticID>1294</staticID>
           <pos>
-            <X>1204.00012</X>
-            <Y>-57.9999924</Y>
+            <x>1204.00012</x>
+            <y>-57.9999924</y>
           </pos>
           <rotation>-2.1</rotation>
           <typeName>wall model</typeName>
@@ -2440,8 +2440,8 @@
           <destructible>true</destructible>
           <staticID>1295</staticID>
           <pos>
-            <X>442</X>
-            <Y>2965</Y>
+            <x>442</x>
+            <y>2965</y>
           </pos>
           <rotation>-1.76</rotation>
           <typeName>wall model</typeName>
@@ -2451,8 +2451,8 @@
           <destructible>false</destructible>
           <staticID>1296</staticID>
           <pos>
-            <X>-9.999998</X>
-            <Y>1625</Y>
+            <x>-9.999998</x>
+            <y>1625</y>
           </pos>
           <rotation>-0.56</rotation>
           <typeName>wall model</typeName>
@@ -2462,8 +2462,8 @@
           <destructible>false</destructible>
           <staticID>1297</staticID>
           <pos>
-            <X>917.999939</X>
-            <Y>-20.9999943</Y>
+            <x>917.999939</x>
+            <y>-20.9999943</y>
           </pos>
           <rotation>1.2</rotation>
           <typeName>wall model</typeName>
@@ -2473,8 +2473,8 @@
           <destructible>true</destructible>
           <staticID>1298</staticID>
           <pos>
-            <X>1213</X>
-            <Y>31.0000076</Y>
+            <x>1213</x>
+            <y>31.0000076</y>
           </pos>
           <rotation>0.1</rotation>
           <typeName>wall model</typeName>
@@ -2484,8 +2484,8 @@
           <destructible>true</destructible>
           <staticID>1299</staticID>
           <pos>
-            <X>3067</X>
-            <Y>3126</Y>
+            <x>3067</x>
+            <y>3126</y>
           </pos>
           <rotation>0.3</rotation>
           <typeName>wall model</typeName>
@@ -2495,8 +2495,8 @@
           <destructible>false</destructible>
           <staticID>1300</staticID>
           <pos>
-            <X>3960</X>
-            <Y>3041.00024</Y>
+            <x>3960</x>
+            <y>3041.00024</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>wall model</typeName>
@@ -2506,8 +2506,8 @@
           <destructible>true</destructible>
           <staticID>1301</staticID>
           <pos>
-            <X>4063</X>
-            <Y>1216</Y>
+            <x>4063</x>
+            <y>1216</y>
           </pos>
           <rotation>2.3</rotation>
           <typeName>wall model</typeName>
@@ -2517,8 +2517,8 @@
           <destructible>true</destructible>
           <staticID>1302</staticID>
           <pos>
-            <X>3384</X>
-            <Y>3357</Y>
+            <x>3384</x>
+            <y>3357</y>
           </pos>
           <rotation>-0.4</rotation>
           <typeName>wall model</typeName>
@@ -2528,8 +2528,8 @@
           <destructible>true</destructible>
           <staticID>1303</staticID>
           <pos>
-            <X>-28.0000038</X>
-            <Y>3472</Y>
+            <x>-28.0000038</x>
+            <y>3472</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2539,8 +2539,8 @@
           <destructible>true</destructible>
           <staticID>1304</staticID>
           <pos>
-            <X>1072</X>
-            <Y>3218</Y>
+            <x>1072</x>
+            <y>3218</y>
           </pos>
           <rotation>4.68318558</rotation>
           <typeName>wall model</typeName>
@@ -2550,8 +2550,8 @@
           <destructible>true</destructible>
           <staticID>1305</staticID>
           <pos>
-            <X>126.999969</X>
-            <Y>607</Y>
+            <x>126.999969</x>
+            <y>607</y>
           </pos>
           <rotation>2.8</rotation>
           <typeName>wall model</typeName>
@@ -2561,8 +2561,8 @@
           <destructible>true</destructible>
           <staticID>1306</staticID>
           <pos>
-            <X>2650</X>
-            <Y>3155</Y>
+            <x>2650</x>
+            <y>3155</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -2572,8 +2572,8 @@
           <destructible>true</destructible>
           <staticID>1307</staticID>
           <pos>
-            <X>3160</X>
-            <Y>3827</Y>
+            <x>3160</x>
+            <y>3827</y>
           </pos>
           <rotation>2.3</rotation>
           <typeName>wall model</typeName>
@@ -2583,8 +2583,8 @@
           <destructible>true</destructible>
           <staticID>1308</staticID>
           <pos>
-            <X>3800</X>
-            <Y>2904</Y>
+            <x>3800</x>
+            <y>2904</y>
           </pos>
           <rotation>0.5</rotation>
           <typeName>wall model</typeName>
@@ -2594,8 +2594,8 @@
           <destructible>true</destructible>
           <staticID>1309</staticID>
           <pos>
-            <X>2282</X>
-            <Y>4008</Y>
+            <x>2282</x>
+            <y>4008</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -2605,8 +2605,8 @@
           <destructible>true</destructible>
           <staticID>1310</staticID>
           <pos>
-            <X>603.9999</X>
-            <Y>742</Y>
+            <x>603.9999</x>
+            <y>742</y>
           </pos>
           <rotation>2.1</rotation>
           <typeName>wall model</typeName>
@@ -2616,8 +2616,8 @@
           <destructible>true</destructible>
           <staticID>1311</staticID>
           <pos>
-            <X>1582</X>
-            <Y>2950</Y>
+            <x>1582</x>
+            <y>2950</y>
           </pos>
           <rotation>0.85</rotation>
           <typeName>wall model</typeName>
@@ -2627,8 +2627,8 @@
           <destructible>true</destructible>
           <staticID>1312</staticID>
           <pos>
-            <X>3433.00024</X>
-            <Y>3172</Y>
+            <x>3433.00024</x>
+            <y>3172</y>
           </pos>
           <rotation>2.15</rotation>
           <typeName>wall model</typeName>
@@ -2638,8 +2638,8 @@
           <destructible>true</destructible>
           <staticID>1313</staticID>
           <pos>
-            <X>144.000015</X>
-            <Y>2781</Y>
+            <x>144.000015</x>
+            <y>2781</y>
           </pos>
           <rotation>0.15</rotation>
           <typeName>wall model</typeName>
@@ -2649,8 +2649,8 @@
           <destructible>true</destructible>
           <staticID>1314</staticID>
           <pos>
-            <X>931</X>
-            <Y>25.9999981</Y>
+            <x>931</x>
+            <y>25.9999981</y>
           </pos>
           <rotation>-0.15</rotation>
           <typeName>wall model</typeName>
@@ -2660,8 +2660,8 @@
           <destructible>true</destructible>
           <staticID>1315</staticID>
           <pos>
-            <X>1014</X>
-            <Y>2994</Y>
+            <x>1014</x>
+            <y>2994</y>
           </pos>
           <rotation>2.15</rotation>
           <typeName>wall model</typeName>
@@ -2671,8 +2671,8 @@
           <destructible>true</destructible>
           <staticID>1316</staticID>
           <pos>
-            <X>2088.00024</X>
-            <Y>4002.99976</Y>
+            <x>2088.00024</x>
+            <y>4002.99976</y>
           </pos>
           <rotation>0.6</rotation>
           <typeName>wall model</typeName>
@@ -2682,8 +2682,8 @@
           <destructible>true</destructible>
           <staticID>1317</staticID>
           <pos>
-            <X>3623</X>
-            <Y>197.000015</Y>
+            <x>3623</x>
+            <y>197.000015</y>
           </pos>
           <rotation>0.2</rotation>
           <typeName>wall model</typeName>
@@ -2693,8 +2693,8 @@
           <destructible>true</destructible>
           <staticID>1318</staticID>
           <pos>
-            <X>111.000069</X>
-            <Y>2980</Y>
+            <x>111.000069</x>
+            <y>2980</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -2704,8 +2704,8 @@
           <destructible>true</destructible>
           <staticID>1319</staticID>
           <pos>
-            <X>209</X>
-            <Y>914</Y>
+            <x>209</x>
+            <y>914</y>
           </pos>
           <rotation>5.78318548</rotation>
           <typeName>wall model</typeName>
@@ -2713,8 +2713,8 @@
         <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
-            <X>3790</X>
-            <Y>3390</Y>
+            <x>3790</x>
+            <y>3390</y>
           </pos>
           <rotation>-0.05</rotation>
           <typeName>dock</typeName>
@@ -2722,8 +2722,8 @@
         <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
-            <X>3901</X>
-            <Y>52.9999847</Y>
+            <x>3901</x>
+            <y>52.9999847</y>
           </pos>
           <rotation>0.05</rotation>
           <typeName>dock</typeName>
@@ -2731,8 +2731,8 @@
         <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
-            <X>90</X>
-            <Y>80</Y>
+            <x>90</x>
+            <y>80</y>
           </pos>
           <rotation>-0.13</rotation>
           <typeName>dock</typeName>
@@ -2740,8 +2740,8 @@
         <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
-            <X>85.0000153</X>
-            <Y>3784</Y>
+            <x>85.0000153</x>
+            <y>3784</y>
           </pos>
           <rotation>6.246032</rotation>
           <typeName>dock</typeName>
@@ -2749,18 +2749,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>970</X>
-              <Y>210</Y>
+              <x>970</x>
+              <y>210</y>
             </min>
             <max>
-              <X>1110</X>
-              <Y>460</Y>
+              <x>1110</x>
+              <y>460</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2768,18 +2768,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1330</X>
-              <Y>330</Y>
+              <x>1330</x>
+              <y>330</y>
             </min>
             <max>
-              <X>1600</X>
-              <Y>660</Y>
+              <x>1600</x>
+              <y>660</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2787,18 +2787,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1800</X>
-              <Y>160</Y>
+              <x>1800</x>
+              <y>160</y>
             </min>
             <max>
-              <X>2050</X>
-              <Y>280</Y>
+              <x>2050</x>
+              <y>280</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2806,18 +2806,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>2250</X>
-              <Y>230</Y>
+              <x>2250</x>
+              <y>230</y>
             </min>
             <max>
-              <X>2520</X>
-              <Y>520</Y>
+              <x>2520</x>
+              <y>520</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2825,18 +2825,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>2740</X>
-              <Y>190</Y>
+              <x>2740</x>
+              <y>190</y>
             </min>
             <max>
-              <X>3030</X>
-              <Y>490</Y>
+              <x>3030</x>
+              <y>490</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2844,18 +2844,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>560</X>
-              <Y>3400</Y>
+              <x>560</x>
+              <y>3400</y>
             </min>
             <max>
-              <X>730</X>
-              <Y>3750</Y>
+              <x>730</x>
+              <y>3750</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2863,18 +2863,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>900</X>
-              <Y>3360</Y>
+              <x>900</x>
+              <y>3360</y>
             </min>
             <max>
-              <X>1170</X>
-              <Y>3650</Y>
+              <x>1170</x>
+              <y>3650</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2882,18 +2882,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>1750</X>
-              <Y>3570</Y>
+              <x>1750</x>
+              <y>3570</y>
             </min>
             <max>
-              <X>2060</X>
-              <Y>3840</Y>
+              <x>2060</x>
+              <y>3840</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2901,18 +2901,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>2520</X>
-              <Y>3260</Y>
+              <x>2520</x>
+              <y>3260</y>
             </min>
             <max>
-              <X>2840</X>
-              <Y>3450</Y>
+              <x>2840</x>
+              <y>3450</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2920,18 +2920,18 @@
         <Item type="AW2.Game.Gobs.SpawnPlayer">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>3120</X>
-              <Y>3470</Y>
+              <x>3120</x>
+              <y>3470</y>
             </min>
             <max>
-              <X>3370</X>
-              <Y>3680</Y>
+              <x>3370</x>
+              <y>3680</y>
             </max>
           </spawnArea>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
@@ -2939,12 +2939,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>410</X>
-              <Y>1330</Y>
+              <x>410</x>
+              <y>1330</y>
             </min>
             <max>
-              <X>3560</X>
-              <Y>2680</Y>
+              <x>3560</x>
+              <y>2680</y>
             </max>
           </spawnArea>
           <spawnInterval>30</spawnInterval>
@@ -2968,8 +2968,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -2977,12 +2977,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>2820</X>
-              <Y>3790</Y>
+              <x>2820</x>
+              <y>3790</y>
             </min>
             <max>
-              <X>2825</X>
-              <Y>3795</Y>
+              <x>2825</x>
+              <y>3795</y>
             </max>
           </spawnArea>
           <spawnInterval>32</spawnInterval>
@@ -2994,8 +2994,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -3003,12 +3003,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>310</X>
-              <Y>3160</Y>
+              <x>310</x>
+              <y>3160</y>
             </min>
             <max>
-              <X>315</X>
-              <Y>3165</Y>
+              <x>315</x>
+              <y>3165</y>
             </max>
           </spawnArea>
           <spawnInterval>32</spawnInterval>
@@ -3020,8 +3020,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -3029,12 +3029,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>3335</X>
-              <Y>130</Y>
+              <x>3335</x>
+              <y>130</y>
             </min>
             <max>
-              <X>3340</X>
-              <Y>135</Y>
+              <x>3340</x>
+              <y>135</y>
             </max>
           </spawnArea>
           <spawnInterval>32</spawnInterval>
@@ -3046,8 +3046,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -3055,12 +3055,12 @@
         <Item type="AW2.Game.Gobs.SpawnGob">
           <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
-              <X>650</X>
-              <Y>570</Y>
+              <x>650</x>
+              <y>570</y>
             </min>
             <max>
-              <X>655</X>
-              <Y>575</Y>
+              <x>655</x>
+              <y>575</y>
             </max>
           </spawnArea>
           <spawnInterval>32</spawnInterval>
@@ -3072,8 +3072,8 @@
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
-            <X>0</X>
-            <Y>0</Y>
+            <x>0</x>
+            <y>0</y>
           </pos>
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
@@ -3083,8 +3083,8 @@
           <destructible>false</destructible>
           <staticID>1348</staticID>
           <pos>
-            <X>2643</X>
-            <Y>-97.00006</Y>
+            <x>2643</x>
+            <y>-97.00006</y>
           </pos>
           <rotation>2.47687483</rotation>
           <typeName>wall model</typeName>
@@ -3094,8 +3094,8 @@
           <destructible>false</destructible>
           <staticID>1349</staticID>
           <pos>
-            <X>2967</X>
-            <Y>5.0000267</Y>
+            <x>2967</x>
+            <y>5.0000267</y>
           </pos>
           <rotation>5.65780544</rotation>
           <typeName>wall model</typeName>
@@ -3105,8 +3105,8 @@
           <destructible>true</destructible>
           <staticID>1350</staticID>
           <pos>
-            <X>3646</X>
-            <Y>48.99997</Y>
+            <x>3646</x>
+            <y>48.99997</y>
           </pos>
           <rotation>0.4</rotation>
           <typeName>wall model</typeName>
@@ -3116,8 +3116,8 @@
           <destructible>true</destructible>
           <staticID>1351</staticID>
           <pos>
-            <X>474.999939</X>
-            <Y>3216</Y>
+            <x>474.999939</x>
+            <y>3216</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3127,8 +3127,8 @@
           <destructible>true</destructible>
           <staticID>1352</staticID>
           <pos>
-            <X>3311</X>
-            <Y>3039.99976</Y>
+            <x>3311</x>
+            <y>3039.99976</y>
           </pos>
           <rotation>2.584565</rotation>
           <typeName>wall model</typeName>
@@ -3138,8 +3138,8 @@
           <destructible>true</destructible>
           <staticID>1353</staticID>
           <pos>
-            <X>3222</X>
-            <Y>2918</Y>
+            <x>3222</x>
+            <y>2918</y>
           </pos>
           <rotation>4.833185</rotation>
           <typeName>wall model</typeName>
@@ -3149,8 +3149,8 @@
           <destructible>true</destructible>
           <staticID>1354</staticID>
           <pos>
-            <X>2784</X>
-            <Y>3606</Y>
+            <x>2784</x>
+            <y>3606</y>
           </pos>
           <rotation>4.6</rotation>
           <typeName>wall model</typeName>
@@ -3160,8 +3160,8 @@
           <destructible>true</destructible>
           <staticID>1355</staticID>
           <pos>
-            <X>3405</X>
-            <Y>287.000031</Y>
+            <x>3405</x>
+            <y>287.000031</y>
           </pos>
           <rotation>1.907663</rotation>
           <typeName>wall model</typeName>
@@ -3171,8 +3171,8 @@
           <destructible>true</destructible>
           <staticID>1356</staticID>
           <pos>
-            <X>2979</X>
-            <Y>3768</Y>
+            <x>2979</x>
+            <y>3768</y>
           </pos>
           <rotation>5.80162334</rotation>
           <typeName>wall model</typeName>
@@ -3182,8 +3182,8 @@
           <destructible>true</destructible>
           <staticID>1357</staticID>
           <pos>
-            <X>3607</X>
-            <Y>3391</Y>
+            <x>3607</x>
+            <y>3391</y>
           </pos>
           <rotation>1.9</rotation>
           <typeName>wall model</typeName>
@@ -3193,8 +3193,8 @@
           <destructible>true</destructible>
           <staticID>1358</staticID>
           <pos>
-            <X>3243</X>
-            <Y>3907</Y>
+            <x>3243</x>
+            <y>3907</y>
           </pos>
           <rotation>-0.9</rotation>
           <typeName>wall model</typeName>
@@ -3204,8 +3204,8 @@
           <destructible>true</destructible>
           <staticID>1359</staticID>
           <pos>
-            <X>3893.99976</X>
-            <Y>3657</Y>
+            <x>3893.99976</x>
+            <y>3657</y>
           </pos>
           <rotation>3.1</rotation>
           <typeName>wall model</typeName>
@@ -3215,8 +3215,8 @@
           <destructible>true</destructible>
           <staticID>1360</staticID>
           <pos>
-            <X>17.0000153</X>
-            <Y>1231.00049</Y>
+            <x>17.0000153</x>
+            <y>1231.00049</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3226,8 +3226,8 @@
           <destructible>true</destructible>
           <staticID>1361</staticID>
           <pos>
-            <X>3228</X>
-            <Y>3197</Y>
+            <x>3228</x>
+            <y>3197</y>
           </pos>
           <rotation>1.8845787</rotation>
           <typeName>wall model</typeName>
@@ -3237,8 +3237,8 @@
           <destructible>true</destructible>
           <staticID>1362</staticID>
           <pos>
-            <X>3153.99976</X>
-            <Y>670</Y>
+            <x>3153.99976</x>
+            <y>670</y>
           </pos>
           <rotation>4.6</rotation>
           <typeName>wall model</typeName>
@@ -3248,8 +3248,8 @@
           <destructible>true</destructible>
           <staticID>1363</staticID>
           <pos>
-            <X>2410</X>
-            <Y>2965</Y>
+            <x>2410</x>
+            <y>2965</y>
           </pos>
           <rotation>0.2</rotation>
           <typeName>wall model</typeName>
@@ -3259,8 +3259,8 @@
           <destructible>true</destructible>
           <staticID>1364</staticID>
           <pos>
-            <X>3978</X>
-            <Y>2321</Y>
+            <x>3978</x>
+            <y>2321</y>
           </pos>
           <rotation>2.56536674</rotation>
           <typeName>wall model</typeName>
@@ -3270,8 +3270,8 @@
           <destructible>true</destructible>
           <staticID>1365</staticID>
           <pos>
-            <X>3496</X>
-            <Y>61</Y>
+            <x>3496</x>
+            <y>61</y>
           </pos>
           <rotation>1.703845</rotation>
           <typeName>wall model</typeName>
@@ -3281,8 +3281,8 @@
           <destructible>false</destructible>
           <staticID>1366</staticID>
           <pos>
-            <X>3956</X>
-            <Y>2955</Y>
+            <x>3956</x>
+            <y>2955</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -3292,8 +3292,8 @@
           <destructible>true</destructible>
           <staticID>1367</staticID>
           <pos>
-            <X>3362</X>
-            <Y>3857</Y>
+            <x>3362</x>
+            <y>3857</y>
           </pos>
           <rotation>4.99768448</rotation>
           <typeName>wall model</typeName>
@@ -3303,8 +3303,8 @@
           <destructible>true</destructible>
           <staticID>1368</staticID>
           <pos>
-            <X>3281</X>
-            <Y>3341</Y>
+            <x>3281</x>
+            <y>3341</y>
           </pos>
           <rotation>1.98235857</rotation>
           <typeName>wall model</typeName>
@@ -3314,8 +3314,8 @@
           <destructible>true</destructible>
           <staticID>1369</staticID>
           <pos>
-            <X>633</X>
-            <Y>3088</Y>
+            <x>633</x>
+            <y>3088</y>
           </pos>
           <rotation>1.01314664</rotation>
           <typeName>wall model</typeName>
@@ -3325,8 +3325,8 @@
           <destructible>true</destructible>
           <staticID>1370</staticID>
           <pos>
-            <X>3504</X>
-            <Y>3384</Y>
+            <x>3504</x>
+            <y>3384</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3336,8 +3336,8 @@
           <destructible>true</destructible>
           <staticID>1371</staticID>
           <pos>
-            <X>2752</X>
-            <Y>3689</Y>
+            <x>2752</x>
+            <y>3689</y>
           </pos>
           <rotation>1.57079637</rotation>
           <typeName>wall model</typeName>
@@ -3347,8 +3347,8 @@
           <destructible>true</destructible>
           <staticID>1372</staticID>
           <pos>
-            <X>3987</X>
-            <Y>1572</Y>
+            <x>3987</x>
+            <y>1572</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -3358,8 +3358,8 @@
           <destructible>true</destructible>
           <staticID>1373</staticID>
           <pos>
-            <X>3562</X>
-            <Y>241</Y>
+            <x>3562</x>
+            <y>241</y>
           </pos>
           <rotation>4.67300272</rotation>
           <typeName>wall model</typeName>
@@ -3369,8 +3369,8 @@
           <destructible>true</destructible>
           <staticID>1374</staticID>
           <pos>
-            <X>507.0001</X>
-            <Y>60.0000229</Y>
+            <x>507.0001</x>
+            <y>60.0000229</y>
           </pos>
           <rotation>5.319144</rotation>
           <typeName>wall model</typeName>
@@ -3380,8 +3380,8 @@
           <destructible>true</destructible>
           <staticID>1375</staticID>
           <pos>
-            <X>157.000015</X>
-            <Y>1034.00012</Y>
+            <x>157.000015</x>
+            <y>1034.00012</y>
           </pos>
           <rotation>3.64994574</rotation>
           <typeName>wall model</typeName>
@@ -3391,8 +3391,8 @@
           <destructible>true</destructible>
           <staticID>1376</staticID>
           <pos>
-            <X>3779.00024</X>
-            <Y>3818</Y>
+            <x>3779.00024</x>
+            <y>3818</y>
           </pos>
           <rotation>1.580761</rotation>
           <typeName>wall model</typeName>
@@ -3402,8 +3402,8 @@
           <destructible>true</destructible>
           <staticID>1377</staticID>
           <pos>
-            <X>3803</X>
-            <Y>1044</Y>
+            <x>3803</x>
+            <y>1044</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3413,8 +3413,8 @@
           <destructible>true</destructible>
           <staticID>1378</staticID>
           <pos>
-            <X>3996.99976</X>
-            <Y>1386</Y>
+            <x>3996.99976</x>
+            <y>1386</y>
           </pos>
           <rotation>4.88452435</rotation>
           <typeName>wall model</typeName>
@@ -3424,8 +3424,8 @@
           <destructible>true</destructible>
           <staticID>1379</staticID>
           <pos>
-            <X>2800</X>
-            <Y>3609</Y>
+            <x>2800</x>
+            <y>3609</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -3435,8 +3435,8 @@
           <destructible>true</destructible>
           <staticID>1380</staticID>
           <pos>
-            <X>3414.99976</X>
-            <Y>3268</Y>
+            <x>3414.99976</x>
+            <y>3268</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3446,8 +3446,8 @@
           <destructible>true</destructible>
           <staticID>1381</staticID>
           <pos>
-            <X>2908</X>
-            <Y>3050</Y>
+            <x>2908</x>
+            <y>3050</y>
           </pos>
           <rotation>4.55455542</rotation>
           <typeName>wall model</typeName>
@@ -3457,8 +3457,8 @@
           <destructible>true</destructible>
           <staticID>1382</staticID>
           <pos>
-            <X>3504</X>
-            <Y>3848</Y>
+            <x>3504</x>
+            <y>3848</y>
           </pos>
           <rotation>2.61613154</rotation>
           <typeName>wall model</typeName>
@@ -3468,8 +3468,8 @@
           <destructible>true</destructible>
           <staticID>1383</staticID>
           <pos>
-            <X>2583</X>
-            <Y>55.0000038</Y>
+            <x>2583</x>
+            <y>55.0000038</y>
           </pos>
           <rotation>-0.6</rotation>
           <typeName>wall model</typeName>
@@ -3479,8 +3479,8 @@
           <destructible>true</destructible>
           <staticID>1384</staticID>
           <pos>
-            <X>946</X>
-            <Y>3098</Y>
+            <x>946</x>
+            <y>3098</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3490,8 +3490,8 @@
           <destructible>true</destructible>
           <staticID>1385</staticID>
           <pos>
-            <X>3830.99951</X>
-            <Y>690</Y>
+            <x>3830.99951</x>
+            <y>690</y>
           </pos>
           <rotation>4.35242462</rotation>
           <typeName>wall model</typeName>
@@ -3501,8 +3501,8 @@
           <destructible>true</destructible>
           <staticID>1386</staticID>
           <pos>
-            <X>511</X>
-            <Y>926</Y>
+            <x>511</x>
+            <y>926</y>
           </pos>
           <rotation>0.3</rotation>
           <typeName>wall model</typeName>
@@ -3512,8 +3512,8 @@
           <destructible>false</destructible>
           <staticID>1387</staticID>
           <pos>
-            <X>-30.9998474</X>
-            <Y>150.999969</Y>
+            <x>-30.9998474</x>
+            <y>150.999969</y>
           </pos>
           <rotation>3.6383965</rotation>
           <typeName>wall model</typeName>
@@ -3523,8 +3523,8 @@
           <destructible>false</destructible>
           <staticID>1388</staticID>
           <pos>
-            <X>783.0001</X>
-            <Y>-43</Y>
+            <x>783.0001</x>
+            <y>-43</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -3534,8 +3534,8 @@
           <destructible>true</destructible>
           <staticID>1389</staticID>
           <pos>
-            <X>2595.00024</X>
-            <Y>4005</Y>
+            <x>2595.00024</x>
+            <y>4005</y>
           </pos>
           <rotation>4.61379051</rotation>
           <typeName>wall model</typeName>
@@ -3545,8 +3545,8 @@
           <destructible>false</destructible>
           <staticID>1390</staticID>
           <pos>
-            <X>2946</X>
-            <Y>3939</Y>
+            <x>2946</x>
+            <y>3939</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -3556,8 +3556,8 @@
           <destructible>true</destructible>
           <staticID>1391</staticID>
           <pos>
-            <X>1920</X>
-            <Y>-11.9999981</Y>
+            <x>1920</x>
+            <y>-11.9999981</y>
           </pos>
           <rotation>1.63843751</rotation>
           <typeName>wall model</typeName>
@@ -3567,8 +3567,8 @@
           <destructible>true</destructible>
           <staticID>1392</staticID>
           <pos>
-            <X>3112</X>
-            <Y>3854</Y>
+            <x>3112</x>
+            <y>3854</y>
           </pos>
           <rotation>3.88613582</rotation>
           <typeName>wall model</typeName>
@@ -3578,8 +3578,8 @@
           <destructible>true</destructible>
           <staticID>1393</staticID>
           <pos>
-            <X>892</X>
-            <Y>3044</Y>
+            <x>892</x>
+            <y>3044</y>
           </pos>
           <rotation>5.43066549</rotation>
           <typeName>wall model</typeName>
@@ -3589,8 +3589,8 @@
           <destructible>false</destructible>
           <staticID>1394</staticID>
           <pos>
-            <X>3933</X>
-            <Y>2479</Y>
+            <x>3933</x>
+            <y>2479</y>
           </pos>
           <rotation>0.7658765</rotation>
           <typeName>wall model</typeName>
@@ -3600,8 +3600,8 @@
           <destructible>false</destructible>
           <staticID>1395</staticID>
           <pos>
-            <X>4067</X>
-            <Y>1741</Y>
+            <x>4067</x>
+            <y>1741</y>
           </pos>
           <rotation>3.2</rotation>
           <typeName>wall model</typeName>
@@ -3611,8 +3611,8 @@
           <destructible>true</destructible>
           <staticID>1396</staticID>
           <pos>
-            <X>2175</X>
-            <Y>2997</Y>
+            <x>2175</x>
+            <y>2997</y>
           </pos>
           <rotation>4.75041437</rotation>
           <typeName>wall model</typeName>
@@ -3622,8 +3622,8 @@
           <destructible>true</destructible>
           <staticID>1397</staticID>
           <pos>
-            <X>1471.99988</X>
-            <Y>3051</Y>
+            <x>1471.99988</x>
+            <y>3051</y>
           </pos>
           <rotation>2.004314</rotation>
           <typeName>wall model</typeName>
@@ -3633,8 +3633,8 @@
           <destructible>true</destructible>
           <staticID>1398</staticID>
           <pos>
-            <X>545.999939</X>
-            <Y>3010</Y>
+            <x>545.999939</x>
+            <y>3010</y>
           </pos>
           <rotation>2.69225526</rotation>
           <typeName>wall model</typeName>
@@ -3644,8 +3644,8 @@
           <destructible>true</destructible>
           <staticID>1399</staticID>
           <pos>
-            <X>3603</X>
-            <Y>3288</Y>
+            <x>3603</x>
+            <y>3288</y>
           </pos>
           <rotation>2.92851377</rotation>
           <typeName>wall model</typeName>
@@ -3655,8 +3655,8 @@
           <destructible>false</destructible>
           <staticID>1400</staticID>
           <pos>
-            <X>19.9999847</X>
-            <Y>3922.99976</Y>
+            <x>19.9999847</x>
+            <y>3922.99976</y>
           </pos>
           <rotation>-1.4</rotation>
           <typeName>wall model</typeName>
@@ -3666,8 +3666,8 @@
           <destructible>true</destructible>
           <staticID>1401</staticID>
           <pos>
-            <X>227.000031</X>
-            <Y>2849</Y>
+            <x>227.000031</x>
+            <y>2849</y>
           </pos>
           <rotation>-0.47</rotation>
           <typeName>wall model</typeName>
@@ -3677,8 +3677,8 @@
           <destructible>false</destructible>
           <staticID>1402</staticID>
           <pos>
-            <X>227.000031</X>
-            <Y>2849</Y>
+            <x>227.000031</x>
+            <y>2849</y>
           </pos>
           <rotation>-0.47</rotation>
           <typeName>wall model</typeName>
@@ -3688,8 +3688,8 @@
           <destructible>false</destructible>
           <staticID>1403</staticID>
           <pos>
-            <X>163.999985</X>
-            <Y>3551</Y>
+            <x>163.999985</x>
+            <y>3551</y>
           </pos>
           <rotation>4.1</rotation>
           <typeName>wall model</typeName>
@@ -3699,8 +3699,8 @@
           <destructible>true</destructible>
           <staticID>1404</staticID>
           <pos>
-            <X>-12.9999933</X>
-            <Y>3695</Y>
+            <x>-12.9999933</x>
+            <y>3695</y>
           </pos>
           <rotation>2.9</rotation>
           <typeName>wall model</typeName>
@@ -3710,8 +3710,8 @@
           <destructible>false</destructible>
           <staticID>1405</staticID>
           <pos>
-            <X>3991</X>
-            <Y>554</Y>
+            <x>3991</x>
+            <y>554</y>
           </pos>
           <rotation>1.53</rotation>
           <typeName>wall model</typeName>
@@ -3721,8 +3721,8 @@
           <destructible>false</destructible>
           <staticID>1406</staticID>
           <pos>
-            <X>2106</X>
-            <Y>4023</Y>
+            <x>2106</x>
+            <y>4023</y>
           </pos>
           <rotation>0.3</rotation>
           <typeName>wall model</typeName>
@@ -3732,8 +3732,8 @@
           <destructible>true</destructible>
           <staticID>1407</staticID>
           <pos>
-            <X>3428</X>
-            <Y>931</Y>
+            <x>3428</x>
+            <y>931</y>
           </pos>
           <rotation>0.05</rotation>
           <typeName>wall model</typeName>
@@ -3743,8 +3743,8 @@
           <destructible>true</destructible>
           <staticID>1408</staticID>
           <pos>
-            <X>3864</X>
-            <Y>957</Y>
+            <x>3864</x>
+            <y>957</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3754,8 +3754,8 @@
           <destructible>true</destructible>
           <staticID>1409</staticID>
           <pos>
-            <X>3341</X>
-            <Y>273</Y>
+            <x>3341</x>
+            <y>273</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -3765,8 +3765,8 @@
           <destructible>true</destructible>
           <staticID>1410</staticID>
           <pos>
-            <X>2665</X>
-            <Y>974</Y>
+            <x>2665</x>
+            <y>974</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3776,8 +3776,8 @@
           <destructible>true</destructible>
           <staticID>1411</staticID>
           <pos>
-            <X>213.000061</X>
-            <Y>1014.00012</Y>
+            <x>213.000061</x>
+            <y>1014.00012</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>wall model</typeName>
@@ -3787,8 +3787,8 @@
           <destructible>true</destructible>
           <staticID>1412</staticID>
           <pos>
-            <X>604.000061</X>
-            <Y>982</Y>
+            <x>604.000061</x>
+            <y>982</y>
           </pos>
           <rotation>2.1</rotation>
           <typeName>wall model</typeName>
@@ -3798,8 +3798,8 @@
           <destructible>true</destructible>
           <staticID>1413</staticID>
           <pos>
-            <X>2472</X>
-            <Y>971</Y>
+            <x>2472</x>
+            <y>971</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -3809,8 +3809,8 @@
           <destructible>true</destructible>
           <staticID>1414</staticID>
           <pos>
-            <X>947.000061</X>
-            <Y>961</Y>
+            <x>947.000061</x>
+            <y>961</y>
           </pos>
           <rotation>0.8</rotation>
           <typeName>wall model</typeName>
@@ -3820,8 +3820,8 @@
           <destructible>true</destructible>
           <staticID>1415</staticID>
           <pos>
-            <X>114</X>
-            <Y>728.000061</Y>
+            <x>114</x>
+            <y>728.000061</y>
           </pos>
           <rotation>6.1</rotation>
           <typeName>wall model</typeName>
@@ -3831,8 +3831,8 @@
           <destructible>true</destructible>
           <staticID>1416</staticID>
           <pos>
-            <X>377</X>
-            <Y>822</Y>
+            <x>377</x>
+            <y>822</y>
           </pos>
           <rotation>3.3</rotation>
           <typeName>wall model</typeName>
@@ -3842,8 +3842,8 @@
           <destructible>true</destructible>
           <staticID>1417</staticID>
           <pos>
-            <X>887</X>
-            <Y>826.000061</Y>
+            <x>887</x>
+            <y>826.000061</y>
           </pos>
           <rotation>3</rotation>
           <typeName>wall model</typeName>
@@ -3853,8 +3853,8 @@
           <destructible>true</destructible>
           <staticID>1418</staticID>
           <pos>
-            <X>590</X>
-            <Y>773</Y>
+            <x>590</x>
+            <y>773</y>
           </pos>
           <rotation>5</rotation>
           <typeName>wall model</typeName>
@@ -3864,8 +3864,8 @@
           <destructible>true</destructible>
           <staticID>1419</staticID>
           <pos>
-            <X>61.99999</X>
-            <Y>803</Y>
+            <x>61.99999</x>
+            <y>803</y>
           </pos>
           <rotation>0.7</rotation>
           <typeName>wall model</typeName>
@@ -3875,8 +3875,8 @@
           <destructible>true</destructible>
           <staticID>1420</staticID>
           <pos>
-            <X>25.9997921</X>
-            <Y>490</Y>
+            <x>25.9997921</x>
+            <y>490</y>
           </pos>
           <rotation>4.976834</rotation>
           <typeName>wall model</typeName>
@@ -3886,8 +3886,8 @@
           <destructible>true</destructible>
           <staticID>1421</staticID>
           <pos>
-            <X>286.000122</X>
-            <Y>687</Y>
+            <x>286.000122</x>
+            <y>687</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -3897,8 +3897,8 @@
           <destructible>true</destructible>
           <staticID>1422</staticID>
           <pos>
-            <X>220.999786</X>
-            <Y>678</Y>
+            <x>220.999786</x>
+            <y>678</y>
           </pos>
           <rotation>4.976834</rotation>
           <typeName>wall model</typeName>
@@ -3908,8 +3908,8 @@
           <destructible>true</destructible>
           <staticID>1423</staticID>
           <pos>
-            <X>414.999725</X>
-            <Y>673</Y>
+            <x>414.999725</x>
+            <y>673</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -3919,8 +3919,8 @@
           <destructible>true</destructible>
           <staticID>1424</staticID>
           <pos>
-            <X>310</X>
-            <Y>585</Y>
+            <x>310</x>
+            <y>585</y>
           </pos>
           <rotation>-1</rotation>
           <typeName>wall model</typeName>
@@ -3930,8 +3930,8 @@
           <destructible>true</destructible>
           <staticID>1425</staticID>
           <pos>
-            <X>311.9998</X>
-            <Y>1000</Y>
+            <x>311.9998</x>
+            <y>1000</y>
           </pos>
           <rotation>1.3</rotation>
           <typeName>wall model</typeName>
@@ -3941,8 +3941,8 @@
           <destructible>true</destructible>
           <staticID>1426</staticID>
           <pos>
-            <X>685.0001</X>
-            <Y>1009.00012</Y>
+            <x>685.0001</x>
+            <y>1009.00012</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -3952,8 +3952,8 @@
           <destructible>true</destructible>
           <staticID>1427</staticID>
           <pos>
-            <X>709.999756</X>
-            <Y>1010.00006</Y>
+            <x>709.999756</x>
+            <y>1010.00006</y>
           </pos>
           <rotation>2.1</rotation>
           <typeName>wall model</typeName>
@@ -3963,8 +3963,8 @@
           <destructible>true</destructible>
           <staticID>1428</staticID>
           <pos>
-            <X>483</X>
-            <Y>1033</Y>
+            <x>483</x>
+            <y>1033</y>
           </pos>
           <rotation>-0.4</rotation>
           <typeName>wall model</typeName>
@@ -3974,8 +3974,8 @@
           <destructible>true</destructible>
           <staticID>1429</staticID>
           <pos>
-            <X>749</X>
-            <Y>779</Y>
+            <x>749</x>
+            <y>779</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -3985,8 +3985,8 @@
           <destructible>true</destructible>
           <staticID>1430</staticID>
           <pos>
-            <X>1350</X>
-            <Y>945</Y>
+            <x>1350</x>
+            <y>945</y>
           </pos>
           <rotation>0.3</rotation>
           <typeName>wall model</typeName>
@@ -3996,8 +3996,8 @@
           <destructible>true</destructible>
           <staticID>1431</staticID>
           <pos>
-            <X>1668</X>
-            <Y>1002</Y>
+            <x>1668</x>
+            <y>1002</y>
           </pos>
           <rotation>5.1</rotation>
           <typeName>wall model</typeName>
@@ -4007,8 +4007,8 @@
           <destructible>true</destructible>
           <staticID>1432</staticID>
           <pos>
-            <X>1377.99988</X>
-            <Y>989</Y>
+            <x>1377.99988</x>
+            <y>989</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -4018,8 +4018,8 @@
           <destructible>true</destructible>
           <staticID>1433</staticID>
           <pos>
-            <X>1481</X>
-            <Y>1018.99994</Y>
+            <x>1481</x>
+            <y>1018.99994</y>
           </pos>
           <rotation>2.47687483</rotation>
           <typeName>wall model</typeName>
@@ -4029,8 +4029,8 @@
           <destructible>true</destructible>
           <staticID>1434</staticID>
           <pos>
-            <X>1482</X>
-            <Y>1056</Y>
+            <x>1482</x>
+            <y>1056</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -4040,8 +4040,8 @@
           <destructible>true</destructible>
           <staticID>1435</staticID>
           <pos>
-            <X>1063.99988</X>
-            <Y>1066.00012</Y>
+            <x>1063.99988</x>
+            <y>1066.00012</y>
           </pos>
           <rotation>-1.2</rotation>
           <typeName>wall model</typeName>
@@ -4051,8 +4051,8 @@
           <destructible>true</destructible>
           <staticID>1436</staticID>
           <pos>
-            <X>978</X>
-            <Y>1004</Y>
+            <x>978</x>
+            <y>1004</y>
           </pos>
           <rotation>5.78318548</rotation>
           <typeName>wall model</typeName>
@@ -4062,8 +4062,8 @@
           <destructible>true</destructible>
           <staticID>1437</staticID>
           <pos>
-            <X>909.9997</X>
-            <Y>1005.00012</Y>
+            <x>909.9997</x>
+            <y>1005.00012</y>
           </pos>
           <rotation>1.1</rotation>
           <typeName>wall model</typeName>
@@ -4073,8 +4073,8 @@
           <destructible>true</destructible>
           <staticID>1438</staticID>
           <pos>
-            <X>948.9998</X>
-            <Y>723</Y>
+            <x>948.9998</x>
+            <y>723</y>
           </pos>
           <rotation>1.3</rotation>
           <typeName>wall model</typeName>
@@ -4084,8 +4084,8 @@
           <destructible>true</destructible>
           <staticID>1439</staticID>
           <pos>
-            <X>1135.00024</X>
-            <Y>816.000061</Y>
+            <x>1135.00024</x>
+            <y>816.000061</y>
           </pos>
           <rotation>0.4</rotation>
           <typeName>wall model</typeName>
@@ -4095,8 +4095,8 @@
           <destructible>true</destructible>
           <staticID>1440</staticID>
           <pos>
-            <X>612</X>
-            <Y>462</Y>
+            <x>612</x>
+            <y>462</y>
           </pos>
           <rotation>-0.2</rotation>
           <typeName>wall model</typeName>
@@ -4106,8 +4106,8 @@
           <destructible>true</destructible>
           <staticID>1441</staticID>
           <pos>
-            <X>649.999756</X>
-            <Y>384.000061</Y>
+            <x>649.999756</x>
+            <y>384.000061</y>
           </pos>
           <rotation>1.3</rotation>
           <typeName>wall model</typeName>
@@ -4117,8 +4117,8 @@
           <destructible>true</destructible>
           <staticID>1442</staticID>
           <pos>
-            <X>514.9999</X>
-            <Y>489</Y>
+            <x>514.9999</x>
+            <y>489</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -4128,8 +4128,8 @@
           <destructible>false</destructible>
           <staticID>1443</staticID>
           <pos>
-            <X>94.00016</X>
-            <Y>-76.00003</Y>
+            <x>94.00016</x>
+            <y>-76.00003</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -4139,8 +4139,8 @@
           <destructible>true</destructible>
           <staticID>1444</staticID>
           <pos>
-            <X>1204.99976</X>
-            <Y>904</Y>
+            <x>1204.99976</x>
+            <y>904</y>
           </pos>
           <rotation>4.976834</rotation>
           <typeName>wall model</typeName>
@@ -4150,8 +4150,8 @@
           <destructible>true</destructible>
           <staticID>1445</staticID>
           <pos>
-            <X>3675.00024</X>
-            <Y>946</Y>
+            <x>3675.00024</x>
+            <y>946</y>
           </pos>
           <rotation>2.6</rotation>
           <typeName>wall model</typeName>
@@ -4161,8 +4161,8 @@
           <destructible>true</destructible>
           <staticID>1446</staticID>
           <pos>
-            <X>2843</X>
-            <Y>962</Y>
+            <x>2843</x>
+            <y>962</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -4172,8 +4172,8 @@
           <destructible>true</destructible>
           <staticID>1447</staticID>
           <pos>
-            <X>3576</X>
-            <Y>800</Y>
+            <x>3576</x>
+            <y>800</y>
           </pos>
           <rotation>-1.6</rotation>
           <typeName>wall model</typeName>
@@ -4183,8 +4183,8 @@
           <destructible>true</destructible>
           <staticID>1448</staticID>
           <pos>
-            <X>3766</X>
-            <Y>769</Y>
+            <x>3766</x>
+            <y>769</y>
           </pos>
           <rotation>3.6</rotation>
           <typeName>wall model</typeName>
@@ -4194,8 +4194,8 @@
           <destructible>true</destructible>
           <staticID>1449</staticID>
           <pos>
-            <X>3640.99976</X>
-            <Y>865</Y>
+            <x>3640.99976</x>
+            <y>865</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -4205,8 +4205,8 @@
           <destructible>true</destructible>
           <staticID>1450</staticID>
           <pos>
-            <X>3980</X>
-            <Y>611</Y>
+            <x>3980</x>
+            <y>611</y>
           </pos>
           <rotation>3.3</rotation>
           <typeName>wall model</typeName>
@@ -4216,8 +4216,8 @@
           <destructible>false</destructible>
           <staticID>1451</staticID>
           <pos>
-            <X>3342</X>
-            <Y>3979</Y>
+            <x>3342</x>
+            <y>3979</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -4227,8 +4227,8 @@
           <destructible>true</destructible>
           <staticID>1452</staticID>
           <pos>
-            <X>3266</X>
-            <Y>791.999756</Y>
+            <x>3266</x>
+            <y>791.999756</y>
           </pos>
           <rotation>5.3</rotation>
           <typeName>wall model</typeName>
@@ -4238,8 +4238,8 @@
           <destructible>true</destructible>
           <staticID>1453</staticID>
           <pos>
-            <X>3037.99976</X>
-            <Y>741</Y>
+            <x>3037.99976</x>
+            <y>741</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -4249,8 +4249,8 @@
           <destructible>true</destructible>
           <staticID>1454</staticID>
           <pos>
-            <X>3737</X>
-            <Y>713.999939</Y>
+            <x>3737</x>
+            <y>713.999939</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -4260,8 +4260,8 @@
           <destructible>true</destructible>
           <staticID>1455</staticID>
           <pos>
-            <X>3563</X>
-            <Y>1042</Y>
+            <x>3563</x>
+            <y>1042</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -4271,8 +4271,8 @@
           <destructible>true</destructible>
           <staticID>1456</staticID>
           <pos>
-            <X>3666.99976</X>
-            <Y>1066</Y>
+            <x>3666.99976</x>
+            <y>1066</y>
           </pos>
           <rotation>1.76</rotation>
           <typeName>wall model</typeName>
@@ -4282,8 +4282,8 @@
           <destructible>true</destructible>
           <staticID>1457</staticID>
           <pos>
-            <X>3593.99976</X>
-            <Y>748</Y>
+            <x>3593.99976</x>
+            <y>748</y>
           </pos>
           <rotation>4.6</rotation>
           <typeName>wall model</typeName>
@@ -4293,8 +4293,8 @@
           <destructible>true</destructible>
           <staticID>1458</staticID>
           <pos>
-            <X>3222</X>
-            <Y>265.999939</Y>
+            <x>3222</x>
+            <y>265.999939</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -4304,8 +4304,8 @@
           <destructible>true</destructible>
           <staticID>1459</staticID>
           <pos>
-            <X>3162</X>
-            <Y>919</Y>
+            <x>3162</x>
+            <y>919</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -4315,8 +4315,8 @@
           <destructible>true</destructible>
           <staticID>1460</staticID>
           <pos>
-            <X>149.999939</X>
-            <Y>2763</Y>
+            <x>149.999939</x>
+            <y>2763</y>
           </pos>
           <rotation>-0.3</rotation>
           <typeName>wall model</typeName>
@@ -4326,8 +4326,8 @@
           <destructible>true</destructible>
           <staticID>1461</staticID>
           <pos>
-            <X>2566</X>
-            <Y>814</Y>
+            <x>2566</x>
+            <y>814</y>
           </pos>
           <rotation>3.15</rotation>
           <typeName>wall model</typeName>
@@ -4337,8 +4337,8 @@
           <destructible>true</destructible>
           <staticID>1462</staticID>
           <pos>
-            <X>2599.00024</X>
-            <Y>814.000061</Y>
+            <x>2599.00024</x>
+            <y>814.000061</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -4348,8 +4348,8 @@
           <destructible>true</destructible>
           <staticID>1463</staticID>
           <pos>
-            <X>2443</X>
-            <Y>1022.00006</Y>
+            <x>2443</x>
+            <y>1022.00006</y>
           </pos>
           <rotation>1.2</rotation>
           <typeName>wall model</typeName>
@@ -4359,8 +4359,8 @@
           <destructible>true</destructible>
           <staticID>1464</staticID>
           <pos>
-            <X>2848</X>
-            <Y>665</Y>
+            <x>2848</x>
+            <y>665</y>
           </pos>
           <rotation>5.1</rotation>
           <typeName>wall model</typeName>
@@ -4370,8 +4370,8 @@
           <destructible>true</destructible>
           <staticID>1465</staticID>
           <pos>
-            <X>3887.99976</X>
-            <Y>1096</Y>
+            <x>3887.99976</x>
+            <y>1096</y>
           </pos>
           <rotation>1.3</rotation>
           <typeName>wall model</typeName>
@@ -4381,8 +4381,8 @@
           <destructible>true</destructible>
           <staticID>1466</staticID>
           <pos>
-            <X>2635.99976</X>
-            <Y>752</Y>
+            <x>2635.99976</x>
+            <y>752</y>
           </pos>
           <rotation>3</rotation>
           <typeName>wall model</typeName>
@@ -4392,8 +4392,8 @@
           <destructible>true</destructible>
           <staticID>1467</staticID>
           <pos>
-            <X>2964.99976</X>
-            <Y>949</Y>
+            <x>2964.99976</x>
+            <y>949</y>
           </pos>
           <rotation>1.9</rotation>
           <typeName>wall model</typeName>
@@ -4403,8 +4403,8 @@
           <destructible>true</destructible>
           <staticID>1468</staticID>
           <pos>
-            <X>2528</X>
-            <Y>816</Y>
+            <x>2528</x>
+            <y>816</y>
           </pos>
           <rotation>1.6</rotation>
           <typeName>wall model</typeName>
@@ -4414,8 +4414,8 @@
           <destructible>true</destructible>
           <staticID>1469</staticID>
           <pos>
-            <X>3177</X>
-            <Y>974</Y>
+            <x>3177</x>
+            <y>974</y>
           </pos>
           <rotation>-1</rotation>
           <typeName>wall model</typeName>
@@ -4425,8 +4425,8 @@
           <destructible>true</destructible>
           <staticID>1470</staticID>
           <pos>
-            <X>3881</X>
-            <Y>1200</Y>
+            <x>3881</x>
+            <y>1200</y>
           </pos>
           <rotation>-0.3</rotation>
           <typeName>wall model</typeName>
@@ -4436,8 +4436,8 @@
           <destructible>true</destructible>
           <staticID>1471</staticID>
           <pos>
-            <X>3215</X>
-            <Y>975</Y>
+            <x>3215</x>
+            <y>975</y>
           </pos>
           <rotation>-1.6</rotation>
           <typeName>wall model</typeName>
@@ -4447,8 +4447,8 @@
           <destructible>true</destructible>
           <staticID>1472</staticID>
           <pos>
-            <X>2337.99976</X>
-            <Y>983.000061</Y>
+            <x>2337.99976</x>
+            <y>983.000061</y>
           </pos>
           <rotation>1.4</rotation>
           <typeName>wall model</typeName>
@@ -4458,8 +4458,8 @@
           <destructible>true</destructible>
           <staticID>1473</staticID>
           <pos>
-            <X>91.00001</X>
-            <Y>2274</Y>
+            <x>91.00001</x>
+            <y>2274</y>
           </pos>
           <rotation>0.7</rotation>
           <typeName>wall model</typeName>
@@ -4469,8 +4469,8 @@
           <destructible>true</destructible>
           <staticID>1474</staticID>
           <pos>
-            <X>615</X>
-            <Y>373</Y>
+            <x>615</x>
+            <y>373</y>
           </pos>
           <rotation>3</rotation>
           <typeName>wall model</typeName>
@@ -4480,8 +4480,8 @@
           <destructible>true</destructible>
           <staticID>1475</staticID>
           <pos>
-            <X>2002.99976</X>
-            <Y>1954</Y>
+            <x>2002.99976</x>
+            <y>1954</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -4491,8 +4491,8 @@
           <destructible>true</destructible>
           <staticID>1476</staticID>
           <pos>
-            <X>3231.00024</X>
-            <Y>1925</Y>
+            <x>3231.00024</x>
+            <y>1925</y>
           </pos>
           <rotation>2.6</rotation>
           <typeName>wall model</typeName>
@@ -4502,8 +4502,8 @@
           <destructible>true</destructible>
           <staticID>1477</staticID>
           <pos>
-            <X>803.000244</X>
-            <Y>1962</Y>
+            <x>803.000244</x>
+            <y>1962</y>
           </pos>
           <rotation>5</rotation>
           <typeName>wall model</typeName>
@@ -4513,8 +4513,8 @@
           <destructible>true</destructible>
           <staticID>1478</staticID>
           <pos>
-            <X>2240.99976</X>
-            <Y>2006</Y>
+            <x>2240.99976</x>
+            <y>2006</y>
           </pos>
           <rotation>0.7658765</rotation>
           <typeName>wall model</typeName>
@@ -4524,8 +4524,8 @@
           <destructible>true</destructible>
           <staticID>1479</staticID>
           <pos>
-            <X>1791</X>
-            <Y>1970.00012</Y>
+            <x>1791</x>
+            <y>1970.00012</y>
           </pos>
           <rotation>-0.7</rotation>
           <typeName>wall model</typeName>
@@ -4535,8 +4535,8 @@
           <destructible>true</destructible>
           <staticID>1480</staticID>
           <pos>
-            <X>1888</X>
-            <Y>2043</Y>
+            <x>1888</x>
+            <y>2043</y>
           </pos>
           <rotation>-0.3</rotation>
           <typeName>wall model</typeName>
@@ -4546,8 +4546,8 @@
           <destructible>true</destructible>
           <staticID>1481</staticID>
           <pos>
-            <X>2088</X>
-            <Y>2107</Y>
+            <x>2088</x>
+            <y>2107</y>
           </pos>
           <rotation>-1.2</rotation>
           <typeName>wall model</typeName>
@@ -4557,8 +4557,8 @@
           <destructible>true</destructible>
           <staticID>1482</staticID>
           <pos>
-            <X>1948.99951</X>
-            <Y>1833</Y>
+            <x>1948.99951</x>
+            <y>1833</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -4568,8 +4568,8 @@
           <destructible>true</destructible>
           <staticID>1483</staticID>
           <pos>
-            <X>2011.00012</X>
-            <Y>2112</Y>
+            <x>2011.00012</x>
+            <y>2112</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -4579,8 +4579,8 @@
           <destructible>true</destructible>
           <staticID>1484</staticID>
           <pos>
-            <X>2020.99976</X>
-            <Y>2128</Y>
+            <x>2020.99976</x>
+            <y>2128</y>
           </pos>
           <rotation>1.1</rotation>
           <typeName>wall model</typeName>
@@ -4590,8 +4590,8 @@
           <destructible>true</destructible>
           <staticID>1485</staticID>
           <pos>
-            <X>2105.99976</X>
-            <Y>1877</Y>
+            <x>2105.99976</x>
+            <y>1877</y>
           </pos>
           <rotation>4.9</rotation>
           <typeName>wall model</typeName>
@@ -4601,8 +4601,8 @@
           <destructible>true</destructible>
           <staticID>1486</staticID>
           <pos>
-            <X>1694</X>
-            <Y>2025.00012</Y>
+            <x>1694</x>
+            <y>2025.00012</y>
           </pos>
           <rotation>0.6</rotation>
           <typeName>wall model</typeName>
@@ -4612,8 +4612,8 @@
           <destructible>true</destructible>
           <staticID>1487</staticID>
           <pos>
-            <X>1723.99976</X>
-            <Y>2139</Y>
+            <x>1723.99976</x>
+            <y>2139</y>
           </pos>
           <rotation>2.1</rotation>
           <typeName>wall model</typeName>
@@ -4623,8 +4623,8 @@
           <destructible>true</destructible>
           <staticID>1488</staticID>
           <pos>
-            <X>2288.99976</X>
-            <Y>2058</Y>
+            <x>2288.99976</x>
+            <y>2058</y>
           </pos>
           <rotation>0.7</rotation>
           <typeName>wall model</typeName>
@@ -4634,8 +4634,8 @@
           <destructible>true</destructible>
           <staticID>1489</staticID>
           <pos>
-            <X>2374.99976</X>
-            <Y>2959</Y>
+            <x>2374.99976</x>
+            <y>2959</y>
           </pos>
           <rotation>4.9</rotation>
           <typeName>wall model</typeName>
@@ -4645,8 +4645,8 @@
           <destructible>true</destructible>
           <staticID>1490</staticID>
           <pos>
-            <X>2327</X>
-            <Y>1906</Y>
+            <x>2327</x>
+            <y>1906</y>
           </pos>
           <rotation>-0.6</rotation>
           <typeName>wall model</typeName>
@@ -4656,8 +4656,8 @@
           <destructible>true</destructible>
           <staticID>1491</staticID>
           <pos>
-            <X>3328</X>
-            <Y>1821</Y>
+            <x>3328</x>
+            <y>1821</y>
           </pos>
           <rotation>1.57079637</rotation>
           <typeName>wall model</typeName>
@@ -4667,8 +4667,8 @@
           <destructible>true</destructible>
           <staticID>1492</staticID>
           <pos>
-            <X>824</X>
-            <Y>2110</Y>
+            <x>824</x>
+            <y>2110</y>
           </pos>
           <rotation>-2.1</rotation>
           <typeName>wall model</typeName>
@@ -4678,8 +4678,8 @@
           <destructible>true</destructible>
           <staticID>1493</staticID>
           <pos>
-            <X>696</X>
-            <Y>2101</Y>
+            <x>696</x>
+            <y>2101</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -4689,8 +4689,8 @@
           <destructible>true</destructible>
           <staticID>1494</staticID>
           <pos>
-            <X>851.000061</X>
-            <Y>2061.99976</Y>
+            <x>851.000061</x>
+            <y>2061.99976</y>
           </pos>
           <rotation>5.78318548</rotation>
           <typeName>wall model</typeName>
@@ -4700,8 +4700,8 @@
           <destructible>true</destructible>
           <staticID>1495</staticID>
           <pos>
-            <X>3231.99976</X>
-            <Y>1834</Y>
+            <x>3231.99976</x>
+            <y>1834</y>
           </pos>
           <rotation>4.5</rotation>
           <typeName>wall model</typeName>
@@ -4711,8 +4711,8 @@
           <destructible>true</destructible>
           <staticID>1496</staticID>
           <pos>
-            <X>779.999756</X>
-            <Y>1874</Y>
+            <x>779.999756</x>
+            <y>1874</y>
           </pos>
           <rotation>4.75</rotation>
           <typeName>wall model</typeName>
@@ -4722,8 +4722,8 @@
           <destructible>true</destructible>
           <staticID>1497</staticID>
           <pos>
-            <X>3296</X>
-            <Y>2027</Y>
+            <x>3296</x>
+            <y>2027</y>
           </pos>
           <rotation>-1.1</rotation>
           <typeName>wall model</typeName>
@@ -4733,8 +4733,8 @@
           <destructible>true</destructible>
           <staticID>1498</staticID>
           <pos>
-            <X>925</X>
-            <Y>1921.99988</Y>
+            <x>925</x>
+            <y>1921.99988</y>
           </pos>
           <rotation>-3.1</rotation>
           <typeName>wall model</typeName>
@@ -4744,8 +4744,8 @@
           <destructible>true</destructible>
           <staticID>1499</staticID>
           <pos>
-            <X>2179.99951</X>
-            <Y>2161</Y>
+            <x>2179.99951</x>
+            <y>2161</y>
           </pos>
           <rotation>-6</rotation>
           <typeName>wall model</typeName>
@@ -4755,8 +4755,8 @@
           <destructible>true</destructible>
           <staticID>1500</staticID>
           <pos>
-            <X>3320.99951</X>
-            <Y>1909</Y>
+            <x>3320.99951</x>
+            <y>1909</y>
           </pos>
           <rotation>-2</rotation>
           <typeName>wall model</typeName>
@@ -4766,8 +4766,8 @@
           <destructible>true</destructible>
           <staticID>1501</staticID>
           <pos>
-            <X>3134</X>
-            <Y>2025</Y>
+            <x>3134</x>
+            <y>2025</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -4777,8 +4777,8 @@
           <destructible>true</destructible>
           <staticID>1502</staticID>
           <pos>
-            <X>903</X>
-            <Y>1999</Y>
+            <x>903</x>
+            <y>1999</y>
           </pos>
           <rotation>3.7</rotation>
           <typeName>wall model</typeName>
@@ -4788,8 +4788,8 @@
           <destructible>true</destructible>
           <staticID>1503</staticID>
           <pos>
-            <X>706</X>
-            <Y>1951</Y>
+            <x>706</x>
+            <y>1951</y>
           </pos>
           <rotation>0.8</rotation>
           <typeName>wall model</typeName>
@@ -4799,8 +4799,8 @@
           <destructible>true</destructible>
           <staticID>1504</staticID>
           <pos>
-            <X>3192</X>
-            <Y>2059</Y>
+            <x>3192</x>
+            <y>2059</y>
           </pos>
           <rotation>-1.3</rotation>
           <typeName>wall model</typeName>
@@ -4810,8 +4810,8 @@
           <destructible>true</destructible>
           <staticID>1505</staticID>
           <pos>
-            <X>3390.99976</X>
-            <Y>972</Y>
+            <x>3390.99976</x>
+            <y>972</y>
           </pos>
           <rotation>1.6</rotation>
           <typeName>wall model</typeName>
@@ -4821,8 +4821,8 @@
           <destructible>true</destructible>
           <staticID>1506</staticID>
           <pos>
-            <X>1543</X>
-            <Y>917</Y>
+            <x>1543</x>
+            <y>917</y>
           </pos>
           <rotation>2.6</rotation>
           <typeName>wall model</typeName>
@@ -4832,8 +4832,8 @@
           <destructible>true</destructible>
           <staticID>1507</staticID>
           <pos>
-            <X>1442.00012</X>
-            <Y>834</Y>
+            <x>1442.00012</x>
+            <y>834</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -4843,8 +4843,8 @@
           <destructible>true</destructible>
           <staticID>1508</staticID>
           <pos>
-            <X>965.999756</X>
-            <Y>622</Y>
+            <x>965.999756</x>
+            <y>622</y>
           </pos>
           <rotation>5.6</rotation>
           <typeName>wall model</typeName>
@@ -4854,8 +4854,8 @@
           <destructible>true</destructible>
           <staticID>1509</staticID>
           <pos>
-            <X>3025</X>
-            <Y>1050</Y>
+            <x>3025</x>
+            <y>1050</y>
           </pos>
           <rotation>5.78318548</rotation>
           <typeName>wall model</typeName>
@@ -4865,8 +4865,8 @@
           <destructible>true</destructible>
           <staticID>1510</staticID>
           <pos>
-            <X>1746</X>
-            <Y>948</Y>
+            <x>1746</x>
+            <y>948</y>
           </pos>
           <rotation>3</rotation>
           <typeName>wall model</typeName>
@@ -4876,8 +4876,8 @@
           <destructible>true</destructible>
           <staticID>1511</staticID>
           <pos>
-            <X>1576.99976</X>
-            <Y>883</Y>
+            <x>1576.99976</x>
+            <y>883</y>
           </pos>
           <rotation>5.1</rotation>
           <typeName>wall model</typeName>
@@ -4887,8 +4887,8 @@
           <destructible>true</destructible>
           <staticID>1512</staticID>
           <pos>
-            <X>1284</X>
-            <Y>1106</Y>
+            <x>1284</x>
+            <y>1106</y>
           </pos>
           <rotation>3.4</rotation>
           <typeName>wall model</typeName>
@@ -4898,8 +4898,8 @@
           <destructible>true</destructible>
           <staticID>1513</staticID>
           <pos>
-            <X>1289</X>
-            <Y>1147.00012</Y>
+            <x>1289</x>
+            <y>1147.00012</y>
           </pos>
           <rotation>4.8</rotation>
           <typeName>wall model</typeName>
@@ -4909,8 +4909,8 @@
           <destructible>true</destructible>
           <staticID>1514</staticID>
           <pos>
-            <X>810</X>
-            <Y>2963</Y>
+            <x>810</x>
+            <y>2963</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -4920,8 +4920,8 @@
           <destructible>true</destructible>
           <staticID>1515</staticID>
           <pos>
-            <X>831</X>
-            <Y>2901</Y>
+            <x>831</x>
+            <y>2901</y>
           </pos>
           <rotation>-2.1</rotation>
           <typeName>wall model</typeName>
@@ -4931,8 +4931,8 @@
           <destructible>true</destructible>
           <staticID>1516</staticID>
           <pos>
-            <X>882.999939</X>
-            <Y>3014</Y>
+            <x>882.999939</x>
+            <y>3014</y>
           </pos>
           <rotation>-1.4</rotation>
           <typeName>wall model</typeName>
@@ -4942,8 +4942,8 @@
           <destructible>true</destructible>
           <staticID>1517</staticID>
           <pos>
-            <X>779</X>
-            <Y>2895</Y>
+            <x>779</x>
+            <y>2895</y>
           </pos>
           <rotation>-1.8</rotation>
           <typeName>wall model</typeName>
@@ -4953,8 +4953,8 @@
           <destructible>true</destructible>
           <staticID>1518</staticID>
           <pos>
-            <X>1308</X>
-            <Y>3007</Y>
+            <x>1308</x>
+            <y>3007</y>
           </pos>
           <rotation>-1.4</rotation>
           <typeName>wall model</typeName>
@@ -4964,8 +4964,8 @@
           <destructible>true</destructible>
           <staticID>1519</staticID>
           <pos>
-            <X>1115</X>
-            <Y>2932</Y>
+            <x>1115</x>
+            <y>2932</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -4975,8 +4975,8 @@
           <destructible>true</destructible>
           <staticID>1520</staticID>
           <pos>
-            <X>294</X>
-            <Y>2880</Y>
+            <x>294</x>
+            <y>2880</y>
           </pos>
           <rotation>2.5</rotation>
           <typeName>wall model</typeName>
@@ -4986,8 +4986,8 @@
           <destructible>true</destructible>
           <staticID>1521</staticID>
           <pos>
-            <X>338</X>
-            <Y>3467</Y>
+            <x>338</x>
+            <y>3467</y>
           </pos>
           <rotation>3</rotation>
           <typeName>wall model</typeName>
@@ -4997,8 +4997,8 @@
           <destructible>true</destructible>
           <staticID>1522</staticID>
           <pos>
-            <X>323.999969</X>
-            <Y>3547</Y>
+            <x>323.999969</x>
+            <y>3547</y>
           </pos>
           <rotation>-2.1</rotation>
           <typeName>wall model</typeName>
@@ -5008,8 +5008,8 @@
           <destructible>true</destructible>
           <staticID>1523</staticID>
           <pos>
-            <X>433</X>
-            <Y>3978</Y>
+            <x>433</x>
+            <y>3978</y>
           </pos>
           <rotation>-2.1</rotation>
           <typeName>wall model</typeName>
@@ -5019,8 +5019,8 @@
           <destructible>true</destructible>
           <staticID>1524</staticID>
           <pos>
-            <X>500</X>
-            <Y>3851</Y>
+            <x>500</x>
+            <y>3851</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -5030,8 +5030,8 @@
           <destructible>true</destructible>
           <staticID>1525</staticID>
           <pos>
-            <X>1323</X>
-            <Y>3217</Y>
+            <x>1323</x>
+            <y>3217</y>
           </pos>
           <rotation>-2.1</rotation>
           <typeName>wall model</typeName>
@@ -5041,8 +5041,8 @@
           <destructible>true</destructible>
           <staticID>1526</staticID>
           <pos>
-            <X>1348</X>
-            <Y>3224</Y>
+            <x>1348</x>
+            <y>3224</y>
           </pos>
           <rotation>1.9</rotation>
           <typeName>wall model</typeName>
@@ -5052,8 +5052,8 @@
           <destructible>true</destructible>
           <staticID>1527</staticID>
           <pos>
-            <X>683</X>
-            <Y>3226</Y>
+            <x>683</x>
+            <y>3226</y>
           </pos>
           <rotation>5.46913</rotation>
           <typeName>wall model</typeName>
@@ -5063,8 +5063,8 @@
           <destructible>false</destructible>
           <staticID>1528</staticID>
           <pos>
-            <X>34.9999771</X>
-            <Y>2633</Y>
+            <x>34.9999771</x>
+            <y>2633</y>
           </pos>
           <rotation>5</rotation>
           <typeName>wall model</typeName>
@@ -5074,8 +5074,8 @@
           <destructible>true</destructible>
           <staticID>1529</staticID>
           <pos>
-            <X>2330.00024</X>
-            <Y>3657.99976</Y>
+            <x>2330.00024</x>
+            <y>3657.99976</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>wall model</typeName>
@@ -5085,8 +5085,8 @@
           <destructible>true</destructible>
           <staticID>1530</staticID>
           <pos>
-            <X>2255</X>
-            <Y>3678</Y>
+            <x>2255</x>
+            <y>3678</y>
           </pos>
           <rotation>4</rotation>
           <typeName>wall model</typeName>
@@ -5096,8 +5096,8 @@
           <destructible>true</destructible>
           <staticID>1531</staticID>
           <pos>
-            <X>1408</X>
-            <Y>774</Y>
+            <x>1408</x>
+            <y>774</y>
           </pos>
           <rotation>0.1</rotation>
           <typeName>wall model</typeName>
@@ -5107,8 +5107,8 @@
           <destructible>true</destructible>
           <staticID>1532</staticID>
           <pos>
-            <X>1992.00024</X>
-            <Y>431.999756</Y>
+            <x>1992.00024</x>
+            <y>431.999756</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -5118,8 +5118,8 @@
           <destructible>true</destructible>
           <staticID>1533</staticID>
           <pos>
-            <X>1796</X>
-            <Y>456.999939</Y>
+            <x>1796</x>
+            <y>456.999939</y>
           </pos>
           <rotation>3.2</rotation>
           <typeName>wall model</typeName>
@@ -5129,8 +5129,8 @@
           <destructible>true</destructible>
           <staticID>1534</staticID>
           <pos>
-            <X>572</X>
-            <Y>3956</Y>
+            <x>572</x>
+            <y>3956</y>
           </pos>
           <rotation>-1.2</rotation>
           <typeName>wall model</typeName>
@@ -5140,8 +5140,8 @@
           <destructible>true</destructible>
           <staticID>1535</staticID>
           <pos>
-            <X>1907.99976</X>
-            <Y>486.000061</Y>
+            <x>1907.99976</x>
+            <y>486.000061</y>
           </pos>
           <rotation>1.8</rotation>
           <typeName>wall model</typeName>
@@ -5151,8 +5151,8 @@
           <destructible>true</destructible>
           <staticID>1536</staticID>
           <pos>
-            <X>2061.99976</X>
-            <Y>494</Y>
+            <x>2061.99976</x>
+            <y>494</y>
           </pos>
           <rotation>5</rotation>
           <typeName>wall model</typeName>
@@ -5162,8 +5162,8 @@
           <destructible>true</destructible>
           <staticID>1537</staticID>
           <pos>
-            <X>1943.99976</X>
-            <Y>423</Y>
+            <x>1943.99976</x>
+            <y>423</y>
           </pos>
           <rotation>4.6</rotation>
           <typeName>wall model</typeName>
@@ -5173,8 +5173,8 @@
           <destructible>true</destructible>
           <staticID>1538</staticID>
           <pos>
-            <X>1850.99988</X>
-            <Y>470</Y>
+            <x>1850.99988</x>
+            <y>470</y>
           </pos>
           <rotation>0.3</rotation>
           <typeName>wall model</typeName>
@@ -5184,8 +5184,8 @@
           <destructible>true</destructible>
           <staticID>1539</staticID>
           <pos>
-            <X>2861.99976</X>
-            <Y>5.4359436E-05</Y>
+            <x>2861.99976</x>
+            <y>5.4359436E-05</y>
           </pos>
           <rotation>1.6</rotation>
           <typeName>wall model</typeName>
@@ -5195,8 +5195,8 @@
           <destructible>true</destructible>
           <staticID>1540</staticID>
           <pos>
-            <X>2231</X>
-            <Y>61.99994</Y>
+            <x>2231</x>
+            <y>61.99994</y>
           </pos>
           <rotation>2.47687483</rotation>
           <typeName>wall model</typeName>
@@ -5206,8 +5206,8 @@
           <destructible>true</destructible>
           <staticID>1541</staticID>
           <pos>
-            <X>2478</X>
-            <Y>3123</Y>
+            <x>2478</x>
+            <y>3123</y>
           </pos>
           <rotation>0.14</rotation>
           <typeName>wall model</typeName>
@@ -5217,8 +5217,8 @@
           <destructible>true</destructible>
           <staticID>1542</staticID>
           <pos>
-            <X>2398.99976</X>
-            <Y>3101</Y>
+            <x>2398.99976</x>
+            <y>3101</y>
           </pos>
           <rotation>1.4</rotation>
           <typeName>wall model</typeName>
@@ -5228,8 +5228,8 @@
           <destructible>true</destructible>
           <staticID>1543</staticID>
           <pos>
-            <X>2208.00024</X>
-            <Y>3080</Y>
+            <x>2208.00024</x>
+            <y>3080</y>
           </pos>
           <rotation>0</rotation>
           <typeName>wall model</typeName>
@@ -5239,8 +5239,8 @@
           <destructible>true</destructible>
           <staticID>1544</staticID>
           <pos>
-            <X>2639.99976</X>
-            <Y>2889</Y>
+            <x>2639.99976</x>
+            <y>2889</y>
           </pos>
           <rotation>5.4</rotation>
           <typeName>wall model</typeName>
@@ -5250,8 +5250,8 @@
           <destructible>true</destructible>
           <staticID>1545</staticID>
           <pos>
-            <X>2972</X>
-            <Y>2920</Y>
+            <x>2972</x>
+            <y>2920</y>
           </pos>
           <rotation>1</rotation>
           <typeName>wall model</typeName>
@@ -5261,8 +5261,8 @@
           <destructible>true</destructible>
           <staticID>1546</staticID>
           <pos>
-            <X>2916</X>
-            <Y>2974</Y>
+            <x>2916</x>
+            <y>2974</y>
           </pos>
           <rotation>4.6</rotation>
           <typeName>wall model</typeName>
@@ -5272,8 +5272,8 @@
           <destructible>true</destructible>
           <staticID>1547</staticID>
           <pos>
-            <X>3109</X>
-            <Y>2886</Y>
+            <x>3109</x>
+            <y>2886</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>wall model</typeName>
@@ -5283,8 +5283,8 @@
           <destructible>true</destructible>
           <staticID>1548</staticID>
           <pos>
-            <X>2777</X>
-            <Y>718</Y>
+            <x>2777</x>
+            <y>718</y>
           </pos>
           <rotation>0.9</rotation>
           <typeName>wall model</typeName>
@@ -5294,8 +5294,8 @@
           <destructible>true</destructible>
           <staticID>1549</staticID>
           <pos>
-            <X>1350.00024</X>
-            <Y>3923</Y>
+            <x>1350.00024</x>
+            <y>3923</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -5305,8 +5305,8 @@
           <destructible>true</destructible>
           <staticID>1550</staticID>
           <pos>
-            <X>1660</X>
-            <Y>3079</Y>
+            <x>1660</x>
+            <y>3079</y>
           </pos>
           <rotation>3</rotation>
           <typeName>wall model</typeName>
@@ -5316,8 +5316,8 @@
           <destructible>true</destructible>
           <staticID>1551</staticID>
           <pos>
-            <X>2.99999619</X>
-            <Y>1748</Y>
+            <x>2.99999619</x>
+            <y>1748</y>
           </pos>
           <rotation>0.2</rotation>
           <typeName>wall model</typeName>
@@ -5327,8 +5327,8 @@
           <destructible>true</destructible>
           <staticID>1552</staticID>
           <pos>
-            <X>-64.99997</X>
-            <Y>1775</Y>
+            <x>-64.99997</x>
+            <y>1775</y>
           </pos>
           <rotation>-0.7</rotation>
           <typeName>wall model</typeName>
@@ -5338,8 +5338,8 @@
           <destructible>true</destructible>
           <staticID>1553</staticID>
           <pos>
-            <X>52</X>
-            <Y>2408</Y>
+            <x>52</x>
+            <y>2408</y>
           </pos>
           <rotation>2.7</rotation>
           <typeName>wall model</typeName>
@@ -5349,8 +5349,8 @@
           <destructible>true</destructible>
           <staticID>1554</staticID>
           <pos>
-            <X>770</X>
-            <Y>3948</Y>
+            <x>770</x>
+            <y>3948</y>
           </pos>
           <rotation>2.2</rotation>
           <typeName>wall model</typeName>
@@ -5360,8 +5360,8 @@
           <destructible>true</destructible>
           <staticID>1555</staticID>
           <pos>
-            <X>1116</X>
-            <Y>4012</Y>
+            <x>1116</x>
+            <y>4012</y>
           </pos>
           <rotation>43</rotation>
           <typeName>wall model</typeName>
@@ -5371,8 +5371,8 @@
           <destructible>true</destructible>
           <staticID>1556</staticID>
           <pos>
-            <X>2405</X>
-            <Y>45.0000458</Y>
+            <x>2405</x>
+            <y>45.0000458</y>
           </pos>
           <rotation>-0.4</rotation>
           <typeName>wall model</typeName>
@@ -5382,8 +5382,8 @@
           <destructible>true</destructible>
           <staticID>1557</staticID>
           <pos>
-            <X>3945</X>
-            <Y>2574</Y>
+            <x>3945</x>
+            <y>2574</y>
           </pos>
           <rotation>1.5</rotation>
           <typeName>wall model</typeName>
@@ -5393,8 +5393,8 @@
           <destructible>true</destructible>
           <staticID>1558</staticID>
           <pos>
-            <X>3891.99951</X>
-            <Y>2415</Y>
+            <x>3891.99951</x>
+            <y>2415</y>
           </pos>
           <rotation>2</rotation>
           <typeName>wall model</typeName>
@@ -5404,8 +5404,8 @@
           <destructible>true</destructible>
           <staticID>1559</staticID>
           <pos>
-            <X>59.0000076</X>
-            <Y>1651</Y>
+            <x>59.0000076</x>
+            <y>1651</y>
           </pos>
           <rotation>-0.5</rotation>
           <typeName>wall model</typeName>
@@ -5415,8 +5415,8 @@
           <destructible>true</destructible>
           <staticID>1560</staticID>
           <pos>
-            <X>127.000244</X>
-            <Y>4059</Y>
+            <x>127.000244</x>
+            <y>4059</y>
           </pos>
           <rotation>3</rotation>
           <typeName>wall model</typeName>
@@ -5426,8 +5426,8 @@
           <destructible>true</destructible>
           <staticID>1561</staticID>
           <pos>
-            <X>1641</X>
-            <Y>3884</Y>
+            <x>1641</x>
+            <y>3884</y>
           </pos>
           <rotation>2.6</rotation>
           <typeName>wall model</typeName>
@@ -5437,8 +5437,8 @@
           <destructible>true</destructible>
           <staticID>1562</staticID>
           <pos>
-            <X>1216</X>
-            <Y>-8.999996</Y>
+            <x>1216</x>
+            <y>-8.999996</y>
           </pos>
           <rotation>-1.6</rotation>
           <typeName>wall model</typeName>
@@ -5454,8 +5454,8 @@
           <propModelName>amazon_leaf_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-25</X>
-            <Y>4147</Y>
+            <x>-25</x>
+            <y>4147</y>
           </pos>
           <rotation>2.5</rotation>
           <typeName>prop model</typeName>
@@ -5464,8 +5464,8 @@
           <propModelName>amazon_leaf_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>4201</X>
-            <Y>84.00001</Y>
+            <x>4201</x>
+            <y>84.00001</y>
           </pos>
           <rotation>5.6</rotation>
           <typeName>prop model</typeName>
@@ -5474,8 +5474,8 @@
           <propModelName>amazon_leaf_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>2686</X>
-            <Y>-140</Y>
+            <x>2686</x>
+            <y>-140</y>
           </pos>
           <rotation>3.68318558</rotation>
           <typeName>prop model</typeName>
@@ -5484,8 +5484,8 @@
           <propModelName>amazon_leaf_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>4097</X>
-            <Y>983</Y>
+            <x>4097</x>
+            <y>983</y>
           </pos>
           <rotation>4.844734</rotation>
           <typeName>prop model</typeName>
@@ -5494,8 +5494,8 @@
           <propModelName>amazon_leaf_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>3949</X>
-            <Y>3905</Y>
+            <x>3949</x>
+            <y>3905</y>
           </pos>
           <rotation>0.5</rotation>
           <typeName>prop model</typeName>
@@ -5504,8 +5504,8 @@
           <propModelName>amazon_leaf_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>1177</X>
-            <Y>4203</Y>
+            <x>1177</x>
+            <y>4203</y>
           </pos>
           <rotation>0.5</rotation>
           <typeName>prop model</typeName>
@@ -5514,8 +5514,8 @@
           <propModelName>amazon_golds</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>-48.0000076</X>
-            <Y>1472</Y>
+            <x>-48.0000076</x>
+            <y>1472</y>
           </pos>
           <rotation>-3.05</rotation>
           <typeName>prop model</typeName>
@@ -5524,8 +5524,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>996.0001</X>
-            <Y>3168.00024</Y>
+            <x>996.0001</x>
+            <y>3168.00024</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5534,8 +5534,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2796</X>
-            <Y>3522</Y>
+            <x>2796</x>
+            <y>3522</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5544,8 +5544,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3249</X>
-            <Y>3333</Y>
+            <x>3249</x>
+            <y>3333</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5554,8 +5554,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>229</X>
-            <Y>546.000061</Y>
+            <x>229</x>
+            <y>546.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5564,8 +5564,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2939</X>
-            <Y>3190</Y>
+            <x>2939</x>
+            <y>3190</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5574,8 +5574,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>784</X>
-            <Y>49.9999352</Y>
+            <x>784</x>
+            <y>49.9999352</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5584,8 +5584,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>559</X>
-            <Y>45</Y>
+            <x>559</x>
+            <y>45</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5594,8 +5594,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>321</X>
-            <Y>565.999939</Y>
+            <x>321</x>
+            <y>565.999939</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5604,8 +5604,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>-85</X>
-            <Y>802</Y>
+            <x>-85</x>
+            <y>802</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5614,8 +5614,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3555</X>
-            <Y>3549</Y>
+            <x>3555</x>
+            <y>3549</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5624,8 +5624,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>781</X>
-            <Y>3676</Y>
+            <x>781</x>
+            <y>3676</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5634,8 +5634,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3038</X>
-            <Y>3725</Y>
+            <x>3038</x>
+            <y>3725</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5644,8 +5644,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3496</X>
-            <Y>3844</Y>
+            <x>3496</x>
+            <y>3844</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5654,8 +5654,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3397</X>
-            <Y>3375</Y>
+            <x>3397</x>
+            <y>3375</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5664,8 +5664,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3289</X>
-            <Y>3758</Y>
+            <x>3289</x>
+            <y>3758</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5674,8 +5674,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3195</X>
-            <Y>3736</Y>
+            <x>3195</x>
+            <y>3736</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5684,8 +5684,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3747</X>
-            <Y>3633</Y>
+            <x>3747</x>
+            <y>3633</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5694,8 +5694,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3437</X>
-            <Y>3500</Y>
+            <x>3437</x>
+            <y>3500</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5704,8 +5704,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3130</X>
-            <Y>3277</Y>
+            <x>3130</x>
+            <y>3277</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5714,8 +5714,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2921</X>
-            <Y>3596</Y>
+            <x>2921</x>
+            <y>3596</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5724,8 +5724,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2881</X>
-            <Y>3910</Y>
+            <x>2881</x>
+            <y>3910</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5734,8 +5734,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2719</X>
-            <Y>3721</Y>
+            <x>2719</x>
+            <y>3721</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5744,8 +5744,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2603</X>
-            <Y>3955</Y>
+            <x>2603</x>
+            <y>3955</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5754,8 +5754,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2893</X>
-            <Y>3393</Y>
+            <x>2893</x>
+            <y>3393</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5764,8 +5764,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3341</X>
-            <Y>3597</Y>
+            <x>3341</x>
+            <y>3597</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5774,8 +5774,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2658</X>
-            <Y>3837</Y>
+            <x>2658</x>
+            <y>3837</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5784,8 +5784,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3640</X>
-            <Y>3736</Y>
+            <x>3640</x>
+            <y>3736</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5794,8 +5794,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2786</X>
-            <Y>3274</Y>
+            <x>2786</x>
+            <y>3274</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5804,8 +5804,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2638</X>
-            <Y>3562</Y>
+            <x>2638</x>
+            <y>3562</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5814,8 +5814,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2809</X>
-            <Y>3742</Y>
+            <x>2809</x>
+            <y>3742</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5824,8 +5824,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1171</X>
-            <Y>3280</Y>
+            <x>1171</x>
+            <y>3280</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5834,8 +5834,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1082</X>
-            <Y>3470</Y>
+            <x>1082</x>
+            <y>3470</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5844,8 +5844,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>943</X>
-            <Y>3550</Y>
+            <x>943</x>
+            <y>3550</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5854,8 +5854,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3146</X>
-            <Y>3498</Y>
+            <x>3146</x>
+            <y>3498</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5864,8 +5864,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>597</X>
-            <Y>3342</Y>
+            <x>597</x>
+            <y>3342</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5874,8 +5874,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>847</X>
-            <Y>3220</Y>
+            <x>847</x>
+            <y>3220</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5884,8 +5884,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>677</X>
-            <Y>3275</Y>
+            <x>677</x>
+            <y>3275</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5894,8 +5894,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>971</X>
-            <Y>3400</Y>
+            <x>971</x>
+            <y>3400</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5904,8 +5904,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>589</X>
-            <Y>3647</Y>
+            <x>589</x>
+            <y>3647</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5914,8 +5914,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>519</X>
-            <Y>3481</Y>
+            <x>519</x>
+            <y>3481</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5924,8 +5924,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>354.999969</X>
-            <Y>3495</Y>
+            <x>354.999969</x>
+            <y>3495</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5934,8 +5934,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1078</X>
-            <Y>3755</Y>
+            <x>1078</x>
+            <y>3755</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5944,8 +5944,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>611</X>
-            <Y>3909</Y>
+            <x>611</x>
+            <y>3909</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5954,8 +5954,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>476</X>
-            <Y>3817</Y>
+            <x>476</x>
+            <y>3817</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5964,8 +5964,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>394</X>
-            <Y>3927</Y>
+            <x>394</x>
+            <y>3927</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5974,8 +5974,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>243</X>
-            <Y>3614</Y>
+            <x>243</x>
+            <y>3614</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5984,8 +5984,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>714</X>
-            <Y>3518</Y>
+            <x>714</x>
+            <y>3518</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -5994,8 +5994,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>832</X>
-            <Y>3344</Y>
+            <x>832</x>
+            <y>3344</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6004,8 +6004,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>927</X>
-            <Y>3847</Y>
+            <x>927</x>
+            <y>3847</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6014,8 +6014,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>351</X>
-            <Y>3741</Y>
+            <x>351</x>
+            <y>3741</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6024,8 +6024,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>775</X>
-            <Y>3908</Y>
+            <x>775</x>
+            <y>3908</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6034,8 +6034,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>239</X>
-            <Y>3381</Y>
+            <x>239</x>
+            <y>3381</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6044,8 +6044,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>355</X>
-            <Y>459</Y>
+            <x>355</x>
+            <y>459</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6054,8 +6054,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>517</X>
-            <Y>432</Y>
+            <x>517</x>
+            <y>432</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6064,8 +6064,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>648</X>
-            <Y>338</Y>
+            <x>648</x>
+            <y>338</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6074,8 +6074,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>733</X>
-            <Y>486.999969</Y>
+            <x>733</x>
+            <y>486.999969</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6084,8 +6084,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>647</X>
-            <Y>618.000061</Y>
+            <x>647</x>
+            <y>618.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6094,8 +6094,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>795</X>
-            <Y>608</Y>
+            <x>795</x>
+            <y>608</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6104,8 +6104,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>135.999985</X>
-            <Y>509</Y>
+            <x>135.999985</x>
+            <y>509</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6114,8 +6114,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>18.9999943</X>
-            <Y>391</Y>
+            <x>18.9999943</x>
+            <y>391</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6124,8 +6124,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2063</X>
-            <Y>248</Y>
+            <x>2063</x>
+            <y>248</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6134,8 +6134,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>735.000061</X>
-            <Y>668</Y>
+            <x>735.000061</x>
+            <y>668</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6144,8 +6144,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>-2.0000124</X>
-            <Y>242</Y>
+            <x>-2.0000124</x>
+            <y>242</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6154,8 +6154,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>285</X>
-            <Y>419</Y>
+            <x>285</x>
+            <y>419</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6164,8 +6164,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>213</X>
-            <Y>27</Y>
+            <x>213</x>
+            <y>27</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6174,8 +6174,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>602</X>
-            <Y>215.999954</Y>
+            <x>602</x>
+            <y>215.999954</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6184,8 +6184,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>379</X>
-            <Y>2.00002337</Y>
+            <x>379</x>
+            <y>2.00002337</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6194,8 +6194,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2005</X>
-            <Y>146.999969</Y>
+            <x>2005</x>
+            <y>146.999969</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6204,8 +6204,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1949</X>
-            <Y>591.999939</Y>
+            <x>1949</x>
+            <y>591.999939</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6214,8 +6214,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1851</X>
-            <Y>556</Y>
+            <x>1851</x>
+            <y>556</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6224,8 +6224,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1813</X>
-            <Y>313</Y>
+            <x>1813</x>
+            <y>313</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6234,8 +6234,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1844</X>
-            <Y>175</Y>
+            <x>1844</x>
+            <y>175</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6244,8 +6244,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>1937</X>
-            <Y>255</Y>
+            <x>1937</x>
+            <y>255</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6254,8 +6254,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3735</X>
-            <Y>434</Y>
+            <x>3735</x>
+            <y>434</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6264,8 +6264,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2999</X>
-            <Y>104.000061</Y>
+            <x>2999</x>
+            <y>104.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6274,8 +6274,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3164</X>
-            <Y>115.000053</Y>
+            <x>3164</x>
+            <y>115.000053</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6284,8 +6284,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3374</X>
-            <Y>349.000061</Y>
+            <x>3374</x>
+            <y>349.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6294,8 +6294,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3178</X>
-            <Y>611.000061</Y>
+            <x>3178</x>
+            <y>611.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6304,8 +6304,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3809</X>
-            <Y>628.000061</Y>
+            <x>3809</x>
+            <y>628.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6314,8 +6314,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3873</X>
-            <Y>528.0001</Y>
+            <x>3873</x>
+            <y>528.0001</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6324,8 +6324,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3929</X>
-            <Y>403.000122</Y>
+            <x>3929</x>
+            <y>403.000122</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6334,8 +6334,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3723</X>
-            <Y>91.0001144</Y>
+            <x>3723</x>
+            <y>91.0001144</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6344,8 +6344,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3673</X>
-            <Y>234.000122</Y>
+            <x>3673</x>
+            <y>234.000122</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6354,8 +6354,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3575</X>
-            <Y>330.000122</Y>
+            <x>3575</x>
+            <y>330.000122</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6364,8 +6364,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3663</X>
-            <Y>605.0001</Y>
+            <x>3663</x>
+            <y>605.0001</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6374,8 +6374,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3522</X>
-            <Y>677.0001</Y>
+            <x>3522</x>
+            <y>677.0001</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6384,8 +6384,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3327</X>
-            <Y>689.0001</Y>
+            <x>3327</x>
+            <y>689.0001</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6394,8 +6394,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3410</X>
-            <Y>154.000061</Y>
+            <x>3410</x>
+            <y>154.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6404,8 +6404,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3317</X>
-            <Y>53.00013</Y>
+            <x>3317</x>
+            <y>53.00013</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6414,8 +6414,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3188</X>
-            <Y>310.000061</Y>
+            <x>3188</x>
+            <y>310.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6424,8 +6424,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>2979</X>
-            <Y>632.000061</Y>
+            <x>2979</x>
+            <y>632.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6434,8 +6434,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3380</X>
-            <Y>520.000061</Y>
+            <x>3380</x>
+            <y>520.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6444,8 +6444,8 @@
           <input>0</input>
           <staticID>0</staticID>
           <pos>
-            <X>3112</X>
-            <Y>459.000061</Y>
+            <x>3112</x>
+            <y>459.000061</y>
           </pos>
           <rotation>0</rotation>
           <typeName>amazon steam</typeName>
@@ -6456,8 +6456,8 @@
   <info>
     <name>Amazonas</name>
     <dimensions>
-      <X>4000</X>
-      <Y>4000</Y>
+      <x>4000</x>
+      <y>4000</y>
     </dimensions>
     <docks>4</docks>
     <previewName>preview_arena_amazonas</previewName>
@@ -6476,57 +6476,57 @@ intense battles in open spaces</infoText>
   </backgroundMusic>
   <binFilename>Arena_Amazonas.bin</binFilename>
   <gravity>
-    <X>0</X>
-    <Y>-30</Y>
+    <x>0</x>
+    <y>-30</y>
   </gravity>
   <lighting>
     <light0DiffuseColor>
-      <X>1</X>
-      <Y>1</Y>
-      <Z>1</Z>
+      <x>1</x>
+      <y>1</y>
+      <z>1</z>
     </light0DiffuseColor>
     <light0Direction>
-      <X>-0.4082483</X>
-      <Y>-0.4082483</Y>
-      <Z>-0.8164966</Z>
+      <x>-0.4082483</x>
+      <y>-0.4082483</y>
+      <z>-0.8164966</z>
     </light0Direction>
     <light0Enabled>true</light0Enabled>
     <light0SpecularColor>
-      <X>0.494117647</X>
-      <Y>0.8627451</Y>
-      <Z>0.956862748</Z>
+      <x>0.494117647</x>
+      <y>0.8627451</y>
+      <z>0.956862748</z>
     </light0SpecularColor>
     <light1DiffuseColor>
-      <X>0.1</X>
-      <Y>0.3</Y>
-      <Z>0.2</Z>
+      <x>0.1</x>
+      <y>0.3</y>
+      <z>0.2</z>
     </light1DiffuseColor>
     <light1Direction>
-      <X>0.4082483</X>
-      <Y>-0.4082483</Y>
-      <Z>-0.8164966</Z>
+      <x>0.4082483</x>
+      <y>-0.4082483</y>
+      <z>-0.8164966</z>
     </light1Direction>
     <light1Enabled>true</light1Enabled>
     <light1SpecularColor>
-      <X>0.1</X>
-      <Y>0.4</Y>
-      <Z>0.2</Z>
+      <x>0.1</x>
+      <y>0.4</y>
+      <z>0.2</z>
     </light1SpecularColor>
     <light2DiffuseColor>
-      <X>0.2</X>
-      <Y>0.6</Y>
-      <Z>0.4</Z>
+      <x>0.2</x>
+      <y>0.6</y>
+      <z>0.4</z>
     </light2DiffuseColor>
     <light2Direction>
-      <X>0.4082483</X>
-      <Y>0.4082483</Y>
-      <Z>0.8164966</Z>
+      <x>0.4082483</x>
+      <y>0.4082483</y>
+      <z>0.8164966</z>
     </light2Direction>
     <light2Enabled>false</light2Enabled>
     <light2SpecularColor>
-      <X>0.2</X>
-      <Y>0.6</Y>
-      <Z>0.4</Z>
+      <x>0.2</x>
+      <y>0.6</y>
+      <z>0.4</z>
     </light2SpecularColor>
   </lighting>
 </ArenaType>

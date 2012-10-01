@@ -145,23 +145,14 @@ namespace AW2.Core
         {
             Log.Write("Assault Wing begins to run");
             Spectator.CreateStatsData = spectator => new SpectatorStats(spectator);
-            var arenas = DataEngine.GetTypeTemplates<Arena>();
-            if (!arenas.Any()) throw new ApplicationException("No arenas found");
-            SelectedArenaName = arenas.First().Info.Name;
-            DataEngine.GameplayMode = new GameplayMode();
-            DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
-            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "blink", "repulsor", "catmoflage", "shield" };
-            DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "hovermine", "fusion cone" };
+            SelectedArenaName = DataEngine.GetTypeTemplates<Arena>().First().Info.Name;
+            DataEngine.GameplayMode = DataEngine.GetTypeTemplates<GameplayMode>().First();
             if (CommandLineOptions.DedicatedServer)
                 WebData.Feed("1D");
             else if (CommandLineOptions.QuickStart != null)
-            {
                 WebData.Feed("1Q");
-            }
             else
-            {
                 WebData.Feed("1");
-            }
             Logic.Initialize();
             base.BeginRun();
         }

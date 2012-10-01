@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GameplayModeType type="AW2.Game.Logic.GameplayMode">
+  <name>mayhem</name>
+  <shipTypes>
+    <Item>Bugger</Item>
+    <Item>Windlord</Item>
+    <Item>Plissken</Item>
+  </shipTypes>
+  <extraDeviceTypes>
+    <Item>blink</Item>
+    <Item>repulsor</Item>
+    <Item>shield</Item>
+    <Item>catmoflage</Item>
+  </extraDeviceTypes>
+  <weapon2Types>
+    <Item>rockets</Item>
+    <Item>bazooka</Item>
+    <Item>hovermine</Item>
+    <Item>fusion cone</Item>
+  </weapon2Types>
+  <startLives>5</startLives>
+  <scoreMultiplierLives>0</scoreMultiplierLives>
+  <scoreMultiplierKills>2</scoreMultiplierKills>
+  <scoreMultiplierDeaths>-1</scoreMultiplierDeaths>
+</GameplayModeType>

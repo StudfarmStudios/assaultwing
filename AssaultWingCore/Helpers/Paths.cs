@@ -51,6 +51,11 @@ namespace AW2.Helpers
         public static readonly string PARTICLES = @"CoreContent\particledefs";
 
         /// <summary>
+        /// Path to gameplay modes.
+        /// </summary>
+        public static readonly string GAMEPLAY_MODES = @"CoreContent\gameplaymodes";
+
+        /// <summary>
         /// Path to textures.
         /// </summary>
         public static readonly string TEXTURES = @"CoreContent\textures";

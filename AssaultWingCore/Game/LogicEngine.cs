@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Game.Arenas;
 using AW2.Game.GobUtils;
+using AW2.Game.Logic;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.UI;
@@ -40,11 +41,13 @@ namespace AW2.Game
             var gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.GOBS);
             var deviceLoader = new TypeLoader(typeof(ShipDevice), Helpers.Paths.DEVICES);
             var particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.PARTICLES);
+            var gameplayModeLoader = new TypeLoader(typeof(GameplayMode), Helpers.Paths.GAMEPLAY_MODES);
             var arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.ARENAS);
             return gobLoader.LoadTemplates().Union(
                 deviceLoader.LoadTemplates().Union(
                 particleLoader.LoadTemplates().Union(
-                arenaLoader.LoadTemplates())));
+                gameplayModeLoader.LoadTemplates().Union(
+                arenaLoader.LoadTemplates()))));
         }
 
         public override void Initialize()
@@ -53,7 +56,9 @@ namespace AW2.Game
             {
                 var name = template is Clonable ? ((Clonable)template).TypeName
                     : template is Arena ? ((Arena)template).Info.Name
+                    : template is GameplayMode ? ((GameplayMode)template).Name
                     : (CanonicalString)null;
+                System.Diagnostics.Debug.Assert(name.Value != null, "Unexpected template type " + template.GetType());
                 Game.DataEngine.AddTypeTemplate(name, template);
             }
         }

@@ -36,10 +36,12 @@ namespace AW2.Game.Logic
         public float ScoreMultiplierKills { get; private set; }
         public float ScoreMultiplierDeaths { get; private set; }
         public float CombatPointsMultiplierInflictedDamage { get; private set; }
+        public float CombatPointsMultiplierCollectedBonuses { get; private set; }
 
         public int CalculateScore(SpectatorArenaStatistics statistics)
         {
-            return (int)Math.Round(CalculateCombatPoints(statistics) +
+            return (int)(0.001f + // Truncate to integer but allow for slight floating-point rounding error.
+                CalculateCombatPoints(statistics) +
                 ScoreMultiplierKills * statistics.Kills +
                 ScoreMultiplierDeaths * statistics.Deaths +
                 ScoreMultiplierLives * Math.Max(0, statistics.Lives));
@@ -47,7 +49,8 @@ namespace AW2.Game.Logic
 
         public float CalculateCombatPoints(SpectatorArenaStatistics statistics)
         {
-            return CombatPointsMultiplierInflictedDamage * statistics.DamageInflictedToMinions;
+            return CombatPointsMultiplierInflictedDamage * statistics.DamageInflictedToMinions +
+                CombatPointsMultiplierCollectedBonuses * statistics.BonusesCollected;
         }
 
         public IEnumerable<Standing> GetStandings(IEnumerable<Spectator> spectators)

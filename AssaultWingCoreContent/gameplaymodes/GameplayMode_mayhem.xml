@@ -23,4 +23,5 @@
   <scoreMultiplierKills>2</scoreMultiplierKills>
   <scoreMultiplierDeaths>-1</scoreMultiplierDeaths>
   <combatPointsMultiplierInflictedDamage>0</combatPointsMultiplierInflictedDamage>
+  <combatPointsMultiplierCollectedBonuses>0</combatPointsMultiplierCollectedBonuses>
 </GameplayModeType>

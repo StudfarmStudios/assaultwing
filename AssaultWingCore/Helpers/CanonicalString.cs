@@ -12,13 +12,14 @@ namespace AW2.Helpers
     /// <remarks>Canonical forms are fixed when all <see cref="DisableRegistering"/>
     /// is called. Before that, all canonical strings must be registered by
     /// calling <see cref="Register"/>.</remarks>
-    [SerializedType(typeof(string))]
+    [LimitedSerialization, SerializedType(typeof(string))]
     [System.Diagnostics.DebuggerDisplay("{Value}")]
     public struct CanonicalString
     {
         private static List<string> g_unregisteredCanonicalForms;
         private static Dictionary<string, int> g_canonicalFormsIndices;
 
+        [TypeParameter, RuntimeState]
         private int _canonical; // set only after CanonicalString registering is disabled
 
         /// <summary>

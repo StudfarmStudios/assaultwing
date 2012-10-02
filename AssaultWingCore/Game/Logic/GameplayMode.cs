@@ -10,38 +10,44 @@ namespace AW2.Game.Logic
     /// </summary>
     public class GameplayMode
     {
-        public CanonicalString Name { get; set; }
+        public CanonicalString Name { get; private set; }
 
         /// <summary>
         /// The types of ship available for selection in the gameplay mode.
         /// </summary>
-        public string[] ShipTypes { get; set; }
+        public string[] ShipTypes { get; private set; }
 
         /// <summary>
         /// The types of extra devices available for selection in the gameplay mode.
         /// </summary>
-        public string[] ExtraDeviceTypes { get; set; }
+        public string[] ExtraDeviceTypes { get; private set; }
 
         /// <summary>
         /// The types of secondary weapon available for selection in the gameplay mode.
         /// </summary>
-        public string[] Weapon2Types { get; set; }
+        public string[] Weapon2Types { get; private set; }
 
         /// <summary>
         /// Number of lives of a player when starting a new arena, or -1 for infinite lives.
         /// </summary>
-        public int StartLives { get; set; }
+        public int StartLives { get; private set; }
 
-        public float ScoreMultiplierLives { get; set; }
-        public float ScoreMultiplierKills { get; set; }
-        public float ScoreMultiplierDeaths { get; set; }
+        public float ScoreMultiplierLives { get; private set; }
+        public float ScoreMultiplierKills { get; private set; }
+        public float ScoreMultiplierDeaths { get; private set; }
+        public float CombatPointsMultiplierInflictedDamage { get; private set; }
 
         public int CalculateScore(SpectatorArenaStatistics statistics)
         {
-            return (int)Math.Round(
+            return (int)Math.Round(CalculateCombatPoints(statistics) +
                 ScoreMultiplierKills * statistics.Kills +
                 ScoreMultiplierDeaths * statistics.Deaths +
                 ScoreMultiplierLives * Math.Max(0, statistics.Lives));
+        }
+
+        public float CalculateCombatPoints(SpectatorArenaStatistics statistics)
+        {
+            return CombatPointsMultiplierInflictedDamage * statistics.DamageInflictedToMinions;
         }
 
         public IEnumerable<Standing> GetStandings(IEnumerable<Spectator> spectators)

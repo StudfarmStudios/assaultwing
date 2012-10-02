@@ -1209,6 +1209,9 @@ namespace AW2.Game
             {
                 _lastDamager = boundInfo.Cause.Owner;
                 _lastDamagerValidUntil = Arena.TotalTime + TimeSpan.FromSeconds(6);
+                var spectatorCause = boundInfo.Cause.Owner;
+                if (spectatorCause != null && Game != null && Game.DataEngine.Minions.Contains(this))
+                    spectatorCause.ArenaStatistics.DamageInflictedToMinions += damageAmount;
             }
             if (Game != null && Game.NetworkMode != NetworkMode.Client) DamageLevel = Math.Min(_maxDamage, DamageLevel + damageAmount);
             _bleachDamage += damageAmount;

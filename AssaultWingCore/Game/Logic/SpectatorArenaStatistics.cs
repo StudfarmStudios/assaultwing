@@ -17,6 +17,7 @@ namespace AW2.Game.Logic
         public int Kills { get; set; }
         public int Deaths { get; set; }
         public int KillsWithoutDying { get; set; }
+        public float DamageInflictedToMinions { get; set; }
         public Func<float> Rating { get; set; }
 
         public SpectatorArenaStatistics()
@@ -31,6 +32,7 @@ namespace AW2.Game.Logic
             Kills = 0;
             Deaths = 0;
             KillsWithoutDying = 0;
+            DamageInflictedToMinions = 0;
         }
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)

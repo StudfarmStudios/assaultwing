@@ -46,6 +46,8 @@ namespace AW2.Game.Logic
                     writer.Write((short)Lives);
                     writer.Write((short)Kills);
                     writer.Write((short)Deaths);
+                    writer.Write((float)DamageInflictedToMinions);
+                    writer.Write((short)BonusesCollected);
                 }
             }
         }
@@ -57,6 +59,8 @@ namespace AW2.Game.Logic
                 Lives = reader.ReadInt16();
                 Kills = reader.ReadInt16();
                 Deaths = reader.ReadInt16();
+                DamageInflictedToMinions = reader.ReadSingle();
+                BonusesCollected = reader.ReadInt16();
             }
         }
     }

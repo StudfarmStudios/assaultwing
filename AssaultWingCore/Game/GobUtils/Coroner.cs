@@ -138,11 +138,12 @@ namespace AW2.Game.GobUtils
 
         private void HandleMinionDeath(BoundDamageInfo info)
         {
-            if (Game != null){
+            if (KilledSpectator == null || !KilledSpectator.Minions.Contains(info.Target)) return;
+            if (Game != null)
+            {
                 if (Game.NetworkMode == NetworkMode.Server) Game.DataEngine.EnqueueArenaStatisticsToClients();
                 if (Game.NetworkMode == NetworkMode.Client) return;
             }
-            if (KilledSpectator == null || !KilledSpectator.Minions.Contains(info.Target)) return;
             switch (DeathType)
             {
                 default: throw new ApplicationException("Unexpected DeathType " + DeathType);

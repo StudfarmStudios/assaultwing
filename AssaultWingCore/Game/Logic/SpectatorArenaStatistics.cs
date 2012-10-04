@@ -8,18 +8,26 @@ namespace AW2.Game.Logic
     /// </summary>
     public class SpectatorArenaStatistics : INetworkSerializable
     {
+        private int _lives;
+        private int _kills;
+        private int _deaths;
+        private float _damageInflictedToMinions;
+        private int _bonusesCollected;
+
         /// <summary>
         /// If positive, how many reincarnations the player has left.
         /// If negative, the player has infinite lives.
         /// If zero, the player cannot play.
         /// </summary>
-        public int Lives { get; set; }
-        public int Kills { get; set; }
-        public int Deaths { get; set; }
+        public int Lives { get { return _lives; } set { _lives = value; if (Updated != null) Updated(); } }
+        public int Kills { get { return _kills; } set { _kills = value; if (Updated != null) Updated(); } }
+        public int Deaths { get { return _deaths; } set { _deaths = value; if (Updated != null) Updated(); } }
         public int KillsWithoutDying { get; set; }
-        public float DamageInflictedToMinions { get; set; }
-        public int BonusesCollected { get; set; }
+        public float DamageInflictedToMinions { get { return _damageInflictedToMinions; } set { _damageInflictedToMinions = value; if (Updated != null) Updated(); } }
+        public int BonusesCollected { get { return _bonusesCollected; } set { _bonusesCollected = value; if (Updated != null) Updated(); } }
         public Func<float> Rating { get; set; }
+
+        public event Action Updated;
 
         public SpectatorArenaStatistics()
         {

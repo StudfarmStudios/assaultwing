@@ -123,6 +123,7 @@ namespace AW2.Game
             IPAddress = ipAddress ?? IPAddress.Loopback;
             Color = Color.LightGray;
             ArenaStatistics = new SpectatorArenaStatistics();
+            ArenaStatistics.Updated += StatisticsUpdatedHandler;
             StatsData = CreateStatsData(this);
         }
 
@@ -222,6 +223,12 @@ namespace AW2.Game
         public override string ToString()
         {
             return string.Format("{0} ({1}, {2})", Name, ID, ConnectionStatus);
+        }
+
+        private void StatisticsUpdatedHandler()
+        {
+            if (Game.NetworkMode != NetworkMode.Server) return;
+            Game.DataEngine.EnqueueArenaStatisticsToClients();
         }
     }
 }

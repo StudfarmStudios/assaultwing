@@ -13,6 +13,11 @@ namespace AW2.Game.Logic
         public CanonicalString Name { get; private set; }
 
         /// <summary>
+        /// The arenas available for play in the gameplay mode.
+        /// </summary>
+        public string[] Arenas { get; private set; }
+
+        /// <summary>
         /// The types of ship available for selection in the gameplay mode.
         /// </summary>
         public string[] ShipTypes { get; private set; }

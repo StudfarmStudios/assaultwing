@@ -145,8 +145,8 @@ namespace AW2.Core
         {
             Log.Write("Assault Wing begins to run");
             Spectator.CreateStatsData = spectator => new SpectatorStats(spectator);
-            SelectedArenaName = DataEngine.GetTypeTemplates<Arena>().First().Info.Name;
             DataEngine.GameplayMode = DataEngine.GetTypeTemplates<GameplayMode>().First();
+            SelectedArenaName = DataEngine.GameplayMode.Arenas.First();
             if (CommandLineOptions.DedicatedServer)
                 WebData.Feed("1D");
             else if (CommandLineOptions.QuickStart != null)

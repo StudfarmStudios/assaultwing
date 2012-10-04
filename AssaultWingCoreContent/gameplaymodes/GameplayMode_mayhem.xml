@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GameplayModeType type="AW2.Game.Logic.GameplayMode">
   <name>mayhem</name>
+  <arenas>
+    <Item>Blood Bowl</Item>
+    <Item>Lumipesu</Item>
+    <Item>Junk</Item>
+    <Item>Amazonas</Item>
+    <Item>Alien World</Item>
+  </arenas>
   <shipTypes>
     <Item>Bugger</Item>
     <Item>Windlord</Item>

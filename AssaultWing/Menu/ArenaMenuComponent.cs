@@ -37,7 +37,7 @@ namespace AW2.Menu
         private ScrollableList _currentArena;
 
         private MenuControls Controls { get { return MenuEngine.Controls; } }
-        private List<ArenaInfo> ArenaInfos { get; set; }
+        private ArenaInfo[] ArenaInfos { get; set; }
         private Vector2 ArenaPreviewPos { get { return _pos + new Vector2(430, 232); } }
         private Vector2 InfoBoxPos { get { return ArenaPreviewPos + new Vector2(-3, 188); } }
         private Vector2 InfoBoxHeaderPos { get { return InfoBoxPos + new Vector2(20, 20); } }
@@ -53,7 +53,12 @@ namespace AW2.Menu
             set
             {
                 base.Active = value;
-                if (value) ArenaInfos = MenuEngine.Game.DataEngine.GetTypeTemplates<Arena>().Select(a => a.Info).ToList();
+                if (value)
+                    ArenaInfos =
+                        (from arenaTemplate in MenuEngine.Game.DataEngine.GetTypeTemplates<Arena>()
+                        join gameModeArena in MenuEngine.Game.DataEngine.GameplayMode.Arenas
+                        on arenaTemplate.Info.Name equals gameModeArena
+                        select arenaTemplate.Info).ToArray();
             }
         }
 
@@ -70,7 +75,7 @@ namespace AW2.Menu
             _cursorFade.Keys.Add(new CurveKey(1, 1, 0, 0, CurveContinuity.Step));
             _cursorFade.PreLoop = CurveLoopType.Cycle;
             _cursorFade.PostLoop = CurveLoopType.Cycle;
-            _currentArena = new ScrollableList(MENU_ITEM_COUNT, () => ArenaInfos.Count);
+            _currentArena = new ScrollableList(MENU_ITEM_COUNT, () => ArenaInfos.Length);
             InitializeControlCallbacks();
         }
 
@@ -117,7 +122,6 @@ namespace AW2.Menu
                     // Draw cursor and highlight.
                     var highlightPos = _pos - view + new Vector2(124, 223) + visibleIndex * lineDeltaPos;
                     var cursorPos = highlightPos + new Vector2(2, 1);
-                    var info = ArenaInfos[realIndex];
                     spriteBatch.Draw(_highlightTexture, highlightPos, Color.White);
                     spriteBatch.Draw(_cursorTexture, cursorPos, Color.Multiply(Color.White, _cursorFade.Evaluate((float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds)));
                 }

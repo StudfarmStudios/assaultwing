@@ -15,15 +15,12 @@ namespace AW2.Core.GameComponents
         private enum EventType { ARENA_FINISH, ARENA_INIT };
 
         private bool _initialized;
-        private IEnumerable<ArenaInfo> ArenaInfos
+        private IEnumerable<string> Arenas
         {
             get
             {
-                return
-                    from arena in Game.DataEngine.GetTypeTemplates<Arena>()
-                    let info = arena.Info
-                    where !Settings.DedicatedServerArenaNames.Any() || Settings.DedicatedServerArenaNames.Contains(info.Name)
-                    select info;
+                return Game.DataEngine.GameplayMode.Arenas
+                    .Where(arena => !Settings.DedicatedServerArenaNames.Any() || Settings.DedicatedServerArenaNames.Contains(arena));
             }
         }
         private TimeSpan _nextEvent;
@@ -117,10 +114,10 @@ namespace AW2.Core.GameComponents
 
         private string ChooseArenaName()
         {
-            var arenaInfos = ArenaInfos.ToArray();
+            var arenaInfos = Arenas.ToArray();
             var arenaIndex = RandomHelper.GetRandomInt(arenaInfos.Length);
-            var candidate = arenaInfos[arenaIndex].Name;
-            if (candidate == _previousArenaName) candidate = arenaInfos[(arenaIndex + 1) % arenaInfos.Length].Name;
+            var candidate = arenaInfos[arenaIndex];
+            if (candidate == _previousArenaName) candidate = arenaInfos[(arenaIndex + 1) % arenaInfos.Length];
             _previousArenaName = candidate;
             return candidate;
         }

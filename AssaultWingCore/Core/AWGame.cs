@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Graphics;
 using AW2.Graphics.Content;
 using AW2.Helpers;
-using AW2.Graphics;
 
 namespace AW2.Core
 {
@@ -15,6 +15,7 @@ namespace AW2.Core
     public class AWGame : IDisposable
     {
         public const int TargetFPS = 60;
+        private static readonly TimeSpan FastFrameDrawMaxDuration = TimeSpan.FromMilliseconds(2);
 
         public GraphicsDeviceService GraphicsDeviceService { get; private set; }
         public RenderTarget2D DefaultRenderTarget { get; private set; }
@@ -22,6 +23,8 @@ namespace AW2.Core
         public GameServiceContainer Services { get; private set; }
         public AWGameComponentCollection Components { get; private set; }
         public TimeSpan TargetElapsedTime { get { return TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS); } }
+        public int FramesDrawnLastSecond { get; private set; }
+        public bool FrameDrawIsFast { get { return _frameDrawTimes.Average <= FastFrameDrawMaxDuration; } }
 
         /// <summary>
         /// The current game time.
@@ -30,6 +33,9 @@ namespace AW2.Core
 
         private bool _takeScreenShot;
         private AutoRenderTarget2D _screenshotRenderTarget;
+        private AWTimer _framerateTimer;
+        private RunningSequenceTimeSpan _frameDrawTimes;
+        private Stopwatch _frameDrawStopwatch;
 
         public AWGame(GraphicsDeviceService graphicsDeviceService)
         {
@@ -38,6 +44,9 @@ namespace AW2.Core
             if (graphicsDeviceService != null) Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
             Components = new AWGameComponentCollection();
             GameTime = new AWGameTime();
+            _framerateTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
+            _frameDrawTimes = new RunningSequenceTimeSpan(TimeSpan.FromSeconds(1));
+            _frameDrawStopwatch = new Stopwatch();
         }
 
         public void TakeScreenShot()
@@ -148,9 +157,17 @@ namespace AW2.Core
 
         private void DrawImpl()
         {
+            _frameDrawStopwatch.Restart();
             foreach (var item in Components)
                 if (item.Visible)
                     item.Draw();
+            _frameDrawStopwatch.Stop();
+            _frameDrawTimes.Add(_frameDrawStopwatch.Elapsed, GameTime.TotalRealTime);
+            if (_framerateTimer.IsElapsed)
+            {
+                _frameDrawTimes.Prune(GameTime.TotalRealTime);
+                FramesDrawnLastSecond = _frameDrawTimes.Count;
+            }
         }
     }
 }

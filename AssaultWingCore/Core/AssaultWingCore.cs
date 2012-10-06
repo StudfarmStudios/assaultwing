@@ -24,8 +24,6 @@ namespace AW2.Core
         #region AssaultWing fields
 
         private UIEngineImpl _uiEngine;
-        private AWTimer _framerateTimer;
-        private RunningSequenceSingle _frameDraws;
         private bool _arenaFinished;
 
         #endregion AssaultWing fields
@@ -91,8 +89,6 @@ namespace AW2.Core
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
             NetworkMode = NetworkMode.Standalone;
-            _framerateTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
-            _frameDraws = new RunningSequenceSingle(TimeSpan.FromSeconds(1));
             InitializeComponents();
         }
 
@@ -249,20 +245,13 @@ namespace AW2.Core
 
         public override void Draw()
         {
-            var now = GameTime.TotalRealTime;
-            _frameDraws.Add(1, now);
-            if (_framerateTimer.IsElapsed)
-            {
-                _frameDraws.Prune(now);
-                Window.Impl.SetTitle(GetStatusText());
-            }
+            Window.Impl.SetTitle(GetStatusText());
             base.Draw();
         }
 
         protected virtual string GetStatusText()
         {
-            var newStatusText = "Assault Wing [~" + _frameDraws.Sum + " fps]";
-            return newStatusText;
+            return "Assault Wing [~" + FramesDrawnLastSecond + " fps]";
         }
 
         protected virtual void FinishArenaImpl() { }

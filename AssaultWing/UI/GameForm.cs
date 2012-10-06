@@ -309,7 +309,7 @@ namespace AW2.UI
                 updateAndDraw: gameTime => BeginInvoke((Action)(() =>
                 {
                     _game.Update(gameTime);
-                    if (!_runner.IsTimeForNextUpdate)
+                    if (!_runner.IsTimeForNextUpdate || _game.FrameDrawIsFast)
                         if (_isFullScreen)
                             Invalidate();
                         else

@@ -25,7 +25,7 @@
     <Item>hovermine</Item>
     <Item>fusion cone</Item>
   </weapon2Types>
-  <startLives>5</startLives>
+  <startLives>-1</startLives>
   <scoreMultiplierLives>0</scoreMultiplierLives>
   <scoreMultiplierKills>2</scoreMultiplierKills>
   <scoreMultiplierDeaths>-1</scoreMultiplierDeaths>

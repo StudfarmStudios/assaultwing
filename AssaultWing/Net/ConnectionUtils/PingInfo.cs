@@ -15,7 +15,7 @@ namespace AW2.Net.ConnectionUtils
         private const int PING_AVERAGED_COUNT = 4;
 
         /// <summary>
-        /// Time at which the next ping request should be sent, in game time.
+        /// Time at which the next ping request should be sent, in real time.
         /// </summary>
         private TimeSpan _nextPingSend;
 
@@ -71,17 +71,16 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public void Update()
         {
-            var now = NowGameTime;
-            SendPing(now);
+            SendPing();
             ReceivePingAndSendPong();
-            ReceivePong(now);
+            ReceivePong();
         }
 
-        private void SendPing(TimeSpan now)
+        private void SendPing()
         {
-            if (now < _nextPingSend) return;
-            _nextPingSend = now + PING_INTERVAL;
-            var pingSend = new PingRequestMessage { Timestamp = now };
+            if (NowRealTime < _nextPingSend) return;
+            _nextPingSend = NowRealTime + PING_INTERVAL;
+            var pingSend = new PingRequestMessage { Timestamp = NowRealTime };
             BaseConnection.Send(pingSend);
         }
 
@@ -93,12 +92,12 @@ namespace AW2.Net.ConnectionUtils
             BaseConnection.Send(pongSend);
         }
 
-        private void ReceivePong(TimeSpan now)
+        private void ReceivePong()
         {
             var pongReceive = BaseConnection.TryDequeueMessage<PingReplyMessage>();
             if (pongReceive == null) return;
             _pongOkayUntil = AWMathHelper.Max(_pongOkayUntil, NowRealTime + PING_INTERVAL.Multiply(10));
-            var pingTime = now - pongReceive.Timestamp;
+            var pingTime = NowRealTime - pongReceive.Timestamp;
             _pingTimes[_nextIndex] = pingTime;
             var pongDelay = pingTime.Divide(2);
             var localFrameCountNow = AssaultWingCore.Instance.DataEngine.ArenaFrameCount;

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using AW2.Game;
+using AW2.Game.Players;
 
 namespace AW2.Core
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Game.Gobs;
+using AW2.Game.Players;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 

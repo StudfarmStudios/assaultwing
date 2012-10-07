@@ -9,7 +9,7 @@ using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.UI;
 
-namespace AW2.Game
+namespace AW2.Game.Players
 {
     /// <summary>
     /// Someone who is watching the game through a viewport.

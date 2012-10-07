@@ -111,7 +111,7 @@
       <DependentUpon>RotationKnob.xaml</DependentUpon>
     </Compile>
     <Compile Include="WpfPropertyGrid.cs" />
-    <Compile Include="Game\EditorSpectator.cs" />
+    <Compile Include="Game\Players\EditorSpectator.cs" />
     <Compile Include="Graphics\EditorViewport.cs" />
     <Page Include="UI\WPF\ArenaEditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

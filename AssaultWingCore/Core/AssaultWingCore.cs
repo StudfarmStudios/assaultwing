@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using AW2.Core;
 using AW2.Core.GameComponents;
 using AW2.Game;
+using AW2.Game.Players;
 using AW2.Graphics;
 using AW2.Graphics.Content;
 using AW2.Helpers;

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using AW2.Helpers.Serialization;
-using AW2.Game;
+using AW2.Game.Players;
 
 namespace AW2.Net
 {

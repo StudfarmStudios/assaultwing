@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
+using AW2.Game.Players;
 using AW2.Helpers;
 
 namespace AW2.Game.GobUtils

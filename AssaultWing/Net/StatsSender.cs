@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using AW2.Core;
 using AW2.Game;
+using AW2.Game.Players;
 using AW2.Helpers;
 using AW2.Net.ConnectionUtils;
 

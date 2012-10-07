@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
 using AW2.Game.Pengs;
+using AW2.Game.Players;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;

@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 using AW2.Game;
+using AW2.Game.Players;
 using AW2.Net;
 
 namespace AW2.Helpers

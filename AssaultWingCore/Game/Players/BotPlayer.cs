@@ -10,7 +10,7 @@ using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
-namespace AW2.Game
+namespace AW2.Game.Players
 {
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name}")]
     public class BotPlayer : Spectator

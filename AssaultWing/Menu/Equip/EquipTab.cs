@@ -4,9 +4,9 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
-using AW2.Game;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
+using AW2.Game.Players;
 using AW2.Helpers;
 using AW2.UI;
 

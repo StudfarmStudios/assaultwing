@@ -8,6 +8,7 @@ using AW2.Game.Arenas;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Game.Logic;
+using AW2.Game.Players;
 using AW2.Graphics;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;

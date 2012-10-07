@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using NUnit.Framework;
+using AW2.Game.Players;
 using AW2.Helpers;
 
 namespace AW2.Game.GobUtils

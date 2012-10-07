@@ -116,7 +116,7 @@
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
-    <Compile Include="Game\BotPlayer.cs" />
+    <Compile Include="Game\Players\BotPlayer.cs" />
     <Compile Include="Game\Collisions\CollisionArea.cs" />
     <Compile Include="Game\Collisions\CollisionAreaType.cs" />
     <Compile Include="Game\Collisions\CollisionCategories.cs" />
@@ -190,9 +190,9 @@
     <Compile Include="Game\Pengs\PhysicalUpdater.cs" />
     <Compile Include="Game\Pengs\SimpleCurve.cs" />
     <Compile Include="Game\Pengs\SprayEmitter.cs" />
-    <Compile Include="Game\Player.cs" />
+    <Compile Include="Game\Players\Player.cs" />
     <Compile Include="Game\PlayerMessage.cs" />
-    <Compile Include="Game\Spectator.cs" />
+    <Compile Include="Game\Players\Spectator.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />
     <Compile Include="Game\Weapons\Cloak.cs" />
     <Compile Include="Game\Weapons\ForwardShot.cs" />

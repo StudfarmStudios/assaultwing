@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Game;
 using AW2.Game.Arenas;
 using AW2.Game.Gobs;
+using AW2.Game.Players;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -81,7 +79,7 @@ namespace AW2.UI.WPF
                 InitializeGraphicsDeviceService();
                 InitializeGame(args, AssaultWingCore.GetArgumentText());
                 InitializeArenaView();
-                AW2.Game.Spectator.CreateStatsData = spectator => new MockStats();
+                AW2.Game.Players.Spectator.CreateStatsData = spectator => new MockStats();
             };
             Closed += (sender, eventArgs) => _runner.Exit();
         }

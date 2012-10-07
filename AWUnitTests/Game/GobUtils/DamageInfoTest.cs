@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using AW2.Game.Players;
 using AW2.Helpers;
 
 namespace AW2.Game.GobUtils

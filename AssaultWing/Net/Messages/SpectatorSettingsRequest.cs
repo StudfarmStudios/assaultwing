@@ -2,6 +2,7 @@
 using AW2.Helpers.Serialization;
 using AW2.Net.ConnectionUtils;
 using AW2.Game;
+using AW2.Game.Players;
 
 namespace AW2.Net.Messages
 {

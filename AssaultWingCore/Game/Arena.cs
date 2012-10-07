@@ -112,8 +112,6 @@ namespace AW2.Game
         [TypeParameter]
         private Vector2 _gravity;
 
-        private List<SoundInstance> _ambientSounds = new List<SoundInstance>();
-
         #endregion General fields
 
         #region Collision related fields
@@ -235,7 +233,6 @@ namespace AW2.Game
         /// </summary>
         public void Dispose()
         {
-            UninitializeAmbientSounds();
             foreach (var gob in Gobs) gob.Dispose();
             Gobs.Clear();
         }
@@ -250,7 +247,6 @@ namespace AW2.Game
             FrameNumber = 0;
             InitializeWorld();
             InitializeGobs();
-            InitializeAmbientSounds();
         }
 
         /// <summary>
@@ -578,45 +574,6 @@ namespace AW2.Game
             if (gameplayLayerIndex == 0 || Layers[gameplayLayerIndex - 1].Z != 0)
                 Layers.Insert(gameplayLayerIndex, new ArenaLayer(false, 0, ""));
             Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
-        }
-
-        private void UninitializeAmbientSounds()
-        {
-            foreach (var sound in _ambientSounds) sound.Stop();
-            _ambientSounds.Clear();
-        }
-
-        private void InitializeAmbientSounds()
-        {
-            // Just in case
-            UninitializeAmbientSounds();
-
-            // Background
-            _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasAmbience"));
-
-            // HACK! (Add sound property on objects or sound source gob)
-
-            var goldObjectId = new CanonicalString("amazon_chest_1");
-            var shovelObjectId = new CanonicalString("amazon_shovel_1");
-            foreach (var layer in _layers)
-            {
-                foreach (var gob in layer.Gobs)
-                {
-                    var names = gob.ModelNames.ToArray();
-
-                    if (names.Contains(goldObjectId))
-                    {
-                        _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasCoins", gob));
-                    }
-                    else if (gob.ModelNames.Contains(shovelObjectId))
-                    {
-                        _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasLeaves", gob));
-                    }
-
-                    gob.Layer = layer;
-                }
-            }
-            foreach (var sound in _ambientSounds) sound.Play();
         }
 
         private void PerformCustomCollisions()

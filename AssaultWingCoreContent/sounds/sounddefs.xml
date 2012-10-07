@@ -23,9 +23,6 @@
 	<sound name="good" volume="0.5"/>
 	<sound name="homeBaseLoop" loop="true" volume="0.15"/>
 	<sound name="homeBaseLoopLow" loop="true" distancescale="70"  volume="0.5"/>
-	<sound name="amazonasAmbience" loop="true" volume="0.05"/>
-	<sound name="amazonasCoins" loop="true" distancescale="60" volume="0.75"/>
-	<sound name="amazonasLeaves" loop="true" distancescale="250" volume="0.3"/>
 	<sound name="lightningWeapon" volume="1.0"/>
 	<sound name="menuBrowseItem" volume="0.3"/>
 	<sound name="menuChangeEnd" volume="0.4"/>

@@ -917,24 +917,6 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="sounds\amazonasAmbience01.wav">
-      <Name>amazonasAmbience01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\amazonasCoins01.wav">
-      <Name>amazonasCoins01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
-    <Compile Include="sounds\amazonasLeaves01.wav">
-      <Name>amazonasLeaves01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
     <Compile Include="sounds\angry01.wav">
       <Name>angry01</Name>
       <Importer>WavImporter</Importer>

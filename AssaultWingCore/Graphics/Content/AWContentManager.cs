@@ -78,6 +78,8 @@ namespace AW2.Graphics.Content
                 Load<Texture2D>(Path.GetFileNameWithoutExtension(filename));
             foreach (var filename in Directory.GetFiles(Paths.FONTS, "*.xnb"))
                 Load<SpriteFont>(Path.GetFileNameWithoutExtension(filename));
+            foreach (var filename in Directory.GetFiles(Paths.SHADERS, "*.xnb"))
+                Load<Effect>(Path.GetFileNameWithoutExtension(filename));
         }
 
         private static string GetAssetFilename<T>(string assetName)

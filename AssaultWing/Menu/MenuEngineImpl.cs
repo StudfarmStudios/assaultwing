@@ -137,30 +137,20 @@ namespace AW2.Menu
             // contain references to graphics content.
             MenuContent.LoadContent();
             foreach (var component in _components) component.LoadContent();
-
-            base.LoadContent();
         }
 
         public override void UnloadContent()
         {
-            if (_spriteBatch != null)
-            {
-                _spriteBatch.Dispose();
-                _spriteBatch = null;
-            }
-            if (_effect != null)
-            {
-                _effect.Dispose();
-                _effect = null;
-            }
+            if (_spriteBatch != null) _spriteBatch.Dispose();
+            _spriteBatch = null;
+            if (_effect != null) _effect.Dispose();
+            _effect = null;
             // The textures and font we reference will be disposed by GraphicsEngine.
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
             foreach (var component in _components)
                 if (component != null) component.UnloadContent();
-
-            base.UnloadContent();
         }
 
         public override void Initialize()

@@ -137,24 +137,14 @@ namespace AW2.Graphics
 
         public override void UnloadContent()
         {
-            Log.Write("Graphics engine unloading graphics content.");
-            var data = Game.DataEngine;
             GameContent.UnloadContent();
-
-            if (_spriteBatch != null)
-            {
-                _spriteBatch.Dispose();
-                _spriteBatch = null;
-            }
+            if (_spriteBatch != null) _spriteBatch.Dispose();
+            _spriteBatch = null;
 
             // Propagate UnloadContent to other components that are known to
             // contain references to graphics content.
-            foreach (var viewport in data.Viewports) viewport.UnloadContent();
-            if (data.Arena != null)
-                foreach (var gob in data.Arena.Gobs) gob.UnloadContent();
-            data.UnloadContent();
-
-            base.UnloadContent();
+            foreach (var viewport in Game.DataEngine.Viewports) viewport.UnloadContent();
+            Game.DataEngine.UnloadContent();
         }
 
         public override void Draw()

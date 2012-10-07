@@ -72,11 +72,8 @@ namespace AW2
 
         public void Dispose()
         {
-            if (_form != null)
-            {
-                _form.Dispose();
-                _form = null;
-            }
+            if (_form != null) _form.Dispose();
+            _form = null;
             Application.ThreadException -= ThreadExceptionHandler;
         }
 

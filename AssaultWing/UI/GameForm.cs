@@ -96,7 +96,11 @@ namespace AW2.UI
 
         public new void Dispose()
         {
-            if (_game != null) _game.Dispose();
+            if (_game != null)
+            {
+                _game.UnloadContent();
+                _game.Dispose();
+            }
             _game = null;
             if (_updateTimer != null) _updateTimer.Dispose();
             AW2.Helpers.Log.Written -= AddToLogView;

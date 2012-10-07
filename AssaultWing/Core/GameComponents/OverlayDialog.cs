@@ -76,11 +76,8 @@ namespace AW2.Core.GameComponents
 
         public override void UnloadContent()
         {
-            if (_spriteBatch != null)
-            {
-                _spriteBatch.Dispose();
-                _spriteBatch = null;
-            }
+            if (_spriteBatch != null) _spriteBatch.Dispose();
+            _spriteBatch = null;
         }
 
         public override void Draw()

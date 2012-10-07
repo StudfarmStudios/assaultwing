@@ -231,20 +231,11 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Unloads graphical content required by the arena.
-        /// </summary>
-        public void UnloadContent()
-        {
-            foreach (var gob in Gobs) gob.UnloadContent();
-        }
-
-        /// <summary>
         /// Releases resources allocated for the arena.
         /// </summary>
         public void Dispose()
         {
             UninitializeAmbientSounds();
-            UnloadContent();
             foreach (var gob in Gobs) gob.Dispose();
             Gobs.Clear();
         }

@@ -768,13 +768,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public virtual void UnloadContent()
-        {
-        }
-
-        /// <summary>
         /// DataEngine will call this method to make the gob do necessary 
         /// initialisations to make it fully functional on addition to 
         /// an ongoing play of the game.
@@ -866,7 +859,6 @@ namespace AW2.Game
         public virtual void Dispose()
         {
             Death = null;
-            UnloadContent();
             IsDisposed = true;
             if (ID > 0)
                 g_unusedRelevantIDs.Enqueue(ID);

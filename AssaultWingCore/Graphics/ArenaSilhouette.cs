@@ -47,6 +47,9 @@ namespace AW2.Graphics
             Game = game;
         }
 
+        /// <summary>
+        /// Uses <see cref="GraphicsDevice"/>, so call only during a Draw method.
+        /// </summary>
         public void EnsureUpdated()
         {
             if (Game.DataEngine.Arena == null) return;
@@ -68,6 +71,9 @@ namespace AW2.Graphics
             ArenaRadarSilhouette = null;
         }
 
+        /// <summary>
+        /// Uses <see cref="GraphicsDevice"/>, so call only during <see cref="Draw"/>.
+        /// </summary>
         private void RefreshArenaRadarSilhouette()
         {
             if (Game.DataEngine.Arena == null) throw new InvalidOperationException("No active arena");

@@ -88,6 +88,7 @@ namespace AW2.UI.WPF
         {
             if (_game != null)
             {
+                _game.UnloadContent();
                 _game.Dispose();
                 _game = null;
             }

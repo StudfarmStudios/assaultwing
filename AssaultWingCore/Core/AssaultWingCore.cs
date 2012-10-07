@@ -159,7 +159,6 @@ namespace AW2.Core
         {
             Log.Write("Starting arena");
             _arenaFinished = false;
-            LoadArenaContent(DataEngine.Arena);
             LogicEngine.Reset();
             PreFrameLogicEngine.Reset();
             PostFrameLogicEngine.Reset();
@@ -186,14 +185,6 @@ namespace AW2.Core
             foreach (var player in DataEngine.Players.Where(plr => plr.IsLocal))
                 foreach (var mess in GetHelpMessages(player))
                     player.Messages.Add(new PlayerMessage("Help>", mess, PlayerMessage.DEFAULT_COLOR));
-        }
-
-        /// <summary>
-        /// Loads graphical content required by an arena to DataEngine.
-        /// </summary>
-        public void LoadArenaContent(Arena arena)
-        {
-            if (GraphicsEngine != null) GraphicsEngine.LoadArenaContent(arena);
         }
 
         public virtual void RefreshGameSettings()

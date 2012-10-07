@@ -101,7 +101,6 @@ namespace AW2.UI.WPF
             {
                 Cursor = Cursors.Wait;
                 var arena = Arena.FromFile(_game, arenaFilename);
-                _game.LoadArenaContent(arena);
                 arena.Initialize();
                 _game.DataEngine.Arena = arena;
                 _game.StartArena();

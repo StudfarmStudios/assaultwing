@@ -16,29 +16,16 @@ namespace AW2.Game.Gobs
         /// The name indexes the static texture bank in DataEngine.
         /// </summary>
         [RuntimeState]
-        private CanonicalString textureName;
+        private CanonicalString _textureName;
 
         /// <summary>
-        /// Names of all textures that this gob type will ever use.
-        /// </summary>
-        public override IEnumerable<CanonicalString> TextureNames
-        {
-            get { return base.TextureNames.Union(new CanonicalString[] { textureName }); }
-        }
-
-        /// <summary>
-        /// Creates an uninitialised piece of wall.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public WallPolygon() : base() 
         {
-            textureName = (CanonicalString)"dummytexture";
+            _textureName = (CanonicalString)"dummytexture";
         }
 
-        /// <summary>
-        /// Creates a piece of wall.
-        /// </summary>
-        /// <param name="typeName">The type of the wall.</param>
         public WallPolygon(CanonicalString typeName)
             : base(typeName)
         {
@@ -51,7 +38,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void LoadContent()
         {
-            Texture = Game.Content.Load<Texture2D>(textureName);
+            Texture = Game.Content.Load<Texture2D>(_textureName);
         }
 
         #endregion Methods related to gobs' functionality in the game world

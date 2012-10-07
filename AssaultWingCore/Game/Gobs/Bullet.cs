@@ -86,17 +86,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         private TimeSpan DeathTime { get; set; }
 
-        public override IEnumerable<CanonicalString> ModelNames
-        {
-            get { return base.ModelNames.Union(_bulletModelNames); }
-        }
-
-        public override IEnumerable<CanonicalString> TextureNames
-        {
-            get { return _backgroundTextureName.IsNull ? base.TextureNames : base.TextureNames.Union(new[] { _backgroundTextureName }); }
-        }
-
+        /// <summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Bullet()
         {
             _impactDamage = 10;

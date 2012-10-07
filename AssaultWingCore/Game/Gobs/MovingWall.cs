@@ -48,14 +48,6 @@ namespace AW2.Game.Gobs
         private bool goingToTarget; // if false, then going to startPos
 
         /// <summary>
-        /// Names of all models that this gob type will ever use.
-        /// </summary>
-        public override IEnumerable<CanonicalString> ModelNames
-        {
-            get { return base.ModelNames.Union(new CanonicalString[] { wallModelName }); }
-        }
-
-        /// <summary>
         /// Creates an uninitialised MovingWall.
         /// </summary>
         /// This constructor is only for serialisation.

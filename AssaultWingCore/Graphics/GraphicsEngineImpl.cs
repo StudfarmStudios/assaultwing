@@ -72,67 +72,9 @@ namespace AW2.Graphics
         {
             if (Game.CommandLineOptions.DedicatedServer) return;
             Game.Content.LoadAllGraphicsContent();
-            var data = Game.DataEngine;
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             GameContent.LoadContent();
-
-            // Loop through gob types and load all the 3D models and textures they need.
-            // The purpose of this is to load from disk here and cache the content for fast access later.
-            foreach (var gobTemplate in data.GetTypeTemplates<Gob>())
-            {
-                foreach (var modelName in gobTemplate.ModelNames)
-                    Game.Content.Load<Model>(modelName);
-                foreach (var textureName in gobTemplate.TextureNames)
-                    Game.Content.Load<Texture2D>(textureName);
-            }
-
-            // Load all textures that each weapon needs.
-            // The purpose of this is to load from disk here and cache the content for fast access later.
-            foreach (var weaponTemplate in data.GetTypeTemplates<Weapon>())
-            {
-                foreach (var textureName in weaponTemplate.TextureNames)
-                    Game.Content.Load<Texture2D>(textureName);
-            }
-
-            // Load arena previews.
-            // The purpose of this is to load from disk here and cache the content for fast access later.
-            Game.Content.Load<Texture2D>("no_preview");
-            foreach (var arenaInfo in data.GetTypeTemplates<Arena>().Select(a => a.Info))
-                try { Game.Content.Load<Texture2D>(arenaInfo.PreviewName); }
-                catch (Microsoft.Xna.Framework.Content.ContentLoadException) { }
-
-            // Load arena related content if an arena is being played right now.
-            if (data.Arena != null)
-                LoadArenaContent(data.Arena);
-
-            // Propagate LoadContent to other components that are known to
-            // contain references to graphics content.
-            foreach (var viewport in data.Viewports) viewport.LoadContent();
-        }
-
-        /// <summary>
-        /// Loads the graphical content required by an arena.
-        /// </summary>
-        /// <param name="arenaTemplate">The arena whose graphical content to load.</param>
-        public void LoadArenaContent(Arena arenaTemplate)
-        {
-            // NOTE !!! This method has very little to do with GraphicsEngineImpl. Refactor into Arena.LoadContent() !!!
-            var data = Game.DataEngine;
-
-            foreach (var gob in arenaTemplate.Gobs)
-            {
-                // Load the layer's gob types.
-                foreach (var modelName in gob.ModelNames)
-                    Game.Content.Load<Model>(modelName);
-
-                // Load the layer's gobs' textures.
-                foreach (var textureName in gob.TextureNames)
-                    Game.Content.Load<Texture2D>(textureName);
-            }
-
-            foreach (var layer in arenaTemplate.Layers)
-                if (layer.ParallaxName != "")
-                    Game.Content.Load<Texture2D>(layer.ParallaxName);
+            foreach (var viewport in Game.DataEngine.Viewports) viewport.LoadContent();
         }
 
         public override void UnloadContent()
@@ -140,9 +82,6 @@ namespace AW2.Graphics
             GameContent.UnloadContent();
             if (_spriteBatch != null) _spriteBatch.Dispose();
             _spriteBatch = null;
-
-            // Propagate UnloadContent to other components that are known to
-            // contain references to graphics content.
             foreach (var viewport in Game.DataEngine.Viewports) viewport.UnloadContent();
             Game.DataEngine.UnloadContent();
         }

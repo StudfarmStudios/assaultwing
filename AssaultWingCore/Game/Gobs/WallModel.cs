@@ -24,11 +24,6 @@ namespace AW2.Game.Gobs
         [RuntimeState]
         private CanonicalString _wallModelName;
 
-        public override IEnumerable<CanonicalString> ModelNames
-        {
-            get { return base.ModelNames.Union(new CanonicalString[] { _wallModelName }); }
-        }
-
         /// <summary>
         /// Only for serialisation.
         /// </summary>

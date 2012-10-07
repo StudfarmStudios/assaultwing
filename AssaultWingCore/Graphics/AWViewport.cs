@@ -185,7 +185,7 @@ namespace AW2.Graphics
         /// <summary>
         /// Called when graphics resources need to be loaded.
         /// </summary>
-        public virtual void LoadContent()
+        public void LoadContent()
         {
             Action<ICollection<Effect>> effectContainerUpdater = container =>
             {

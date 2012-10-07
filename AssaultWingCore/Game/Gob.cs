@@ -357,24 +357,6 @@ namespace AW2.Game
         private ModelGeometry ModelSkeleton { get; set; }
 
         /// <summary>
-        /// Names of all 3D models that this gob type will ever use.
-        /// </summary>
-        // TODO !!! Remove. Just load all available content.
-        public virtual IEnumerable<CanonicalString> ModelNames
-        {
-            get { return new List<CanonicalString> { _modelName }; }
-        }
-
-        /// <summary>
-        /// Names of all textures that this gob type will ever use.
-        /// </summary>
-        // TODO !!! Remove. Just load all available content.
-        public virtual IEnumerable<CanonicalString> TextureNames
-        {
-            get { return new List<CanonicalString>(); }
-        }
-
-        /// <summary>
         /// Position of the gob in the game world.
         /// </summary>
         public virtual Vector2 Pos

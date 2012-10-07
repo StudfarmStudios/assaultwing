@@ -91,11 +91,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         public int ChainIndex { get; set; }
 
-        public override IEnumerable<CanonicalString> TextureNames
-        {
-            get { return base.TextureNames.Concat(_textureNames); }
-        }
-
         public override void GetDraw3DBounds(out Vector2 min, out Vector2 max)
         {
             var shooter = Shooter.GetValue();

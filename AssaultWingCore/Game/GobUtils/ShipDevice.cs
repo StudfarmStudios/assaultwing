@@ -118,14 +118,6 @@ namespace AW2.Game.GobUtils
         public CanonicalString IconName { get { return _iconName; } set { _iconName = value; } }
 
         /// <summary>
-        /// Names of all textures that this weapon will ever use.
-        /// </summary>
-        public IEnumerable<CanonicalString> TextureNames
-        {
-            get { return new List<CanonicalString> { _iconName, DeviceInfo.IconEquipName }; }
-        }
-
-        /// <summary>
         /// The arena in which the weapon lives.
         /// </summary>
         public Arena Arena { get; set; }

@@ -26,10 +26,6 @@ namespace AW2.Game.Gobs
         private Vector2 _drawBoundsMax;
 
         public override bool IsRelevant { get { return false; } }
-        public override IEnumerable<CanonicalString> ModelNames
-        {
-            get { return base.ModelNames.Union(new[] { _propModelName }); }
-        }
 
         /// <summary>
         /// This constructor is only for serialisation.

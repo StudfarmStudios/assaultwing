@@ -286,11 +286,6 @@ namespace AW2.Game.Gobs
         public ShipInfo ShipInfo { get { return _shipInfo; } set { _shipInfo = value; } }
         public new Player Owner { get { return (Player)base.Owner; } set { base.Owner = value; } }
 
-        public override IEnumerable<CanonicalString> TextureNames
-        {
-            get { return base.TextureNames.Union(new CanonicalString[] { ShipInfo.IconEquipName }); }
-        }
-
         public event ReceivingDamageEvent ReceivingDamage;
 
         private SpriteFont PlayerNameFont { get { return Game.GraphicsEngine.GameContent.ConsoleFont; } }

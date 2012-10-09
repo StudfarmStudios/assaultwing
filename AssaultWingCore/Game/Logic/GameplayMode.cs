@@ -44,7 +44,7 @@ namespace AW2.Game.Logic
         public float CombatPointsMultiplierInflictedDamage { get; private set; }
         public float CombatPointsMultiplierCollectedBonuses { get; private set; }
 
-        public int CalculateScore(SpectatorArenaStatistics statistics)
+        public int CalculateScore(ArenaStatistics statistics)
         {
             return (int)(0.001f + // Truncate to integer but allow for slight floating-point rounding error.
                 CalculateCombatPoints(statistics) +
@@ -53,7 +53,7 @@ namespace AW2.Game.Logic
                 ScoreMultiplierLives * Math.Max(0, statistics.Lives));
         }
 
-        public float CalculateCombatPoints(SpectatorArenaStatistics statistics)
+        public float CalculateCombatPoints(ArenaStatistics statistics)
         {
             return CombatPointsMultiplierInflictedDamage * statistics.DamageInflictedToMinions +
                 CombatPointsMultiplierCollectedBonuses * statistics.BonusesCollected;

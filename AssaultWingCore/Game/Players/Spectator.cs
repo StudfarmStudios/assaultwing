@@ -106,7 +106,7 @@ namespace AW2.Game.Players
         /// </summary>
         public virtual IEnumerable<Gob> Minions { get { yield break; } }
 
-        public SpectatorArenaStatistics ArenaStatistics { get; private set; }
+        public ArenaStatistics ArenaStatistics { get; private set; }
 
         /// <summary>
         /// In real time.
@@ -122,7 +122,7 @@ namespace AW2.Game.Players
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
             IPAddress = ipAddress ?? IPAddress.Loopback;
             Color = Color.LightGray;
-            ArenaStatistics = new SpectatorArenaStatistics();
+            ArenaStatistics = new ArenaStatistics();
             ArenaStatistics.Updated += StatisticsUpdatedHandler;
             StatsData = CreateStatsData(this);
         }

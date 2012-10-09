@@ -4,9 +4,10 @@ using AW2.Helpers.Serialization;
 namespace AW2.Game.Logic
 {
     /// <summary>
-    /// Statistics of one <see cref="Spectator"/> from one <see cref="Arena"/>.
+    /// Statistics of one <see cref="AW2.Game.Players.Spectator"/>
+    /// for one <see cref="AW2.Game.Arena"/>.
     /// </summary>
-    public class SpectatorArenaStatistics : INetworkSerializable
+    public class ArenaStatistics : INetworkSerializable
     {
         private int _lives;
         private int _kills;
@@ -29,7 +30,7 @@ namespace AW2.Game.Logic
 
         public event Action Updated;
 
-        public SpectatorArenaStatistics()
+        public ArenaStatistics()
         {
             Lives = -1;
             Rating = () => 0;

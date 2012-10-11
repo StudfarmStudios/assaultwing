@@ -16,9 +16,7 @@ namespace AW2.Game.Logic
         private int _bonusesCollected;
 
         /// <summary>
-        /// If positive, how many reincarnations the player has left.
-        /// If negative, the player has infinite lives.
-        /// If zero, the player cannot play.
+        /// How many reincarnations there is left, or negative for infinite lives.
         /// </summary>
         public int Lives { get { return _lives; } set { _lives = value; if (Updated != null) Updated(); } }
         public int Kills { get { return _kills; } set { _kills = value; if (Updated != null) Updated(); } }

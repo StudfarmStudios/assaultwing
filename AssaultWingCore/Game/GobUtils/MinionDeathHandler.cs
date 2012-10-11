@@ -27,7 +27,15 @@ namespace AW2.Game.GobUtils
                 case Coroner.DeathTypeType.Kill:
                     stats.Send(new
                     {
-                        Killer = stats.GetStatsString(coroner.ScoringSpectator),
+                        Killer = stats.GetStatsString(coroner.KillerSpectator),
+                        Victim = stats.GetStatsString(coroner.KilledSpectator),
+                        Pos = coroner.DamageInfo.Target.Pos,
+                    });
+                    break;
+                case Coroner.DeathTypeType.TeamKill:
+                    coroner.Game.Stats.Send(new
+                    {
+                        TeamKiller = stats.GetStatsString(coroner.KillerSpectator),
                         Victim = stats.GetStatsString(coroner.KilledSpectator),
                         Pos = coroner.DamageInfo.Target.Pos,
                     });
@@ -44,15 +52,20 @@ namespace AW2.Game.GobUtils
 
         private static void SendMessages(Coroner coroner)
         {
-            var scoringPlayer = coroner.ScoringSpectator as Player;
+            var killerPlayer = coroner.KillerSpectator as Player;
             var killedPlayer = coroner.KilledSpectator as Player;
             var players = coroner.Game.DataEngine.Players;
             switch (coroner.DeathType)
             {
                 default: throw new ApplicationException("Unexpected DeathType " + coroner.DeathType);
                 case Coroner.DeathTypeType.Kill:
-                    CreateKillMessage(coroner.ScoringSpectator, coroner.DamageInfo.Target.Pos);
-                    if (scoringPlayer != null) scoringPlayer.Messages.Add(new PlayerMessage(coroner.MessageToScoringPlayer, PlayerMessage.KILL_COLOR));
+                    CreateKillMessage(coroner.KillerSpectator, coroner.DamageInfo.Target.Pos);
+                    if (killerPlayer != null) killerPlayer.Messages.Add(new PlayerMessage(coroner.MessageToKiller, PlayerMessage.KILL_COLOR));
+                    if (killedPlayer != null) killedPlayer.Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.DEATH_COLOR));
+                    break;
+                case Coroner.DeathTypeType.TeamKill:
+                    CreateTeamKillMessage(coroner.KillerSpectator, coroner.DamageInfo.Target.Pos);
+                    if (killerPlayer != null) killerPlayer.Messages.Add(new PlayerMessage(coroner.MessageToKiller, PlayerMessage.KILL_COLOR));
                     if (killedPlayer != null) killedPlayer.Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.DEATH_COLOR));
                     break;
                 case Coroner.DeathTypeType.Accident:
@@ -70,6 +83,11 @@ namespace AW2.Game.GobUtils
         }
 
         private static void CreateSuicideMessage(Spectator perpetrator, Vector2 pos)
+        {
+            CreateDeathMessage(perpetrator, pos, "b_icon_take_life");
+        }
+
+        private static void CreateTeamKillMessage(Spectator perpetrator, Vector2 pos)
         {
             CreateDeathMessage(perpetrator, pos, "b_icon_take_life");
         }

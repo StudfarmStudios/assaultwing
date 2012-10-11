@@ -193,6 +193,7 @@
     <Compile Include="Game\Players\Player.cs" />
     <Compile Include="Game\PlayerMessage.cs" />
     <Compile Include="Game\Players\Spectator.cs" />
+    <Compile Include="Game\Players\Team.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />
     <Compile Include="Game\Weapons\Cloak.cs" />
     <Compile Include="Game\Weapons\ForwardShot.cs" />

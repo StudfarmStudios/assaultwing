@@ -37,7 +37,28 @@ namespace AW2.Game.GobUtils
 
     public class BoundDamageInfo : DamageInfo
     {
-        public enum SourceTypeType { Unspecified, OwnPlayer, EnemyPlayer };
+        public enum SourceTypeType
+        {
+            /// <summary>
+            /// Damaged by Nature.
+            /// </summary>
+            Unspecified,
+
+            /// <summary>
+            /// Damaged by the player himself.
+            /// </summary>
+            Self,
+
+            /// <summary>
+            /// Damaged by an opponent.
+            /// </summary>
+            EnemyPlayer,
+
+            /// <summary>
+            /// Damaged by a player on the same team.
+            /// </summary>
+            OwnTeamPlayer,
+        };
 
         public Gob Target { get; private set; }
         public SourceTypeType SourceType
@@ -45,9 +66,10 @@ namespace AW2.Game.GobUtils
             get
             {
                 if (Cause == null || Cause.Owner == null) return SourceTypeType.Unspecified;
-                return Cause.Owner == Target.Owner
-                    ? SourceTypeType.OwnPlayer
-                    : SourceTypeType.EnemyPlayer;
+                if (Cause.Owner == Target.Owner) return SourceTypeType.Self;
+                if (Cause.Owner.Team != null && Target.Owner != null && Cause.Owner.Team == Target.Owner.Team)
+                    return SourceTypeType.OwnTeamPlayer;
+                return SourceTypeType.EnemyPlayer;
             }
         }
 

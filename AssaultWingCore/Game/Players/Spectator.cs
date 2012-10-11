@@ -106,6 +106,7 @@ namespace AW2.Game.Players
         /// </summary>
         public virtual IEnumerable<Gob> Minions { get { yield break; } }
 
+        public Team Team { get; private set; }
         public ArenaStatistics ArenaStatistics { get; private set; }
 
         /// <summary>
@@ -131,6 +132,17 @@ namespace AW2.Game.Players
         public virtual AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
             throw new NotImplementedException("Spectator.CreateViewport is to be implemented in subclasses only");
+        }
+
+        /// <summary>
+        /// Assigns the spectator to a team. The spectator will resign any previous team.
+        /// </summary>
+        public void AssignTeam(Team team)
+        {
+            var oldTeam = Team;
+            Team = team;
+            if (oldTeam != null) oldTeam.UpdateAssignment(this);
+            if (Team != null) Team.UpdateAssignment(this);
         }
 
         public void Disconnect()
@@ -227,7 +239,7 @@ namespace AW2.Game.Players
 
         private void StatisticsUpdatedHandler()
         {
-            if (Game.NetworkMode != NetworkMode.Server) return;
+            if (Game == null || Game.NetworkMode != NetworkMode.Server) return;
             Game.DataEngine.EnqueueArenaStatisticsToClients();
         }
     }

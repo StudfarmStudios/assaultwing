@@ -3,6 +3,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 using Microsoft.Xna.Framework;
+using AW2.Game.Players;
 
 namespace AW2.Helpers.Serialization
 {
@@ -201,6 +202,24 @@ namespace AW2.Helpers.Serialization
         public void Write(Color color)
         {
             Write((uint)color.PackedValue);
+        }
+
+        public void WriteID(Team team)
+        {
+            checked
+            {
+                var id = team == null ? Team.UNINITIALIZED_ID : team.ID;
+                Write((sbyte)id);
+            }
+        }
+
+        public void WriteID(Spectator spectator)
+        {
+            checked
+            {
+                var id = spectator == null ? Spectator.UNINITIALIZED_ID : spectator.ID;
+                Write((sbyte)id);
+            }
         }
 
         public void WriteNormalized16(Vector2 vector, float minNormalized, float maxNormalized)

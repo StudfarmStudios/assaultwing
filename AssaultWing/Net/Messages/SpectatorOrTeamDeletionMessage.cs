@@ -7,12 +7,12 @@ namespace AW2.Net.Messages
     /// A message from a game server to a game client signalling the removal of a remote player.
     /// </summary>
     [MessageType(0x2e, false)]
-    public class PlayerDeletionMessage : Message
+    public class SpectatorOrTeamDeletionMessage : Message
     {
         /// <summary>
-        /// Identifier of the player to delete.
+        /// Identifier of the spectator or team to delete.
         /// </summary>
-        public int PlayerID { get; set; }
+        public int SpectatorOrTeamID { get; set; }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
@@ -22,21 +22,21 @@ namespace AW2.Net.Messages
             {
                 checked
                 {
-                    // Player deletion (request) message structure:
-                    // int: player identifier
-                    writer.Write((byte)PlayerID);
+                    // Spectator or team deletion (request) message structure:
+                    // sbyte: spectator or team identifier
+                    writer.Write((sbyte)SpectatorOrTeamID);
                 }
             }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            PlayerID = reader.ReadByte();
+            SpectatorOrTeamID = reader.ReadSByte();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [PlayerID " + PlayerID + "]";
+            return base.ToString() + " [ID " + SpectatorOrTeamID + "]";
         }
     }
 }

@@ -48,7 +48,6 @@ namespace AW2.Game.Players
         {
             _bots = new List<Gob>();
             Name = AW2.Settings.PlayerSettings.BOTS_NAME;
-            Color = Color.LightGray;
         }
 
         public override void ResetForArena()

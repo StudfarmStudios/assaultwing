@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
@@ -30,7 +31,18 @@ namespace AW2.Game
         /// </summary>
         private NamedItemCollection<object> _templates;
 
+        /// <summary>
+        /// Used on game servers only. Time of next update of arena state to game clients, in real time.
+        /// </summary>
+        private TimeSpan? _nextArenaStateToClients;
+
+        /// <summary>
+        /// Used on game servers only. Accessed from multiple threads, so remember to lock.
+        /// </summary>
+        private List<Spectator> _pendingRemoteSpectatorsOnServer = new List<Spectator>();
+
         private IndexedItemCollection<Spectator> _spectators;
+        private IndexedItemCollection<Team> _teams;
 
         /// <summary>
         /// Players and other spectators of the game session.
@@ -47,9 +59,18 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Used on game servers only. Accessed from multiple threads, so remember to lock.
+        /// Teams of the game session.
         /// </summary>
-        private List<Spectator> _pendingRemoteSpectatorsOnServer = new List<Spectator>();
+        public IndexedItemCollection<Team> Teams
+        {
+            get { return _teams; }
+            private set
+            {
+                _teams = value;
+                _teams.Added += TeamAddedHandler;
+                _teams.Removed += TeamRemovedHandler;
+            }
+        }
 
         public IEnumerable<Gob> Minions { get { return Spectators.SelectMany(spec => spec.Minions); } }
         public IEnumerable<Player> Players { get { return Spectators.OfType<Player>(); } }
@@ -75,6 +96,7 @@ namespace AW2.Game
             : base(game, updateOrder)
         {
             Spectators = new IndexedItemCollection<Spectator>();
+            Teams = new IndexedItemCollection<Team>();
             Devices = new IndexedItemCollection<ShipDevice>();
             Devices.Added += device =>
             {
@@ -91,28 +113,33 @@ namespace AW2.Game
         #region arenas
 
         /// <summary>
-        /// Time of next update of arena statistics to clients, in real time.
+        /// Enqueues an update to be sent from this game server to all game clients, containing data that
+        /// originates from the game server and is related to the current arena.
         /// </summary>
-        public TimeSpan? NextArenaStatisticsToClients { get; private set; }
-
-        public void EnqueueArenaStatisticsToClients()
+        public void EnqueueArenaStateToClients()
         {
+            Debug.Assert(Game.NetworkMode == NetworkMode.Server, "Not a game server");
             var sendLatest = Game.GameTime.TotalRealTime + TimeSpan.FromSeconds(1);
-            if (NextArenaStatisticsToClients.HasValue)
-                NextArenaStatisticsToClients = AWMathHelper.Min(NextArenaStatisticsToClients.Value, sendLatest);
+            if (_nextArenaStateToClients.HasValue)
+                _nextArenaStateToClients = AWMathHelper.Min(_nextArenaStateToClients.Value, sendLatest);
             else
-                NextArenaStatisticsToClients = sendLatest;
+                _nextArenaStateToClients = sendLatest;
         }
 
-        public void CheckArenaStatisticsToClients()
+        public bool IsTimeForArenaStatisticsToClients()
         {
-            NextArenaStatisticsToClients = null;
+            if (!_nextArenaStateToClients.HasValue) return false;
+            if (_nextArenaStateToClients.Value > Game.GameTime.TotalRealTime) return false;
+            _nextArenaStateToClients = null;
+            return true;
         }
 
         public void StartArena()
         {
             ArenaSilhouette.Clear();
             foreach (var player in Spectators) player.ResetForArena();
+            foreach (var team in Teams) team.ResetForArena(GameplayMode);
+            RemoveEmptyTeams();
         }
 
         #endregion arenas
@@ -148,7 +175,14 @@ namespace AW2.Game
 
         #endregion type templates
 
-        #region spectators
+        #region spectators and teams
+
+        public Spectator FindSpectator(int id)
+        {
+            return id == Spectator.UNINITIALIZED_ID
+                ? null
+                : Spectators.FirstOrDefault(p => p.ID == id);
+        }
 
         public void AddPendingRemoteSpectatorOnServer(Spectator newSpectator)
         {
@@ -167,7 +201,12 @@ namespace AW2.Game
             }
         }
 
-        #endregion spectators
+        public void RemoveEmptyTeams()
+        {
+            Teams.Remove(team => !team.Members.Any());
+        }
+
+        #endregion spectators and teams
 
         #region viewports
 
@@ -269,20 +308,26 @@ namespace AW2.Game
 
         #region Private methods
 
-        private int GetFreeSpectatorID()
+        private int GetFreeSpectatorOrTeamID()
         {
-            var usedIDs = Spectators.Select(spec => spec.ID);
-            for (int id = 0; id <= byte.MaxValue; ++id)
-                if (!usedIDs.Contains(id)) return id;
-            throw new ApplicationException("There are no free spectator IDs");
+            var usedIDs = Spectators.Select(spec => spec.ID).Union(Teams.Select(team => team.ID)).ToArray();
+            if (Game.NetworkMode == NetworkMode.Client)
+            {
+                for (int id = -1; id >= -byte.MaxValue; id--) if (!usedIDs.Contains(id)) return id;
+            }
+            else
+            {
+                for (int id = 1; id <= byte.MaxValue; id++) if (!usedIDs.Contains(id)) return id;
+            }
+            throw new ApplicationException("All spectator and team IDs are in use");
         }
 
-        private Color GetFreePlayerColor()
+        private Color GetFreeTeamColor()
         {
-            return GetPlayerColorPalette().Except(Players.Select(p => p.Color)).First();
+            return GetTeamColorPalette().Except(Teams.Select(p => p.Color)).First();
         }
 
-        private static IEnumerable<Color> GetPlayerColorPalette()
+        private static IEnumerable<Color> GetTeamColorPalette()
         {
             yield return new Color(100, 149, 237);
             yield return new Color(255, 20, 146);
@@ -310,19 +355,35 @@ namespace AW2.Game
         private void SpectatorAddedHandler(Spectator spectator)
         {
             spectator.Game = Game;
-            spectator.ID = GetFreeSpectatorID();
-            var player = spectator as Player;
-            if (player != null && Game.NetworkMode != NetworkMode.Client)
+            spectator.ID = GetFreeSpectatorOrTeamID();
+            if (Game.NetworkMode != NetworkMode.Client)
             {
-                player.Color = Color.Black; // reset to a color that won't affect free color picking
-                player.Color = GetFreePlayerColor();
+                var team = new Team("Team " + spectator.Name, spectatorID => Spectators.FirstOrDefault(spec => spec.ID == spectatorID));
+                Game.DataEngine.Teams.Add(team);
+                spectator.AssignTeam(team);
             }
             if (SpectatorAdded != null) SpectatorAdded(spectator);
         }
 
         private void SpectatorRemovedHandler(Spectator spectator)
         {
+            spectator.AssignTeam(null);
             if (SpectatorRemoved != null) SpectatorRemoved(spectator);
+        }
+
+        private void TeamAddedHandler(Team team)
+        {
+            if (team.ID == Team.UNINITIALIZED_ID) team.ID = GetFreeSpectatorOrTeamID();
+            team.Color = Color.Black; // reset to a color that won't affect color picking
+            team.Color = GetFreeTeamColor();
+            team.ResetForArena(GameplayMode);
+            Log.Write("!!! Added team {0}", team);
+        }
+
+        private void TeamRemovedHandler(Team team)
+        {
+            Log.Write("!!! Removing team {0}", team);
+            foreach (var spec in Spectators) if (spec.Team == team) spec.AssignTeam(null);
         }
 
         #endregion Callbacks

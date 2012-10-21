@@ -3,6 +3,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 using Microsoft.Xna.Framework;
+using AW2.Game.Players;
 
 namespace AW2.Helpers.Serialization
 {
@@ -94,6 +95,22 @@ namespace AW2.Helpers.Serialization
         public Color ReadColor()
         {
             return new Color { PackedValue = ReadUInt32() };
+        }
+
+        public LazyProxy<int, Team> ReadTeamID(Func<int, Team> findTeam)
+        {
+            int teamID = ReadSByte();
+            var proxy = new LazyProxy<int, Team>(findTeam);
+            proxy.SetData(teamID);
+            return proxy;
+        }
+
+        public LazyProxy<int, Spectator> ReadSpectatorID(Func<int, Spectator> findSpectator)
+        {
+            int spectatorID = ReadSByte();
+            var proxy = new LazyProxy<int, Spectator>(findSpectator);
+            proxy.SetData(spectatorID);
+            return proxy;
         }
 
         public Vector2 ReadVector2Normalized16(float minNormalized, float maxNormalized)

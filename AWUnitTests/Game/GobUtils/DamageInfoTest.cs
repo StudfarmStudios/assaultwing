@@ -18,7 +18,7 @@ namespace AW2.Game.GobUtils
         public void Setup()
         {
             _arena = new Arena();
-            _avengers = new Team("Avengers");
+            _avengers = new Team("Avengers", null);
             _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
             _player2 = new Player(null, "Player 2", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
             _player3 = new Player(null, "Player 3", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());

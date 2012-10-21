@@ -25,8 +25,8 @@ namespace AW2.Game.Players
             _ship1 = new Ship((CanonicalString)"Bugger") { Owner = _player1, MaxDamageLevel = 100, Arena = _arena };
             _ship2 = new Ship((CanonicalString)"Bugger") { Owner = _player2, MaxDamageLevel = 100, Arena = _arena };
             _ship3 = new Ship((CanonicalString)"Bugger") { Owner = _player3, MaxDamageLevel = 100, Arena = _arena };
-            _avengers = new Team("Avengers");
-            _xmen = new Team("X-Men");
+            _avengers = new Team("Avengers", null);
+            _xmen = new Team("X-Men", null);
             _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
             _player2 = new Player(null, "Player 2", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
             _player3 = new Player(null, "Player 3", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());

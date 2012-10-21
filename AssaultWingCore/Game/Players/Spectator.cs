@@ -21,7 +21,7 @@ namespace AW2.Game.Players
         public enum ConnectionStatusType { Local, Remote, Disconnected };
         public enum ServerRegistrationType { No, Requested, Yes };
 
-        public const int UNINITIALIZED_ID = -1;
+        public const int UNINITIALIZED_ID = 0;
         public const int CONNECTION_ID_LOCAL = -1;
 
         private static int g_nextLocalID;
@@ -94,7 +94,7 @@ namespace AW2.Game.Players
         /// <summary>
         /// Identification color of the spectator.
         /// </summary>
-        public Color Color { get; set; }
+        public Color Color { get { return Team == null ? Color.LightGray : Team.Color; } }
 
         /// <summary>
         /// Does the spectator need a viewport on the game window.
@@ -106,7 +106,8 @@ namespace AW2.Game.Players
         /// </summary>
         public virtual IEnumerable<Gob> Minions { get { yield break; } }
 
-        public Team Team { get; private set; }
+        public Team Team { get{ return TeamProxy != null ? TeamProxy.GetValue() : null; } set { TeamProxy = value; } }
+        public LazyProxy<int, Team> TeamProxy { get; set; }
         public ArenaStatistics ArenaStatistics { get; private set; }
 
         /// <summary>
@@ -122,7 +123,6 @@ namespace AW2.Game.Players
             ConnectionID = connectionId;
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
             IPAddress = ipAddress ?? IPAddress.Loopback;
-            Color = Color.LightGray;
             ArenaStatistics = new ArenaStatistics();
             ArenaStatistics.Updated += StatisticsUpdatedHandler;
             StatsData = CreateStatsData(this);
@@ -143,6 +143,7 @@ namespace AW2.Game.Players
             Team = team;
             if (oldTeam != null) oldTeam.UpdateAssignment(this);
             if (Team != null) Team.UpdateAssignment(this);
+            if (team != oldTeam) Log.Write("!!! Assigned {0} from {1} to {2}", Name, oldTeam, team);
         }
 
         public void Disconnect()
@@ -178,6 +179,8 @@ namespace AW2.Game.Players
         /// </summary>
         public virtual void Update()
         {
+            // Refresh team assignment in case TeamProxy has gained more data.
+            if (Game.NetworkMode == NetworkMode.Client) AssignTeam(Team);
         }
 
         /// <summary>
@@ -211,6 +214,7 @@ namespace AW2.Game.Players
                 if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                 {
                     writer.Write((bool)IsDisconnected);
+                    writer.WriteID(Team);
                 }
                 StatsData.Serialize(writer, mode);
             }
@@ -228,6 +232,8 @@ namespace AW2.Game.Players
                 var isDisconnected = reader.ReadBoolean();
                 if (IsRemote && isDisconnected) ConnectionStatus = ConnectionStatusType.Disconnected;
                 if (IsDisconnected && !isDisconnected) ConnectionStatus = ConnectionStatusType.Remote;
+                TeamProxy = reader.ReadTeamID(FindTeam);
+                // Note: The team is refreshed in Spectator.Update()
             }
             StatsData.Deserialize(reader, mode, framesAgo);
         }
@@ -237,10 +243,17 @@ namespace AW2.Game.Players
             return string.Format("{0} ({1}, {2})", Name, ID, ConnectionStatus);
         }
 
+        private Team FindTeam(int id)
+        {
+            return id == Team.UNINITIALIZED_ID
+                ? null
+                : Game.DataEngine.Teams.FirstOrDefault(t => t.ID == id);
+        }
+
         private void StatisticsUpdatedHandler()
         {
             if (Game == null || Game.NetworkMode != NetworkMode.Server) return;
-            Game.DataEngine.EnqueueArenaStatisticsToClients();
+            Game.DataEngine.EnqueueArenaStateToClients();
         }
     }
 }

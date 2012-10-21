@@ -23,7 +23,7 @@ namespace AW2.Core
     [System.Diagnostics.DebuggerDisplay("AssaultWing {Logic}")]
     public class AssaultWing : AssaultWingCore
     {
-        private TimeSpan _lastGameSettingsSent;
+        private AWTimer _gameSettingsSendTimer;
         private AWTimer _frameNumberSynchronizationTimer;
         private byte _nextArenaID;
         private GobDeletionMessage _pendingGobDeletionMessage;
@@ -76,6 +76,7 @@ namespace AW2.Core
                 Logic = new UserControlledLogic(this);
             ArenaLoadTask = new BackgroundTask();
             NetworkingErrors = new Queue<string>();
+            _gameSettingsSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
             _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
 
             NetworkEngine = new NetworkEngine(this, 30);
@@ -237,6 +238,7 @@ namespace AW2.Core
                     (CanonicalString)Settings.Players.Player2.ExtraDeviceName,
                     PlayerControls.FromSettings(Settings.Controls.Player2))
             };
+            DataEngine.Teams.Clear();
             DataEngine.Spectators.Clear();
             foreach (var plr in players.Take(count)) DataEngine.Spectators.Add(plr);
         }
@@ -284,6 +286,9 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Client;
+            // Note: Clients are supposed to create teams only with local IDs (negative).
+            // Remove existing teams because they have global IDs (positive).
+            foreach (var spec in DataEngine.Spectators) spec.AssignTeam(null);
             RefreshGameSettings();
             IsClientAllowedToStartArena = false;
             try
@@ -511,7 +516,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Server) return;
             Stats.Send(new { RemovePlayer = spectator.GetStats().LoginToken, Name = spectator.Name });
             UpdateGameServerInfoToManagementServer();
-            NetworkEngine.SendToGameClients(new PlayerDeletionMessage { PlayerID = spectator.ID });
+            NetworkEngine.SendToGameClients(new SpectatorOrTeamDeletionMessage { SpectatorOrTeamID = spectator.ID });
         }
 
         private void ConnectionResultOnClientCallback(Result<Connection> result)
@@ -586,11 +591,10 @@ namespace AW2.Core
 
         private void SendArenaStatisticsOnServer()
         {
-            if (!DataEngine.NextArenaStatisticsToClients.HasValue) return;
-            if (DataEngine.NextArenaStatisticsToClients.Value > GameTime.TotalRealTime) return;
-            DataEngine.CheckArenaStatisticsToClients();
-            var message = new ArenaStatisticsMessage();
-            foreach (var spec in DataEngine.Spectators) message.AddSpectatorStatistics(spec.ID, spec.ArenaStatistics);
+            if (!DataEngine.IsTimeForArenaStatisticsToClients()) return;
+            var message = new ArenaStateMessage();
+            foreach (var spec in DataEngine.Spectators) message.AddArenaStatistics(spec.ID, spec.ArenaStatistics);
+            foreach (var team in DataEngine.Teams) message.AddArenaStatistics(team.ID, team.ArenaStatistics);
             NetworkEngine.SendToGameClients(message);
         }
 
@@ -607,9 +611,7 @@ namespace AW2.Core
             foreach (var spectator in DataEngine.Spectators)
             {
                 if (spectator.ClientUpdateRequest == Spectator.ClientUpdateType.None) continue;
-                var plrMessage = new SpectatorUpdateMessage();
-                plrMessage.SpectatorID = spectator.ID;
-                plrMessage.Write(spectator, SerializationModeFlags.VaryingDataFromServer);
+                var plrMessage = new SpectatorOrTeamUpdateMessage(spectator, SerializationModeFlags.VaryingDataFromServer);
                 if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToEveryone))
                     NetworkEngine.SendToGameClients(plrMessage);
                 else if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToOwnerOnly) && spectator.IsRemote)
@@ -697,16 +699,15 @@ namespace AW2.Core
 
         private void SendGameSettingsOnServer()
         {
-            if (_lastGameSettingsSent.SecondsAgoRealTime() < 1) return;
-            _lastGameSettingsSent = GameTime.TotalRealTime;
+            if (!_gameSettingsSendTimer.IsElapsed) return;
             SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
+            SendTeamSettingsToGameClients();
             SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
         }
 
         private void SendGameSettingsOnClient()
         {
-            if (_lastGameSettingsSent.SecondsAgoRealTime() < 1) return;
-            _lastGameSettingsSent = GameTime.TotalRealTime;
+            if (!_gameSettingsSendTimer.IsElapsed) return;
             SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
         }
 
@@ -750,7 +751,17 @@ namespace AW2.Core
                 mess.Write(spectator, mode);
                 if (spectator.ServerRegistration == Spectator.ServerRegistrationType.No)
                     spectator.ServerRegistration = Spectator.ServerRegistrationType.Requested;
-                foreach (var conn in connections) conn.Send(mess);
+                foreach (var conn in connections) if (spectator.ConnectionID != conn.ID) conn.Send(mess);
+            }
+        }
+
+        private void SendTeamSettingsToGameClients()
+        {
+            foreach (var team in DataEngine.Teams)
+            {
+                var mess = new TeamSettingsMessage { TeamID = team.ID };
+                mess.Write(team, SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer);
+                foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(mess);
             }
         }
 
@@ -828,7 +839,7 @@ namespace AW2.Core
                     }
                 }
                 NetworkEngine.GetConnection(spectator.ConnectionID).Send(mess);
-                DataEngine.EnqueueArenaStatisticsToClients();
+                DataEngine.EnqueueArenaStateToClients();
                 return true;
             });
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AW2.Game.Players;
 using AW2.Helpers.Serialization;
 
@@ -10,38 +11,26 @@ namespace AW2.Net.Messages
     [MessageType(0x28, false)]
     public class SpectatorOrTeamUpdateMessage : StreamMessage
     {
-        public enum ClassType { Spectator, Team }
+        private List<int> _ids = new List<int>();
 
-        /// <summary>
-        /// Identifier of the spectator or team to update.
-        /// </summary>
-        public int SpectatorOrTeamID { get; private set; }
-
-        /// <summary>
-        /// Is this message is about a team or about a spectator.
-        /// </summary>
-        public ClassType Class { get; private set; }
-
-        /// <summary>
-        /// Only for deserialization.
-        /// </summary>
-        public SpectatorOrTeamUpdateMessage()
+        public void Add(int id, INetworkSerializable spectatorOrTeam, SerializationModeFlags serializationMode)
         {
+            _ids.Add(id);
+            Write(spectatorOrTeam, serializationMode);
         }
 
-        public SpectatorOrTeamUpdateMessage(Spectator spectator, SerializationModeFlags serializationMode)
+        /// <summary>
+        /// Reads the updates for the spectators and teams. If <paramref name="spectatorOrTeamFinder"/> returns null,
+        /// then that and the following updates in this message are skipped.
+        /// </summary>
+        public void Read(Func<int, INetworkSerializable> spectatorOrTeamFinder, SerializationModeFlags serializationMode, int framesAgo)
         {
-            Class = ClassType.Spectator;
-            SpectatorOrTeamID = spectator.ID;
-            Write(spectator, serializationMode);
-        }
-
-        public SpectatorOrTeamUpdateMessage(Team team, SerializationModeFlags serializationMode)
-        {
-#warning NEVER CALLED!!!
-            Class = ClassType.Team;
-            SpectatorOrTeamID = team.ID;
-            Write(team, serializationMode);
+            for (int i = 0; i < _ids.Count; i++)
+            {
+                var spectatorOrTeam = spectatorOrTeamFinder(_ids[i]);
+                if (spectatorOrTeam == null) break;
+                Read(spectatorOrTeam, serializationMode, framesAgo);
+            }
         }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
@@ -52,18 +41,20 @@ namespace AW2.Net.Messages
             checked
             {
                 // Spectator or team update (request) message structure:
-                // byte (ClassType): class identifier
-                // byte: spectator or team identifier
+                // byte: number of spectators and teams to update, K
+                // ushort: total byte count of spectator and team data
+                // K bytes: identifiers of the spectators and teams
                 // ushort: data length N
-                // N bytes: serialised data of the spectator or team
+                // repeat K times:
+                //   ??? bytes: serialised data of a spectator or a team (content known only by the class in question)
                 byte[] writeBytes = StreamedData;
 #if NETWORK_PROFILING
                 using (new NetworkProfilingScope("SpectatorOrTeamUpdateMessageHeader"))
 #endif
                 {
-                    writer.Write((byte)Class);
-                    writer.Write((byte)SpectatorOrTeamID);
+                    writer.Write((byte)_ids.Count);
                     writer.Write((ushort)writeBytes.Length);
+                    foreach (var id in _ids) writer.Write((byte)id);
                 }
                 writer.Write(writeBytes, 0, writeBytes.Length);
             }
@@ -71,16 +62,16 @@ namespace AW2.Net.Messages
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            Class = (ClassType)reader.ReadByte();
-            SpectatorOrTeamID = reader.ReadByte();
-            int byteCount = reader.ReadUInt16();
-            StreamedData = reader.ReadBytes(byteCount);
-            if (!Enum.IsDefined(typeof(ClassType), Class)) throw new NetworkException("Invalid value for Class, " + Class);
+            int count = reader.ReadByte();
+            int totalByteCount = reader.ReadUInt16();
+            _ids.Clear();
+            for (int i = 0; i < count; i++) _ids.Add(reader.ReadByte());
+            StreamedData = reader.ReadBytes(totalByteCount);
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [SpectatorOrTeamID " + SpectatorOrTeamID + ", Class " + Class + "]";
+            return base.ToString() + " [" + _ids.Count + " spectators and teams]";
         }
     }
 }

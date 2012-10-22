@@ -184,6 +184,13 @@ namespace AW2.Game
                 : Spectators.FirstOrDefault(p => p.ID == id);
         }
 
+        public Team FindTeam(int id)
+        {
+            return id == Team.UNINITIALIZED_ID
+                ? null
+                : Teams.FirstOrDefault(t => t.ID == id);
+        }
+
         public void AddPendingRemoteSpectatorOnServer(Spectator newSpectator)
         {
             lock (_pendingRemoteSpectatorsOnServer) _pendingRemoteSpectatorsOnServer.Add(newSpectator);
@@ -377,12 +384,10 @@ namespace AW2.Game
             team.Color = Color.Black; // reset to a color that won't affect color picking
             team.Color = GetFreeTeamColor();
             team.ResetForArena(GameplayMode);
-            Log.Write("!!! Added team {0}", team);
         }
 
         private void TeamRemovedHandler(Team team)
         {
-            Log.Write("!!! Removing team {0}", team);
             foreach (var spec in Spectators) if (spec.Team == team) spec.AssignTeam(null);
         }
 

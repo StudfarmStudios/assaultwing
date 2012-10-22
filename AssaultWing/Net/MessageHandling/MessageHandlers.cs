@@ -68,7 +68,6 @@ namespace AW2.Net.MessageHandling
             yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.GobCreationMessageReceived) { OneMessageAtATime = true };
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
-            yield return new MessageHandler<ArenaStateMessage>(MessageHandlerBase.SourceType.Server, HandleArenaStatisticsMessage);
         }
 
         public IEnumerable<MessageHandlerBase> GetServerMenuHandlers()
@@ -135,11 +134,9 @@ namespace AW2.Net.MessageHandling
         private void HandleTeamSettingsMessageOnClient(TeamSettingsMessage mess)
         {
             var teamSerializationMode = SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer;
-            var team = Game.DataEngine.Teams.FirstOrDefault(t => t.ID == mess.TeamID);
-            Log.Write("!!! Handling TeamSettingsMessage ID={0}, team was {1}", mess.TeamID, team == null ? "<null>" : team.Name);
+            var team = Game.DataEngine.FindTeam(mess.TeamID);
             if (team == null) Game.DataEngine.Teams.Add(team = new Team("<uninitialised>", Game.DataEngine.FindSpectator) { ID = mess.TeamID });
             mess.Read(team, teamSerializationMode, 0);
-            Log.Write("!!! ...team became {0}", team);
         }
 
         private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
@@ -238,20 +235,8 @@ namespace AW2.Net.MessageHandling
 
         private void HandleSpectatorOrTeamUpdateMessage(SpectatorOrTeamUpdateMessage mess)
         {
-            switch (mess.Class)
-            {
-                default: throw new NetworkException("Unexpected value " + mess.Class);
-                case SpectatorOrTeamUpdateMessage.ClassType.Spectator:
-                    var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorOrTeamID);
-                    // Silently ignore updates for unknown players.
-                    if (player != null) mess.Read(player, SerializationModeFlags.VaryingDataFromServer, framesAgo: 0);
-                    break;
-                case SpectatorOrTeamUpdateMessage.ClassType.Team:
-                    var team = Game.DataEngine.Teams.FirstOrDefault(t => t.ID == mess.SpectatorOrTeamID);
-                    // Silently ignore updates for unknown teams.
-                    if (team != null) mess.Read(team, SerializationModeFlags.VaryingDataFromServer, framesAgo: 0);
-                    break;
-            }
+            mess.Read(id => (INetworkSerializable)Game.DataEngine.FindSpectator(id) ?? Game.DataEngine.FindTeam(id),
+                SerializationModeFlags.VaryingDataFromServer, 0);
         }
 
         private void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)
@@ -294,7 +279,7 @@ namespace AW2.Net.MessageHandling
                 TryCreateAndAddNewSpectatorOnServer(mess, SerializationModeFlags.ConstantDataFromClient);
             else
             {
-                var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
+                var spectator = Game.DataEngine.FindSpectator(mess.SpectatorID);
                 if (spectator == null || spectator.ConnectionID != mess.ConnectionID)
                 {
                     // Silently ignoring update of an unknown spectator or
@@ -341,18 +326,6 @@ namespace AW2.Net.MessageHandling
         private void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)
         {
             Game.LogicEngine.KillGobsOnClient(mess.GobIDs);
-        }
-
-        private void HandleArenaStatisticsMessage(ArenaStateMessage mess)
-        {
-            mess.ReadStatistics(id =>
-            {
-                var spectator = Game.DataEngine.Spectators.FirstOrDefault(s => s.ID == id);
-                var team = Game.DataEngine.Teams.FirstOrDefault(t => t.ID == id);
-                return spectator != null ? spectator.ArenaStatistics
-                    : team != null ? team.ArenaStatistics
-                    : null;
-            });
         }
 
         #endregion

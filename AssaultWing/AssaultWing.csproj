@@ -206,7 +206,6 @@
     <Compile Include="Net\MessageSendType.cs" />
     <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
     <Compile Include="Net\Messages\ConnectionClosingMessage.cs" />
-    <Compile Include="Net\Messages\ArenaStateMessage.cs" />
     <Compile Include="Net\Messages\GameServerHandshakeRequestTCP.cs" />
     <Compile Include="Net\Messages\GameServerHandshakeRequestUDP.cs" />
     <Compile Include="Net\Messages\GameSettingsRequest.cs" />

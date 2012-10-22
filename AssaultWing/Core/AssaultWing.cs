@@ -575,9 +575,8 @@ namespace AW2.Core
             SendGobCreationMessageOnServer();
             SendGameSettingsOnServer();
             SendGobUpdateMessageOnServer();
-            SendPlayerUpdatesOnServer();
+            SendSpectatorAndTeamUpdatesOnServer();
             SendGobDeletionsOnServer();
-            SendArenaStatisticsOnServer();
         }
 
         private void SendMessagesOnClient()
@@ -589,15 +588,6 @@ namespace AW2.Core
             SendGobUpdateMessageOnClient();
         }
 
-        private void SendArenaStatisticsOnServer()
-        {
-            if (!DataEngine.IsTimeForArenaStatisticsToClients()) return;
-            var message = new ArenaStateMessage();
-            foreach (var spec in DataEngine.Spectators) message.AddArenaStatistics(spec.ID, spec.ArenaStatistics);
-            foreach (var team in DataEngine.Teams) message.AddArenaStatistics(team.ID, team.ArenaStatistics);
-            NetworkEngine.SendToGameClients(message);
-        }
-
         private void SendGobDeletionsOnServer()
         {
             if ((DataEngine.ArenaFrameCount % 3) != 0) return;
@@ -606,18 +596,21 @@ namespace AW2.Core
             _pendingGobDeletionMessage = null;
         }
 
-        private void SendPlayerUpdatesOnServer()
+        private void SendSpectatorAndTeamUpdatesOnServer()
         {
-            foreach (var spectator in DataEngine.Spectators)
-            {
-                if (spectator.ClientUpdateRequest == Spectator.ClientUpdateType.None) continue;
-                var plrMessage = new SpectatorOrTeamUpdateMessage(spectator, SerializationModeFlags.VaryingDataFromServer);
-                if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToEveryone))
-                    NetworkEngine.SendToGameClients(plrMessage);
-                else if (spectator.ClientUpdateRequest.HasFlag(Player.ClientUpdateType.ToOwnerOnly) && spectator.IsRemote)
-                    NetworkEngine.GetGameClientConnection(spectator.ConnectionID).Send(plrMessage);
-                spectator.ClientUpdateRequest = Spectator.ClientUpdateType.None;
-            }
+            var updateEveryone = DataEngine.IsTimeForArenaStatisticsToClients();
+            var updatees = DataEngine.Spectators
+                .Where(spec => spec.IsClientUpdateRequested || updateEveryone)
+                .Select(spec => new { spec.ID, Data = (INetworkSerializable)spec })
+                .Union(DataEngine.Teams
+                    .Where(team => updateEveryone)
+                    .Select(team => new { team.ID, Data = (INetworkSerializable)team }))
+                .ToArray();
+            if (!updatees.Any()) return;
+            var message = new SpectatorOrTeamUpdateMessage();
+            foreach (var updatee in updatees) message.Add(updatee.ID, updatee.Data, SerializationModeFlags.VaryingDataFromServer);
+            NetworkEngine.SendToGameClients(message);
+            foreach (var spectator in DataEngine.Spectators) spectator.IsClientUpdateRequested = false;
         }
 
         private void SetPlayerControls(ClientGameStateUpdateMessage message)

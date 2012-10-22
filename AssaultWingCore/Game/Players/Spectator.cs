@@ -16,8 +16,6 @@ namespace AW2.Game.Players
     /// </summary>
     public class Spectator : INetworkSerializable
     {
-        [Flags]
-        public enum ClientUpdateType { None = 0x00, ToOwnerOnly = 0x01, ToEveryone = 0x02 };
         public enum ConnectionStatusType { Local, Remote, Disconnected };
         public enum ServerRegistrationType { No, Requested, Yes };
 
@@ -82,9 +80,9 @@ namespace AW2.Game.Players
         public bool IsLocal { get { return ConnectionStatus == ConnectionStatusType.Local; } }
 
         /// <summary>
-        /// For use by game server only.
+        /// For use by the game server only.
         /// </summary>
-        public ClientUpdateType ClientUpdateRequest { get; set; }
+        public bool IsClientUpdateRequested { get; set; }
 
         /// <summary>
         /// The human-readable name of the spectator.
@@ -143,7 +141,6 @@ namespace AW2.Game.Players
             Team = team;
             if (oldTeam != null) oldTeam.UpdateAssignment(this);
             if (Team != null) Team.UpdateAssignment(this);
-            if (team != oldTeam) Log.Write("!!! Assigned {0} from {1} to {2}", Name, oldTeam, team);
         }
 
         public void Disconnect()
@@ -151,7 +148,7 @@ namespace AW2.Game.Players
             if (ConnectionStatus != ConnectionStatusType.Remote) throw new InvalidOperationException("Cannot disconnect a " + ConnectionStatus + " spectator");
             LastDisconnectTime = Game.GameTime.TotalRealTime;
             ConnectionStatus = ConnectionStatusType.Disconnected;
-            ClientUpdateRequest |= ClientUpdateType.ToEveryone;
+            IsClientUpdateRequested = true;
         }
 
         /// <summary>
@@ -163,7 +160,7 @@ namespace AW2.Game.Players
             ConnectionID = newSpectator.ConnectionID;
             ConnectionStatus = ConnectionStatusType.Remote;
             StatsData = newSpectator.StatsData;
-            ClientUpdateRequest |= ClientUpdateType.ToEveryone;
+            IsClientUpdateRequested = true;
         }
 
         /// <summary>

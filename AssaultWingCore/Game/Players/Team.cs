@@ -42,16 +42,8 @@ namespace AW2.Game.Players
         public void UpdateAssignment(Spectator spectator)
         {
             var isMember = Members.Contains(spectator);
-            if (spectator.Team == this && !isMember)
-            {
-                Log.Write("!!! Adding {0} to {1}", spectator.Name, Name);
-                _members.Add(spectator);
-            }
-            else if (spectator.Team != this && isMember)
-            {
-                Log.Write("!!! Removing {0} from {1}", spectator.Name, Name);
-                _members.Remove(spectator);
-            }
+            if (spectator.Team == this && !isMember) _members.Add(spectator);
+            else if (spectator.Team != this && isMember) _members.Remove(spectator);
         }
 
         /// <summary>

@@ -122,7 +122,7 @@ namespace AW2.Net.MessageHandling
 
         private void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
-            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer;
+            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer;
             var spectator = Game.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
@@ -133,10 +133,16 @@ namespace AW2.Net.MessageHandling
 
         private void HandleTeamSettingsMessageOnClient(TeamSettingsMessage mess)
         {
-            var teamSerializationMode = SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer;
-            var team = Game.DataEngine.FindTeam(mess.TeamID);
-            if (team == null) Game.DataEngine.Teams.Add(team = new Team("<uninitialised>", Game.DataEngine.FindSpectator) { ID = mess.TeamID });
-            mess.Read(team, teamSerializationMode, 0);
+            mess.Read(id =>
+                {
+                    var team = Game.DataEngine.FindTeam(id);
+                    if (team == null) Game.DataEngine.Teams.Add(team = new Team("<uninitialised>", Game.DataEngine.FindSpectator) { ID = id });
+                    return team;
+                },
+                SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer, 0);
+            // Remove teams that were not mentioned in the message.
+            if (mess.IDs.Count() != Game.DataEngine.Teams.Count)
+                Game.DataEngine.Teams.Remove(team => !mess.IDs.Contains(team.ID));
         }
 
         private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
@@ -275,8 +281,9 @@ namespace AW2.Net.MessageHandling
             if (clientConn.ConnectionStatus.State == ConnectionUtils.GameClientStatus.StateType.Dropped) return;
             clientConn.ConnectionStatus.IsRequestingSpawnForArenaID = mess.IsRequestingSpawnForArenaID;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
+            var serializationMode = SerializationModeFlags.ConstantDataFromClient;
             if (!mess.IsRegisteredToServer)
-                TryCreateAndAddNewSpectatorOnServer(mess, SerializationModeFlags.ConstantDataFromClient);
+                TryCreateAndAddNewSpectatorOnServer(mess, serializationMode);
             else
             {
                 var spectator = Game.DataEngine.FindSpectator(mess.SpectatorID);
@@ -286,7 +293,7 @@ namespace AW2.Net.MessageHandling
                     // a spectator that doesn't live on the client who sent the update.
                 }
                 else
-                    mess.Read(spectator, SerializationModeFlags.ConstantDataFromClient, 0);
+                    mess.Read(spectator, serializationMode, 0);
             }
         }
 

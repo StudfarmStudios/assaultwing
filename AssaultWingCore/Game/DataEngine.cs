@@ -32,11 +32,6 @@ namespace AW2.Game
         private NamedItemCollection<object> _templates;
 
         /// <summary>
-        /// Used on game servers only. Time of next update of arena state to game clients, in real time.
-        /// </summary>
-        private TimeSpan? _nextArenaStateToClients;
-
-        /// <summary>
         /// Used on game servers only. Accessed from multiple threads, so remember to lock.
         /// </summary>
         private List<Spectator> _pendingRemoteSpectatorsOnServer = new List<Spectator>();
@@ -112,34 +107,11 @@ namespace AW2.Game
 
         #region arenas
 
-        /// <summary>
-        /// Enqueues an update to be sent from this game server to all game clients, containing data that
-        /// originates from the game server and is related to the current arena.
-        /// </summary>
-        public void EnqueueArenaStateToClients()
-        {
-            Debug.Assert(Game.NetworkMode == NetworkMode.Server, "Not a game server");
-            var sendLatest = Game.GameTime.TotalRealTime + TimeSpan.FromSeconds(1);
-            if (_nextArenaStateToClients.HasValue)
-                _nextArenaStateToClients = AWMathHelper.Min(_nextArenaStateToClients.Value, sendLatest);
-            else
-                _nextArenaStateToClients = sendLatest;
-        }
-
-        public bool IsTimeForArenaStatisticsToClients()
-        {
-            if (!_nextArenaStateToClients.HasValue) return false;
-            if (_nextArenaStateToClients.Value > Game.GameTime.TotalRealTime) return false;
-            _nextArenaStateToClients = null;
-            return true;
-        }
-
         public void StartArena()
         {
             ArenaSilhouette.Clear();
             foreach (var player in Spectators) player.ResetForArena();
             foreach (var team in Teams) team.ResetForArena(GameplayMode);
-            RemoveEmptyTeams();
         }
 
         #endregion arenas

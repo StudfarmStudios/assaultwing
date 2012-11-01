@@ -24,6 +24,7 @@ namespace AW2.Core
     public class AssaultWing : AssaultWingCore
     {
         private AWTimer _gameSettingsSendTimer;
+        private AWTimer _arenaStateSendTimer;
         private AWTimer _frameNumberSynchronizationTimer;
         private byte _nextArenaID;
         private GobDeletionMessage _pendingGobDeletionMessage;
@@ -77,6 +78,7 @@ namespace AW2.Core
             ArenaLoadTask = new BackgroundTask();
             NetworkingErrors = new Queue<string>();
             _gameSettingsSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
+            _arenaStateSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
             _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
 
             NetworkEngine = new NetworkEngine(this, 30);
@@ -176,11 +178,10 @@ namespace AW2.Core
         /// <summary>
         /// Prepares a new play session to start from the arena called <see cref="SelectedArenaName"/>.
         /// Call <see cref="StartArena"/> after this method returns to start playing the arena.
-        /// This method usually takes a long time to run. It's therefore a good
-        /// idea to make it run in a background thread.
         /// </summary>
         public void LoadSelectedArena(byte? arenaIDOnClient = null)
         {
+            if (NetworkMode != Core.NetworkMode.Client) DataEngine.RemoveEmptyTeams();
             var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)SelectedArenaName);
             // Note: Must create a new Arena instance and not use the existing template
             // because playing an arena will modify it.
@@ -289,6 +290,7 @@ namespace AW2.Core
             // Note: Clients are supposed to create teams only with local IDs (negative).
             // Remove existing teams because they have global IDs (positive).
             foreach (var spec in DataEngine.Spectators) spec.AssignTeam(null);
+            DataEngine.RemoveEmptyTeams();
             RefreshGameSettings();
             IsClientAllowedToStartArena = false;
             try
@@ -598,19 +600,11 @@ namespace AW2.Core
 
         private void SendSpectatorAndTeamUpdatesOnServer()
         {
-            var updateEveryone = DataEngine.IsTimeForArenaStatisticsToClients();
-            var updatees = DataEngine.Spectators
-                .Where(spec => spec.IsClientUpdateRequested || updateEveryone)
-                .Select(spec => new { spec.ID, Data = (INetworkSerializable)spec })
-                .Union(DataEngine.Teams
-                    .Where(team => updateEveryone)
-                    .Select(team => new { team.ID, Data = (INetworkSerializable)team }))
-                .ToArray();
-            if (!updatees.Any()) return;
+            if (!_arenaStateSendTimer.IsElapsed) return;
             var message = new SpectatorOrTeamUpdateMessage();
-            foreach (var updatee in updatees) message.Add(updatee.ID, updatee.Data, SerializationModeFlags.VaryingDataFromServer);
+            foreach (var spec in DataEngine.Spectators) message.Add(spec.ID, spec, SerializationModeFlags.VaryingDataFromServer);
+            foreach (var team in DataEngine.Teams) message.Add(team.ID, team, SerializationModeFlags.VaryingDataFromServer);
             NetworkEngine.SendToGameClients(message);
-            foreach (var spectator in DataEngine.Spectators) spectator.IsClientUpdateRequested = false;
         }
 
         private void SetPlayerControls(ClientGameStateUpdateMessage message)
@@ -731,8 +725,7 @@ namespace AW2.Core
                 SpectatorID = spec.ID,
                 Subclass = SpectatorSettingsRequest.GetSubclassType(spec),
             };
-            SendSpectatorSettingsToRemote(SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer,
-                sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
+            SendSpectatorSettingsToRemote(SerializationModeFlags.ConstantDataFromServer, sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
             foreach (var conn in NetworkEngine.GameClientConnections) conn.ConnectionStatus.HasPlayerSettings = true;
         }
 
@@ -750,12 +743,10 @@ namespace AW2.Core
 
         private void SendTeamSettingsToGameClients()
         {
-            foreach (var team in DataEngine.Teams)
-            {
-                var mess = new TeamSettingsMessage { TeamID = team.ID };
-                mess.Write(team, SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer);
-                foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(mess);
-            }
+            var mess = new TeamSettingsMessage();
+            var serializationMode = SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer;
+            foreach (var team in DataEngine.Teams) mess.Add(team.ID, team, serializationMode);
+            foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(mess);
         }
 
         public void AddRemoteSpectator(Spectator newSpectator)
@@ -832,7 +823,6 @@ namespace AW2.Core
                     }
                 }
                 NetworkEngine.GetConnection(spectator.ConnectionID).Send(mess);
-                DataEngine.EnqueueArenaStateToClients();
                 return true;
             });
         }

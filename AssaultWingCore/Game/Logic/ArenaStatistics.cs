@@ -18,15 +18,13 @@ namespace AW2.Game.Logic
         /// <summary>
         /// How many reincarnations there is left, or negative for infinite lives.
         /// </summary>
-        public int Lives { get { return _lives; } set { _lives = value; if (Updated != null) Updated(); } }
-        public int Kills { get { return _kills; } set { _kills = value; if (Updated != null) Updated(); } }
-        public int Deaths { get { return _deaths; } set { _deaths = value; if (Updated != null) Updated(); } }
+        public int Lives { get { return _lives; } set { _lives = value; } }
+        public int Kills { get { return _kills; } set { _kills = value; } }
+        public int Deaths { get { return _deaths; } set { _deaths = value; } }
         public int KillsWithoutDying { get; set; }
-        public float DamageInflictedToMinions { get { return _damageInflictedToMinions; } set { _damageInflictedToMinions = value; if (Updated != null) Updated(); } }
-        public int BonusesCollected { get { return _bonusesCollected; } set { _bonusesCollected = value; if (Updated != null) Updated(); } }
+        public float DamageInflictedToMinions { get { return _damageInflictedToMinions; } set { _damageInflictedToMinions = value; } }
+        public int BonusesCollected { get { return _bonusesCollected; } set { _bonusesCollected = value; } }
         public Func<float> Rating { get; set; }
-
-        public event Action Updated;
 
         public ArenaStatistics()
         {

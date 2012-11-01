@@ -80,11 +80,6 @@ namespace AW2.Game.Players
         public bool IsLocal { get { return ConnectionStatus == ConnectionStatusType.Local; } }
 
         /// <summary>
-        /// For use by the game server only.
-        /// </summary>
-        public bool IsClientUpdateRequested { get; set; }
-
-        /// <summary>
         /// The human-readable name of the spectator.
         /// </summary>
         public string Name { get; set; }
@@ -122,7 +117,6 @@ namespace AW2.Game.Players
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
             IPAddress = ipAddress ?? IPAddress.Loopback;
             ArenaStatistics = new ArenaStatistics();
-            ArenaStatistics.Updated += StatisticsUpdatedHandler;
             StatsData = CreateStatsData(this);
         }
 
@@ -148,7 +142,6 @@ namespace AW2.Game.Players
             if (ConnectionStatus != ConnectionStatusType.Remote) throw new InvalidOperationException("Cannot disconnect a " + ConnectionStatus + " spectator");
             LastDisconnectTime = Game.GameTime.TotalRealTime;
             ConnectionStatus = ConnectionStatusType.Disconnected;
-            IsClientUpdateRequested = true;
         }
 
         /// <summary>
@@ -160,7 +153,6 @@ namespace AW2.Game.Players
             ConnectionID = newSpectator.ConnectionID;
             ConnectionStatus = ConnectionStatusType.Remote;
             StatsData = newSpectator.StatsData;
-            IsClientUpdateRequested = true;
         }
 
         /// <summary>
@@ -214,6 +206,7 @@ namespace AW2.Game.Players
                     writer.WriteID(Team);
                 }
                 StatsData.Serialize(writer, mode);
+                ArenaStatistics.Serialize(writer, mode);
             }
         }
 
@@ -233,6 +226,7 @@ namespace AW2.Game.Players
                 // Note: The team is refreshed in Spectator.Update()
             }
             StatsData.Deserialize(reader, mode, framesAgo);
+            ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }
 
         public override string ToString()
@@ -245,12 +239,6 @@ namespace AW2.Game.Players
             return id == Team.UNINITIALIZED_ID
                 ? null
                 : Game.DataEngine.Teams.FirstOrDefault(t => t.ID == id);
-        }
-
-        private void StatisticsUpdatedHandler()
-        {
-            if (Game == null || Game.NetworkMode != NetworkMode.Server) return;
-            Game.DataEngine.EnqueueArenaStateToClients();
         }
     }
 }

@@ -239,6 +239,8 @@ namespace AW2.Game
 
         /// <summary>
         /// Initializes the arena for a new play session.
+        /// This method usually takes a long time to run. It's therefore a good
+        /// idea to make it run in a background thread.
         /// </summary>
         public void Initialize()
         {

@@ -268,7 +268,6 @@ namespace AW2.Game.Players
             ExtraDeviceName = extraDeviceName;
             Controls = controls;
             Messages = new MessageContainer(Game);
-            Color = Color.Gray;
             PostprocessEffectNames = new List<CanonicalString>();
             GobTrackerItems = new List<GobTrackerItem>();
         }
@@ -279,6 +278,7 @@ namespace AW2.Game.Players
 
         public override void Update()
         {
+            base.Update();
             if (Game.NetworkMode != NetworkMode.Client)
             {
                 if (IsTimeToCreateShip) CreateShip();
@@ -348,7 +348,6 @@ namespace AW2.Game.Players
                         writer.Write((CanonicalString)ShipName);
                         writer.Write((CanonicalString)Weapon2Name);
                         writer.Write((CanonicalString)ExtraDeviceName);
-                        writer.Write((Color)Color);
                     }
                 }
             }
@@ -363,7 +362,6 @@ namespace AW2.Game.Players
                 var newShipName = reader.ReadCanonicalString();
                 var newWeapon2Name = reader.ReadCanonicalString();
                 var newExtraDeviceName = reader.ReadCanonicalString();
-                Color = reader.ReadColor();
                 if (Game.DataEngine.GetTypeTemplate(newShipName) is Ship) ShipName = newShipName;
                 if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
                 if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;

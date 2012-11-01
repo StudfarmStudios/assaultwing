@@ -32,8 +32,8 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>1.24.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.25.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <ExcludeDeploymentUrl>true</ExcludeDeploymentUrl>
@@ -132,6 +132,7 @@
   <ItemGroup>
     <Compile Include="AssaultWingProgram.cs" />
     <Compile Include="Core\AssaultWing.cs" />
+    <Compile Include="Net\Messages\TeamSettingsMessage.cs" />
     <Compile Include="UI\DedicatedServerLogic.cs" />
     <Compile Include="Core\GameComponents\DedicatedServer.cs" />
     <Compile Include="Core\GameComponents\IntroEngine.cs" />
@@ -205,7 +206,6 @@
     <Compile Include="Net\MessageSendType.cs" />
     <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
     <Compile Include="Net\Messages\ConnectionClosingMessage.cs" />
-    <Compile Include="Net\Messages\ArenaStatisticsMessage.cs" />
     <Compile Include="Net\Messages\GameServerHandshakeRequestTCP.cs" />
     <Compile Include="Net\Messages\GameServerHandshakeRequestUDP.cs" />
     <Compile Include="Net\Messages\GameSettingsRequest.cs" />
@@ -215,10 +215,10 @@
     <Compile Include="Net\Messages\PingReplyMessage.cs" />
     <Compile Include="Net\Messages\PingRequestMessage.cs" />
     <Compile Include="Net\Messages\ClientGameStateUpdateMessage.cs" />
-    <Compile Include="Net\Messages\PlayerDeletionMessage.cs" />
+    <Compile Include="Net\Messages\SpectatorOrTeamDeletionMessage.cs" />
     <Compile Include="Net\Messages\PlayerMessageMessage.cs" />
     <Compile Include="Net\Messages\SpectatorSettingsReply.cs" />
-    <Compile Include="Net\Messages\SpectatorUpdateMessage.cs" />
+    <Compile Include="Net\Messages\SpectatorOrTeamUpdateMessage.cs" />
     <Compile Include="Net\Messages\SpectatorSettingsRequest.cs" />
     <Compile Include="Net\Messages\StartGameMessage.cs" />
     <Compile Include="Net\MessageType.cs" />

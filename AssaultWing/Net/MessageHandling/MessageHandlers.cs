@@ -53,7 +53,8 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<StartGameMessage>(MessageHandlerBase.SourceType.Server, HandleStartGameMessage);
             yield return new MessageHandler<SpectatorSettingsReply>(MessageHandlerBase.SourceType.Server, HandleSpectatorSettingsReply);
             yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleSpectatorSettingsRequestOnClient);
-            yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
+            yield return new MessageHandler<TeamSettingsMessage>(MessageHandlerBase.SourceType.Server, HandleTeamSettingsMessageOnClient);
+            yield return new MessageHandler<SpectatorOrTeamDeletionMessage>(MessageHandlerBase.SourceType.Server, HandleSpectatorOrTeamDeletionMessage);
             yield return new MessageHandler<GameSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleGameSettingsRequest);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerMessageMessageOnClient);
             yield return new MessageHandler<ArenaFinishMessage>(MessageHandlerBase.SourceType.Server, HandleArenaFinishMessage);
@@ -62,12 +63,11 @@ namespace AW2.Net.MessageHandling
         public IEnumerable<MessageHandlerBase> GetClientGameplayHandlers()
         {
             var networkEngine = Game.NetworkEngine;
-            yield return new MessageHandler<SpectatorUpdateMessage>(MessageHandlerBase.SourceType.Server, HandleSpectatorUpdateMessage);
-            yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
+            yield return new MessageHandler<SpectatorOrTeamUpdateMessage>(MessageHandlerBase.SourceType.Server, HandleSpectatorOrTeamUpdateMessage);
+            yield return new MessageHandler<SpectatorOrTeamDeletionMessage>(MessageHandlerBase.SourceType.Server, HandleSpectatorOrTeamDeletionMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, Game.GobCreationMessageReceived) { OneMessageAtATime = true };
             yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessageOnClient);
             yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
-            yield return new MessageHandler<ArenaStatisticsMessage>(MessageHandlerBase.SourceType.Server, HandleArenaStatisticsMessage);
         }
 
         public IEnumerable<MessageHandlerBase> GetServerMenuHandlers()
@@ -122,24 +122,27 @@ namespace AW2.Net.MessageHandling
 
         private void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
-            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer;
+            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer;
             var spectator = Game.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
             if (spectator == null)
                 TryCreateAndAddNewSpectatorOnClient(mess, spectatorSerializationMode);
             else if (spectator.IsRemote)
                 mess.Read(spectator, spectatorSerializationMode, 0);
-            else
-            {
-                if (mess.Subclass != SpectatorSettingsRequest.SubclassType.Player) throw new ApplicationException("Unexpected Spectator subclass " + mess.Subclass);
-                // Be careful not to overwrite our most recent name and equipment choices
-                // with something older from the server.
-                // TODO !!! Instead of creating a temp player, serialize only Player.Color when mode is ConstantDataFromServer
-                // and the player lives at a remote client.
-                var tempPlayer = GetTempPlayer();
-                mess.Read(tempPlayer, spectatorSerializationMode, 0);
-                if (spectator is Player) ((Player)spectator).Color = tempPlayer.Color;
-            }
+        }
+
+        private void HandleTeamSettingsMessageOnClient(TeamSettingsMessage mess)
+        {
+            mess.Read(id =>
+                {
+                    var team = Game.DataEngine.FindTeam(id);
+                    if (team == null) Game.DataEngine.Teams.Add(team = new Team("<uninitialised>", Game.DataEngine.FindSpectator) { ID = id });
+                    return team;
+                },
+                SerializationModeFlags.ConstantDataFromServer | SerializationModeFlags.VaryingDataFromServer, 0);
+            // Remove teams that were not mentioned in the message.
+            if (mess.IDs.Count() != Game.DataEngine.Teams.Count)
+                Game.DataEngine.Teams.Remove(team => !mess.IDs.Contains(team.ID));
         }
 
         private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
@@ -174,9 +177,10 @@ namespace AW2.Net.MessageHandling
                 Game.NetworkingErrors.Enqueue(string.Format("Server refused {0}:\n{1}", spectator.Name, mess.FailMessage)); // TODO: Proper line wrapping in dialogs
         }
 
-        private void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
+        private void HandleSpectatorOrTeamDeletionMessage(SpectatorOrTeamDeletionMessage mess)
         {
-            Game.DataEngine.Spectators.Remove(spec => !spec.IsLocal && spec.ID == mess.PlayerID);
+            Game.DataEngine.Spectators.Remove(spec => !spec.IsLocal && spec.ID == mess.SpectatorOrTeamID);
+            Game.DataEngine.Teams.Remove(team => team.ID == mess.SpectatorOrTeamID);
         }
 
         private void HandleGameSettingsRequest(GameSettingsRequest mess)
@@ -235,11 +239,10 @@ namespace AW2.Net.MessageHandling
             if (player != null) player.Messages.Add(mess.Message);
         }
 
-        private void HandleSpectatorUpdateMessage(SpectatorUpdateMessage mess)
+        private void HandleSpectatorOrTeamUpdateMessage(SpectatorOrTeamUpdateMessage mess)
         {
-            var player = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
-            if (player == null) return; // Silently ignoring update for an unknown player
-            mess.Read(player, SerializationModeFlags.VaryingDataFromServer, Game.NetworkEngine.GetMessageAge(mess));
+            mess.Read(id => (INetworkSerializable)Game.DataEngine.FindSpectator(id) ?? Game.DataEngine.FindTeam(id),
+                SerializationModeFlags.VaryingDataFromServer, 0);
         }
 
         private void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)
@@ -278,24 +281,19 @@ namespace AW2.Net.MessageHandling
             if (clientConn.ConnectionStatus.State == ConnectionUtils.GameClientStatus.StateType.Dropped) return;
             clientConn.ConnectionStatus.IsRequestingSpawnForArenaID = mess.IsRequestingSpawnForArenaID;
             clientConn.ConnectionStatus.IsReadyToStartArena = mess.IsGameClientReadyToStartArena;
+            var serializationMode = SerializationModeFlags.ConstantDataFromClient;
             if (!mess.IsRegisteredToServer)
-                TryCreateAndAddNewSpectatorOnServer(mess, SerializationModeFlags.ConstantDataFromClient);
+                TryCreateAndAddNewSpectatorOnServer(mess, serializationMode);
             else
             {
-                var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.SpectatorID);
+                var spectator = Game.DataEngine.FindSpectator(mess.SpectatorID);
                 if (spectator == null || spectator.ConnectionID != mess.ConnectionID)
                 {
                     // Silently ignoring update of an unknown spectator or
                     // a spectator that doesn't live on the client who sent the update.
                 }
                 else
-                {
-                    // Be careful not to overwrite the player's color with something silly from the client.
-                    // TODO !!! Implement this by Player.Serialize writing everything but the colour when mode is ConstantFromClient.
-                    var oldColor = spectator is Player ? (Color?)((Player)spectator).Color : null;
-                    mess.Read(spectator, SerializationModeFlags.ConstantDataFromClient, 0);
-                    if (oldColor.HasValue) ((Player)spectator).Color = oldColor.Value;
-                }
+                    mess.Read(spectator, serializationMode, 0);
             }
         }
 
@@ -335,15 +333,6 @@ namespace AW2.Net.MessageHandling
         private void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)
         {
             Game.LogicEngine.KillGobsOnClient(mess.GobIDs);
-        }
-
-        private void HandleArenaStatisticsMessage(ArenaStatisticsMessage mess)
-        {
-            mess.ReadSpectatorStatistics(specID =>
-            {
-                var spectator = Game.DataEngine.Spectators.FirstOrDefault(spec => spec.ID == specID);
-                return spectator == null ? null : spectator.ArenaStatistics;
-            });
         }
 
         #endregion

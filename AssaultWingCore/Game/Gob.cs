@@ -935,10 +935,7 @@ namespace AW2.Game
                         if (StaticID != 0) flags |= (byte)0x01;
                         writer.Write((byte)flags);
                         if (StaticID != 0) writer.Write((short)StaticID);
-                        if (Owner != null)
-                            writer.Write((sbyte)Owner.ID);
-                        else
-                            writer.Write((sbyte)Spectator.UNINITIALIZED_ID);
+                        writer.WriteID(Owner);
                     }
                     if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
                     {
@@ -966,9 +963,7 @@ namespace AW2.Game
                 ID = reader.ReadInt16();
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt16();
-                int ownerID = reader.ReadSByte();
-                OwnerProxy = new LazyProxy<int, Spectator>(FindSpectator);
-                OwnerProxy.SetData(ownerID);
+                OwnerProxy = reader.ReadSpectatorID(Game.DataEngine.FindSpectator);
             }
             if ((mode & SerializationModeFlags.VaryingDataFromServer) != 0)
             {
@@ -1206,13 +1201,6 @@ namespace AW2.Game
         #endregion Damage methods
 
         #region Private methods
-
-        private Spectator FindSpectator(int id)
-        {
-            return id == Spectator.UNINITIALIZED_ID
-                ? null
-                : Game.DataEngine.Spectators.FirstOrDefault(p => p.ID == id);
-        }
 
         /// <summary>
         /// Creates birth gobs for the gob.

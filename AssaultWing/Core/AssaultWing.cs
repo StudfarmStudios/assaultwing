@@ -403,7 +403,17 @@ namespace AW2.Core
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray(); // ToArray takes a copy
-            Stats.Send(new { ArenaFinished = standings.Select(st => new { st.Name, ((SpectatorStats)st.StatsData).LoginToken, st.Score, st.Kills, st.Deaths }).ToArray() });
+            Stats.Send(new
+            {
+                ArenaFinished = standings.Select(st => new
+                {
+                    st.Name,
+                    LoginToken = st.StatsData == null ? "" : ((SpectatorStats)st.StatsData).LoginToken,
+                    st.Score,
+                    st.Kills,
+                    st.Deaths,
+                }).ToArray()
+            });
             foreach (var spec in DataEngine.Spectators) if (spec.IsLocal) WebData.UpdatePilotRanking(spec);
             Logic.FinishArena();
 #if NETWORK_PROFILING

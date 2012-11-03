@@ -73,7 +73,7 @@ namespace AW2.UI
             EnsureArenaLoadingStopped();
             StopGameplay();
             _clearGameDataWhenEnteringMenus = true;
-            var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators).ToArray(); // ToArray takes a copy
+            var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Teams);
             var callback = new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL,
                 () => { if (GameState == GAMESTATE_GAMEPLAY_STOPPED) ShowEquipMenu(); });
             ShowDialog(new GameOverOverlayDialogData(MenuEngine, standings, callback) { GroupName = "Game over" });

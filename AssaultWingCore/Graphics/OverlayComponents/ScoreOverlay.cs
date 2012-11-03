@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game;
+using AW2.Game.Logic;
 using AW2.Game.Players;
 using AW2.Helpers;
 
@@ -10,17 +11,22 @@ namespace AW2.Graphics.OverlayComponents
 {
     public class ScoreOverlay : OverlayComponent
     {
-        private const int SCORE_LINE_SPACING = 17;
+        private static readonly Vector2 TextTopLeft = new Vector2(13, 29);
+        private const int NameWidth = 139;
+        private const int ScoreWidth = 48;
+        private const int ScoreEntryWidth = 35;
+        private const int ScoreLineSpacing = 17;
 
         private Player _player;
 
         public override Point Dimensions
         {
-            get { return new Point(Content.ScoreBackgroundTexture.Width, 30 + (Game.DataEngine.Spectators.Count() * SCORE_LINE_SPACING)); }
+            get { return new Point(Content.ScoreBackgroundTexture.Width, 30 + EntryCount * ScoreLineSpacing); }
         }
 
         private AssaultWingCore Game { get { return _player.Game; } }
         private GameContent Content { get { return Game.GraphicsEngine.GameContent; } }
+        private int EntryCount { get { return Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Teams).Sum(entry => 1 + entry.Item2.Length); } }
 
         public ScoreOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Left, VerticalAlignment.Bottom)
@@ -31,31 +37,28 @@ namespace AW2.Graphics.OverlayComponents
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Content.ScoreBackgroundTexture, Vector2.Zero, Color.White);
-
-            var textTopLeft = new Vector2(13, 29);
-            int nameWidth = 139;
-            int scoreWidth = 48;
-            int scoreEntryWidth = 35;
-
-            var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Spectators);
+            var mainStandings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Teams);
             int line = 0;
-
-            foreach (var entry in standings)
+            foreach (var mainEntry in mainStandings)
             {
-                var namePos = textTopLeft + new Vector2(0, line * SCORE_LINE_SPACING);
-                var scorePos = textTopLeft + new Vector2(nameWidth, line * SCORE_LINE_SPACING - 3);
-                var killsPos = textTopLeft + new Vector2(nameWidth + scoreWidth, line * SCORE_LINE_SPACING);
-                var deathsPos = textTopLeft + new Vector2(nameWidth + scoreWidth + scoreEntryWidth, line * SCORE_LINE_SPACING);
-                var rowAlpha = entry.IsDisconnected ? 0.5f : 1;
-                var rowColor = Color.Multiply(_player.ID == entry.SpectatorID ? Color.White : entry.Color, rowAlpha);
-
-                ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Name, namePos.Round(), rowColor, 0.9f, 1);
-                ModelRenderer.DrawBorderedText(spriteBatch, Content.ScoreFont, entry.Score.ToString(), scorePos.Round(), rowColor, 0.9f, 1);
-                ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Kills.ToString(), killsPos.Round(), rowColor, 0.9f, 1);
-                ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Deaths.ToString(), deathsPos.Round(), rowColor, 0.9f, 1);
-
-                ++line;
+                DrawStandingEntry(spriteBatch, mainEntry.Item1, line++, 0);
+                foreach (var subEntry in mainEntry.Item2) DrawStandingEntry(spriteBatch, subEntry, line++, 10);
             }
+        }
+
+        private void DrawStandingEntry(SpriteBatch spriteBatch, Standing entry, int line, int indent)
+        {
+            var namePos = TextTopLeft + new Vector2(indent, line * ScoreLineSpacing);
+            var scorePos = TextTopLeft + new Vector2(NameWidth, line * ScoreLineSpacing - 3);
+            var killsPos = TextTopLeft + new Vector2(NameWidth + ScoreWidth, line * ScoreLineSpacing);
+            var deathsPos = TextTopLeft + new Vector2(NameWidth + ScoreWidth + ScoreEntryWidth, line * ScoreLineSpacing);
+            var rowAlpha = entry.IsActive ? 1 : 0.5f;
+            var isHighlighted = Game.DataEngine.FindSpectator(entry.ID) == _player;
+            var rowColor = Color.Multiply(isHighlighted ? Color.White : entry.Color, rowAlpha);
+            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Name, namePos.Round(), rowColor, 0.9f, 1);
+            ModelRenderer.DrawBorderedText(spriteBatch, Content.ScoreFont, entry.Score.ToString(), scorePos.Round(), rowColor, 0.9f, 1);
+            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Kills.ToString(), killsPos.Round(), rowColor, 0.9f, 1);
+            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Deaths.ToString(), deathsPos.Round(), rowColor, 0.9f, 1);
         }
     }
 }

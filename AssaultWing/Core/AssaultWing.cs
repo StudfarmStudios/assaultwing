@@ -402,7 +402,7 @@ namespace AW2.Core
             IsClientAllowedToStartArena = false;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators).ToArray(); // ToArray takes a copy
+            var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators);
             Stats.Send(new
             {
                 ArenaFinished = standings.Select(st => new

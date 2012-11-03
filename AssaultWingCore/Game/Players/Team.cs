@@ -66,6 +66,7 @@ namespace AW2.Game.Players
                     writer.Write((string)Name);
                     writer.Write((Color)Color);
                 }
+                ArenaStatistics.Serialize(writer, mode);
             }
         }
 
@@ -76,6 +77,7 @@ namespace AW2.Game.Players
                 Name = reader.ReadString();
                 Color = reader.ReadColor();
             }
+            ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }
 
         public override string ToString()

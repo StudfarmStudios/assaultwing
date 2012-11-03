@@ -384,6 +384,34 @@ namespace AW2.Helpers
         }
 
         [Test]
+        public void TestFloor()
+        {
+            Assert.AreEqual(2, 1.99999f.Floor());
+            Assert.AreEqual(1, 1.9f.Floor());
+            Assert.AreEqual(1, 1.5f.Floor());
+            Assert.AreEqual(1, 1.1f.Floor());
+            Assert.AreEqual(1, 1.00001f.Floor());
+            Assert.AreEqual(1, 1f.Floor());
+            Assert.AreEqual(1, 0.99999f.Floor());
+            Assert.AreEqual(0, 0.9f.Floor());
+            Assert.AreEqual(0, 0.5f.Floor());
+            Assert.AreEqual(0, 0.1f.Floor());
+            Assert.AreEqual(0, 0.00001f.Floor());
+            Assert.AreEqual(0, 0f.Floor());
+            Assert.AreEqual(0, -0.00001f.Floor());
+            Assert.AreEqual(-1, (-0.1f).Floor());
+            Assert.AreEqual(-1, (-0.5f).Floor());
+            Assert.AreEqual(-1, (-0.9f).Floor());
+            Assert.AreEqual(-1, (-0.99999f).Floor());
+            Assert.AreEqual(-1, (-1f).Floor());
+            Assert.AreEqual(-1, (-1.00001f).Floor());
+            Assert.AreEqual(-2, (-1.1f).Floor());
+            Assert.AreEqual(-2, (-1.5f).Floor());
+            Assert.AreEqual(-2, (-1.9f).Floor());
+            Assert.AreEqual(-2, (-1.99999f).Floor());
+        }
+
+        [Test]
         public void TestVector2Clamp()
         {
             Assert.AreEqual(Vector2.Zero, Vector2.Zero.Clamp(0, 0));

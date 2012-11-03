@@ -46,11 +46,10 @@ namespace AW2.Game.Logic
 
         public int CalculateScore(ArenaStatistics statistics)
         {
-            return (int)(0.001f + // Truncate to integer but allow for slight floating-point rounding error.
-                CalculateCombatPoints(statistics) +
+            return (CalculateCombatPoints(statistics) +
                 ScoreMultiplierKills * statistics.Kills +
                 ScoreMultiplierDeaths * statistics.Deaths +
-                ScoreMultiplierLives * Math.Max(0, statistics.Lives));
+                ScoreMultiplierLives * Math.Max(0, statistics.Lives)).Floor();
         }
 
         public float CalculateCombatPoints(ArenaStatistics statistics)

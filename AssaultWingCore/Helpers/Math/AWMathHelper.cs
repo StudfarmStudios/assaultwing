@@ -416,6 +416,17 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns the largest integer that is equal to or less than the value. Allows for a little tolerance.
+        /// </summary>
+        public static int Floor(this float value)
+        {
+            var tolerance = 0.001f;
+            return value >= 0
+                ? (int)(value + tolerance)
+                : (int)(value - 1 + tolerance);
+        }
+
+        /// <summary>
         /// Clamps an integer to an interval.
         /// </summary>
         /// <param name="value">The value to clamp.</param>

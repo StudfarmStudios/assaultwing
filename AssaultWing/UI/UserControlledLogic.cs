@@ -98,7 +98,7 @@ namespace AW2.UI
             {
                 var info = Game.NetworkingErrors.Dequeue();
                 Log.Write(info);
-                ShowInfoDialog(info);
+                ShowInfoDialog(info, "Networking error");
             }
         }
 

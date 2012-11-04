@@ -579,6 +579,7 @@ namespace AW2.Net
             var arenaName = _game.SelectedArenaName;
             var startGameMessage = new StartGameMessage
             {
+                GameplayMode = _game.DataEngine.GameplayMode.Name,
                 ArenaID = Game.DataEngine.Arena.ID,
                 ArenaToPlay = arenaName,
                 ArenaTimeLeft = Game.DataEngine.ArenaFinishTime == TimeSpan.Zero ? TimeSpan.Zero : Game.DataEngine.ArenaFinishTime - Game.GameTime.TotalRealTime,

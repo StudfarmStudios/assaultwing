@@ -5,6 +5,7 @@ using System.Net;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Game;
+using AW2.Game.Logic;
 using AW2.Game.Players;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -154,7 +155,7 @@ namespace AW2.Net.MessageHandling
         {
             if (Game.DataEngine.Arena != null && Game.DataEngine.Arena.ID == mess.ArenaID) return;
             Game.DataEngine.ArenaFinishTime = mess.ArenaTimeLeft == TimeSpan.Zero ? TimeSpan.Zero : mess.ArenaTimeLeft + Game.GameTime.TotalRealTime;
-            Game.PrepareArena(mess.ArenaToPlay, mess.ArenaID, mess.WallCount);
+            Game.PrepareArenaOnClient(mess.GameplayMode, mess.ArenaToPlay, mess.ArenaID, mess.WallCount);
         }
 
         private void HandleSpectatorSettingsReply(SpectatorSettingsReply mess)
@@ -185,6 +186,7 @@ namespace AW2.Net.MessageHandling
 
         private void HandleGameSettingsRequest(GameSettingsRequest mess)
         {
+            Game.DataEngine.GameplayMode = (GameplayMode)Game.DataEngine.GetTypeTemplate(mess.GameplayMode);
             Game.SelectedArenaName = mess.ArenaToPlay;
         }
 

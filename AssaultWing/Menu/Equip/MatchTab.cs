@@ -34,6 +34,12 @@ namespace AW2.Menu.Equip
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
+            if (Controls.Activate.Pulse && _tabItem == MatchTabItem.Type)
+            {
+                var modes = MenuEngine.Game.DataEngine.GetTypeTemplates<AW2.Game.Logic.GameplayMode>().ToArray();
+                var oldIndex = Array.FindIndex(modes, mode => mode.Name == MenuEngine.Game.DataEngine.GameplayMode.Name);
+                MenuEngine.Game.DataEngine.GameplayMode = modes[(oldIndex + 1) % modes.Length];
+            }
             if (Controls.Activate.Pulse && IsArenaSelectable && _tabItem == MatchTabItem.Arena)
             {
                 MenuComponent.IsTemporarilyInactive = true;
@@ -67,7 +73,7 @@ namespace AW2.Menu.Equip
             spriteBatch.Draw(Content.PlayerNameBackground, LeftPanePos - view, Color.White);
 
             spriteBatch.DrawString(Content.FontSmall, MatchTabItem.Type.ToString(), currentPos.Round(), Color.GreenYellow);
-            spriteBatch.DrawString(Content.FontSmall, "Mayhem", (currentPos + new Vector2(0, 20)).Round(), Color.White);
+            spriteBatch.DrawString(Content.FontSmall, MenuEngine.Game.DataEngine.GameplayMode.Name, (currentPos + new Vector2(0, 20)).Round(), Color.White);
             currentPos += lineHeight;
 
             var arenaName = MenuEngine.Game.SelectedArenaName;

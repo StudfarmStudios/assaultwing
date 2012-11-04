@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core.GameComponents;
@@ -167,8 +168,10 @@ namespace AW2.Core
             base.EndRun();
         }
 
-        public void PrepareArena(string arenaName, byte arenaIDOnClient, int wallCount)
+        public void PrepareArenaOnClient(CanonicalString gameplayMode, string arenaName, byte arenaIDOnClient, int wallCount)
         {
+            Debug.Assert(NetworkMode == Core.NetworkMode.Client);
+            DataEngine.GameplayMode = (GameplayMode)DataEngine.GetTypeTemplate(gameplayMode);
             SelectedArenaName = arenaName;
             Logic.ShowEquipMenu();
             LoadSelectedArena(arenaIDOnClient);
@@ -699,19 +702,14 @@ namespace AW2.Core
             if (!_gameSettingsSendTimer.IsElapsed) return;
             SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
             SendTeamSettingsToGameClients();
-            SendGameSettingsToRemote(NetworkEngine.GameClientConnections);
+            var mess = new GameSettingsRequest { ArenaToPlay = SelectedArenaName, GameplayMode = DataEngine.GameplayMode.Name };
+            foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(mess);
         }
 
         private void SendGameSettingsOnClient()
         {
             if (!_gameSettingsSendTimer.IsElapsed) return;
             SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
-        }
-
-        private void SendGameSettingsToRemote(IEnumerable<Connection> connections)
-        {
-            var mess = new GameSettingsRequest { ArenaToPlay = SelectedArenaName };
-            foreach (var conn in connections) conn.Send(mess);
         }
 
         private void SendSpectatorSettingsToGameServer(Func<Spectator, bool> sendCriteria)

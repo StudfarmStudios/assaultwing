@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
@@ -11,6 +12,7 @@ namespace AW2.Net.Messages
     public class GameSettingsRequest : Message
     {
         public string ArenaToPlay { get; set; }
+        public CanonicalString GameplayMode { get; set; }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
@@ -21,18 +23,21 @@ namespace AW2.Net.Messages
             {
                 // Game settings request structure:
                 // variable-length string: name of arena to play
+                // canonical string: name of gameplay mode
                 writer.Write((string)ArenaToPlay);
+                writer.Write((CanonicalString)GameplayMode);
             }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             ArenaToPlay = reader.ReadString();
+            GameplayMode = reader.ReadCanonicalString();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [" + ArenaToPlay + "]";
+            return base.ToString() + " [" + ArenaToPlay + ", " + GameplayMode + "]";
         }
     }
 }

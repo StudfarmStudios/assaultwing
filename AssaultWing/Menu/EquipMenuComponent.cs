@@ -211,19 +211,20 @@ namespace AW2.Menu
                 spriteBatch.DrawString(Content.FontSmall, value, valuePos.Round(), valueColor);
             };
             drawInfo(0, "Players", MenuEngine.Game.DataEngine.Players.Count().ToString(), Color.White, Color.GreenYellow);
-            drawInfo(1, "Arena", MenuEngine.Game.SelectedArenaName, Color.White, Color.GreenYellow);
+            drawInfo(1, "Type", MenuEngine.Game.DataEngine.GameplayMode.Name, Color.White, Color.GreenYellow);
+            drawInfo(2, "Arena", MenuEngine.Game.SelectedArenaName, Color.White, Color.GreenYellow);
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Server:
                     {
                         var clientCount = MenuEngine.Game.NetworkEngine.GameClientConnections.Count(conn => conn.ConnectionStatus.IsReadyToStartArena);
-                        drawInfo(4, string.Format("{0} client{1} ready", clientCount, clientCount == 1 ? "" : "s"),
+                        drawInfo(5, string.Format("{0} client{1} ready", clientCount, clientCount == 1 ? "" : "s"),
                             "", Color.GreenYellow, Color.GreenYellow);
                         break;
                     }
                 case NetworkMode.Client:
-                    drawInfo(2, "Ping", GetPingTextAndColor().Item1, Color.White, GetPingTextAndColor().Item2);
-                    drawInfo(4, IsPlayButtonPressed ? "Waiting for server" : "Press F10 to play",
+                    drawInfo(3, "Ping", GetPingTextAndColor().Item1, Color.White, GetPingTextAndColor().Item2);
+                    drawInfo(5, IsPlayButtonPressed ? "Waiting for server" : "Press F10 to play",
                         "", Color.GreenYellow, Color.GreenYellow);
                     break;
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AW2.Game;
 using AW2.Game.Arenas;
+using AW2.Game.Logic;
 using AW2.Helpers;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
@@ -60,6 +61,7 @@ namespace AW2.Core.GameComponents
             }
             else
             {
+                Game.DataEngine.GameplayMode = ChooseGameplayMode();
                 Game.SelectedArenaName = ChooseArenaName();
             }
         }
@@ -90,6 +92,7 @@ namespace AW2.Core.GameComponents
                     _nextEventType = EventType.ARENA_INIT;
                     Game.FinishArena();
                     Game.RefreshGameSettings();
+                    Game.DataEngine.GameplayMode = ChooseGameplayMode();
                     Game.SelectedArenaName = ChooseArenaName();
                     break;
                 case EventType.ARENA_INIT:
@@ -110,6 +113,12 @@ namespace AW2.Core.GameComponents
                     break;
                 default: throw new ApplicationException("Invalid event type " + _nextEventType);
             }
+        }
+
+        private GameplayMode ChooseGameplayMode()
+        {
+            var gameplayModes = Game.DataEngine.GetTypeTemplates<GameplayMode>().ToArray();
+            return gameplayModes[RandomHelper.GetRandomInt(gameplayModes.Length)];
         }
 
         private string ChooseArenaName()

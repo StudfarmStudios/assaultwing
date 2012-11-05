@@ -40,6 +40,7 @@
     <Item>dumb glow</Item>
     <Item>bot electric ball</Item>
     <Item>bot electric streaks</Item>
+    <Item>playerglow</Item>
   </birthGobTypes>
   <deathGobTypes>
     <Item>bomb explosion</Item>

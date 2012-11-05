@@ -207,6 +207,9 @@ namespace AW2.Game.Gobs
 
         public SprayEmitter Emitter { get { return _emitter; } }
 
+        private Color Color { get { return _playerRelated && Owner != null ? Owner.Color : Color.White; } }
+        private float BaseAlpha { get { return !_disregardHidingLeader && Leader != null && Leader.IsHiding ? Leader.Alpha : 1; } }
+
         #endregion Peng properties
 
         /// <summary>
@@ -287,18 +290,6 @@ namespace AW2.Game.Gobs
             CheckLeaderDeath();
             CheckDeath(isFrozen);
         }
-
-        private Color Color
-        {
-            get
-            {
-                if (!_playerRelated) return Color.White;
-                var playerOwner = Owner as Player;
-                return playerOwner != null ? playerOwner.Color : Color.White;
-            }
-        }
-
-        private float BaseAlpha { get { return !_disregardHidingLeader && Leader != null && Leader.IsHiding ? Leader.Alpha : 1; } }
 
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale, Player viewer)
         {

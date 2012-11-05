@@ -345,7 +345,6 @@ namespace AW2.Game.Gobs
             _thruster.Activate(this);
             _coughEngine.Activate(this);
             _deviceTypeNameUpdateTimer = new AWTimer(() => Game.GameTime.TotalGameTime, TimeSpan.FromSeconds(1.5));
-            CreateGlow();
             IsNewborn = true;
             Game.SoundEngine.PlaySound(SHIP_BIRTH_SOUND, this);
         }
@@ -604,16 +603,6 @@ namespace AW2.Game.Gobs
         }
 
         #region Private methods
-
-        private void CreateGlow()
-        {
-            Gob.CreateGob<Peng>(Game, (CanonicalString)"playerglow", gob =>
-            {
-                gob.OwnerProxy = OwnerProxy;
-                gob.Leader = this;
-                Game.DataEngine.Arena.Gobs.Add(gob);
-            });
-        }
 
         /// <param name="force">Force of turn; (0,1] for a left turn, or [-1,0) for a right turn.</param>
         private void Turn(float force)

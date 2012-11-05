@@ -59,6 +59,7 @@
   <birthGobTypes>
     <Item>player birth stars</Item>
     <Item>player birth strokes</Item>
+    <Item>playerglow</Item>
   </birthGobTypes>
   <deathGobTypes>
     <Item>ship explosion</Item>

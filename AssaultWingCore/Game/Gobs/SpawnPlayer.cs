@@ -36,9 +36,9 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Positions a ship using any of the spawn areas in the arena that contains the ship.
+        /// Positions a minion (e.g. a ship) using any of the spawn areas in the arena.
         /// </summary>
-        public static void PositionNewShip(Ship ship, Arena arena)
+        public static void PositionNewMinion(Gob minion, Arena arena)
         {
             Func<IGeomPrimitive, int, IEnumerable<Vector2>> getRandomPoses = (area, count) =>
                 Enumerable.Range(0, count)
@@ -49,31 +49,33 @@ namespace AW2.Game.Gobs
                 ? spawnPoses
                 : getRandomPoses(new Rectangle(Vector2.Zero, arena.Dimensions), 20);
             var posesWithThreats = poses
-                .Select(pos => new { pos, threat = GetThreat(ship, pos) })
+                .Select(pos => new { pos, mood = GetMood(minion, pos) })
                 .ToList()
-                .OrderBy(x => x.threat)
+                .OrderByDescending(x => x.mood)
                 .ToList();
-            var leastThreat = posesWithThreats[0].threat;
-            var bestSpawns = posesWithThreats.TakeWhile(x => x.threat == leastThreat).ToList();
+            var bestMood = posesWithThreats[0].mood;
+            var bestSpawns = posesWithThreats.TakeWhile(x => x.mood == bestMood).ToList();
             var bestPos = bestSpawns[RandomHelper.GetRandomInt(bestSpawns.Count)].pos;
-            ship.ResetPos(bestPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
+            minion.ResetPos(bestPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
         }
 
         /// <summary>
-        /// Returns an estimate of imminent threat to a gob at a position.
-        /// Threat is not measured in any specific units. Returned values are mutually comparable;
-        /// the larger the return value, the more dangerous the position is.
+        /// Returns an estimate of the current mood of a position for a gob.
+        /// Mood is not measured in any specific units. Returned values are mutually comparable;
+        /// the larger the return value, the better the mood is.
         /// </summary>
-        private static float GetThreat(Gob gob, Vector2 pos)
+        private static float GetMood(Gob gob, Vector2 pos)
         {
-            const float SAFE_DISTANCE = 2000;
-            var threats =
-                from plr in gob.Game.DataEngine.Players
-                let ship = plr.Ship
-                where plr != gob.Owner && ship != null
-                let distance = Vector2.Distance(pos, ship.Pos)
-                select Math.Max(0, SAFE_DISTANCE - distance);
-            return threats.Sum();
+            const float MOOD_DISTANCE_MIN = 400;
+            const float MOOD_DISTANCE_MAX = 2000;
+            var constituents =
+                from minion in gob.Game.DataEngine.Minions
+                where minion != gob
+                let distance = Vector2.Distance(pos, minion.Pos)
+                let sign = minion.Owner == gob.Owner ? 1 : -1
+                let amplitude = MathHelper.Clamp(1 - (distance - MOOD_DISTANCE_MIN) / (MOOD_DISTANCE_MAX - MOOD_DISTANCE_MIN), 0, 1)
+                select sign * amplitude;
+            return constituents.Sum();
         }
     }
 }

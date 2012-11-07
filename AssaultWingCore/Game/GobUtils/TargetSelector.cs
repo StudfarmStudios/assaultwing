@@ -66,7 +66,7 @@ namespace AW2.Game.GobUtils
                 where !gob.Disabled && gob != source && !gob.IsHidden
                 let distanceSquared = Vector2.DistanceSquared(gob.Pos, source.Pos)
                 where distanceSquared <= MaxRange * MaxRange
-                let ownerWeight = gob.Owner == source.Owner ? FriendlyWeight : gob.Owner == null ? NeutralWeight : HostileWeight
+                let ownerWeight = gob.IsFriend(source) ? FriendlyWeight : gob.Owner == null ? NeutralWeight : HostileWeight
                 let relativePos = (gob.Pos - source.Pos).Rotate(-direction)
                 let targetAngle = Math.Abs(relativePos.Angle())
                 where targetAngle <= MaxAngle

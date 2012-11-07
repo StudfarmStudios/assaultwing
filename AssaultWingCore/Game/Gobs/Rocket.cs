@@ -218,7 +218,7 @@ namespace AW2.Game.Gobs
             var oldTarget = Target;
             var newBestTarget = _targetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
             if (newBestTarget != null &&
-                (newBestTarget.Owner == null || newBestTarget.Owner == Owner) &&
+                (newBestTarget.Owner == null || IsFriend(newBestTarget)) &&
                 RandomHelper.GetRandomFloat() < 0.9)
                 newBestTarget = null;
             if (newBestTarget != null) Target = newBestTarget;

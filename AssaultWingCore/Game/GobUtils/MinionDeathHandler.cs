@@ -65,7 +65,7 @@ namespace AW2.Game.GobUtils
                     break;
                 case Coroner.DeathTypeType.TeamKill:
                     CreateTeamKillMessage(coroner.KillerSpectator, coroner.DamageInfo.Target.Pos);
-                    if (killerPlayer != null) killerPlayer.Messages.Add(new PlayerMessage(coroner.MessageToKiller, PlayerMessage.KILL_COLOR));
+                    if (killerPlayer != null) killerPlayer.Messages.Add(new PlayerMessage(coroner.MessageToKiller, PlayerMessage.SUICIDE_COLOR));
                     if (killedPlayer != null) killedPlayer.Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.DEATH_COLOR));
                     break;
                 case Coroner.DeathTypeType.Accident:

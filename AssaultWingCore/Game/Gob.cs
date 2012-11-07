@@ -867,7 +867,7 @@ namespace AW2.Game
                 ModelRenderer.DrawTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, Alpha);
             else
                 ModelRenderer.Draw(Model, WorldMatrix, view, projection, ModelPartTransforms);
-            if (IsHiding && Owner == viewer)
+            if (IsHiding && Owner.IsFriend(viewer))
             {
                 var outlineAlpha = Alpha < HIDING_ALPHA_LIMIT ? 1 : Math.Max(0, 0.3f - 2 * Alpha);
                 ModelRenderer.DrawOutlineTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, outlineAlpha);
@@ -1080,6 +1080,17 @@ namespace AW2.Game
         public void ClearCollisionAreas()
         {
             _collisionAreas = new CollisionArea[0];
+        }
+
+        /// <summary>
+        /// Returns true if the gob is a friend, i.e. on the same side as this gob. The friend relation is symmetric.
+        /// </summary>
+        public bool IsFriend(Gob other)
+        {
+            if (other == null) return false;
+            if (Owner == other.Owner) return true;
+            if (Owner == null) return false;
+            return Owner.IsFriend(other.Owner);
         }
 
         public void Enable()

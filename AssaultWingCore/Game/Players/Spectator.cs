@@ -137,6 +137,15 @@ namespace AW2.Game.Players
             if (Team != null) Team.UpdateAssignment(this);
         }
 
+        /// <summary>
+        /// Returns true if the spectator is a friend, i.e. on the same side as this spectator.
+        /// The friend relation is symmetric.
+        /// </summary>
+        public bool IsFriend(Spectator other)
+        {
+            return other != null && Team != null && other.Team == Team;
+        }
+
         public void Disconnect()
         {
             if (ConnectionStatus != ConnectionStatusType.Remote) throw new InvalidOperationException("Cannot disconnect a " + ConnectionStatus + " spectator");

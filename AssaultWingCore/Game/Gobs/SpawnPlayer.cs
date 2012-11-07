@@ -72,7 +72,7 @@ namespace AW2.Game.Gobs
                 from minion in gob.Game.DataEngine.Minions
                 where minion != gob
                 let distance = Vector2.Distance(pos, minion.Pos)
-                let sign = minion.Owner == gob.Owner ? 1 : -1
+                let sign = gob.IsFriend(minion) ? 1 : -1
                 let amplitude = MathHelper.Clamp(1 - (distance - MOOD_DISTANCE_MIN) / (MOOD_DISTANCE_MAX - MOOD_DISTANCE_MIN), 0, 1)
                 select sign * amplitude;
             return constituents.Sum();

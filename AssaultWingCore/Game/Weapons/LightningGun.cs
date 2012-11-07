@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
@@ -45,7 +46,7 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            FireAtTargets(FindTargets(Owner.Game.DataEngine.Minions));
+            FireAtTargets(PruneTailFriends(FindTargets(Owner.Game.DataEngine.Minions)));
         }
 
         public IEnumerable<Gob> FindTargets(IEnumerable<Gob> potentialTargets)
@@ -56,11 +57,7 @@ namespace AW2.Game.Weapons
             for (int i = 0; i < LIGHTNING_CHAIN_LENGTH_MAX; i++)
             {
                 var target = _targetSelector.ChooseTarget(potentialTargets, current, direction);
-                if (target == null)
-                {
-                    if (i == 0) yield return null;
-                    break;
-                }
+                if (target == null) break;
                 yield return target;
                 direction = (target.Pos - current.Pos).Angle();
                 current = target;
@@ -68,10 +65,18 @@ namespace AW2.Game.Weapons
             }
         }
 
+        private IEnumerable<Gob> PruneTailFriends(IEnumerable<Gob> targets)
+        {
+            if (Owner == null) return targets;
+            var input = targets.ToArray();
+            var takeCount = 1 + Array.FindLastIndex(input, target => !Owner.IsFriend(target));
+            return input.Take(takeCount);
+        }
+
         private void FireAtTargets(IEnumerable<Gob> targets)
         {
-            ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(Owner, index, targets.First(), 0));
-            var previous = targets.First();
+            ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(Owner, index, targets.FirstOrDefault(), 0));
+            var previous = targets.FirstOrDefault();
             var chainIndex = 1;
             foreach (var target in targets.Skip(1))
             {

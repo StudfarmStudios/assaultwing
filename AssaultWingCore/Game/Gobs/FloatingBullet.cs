@@ -59,11 +59,11 @@ namespace AW2.Game.Gobs
         private bool IsHoverThrusting { get { return HoverThrustCycleFrame < AssaultWingCore.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
         private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }
 
-        private bool IsAvoidable(Gob gob) { return gob.Owner == Owner && gob is FloatingBullet; }
-        private bool IsReachable(Gob gob) { return gob.Owner != Owner && !gob.IsHidden && Game.DataEngine.Minions.Contains(gob); }
+        private bool IsAvoidable(Gob gob) { return IsFriend(gob) && gob is FloatingBullet; }
+        private bool IsReachable(Gob gob) { return !IsFriend(gob) && !gob.IsHidden && Game.DataEngine.Minions.Contains(gob); }
         private bool IsExplodable(CollisionArea area)
         {
-            if (area.Owner.Owner == Owner) return false;
+            if (IsFriend(area.Owner)) return false;
             if (!area.Owner.IsDamageable) return false;
             if (!area.Type.IsPhysical()) return false;
             if (area.Owner.MaxDamageLevel <= 100 && area.Owner.MoveType == GobUtils.MoveType.Dynamic) return false;
@@ -111,7 +111,7 @@ namespace AW2.Game.Gobs
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) PhysicsHelper.ApplyForce(this, _thrustForce);
             Alpha = Game.DataEngine.Minions
-                .Where(gob => gob.Owner != Owner && !gob.IsHidden)
+                .Where(gob => !IsFriend(gob) && !gob.IsHidden)
                 .Select(gob => Vector2.Distance(Pos, gob.Pos))
                 .Select(_enemyDistanceToAlpha.Evaluate)
                 .DefaultIfEmpty(0)

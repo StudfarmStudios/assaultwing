@@ -67,8 +67,7 @@ namespace AW2.Game.GobUtils
             {
                 if (Cause == null || Cause.Owner == null) return SourceTypeType.Unspecified;
                 if (Cause.Owner == Target.Owner) return SourceTypeType.Self;
-                if (Cause.Owner.Team != null && Target.Owner != null && Cause.Owner.Team == Target.Owner.Team)
-                    return SourceTypeType.OwnTeamPlayer;
+                if (Cause.IsFriend(Target)) return SourceTypeType.OwnTeamPlayer;
                 return SourceTypeType.EnemyPlayer;
             }
         }

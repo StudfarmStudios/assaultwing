@@ -79,6 +79,7 @@ namespace AW2.Game.Logic
         {
             var standings = (
                 from team in teams
+                where team.Members.Any()
                 let stats = team.ArenaStatistics
                 let score = CalculateScore(stats)
                 orderby score descending, stats.Kills descending, team.Name
@@ -98,6 +99,27 @@ namespace AW2.Game.Logic
             if (spectators.Count() < 2) return false;
             int spectatorsAlive = spectators.Count(player => player.ArenaStatistics.Lives != 0);
             return spectatorsAlive < 2;
+        }
+
+        /// <summary>
+        /// Returns a sequence of team member reassigning operations that will balance out the given teams.
+        /// The returned tuples are (spectator ID, team ID) denoting which spectator should be assigned to which team.
+        /// </summary>
+        public IEnumerable<Tuple<int, int>> BalanceTeams(IEnumerable<Team> teams)
+        {
+            if (teams.Count() < 2) yield break;
+            Func<Spectator, int> rate = spec => 1;
+            var teamsBySize = teams.OrderByDescending(team => team.Members.Sum(rate));
+            var keepTeams = teamsBySize.Take(2).ToArray();
+            var keepSpecCount = keepTeams.Min(team => team.Members.Sum(rate) + 1);
+            var freeSpecs = teams.SelectMany(team => team.Members).Except(keepTeams.SelectMany(team => team.Members.Take(keepSpecCount)));
+            var teamRates = keepTeams.Select(team => team.Members.Take(keepSpecCount).Sum(rate)).ToArray();
+            foreach (var spec in freeSpecs)
+            {
+                var index = Array.IndexOf(teamRates, teamRates.Min());
+                yield return Tuple.Create(spec.ID, keepTeams[index].ID);
+                teamRates[index] += rate(spec);
+            }
         }
     }
 }

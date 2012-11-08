@@ -76,6 +76,7 @@
     <Compile Include="Game\GobUtils\ShipLocationPredicterTest.cs" />
     <Compile Include="Game\GobUtils\TargetSelectorTest.cs" />
     <Compile Include="Game\GobUtils\WallIndexMapTest.cs" />
+    <Compile Include="Game\Logic\GameplayModeTest.cs" />
     <Compile Include="Game\Players\TeamTest.cs" />
     <Compile Include="Game\Weapons\LightningGunTest.cs" />
     <Compile Include="Graphics\AWViewportCollectionTest.cs" />

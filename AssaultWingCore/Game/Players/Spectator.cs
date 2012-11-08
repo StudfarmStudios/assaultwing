@@ -24,6 +24,8 @@ namespace AW2.Game.Players
 
         private static int g_nextLocalID;
 
+        private bool _teamAssignmentDeserialized;
+
         public static Func<Spectator, INetworkSerializable> CreateStatsData;
 
         /// <summary>
@@ -177,8 +179,11 @@ namespace AW2.Game.Players
         /// </summary>
         public virtual void Update()
         {
-            // Refresh team assignment in case TeamProxy has gained more data.
-            if (Game.NetworkMode == NetworkMode.Client) AssignTeam(Team);
+            if (_teamAssignmentDeserialized)
+            {
+                _teamAssignmentDeserialized = false;
+                if (Team != null) Team.UpdateAssignment(this);
+            }
         }
 
         /// <summary>
@@ -231,8 +236,15 @@ namespace AW2.Game.Players
                 var isDisconnected = reader.ReadBoolean();
                 if (IsRemote && isDisconnected) ConnectionStatus = ConnectionStatusType.Disconnected;
                 if (IsDisconnected && !isDisconnected) ConnectionStatus = ConnectionStatusType.Remote;
+                var oldTeam = Team;
                 TeamProxy = reader.ReadTeamID(FindTeam);
-                // Note: The team is refreshed in Spectator.Update()
+                if (oldTeam != Team)
+                {
+                    // Resign from old team now while we still have a direct reference to it.
+                    // The new team may not exist yet, so assign to it later in Update().
+                    if (oldTeam != null) oldTeam.UpdateAssignment(this);
+                    _teamAssignmentDeserialized = true;
+                }
             }
             StatsData.Deserialize(reader, mode, framesAgo);
             ArenaStatistics.Deserialize(reader, mode, framesAgo);

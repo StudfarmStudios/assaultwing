@@ -185,6 +185,18 @@ namespace AW2.Game
             Teams.Remove(team => !team.Members.Any());
         }
 
+        public void RebalanceTeams()
+        {
+            if (Game.NetworkMode == NetworkMode.Client) return;
+            var ops = GameplayMode.BalanceTeams(Teams).ToArray(); // Take a copy into an array because the teams will be modified.
+            foreach (var op in ops)
+            {
+                var spec = FindSpectator(op.Item1);
+                var team = FindTeam(op.Item2);
+                if (spec != null && team != null) spec.AssignTeam(team);
+            }
+        }
+
         #endregion spectators and teams
 
         #region viewports

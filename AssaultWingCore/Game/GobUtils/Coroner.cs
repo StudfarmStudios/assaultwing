@@ -95,7 +95,7 @@ namespace AW2.Game.GobUtils
             };
             g_teamKillPhrases = new[]
             {
-                "{0} mistook {1} for an enemy", "{0} couldn't tell {1} was a friend", "{0} made {1} feel unwelcome",
+                "{0} mistook {1} for an enemy", "{0} didn't recognize {1} as a friend", "{0} made {1} feel unwelcome",
                 "{0} pushed {1} aside", "{0} pretended to be {1:genetive} enemy",
             };
             g_omgs = new[]

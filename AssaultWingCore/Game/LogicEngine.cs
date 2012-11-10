@@ -28,6 +28,7 @@ namespace AW2.Game
 
         private List<GobKillData> _gobsToKillOnClient;
         private Control _helpControl;
+        private AWTimer _teamRebalanceTimer;
  
         public LogicEngine(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
@@ -66,6 +67,7 @@ namespace AW2.Game
         public void Reset()
         {
             _gobsToKillOnClient.Clear();
+            _teamRebalanceTimer = new AWTimer(() => Game.GameTime.TotalRealTime, Game.Settings.Players.TeamRebalancingInterval) { SkipPastIntervals = true };
         }
 
         public override void Update()
@@ -79,6 +81,7 @@ namespace AW2.Game
             foreach (var player in data.Spectators) player.Update();
             KillGobsOnClient();
             RemoveInactivePlayers();
+            if (_teamRebalanceTimer.IsElapsed) data.RebalanceTeams();
             data.Arena.Gobs.FinishAddsAndRemoves();
 
             // Check for arena end. Network games end when the game server presses Esc.

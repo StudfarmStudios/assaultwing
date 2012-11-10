@@ -41,6 +41,7 @@ namespace AW2.Settings
         public PlayerSettingsItem Player2 { get; private set; }
         public bool BotsEnabled { get; set; }
         public string BotsPassword { get; set; }
+        public TimeSpan TeamRebalancingInterval { get; set; }
 
         public PlayerSettings()
         {
@@ -53,6 +54,7 @@ namespace AW2.Settings
             Player2 = PLAYER2DEFAULT;
             BotsEnabled = true;
             BotsPassword = "";
+            TeamRebalancingInterval = TimeSpan.FromSeconds(15);
         }
 
         public void Validate(AssaultWingCore game)

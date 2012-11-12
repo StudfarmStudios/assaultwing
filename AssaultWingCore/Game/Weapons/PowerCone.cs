@@ -40,7 +40,7 @@ namespace AW2.Game.Weapons
             Gob.CreateGob<Triforce>(Owner.Game, _shotTypeName, shot =>
             {
                 shot.ResetPos(Owner.Pos, Vector2.Zero, Owner.Rotation);
-                shot.Owner = PlayerOwner;
+                shot.Owner = SpectatorOwner;
                 shot.Host = Owner;
                 shot.HostBoneIndex = boneIndex;
                 Arena.Gobs.Add(shot);

@@ -129,7 +129,7 @@ namespace AW2.Core
         {
             var dir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Assault Wing");
             System.IO.Directory.CreateDirectory(dir);
-            var filename = string.Format("AW {0:yyyy-MM-dd HH-mm-ss}.png", DateTime.Now);
+            var filename = string.Format("AW {0:yyyy-MM-dd HH-mm-ss}.jpg", DateTime.Now);
             return System.IO.Path.Combine(dir, filename);
         }
 

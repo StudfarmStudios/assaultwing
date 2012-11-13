@@ -104,6 +104,8 @@ namespace AW2.Game.Players
         public Team Team { get{ return TeamProxy != null ? TeamProxy.GetValue() : null; } set { TeamProxy = value; } }
         public LazyProxy<int, Team> TeamProxy { get; set; }
         public ArenaStatistics ArenaStatistics { get; private set; }
+        public ArenaStatistics PreviousArenaStatistics { get; private set; }
+        public ArenaStatistics LatestArenaStatistics { get { return !ArenaStatistics.IsEmpty ? ArenaStatistics : PreviousArenaStatistics; } }
 
         /// <summary>
         /// In real time.
@@ -119,6 +121,7 @@ namespace AW2.Game.Players
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
             IPAddress = ipAddress ?? IPAddress.Loopback;
             ArenaStatistics = new ArenaStatistics();
+            PreviousArenaStatistics = new ArenaStatistics();
             StatsData = CreateStatsData(this);
         }
 
@@ -191,6 +194,7 @@ namespace AW2.Game.Players
         /// </summary>
         public virtual void ResetForArena()
         {
+            PreviousArenaStatistics = ArenaStatistics.Clone();
             ArenaStatistics.Reset(Game.DataEngine.GameplayMode);
         }
 

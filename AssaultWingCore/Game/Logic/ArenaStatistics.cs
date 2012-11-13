@@ -26,10 +26,27 @@ namespace AW2.Game.Logic
         public int BonusesCollected { get { return _bonusesCollected; } set { _bonusesCollected = value; } }
         public Func<float> Rating { get; set; }
 
+        public bool IsEmpty { get { return Kills == 0 && Deaths == 0 && DamageInflictedToMinions == 0 && BonusesCollected == 0; } }
+
         public ArenaStatistics()
         {
             Lives = -1;
             Rating = () => 0;
+        }
+
+        public ArenaStatistics Clone()
+        {
+            var currentRating = Rating();
+            return new ArenaStatistics
+            {
+                Lives = Lives,
+                Kills = Kills,
+                Deaths = Deaths,
+                KillsWithoutDying = KillsWithoutDying,
+                DamageInflictedToMinions = DamageInflictedToMinions,
+                BonusesCollected = BonusesCollected,
+                Rating = () => currentRating,
+            };
         }
 
         public void Reset(GameplayMode gameplayMode)
@@ -67,6 +84,11 @@ namespace AW2.Game.Logic
                 DamageInflictedToMinions = reader.ReadSingle();
                 BonusesCollected = reader.ReadInt16();
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Lives={0} Kills={1} Deaths={2} Damage={3} Bonuses={4}", Lives, Kills, Deaths, DamageInflictedToMinions, BonusesCollected);
         }
     }
 }

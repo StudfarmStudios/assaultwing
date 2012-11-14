@@ -83,25 +83,26 @@ namespace AW2.Game.Logic
         [Test]
         public void TestTeamCondense()
         {
-            AssertTeamBalancing(5, new[] { _player1 }, new[] { _player2 }, new[] { _player3 }, new[] { _player4 });
+            AssertTeamBalancing(0, new[] { _player1 }, new[] { _player2 }, new[] { _player3 }, new[] { _player4 });
         }
 
         [Test]
         public void TestTeamSpreadToEmptyTeams()
         {
-            AssertTeamBalancing(5, new[] { _player1, _player2, _player3, _player4 });
+            AssertTeamBalancing(10, new[] { _player1, _player2, _player3, _player4 });
         }
 
         [Test]
         public void TestTeamSpreadToNonemptyTeams()
         {
-            AssertTeamBalancing(5, new[] { _player1, _player2, _player3 }, new[] { _player4 });
+            AssertTeamBalancing(0, new[] { _player1, _player2, _player3 }, new[] { _player4 });
         }
 
         [Test]
         public void TestTeamCondenseAndSpread()
         {
-            AssertTeamBalancing(5, new[] { _player1, _player2, _player3, _player4 }, new[] { _player5 }, new[] { _player6 });
+            // Note: As of 2012-11-14 the teams are only condensed. The next balancing operation would spread.
+            AssertTeamBalancing(10, new[] { _player1, _player2, _player3, _player4 }, new[] { _player5 }, new[] { _player6 });
         }
 
         [Test]
@@ -114,23 +115,30 @@ namespace AW2.Game.Logic
         [Test]
         public void TestUnfairTeamBalancingPrevious()
         {
-            _player1.PreviousArenaStatistics.Kills = 6;
+            _player1.PreviousArenaStatistics.Kills = 7;
             _player2.PreviousArenaStatistics.Deaths = 3;
             _player3.PreviousArenaStatistics.Deaths = 3;
             _player4.PreviousArenaStatistics.Deaths = 3;
-            AssertTeamBalancing(6, new[] { _player1, _player2 }, new[] { _player3, _player4 });
+            _player5.PreviousArenaStatistics.Deaths = 1;
+            _player6.PreviousArenaStatistics.Deaths = 1;
+            AssertTeamBalancing(4, new[] { _player1, _player2, _player3 }, new[] { _player4, _player5, _player6 });
         }
 
         [Test]
         public void TestUnfairTeamBalancingCurrent()
         {
-            _player1.ArenaStatistics.Kills = 6;
+            _player1.ArenaStatistics.Kills = 7;
             _player2.ArenaStatistics.Deaths = 3;
             _player3.ArenaStatistics.Deaths = 3;
             _player4.ArenaStatistics.Deaths = 3;
-            AssertTeamBalancing(6, new[] { _player1, _player2 }, new[] { _player3, _player4 });
+            _player5.ArenaStatistics.Deaths = 1;
+            _player6.ArenaStatistics.Deaths = 1;
+            AssertTeamBalancing(4, new[] { _player1, _player2, _player3 }, new[] { _player4, _player5, _player6 });
         }
 
+        /// <summary>
+        /// TODO: Assert what happens when balancing is run a few times. That corresponds better to actual use.
+        /// </summary>
         private void AssertTeamBalancing(int rateTolerance, params Spectator[][] teams)
         {
             foreach (var x in teams.Zip(Teams, (specs, team) => new { specs, team }))

@@ -151,9 +151,9 @@ namespace AW2.Game.Logic
                 if (strongTeam.Members.Count() > 1)
                 {
                     var ratingDifference = localTeamRatings[strongTeam] - localTeamRatings[weakTeam];
-                    var mover = strongTeam.Members.OrderBy(spec => Math.Abs(ratingDifference - 2 * localRatings[spec])).First();
-                    if (Math.Abs(ratingDifference - localRatings[mover]) < ratingDifference)
-                        yield return Tuple.Create(mover.ID, weakTeam.ID);
+                    var reassignee = strongTeam.Members.OrderBy(spec => Math.Abs(ratingDifference - 2 * localRatings[spec])).First();
+                    if (Math.Abs(ratingDifference - 2 * localRatings[reassignee]) < ratingDifference - 1) // Avoid near trivial reassignments.
+                        yield return Tuple.Create(reassignee.ID, weakTeam.ID);
                 }
             }
         }

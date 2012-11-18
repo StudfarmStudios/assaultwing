@@ -116,6 +116,7 @@
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
+    <Compile Include="Game\Logic\TeamChoice.cs" />
     <Compile Include="Game\Players\BotPlayer.cs" />
     <Compile Include="Game\Collisions\CollisionArea.cs" />
     <Compile Include="Game\Collisions\CollisionAreaType.cs" />

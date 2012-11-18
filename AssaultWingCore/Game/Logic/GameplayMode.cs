@@ -119,15 +119,25 @@ namespace AW2.Game.Logic
         }
 
         /// <summary>
+        /// Chooses the team a spectator. The team may be one of the given ones or a new one.
+        /// </summary>
+        public TeamChoice ChooseTeam(Spectator spectator, IEnumerable<Team> allTeams)
+        {
+            if (allTeams.Count() < 2) return new TeamChoice(GetFreeTeamName(allTeams));
+            var ratingContext = GetRatingContext(allTeams);
+            return new TeamChoice(allTeams.OrderBy(ratingContext.Rate).First());
+        }
+
+        /// <summary>
         /// Returns a sequence of team member reassigning operations that will balance out the given teams.
         /// The returned tuples are (spectator ID, team ID) denoting which spectator should be assigned to which team.
         /// </summary>
         public IEnumerable<Tuple<int, int>> BalanceTeams(IEnumerable<Team> teams)
         {
             if (teams.Count() < 2) yield break;
-            var ratingContext = new LocalRatingContext(CalculateScore, teams.SelectMany(team => team.Members));
+            var ratingContext = GetRatingContext(teams);
             var localRatings = teams.SelectMany(team => team.Members).ToDictionary(spec => spec, ratingContext.Rate);
-            var localTeamRatings = teams.ToDictionary(team => team, team => team.Members.Sum(spec => localRatings[spec]));
+            var localTeamRatings = teams.ToDictionary(team => team, ratingContext.Rate);
             var relevantTeamCount = Math.Max(2, teams.Count(team => team.Members.Any()));
             var teamsOrdered = teams.OrderByDescending(team => localTeamRatings[team]).Take(relevantTeamCount).ToArray();
             if (teamsOrdered.Length > 2)
@@ -163,6 +173,22 @@ namespace AW2.Game.Logic
             return new LocalRatingContext(CalculateScore, allSpectators).Rate(spectator);
         }
 
+        private LocalRatingContext GetRatingContext(IEnumerable<Team> teams)
+        {
+            return new LocalRatingContext(CalculateScore, teams.SelectMany(team => team.Members));
+        }
+
+        private string GetFreeTeamName(IEnumerable<Team> teams)
+        {
+            return GetTeamNames().Except(teams.Select(p => p.Name)).First();
+        }
+
+        private IEnumerable<string> GetTeamNames()
+        {
+            yield return "Avengers";
+            yield return "Vindicators";
+        }
+
         private class LocalRatingContext
         {
             public const int LocalRatingMin = 1;
@@ -195,6 +221,11 @@ namespace AW2.Game.Logic
                 var relativeScore = (GetScore(spectator.LatestArenaStatistics) - MinScore) / (float)(MaxScore - MinScore);
                 var localRating = ((relativeScore - 0.5f) * DampingFactor + 0.5f) * (LocalRatingMax - LocalRatingMin) + LocalRatingMin;
                 return (int)Math.Round(MathHelper.Clamp(localRating, LocalRatingMin, LocalRatingMax));
+            }
+
+            public int Rate(Team team)
+            {
+                return team.Members.Sum(spec => Rate(spec));
             }
         }
     }

@@ -349,8 +349,19 @@ namespace AW2.Game
             spectator.ID = GetFreeSpectatorOrTeamID();
             if (Game.NetworkMode != NetworkMode.Client)
             {
-                var team = new Team("Team " + spectator.Name, spectatorID => Spectators.FirstOrDefault(spec => spec.ID == spectatorID));
-                Game.DataEngine.Teams.Add(team);
+                var teamChoice = GameplayMode.ChooseTeam(spectator, Teams);
+                Team team = null;
+                switch (teamChoice.Type)
+                {
+                    default: throw new ApplicationException("Unexpected team choice type " + teamChoice.Type);
+                    case TeamChoice.ChoiceType.ExistingTeam:
+                        team = FindTeam(teamChoice.ExistingTeamID);
+                        break;
+                    case TeamChoice.ChoiceType.NewTeam:
+                        team = new Team(teamChoice.NewTeamName, FindSpectator);
+                        Teams.Add(team);
+                        break;
+                }
                 spectator.AssignTeam(team);
             }
             if (SpectatorAdded != null) SpectatorAdded(spectator);

@@ -191,7 +191,7 @@ namespace AW2.Game.Logic
             /// </summary>
             public int Rate(Spectator spectator)
             {
-                if (spectator.LatestArenaStatistics.IsEmpty) return (int)Math.Round((LocalRatingMin + LocalRatingMax) / 2f);
+                if (spectator.LatestArenaStatistics.IsEmpty || MinScore == MaxScore) return (int)Math.Round((LocalRatingMin + LocalRatingMax) / 2f);
                 var relativeScore = (GetScore(spectator.LatestArenaStatistics) - MinScore) / (float)(MaxScore - MinScore);
                 var localRating = ((relativeScore - 0.5f) * DampingFactor + 0.5f) * (LocalRatingMax - LocalRatingMin) + LocalRatingMin;
                 return (int)Math.Round(MathHelper.Clamp(localRating, LocalRatingMin, LocalRatingMax));

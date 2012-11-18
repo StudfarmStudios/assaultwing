@@ -1,42 +1,32 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace AW2.Helpers
 {
     /// <summary>
     /// Contains utility methods for generating random numbers.
     /// </summary>
-    public class RandomHelper
+    public static class RandomHelper
     {
-        #region Fields
-
-        /// <summary>
-        /// Global random generator
-        /// </summary>
-        static Random globalRandomGenerator = new Random(unchecked((int)(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond)));
-
-        static int[] mixers;
-
-        #endregion
+        private static Random g_globalRandomGenerator = new Random(unchecked((int)(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond)));
+        private static int[] g_mixers;
 
         static RandomHelper()
         {
-            mixers = new int[256];
-            for (int i = 0; i < mixers.Length; ++i)
-                mixers[i] = GetRandomInt();
+            g_mixers = new int[256];
+            for (int i = 0; i < g_mixers.Length; ++i)
+                g_mixers[i] = GetRandomInt();
         }
 
-        #region Public interface
-
+        
         /// <summary>
         /// Get a random int that is at least zero and strictly less than a value.
         /// </summary>
-        /// <param name="max">The random int will be strictly less than this value.</param>
-        /// <returns>A random int.</returns>
         public static int GetRandomInt(int max)
         {
-            return globalRandomGenerator.Next(max);
+            return g_globalRandomGenerator.Next(max);
         }
 
         /// <summary>
@@ -48,37 +38,30 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Returns a random int between <see cref="int.MinValue"/> and
-        /// <see cref="int.MaxValue"/>.
+        /// Returns a random int between <see cref="int.MinValue"/> and <see cref="int.MaxValue"/>.
         /// </summary>
-        /// <returns>A random int.</returns>
         public static int GetRandomInt()
         {
-            if (globalRandomGenerator.Next(2) == 0)
-                return globalRandomGenerator.Next();
-            return -1 - globalRandomGenerator.Next();
+            if (g_globalRandomGenerator.Next(2) == 0)
+                return g_globalRandomGenerator.Next();
+            return -1 - g_globalRandomGenerator.Next();
         }
 
         /// <summary>
         /// Mixes a seed value with a mixing value, producing a predictable random value.
         /// </summary>
-        /// <param name="seed">Random seed</param>
-        /// <param name="mixer">Mixing value</param>
-        /// <returns>The "random" integer computed by mixing the seed with the mixer.</returns>
         public static int MixRandomInt(int seed, int mixer)
         {
             // Produce a predictable random number from the mixer and
             // use it to modify seed.
             int mixerIndex = (mixer & 0xff) ^ ((mixer >> 8) & 0xff)
                 ^ ((mixer >> 16) & 0xff) ^ ((mixer >> 24) & 0xff);
-            return seed ^ mixers[mixerIndex];
+            return seed ^ g_mixers[mixerIndex];
         }
 
         /// <summary>
         /// Returns the next integer from a random sequence determined by a seed value.
         /// </summary>
-        /// <param name="seed">Random seed</param>
-        /// <returns>The next integer from the random sequence determined by the seed value.</returns>
         public static int ShiftRandomInt(int seed)
         {
             // The implementation is a Galois linear feedback shift register (with maximal period).
@@ -101,40 +84,30 @@ namespace AW2.Helpers
         /// <summary>
         /// Get random float between min and max
         /// </summary>
-        /// <param name="min">Min</param>
-        /// <param name="max">Max</param>
-        /// <returns>Float</returns>
         public static float GetRandomFloat(float min, float max)
         {
-            return (float)globalRandomGenerator.NextDouble() * (max - min) + min;
+            return (float)g_globalRandomGenerator.NextDouble() * (max - min) + min;
         }
 
         /// <summary>
         /// Get random float between 0 and 1
         /// </summary>
-        /// <returns>Float</returns>
         public static float GetRandomFloat()
         {
-            return (float)globalRandomGenerator.NextDouble();
+            return (float)g_globalRandomGenerator.NextDouble();
         }
 
         /// <summary>
         /// Get random byte between min and max
         /// </summary>
-        /// <param name="min">Min</param>
-        /// <param name="max">Max</param>
-        /// <returns>Byte</returns>
         public static byte GetRandomByte(byte min, byte max)
         {
-            return (byte)(globalRandomGenerator.Next(min, max));
+            return (byte)(g_globalRandomGenerator.Next(min, max));
         }
 
         /// <summary>
         /// Get random Vector2
         /// </summary>
-        /// <param name="min">Minimum for each component</param>
-        /// <param name="max">Maximum for each component</param>
-        /// <returns>Vector2</returns>
         public static Vector2 GetRandomVector2(float min, float max)
         {
             return new Vector2(
@@ -145,9 +118,6 @@ namespace AW2.Helpers
         /// <summary>
         /// Returns a random Vector2 in a rectangular area.
         /// </summary>
-        /// <param name="min">Componentwise minimum.</param>
-        /// <param name="max">Componentwise maximum.</param>
-        /// <returns>A random Vector2 in a rectangular area.</returns>
         public static Vector2 GetRandomVector2(Vector2 min, Vector2 max)
         {
             return new Vector2(
@@ -156,37 +126,8 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Get random Vector3
-        /// </summary>
-        /// <param name="min">Minimum for each component</param>
-        /// <param name="max">Maximum for each component</param>
-        /// <returns>Vector3</returns>
-        public static Vector3 GetRandomVector3(float min, float max)
-        {
-            return new Vector3(
-                GetRandomFloat(min, max),
-                GetRandomFloat(min, max),
-                GetRandomFloat(min, max));
-        }
-
-        /// <summary>
-        /// Get random color
-        /// </summary>
-        /// <returns>Color</returns>
-        public static Color GetRandomColor()
-        {
-            return new Color(new Vector3(
-                GetRandomFloat(0.25f, 1.0f),
-                GetRandomFloat(0.25f, 1.0f),
-                GetRandomFloat(0.25f, 1.0f)));
-        }
-
-        /// <summary>
         /// Finds from a circle sector a random point with an even distribution over the sector's area.
         /// </summary>
-        /// <param name="radius">Radius of the circle.</param>
-        /// <param name="minAngle">Minimum angle, in radians, for <paramref name="dirAngle"/>.</param>
-        /// <param name="maxAngle">Maximum angle, in radians, for <paramref name="dirAngle"/>.</param>
         public static Vector2 GetRandomCirclePoint(float radius, float minAngle, float maxAngle)
         {
             Vector2 position, dirUnit;
@@ -222,10 +163,25 @@ namespace AW2.Helpers
         {
             dirAngle = GetRandomFloat(minAngle, maxAngle);
             dirUnit = new Vector2((float)Math.Cos(dirAngle), (float)Math.Sin(dirAngle));
-            float distance = radius * (float)Math.Sqrt(globalRandomGenerator.NextDouble());
+            float distance = radius * (float)Math.Sqrt(g_globalRandomGenerator.NextDouble());
             position = distance * dirUnit;
         }
 
-        #endregion
+        /// <summary>
+        /// Returns a copy of the sequence that is shuffled randomly.
+        /// </summary>
+        /// <seealso cref="http://en.wikipedia.org/wiki/Fisher-Yates_shuffle#The_modern_algorithm"/>
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> sequence)
+        {
+            var result = sequence.ToArray();
+            for (int i = result.Length - 1; i >= 1; i--)
+            {
+                var j = RandomHelper.GetRandomInt(i + 1);
+                var swap = result[i];
+                result[i] = result[j];
+                result[j] = swap;
+            }
+            return result;
+        }
     }
 } 

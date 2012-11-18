@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace AW2.Helpers
@@ -27,29 +28,19 @@ namespace AW2.Helpers
             TestPredictability(seed, 1000, (x, k) => RandomHelper.MixRandomInt(seed, k));
         }
 
-#if POISSON_DISTRIBUTION_IMPLEMENTED
         [Test]
-        public void TestGetRandomIntPoisson()
+        public void TestShuffle()
         {
-            /*
-            * Universal generator as described in "Non-Uniform Random Variate Generation"
-            * by Luc Devroye (McGill University).
-            L = mean
-            m = mode = Math.Floor(L) (unless mode is integer, in which case mode -= 0.5)
-            p(k) = probability of case k = L^k * e^-L / k!
-
-            Compute w = 1 + p(m)/2
-            repeat
-            Generate U, V, W uniformly on [0, 1], and let S be a random sign.
-            if U <= w/(1+w)
-            then Y = V * w/p(m)
-            else Y = (w - log(V))/p(m)
-            X = S * round(Y)
-            until W * min(1, e^(w - p(m) * Y) <= p(m+X)/p(m)
-            return m + X
-            */
+            AssertShuffle(new int[0]);
+            AssertShuffle(new[] { 1, 2, 3, 4, 5 });
+            AssertShuffle(new[] { 1, 1 });
         }
-#endif // POISSON_DISTRIBUTION_IMPLEMENTED
+
+        private void AssertShuffle(int[] original)
+        {
+            var shuffled = original.Shuffle();
+            Assert.AreEqual(original, shuffled.OrderBy(x => x).ToArray());
+        }
 
         /// <summary>
         /// Helper method. Tests for even distribution of ints given by an
@@ -62,7 +53,7 @@ namespace AW2.Helpers
         /// in one interval. Must be "large enough" for the check to be reliable.
         /// Larger numbers imply more computation.</param>
         /// <param name="randomizer">Function returning random ints.</param>
-        void TestEvenDistributionInt(int intervalCount, int averageCount, Func<int> randomizer)
+        private void TestEvenDistributionInt(int intervalCount, int averageCount, Func<int> randomizer)
         {
             int intervalLength = (int)(65536.0 * 65536.0 / intervalCount); // must use floating point numbers to express the number of 32-bit integers
             var counts = new int[intervalCount]; // counts of random numbers grouped into intervals
@@ -104,7 +95,7 @@ namespace AW2.Helpers
         /// <param name="successor">Successor function, computing the next random
         /// number, given the previous random number and the index of the 
         /// number to produce.</param>
-        void TestPredictability(int seed, int runLength, Func<int, int, int> successor)
+        private void TestPredictability(int seed, int runLength, Func<int, int, int> successor)
         {
             var run1 = new int[runLength];
             var run2 = new int[runLength];
@@ -115,41 +106,5 @@ namespace AW2.Helpers
                 run2[i] = successor(run2[i - 1], i);
             Assert.AreEqual(run1, run2, "Random is not predictable");
         }
-
-#if POISSON_DISTRIBUTION_IMPLEMENTED
-        /// <summary>
-        /// Helper method. Tests for Poisson distribution of ints given by an
-        /// int randomising delegate.
-        /// </summary>
-        /// <param name="randomizer">Random number generator to test.</param>
-        /// <param name="mode">Mode of the Poisson distribution</param>
-        void TestPoissonDistributionInt(Func<int> randomizer, int mode)
-        {
-            int[] counts = new int[2 * mode + 1]; // counts for 2*mode first numbers and a count for all the rest
-            int totalCount = 10000000;
-            for (int i = 0; i < totalCount; ++i)
-            {
-                int value = randomizer();
-                int interval = value < counts.Length - 1 ? value : counts.Length;
-                ++counts[interval];
-            }
-
-            float[] weights = new float[counts.Length];
-            int epsilon = 0;
-            int worstInterval = -1;
-            for (int i = 0; i < counts.Length; ++i)
-                weights[i] = counts[i] / (float)totalCount;
-                //if (Math.Abs(1000 - counts[i]) > epsilon)
-                //{
-                //    epsilon = Math.Abs(1000 - counts[i]);
-                //    worstInterval = i;
-                //}
-            Assert.Less(epsilon, 160, "Random distribution doesn't look very even, worst interval " + worstInterval
-                + "\nsome intervals: 0=" + counts[0] + ", 1=" + counts[1] + ", 2=" + counts[2]
-                + "\n32766=" + counts[32766] + ", 32767=" + counts[32767] + ", 32768=" + counts[32768]
-                + "\n65533=" + counts[65533] + ", 65534=" + counts[65534] + ", 65535=" + counts[65535]
-                + "\n*** Please rerun the test several times and worry only if it fails repeatedly ***");
-        }
-#endif // POISSON_DISTRIBUTION_IMPLEMENTED
     }
 }

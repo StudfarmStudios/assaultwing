@@ -136,35 +136,13 @@ namespace AW2.Game.Logic
         {
             if (teams.Count() < 2) yield break;
             var ratingContext = GetRatingContext(teams);
-            var localRatings = teams.SelectMany(team => team.Members).ToDictionary(spec => spec, ratingContext.Rate);
-            var localTeamRatings = teams.ToDictionary(team => team, ratingContext.Rate);
-            var relevantTeamCount = Math.Max(2, teams.Count(team => team.Members.Any()));
-            var teamsOrdered = teams.OrderByDescending(team => localTeamRatings[team]).Take(relevantTeamCount).ToArray();
-            if (teamsOrdered.Length > 2)
+            var spectators = teams.SelectMany(team => team.Members).Shuffle().OrderByDescending(spec => ratingContext.Rate(spec)).ToArray();
+            var resultTeams = teams.Take(2).ToDictionary(team => team, team => 0);
+            foreach (var spec in spectators)
             {
-                // Merge small teams into the two biggest ones.
-                var team1 = teamsOrdered[0];
-                var team2 = teamsOrdered[1];
-                foreach (var team in teamsOrdered.Skip(2))
-                    foreach (var spec in team.Members)
-                    {
-                        var weakestTeam = localTeamRatings[team1] < localTeamRatings[team2] ? team1 : team2;
-                        localTeamRatings[weakestTeam] += localRatings[spec];
-                        yield return Tuple.Create(spec.ID, weakestTeam.ID);
-                    }
-            }
-            else
-            {
-                // Balance teams by reassigning spectators.
-                var weakTeam = localTeamRatings[teamsOrdered[0]] < localTeamRatings[teamsOrdered[1]] ? teamsOrdered[0] : teamsOrdered[1];
-                var strongTeam = localTeamRatings[teamsOrdered[0]] < localTeamRatings[teamsOrdered[1]] ? teamsOrdered[1] : teamsOrdered[0];
-                if (strongTeam.Members.Count() > 1)
-                {
-                    var ratingDifference = localTeamRatings[strongTeam] - localTeamRatings[weakTeam];
-                    var reassignee = strongTeam.Members.OrderBy(spec => Math.Abs(ratingDifference - 2 * localRatings[spec])).First();
-                    if (Math.Abs(ratingDifference - 2 * localRatings[reassignee]) < ratingDifference - 1) // Avoid near trivial reassignments.
-                        yield return Tuple.Create(reassignee.ID, weakTeam.ID);
-                }
+                var weakestTeam = resultTeams.OrderBy(x => x.Value).First().Key;
+                resultTeams[weakestTeam] += ratingContext.Rate(spec);
+                yield return Tuple.Create(spec.ID, weakestTeam.ID);
             }
         }
 

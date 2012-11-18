@@ -89,7 +89,7 @@ namespace AW2.Game.Logic
         [Test]
         public void TestTeamSpreadToEmptyTeams()
         {
-            AssertTeamBalancing(10, new[] { _player1, _player2, _player3, _player4 });
+            AssertTeamBalancing(0, new[] { _player1, _player2, _player3, _player4 });
         }
 
         [Test]
@@ -101,8 +101,7 @@ namespace AW2.Game.Logic
         [Test]
         public void TestTeamCondenseAndSpread()
         {
-            // Note: As of 2012-11-14 the teams are only condensed. The next balancing operation would spread.
-            AssertTeamBalancing(10, new[] { _player1, _player2, _player3, _player4 }, new[] { _player5 }, new[] { _player6 });
+            AssertTeamBalancing(0, new[] { _player1, _player2, _player3, _player4 }, new[] { _player5 }, new[] { _player6 });
         }
 
         [Test]
@@ -121,7 +120,7 @@ namespace AW2.Game.Logic
             _player4.PreviousArenaStatistics.Deaths = 3;
             _player5.PreviousArenaStatistics.Deaths = 1;
             _player6.PreviousArenaStatistics.Deaths = 1;
-            AssertTeamBalancing(4, new[] { _player1, _player2, _player3 }, new[] { _player4, _player5, _player6 });
+            AssertTeamBalancing(2, new[] { _player1, _player2, _player3 }, new[] { _player4, _player5, _player6 });
         }
 
         [Test]
@@ -133,12 +132,9 @@ namespace AW2.Game.Logic
             _player4.ArenaStatistics.Deaths = 3;
             _player5.ArenaStatistics.Deaths = 1;
             _player6.ArenaStatistics.Deaths = 1;
-            AssertTeamBalancing(4, new[] { _player1, _player2, _player3 }, new[] { _player4, _player5, _player6 });
+            AssertTeamBalancing(2, new[] { _player1, _player2, _player3 }, new[] { _player4, _player5, _player6 });
         }
 
-        /// <summary>
-        /// TODO: Assert what happens when balancing is run a few times. That corresponds better to actual use.
-        /// </summary>
         private void AssertTeamBalancing(int rateTolerance, params Spectator[][] teams)
         {
             foreach (var x in teams.Zip(Teams, (specs, team) => new { specs, team }))

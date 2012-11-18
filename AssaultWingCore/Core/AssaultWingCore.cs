@@ -23,6 +23,7 @@ namespace AW2.Core
 
         private UIEngineImpl _uiEngine;
         private bool _arenaFinished;
+        private AWTimer _standingsTimer;
 
         #endregion AssaultWing fields
 
@@ -88,6 +89,7 @@ namespace AW2.Core
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
             NetworkMode = NetworkMode.Standalone;
             InitializeComponents();
+            _standingsTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1));
         }
 
         #region AssaultWing private methods
@@ -146,6 +148,7 @@ namespace AW2.Core
 
         private void AfterEveryFrame()
         {
+            if (_standingsTimer.IsElapsed) DataEngine.UpdateStandings();
         }
 
         #endregion AssaultWing private methods

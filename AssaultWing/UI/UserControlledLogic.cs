@@ -73,10 +73,10 @@ namespace AW2.UI
             EnsureArenaLoadingStopped();
             StopGameplay();
             _clearGameDataWhenEnteringMenus = true;
-            var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Teams);
+            Game.DataEngine.Standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Teams);
             var callback = new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL,
                 () => { if (GameState == GAMESTATE_GAMEPLAY_STOPPED) ShowEquipMenu(); });
-            ShowDialog(new GameOverOverlayDialogData(MenuEngine, standings, callback) { GroupName = "Game over" });
+            ShowDialog(new GameOverOverlayDialogData(MenuEngine, Game.DataEngine.Standings, callback) { GroupName = "Game over" });
             // The game server will soon load the next arena which may delay ping replies for a while.
             if (Game.NetworkEngine.IsConnectedToGameServer) Game.NetworkEngine.GameServerConnection.PingInfo.AllowLatePingsForAWhile();
         }

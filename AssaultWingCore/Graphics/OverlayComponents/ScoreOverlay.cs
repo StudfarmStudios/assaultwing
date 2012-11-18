@@ -26,7 +26,7 @@ namespace AW2.Graphics.OverlayComponents
 
         private AssaultWingCore Game { get { return _player.Game; } }
         private GameContent Content { get { return Game.GraphicsEngine.GameContent; } }
-        private int EntryCount { get { return Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Teams).Sum(entry => 1 + entry.Item2.Length); } }
+        private int EntryCount { get { return Game.DataEngine.Standings.Sum(entry => 1 + entry.Item2.Length); } }
 
         public ScoreOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Left, VerticalAlignment.Bottom)
@@ -37,7 +37,7 @@ namespace AW2.Graphics.OverlayComponents
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Content.ScoreBackgroundTexture, Vector2.Zero, Color.White);
-            var mainStandings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Teams);
+            var mainStandings = Game.DataEngine.Standings;
             int line = 0;
             foreach (var mainEntry in mainStandings)
             {

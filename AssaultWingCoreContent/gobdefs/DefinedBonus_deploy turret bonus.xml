@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Bonus">
+  <typeName>deploy turret bonus</typeName>
+  <networkUpdatePeriod>1.5</networkUpdatePeriod>
+  <lifetime>30</lifetime>
+  <maxDamage>500</maxDamage>
+  <mass>70</mass>
+  <modelName>megabonus</modelName>
+  <scale>0.12</scale>
+  <depthLayer2D>0.6</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <bonusActionTypeName>deploy turret bonus action</bonusActionTypeName>
+  <layerPreference>Front</layerPreference>
+  <moveType>Dynamic</moveType>
+  <birthGobTypes>
+    <Item>bonus birth</Item>
+    <Item>megabonus blink</Item>
+  </birthGobTypes>
+  <deathGobTypes>
+    <Item>bonus death dust</Item>
+  </deathGobTypes>
+  <collectGobTypes>
+    <Item>bonus collect flash</Item>
+    <Item>bonus collect</Item>
+  </collectGobTypes>
+  <collisionAreas>
+    <Item>
+      <type>Common</type>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>General</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <x>0</x>
+          <y>0</y>
+        </center>
+        <radius>90</radius>
+      </area>
+    </Item>
+    <Item>
+      <type>BonusCollect</type>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Activate</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <x>0</x>
+          <y>0</y>
+        </center>
+        <radius>176</radius>
+      </area>
+    </Item>
+  </collisionAreas>
+</GobType>

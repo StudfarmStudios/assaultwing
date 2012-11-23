@@ -8,7 +8,7 @@ using AW2.Helpers.Serialization;
 
 namespace AW2.Game.BonusActions
 {
-    public class Weapon2UpgradeBonusAction : Gobs.BonusAction
+    public class Weapon2UpgradeBonusAction : BonusAction
     {
         private static readonly CanonicalString DUMMY_ICON_NAME = (CanonicalString)"dummytexture";
 
@@ -16,6 +16,8 @@ namespace AW2.Game.BonusActions
         private CanonicalString _fixedWeaponName;
         [TypeParameter]
         private CanonicalString _effectName;
+        [TypeParameter]
+        private bool _isSingleUse;
 
         private string _bonusText;
         private CanonicalString _bonusIconName;
@@ -49,6 +51,7 @@ namespace AW2.Game.BonusActions
         {
             _fixedWeaponName = (CanonicalString)"";
             _effectName = (CanonicalString)"";
+            _isSingleUse = false;
         }
 
         public Weapon2UpgradeBonusAction(CanonicalString typeName)
@@ -74,6 +77,7 @@ namespace AW2.Game.BonusActions
                     Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, upgradeName);
                     if (_effectName != "") Host.Owner.PostprocessEffectNames.Add(_effectName);
                 }
+                Host.Owner.WeaponFired += WeaponFiredHandler;
             }
         }
 
@@ -84,8 +88,15 @@ namespace AW2.Game.BonusActions
             {
                 Host.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Host.Owner.Weapon2Name);
                 if (_effectName != "") Host.Owner.PostprocessEffectNames.Remove(_effectName);
+                Host.Owner.WeaponFired -= WeaponFiredHandler;
             }
             base.Dispose();
+        }
+
+        private void WeaponFiredHandler(ShipDevice.OwnerHandleType ownerHandle)
+        {
+            if (ownerHandle != ShipDevice.OwnerHandleType.SecondaryWeapon) return;
+            if (_isSingleUse) TimeOut();
         }
     }
 }

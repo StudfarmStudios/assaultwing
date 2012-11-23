@@ -3,6 +3,7 @@
   <typeName>weapon upgrade bonus action</typeName>
   <duration>45</duration>
   <fixedWeaponName></fixedWeaponName>
+  <isSingleUse>false</isSingleUse>
   <effectName></effectName>
   <networkUpdatePeriod>2</networkUpdatePeriod>
   <maxDamage>10</maxDamage>

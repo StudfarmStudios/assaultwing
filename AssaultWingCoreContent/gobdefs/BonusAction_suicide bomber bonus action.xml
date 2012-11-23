@@ -3,6 +3,7 @@
   <typeName>suicide bomber bonus action</typeName>
   <duration>20</duration>
   <fixedWeaponName>suicide bomber</fixedWeaponName>
+  <isSingleUse>true</isSingleUse>
   <effectName>bomber_rage</effectName>
   <networkUpdatePeriod>2</networkUpdatePeriod>
   <maxDamage>10</maxDamage>

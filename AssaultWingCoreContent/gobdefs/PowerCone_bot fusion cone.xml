@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.PowerCone">
+
+  <deviceInfo>
+    <pictureName>menu_equip_weaponpicture_fusioncone</pictureName>
+    <titlePictureName>menu_equip_weaponname_fusioncone</titlePictureName>
+    <infoText>
+      Violent protium fusion spreads a wide and
+      instant neutron jet, tearing apart the
+      atomic structure of most materials including
+      solid walls. The jet fades out in medium
+      distance. Intense short-range radiation
+      bursts out of your ship in all directions
+      which can be lethal to that guy who just
+      rammed you against a wall.
+    </infoText>
+    <reloadSpeed>High</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>menu_equip_wep2_fusioncone</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>High</shotSpeed>
+    <recoilMomentum>Low</recoilMomentum>
+  </weaponInfo>
+
+  <upgradeNames>
+  </upgradeNames>
+
+  <typeName>bot fusion cone</typeName>
+  <gunBarrels>Middle</gunBarrels>
+  <fireSound>FusionConeFire</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
+  <iconName>b_icon_antimattercone</iconName>
+  <shotTypeName>fusion jet</shotTypeName>
+  <recoilMomentum>0</recoilMomentum>
+  <loadTime>4.8</loadTime>
+  <fireCharge>0</fireCharge>
+  <fireChargePerSecond>0</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>1</shotSpacing>
+</ShipDeviceType>

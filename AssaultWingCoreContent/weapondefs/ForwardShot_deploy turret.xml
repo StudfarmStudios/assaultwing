@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.ForwardShot">
+
+  <deviceInfo>
+    <pictureName>menu_equip_weaponpicture_mines</pictureName>
+    <titlePictureName>menu_equip_weaponname_mines</titlePictureName>
+    <infoText>
+      The turret stays put and shoots at your enemies.
+      Lay it down next to a dock or a bonus spawn and
+      guard your territory. Remember to guard your
+      turret or otherwise it will easily be flanked
+      and destroyed.
+    </infoText>
+    <reloadSpeed>Low</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>menu_equip_wep2_mines</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>High</shotSpeed>
+    <recoilMomentum>Low</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>deploy turret</typeName>
+  <gunBarrels>Rear</gunBarrels>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>b_icon_mines</iconName>
+  <fireSound>DropMines</fireSound>
+  <fireSoundType>Once</fireSoundType>
+  <fireEffectType>Once</fireEffectType>
+  <shotTypeName>bazooka turret</shotTypeName>
+  <shotSpeed>100</shotSpeed>
+  <loadTime>1</loadTime>
+  <fireCharge>500</fireCharge>
+  <fireChargePerSecond>600</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>0.05</shotSpacing>
+  <shotAngleVariation>0</shotAngleVariation>
+  <shotAngleEvenDistribution>false</shotAngleEvenDistribution>
+  <shotSpeedVariation>20</shotSpeedVariation>
+  <recoilMomentum>0</recoilMomentum>
+  <muzzleFireEngineNames>
+  </muzzleFireEngineNames>
+</ShipDeviceType>

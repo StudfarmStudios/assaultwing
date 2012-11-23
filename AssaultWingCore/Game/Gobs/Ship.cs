@@ -573,11 +573,9 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public ShipDevice.FiringResult TryFire(ShipDevice.OwnerHandleType ownerHandleType, Control control)
+        public void TryFire(ShipDevice.OwnerHandleType ownerHandleType, Control control)
         {
-            var result = GetDevice(ownerHandleType).TryFire(control.State);
-            DeviceUsagesToClients[ownerHandleType] = result;
-            return result;
+            DeviceUsagesToClients[ownerHandleType] = GetDevice(ownerHandleType).TryFire(control.State);
         }
 
         public void SetDeviceType(ShipDevice.OwnerHandleType deviceType, CanonicalString typeName)

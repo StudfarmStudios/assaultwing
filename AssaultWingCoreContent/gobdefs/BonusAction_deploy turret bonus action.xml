@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.BonusActions.Weapon2UpgradeBonusAction">
+  <typeName>deploy turret bonus action</typeName>
+  <duration>20</duration>
+  <fixedWeaponName>deploy turret</fixedWeaponName>
+  <isSingleUse>true</isSingleUse>
+  <effectName></effectName>
+  <networkUpdatePeriod>2</networkUpdatePeriod>
+  <maxDamage>10</maxDamage>
+  <mass>0</mass>
+  <scale>1</scale>
+  <modelName>dummymodel</modelName>
+  <moveType>Static</moveType>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <deathGobTypes>
+  </deathGobTypes>
+  <birthGobTypes>
+  </birthGobTypes>
+  <collisionAreas>
+  </collisionAreas>
+</GobType>

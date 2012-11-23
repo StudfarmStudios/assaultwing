@@ -64,7 +64,7 @@ namespace AW2.Game.Gobs
 
         public override bool IsDamageable { get { return true; } }
         public CanonicalString WeaponName { get { return _weaponName; } }
-        public new BotPlayer Owner { get { return (BotPlayer)base.Owner; } set { base.Owner = value; } }
+        private BotPlayer BotOwner { get { return Owner as BotPlayer; } }
         private Gob Target
         {
             get { return _targetProxy != null ? _targetProxy.GetValue() : null; }
@@ -111,7 +111,7 @@ namespace AW2.Game.Gobs
             _coughEngine.Activate(this);
             _weapon = ShipDevice.Create(Game, _weaponName);
             _weapon.AttachTo(this, ShipDevice.OwnerHandleType.PrimaryWeapon);
-            Game.DataEngine.Devices.Add(_weapon);
+            Game.PostFrameLogicEngine.DoOnce += () => Game.DataEngine.Devices.Add(_weapon);
             _thrustController = new PIDController(() => _optimalTargetDistance, () => Target == null ? 0 : Vector2.Distance(Target.Pos, Pos))
             {
                 ProportionalGain = 2,
@@ -176,7 +176,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if (Owner != null) Owner.SeizeBot(this);
+            if (BotOwner != null) BotOwner.SeizeBot(this);
             if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
                 int targetID = reader.ReadInt16();

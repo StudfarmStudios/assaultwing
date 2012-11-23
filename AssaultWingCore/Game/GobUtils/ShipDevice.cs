@@ -251,15 +251,7 @@ namespace AW2.Game.GobUtils
                     FiringOperator.StartFiring();
                     if (_fireSoundType == FiringEffectPlayType.Once) PlayFiringSound();
                     if (_fireEffectType == FiringEffectPlayType.Once) CreateVisuals();
-                    var stats = Owner.Game.Stats;
-                    stats.Send(new
-                    {
-                        Fired = stats.GetStatsString(SpectatorOwner),
-                        Role = OwnerHandle,
-                        Type = TypeName.Value,
-                        Pos = Owner.Pos,
-                    });
-                    if (PlayerOwner != null) PlayerOwner.OnWeaponFired(OwnerHandle); // TODO !!! Make PlayerOwner work with BotPlayer, too.
+                    if (PlayerOwner != null) PlayerOwner.OnWeaponFired(this); // TODO !!! Make PlayerOwner work with BotPlayer, too.
                     break;
                 case FiringResult.Failure:
                     PlayFiringFailedSound();

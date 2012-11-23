@@ -184,10 +184,19 @@ namespace AW2.Game.Players
         /// Called after a ship device of the player's ship is fired.
         /// </summary>
         public event Action<ShipDevice.OwnerHandleType> WeaponFired;
-        public void OnWeaponFired(ShipDevice.OwnerHandleType ownerHandleType)
+        public void OnWeaponFired(ShipDevice device)
         {
-            if (ownerHandleType != ShipDevice.OwnerHandleType.ExtraDevice) Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
-            if (WeaponFired != null) WeaponFired(ownerHandleType);
+            if (!Minions.Contains(device.Owner)) return;
+            Game.Stats.Send(new
+            {
+                Fired = Game.Stats.GetStatsString(this),
+                Role = device.OwnerHandle,
+                Type = device.TypeName.Value,
+                Pos = device.Owner.Pos,
+            });
+            // FIXME: It could be possible that the device does not belong to Ship.
+            if (device.OwnerHandle != ShipDevice.OwnerHandleType.ExtraDevice) Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
+            if (WeaponFired != null) WeaponFired(device.OwnerHandle);
         }
 
         #endregion Events
@@ -404,8 +413,7 @@ namespace AW2.Game.Players
         {
             var control = Controls[ownerHandleType];
             if (!control.HasSignal) return;
-            var result = Ship.TryFire(ownerHandleType, control);
-            if (result == ShipDevice.FiringResult.Success) OnWeaponFired(ownerHandleType);
+            Ship.TryFire(ownerHandleType, control);
         }
 
         /// <summary>

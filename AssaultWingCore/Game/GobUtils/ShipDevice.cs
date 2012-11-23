@@ -312,7 +312,7 @@ namespace AW2.Game.GobUtils
 
         private void PlayFiringFailedSound()
         {
-            if (PlayerOwner != null && PlayerOwner.IsLocal)
+            if (PlayerOwner != null && PlayerOwner.IsLocal && Owner == PlayerOwner.Ship)
                 PlayerOwner.Game.SoundEngine.PlaySound("WeaponFail");
         }
 

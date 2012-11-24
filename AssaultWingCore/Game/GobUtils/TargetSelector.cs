@@ -59,7 +59,8 @@ namespace AW2.Game.GobUtils
         /// 2. straight ahead, and
         /// 3. close
         /// </summary>
-        public Gob ChooseTarget(IEnumerable<Gob> candidates, Gob source, float direction)
+        /// <param name="filter">Gobs that map to false are ignored as potential targets.</param>
+        public Gob ChooseTarget(IEnumerable<Gob> candidates, Gob source, float direction, Func<Gob, bool> filter = null)
         {
             var targets =
                 from gob in candidates
@@ -74,7 +75,7 @@ namespace AW2.Game.GobUtils
                 where totalWeight < float.MaxValue
                 orderby totalWeight ascending
                 select gob;
-            return targets.FirstOrDefault();
+            return filter != null ? targets.FirstOrDefault(filter) : targets.FirstOrDefault();
         }
     }
 }

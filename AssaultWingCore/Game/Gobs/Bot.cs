@@ -143,6 +143,7 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
+            if (Target != null && Target.Dead) Target = null;
             foreach (var act in _timedActions) act.Update(Arena.TotalTime);
             MoveAround();
             Aim();
@@ -206,13 +207,14 @@ namespace AW2.Game.Gobs
 
         private void UpdateMoveTarget()
         {
-            Target = _moveTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
+            // Keep any chosen aim target.
+            Target = Target ?? _moveTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
         }
 
         private void UpdateAimTarget()
         {
             // If no short range target found, then continue with long range target.
-            Target = _aimTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation) ?? Target;
+            Target = _aimTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation, IsInLineOfSight) ?? Target;
         }
 
         private void MoveAround()
@@ -274,11 +276,15 @@ namespace AW2.Game.Gobs
         {
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Target == null) return;
-            var targetDistanceSquared = Vector2.DistanceSquared(Target.Pos, Pos);
-            if (targetDistanceSquared > _shootRange * _shootRange) return;
-            var obstacleDistance = Arena.GetDistanceToClosest(Pos, Target.Pos, area => area.Owner.MoveType != GobUtils.MoveType.Dynamic, OBSTACLE_TYPES);
-            if (obstacleDistance * obstacleDistance < targetDistanceSquared) return;
-            _weapon.TryFire(new UI.ControlState(1, true));
+            if (IsInLineOfSight(Target)) _weapon.TryFire(new UI.ControlState(1, true));
+        }
+
+        private bool IsInLineOfSight(Gob target)
+        {
+            var targetDistanceSquared = Vector2.DistanceSquared(target.Pos, Pos);
+            if (targetDistanceSquared > _shootRange * _shootRange) return false;
+            var obstacleDistance = Arena.GetDistanceToClosest(Pos, target.Pos, area => area.Owner.MoveType != GobUtils.MoveType.Dynamic, OBSTACLE_TYPES);
+            return !obstacleDistance.HasValue || obstacleDistance * obstacleDistance > targetDistanceSquared;
         }
 
         private void MoveFan()

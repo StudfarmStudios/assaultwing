@@ -113,5 +113,15 @@ namespace AW2.Game.GobUtils
             apply(accept, new[] { new Vector2(100, 0), new Vector2(100, 100), new Vector2(1, 100), new Vector2(1, -100), new Vector2(100, -100), Vector2.Zero,
                                   new Vector2(-100, 0), new Vector2(-100, 100), new Vector2(-1, 100), new Vector2(-1, -100), new Vector2(-100, -100)});
         }
+
+        [Test]
+        public void TestFilter()
+        {
+            var gobs = new[] { _hostileGob1, _hostileGob2 };
+            _hostileGob1.Pos = new Vector2(100, 0);
+            _hostileGob2.Pos = new Vector2(110, 0);
+            Func<Gob, bool> filter = gob => gob == _hostileGob2;
+            Assert.AreEqual(_hostileGob2, _targetSelector.ChooseTarget(gobs, _source, 0, filter));
+        }
     }
 }

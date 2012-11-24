@@ -45,7 +45,6 @@
   </birthGobTypes>
   <deathGobTypes>
     <Item>bomb explosion</Item>
-    <Item>bot bonus spray</Item>
   </deathGobTypes>
   <collisionAreas>
     <Item>

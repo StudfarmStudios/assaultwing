@@ -64,6 +64,7 @@
   </birthGobTypes>
   <deathGobTypes>
     <Item>ship explosion</Item>
+    <Item>bot bonus spray</Item>
   </deathGobTypes>
   <collisionAreas>
     <Item>

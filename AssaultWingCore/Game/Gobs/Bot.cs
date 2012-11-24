@@ -23,6 +23,7 @@ namespace AW2.Game.Gobs
         private static readonly TimeSpan MOVE_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(11);
         private static readonly TimeSpan AIM_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
         private static readonly TimeSpan TRY_FIRE_INTERVAL = TimeSpan.FromSeconds(0.9);
+        private static readonly float SHOOT_AIM_ANGLE_ERROR_MAX = MathHelper.ToRadians(10);
         private static readonly CollisionAreaType[] WALL_TYPES = new[] { CollisionAreaType.Static };
         private static readonly CollisionAreaType[] OBSTACLE_TYPES = new[] { CollisionAreaType.Static };
         private const float FAN_ANGLE_SPEED_MAX = 30;
@@ -276,6 +277,8 @@ namespace AW2.Game.Gobs
         {
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Target == null) return;
+            var aimErrorAngle = AWMathHelper.AbsoluteAngleDifference(Rotation, (Target.Pos - Pos).Angle());
+            if (aimErrorAngle > SHOOT_AIM_ANGLE_ERROR_MAX) return;
             if (IsInLineOfSight(Target)) _weapon.TryFire(new UI.ControlState(1, true));
         }
 

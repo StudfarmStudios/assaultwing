@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.WallModel">
   <typeName>wall model</typeName>
   <networkUpdatePeriod>0</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <scale>1</scale>
   <deathGobTypes>
   </deathGobTypes>

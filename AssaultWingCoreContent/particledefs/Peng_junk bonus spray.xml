@@ -4,67 +4,67 @@
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
   <visibilityRadius>50</visibilityRadius>
-   <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>Transparent</type>
+    <type>Transparent</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <coordinateSystem>Game</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
-      <emissionFrequency>0.20</emissionFrequency>
-      <numberToCreate>-1</numberToCreate>
-      <radius>10</radius>
-      <sprayAngle>0.7</sprayAngle>
-      <facingType>Random</facingType>
-      <textureNames>
-      <!--<Item type="&string;">p_orangeball</Item>-->
+    <emissionFrequency>0.20</emissionFrequency>
+    <numberToCreate>-1</numberToCreate>
+    <radius>10</radius>
+    <sprayAngle>0.7</sprayAngle>
+    <facingType>Random</facingType>
+    <textureNames>
     </textureNames>
-      <gobTypeNames>
-         <Item>upgradeweapon2</Item>
-         <Item>upgradeweapon2</Item>
-         <Item>upgradeweapon2</Item>
-         <Item>upgradeweapon2</Item>
-         <Item>upgradeweapon2</Item>
-         <Item>upgradeweapon2</Item>
-         <Item>upgradeweapon2</Item>
-		 <Item>upgradeweapon1loadtime</Item>
-		 <Item>upgradeweapon1loadtime</Item>
-		 <Item>repairsystem</Item>
-		 <Item>repairsystem</Item>
-		 <Item>repairsystem</Item>
-		 <Item>repairsystem</Item>
-		 <Item>repairsystem</Item>
-		 <Item>kamikaze</Item>
-      </gobTypeNames>
-      <initialVelocity type="AW2.Game.Pengs.ConstantValue">
-        <value>150</value>
-      </initialVelocity>
+    <gobTypeNames>
+      <Item>upgradeweapon2</Item>
+      <Item>upgradeweapon2</Item>
+      <Item>upgradeweapon2</Item>
+      <Item>upgradeweapon2</Item>
+      <Item>upgradeweapon2</Item>
+      <Item>upgradeweapon2</Item>
+      <Item>upgradeweapon2</Item>
+      <Item>upgradeweapon1loadtime</Item>
+      <Item>upgradeweapon1loadtime</Item>
+      <Item>repairsystem</Item>
+      <Item>repairsystem</Item>
+      <Item>repairsystem</Item>
+      <Item>repairsystem</Item>
+      <Item>repairsystem</Item>
+      <Item>kamikaze</Item>
+    </gobTypeNames>
+    <initialVelocity type="AW2.Game.Pengs.ConstantValue">
+      <value>150</value>
+    </initialVelocity>
   </emitter>
   <updater>
     <areParticlesImmortal>false</areParticlesImmortal>
-      <drag>0.0</drag>
-      <particleAge type="AW2.Game.Pengs.ExpectedValue">
-         <expected>25</expected>
-         <variance>5</variance>
-      </particleAge>
-      <accelerationInputScale>0</accelerationInputScale>
+    <drag>0.0</drag>
+    <particleAge type="AW2.Game.Pengs.ExpectedValue">
+      <expected>25</expected>
+      <variance>5</variance>
+    </particleAge>
+    <accelerationInputScale>0</accelerationInputScale>
     <acceleration type="AW2.Game.Pengs.ConstantValue">
-        <value>4</value>
-      </acceleration>
+      <value>4</value>
+    </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
-        <value>0</value>
-      </rotationSpeed>
-      <scaleInputScale>0</scaleInputScale>
+      <value>0</value>
+    </rotationSpeed>
+    <scaleInputScale>0</scaleInputScale>
     <scale type="AW2.Game.Pengs.ConstantValue">
-        <value>1</value>
-      </scale>
-      <alphaInputScale>0</alphaInputScale>
+      <value>1</value>
+    </scale>
+    <alphaInputScale>0</alphaInputScale>
     <alpha type="AW2.Game.Pengs.ConstantValue">
-        <value>1</value>
-      </alpha>
+      <value>1</value>
+    </alpha>
   </updater>
   <birthGobTypes/>
   <deathGobTypes/>

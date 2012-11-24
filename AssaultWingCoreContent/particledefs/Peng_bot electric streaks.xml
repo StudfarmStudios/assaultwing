@@ -5,6 +5,7 @@
   <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
   <visibilityRadius>50</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <layerPreference>Front</layerPreference>
   <depthLayer2D>0.58</depthLayer2D>
   <drawMode2D>
@@ -45,7 +46,7 @@
       <variance>2.5</variance>
     </rotationSpeed>
     <scaleInputScale>0</scaleInputScale>
-	<scale type="AW2.Game.Pengs.CurveLerp">
+    <scale type="AW2.Game.Pengs.CurveLerp">
       <min>0.001</min>
       <max>1000</max>
       <randomAmplitude>0</randomAmplitude>

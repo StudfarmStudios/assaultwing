@@ -13,6 +13,7 @@
   <deathGobTypes />
   <moveType>Static</moveType>
   <networkUpdatePeriod>0</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <collisionAreas />
   <maxDamage>100</maxDamage>
   <scaleCurve>

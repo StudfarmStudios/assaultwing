@@ -204,6 +204,12 @@ namespace AW2.Game
         private CanonicalString[] _deathGobTypes;
 
         /// <summary>
+        /// Lifetime of the gob, in game time.
+        /// </summary>
+        [TypeParameter]
+        protected TimeSpan _lifetime;
+
+        /// <summary>
         /// True iff the Die() has been called for this gob.
         /// </summary>
         private bool _dead;
@@ -668,6 +674,7 @@ namespace AW2.Game
             _scale = 1f;
             _birthGobTypes = new CanonicalString[0];
             _deathGobTypes = new CanonicalString[0];
+            _lifetime = TimeSpan.MaxValue;
             _collisionAreas = new CollisionArea[0];
             _maxDamage = 100;
             _moveType = MoveType.Dynamic;
@@ -790,6 +797,7 @@ namespace AW2.Game
                 if (MoveOffset.LengthSquared() < POS_SMOOTH_MOVE_CUTOFF * POS_SMOOTH_MOVE_CUTOFF) MoveOffset = Vector2.Zero;
                 else Move += MoveOffset;
             }
+            if (Arena.TotalTime >= BirthTime + _lifetime) Die();
         }
 
         public static float DampDrawRotationOffset(float drawRotationOffset)

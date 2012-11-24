@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.Bot">
   <typeName>bazooka turret</typeName>
   <networkUpdatePeriod>1</networkUpdatePeriod>
+  <lifetime>30</lifetime>
   <mass>1400</mass>
   <scale>0.057</scale>
   <depthLayer2D>0.5</depthLayer2D>

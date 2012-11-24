@@ -57,13 +57,6 @@ namespace AW2.Game.Gobs
         private float _backgroundAlpha;
 
         /// <summary>
-        /// Lifetime of the bounce bullet, in game time seconds.
-        /// Death is inevitable when lifetime has passed.
-        /// </summary>
-        [TypeParameter]
-        private float _lifetime;
-
-        /// <summary>
         /// If true, the bullet rotates by physics. Initial rotation speed comes from <see cref="rotationSpeed"/>.
         /// If false, the bullet heads towards where it's going.
         /// </summary>
@@ -82,11 +75,6 @@ namespace AW2.Game.Gobs
         private Texture2D _backgroundTexture;
 
         /// <summary>
-        /// Time of certain death of the bullet, in game time.
-        /// </summary>
-        private TimeSpan DeathTime { get; set; }
-
-        /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
         public Bullet()
@@ -97,7 +85,6 @@ namespace AW2.Game.Gobs
             _backgroundTextureName = CanonicalString.Null;
             _backgroundScale = 1;
             _backgroundAlpha = 1;
-            _lifetime = 60;
             _isRotating = false;
             _rotationSpeed = 5;
             _thruster = new Thruster();
@@ -116,7 +103,6 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            DeathTime = Arena.TotalTime + TimeSpan.FromSeconds(_lifetime);
             if (_isRotating) RotationSpeed = _rotationSpeed;
             if (_bulletModelNames.Length > 0)
             {
@@ -129,7 +115,6 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            if (Arena.TotalTime >= DeathTime) Die();
             base.Update();
             if (!_isRotating && Move.LengthSquared() >= HEADING_MOVEMENT_MINIMUM_SQUARED)
                 RotationSpeed = AWMathHelper.GetAngleSpeedTowards(Rotation, Move.Angle(), HEADING_TURN_SPEED, Game.TargetElapsedTime);

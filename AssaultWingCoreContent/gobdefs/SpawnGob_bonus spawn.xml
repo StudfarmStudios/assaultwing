@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.SpawnGob">
   <typeName>bonus spawn</typeName>
   <networkUpdatePeriod>0</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <birthGobTypes>
   </birthGobTypes>
   <deathGobTypes>

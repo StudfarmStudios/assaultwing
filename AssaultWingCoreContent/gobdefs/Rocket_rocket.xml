@@ -16,6 +16,7 @@
   <findTargetRange>1000</findTargetRange>
   <typeName>rocket</typeName>
   <networkUpdatePeriod>2</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <mass>80</mass>
   <modelName>missile</modelName>
   <scale>0.0387</scale>

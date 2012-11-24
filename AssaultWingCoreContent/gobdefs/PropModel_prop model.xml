@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.PropModel">
   <typeName>prop model</typeName>
   <networkUpdatePeriod>0</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <mass>1</mass>
   <modelName>dummymodel</modelName>
   <scale>1</scale>

@@ -6,6 +6,7 @@
   <isSingleUse>true</isSingleUse>
   <effectName>bomber_rage</effectName>
   <networkUpdatePeriod>2</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

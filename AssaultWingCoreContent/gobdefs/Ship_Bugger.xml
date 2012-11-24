@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.Ship">
   <typeName>Bugger</typeName>
   <networkUpdatePeriod>0.05</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
 
   <shipInfo>
     <iconEquipName>menu_equip_ship_prowler</iconEquipName>

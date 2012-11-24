@@ -4,6 +4,7 @@
   <duration>60</duration>
   <loadTimeMultiplier>0.6</loadTimeMultiplier>
   <networkUpdatePeriod>2</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

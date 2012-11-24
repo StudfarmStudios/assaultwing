@@ -45,8 +45,6 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private TimeSpan _hitInterval;
         [TypeParameter]
-        private TimeSpan _lifetime;
-        [TypeParameter]
         private float _wallPunchRadius;
         [TypeParameter]
         private string _hitSound;
@@ -69,7 +67,6 @@ namespace AW2.Game.Gobs
         /// Access via <see cref="RelativeSliceSlides"/>.
         /// </summary>
         private Vector2[] _relativeSliceSides;
-        private TimeSpan _deathTime;
         private AWTimer _nextHitTimer;
         private LazyProxy<int, Gob> _hostProxy;
         private List<Vector2> _wallPunchPosesForClient;
@@ -77,7 +74,7 @@ namespace AW2.Game.Gobs
         public Gob Host { get { return _hostProxy != null ? _hostProxy.GetValue() : null; } set { _hostProxy = value; } }
         public int HostBoneIndex { get; set; }
         private TimeSpan FadeTime { get { return _firstHitDelay; } }
-        private bool IsFadingOut { get { return Arena.TotalTime + FadeTime >= _deathTime; } }
+        private bool IsFadingOut { get { return Arena.TotalTime >= BirthTime + _lifetime - FadeTime; } }
         private bool IsHittable(CollisionArea area) { return area.Type.IsPhysical() && area.Owner.IsDamageable && area.Owner != Host; }
         /// <summary>
         /// Relative to the triforce's orientation and length.
@@ -106,7 +103,6 @@ namespace AW2.Game.Gobs
             _damagePerHit = 100;
             _firstHitDelay = TimeSpan.FromSeconds(0.1);
             _hitInterval = TimeSpan.FromSeconds(0.3);
-            _lifetime = TimeSpan.FromSeconds(1.1);
             _wallPunchRadius = 10;
             _textureName = (CanonicalString)"dummytexture";
             _hitEffects = new[] { (CanonicalString)"dummypeng" };
@@ -130,7 +126,6 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _deathTime = Arena.TotalTime + _lifetime + FadeTime;
             _nextHitTimer = new AWTimer(() => Arena.TotalTime, _hitInterval);
             _nextHitTimer.SetCurrentInterval(_firstHitDelay);
             _wallPunchPosesForClient = new List<Vector2>();
@@ -144,10 +139,9 @@ namespace AW2.Game.Gobs
             UpdateLocation();
             UpdateGeometry();
             PerformHits();
-            if (Arena.TotalTime >= _deathTime) Die();
             if (Host != null && Host.Dead)
             {
-                _deathTime = Arena.TotalTime + FadeTime;
+                _lifetime = Arena.TotalTime + FadeTime - BirthTime;
                 Host = null;
             }
         }
@@ -286,7 +280,7 @@ namespace AW2.Game.Gobs
             var fadeSeconds = (float)_firstHitDelay.TotalSeconds;
             var lifeSeconds = (float)_lifetime.TotalSeconds;
             if (Age < FadeTime) return Age.Divide(FadeTime);
-            if (IsFadingOut) return Math.Max(0, (_deathTime - Arena.TotalTime).Divide(FadeTime));
+            if (IsFadingOut) return Math.Max(0, (BirthTime + _lifetime - Arena.TotalTime).Divide(FadeTime));
             return 1;
         }
 

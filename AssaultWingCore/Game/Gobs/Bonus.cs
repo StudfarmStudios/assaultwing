@@ -20,17 +20,6 @@ namespace AW2.Game.Gobs
         private CanonicalString[] _collectGobTypes;
 
         /// <summary>
-        /// Lifetime of the bonus, in seconds.
-        /// </summary>
-        [TypeParameter]
-        private float _lifetime;
-
-        /// <summary>
-        /// Time at which the bonus dies, in game time.
-        /// </summary>
-        private TimeSpan _deathTime;
-
-        /// <summary>
         /// What happens when the bonus is collected.
         /// </summary>
         [TypeParameter]
@@ -44,26 +33,12 @@ namespace AW2.Game.Gobs
         public Bonus()
         {
             _collectGobTypes = new[] { (CanonicalString)"dummypeng" };
-            _lifetime = 10;
             _bonusActionTypeName = (CanonicalString)"dummygob";
         }
 
         public Bonus(CanonicalString typeName)
             : base(typeName)
         {
-        }
-
-        public override void Activate()
-        {
-            base.Activate();
-            _deathTime = Arena.TotalTime + TimeSpan.FromSeconds(_lifetime);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (_deathTime <= Arena.TotalTime)
-                Die();
         }
 
         public override bool CollideIrreversible(CollisionArea myArea, CollisionArea theirArea)

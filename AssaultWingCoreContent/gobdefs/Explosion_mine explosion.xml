@@ -2,6 +2,7 @@
 <GobType type="AW2.Game.Gobs.Explosion">
   <typeName>mine explosion</typeName>
   <networkUpdatePeriod>2</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <impactHoleRadius>56</impactHoleRadius>
   <particleEngineNames>
     <Item>fragments</Item>

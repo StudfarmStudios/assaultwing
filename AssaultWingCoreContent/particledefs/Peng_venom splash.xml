@@ -4,98 +4,99 @@
   <disregardHidingLeader>false</disregardHidingLeader>
   <dieImmediatelyWithLeader>false</dieImmediatelyWithLeader>
   <visibilityRadius>50</visibilityRadius>
-   <networkUpdatePeriod>1</networkUpdatePeriod>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>Transparent</type>
+    <type>Transparent</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <coordinateSystem>Game</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
-      <emissionFrequency>150</emissionFrequency>
-      <numberToCreate>5</numberToCreate>
-      <radius>0</radius>
-      <sprayAngle>3.14</sprayAngle>
-      <facingType>Directed</facingType>
-      <textureNames>
-         <Item>p_snakehaze</Item>
-      </textureNames>
-      <gobTypeNames>
+    <emissionFrequency>150</emissionFrequency>
+    <numberToCreate>5</numberToCreate>
+    <radius>0</radius>
+    <sprayAngle>3.14</sprayAngle>
+    <facingType>Directed</facingType>
+    <textureNames>
+      <Item>p_snakehaze</Item>
+    </textureNames>
+    <gobTypeNames>
     </gobTypeNames>
-      <initialVelocity type="AW2.Game.Pengs.ConstantValue">
-        <value>90</value>
-      </initialVelocity>
+    <initialVelocity type="AW2.Game.Pengs.ConstantValue">
+      <value>90</value>
+    </initialVelocity>
   </emitter>
   <updater>
     <areParticlesImmortal>false</areParticlesImmortal>
-      <drag>0.0</drag>
-      <particleAge type="AW2.Game.Pengs.ExpectedValue">
-         <expected>0.18</expected>
-         <variance>0.08</variance>
-      </particleAge>
-      <accelerationInputScale>0</accelerationInputScale>
+    <drag>0.0</drag>
+    <particleAge type="AW2.Game.Pengs.ExpectedValue">
+      <expected>0.18</expected>
+      <variance>0.08</variance>
+    </particleAge>
+    <accelerationInputScale>0</accelerationInputScale>
     <acceleration type="AW2.Game.Pengs.CurveLerp">
-         <min>-1000</min>
-         <max>1000</max>
-         <randomAmplitude>10</randomAmplitude>
-         <randomMixer>1</randomMixer>
-         <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
-            <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-               <Item type="AW2.Game.Pengs.CurveLerpKey">
-                  <input>0</input>
-                  <curve>
-                      0 0.0 0 0 Smooth
-                      0.07 0.0 0 0 Smooth
-                      0.2 -25 0 0 Smooth
-                      1 -40 0 0 Smooth
-                  </curve>
-               </Item>
-            </keys>
-         </keys>
-      </acceleration>
+      <min>-1000</min>
+      <max>1000</max>
+      <randomAmplitude>10</randomAmplitude>
+      <randomMixer>1</randomMixer>
+      <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
+        <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <Item type="AW2.Game.Pengs.CurveLerpKey">
+            <input>0</input>
+            <curve>
+              0 0.0 0 0 Smooth
+              0.07 0.0 0 0 Smooth
+              0.2 -25 0 0 Smooth
+              1 -40 0 0 Smooth
+            </curve>
+          </Item>
+        </keys>
+      </keys>
+    </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
-        <value>0.3</value>
-      </rotationSpeed>
-      <scaleInputScale>0</scaleInputScale>
+      <value>0.3</value>
+    </rotationSpeed>
+    <scaleInputScale>0</scaleInputScale>
     <scale type="AW2.Game.Pengs.CurveLerp">
-         <min>0.001</min>
-         <max>1000</max>
-         <randomAmplitude>0.01</randomAmplitude>
-         <randomMixer>3</randomMixer>
-         <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
-            <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-               <Item type="AW2.Game.Pengs.CurveLerpKey">
-                  <input>0</input>
-                  <curve>
-                      0 0.08 0 0 Smooth
-                      0.1 0.15 0 0 Smooth
-                      1 0.01 0 0 Smooth
-                  </curve>
-               </Item>
-            </keys>
-         </keys>
-      </scale>
-      <alphaInputScale>0</alphaInputScale>
+      <min>0.001</min>
+      <max>1000</max>
+      <randomAmplitude>0.01</randomAmplitude>
+      <randomMixer>3</randomMixer>
+      <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
+        <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <Item type="AW2.Game.Pengs.CurveLerpKey">
+            <input>0</input>
+            <curve>
+              0 0.08 0 0 Smooth
+              0.1 0.15 0 0 Smooth
+              1 0.01 0 0 Smooth
+            </curve>
+          </Item>
+        </keys>
+      </keys>
+    </scale>
+    <alphaInputScale>0</alphaInputScale>
     <alpha type="AW2.Game.Pengs.CurveLerp">
-         <min>0</min>
-         <max>1</max>
-         <randomAmplitude>0</randomAmplitude>
-         <randomMixer>4</randomMixer>
-         <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
-            <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-               <Item type="AW2.Game.Pengs.CurveLerpKey">
-                  <input>0</input>
-                  <curve>
-                      0 0.1 0 0 Smooth
-                      0.1 0.6 0 0 Smooth
-                      1 0 0 0 Smooth
-                  </curve>
-               </Item>
-            </keys>
-         </keys>
-      </alpha>
+      <min>0</min>
+      <max>1</max>
+      <randomAmplitude>0</randomAmplitude>
+      <randomMixer>4</randomMixer>
+      <keys type="AW2.Game.Pengs.CurveLerpKeyCollection">
+        <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <Item type="AW2.Game.Pengs.CurveLerpKey">
+            <input>0</input>
+            <curve>
+              0 0.1 0 0 Smooth
+              0.1 0.6 0 0 Smooth
+              1 0 0 0 Smooth
+            </curve>
+          </Item>
+        </keys>
+      </keys>
+    </alpha>
   </updater>
   <birthGobTypes/>
   <deathGobTypes/>

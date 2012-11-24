@@ -7,6 +7,7 @@
   <pengTypeName>nanobot repair</pengTypeName>
   <damagePerSecond>-40</damagePerSecond>
   <networkUpdatePeriod>2</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <maxDamage>10</maxDamage>
   <mass>0</mass>
   <scale>1</scale>

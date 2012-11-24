@@ -5,6 +5,7 @@
   <dieImmediatelyWithLeader>true</dieImmediatelyWithLeader>
   <visibilityRadius>50</visibilityRadius>
   <networkUpdatePeriod>1</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
   <layerPreference>Front</layerPreference>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>

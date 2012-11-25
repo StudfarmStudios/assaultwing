@@ -189,8 +189,7 @@ namespace AW2.Game
         public void RebalanceTeams()
         {
             if (Game.NetworkMode == NetworkMode.Client) return;
-            var ops = GameplayMode.BalanceTeams(Teams).ToArray(); // Take a copy into an array because the teams will be modified.
-            foreach (var op in ops)
+            foreach (var op in GameplayMode.BalanceTeams(Teams).ToArray())
             {
                 var spec = FindSpectator(op.Item1);
                 var team = FindTeam(op.Item2);
@@ -356,19 +355,18 @@ namespace AW2.Game
             if (Game.NetworkMode != NetworkMode.Client)
             {
                 var teamChoice = GameplayMode.ChooseTeam(spectator, Teams);
-                Team team = null;
                 switch (teamChoice.Type)
                 {
-                    default: throw new ApplicationException("Unexpected team choice type " + teamChoice.Type);
-                    case TeamChoice.ChoiceType.ExistingTeam:
-                        team = FindTeam(teamChoice.ExistingTeamID);
+                    default: throw new ApplicationException("Unexpected team operation " + teamChoice.Type);
+                    case TeamOperation.ChoiceType.AssignToExistingTeam:
+                        spectator.AssignTeam(teamChoice.ExistingTeam);
                         break;
-                    case TeamChoice.ChoiceType.NewTeam:
-                        team = new Team(teamChoice.NewTeamName, FindSpectator);
+                    case TeamOperation.ChoiceType.AssignToNewTeam:
+                        var team = new Team(teamChoice.NewTeamName, FindSpectator);
                         Teams.Add(team);
+                        spectator.AssignTeam(team);
                         break;
                 }
-                spectator.AssignTeam(team);
             }
             if (SpectatorAdded != null) SpectatorAdded(spectator);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.Players;
 using AW2.Helpers;
+using AW2.Settings;
 
 namespace AW2.Game.Logic
 {
@@ -113,13 +114,13 @@ namespace AW2.Game.Logic
         }
 
         /// <summary>
-        /// Chooses the team a spectator. The team may be one of the given ones or a new one.
+        /// Chooses the team for a spectator. The team may be one of the given ones or a new one.
         /// </summary>
-        public TeamChoice ChooseTeam(Spectator spectator, IEnumerable<Team> allTeams)
+        public TeamOperation ChooseTeam(Spectator spectator, IEnumerable<Team> allTeams)
         {
-            if (allTeams.Count() < 2) return new TeamChoice(GetFreeTeamName(allTeams));
+            if (allTeams.Count() < 2) return TeamOperation.AssignToNewTeam(GetFreeTeamNames(allTeams).First());
             var ratingContext = GetRatingContext(allTeams);
-            return new TeamChoice(allTeams.OrderBy(ratingContext.Rate).First());
+            return TeamOperation.AssignToExistingTeam(allTeams.OrderBy(ratingContext.Rate).First());
         }
 
         /// <summary>
@@ -128,9 +129,15 @@ namespace AW2.Game.Logic
         /// </summary>
         public IEnumerable<Tuple<int, int>> BalanceTeams(IEnumerable<Team> teams)
         {
+            // TODO !!! Use TeamOperation !!!
             if (teams.Count() < 2) yield break;
             var ratingContext = GetRatingContext(teams);
-            var spectators = teams.SelectMany(team => team.Members).Shuffle().OrderByDescending(spec => ratingContext.Rate(spec)).ToArray();
+            var spectators = teams
+                .SelectMany(team => team.Members)
+                .Where(spec => !(spec is BotPlayer))
+                .Shuffle()
+                .OrderByDescending(spec => ratingContext.Rate(spec))
+                .ToArray();
             var resultTeams = teams.Take(2).ToDictionary(team => team, team => 0);
             foreach (var spec in spectators)
             {
@@ -145,14 +152,40 @@ namespace AW2.Game.Logic
             return new LocalRatingContext(CalculateScore, allSpectators).Rate(spectator);
         }
 
+        /// <summary>
+        /// Returns operations that update the <see cref="BotPlayer"/> instances to conform to the settings.
+        /// </summary>
+        public IEnumerable<TeamOperation> UpdateBotPlayerConfiguration(IEnumerable<Team> teams, AWSettings settings)
+        {
+            var removeExtraBots = teams
+                .SelectMany(team => team.Members.OfType<BotPlayer>().Skip(1))
+                .Select(botPlayer => TeamOperation.Remove(botPlayer));
+            var switchOnOrOff = settings.Players.BotsEnabled
+                ? teams
+                    .Where(team => !team.Members.OfType<BotPlayer>().Any())
+                    .Select(team => TeamOperation.CreateToExistingTeam(team, GetBotPlayerName(team.Name)))
+                : teams
+                    .SelectMany(team => team.Members.OfType<BotPlayer>())
+                    .Select(botPlayer => TeamOperation.Remove(botPlayer));
+            var addMissingTeams = settings.Players.BotsEnabled
+                ? GetFreeTeamNames(teams).Take(2 - teams.Count()).Select(name => TeamOperation.CreateToNewTeam(name, GetBotPlayerName(name)))
+                : new TeamOperation[0];
+            return removeExtraBots.Union(switchOnOrOff).Union(addMissingTeams);
+        }
+
+        private string GetBotPlayerName(string teamName)
+        {
+            return teamName.TrimEnd('s') + " Bots";
+        }
+
         private LocalRatingContext GetRatingContext(IEnumerable<Team> teams)
         {
             return new LocalRatingContext(CalculateScore, teams.SelectMany(team => team.Members));
         }
 
-        private string GetFreeTeamName(IEnumerable<Team> teams)
+        private IEnumerable<string> GetFreeTeamNames(IEnumerable<Team> teams)
         {
-            return GetTeamNames().Except(teams.Select(p => p.Name)).First();
+            return GetTeamNames().Except(teams.Select(p => p.Name));
         }
 
         private IEnumerable<string> GetTeamNames()

@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core.GameComponents;
 using AW2.Game;
+using AW2.Game.Logic;
 using AW2.Game.Players;
 using AW2.Graphics;
 using AW2.Graphics.Content;
@@ -193,11 +194,27 @@ namespace AW2.Core
         public virtual void RefreshGameSettings()
         {
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
-            var wantBots = Settings.Players.BotsEnabled && NetworkMode != Core.NetworkMode.Client;
-            if (wantBots && !DataEngine.Spectators.OfType<BotPlayer>().Any())
-                DataEngine.Spectators.Add(new BotPlayer(this));
-            if (!wantBots)
-                DataEngine.Spectators.Remove(spec => spec is BotPlayer);
+            if (NetworkMode != NetworkMode.Client)
+            foreach (var op in DataEngine.GameplayMode.UpdateBotPlayerConfiguration(DataEngine.Teams, Settings).ToArray())
+                switch (op.Type)
+                {
+                    default: throw new ApplicationException("Unexpected team operation " + op.Type);
+                    case TeamOperation.ChoiceType.CreateToExistingTeam:
+                        var botPlayer = new BotPlayer(this) { Name = op.NewSpectatorName };
+                        DataEngine.Spectators.Add(botPlayer);
+                        botPlayer.AssignTeam(op.ExistingTeam);
+                        break;
+                    case TeamOperation.ChoiceType.CreateToNewTeam:
+                        var team = new Team(op.NewTeamName, DataEngine.FindSpectator);
+                        var botPlayer2 = new BotPlayer(this) { Name = op.NewSpectatorName };
+                        DataEngine.Teams.Add(team);
+                        DataEngine.Spectators.Add(botPlayer2);
+                        botPlayer2.AssignTeam(team);
+                        break;
+                    case TeamOperation.ChoiceType.Remove:
+                        DataEngine.Spectators.Remove(op.ExistingSpectator);
+                        break;
+                }
         }
 
         #endregion Methods for game components

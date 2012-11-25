@@ -35,7 +35,6 @@ namespace AW2.Game.Players
             : base(game, connectionID, ipAddress)
         {
             _bots = new List<Gob>();
-            Name = AW2.Settings.PlayerSettings.BOTS_NAME;
         }
 
         public override void ResetForArena()

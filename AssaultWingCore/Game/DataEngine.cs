@@ -190,11 +190,13 @@ namespace AW2.Game
         {
             if (Game.NetworkMode == NetworkMode.Client) return;
             foreach (var op in GameplayMode.BalanceTeams(Teams).ToArray())
-            {
-                var spec = FindSpectator(op.Item1);
-                var team = FindTeam(op.Item2);
-                if (spec != null && team != null) spec.AssignTeam(team);
-            }
+                switch (op.Type)
+                {
+                    default: throw new ApplicationException("Unexpected team operation " + op.Type);
+                    case TeamOperation.ChoiceType.AssignToExistingTeam:
+                        op.ExistingSpectator.AssignTeam(op.ExistingTeam);
+                        break;
+                }
         }
 
         public void UpdateStandings()
@@ -359,12 +361,12 @@ namespace AW2.Game
                 {
                     default: throw new ApplicationException("Unexpected team operation " + teamChoice.Type);
                     case TeamOperation.ChoiceType.AssignToExistingTeam:
-                        spectator.AssignTeam(teamChoice.ExistingTeam);
+                        teamChoice.ExistingSpectator.AssignTeam(teamChoice.ExistingTeam);
                         break;
                     case TeamOperation.ChoiceType.AssignToNewTeam:
                         var team = new Team(teamChoice.NewTeamName, FindSpectator);
                         Teams.Add(team);
-                        spectator.AssignTeam(team);
+                        teamChoice.ExistingSpectator.AssignTeam(team);
                         break;
                 }
             }

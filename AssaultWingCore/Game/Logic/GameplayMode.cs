@@ -118,18 +118,16 @@ namespace AW2.Game.Logic
         /// </summary>
         public TeamOperation ChooseTeam(Spectator spectator, IEnumerable<Team> allTeams)
         {
-            if (allTeams.Count() < 2) return TeamOperation.AssignToNewTeam(GetFreeTeamNames(allTeams).First());
+            if (allTeams.Count() < 2) return TeamOperation.AssignToNewTeam(GetFreeTeamNames(allTeams).First(), spectator);
             var ratingContext = GetRatingContext(allTeams);
-            return TeamOperation.AssignToExistingTeam(allTeams.OrderBy(ratingContext.Rate).First());
+            return TeamOperation.AssignToExistingTeam(allTeams.OrderBy(ratingContext.Rate).First(), spectator);
         }
 
         /// <summary>
-        /// Returns a sequence of team member reassigning operations that will balance out the given teams.
-        /// The returned tuples are (spectator ID, team ID) denoting which spectator should be assigned to which team.
+        /// Returns a sequence of operations that will balance out the given teams.
         /// </summary>
-        public IEnumerable<Tuple<int, int>> BalanceTeams(IEnumerable<Team> teams)
+        public IEnumerable<TeamOperation> BalanceTeams(IEnumerable<Team> teams)
         {
-            // TODO !!! Use TeamOperation !!!
             if (teams.Count() < 2) yield break;
             var ratingContext = GetRatingContext(teams);
             var spectators = teams
@@ -143,7 +141,7 @@ namespace AW2.Game.Logic
             {
                 var weakestTeam = resultTeams.OrderBy(x => x.Value).First().Key;
                 resultTeams[weakestTeam] += ratingContext.Rate(spec);
-                yield return Tuple.Create(spec.ID, weakestTeam.ID);
+                yield return TeamOperation.AssignToExistingTeam(weakestTeam, spec);
             }
         }
 

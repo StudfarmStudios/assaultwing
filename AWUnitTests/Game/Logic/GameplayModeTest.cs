@@ -140,12 +140,13 @@ namespace AW2.Game.Logic
             foreach (var x in teams.Zip(Teams, (specs, team) => new { specs, team }))
                 foreach (var spec in x.specs) spec.AssignTeam(x.team);
             var ops = _gameplayMode.BalanceTeams(Teams).ToArray();
+            Assert.True(ops.All(op => op.Type == TeamOperation.ChoiceType.AssignToExistingTeam), "Unexpected team operations");
             var remainingTeams = (
                 from team in Teams
-                let originalSpecs = team.Members.Select(spec => spec.ID)
-                let lostSpecs = ops.Where(op => op.Item2 != team.ID).Select(op => op.Item1)
-                let gainedSpecs = ops.Where(op => op.Item2 == team.ID).Select(op => op.Item1)
-                let remainingSpecs = originalSpecs.Except(lostSpecs).Union(gainedSpecs).Select(FindSpectator).ToArray()
+                let originalSpecs = team.Members
+                let lostSpecs = ops.Where(op => op.ExistingTeam != team).Select(op => op.ExistingSpectator)
+                let gainedSpecs = ops.Where(op => op.ExistingTeam == team).Select(op => op.ExistingSpectator)
+                let remainingSpecs = originalSpecs.Except(lostSpecs).Union(gainedSpecs).ToArray()
                 where remainingSpecs.Any()
                 select remainingSpecs).ToArray();
             Assert.AreEqual(2, remainingTeams.Length);

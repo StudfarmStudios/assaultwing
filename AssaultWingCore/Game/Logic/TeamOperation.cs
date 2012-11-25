@@ -22,21 +22,23 @@ namespace AW2.Game.Logic
         public string NewTeamName { get; private set; }
         public string NewSpectatorName { get; private set; }
 
-        public static TeamOperation AssignToExistingTeam(Team existingTeam)
+        public static TeamOperation AssignToExistingTeam(Team existingTeam, Spectator existingSpectator)
         {
             return new TeamOperation
             {
                 Type = ChoiceType.AssignToExistingTeam,
                 ExistingTeam = existingTeam,
+                ExistingSpectator = existingSpectator,
             };
         }
 
-        public static TeamOperation AssignToNewTeam(string newTeamName)
+        public static TeamOperation AssignToNewTeam(string newTeamName, Spectator existingSpectator)
         {
             return new TeamOperation
             {
                 Type = ChoiceType.AssignToNewTeam,
                 NewTeamName = newTeamName,
+                ExistingSpectator = existingSpectator,
             };
         }
 

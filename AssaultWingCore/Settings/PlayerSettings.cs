@@ -35,6 +35,7 @@ namespace AW2.Settings
             ExtraDeviceName = "catmoflage",
             Password = "",
         };
+        [Obsolete("TODO: Register various bots for known teams in gameplay modes.")]
         public const string BOTS_NAME = "The Bots";
 
         public PlayerSettingsItem Player1 { get; private set; }

@@ -211,7 +211,9 @@ namespace AW2.Game.Gobs
         private void UpdateLocation()
         {
             if (Host == null) return;
-            ResetPos(Host.GetNamedPosition(HostBoneIndex), Vector2.Zero, Host.GetBoneRotation(HostBoneIndex));
+            var targetFPS = AW2.Core.AssaultWingCore.TargetFPS;
+            Move = (Host.GetNamedPosition(HostBoneIndex) - Pos) * targetFPS;
+            RotationSpeed = AWMathHelper.GetAbsoluteMinimalEqualAngle(Host.GetBoneRotation(HostBoneIndex) - Rotation) * targetFPS;
         }
 
         private void UpdateGeometry()

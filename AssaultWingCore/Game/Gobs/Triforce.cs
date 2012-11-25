@@ -73,6 +73,7 @@ namespace AW2.Game.Gobs
 
         public Gob Host { get { return _hostProxy != null ? _hostProxy.GetValue() : null; } set { _hostProxy = value; } }
         public int HostBoneIndex { get; set; }
+        protected override bool IsNetworkMoveSmoothing { get { return false; } }
         private TimeSpan FadeTime { get { return _firstHitDelay; } }
         private bool IsFadingOut { get { return Arena.TotalTime >= BirthTime + _lifetime - FadeTime; } }
         private bool IsHittable(CollisionArea area) { return area.Type.IsPhysical() && area.Owner.IsDamageable && area.Owner != Host; }

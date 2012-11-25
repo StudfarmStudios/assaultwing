@@ -384,6 +384,8 @@ namespace AW2.Game
         /// </summary>
         private Vector2 MoveOffset { get; set; }
 
+        protected virtual bool IsNetworkMoveSmoothing { get { return true; } }
+
         /// <summary>
         /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/> as if the
         /// gob appeared there instantaneously as opposed to moving there in a continuous fashion.
@@ -786,8 +788,8 @@ namespace AW2.Game
         /// </summary>
         public virtual void Update()
         {
-            if (IsRelevant && MayBeDifficultToPredictOnClient) ForcedNetworkUpdate = true;
-            if (Game.NetworkMode == NetworkMode.Client && MoveType != GobUtils.MoveType.Static)
+            if (IsNetworkMoveSmoothing && IsRelevant && MayBeDifficultToPredictOnClient) ForcedNetworkUpdate = true;
+            if (IsNetworkMoveSmoothing && Game.NetworkMode == NetworkMode.Client && MoveType != GobUtils.MoveType.Static)
             {
                 _previousMove = Move;
                 DrawPosOffset *= POS_SMOOTHING_FADEOUT;

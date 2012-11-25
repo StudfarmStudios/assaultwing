@@ -195,26 +195,8 @@ namespace AW2.Core
         {
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
             if (NetworkMode != NetworkMode.Client)
-            foreach (var op in DataEngine.GameplayMode.UpdateBotPlayerConfiguration(DataEngine.Teams, Settings).ToArray())
-                switch (op.Type)
-                {
-                    default: throw new ApplicationException("Unexpected team operation " + op.Type);
-                    case TeamOperation.ChoiceType.CreateToExistingTeam:
-                        var botPlayer = new BotPlayer(this) { Name = op.NewSpectatorName };
-                        DataEngine.Spectators.Add(botPlayer);
-                        botPlayer.AssignTeam(op.ExistingTeam);
-                        break;
-                    case TeamOperation.ChoiceType.CreateToNewTeam:
-                        var team = new Team(op.NewTeamName, DataEngine.FindSpectator);
-                        var botPlayer2 = new BotPlayer(this) { Name = op.NewSpectatorName };
-                        DataEngine.Teams.Add(team);
-                        DataEngine.Spectators.Add(botPlayer2);
-                        botPlayer2.AssignTeam(team);
-                        break;
-                    case TeamOperation.ChoiceType.Remove:
-                        DataEngine.Spectators.Remove(op.ExistingSpectator);
-                        break;
-                }
+                foreach (var op in DataEngine.GameplayMode.UpdateBotPlayerConfiguration(DataEngine.Teams, Settings).ToArray())
+                    DataEngine.Apply(op);
         }
 
         #endregion Methods for game components

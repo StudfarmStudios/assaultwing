@@ -164,6 +164,37 @@ namespace AW2.Game
                 : Teams.FirstOrDefault(t => t.ID == id);
         }
 
+        public void Apply(TeamOperation operation)
+        {
+            switch (operation.Type)
+            {
+                default: throw new ApplicationException("Unexpected team operation " + operation.Type);
+                case TeamOperation.ChoiceType.AssignToExistingTeam:
+                    operation.ExistingSpectator.AssignTeam(operation.ExistingTeam);
+                    break;
+                case TeamOperation.ChoiceType.AssignToNewTeam:
+                    var team = new Team(operation.NewTeamName, FindSpectator);
+                    Teams.Add(team);
+                    operation.ExistingSpectator.AssignTeam(team);
+                    break;
+                case TeamOperation.ChoiceType.CreateToExistingTeam:
+                    var botPlayer = new BotPlayer(Game) { Name = operation.NewSpectatorName };
+                    Spectators.Add(botPlayer);
+                    botPlayer.AssignTeam(operation.ExistingTeam);
+                    break;
+                case TeamOperation.ChoiceType.CreateToNewTeam:
+                    var team2 = new Team(operation.NewTeamName, FindSpectator);
+                    var botPlayer2 = new BotPlayer(Game) { Name = operation.NewSpectatorName };
+                    Teams.Add(team2);
+                    Spectators.Add(botPlayer2);
+                    botPlayer2.AssignTeam(team2);
+                    break;
+                case TeamOperation.ChoiceType.Remove:
+                    Spectators.Remove(operation.ExistingSpectator);
+                    break;
+            }
+        }
+
         public void AddPendingRemoteSpectatorOnServer(Spectator newSpectator)
         {
             lock (_pendingRemoteSpectatorsOnServer) _pendingRemoteSpectatorsOnServer.Add(newSpectator);
@@ -189,14 +220,7 @@ namespace AW2.Game
         public void RebalanceTeams()
         {
             if (Game.NetworkMode == NetworkMode.Client) return;
-            foreach (var op in GameplayMode.BalanceTeams(Teams).ToArray())
-                switch (op.Type)
-                {
-                    default: throw new ApplicationException("Unexpected team operation " + op.Type);
-                    case TeamOperation.ChoiceType.AssignToExistingTeam:
-                        op.ExistingSpectator.AssignTeam(op.ExistingTeam);
-                        break;
-                }
+            foreach (var op in GameplayMode.BalanceTeams(Teams).ToArray()) Apply(op);
         }
 
         public void UpdateStandings()
@@ -354,22 +378,7 @@ namespace AW2.Game
         {
             spectator.Game = Game;
             spectator.ID = GetFreeSpectatorOrTeamID();
-            if (Game.NetworkMode != NetworkMode.Client)
-            {
-                var teamChoice = GameplayMode.ChooseTeam(spectator, Teams);
-                switch (teamChoice.Type)
-                {
-                    default: throw new ApplicationException("Unexpected team operation " + teamChoice.Type);
-                    case TeamOperation.ChoiceType.AssignToExistingTeam:
-                        teamChoice.ExistingSpectator.AssignTeam(teamChoice.ExistingTeam);
-                        break;
-                    case TeamOperation.ChoiceType.AssignToNewTeam:
-                        var team = new Team(teamChoice.NewTeamName, FindSpectator);
-                        Teams.Add(team);
-                        teamChoice.ExistingSpectator.AssignTeam(team);
-                        break;
-                }
-            }
+            if (Game.NetworkMode != NetworkMode.Client) Apply(GameplayMode.ChooseTeam(spectator, Teams));
             if (SpectatorAdded != null) SpectatorAdded(spectator);
         }
 

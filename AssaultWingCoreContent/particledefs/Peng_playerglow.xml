@@ -44,7 +44,7 @@
     </rotationSpeed>
     <scaleInputScale>0</scaleInputScale>
     <scale type="AW2.Game.Pengs.ConstantValue">
-      <value>1.2</value>
+      <value>2.2</value>
     </scale>
     <alphaInputScale>0</alphaInputScale>
     <alpha type="AW2.Game.Pengs.ConstantValue">

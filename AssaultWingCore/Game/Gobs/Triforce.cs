@@ -135,6 +135,7 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
+            base.Update();
             if (Host != null && Host.Disabled) Die();
             UpdateLocation();
             UpdateGeometry();

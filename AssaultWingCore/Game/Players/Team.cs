@@ -12,7 +12,7 @@ namespace AW2.Game.Players
     /// <summary>
     /// A group of co-operating <see cref="Spectator"/> instances.
     /// </summary>
-    [System.Diagnostics.DebuggerDisplay("{ID}: {Name} is {Color} with {Members.Count} members")]
+    [System.Diagnostics.DebuggerDisplay("{ID}: {Name} is {Color} with {_members.Count} members")]
     public class Team : INetworkSerializable
     {
         public const int UNINITIALIZED_ID = 0;

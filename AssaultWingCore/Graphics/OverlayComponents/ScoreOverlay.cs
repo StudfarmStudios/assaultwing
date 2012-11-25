@@ -26,7 +26,8 @@ namespace AW2.Graphics.OverlayComponents
 
         private AssaultWingCore Game { get { return _player.Game; } }
         private GameContent Content { get { return Game.GraphicsEngine.GameContent; } }
-        private int EntryCount { get { return Game.DataEngine.Standings.Sum(entry => 1 + entry.Item2.Length); } }
+        private Standings Standings { get { return Game.DataEngine.Standings; } }
+        private int EntryCount { get { return Standings.HasTrivialTeams ? Standings.SpectatorCount : Standings.TeamCount + Standings.SpectatorCount; } }
 
         public ScoreOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Left, VerticalAlignment.Bottom)
@@ -37,9 +38,22 @@ namespace AW2.Graphics.OverlayComponents
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Content.ScoreBackgroundTexture, Vector2.Zero, Color.White);
-            var mainStandings = Game.DataEngine.Standings;
+            if (Standings.HasTrivialTeams)
+                DrawTrivialTeams(spriteBatch);
+            else
+                DrawFullTeams(spriteBatch);
+        }
+
+        private void DrawTrivialTeams(SpriteBatch spriteBatch)
+        {
             int line = 0;
-            foreach (var mainEntry in mainStandings)
+            foreach (var specEntry in Standings.GetSpectators()) DrawStandingEntry(spriteBatch, specEntry, line++, 0);
+        }
+
+        private void DrawFullTeams(SpriteBatch spriteBatch)
+        {
+            int line = 0;
+            foreach (var mainEntry in Standings)
             {
                 DrawStandingEntry(spriteBatch, mainEntry.Item1, line++, 0);
                 foreach (var subEntry in mainEntry.Item2) DrawStandingEntry(spriteBatch, subEntry, line++, 10);

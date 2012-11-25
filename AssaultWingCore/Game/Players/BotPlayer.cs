@@ -22,26 +22,14 @@ namespace AW2.Game.Players
             (CanonicalString)"bazooka bot",
             (CanonicalString)"mine bot",
         };
-        private const int MAX_MINION_COUNT = 5;
-        private const int MIN_BOT_COUNT = 2; // overrides MAX_MINION_COUNT
-        private readonly TimeSpan BOT_CREATION_INTERVAL = TimeSpan.FromSeconds(9.5);
 
         private List<Gob> _bots;
-        private TimeSpan _nextBotCreationTime;
         private int _preferredBotTypeIndex;
+        private int _optimalBotCount;
+        private List<TimedAction> _timedActions;
 
         public override IEnumerable<Gob> Minions { get { return _bots; } }
         private Arena Arena { get { return Game.DataEngine.Arena; } }
-        private bool EnoughBots
-        {
-            get
-            {
-                var minions = Game.DataEngine.Minions;
-                var botCount = minions.OfType<Bot>().Count();
-                var minionCount = minions.Count();
-                return botCount >= MIN_BOT_COUNT && minionCount >= MAX_MINION_COUNT;
-            }
-        }
 
         public BotPlayer(AssaultWingCore game, int connectionID = Spectator.CONNECTION_ID_LOCAL, IPAddress ipAddress = null)
             : base(game, connectionID, ipAddress)
@@ -53,14 +41,18 @@ namespace AW2.Game.Players
         public override void ResetForArena()
         {
             base.ResetForArena();
-            _nextBotCreationTime = Game.GameTime.TotalGameTime + BOT_CREATION_INTERVAL;
             _bots.Clear();
+            _timedActions = new List<TimedAction>
+            {
+                new TimedAction(TimeSpan.FromSeconds(20), () => _optimalBotCount = GetOptimalBotCount()),
+                new TimedAction(TimeSpan.FromSeconds(3), CreateBot),
+            };
         }
 
         public override void Update()
         {
             base.Update();
-            CreateBot();
+            foreach (var act in _timedActions) act.Update(Arena.TotalTime);
         }
 
         public void SeizeBot(Bot bot)
@@ -69,14 +61,25 @@ namespace AW2.Game.Players
             _bots.Add(bot);
             bot.Owner = this;
             bot.Death += MinionDeathHandler.OnMinionDeath;
-            bot.Death += coroner => _bots.Remove(bot);
+            bot.Death += BotDeathHandler;
+        }
+
+        private int GetOptimalBotCount()
+        {
+            if (Team == null) return 2;
+            var standings = Game.DataEngine.GameplayMode.GetStandings(Game.DataEngine.Teams);
+            var ourScore = standings[Team].Score;
+            var bestScore = standings.Max(x => x.Item1.Score);
+            var weAreLosingBadly = bestScore >= 10 && bestScore >= ourScore * 2;
+            var weAreLosing = bestScore >= 10 && bestScore >= (ourScore * 4) / 3;
+            return weAreLosingBadly ? 5
+                : weAreLosing ? 3
+                : 2;
         }
 
         private void CreateBot()
         {
-            if (_nextBotCreationTime > Game.GameTime.TotalGameTime) return;
-            _nextBotCreationTime = Game.GameTime.TotalGameTime + BOT_CREATION_INTERVAL;
-            if (EnoughBots) return;
+            if (Minions.Count() >= _optimalBotCount) return;
             _preferredBotTypeIndex = (_preferredBotTypeIndex + 1) % g_botTypes.Length;
             Gob.CreateGob<Bot>(Game, g_botTypes[_preferredBotTypeIndex], bot =>
             {
@@ -92,6 +95,11 @@ namespace AW2.Game.Players
                     Pos = bot.Pos,
                 });
             });
+        }
+
+        private void BotDeathHandler(Coroner coroner)
+        {
+            _bots.Remove(coroner.DamageInfo.Target);
         }
     }
 }

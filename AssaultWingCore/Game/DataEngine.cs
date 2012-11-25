@@ -77,7 +77,7 @@ namespace AW2.Game
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
         public WrappedTextList ChatHistory { get; private set; }
-        public Tuple<Standing, Standing[]>[] Standings { get; set; }
+        public Standings Standings { get; set; }
         public ArenaSilhouette ArenaSilhouette { get; private set; }
 
         /// <summary>

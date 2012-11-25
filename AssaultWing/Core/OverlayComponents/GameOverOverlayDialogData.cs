@@ -20,12 +20,12 @@ namespace AW2.Core.OverlayComponents
         private const float TextLeftX = 50;
         private const float TextTopY = 45;
 
-        private Tuple<Standing, Standing[]>[] _standings;
+        private Standings _standings;
 
         private SpriteFont FontHuge { get { return Menu.MenuContent.FontHuge; } }
         private SpriteFont FontSmall { get { return Menu.MenuContent.FontSmall; } }
 
-        public GameOverOverlayDialogData(MenuEngineImpl menu, Tuple<Standing, Standing[]>[] standings, params TriggeredCallback[] actions)
+        public GameOverOverlayDialogData(MenuEngineImpl menu, Standings standings, params TriggeredCallback[] actions)
             : base(menu, actions)
         {
             _standings = standings;
@@ -55,6 +55,20 @@ namespace AW2.Core.OverlayComponents
                 GetScoreCells("Score", "Kills", "Deaths"),
                 (textPos, text) => spriteBatch.DrawString(FontSmall, text, textPos, Color.White));
             AdvanceLine(ref textCenter, FontSmall);
+            if (_standings.HasTrivialTeams)
+                DrawTrivialTeams(spriteBatch, ref textCenter);
+            else
+                DrawFullTeams(spriteBatch, ref textCenter);
+        }
+
+        private void DrawTrivialTeams(SpriteBatch spriteBatch, ref Vector2 textCenter)
+        {
+            int position = 1;
+            foreach (var specEntry in _standings.GetSpectators()) DrawStandingsLine(spriteBatch, ref textCenter, specEntry, position++, indent: 0);
+        }
+
+        private void DrawFullTeams(SpriteBatch spriteBatch, ref Vector2 textCenter)
+        {
             int position = 1;
             foreach (var entry in _standings)
             {

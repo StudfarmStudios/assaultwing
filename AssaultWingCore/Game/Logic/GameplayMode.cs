@@ -92,7 +92,7 @@ namespace AW2.Game.Logic
         /// The condensed form is used when all teams have at most one member. The condensed form has all the
         /// players on the first level. Their substandings are empty.
         /// </summary>
-        public Tuple<Standing, Standing[]>[] GetStandings(IEnumerable<Team> teams)
+        public Standings GetStandings(IEnumerable<Team> teams)
         {
             var standings = (
                 from team in teams
@@ -102,13 +102,7 @@ namespace AW2.Game.Logic
                 orderby score descending, stats.Kills descending, team.Name
                 let entry = new Standing(team.ID, team.Name, team.Color, score, team.ArenaStatistics, statsData: null, isActive: true)
                 select Tuple.Create(entry, GetStandings(team.Members))).ToArray();
-            if (teams.Any(team => team.Members.Count() > 1))
-                return standings;
-            else
-                return (
-                    from entry in standings
-                    where entry.Item2.Length == 1
-                    select Tuple.Create(entry.Item2[0], new Standing[0])).ToArray();
+            return new Standings(standings);
         }
 
         public bool ArenaFinished(Arena arena, IEnumerable<Spectator> spectators)

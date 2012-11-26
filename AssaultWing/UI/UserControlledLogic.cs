@@ -305,7 +305,7 @@ namespace AW2.UI
             else
             {
                 Game.LoadSelectedArena();
-                PrepareArena(Game.DataEngine.Arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
+                PrepareArena(Game.DataEngine.Arena.Gobs.All<AW2.Game.Gobs.Wall>().Count());
             }
         }
 

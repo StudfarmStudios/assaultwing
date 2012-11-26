@@ -209,13 +209,13 @@ namespace AW2.Game.Gobs
         private void UpdateMoveTarget()
         {
             // Keep any chosen aim target.
-            Target = Target ?? _moveTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
+            Target = Target ?? _moveTargetSelector.ChooseTarget(Arena.PotentialTargets, this, Rotation);
         }
 
         private void UpdateAimTarget()
         {
             // If no short range target found, then continue with long range target.
-            Target = _aimTargetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation, IsInLineOfSight) ?? Target;
+            Target = _aimTargetSelector.ChooseTarget(Arena.PotentialTargets, this, Rotation, IsInLineOfSight) ?? Target;
         }
 
         private void MoveAround()

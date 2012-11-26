@@ -11,6 +11,7 @@ using FarseerPhysics.Factories;
 using AW2.Core;
 using AW2.Game.Arenas;
 using AW2.Game.Collisions;
+using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
@@ -290,6 +291,19 @@ namespace AW2.Game
         public IEnumerable<CollisionEvent> GetCollisionEvents()
         {
             return _collisionEvents.Values;
+        }
+
+        /// <summary>
+        /// All potential attack targets. Useful as input to <see cref="AW2.Game.GobUtils.TargetSelector.ChooseTarget"/>.
+        /// </summary>
+        public IEnumerable<Gob> PotentialTargets
+        {
+            get
+            {
+                return Gobs.All(typeof(Ship))
+                    .Union(Gobs.All(typeof(Bot)))
+                    .Union(Gobs.All(typeof(FloatingBullet)));
+            }
         }
 
         /// <summary>

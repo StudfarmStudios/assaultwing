@@ -46,7 +46,7 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            FireAtTargets(PruneTailFriends(FindTargets(Owner.Game.DataEngine.Minions)));
+            FireAtTargets(PruneTailFriends(FindTargets(Arena.PotentialTargets)));
         }
 
         public IEnumerable<Gob> FindTargets(IEnumerable<Gob> potentialTargets)

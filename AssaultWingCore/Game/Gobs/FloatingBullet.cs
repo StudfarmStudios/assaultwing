@@ -60,7 +60,7 @@ namespace AW2.Game.Gobs
         private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }
 
         private bool IsAvoidable(Gob gob) { return IsFriend(gob) && gob is FloatingBullet; }
-        private bool IsReachable(Gob gob) { return !IsFriend(gob) && !gob.IsHidden && Game.DataEngine.Minions.Contains(gob); }
+        private bool IsReachable(Gob gob) { return !IsFriend(gob) && !gob.IsHidden && Arena.PotentialTargets.Contains(gob); }
         private bool IsExplodable(CollisionArea area)
         {
             if (IsFriend(area.Owner)) return false;
@@ -110,7 +110,9 @@ namespace AW2.Game.Gobs
             base.Update();
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) PhysicsHelper.ApplyForce(this, _thrustForce);
-            Alpha = Game.DataEngine.Minions
+            // FIXME !!! Computing alpha and magnet from Arena.PotentialTargets each frame may be too slow.
+            // !!! Instead, choose a target, like, twice a second and compute alpha and magnet by that.
+            Alpha = Arena.PotentialTargets
                 .Where(gob => !IsFriend(gob) && !gob.IsHidden)
                 .Select(gob => Vector2.Distance(Pos, gob.Pos))
                 .Select(_enemyDistanceToAlpha.Evaluate)

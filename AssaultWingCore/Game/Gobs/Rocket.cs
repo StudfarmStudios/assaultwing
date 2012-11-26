@@ -216,7 +216,7 @@ namespace AW2.Game.Gobs
             if (_nextFindTarget > Arena.TotalTime) return;
             _nextFindTarget = Arena.TotalTime + FIND_TARGET_INTERVAL;
             var oldTarget = Target;
-            var newBestTarget = _targetSelector.ChooseTarget(Game.DataEngine.Minions, this, Rotation);
+            var newBestTarget = _targetSelector.ChooseTarget(Arena.PotentialTargets, this, Rotation);
             if (newBestTarget != null &&
                 (newBestTarget.Owner == null || IsFriend(newBestTarget)) &&
                 RandomHelper.GetRandomFloat() < 0.9)

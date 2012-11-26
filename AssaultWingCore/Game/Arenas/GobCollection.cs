@@ -15,16 +15,16 @@ namespace AW2.Game.Arenas
     [LimitedSerialization]
     public class GobCollection : IEnumerable<Gob>, IObservableCollection<object, Gob>
     {
+        private static readonly IEnumerable<Gob> g_emptyGobArray = new Gob[0];
+
         /// <summary>
         /// The arena layers that contain the gobs.
         /// </summary>
         [RuntimeState]
         private IList<ArenaLayer> _arenaLayers;
 
-        /// <summary>
-        /// All gobs in all layers by gob IDs.
-        /// </summary>
-        private Dictionary<int, Gob> _gobDictionary;
+        private Dictionary<int, Gob> _gobsByID;
+        private Dictionary<Type, HashSet<Gob>> _gobsByClass;
 
         /// <summary>
         /// The arena layer where the gameplay takes place.
@@ -41,7 +41,7 @@ namespace AW2.Game.Arenas
         /// </summary>
         public ArenaLayer GameplayOverlayLayer { get; set; }
 
-        public int Count { get { return _gobDictionary.Count > 0 ? _gobDictionary.Count : _arenaLayers.Sum(l => l.Gobs.Count); } }
+        public int Count { get { return _gobsByID.Count > 0 ? _gobsByID.Count : _arenaLayers.Sum(l => l.Gobs.Count); } }
 
         /// <summary>
         /// Returns the gob with <paramref name="gobID"/> or null if no such gob exists.
@@ -51,7 +51,7 @@ namespace AW2.Game.Arenas
             get
             {
                 Gob gob;
-                _gobDictionary.TryGetValue(gobID, out gob);
+                _gobsByID.TryGetValue(gobID, out gob);
                 return gob;
             }
         }
@@ -63,24 +63,12 @@ namespace AW2.Game.Arenas
         {
             if (arenaLayers == null) throw new ArgumentNullException();
             _arenaLayers = arenaLayers;
-            _gobDictionary = new Dictionary<int, Gob>();
-            // Note: There may be gobs in _arenaLayers but _gobDictionary is uninitialized.
+            _gobsByClass = new Dictionary<Type, HashSet<Gob>>();
+            _gobsByID = new Dictionary<int, Gob>();
+            // Note: There may be gobs in _arenaLayers but _gobsByID is uninitialized.
             // This happens only when an arena template is loaded from XML, in which case the gobs
             // don't even have proper IDs. When an arena is started for playing, all the gobs are added
-            // by calling Add() whence _gobDictionary is filled.
-        }
-
-        /// <summary>
-        /// Removes the first occurrence of a specific element from the collection.
-        /// </summary>
-        /// <param name="force">Remove the element regardless of how <see cref="Removing"/>
-        /// evaluates on the element.</param>
-        public void Remove(Gob gob, bool force)
-        {
-            if (gob.Layer == null) return;
-            if (Removing != null && !Removing(gob) && !force) return;
-            _gobDictionary.Remove(gob.ID);
-            gob.Layer.Gobs.Remove(gob);
+            // by calling Add() whence _gobsByID is filled.
         }
 
         /// <summary>
@@ -111,6 +99,18 @@ namespace AW2.Game.Arenas
             remove { foreach (var layer in _arenaLayers) layer.Gobs.NotFound -= value; }
         }
 
+        public IEnumerable<T> All<T>() where T : Gob
+        {
+            return All(typeof(T)).Cast<T>();
+        }
+
+        public IEnumerable<Gob> All(Type gobClass)
+        {
+            HashSet<Gob> kindred;
+            if (!_gobsByClass.TryGetValue(gobClass, out kindred)) return g_emptyGobArray;
+            return kindred;
+        }
+
         public void Add(Gob gob)
         {
             if (gob.Layer == null)
@@ -122,15 +122,24 @@ namespace AW2.Game.Arenas
                     default: throw new ApplicationException("Unexpected layer preference " + gob.LayerPreference);
                 }
             gob.Layer.Gobs.Add(gob);
-            if (_gobDictionary.ContainsKey(gob.ID)) // This bug crashes game servers occasionally (2012-09-16).
+            if (_gobsByID.ContainsKey(gob.ID)) // This bug crashes game servers occasionally (2012-09-16).
                 throw new ApplicationException(string.Format("Cannot add {0} (at {1}) because {2} (at {3}) exists",
-                    gob, gob.BirthTime, _gobDictionary[gob.ID], _gobDictionary[gob.ID].BirthTime));
-            _gobDictionary.Add(gob.ID, gob);
+                    gob, gob.BirthTime, _gobsByID[gob.ID], _gobsByID[gob.ID].BirthTime));
+            _gobsByID.Add(gob.ID, gob);
+            var gobClass = gob.GetType();
+            HashSet<Gob> kindred;
+            if (!_gobsByClass.TryGetValue(gobClass, out kindred))
+            {
+                kindred = new HashSet<Gob>();
+                _gobsByClass.Add(gobClass, kindred);
+            }
+            kindred.Add(gob);
         }
 
         public void Clear()
         {
-            _gobDictionary.Clear();
+            _gobsByID.Clear();
+            _gobsByClass.Clear();
             foreach (var layer in _arenaLayers) layer.Gobs.Clear();
         }
 
@@ -140,6 +149,22 @@ namespace AW2.Game.Arenas
         public void Remove(Gob gob)
         {
             Remove(gob, false);
+        }
+
+        /// <summary>
+        /// Removes the first occurrence of a specific element from the collection.
+        /// </summary>
+        /// <param name="force">Remove the element regardless of how <see cref="Removing"/>
+        /// evaluates on the element.</param>
+        public void Remove(Gob gob, bool force)
+        {
+            if (gob.Layer == null) return;
+            if (Removing != null && !Removing(gob) && !force) return;
+            _gobsByID.Remove(gob.ID);
+            var gobClass = gob.GetType();
+            HashSet<Gob> kindred;
+            if (_gobsByClass.TryGetValue(gobClass, out kindred)) kindred.Remove(gob);
+            gob.Layer.Gobs.Remove(gob);
         }
 
         /// <summary>

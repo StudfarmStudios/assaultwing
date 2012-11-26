@@ -43,7 +43,7 @@ namespace AW2.Game.Gobs
             Func<IGeomPrimitive, int, IEnumerable<Vector2>> getRandomPoses = (area, count) =>
                 Enumerable.Range(0, count)
                 .Select(x => arena.GetFreePosition(LARGE_GOB_PHYSICAL_RADIUS, area));
-            var spawnPoses = arena.Gobs.OfType<SpawnPlayer>()
+            var spawnPoses = arena.Gobs.All<SpawnPlayer>()
                 .SelectMany(spawn => getRandomPoses(spawn._spawnArea, 5));
             var poses = spawnPoses.Any()
                 ? spawnPoses

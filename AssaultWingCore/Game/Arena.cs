@@ -301,6 +301,7 @@ namespace AW2.Game
             get
             {
                 return Gobs.All(typeof(Ship))
+                    .Union(Gobs.All(typeof(SnakeShip)))
                     .Union(Gobs.All(typeof(Bot)))
                     .Union(Gobs.All(typeof(FloatingBullet)));
             }

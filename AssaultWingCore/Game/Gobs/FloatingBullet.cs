@@ -53,6 +53,11 @@ namespace AW2.Game.Gobs
         private Vector2 _thrustForce;
         private CollisionArea _magnetArea;
         private CollisionArea _spreadArea;
+        /// <summary>
+        /// Fast-access cache for potential targets.
+        /// </summary>
+        private HashSet<Gob> _potentialTargets;
+        private AWTimer _potentialTargetsUpdateTimer;
 
         public override bool IsDamageable { get { return true; } }
         private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(AssaultWingCore.TargetFPS * HOVER_THRUST_INTERVAL); } }
@@ -60,7 +65,7 @@ namespace AW2.Game.Gobs
         private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }
 
         private bool IsAvoidable(Gob gob) { return IsFriend(gob) && gob is FloatingBullet; }
-        private bool IsReachable(Gob gob) { return !IsFriend(gob) && !gob.IsHidden && Arena.PotentialTargets.Contains(gob); }
+        private bool IsReachable(Gob gob) { return !IsFriend(gob) && !gob.IsHidden && _potentialTargets.Contains(gob); }
         private bool IsExplodable(CollisionArea area)
         {
             if (IsFriend(area.Owner)) return false;
@@ -103,16 +108,17 @@ namespace AW2.Game.Gobs
             Body.AngularDamping = _rotationDamping;
             _magnetArea = CollisionAreas.First(area => area.Name == "Magnet");
             _spreadArea = CollisionAreas.First(area => area.Name == "Spread");
+            _potentialTargets = new HashSet<Gob>();
+            _potentialTargetsUpdateTimer = new AWTimer(() => Arena.TotalTime, TimeSpan.FromSeconds(0.5));
         }
 
         public override void Update()
         {
             base.Update();
+            UpdatePotentialTargets();
             if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
             if (IsHoverThrusting) PhysicsHelper.ApplyForce(this, _thrustForce);
-            // FIXME !!! Computing alpha and magnet from Arena.PotentialTargets each frame may be too slow.
-            // !!! Instead, choose a target, like, twice a second and compute alpha and magnet by that.
-            Alpha = Arena.PotentialTargets
+            Alpha = _potentialTargets
                 .Where(gob => !IsFriend(gob) && !gob.IsHidden)
                 .Select(gob => Vector2.Distance(Pos, gob.Pos))
                 .Select(_enemyDistanceToAlpha.Evaluate)
@@ -162,6 +168,17 @@ namespace AW2.Game.Gobs
                 else
                     _hoverAroundPos = maybeHoverAroundPos;
             }
+        }
+
+        private void UpdatePotentialTargets()
+        {
+            if (_potentialTargetsUpdateTimer.IsElapsed)
+            {
+                _potentialTargets.Clear();
+                _potentialTargets.UnionWith(Arena.PotentialTargets);
+            }
+            else
+                _potentialTargets.RemoveWhere(gob => gob.Dead);
         }
 
         private void MoveTowards(Vector2 target, float force)

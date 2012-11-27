@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GobType type="AW2.Game.Gobs.Lightning">
+  <typeName>bot lightning</typeName>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <impactDamage>113</impactDamage>
+  <chainDamageMultiplier>1.3</chainDamageMultiplier>
+  <wildness>0.35</wildness>
+  <fineness>22</fineness>
+  <thickness>0.7</thickness>
+  <textureNames>
+    <Item>lightning</Item>
+    <Item>lightning_2</Item>
+    <Item>lightning_3</Item>
+  </textureNames>
+  <alphaCurve>
+    0 1 0 -0.0465796478 Smooth
+    0.3 0 -2.71247 0 Smooth
+  </alphaCurve>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1</scale>
+  <birthGobTypes/>
+  <deathGobTypes/>
+  <moveType>Static</moveType>
+  <networkUpdatePeriod>0</networkUpdatePeriod>
+  <lifetime>900000000000</lifetime>
+  <collisionAreas />
+  <maxDamage>100</maxDamage>
+</GobType>

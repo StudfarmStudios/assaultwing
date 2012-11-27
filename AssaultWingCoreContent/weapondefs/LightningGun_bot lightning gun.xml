@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.LightningGun">
+
+  <deviceInfo>
+    <pictureName>dummytexture</pictureName>
+    <titlePictureName>dummytexture</titlePictureName>
+    <infoText>Info</infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>dummytexture</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Average</shotSpeed>
+    <recoilMomentum>Average</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>bot lightning gun</typeName>
+  <range>350</range>
+  <chainLinkRangeMultiplier>0.8</chainLinkRangeMultiplier>
+  <fireSound>LightningWeapon</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <fireEffectType>EveryShot</fireEffectType>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>dummytexture</iconName>
+  <shotTypeName>bot lightning</shotTypeName>
+  <loadTime>2</loadTime>
+  <fireCharge>0</fireCharge>
+  <fireChargePerSecond>0</fireChargePerSecond>
+  <recoilMomentum>0</recoilMomentum>
+  <shotCount>2</shotCount>
+  <shotSpacing>0.3</shotSpacing>
+</ShipDeviceType>

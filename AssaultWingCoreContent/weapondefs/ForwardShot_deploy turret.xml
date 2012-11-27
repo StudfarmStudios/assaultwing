@@ -31,7 +31,7 @@
   <fireSound>DropMines</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
-  <shotTypeName>bazooka turret</shotTypeName>
+  <shotTypeName>lightning turret</shotTypeName>
   <shotSpeed>100</shotSpeed>
   <loadTime>1</loadTime>
   <fireCharge>500</fireCharge>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Bot">
+  <typeName>lightning turret</typeName>
+  <networkUpdatePeriod>1</networkUpdatePeriod>
+  <lifetime>30</lifetime>
+  <mass>1400</mass>
+  <scale>0.057</scale>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <rotationSpeed>1.2</rotationSpeed>
+  <aimRange>500</aimRange>
+  <shootRange>350</shootRange>
+  <optimalTargetDistance>290</optimalTargetDistance>
+
+  <thruster>
+    <maxForce>55000</maxForce>
+    <maxSpeed>20</maxSpeed>
+    <runningSound></runningSound>
+    <exhaustEngineNames>
+      <Item>bot thrust</Item>
+    </exhaustEngineNames>
+  </thruster>
+
+  <coughEngine>
+    <pengNames>
+      <Item>shipsmoke</Item>
+    </pengNames>
+  </coughEngine>
+
+  <weaponName>bot lightning gun</weaponName>
+  <modelName>bot</modelName>
+  <moveType>Dynamic</moveType>
+  <maxDamage>1500</maxDamage>
+  <birthGobTypes>
+    <Item>bot birth electric ball</Item>
+    <Item>bot birth electric streaks</Item>
+    <Item>bot birth glowdust</Item>
+    <Item>dumb glow</Item>
+    <Item>bot electric ball</Item>
+    <Item>bot electric streaks</Item>
+    <Item>playerglow</Item>
+  </birthGobTypes>
+  <deathGobTypes>
+    <Item>bomb explosion</Item>
+  </deathGobTypes>
+  <collisionAreas>
+    <Item>
+      <type>Common</type>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Hit</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <x>0</x>
+          <y>0</y>
+        </center>
+        <radius>315</radius>
+      </area>
+    </Item>
+  </collisionAreas>
+</GobType>

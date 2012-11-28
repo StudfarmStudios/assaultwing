@@ -172,7 +172,12 @@ namespace AW2.Game.Gobs
 #endif
                 checked
                 {
-                    base.Serialize(writer, mode);
+                    // Note: Gob.{Pos,Rotation,Move,RotationSpeed} are computed from Host
+                    // and don't need to be serialized except at birth.
+                    var baseSerializationMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
+                        ? mode
+                        : mode & ~SerializationModeFlags.VaryingDataFromServer;
+                    base.Serialize(writer, baseSerializationMode);
                     if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
                     {
                         var hostID = Host != null ? Host.ID : Gob.INVALID_ID;
@@ -191,7 +196,12 @@ namespace AW2.Game.Gobs
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, framesAgo);
+            // Note: Gob.{Pos,Rotation,Move,RotationSpeed} are computed from Host
+            // and don't need to be serialized except at birth.
+            var baseSerializationMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
+                ? mode
+                : mode & ~SerializationModeFlags.VaryingDataFromServer;
+            base.Deserialize(reader, baseSerializationMode, framesAgo);
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
             {
                 int hostID = reader.ReadInt16();
@@ -213,8 +223,8 @@ namespace AW2.Game.Gobs
         {
             if (Host == null) return;
             var targetFPS = AW2.Core.AssaultWingCore.TargetFPS;
-            Move = (Host.GetNamedPosition(HostBoneIndex) - Pos) * targetFPS;
-            RotationSpeed = AWMathHelper.GetAbsoluteMinimalEqualAngle(Host.GetBoneRotation(HostBoneIndex) - Rotation) * targetFPS;
+            Move = (Host.GetNamedPosition(HostBoneIndex) - (Pos + DrawPosOffset)) * targetFPS;
+            RotationSpeed = AWMathHelper.GetAbsoluteMinimalEqualAngle(Host.GetBoneRotation(HostBoneIndex) - (Rotation + DrawRotationOffset)) * targetFPS;
         }
 
         private void UpdateGeometry()

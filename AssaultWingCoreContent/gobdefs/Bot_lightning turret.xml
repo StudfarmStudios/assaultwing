@@ -12,9 +12,10 @@
   <layerPreference>Front</layerPreference>
   <rotationSpeed>1.2</rotationSpeed>
   <aimRange>500</aimRange>
-  <shootRange>350</shootRange>
-  <shootAimAngleErrorMax>1.2</shootAimAngleErrorMax>
+  <shootRange>420</shootRange>
   <optimalTargetDistance>290</optimalTargetDistance>
+  <shootAimAngleErrorMax>1.2</shootAimAngleErrorMax>
+  <shootWithoutLineOfSight>true</shootWithoutLineOfSight>
   <movementDamping>0.4</movementDamping>
 
   <thruster>

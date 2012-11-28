@@ -40,9 +40,11 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _aimRange;
         [TypeParameter]
+        private float _shootRange;
+        [TypeParameter]
         private float _shootAimAngleErrorMax;
         [TypeParameter]
-        private float _shootRange;
+        private bool _shootWithoutLineOfSight;
         [TypeParameter]
         private float _optimalTargetDistance;
         [TypeParameter]
@@ -93,8 +95,9 @@ namespace AW2.Game.Gobs
         {
             _rotationSpeed = MathHelper.TwoPi / 10;
             _aimRange = 700;
-            _shootAimAngleErrorMax = 0.20f;
             _shootRange = 500;
+            _shootAimAngleErrorMax = 0.20f;
+            _shootWithoutLineOfSight = false;
             _optimalTargetDistance = 400;
             _thruster = new Thruster();
             _movementDamping = 0;
@@ -292,6 +295,7 @@ namespace AW2.Game.Gobs
         {
             var targetDistanceSquared = Vector2.DistanceSquared(target.Pos, Pos);
             if (targetDistanceSquared > _shootRange * _shootRange) return false;
+            if (_shootWithoutLineOfSight) return true;
             var obstacleDistance = Arena.GetDistanceToClosest(Pos, target.Pos, area => area.Owner.MoveType != GobUtils.MoveType.Dynamic, OBSTACLE_TYPES);
             return !obstacleDistance.HasValue || obstacleDistance * obstacleDistance > targetDistanceSquared;
         }

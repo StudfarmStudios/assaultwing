@@ -15,6 +15,7 @@
   <shootRange>500</shootRange>
   <optimalTargetDistance>370</optimalTargetDistance>
   <shootAimAngleErrorMax>0.2</shootAimAngleErrorMax>
+  <shootWithoutLineOfSight>false</shootWithoutLineOfSight>
   <movementDamping>0.4</movementDamping>
 
   <thruster>

@@ -23,7 +23,6 @@ namespace AW2.Game.Gobs
         private static readonly TimeSpan MOVE_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(11);
         private static readonly TimeSpan AIM_TARGET_UPDATE_INTERVAL = TimeSpan.FromSeconds(1.1);
         private static readonly TimeSpan TRY_FIRE_INTERVAL = TimeSpan.FromSeconds(0.9);
-        private static readonly float SHOOT_AIM_ANGLE_ERROR_MAX = MathHelper.ToRadians(10);
         private static readonly CollisionAreaType[] WALL_TYPES = new[] { CollisionAreaType.Static };
         private static readonly CollisionAreaType[] OBSTACLE_TYPES = new[] { CollisionAreaType.Static };
         private const float FAN_ANGLE_SPEED_MAX = 30;
@@ -41,11 +40,15 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _aimRange;
         [TypeParameter]
+        private float _shootAimAngleErrorMax;
+        [TypeParameter]
         private float _shootRange;
         [TypeParameter]
         private float _optimalTargetDistance;
         [TypeParameter]
         private Thruster _thruster;
+        [TypeParameter]
+        private float _movementDamping;
         [TypeParameter]
         private CoughEngine _coughEngine;
         [TypeParameter]
@@ -90,9 +93,11 @@ namespace AW2.Game.Gobs
         {
             _rotationSpeed = MathHelper.TwoPi / 10;
             _aimRange = 700;
+            _shootAimAngleErrorMax = 0.20f;
             _shootRange = 500;
             _optimalTargetDistance = 400;
             _thruster = new Thruster();
+            _movementDamping = 0;
             _coughEngine = new CoughEngine();
             _weaponName = (CanonicalString)"dummyweapontype";
         }
@@ -139,6 +144,7 @@ namespace AW2.Game.Gobs
                 _timedActions.Add(new TimedAction(AIM_TARGET_UPDATE_INTERVAL, UpdateAimTarget));
                 _timedActions.Add(new TimedAction(TRY_FIRE_INTERVAL, Shoot));
             }
+            Body.LinearDamping = _movementDamping;
         }
 
         public override void Update()
@@ -278,7 +284,7 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == Core.NetworkMode.Client) return;
             if (Target == null) return;
             var aimErrorAngle = AWMathHelper.AbsoluteAngleDifference(Rotation, (Target.Pos - Pos).Angle());
-            if (aimErrorAngle > SHOOT_AIM_ANGLE_ERROR_MAX) return;
+            if (aimErrorAngle > _shootAimAngleErrorMax) return;
             if (IsInLineOfSight(Target)) _weapon.TryFire(new UI.ControlState(1, true));
         }
 

@@ -2,8 +2,8 @@
 <GobType type="AW2.Game.Gobs.Bot">
   <typeName>lightning turret</typeName>
   <networkUpdatePeriod>1</networkUpdatePeriod>
-  <lifetime>30</lifetime>
-  <mass>1400</mass>
+  <lifetime>45</lifetime>
+  <mass>14000</mass>
   <scale>0.057</scale>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
@@ -13,14 +13,15 @@
   <rotationSpeed>1.2</rotationSpeed>
   <aimRange>500</aimRange>
   <shootRange>350</shootRange>
+  <shootAimAngleErrorMax>1.2</shootAimAngleErrorMax>
   <optimalTargetDistance>290</optimalTargetDistance>
+  <movementDamping>0.4</movementDamping>
 
   <thruster>
-    <maxForce>55000</maxForce>
-    <maxSpeed>20</maxSpeed>
+    <maxForce>0</maxForce>
+    <maxSpeed>0</maxSpeed>
     <runningSound></runningSound>
     <exhaustEngineNames>
-      <Item>bot thrust</Item>
     </exhaustEngineNames>
   </thruster>
 

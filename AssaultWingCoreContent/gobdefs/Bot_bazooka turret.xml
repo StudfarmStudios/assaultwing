@@ -2,8 +2,8 @@
 <GobType type="AW2.Game.Gobs.Bot">
   <typeName>bazooka turret</typeName>
   <networkUpdatePeriod>1</networkUpdatePeriod>
-  <lifetime>30</lifetime>
-  <mass>1400</mass>
+  <lifetime>45</lifetime>
+  <mass>14000</mass>
   <scale>0.057</scale>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
@@ -14,13 +14,14 @@
   <aimRange>800</aimRange>
   <shootRange>500</shootRange>
   <optimalTargetDistance>370</optimalTargetDistance>
+  <shootAimAngleErrorMax>0.2</shootAimAngleErrorMax>
+  <movementDamping>0.4</movementDamping>
 
   <thruster>
-    <maxForce>55000</maxForce>
-    <maxSpeed>20</maxSpeed>
+    <maxForce>0</maxForce>
+    <maxSpeed>0</maxSpeed>
     <runningSound></runningSound>
     <exhaustEngineNames>
-      <Item>bot thrust</Item>
     </exhaustEngineNames>
   </thruster>
 

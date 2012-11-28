@@ -13,7 +13,9 @@
   <rotationSpeed>0.8</rotationSpeed>
   <aimRange>800</aimRange>
   <shootRange>380</shootRange>
+  <shootAimAngleErrorMax>1.5</shootAimAngleErrorMax>
   <optimalTargetDistance>220</optimalTargetDistance>
+  <movementDamping>0.01</movementDamping>
 
   <thruster>
     <maxForce>55000</maxForce>

@@ -110,6 +110,7 @@ namespace AW2.Game.Gobs
             _spreadArea = CollisionAreas.First(area => area.Name == "Spread");
             _potentialTargets = new HashSet<Gob>();
             _potentialTargetsUpdateTimer = new AWTimer(() => Arena.TotalTime, TimeSpan.FromSeconds(0.5));
+            _potentialTargetsUpdateTimer.SetCurrentInterval(TimeSpan.Zero); // Do the first update immediately.
         }
 
         public override void Update()

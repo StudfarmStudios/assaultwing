@@ -9,17 +9,8 @@
 //
 //  Copyright (C) 2006 Franco, Gustavo 
 //
-#if DEBUG
-#define DEBUGON
-#endif
-
 using System;
-using System.Text;
 using System.Drawing;
-using System.Threading;
-using System.Collections;
-using System.Windows.Forms;
-using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using AW2.Helpers.Collections;
@@ -82,11 +73,6 @@ namespace AW2.Game.Arenas
         }
         #endregion
 
-        #region Events
-        public delegate void PathFinderDebugHandler(int fromX, int fromY, int x, int y, PathFinderNodeType type, float totalCost, float cost);
-        public event PathFinderDebugHandler PathFinderDebug;
-        #endregion
-
         private static readonly sbyte[,] g_direction = new sbyte[8, 2] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 }, { 1, -1 }, { 1, 1 }, { -1, 1 }, { -1, -1 } };
 
         #region Variables Declaration
@@ -98,8 +84,6 @@ namespace AW2.Game.Arenas
         private bool mStopped = true;
         private float mHEstimate = 2;
         private int mSearchLimit = 2000;
-        private bool mDebugProgress = false;
-        private bool mDebugFoundPath = false;
         private PathFinderNodeFast[] mCalcGrid = null;
         private byte mOpenNodeValue = 1;
         private byte mCloseNodeValue = 2;
@@ -163,18 +147,6 @@ namespace AW2.Game.Arenas
             get { return mSearchLimit; }
             set { mSearchLimit = value; }
         }
-
-        public bool DebugProgress
-        {
-            get { return mDebugProgress; }
-            set { mDebugProgress = value; }
-        }
-
-        public bool DebugFoundPath
-        {
-            get { return mDebugFoundPath; }
-            set { mDebugFoundPath = value; }
-        }
         #endregion
 
         #region Methods
@@ -196,13 +168,6 @@ namespace AW2.Game.Arenas
                 mOpen.Clear();
                 mClose.Clear();
 
-#if DEBUGON
-                if (mDebugProgress && PathFinderDebug != null)
-                    PathFinderDebug(0, 0, start.X, start.Y, PathFinderNodeType.Start, -1, -1);
-                if (mDebugProgress && PathFinderDebug != null)
-                    PathFinderDebug(0, 0, end.X, end.Y, PathFinderNodeType.End, -1, -1);
-#endif
-
                 mLocation = (start.Y << mGridYLog2) + start.X;
                 mEndLocation = (end.Y << mGridYLog2) + end.X;
                 mCalcGrid[mLocation].G = 0;
@@ -222,11 +187,6 @@ namespace AW2.Game.Arenas
 
                     mLocationX = (ushort)(mLocation & mGridXMinus1);
                     mLocationY = (ushort)(mLocation >> mGridYLog2);
-
-#if DEBUGON
-                    if (mDebugProgress && PathFinderDebug != null)
-                        PathFinderDebug(0, 0, mLocation & mGridXMinus1, mLocation >> mGridYLog2, PathFinderNodeType.Current, -1, -1);
-#endif
 
                     if (mLocation == mEndLocation)
                     {
@@ -275,21 +235,12 @@ namespace AW2.Game.Arenas
                         mH = (float)(mHEstimate * Math.Sqrt(Math.Pow((mNewLocationX - end.X), 2) + Math.Pow((mNewLocationY - end.Y), 2)));
                         mCalcGrid[mNewLocation].F = mNewG + mH;
 
-#if DEBUGON
-                        if (mDebugProgress && PathFinderDebug != null)
-                            PathFinderDebug(mLocationX, mLocationY, mNewLocationX, mNewLocationY, PathFinderNodeType.Open, mCalcGrid[mNewLocation].F, mCalcGrid[mNewLocation].G);
-#endif
                         mOpen.Push(mNewLocation);
                         mCalcGrid[mNewLocation].Status = mOpenNodeValue;
                     }
 
                     mCloseNodeCounter++;
                     mCalcGrid[mLocation].Status = mCloseNodeValue;
-
-#if DEBUGON
-                    if (mDebugProgress && PathFinderDebug != null)
-                        PathFinderDebug(0, 0, mLocationX, mLocationY, PathFinderNodeType.Close, mCalcGrid[mLocation].F, mCalcGrid[mLocation].G);
-#endif
                 }
 
                 if (mFound)
@@ -311,10 +262,6 @@ namespace AW2.Game.Arenas
                     while (fNode.X != fNode.PX || fNode.Y != fNode.PY)
                     {
                         mClose.Add(fNode);
-#if DEBUGON
-                        if (mDebugFoundPath && PathFinderDebug != null)
-                            PathFinderDebug(fNode.PX, fNode.PY, fNode.X, fNode.Y, PathFinderNodeType.Path, fNode.F, fNode.G);
-#endif
                         posX = fNode.PX;
                         posY = fNode.PY;
                         fNodeTmp = mCalcGrid[(posY << mGridYLog2) + posX];
@@ -328,10 +275,6 @@ namespace AW2.Game.Arenas
                     }
 
                     mClose.Add(fNode);
-#if DEBUGON
-                    if (mDebugFoundPath && PathFinderDebug != null)
-                        PathFinderDebug(fNode.PX, fNode.PY, fNode.X, fNode.Y, PathFinderNodeType.Path, fNode.F, fNode.G);
-#endif
 
                     mStopped = true;
                     return mClose;

@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Core\CommandLineOptionsTest.cs" />
     <Compile Include="FarseerPhysics\Collision\AABBTest.cs" />
+    <Compile Include="Game\Arenas\NavigatorTest.cs" />
     <Compile Include="Game\GobTest.cs" />
     <Compile Include="Game\GobUtils\CoronerTest.cs" />
     <Compile Include="Game\GobUtils\DamageInfoTest.cs" />

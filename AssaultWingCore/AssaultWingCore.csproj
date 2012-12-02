@@ -113,6 +113,8 @@
     <Compile Include="Game\Arenas\ArenaTypeLoader.cs" />
     <Compile Include="Game\Arenas\GobCollection.cs" />
     <Compile Include="Game\Arenas\LightingSettings.cs" />
+    <Compile Include="Game\Arenas\Navigator.cs" />
+    <Compile Include="Game\Arenas\PathFinderAStar.cs" />
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
@@ -246,6 +248,7 @@
     <Compile Include="Helpers\Collections\IObservableCollection.cs" />
     <Compile Include="Helpers\Collections\ITypedQueue.cs" />
     <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
+    <Compile Include="Helpers\Collections\PriorityQueueB.cs" />
     <Compile Include="Helpers\Collections\TypedQueue.cs" />
     <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Geometric\Circle.cs" />

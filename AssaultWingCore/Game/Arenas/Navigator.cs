@@ -25,12 +25,7 @@ namespace AW2.Game.Arenas
                     pathFinderGrid[gridX, gridY] = isAccessible(new Vector2(gridX, gridY) * granularity) ? (byte)1 : (byte)0;
             _pathFinder = new PathFinderAStar(pathFinderGrid)
             {
-                Diagonals = true,
-                HeuristicEstimate = 2,
-                HeavyDiagonals = false,
-                PunishChangeDirection = false,
-                TieBreaker = false,
-                Formula = PathFinderAStar.HeuristicFormula.Manhattan,
+                HeuristicEstimate = 1,
                 SearchLimit = 10000,
             };
         }

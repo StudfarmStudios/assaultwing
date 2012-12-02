@@ -16,23 +16,9 @@ using System.Diagnostics;
 
 namespace AW2.Helpers.Collections
 {
-    #region Interfaces
     /// <remarks>Part of Gustavo Franco's A* pathfinding tutorial.</remarks>
     /// <seealso cref="http://www.codeguru.com/csharp/csharp/cs_misc/designtechniques/article.php/c12527/AStar-A-Implementation-in-C-Path-Finding-PathFinder.htm"/>
-    public interface IPriorityQueue<T>
-    {
-        #region Methods
-        int Push(T item);
-        T Pop();
-        T Peek();
-        void Update(int i);
-        #endregion
-    }
-    #endregion
-
-    /// <remarks>Part of Gustavo Franco's A* pathfinding tutorial.</remarks>
-    /// <seealso cref="http://www.codeguru.com/csharp/csharp/cs_misc/designtechniques/article.php/c12527/AStar-A-Implementation-in-C-Path-Finding-PathFinder.htm"/>
-    public class PriorityQueueB<T> : IPriorityQueue<T>
+    public class PriorityQueueB<T>
     {
         #region Variables Declaration
         protected List<T> InnerList = new List<T>();
@@ -58,17 +44,6 @@ namespace AW2.Helpers.Collections
         #endregion
 
         #region Methods
-        protected void SwitchElements(int i, int j)
-        {
-            T h = InnerList[i];
-            InnerList[i] = InnerList[j];
-            InnerList[j] = h;
-        }
-
-        protected virtual int OnCompare(int i, int j)
-        {
-            return mComparer.Compare(InnerList[i], InnerList[j]);
-        }
 
         /// <summary>
         /// Push an object onto the PQ
@@ -84,9 +59,11 @@ namespace AW2.Helpers.Collections
                 if (p == 0)
                     break;
                 p2 = (p - 1) / 2;
-                if (OnCompare(p, p2) < 0)
+                if (mComparer.Compare(InnerList[p], InnerList[p2]) < 0)
                 {
-                    SwitchElements(p, p2);
+                    var swap = InnerList[p];
+                    InnerList[p] = InnerList[p2];
+                    InnerList[p2] = swap;
                     p = p2;
                 }
                 else
@@ -103,67 +80,27 @@ namespace AW2.Helpers.Collections
         {
             T result = InnerList[0];
             int p = 0, p1, p2, pn;
-            InnerList[0] = InnerList[InnerList.Count - 1];
-            InnerList.RemoveAt(InnerList.Count - 1);
+            var innerListCount = InnerList.Count - 1;
+            InnerList[0] = InnerList[innerListCount];
+            InnerList.RemoveAt(innerListCount);
             do
             {
                 pn = p;
                 p1 = 2 * p + 1;
                 p2 = 2 * p + 2;
-                if (InnerList.Count > p1 && OnCompare(p, p1) > 0) // links kleiner
+                if (innerListCount > p1 && mComparer.Compare(InnerList[p], InnerList[p1]) > 0) // links kleiner
                     p = p1;
-                if (InnerList.Count > p2 && OnCompare(p, p2) > 0) // rechts noch kleiner
+                if (innerListCount > p2 && mComparer.Compare(InnerList[p], InnerList[p2]) > 0) // rechts noch kleiner
                     p = p2;
 
                 if (p == pn)
                     break;
-                SwitchElements(p, pn);
+                var swap = InnerList[p];
+                InnerList[p] = InnerList[pn];
+                InnerList[pn] = swap;
             } while (true);
 
             return result;
-        }
-
-        /// <summary>
-        /// Notify the PQ that the object at position i has changed
-        /// and the PQ needs to restore order.
-        /// Since you dont have access to any indexes (except by using the
-        /// explicit IList.this) you should not call this function without knowing exactly
-        /// what you do.
-        /// </summary>
-        /// <param name="i">The index of the changed object.</param>
-        public void Update(int i)
-        {
-            int p = i, pn;
-            int p1, p2;
-            do	// aufsteigen
-            {
-                if (p == 0)
-                    break;
-                p2 = (p - 1) / 2;
-                if (OnCompare(p, p2) < 0)
-                {
-                    SwitchElements(p, p2);
-                    p = p2;
-                }
-                else
-                    break;
-            } while (true);
-            if (p < i)
-                return;
-            do	   // absteigen
-            {
-                pn = p;
-                p1 = 2 * p + 1;
-                p2 = 2 * p + 2;
-                if (InnerList.Count > p1 && OnCompare(p, p1) > 0) // links kleiner
-                    p = p1;
-                if (InnerList.Count > p2 && OnCompare(p, p2) > 0) // rechts noch kleiner
-                    p = p2;
-
-                if (p == pn)
-                    break;
-                SwitchElements(p, pn);
-            } while (true);
         }
 
         /// <summary>
@@ -185,30 +122,6 @@ namespace AW2.Helpers.Collections
         public int Count
         {
             get { return InnerList.Count; }
-        }
-
-        public void RemoveLocation(T item)
-        {
-            int index = -1;
-            for (int i = 0; i < InnerList.Count; i++)
-            {
-
-                if (mComparer.Compare(InnerList[i], item) == 0)
-                    index = i;
-            }
-
-            if (index != -1)
-                InnerList.RemoveAt(index);
-        }
-
-        public T this[int index]
-        {
-            get { return InnerList[index]; }
-            set
-            {
-                InnerList[index] = value;
-                Update(index);
-            }
         }
         #endregion
     }

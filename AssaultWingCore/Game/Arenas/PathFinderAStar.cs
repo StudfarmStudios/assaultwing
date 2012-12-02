@@ -9,7 +9,9 @@
 //
 //  Copyright (C) 2006 Franco, Gustavo 
 //
+#if DEBUG
 #define DEBUGON
+#endif
 
 using System;
 using System.Text;
@@ -36,8 +38,8 @@ namespace AW2.Game.Arenas
         internal struct PathFinderNodeFast
         {
             #region Variables Declaration
-            public int F; // f = gone + heuristic
-            public int G;
+            public float F; // f = gone + heuristic
+            public float G;
             public ushort PX; // Parent
             public ushort PY;
             public byte Status;
@@ -47,9 +49,9 @@ namespace AW2.Game.Arenas
         public struct PathFinderNode
         {
             #region Variables Declaration
-            public int F;
-            public int G;
-            public int H;  // f = gone + heuristic
+            public float F;
+            public float G;
+            public float H;  // f = gone + heuristic
             public int X;
             public int Y;
             public int PX; // Parent
@@ -61,12 +63,12 @@ namespace AW2.Game.Arenas
         #region Enum
         public enum PathFinderNodeType
         {
-            Start   = 1,
-            End     = 2,
-            Open    = 4,
-            Close   = 8,
+            Start = 1,
+            End = 2,
+            Open = 4,
+            Close = 8,
             Current = 16,
-            Path    = 32
+            Path = 32
         }
 
         public enum HeuristicFormula
@@ -80,15 +82,12 @@ namespace AW2.Game.Arenas
         }
         #endregion
 
-        #region Win32APIs
-        [System.Runtime.InteropServices.DllImport("KERNEL32.DLL", EntryPoint = "RtlZeroMemory")]
-        public unsafe static extern bool ZeroMemory(byte* destination, int length);
-        #endregion
-
         #region Events
-        public delegate void PathFinderDebugHandler(int fromX, int fromY, int x, int y, PathFinderNodeType type, int totalCost, int cost);
+        public delegate void PathFinderDebugHandler(int fromX, int fromY, int x, int y, PathFinderNodeType type, float totalCost, float cost);
         public event PathFinderDebugHandler PathFinderDebug;
         #endregion
+
+        private static readonly sbyte[,] g_direction = new sbyte[8, 2] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 }, { 1, -1 }, { 1, 1 }, { -1, 1 }, { -1, -1 } };
 
         #region Variables Declaration
         // Heap variables are initializated to default, but I like to do it anyway
@@ -97,13 +96,7 @@ namespace AW2.Game.Arenas
         private List<PathFinderNode> mClose = new List<PathFinderNode>();
         private bool mStop = false;
         private bool mStopped = true;
-        private int mHoriz = 0;
-        private HeuristicFormula mFormula = HeuristicFormula.Euclidean;
-        private bool mDiagonals = true;
-        private int mHEstimate = 2;
-        private bool mPunishChangeDirection = false;
-        private bool mTieBreaker = false;
-        private bool mHeavyDiagonals = false;
+        private float mHEstimate = 2;
         private int mSearchLimit = 2000;
         private bool mDebugProgress = false;
         private bool mDebugFoundPath = false;
@@ -112,7 +105,7 @@ namespace AW2.Game.Arenas
         private byte mCloseNodeValue = 2;
 
         //Promoted local variables to member variables to avoid recreation between calls
-        private int mH = 0;
+        private float mH = 0;
         private int mLocation = 0;
         private int mNewLocation = 0;
         private ushort mLocationX = 0;
@@ -125,9 +118,8 @@ namespace AW2.Game.Arenas
         private ushort mGridXMinus1 = 0;
         private ushort mGridYLog2 = 0;
         private bool mFound = false;
-        private sbyte[,] mDirection = new sbyte[8, 2] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 }, { 1, -1 }, { 1, 1 }, { -1, 1 }, { -1, -1 } };
         private int mEndLocation = 0;
-        private int mNewG = 0;
+        private float mNewG = 0;
         #endregion
 
         #region Constructors
@@ -160,47 +152,10 @@ namespace AW2.Game.Arenas
             get { return mStopped; }
         }
 
-        public HeuristicFormula Formula
-        {
-            get { return mFormula; }
-            set { mFormula = value; }
-        }
-
-        public bool Diagonals
-        {
-            get { return mDiagonals; }
-            set
-            {
-                mDiagonals = value;
-                if (mDiagonals)
-                    mDirection = new sbyte[8, 2] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 }, { 1, -1 }, { 1, 1 }, { -1, 1 }, { -1, -1 } };
-                else
-                    mDirection = new sbyte[4, 2] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 } };
-            }
-        }
-
-        public bool HeavyDiagonals
-        {
-            get { return mHeavyDiagonals; }
-            set { mHeavyDiagonals = value; }
-        }
-
-        public int HeuristicEstimate
+        public float HeuristicEstimate
         {
             get { return mHEstimate; }
             set { mHEstimate = value; }
-        }
-
-        public bool PunishChangeDirection
-        {
-            get { return mPunishChangeDirection; }
-            set { mPunishChangeDirection = value; }
-        }
-
-        public bool TieBreaker
-        {
-            get { return mTieBreaker; }
-            set { mTieBreaker = value; }
         }
 
         public int SearchLimit
@@ -232,11 +187,6 @@ namespace AW2.Game.Arenas
         {
             lock (this)
             {
-                // Is faster if we don't clear the matrix, just assign different values for open and close and ignore the rest
-                // I could have user Array.Clear() but using unsafe code is faster, no much but it is.
-                //fixed (PathFinderNodeFast* pGrid = tmpGrid) 
-                //    ZeroMemory((byte*) pGrid, sizeof(PathFinderNodeFast) * 1000000);
-
                 mFound = false;
                 mStop = false;
                 mStopped = false;
@@ -291,14 +241,11 @@ namespace AW2.Game.Arenas
                         return null;
                     }
 
-                    if (mPunishChangeDirection)
-                        mHoriz = (mLocationX - mCalcGrid[mLocation].PX);
-
                     //Lets calculate each successors
-                    for (int i = 0; i < (mDiagonals ? 8 : 4); i++)
+                    for (int i = 0; i < 8; i++)
                     {
-                        mNewLocationX = (ushort)(mLocationX + mDirection[i, 0]);
-                        mNewLocationY = (ushort)(mLocationY + mDirection[i, 1]);
+                        mNewLocationX = (ushort)(mLocationX + g_direction[i, 0]);
+                        mNewLocationY = (ushort)(mLocationY + g_direction[i, 1]);
                         mNewLocation = (mNewLocationY << mGridYLog2) + mNewLocationX;
 
                         if (mNewLocationX >= mGridX || mNewLocationY >= mGridY)
@@ -308,24 +255,10 @@ namespace AW2.Game.Arenas
                         if (mGrid[mNewLocationX, mNewLocationY] == 0)
                             continue;
 
-                        if (mHeavyDiagonals && i > 3)
-                            mNewG = mCalcGrid[mLocation].G + (int)(mGrid[mNewLocationX, mNewLocationY] * 2.41);
+                        if (i > 3)
+                            mNewG = mCalcGrid[mLocation].G + mGrid[mNewLocationX, mNewLocationY] * 1.4142135623730950488016887242097f;
                         else
                             mNewG = mCalcGrid[mLocation].G + mGrid[mNewLocationX, mNewLocationY];
-
-                        if (mPunishChangeDirection)
-                        {
-                            if ((mNewLocationX - mLocationX) != 0)
-                            {
-                                if (mHoriz == 0)
-                                    mNewG += Math.Abs(mNewLocationX - end.X) + Math.Abs(mNewLocationY - end.Y);
-                            }
-                            if ((mNewLocationY - mLocationY) != 0)
-                            {
-                                if (mHoriz != 0)
-                                    mNewG += Math.Abs(mNewLocationX - end.X) + Math.Abs(mNewLocationY - end.Y);
-                            }
-                        }
 
                         //Is it open or closed?
                         if (mCalcGrid[mNewLocation].Status == mOpenNodeValue || mCalcGrid[mNewLocation].Status == mCloseNodeValue)
@@ -339,62 +272,14 @@ namespace AW2.Game.Arenas
                         mCalcGrid[mNewLocation].PY = mLocationY;
                         mCalcGrid[mNewLocation].G = mNewG;
 
-                        switch (mFormula)
-                        {
-                            default:
-                            case HeuristicFormula.Manhattan:
-                                mH = mHEstimate * (Math.Abs(mNewLocationX - end.X) + Math.Abs(mNewLocationY - end.Y));
-                                break;
-                            case HeuristicFormula.MaxDXDY:
-                                mH = mHEstimate * (Math.Max(Math.Abs(mNewLocationX - end.X), Math.Abs(mNewLocationY - end.Y)));
-                                break;
-                            case HeuristicFormula.DiagonalShortCut:
-                                int h_diagonal = Math.Min(Math.Abs(mNewLocationX - end.X), Math.Abs(mNewLocationY - end.Y));
-                                int h_straight = (Math.Abs(mNewLocationX - end.X) + Math.Abs(mNewLocationY - end.Y));
-                                mH = (mHEstimate * 2) * h_diagonal + mHEstimate * (h_straight - 2 * h_diagonal);
-                                break;
-                            case HeuristicFormula.Euclidean:
-                                mH = (int)(mHEstimate * Math.Sqrt(Math.Pow((mNewLocationY - end.X), 2) + Math.Pow((mNewLocationY - end.Y), 2)));
-                                break;
-                            case HeuristicFormula.EuclideanNoSQR:
-                                mH = (int)(mHEstimate * (Math.Pow((mNewLocationX - end.X), 2) + Math.Pow((mNewLocationY - end.Y), 2)));
-                                break;
-                            case HeuristicFormula.Custom1:
-                                Point dxy = new Point(Math.Abs(end.X - mNewLocationX), Math.Abs(end.Y - mNewLocationY));
-                                int Orthogonal = Math.Abs(dxy.X - dxy.Y);
-                                int Diagonal = Math.Abs(((dxy.X + dxy.Y) - Orthogonal) / 2);
-                                mH = mHEstimate * (Diagonal + Orthogonal + dxy.X + dxy.Y);
-                                break;
-                        }
-                        if (mTieBreaker)
-                        {
-                            int dx1 = mLocationX - end.X;
-                            int dy1 = mLocationY - end.Y;
-                            int dx2 = start.X - end.X;
-                            int dy2 = start.Y - end.Y;
-                            int cross = Math.Abs(dx1 * dy2 - dx2 * dy1);
-                            mH = (int)(mH + cross * 0.001);
-                        }
+                        mH = (float)(mHEstimate * Math.Sqrt(Math.Pow((mNewLocationX - end.X), 2) + Math.Pow((mNewLocationY - end.Y), 2)));
                         mCalcGrid[mNewLocation].F = mNewG + mH;
 
 #if DEBUGON
                         if (mDebugProgress && PathFinderDebug != null)
                             PathFinderDebug(mLocationX, mLocationY, mNewLocationX, mNewLocationY, PathFinderNodeType.Open, mCalcGrid[mNewLocation].F, mCalcGrid[mNewLocation].G);
 #endif
-
-                        //It is faster if we leave the open node in the priority queue
-                        //When it is removed, it will be already closed, it will be ignored automatically
-                        //if (tmpGrid[newLocation].Status == 1)
-                        //{
-                        //    //int removeX   = newLocation & gridXMinus1;
-                        //    //int removeY   = newLocation >> gridYLog2;
-                        //    mOpen.RemoveLocation(newLocation);
-                        //}
-
-                        //if (tmpGrid[newLocation].Status != 1)
-                        //{
                         mOpen.Push(mNewLocation);
-                        //}
                         mCalcGrid[mNewLocation].Status = mOpenNodeValue;
                     }
 
@@ -460,27 +345,17 @@ namespace AW2.Game.Arenas
         #region Inner Classes
         internal class ComparePFNodeMatrix : IComparer<int>
         {
-            #region Variables Declaration
-            PathFinderNodeFast[] mMatrix;
-            #endregion
+            private PathFinderNodeFast[] mMatrix;
 
-            #region Constructors
             public ComparePFNodeMatrix(PathFinderNodeFast[] matrix)
             {
                 mMatrix = matrix;
             }
-            #endregion
 
-            #region IComparer Members
             public int Compare(int a, int b)
             {
-                if (mMatrix[a].F > mMatrix[b].F)
-                    return 1;
-                else if (mMatrix[a].F < mMatrix[b].F)
-                    return -1;
-                return 0;
+                return mMatrix[a].F.CompareTo(mMatrix[b].F);
             }
-            #endregion
         }
         #endregion
     }

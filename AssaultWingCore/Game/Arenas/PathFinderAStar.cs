@@ -10,7 +10,6 @@
 //  Copyright (C) 2006 Franco, Gustavo 
 //
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using AW2.Helpers.Collections;
@@ -155,7 +154,7 @@ namespace AW2.Game.Arenas
             mStop = true;
         }
 
-        public List<PathFinderNode> FindPath(Point start, Point end)
+        public List<PathFinderNode> FindPath(int startX, int startY, int endX, int endY)
         {
             lock (this)
             {
@@ -168,12 +167,12 @@ namespace AW2.Game.Arenas
                 mOpen.Clear();
                 mClose.Clear();
 
-                mLocation = (start.Y << mGridYLog2) + start.X;
-                mEndLocation = (end.Y << mGridYLog2) + end.X;
+                mLocation = (startY << mGridYLog2) + startX;
+                mEndLocation = (endY << mGridYLog2) + endX;
                 mCalcGrid[mLocation].G = 0;
                 mCalcGrid[mLocation].F = mHEstimate;
-                mCalcGrid[mLocation].PX = (ushort)start.X;
-                mCalcGrid[mLocation].PY = (ushort)start.Y;
+                mCalcGrid[mLocation].PX = (ushort)startX;
+                mCalcGrid[mLocation].PY = (ushort)startY;
                 mCalcGrid[mLocation].Status = mOpenNodeValue;
 
                 mOpen.Push(mLocation);
@@ -232,7 +231,7 @@ namespace AW2.Game.Arenas
                         mCalcGrid[mNewLocation].PY = mLocationY;
                         mCalcGrid[mNewLocation].G = mNewG;
 
-                        mH = (float)(mHEstimate * Math.Sqrt(Math.Pow((mNewLocationX - end.X), 2) + Math.Pow((mNewLocationY - end.Y), 2)));
+                        mH = (float)(mHEstimate * Math.Sqrt(Math.Pow((mNewLocationX - endX), 2) + Math.Pow((mNewLocationY - endY), 2)));
                         mCalcGrid[mNewLocation].F = mNewG + mH;
 
                         mOpen.Push(mNewLocation);
@@ -246,18 +245,18 @@ namespace AW2.Game.Arenas
                 if (mFound)
                 {
                     mClose.Clear();
-                    int posX = end.X;
-                    int posY = end.Y;
+                    int posX = endX;
+                    int posY = endY;
 
-                    PathFinderNodeFast fNodeTmp = mCalcGrid[(end.Y << mGridYLog2) + end.X];
+                    PathFinderNodeFast fNodeTmp = mCalcGrid[(endY << mGridYLog2) + endX];
                     PathFinderNode fNode;
                     fNode.F = fNodeTmp.F;
                     fNode.G = fNodeTmp.G;
                     fNode.H = 0;
                     fNode.PX = fNodeTmp.PX;
                     fNode.PY = fNodeTmp.PY;
-                    fNode.X = end.X;
-                    fNode.Y = end.Y;
+                    fNode.X = endX;
+                    fNode.Y = endY;
 
                     while (fNode.X != fNode.PX || fNode.Y != fNode.PY)
                     {

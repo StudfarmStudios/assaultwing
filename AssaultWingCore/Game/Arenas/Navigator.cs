@@ -32,8 +32,11 @@ namespace AW2.Game.Arenas
 
         public IEnumerable<Vector2> GetPath(Vector2 from, Vector2 to)
         {
-            Func<Vector2, System.Drawing.Point> toPoint = v => new System.Drawing.Point((int)Math.Round(v.X), (int)Math.Round(v.Y));
-            var reversePath = _pathFinder.FindPath(toPoint(from), toPoint(to));
+            var startX = CoordinateToIndex(from.X);
+            var startY = CoordinateToIndex(from.Y);
+            var endX = CoordinateToIndex(to.X);
+            var endY = CoordinateToIndex(to.Y);
+            var reversePath = _pathFinder.FindPath(startX, startY, endX, endY);
             if (reversePath == null) yield break;
             for (int i = reversePath.Count - 1; i >= 0; i--) yield return IndicesToVector2(reversePath[i].X, reversePath[i].Y);
         }

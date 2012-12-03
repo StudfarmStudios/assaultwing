@@ -84,8 +84,8 @@ namespace AW2.Game.Arenas
         private float mHEstimate = 2;
         private int mSearchLimit = 2000;
         private PathFinderNodeFast[] mCalcGrid = null;
-        private byte mOpenNodeValue = 1;
-        private byte mCloseNodeValue = 2;
+        private byte mOpenNodeValue = 0;
+        private byte mCloseNodeValue = 1;
 
         //Promoted local variables to member variables to avoid recreation between calls
         private float mH = 0;
@@ -162,8 +162,16 @@ namespace AW2.Game.Arenas
                 mStop = false;
                 mStopped = false;
                 mCloseNodeCounter = 0;
+                // As long as mOpenNodeValue and mCloseNodeValue are previously unused as values in
+                // mCalGrid[].Status, we don't need to clear mCalcGrid.
                 mOpenNodeValue += 2;
                 mCloseNodeValue += 2;
+                if (mOpenNodeValue == 0 || mCloseNodeValue == 0)
+                {
+                    mOpenNodeValue += 2;
+                    mCloseNodeValue += 2;
+                    Array.Clear(mCalcGrid, 0, mCalcGrid.Length);
+                }
                 mOpen.Clear();
                 mClose.Clear();
 

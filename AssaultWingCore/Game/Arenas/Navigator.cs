@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Helpers;
 
 namespace AW2.Game.Arenas
 {
@@ -19,10 +20,10 @@ namespace AW2.Game.Arenas
             Debug.Assert(dimensions.X > 0 && dimensions.Y > 0);
             Debug.Assert(granularity > 0);
             _granularity = granularity;
-            var pathFinderGrid = new byte[CoordinateToIndex(dimensions.X), CoordinateToIndex(dimensions.Y)];
+            var pathFinderGrid = new byte[AWMathHelper.CeilingPowerTwo(CoordinateToIndex(dimensions.X)), CoordinateToIndex(dimensions.Y)];
             for (var gridY = 0; gridY < pathFinderGrid.GetLength(1); gridY++)
                 for (var gridX = 0; gridX < pathFinderGrid.GetLength(0); gridX++)
-                    pathFinderGrid[gridX, gridY] = isAccessible(new Vector2(gridX, gridY) * granularity) ? (byte)1 : (byte)0;
+                    pathFinderGrid[gridX, gridY] = isAccessible(IndicesToVector2(gridX, gridY)) ? (byte)1 : (byte)0;
             _pathFinder = new PathFinderAStar(pathFinderGrid)
             {
                 HeuristicEstimate = 1,

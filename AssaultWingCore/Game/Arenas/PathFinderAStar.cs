@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using AW2.Helpers;
 using AW2.Helpers.Collections;
 
 namespace AW2.Game.Arenas
@@ -99,7 +100,7 @@ namespace AW2.Game.Arenas
         private ushort mGridX = 0;
         private ushort mGridY = 0;
         private ushort mGridXMinus1 = 0;
-        private ushort mGridYLog2 = 0;
+        private ushort mGridXLog2 = 0;
         private bool mFound = false;
         private int mEndLocation = 0;
         private float mNewG = 0;
@@ -108,23 +109,15 @@ namespace AW2.Game.Arenas
         #region Constructors
         public PathFinderAStar(byte[,] grid)
         {
-            if (grid == null)
-                throw new Exception("Grid cannot be null");
-
+            if (grid == null) throw new ArgumentNullException();
+            mGridX = (ushort)grid.GetLength(0);
+            mGridY = (ushort)grid.GetLength(1);
+            if (mGridX == 0 || mGridY == 0) throw new ArgumentException("Grid must not be zero-sized");
+            mGridXLog2 = (ushort)AWMathHelper.LogTwo(mGridX);
+            if (1 << mGridXLog2 != mGridX) throw new ArgumentException("Grid width must be a power of two, not " + mGridX);
             mGrid = grid;
-            mGridX = (ushort)(mGrid.GetUpperBound(0) + 1);
-            mGridY = (ushort)(mGrid.GetUpperBound(1) + 1);
             mGridXMinus1 = (ushort)(mGridX - 1);
-            mGridYLog2 = (ushort)Math.Log(mGridY, 2);
-
-            // This should be done at the constructor, for now we leave it here.
-            if (Math.Log(mGridX, 2) != (int)Math.Log(mGridX, 2) ||
-                Math.Log(mGridY, 2) != (int)Math.Log(mGridY, 2))
-                throw new Exception("Invalid Grid, size in X and Y must be power of 2");
-
-            if (mCalcGrid == null || mCalcGrid.Length != (mGridX * mGridY))
-                mCalcGrid = new PathFinderNodeFast[mGridX * mGridY];
-
+            mCalcGrid = new PathFinderNodeFast[mGridX * mGridY];
             mOpen = new PriorityQueueB<int>(new ComparePFNodeMatrix(mCalcGrid));
         }
         #endregion
@@ -173,8 +166,8 @@ namespace AW2.Game.Arenas
             mOpen.Clear();
             mClose.Clear();
 
-            mLocation = (startY << mGridYLog2) + startX;
-            mEndLocation = (endY << mGridYLog2) + endX;
+            mLocation = (startY << mGridXLog2) + startX;
+            mEndLocation = (endY << mGridXLog2) + endX;
             mCalcGrid[mLocation].G = 0;
             mCalcGrid[mLocation].F = mHEstimate;
             mCalcGrid[mLocation].PX = (ushort)startX;
@@ -191,7 +184,7 @@ namespace AW2.Game.Arenas
                     continue;
 
                 mLocationX = (ushort)(mLocation & mGridXMinus1);
-                mLocationY = (ushort)(mLocation >> mGridYLog2);
+                mLocationY = (ushort)(mLocation >> mGridXLog2);
 
                 if (mLocation == mEndLocation)
                 {
@@ -211,7 +204,7 @@ namespace AW2.Game.Arenas
                 {
                     mNewLocationX = (ushort)(mLocationX + g_direction[i, 0]);
                     mNewLocationY = (ushort)(mLocationY + g_direction[i, 1]);
-                    mNewLocation = (mNewLocationY << mGridYLog2) + mNewLocationX;
+                    mNewLocation = (mNewLocationY << mGridXLog2) + mNewLocationX;
 
                     if (mNewLocationX >= mGridX || mNewLocationY >= mGridY)
                         continue;
@@ -254,7 +247,7 @@ namespace AW2.Game.Arenas
                 int posX = endX;
                 int posY = endY;
 
-                PathFinderNodeFast fNodeTmp = mCalcGrid[(endY << mGridYLog2) + endX];
+                PathFinderNodeFast fNodeTmp = mCalcGrid[(endY << mGridXLog2) + endX];
                 PathFinderNode fNode;
                 fNode.F = fNodeTmp.F;
                 fNode.G = fNodeTmp.G;
@@ -269,7 +262,7 @@ namespace AW2.Game.Arenas
                     mClose.Add(fNode);
                     posX = fNode.PX;
                     posY = fNode.PY;
-                    fNodeTmp = mCalcGrid[(posY << mGridYLog2) + posX];
+                    fNodeTmp = mCalcGrid[(posY << mGridXLog2) + posX];
                     fNode.F = fNodeTmp.F;
                     fNode.G = fNodeTmp.G;
                     fNode.H = 0;

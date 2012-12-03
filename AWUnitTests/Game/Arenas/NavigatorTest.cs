@@ -34,6 +34,13 @@ namespace AW2.Game.Arenas
             AssertPath(Vector2.Zero, DIMENSIONS - Vector2.One, 1,1, 3,3);
         }
 
+        [Test]
+        public void TestDimensions()
+        {
+            _navigator = new Navigator(new Vector2(3, 5), 1, x => true);
+            AssertPath(Vector2.Zero, new Vector2(2, 4), 0.5f,0.5f, 1.5f,1.5f, 1.5f,2.5f, 1.5f,3.5f, 2.5f,4.5f);
+        }
+
         private void AssertPath(Vector2 from, Vector2 to, params float[] expectedXY)
         {
             Assert.NotNull(expectedXY);

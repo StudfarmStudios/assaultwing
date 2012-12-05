@@ -27,7 +27,7 @@ namespace AW2.Game.Arenas
             _pathFinder = new PathFinderAStar(pathFinderGrid)
             {
                 HeuristicEstimate = 1,
-                SearchLimit = 10000,
+                SearchLimit = 20000,
             };
         }
 

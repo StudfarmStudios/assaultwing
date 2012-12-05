@@ -141,6 +141,7 @@ namespace AW2.Game
         public Vector2 Dimensions { get { return Info.Dimensions; } }
         public Rectangle BoundedAreaNormal { get { return new Rectangle(Vector2.Zero, Dimensions); } }
         public Rectangle BoundedAreaExtreme { get { return new Rectangle(-new Vector2(GOB_DESTRUCTION_BOUNDARY), Dimensions + new Vector2(GOB_DESTRUCTION_BOUNDARY)); } }
+        public Navigator Navigator { get; private set; }
 
         /// <summary>
         /// Filename of the arena's binary data container.
@@ -250,6 +251,7 @@ namespace AW2.Game
             FrameNumber = 0;
             InitializeWorld();
             InitializeGobs();
+            InitializeNavigator();
         }
 
         /// <summary>
@@ -591,6 +593,13 @@ namespace AW2.Game
             if (gameplayLayerIndex == 0 || Layers[gameplayLayerIndex - 1].Z != 0)
                 Layers.Insert(gameplayLayerIndex, new ArenaLayer(false, 0, ""));
             Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
+        }
+
+        private void InitializeNavigator()
+        {
+            Navigator = new Navigator(Dimensions, Gob.LARGE_GOB_PHYSICAL_RADIUS,
+                pos => IsFreePosition(new Circle(pos, Gob.SMALL_GOB_PHYSICAL_RADIUS),
+                    area => area.Owner.MoveType != MoveType.Dynamic));
         }
 
         private void PerformCustomCollisions()

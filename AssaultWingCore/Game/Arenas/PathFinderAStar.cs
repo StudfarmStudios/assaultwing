@@ -79,7 +79,6 @@ namespace AW2.Game.Arenas
         // Heap variables are initializated to default, but I like to do it anyway
         private byte[,] mGrid = null;
         private PriorityQueueB<int> mOpen = null;
-        private List<PathFinderNode> mClose = new List<PathFinderNode>();
         private bool mStop = false;
         private bool mStopped = true;
         private float mHEstimate = 2;
@@ -164,7 +163,7 @@ namespace AW2.Game.Arenas
                 Array.Clear(mCalcGrid, 0, mCalcGrid.Length);
             }
             mOpen.Clear();
-            mClose.Clear();
+            var closedNodes = new List<PathFinderNode>();
 
             mLocation = (startY << mGridXLog2) + startX;
             mEndLocation = (endY << mGridXLog2) + endX;
@@ -243,7 +242,7 @@ namespace AW2.Game.Arenas
 
             if (mFound)
             {
-                mClose.Clear();
+                closedNodes.Clear();
                 int posX = endX;
                 int posY = endY;
 
@@ -259,7 +258,7 @@ namespace AW2.Game.Arenas
 
                 while (fNode.X != fNode.PX || fNode.Y != fNode.PY)
                 {
-                    mClose.Add(fNode);
+                    closedNodes.Add(fNode);
                     posX = fNode.PX;
                     posY = fNode.PY;
                     fNodeTmp = mCalcGrid[(posY << mGridXLog2) + posX];
@@ -272,10 +271,10 @@ namespace AW2.Game.Arenas
                     fNode.Y = posY;
                 }
 
-                mClose.Add(fNode);
+                closedNodes.Add(fNode);
 
                 mStopped = true;
-                return mClose;
+                return closedNodes;
             }
             mStopped = true;
             return null;

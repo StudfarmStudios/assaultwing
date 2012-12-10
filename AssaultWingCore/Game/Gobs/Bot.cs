@@ -277,8 +277,8 @@ namespace AW2.Game.Gobs
         private void Aim()
         {
             if (Target == null || Target.IsHidden) return;
-            RotationSpeed = AWMathHelper.GetAngleSpeedTowards(Rotation, (Target.Pos - Pos).Angle(), _rotationSpeed, Game.TargetElapsedTime);
-            var rotationDelta = RotationSpeed * (float)Game.TargetElapsedTime.TotalSeconds;
+            RotationSpeed = AWMathHelper.GetAngleSpeedTowards(Rotation, (Target.Pos - Pos).Angle(), _rotationSpeed, AW2.Core.AssaultWingCore.TargetElapsedTime);
+            var rotationDelta = RotationSpeed * (float)AW2.Core.AssaultWingCore.TargetElapsedTime.TotalSeconds;
             _fanAngleSpeed = MathHelper.Clamp(_fanAngleSpeed + rotationDelta * 10, -FAN_ANGLE_SPEED_MAX, FAN_ANGLE_SPEED_MAX);
         }
 

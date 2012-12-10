@@ -323,7 +323,7 @@ namespace AW2.Net
         /// </summary>
         public TimeSpan GetMessageGameTime(GameplayMessage message)
         {
-            return Game.TargetElapsedTime.Multiply(message.FrameNumber);
+            return AssaultWing.TargetElapsedTime.Multiply(message.FrameNumber);
         }
 
         #endregion Public interface

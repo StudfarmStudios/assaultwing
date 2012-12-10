@@ -31,7 +31,7 @@ namespace AW2.UI
         /// </summary>
         public bool IsActive { get; set; }
 
-        private TimeSpan TemporaryActivationInterval { get { return _game.TargetElapsedTime + TimeSpan.FromMilliseconds(1); } }
+        private static TimeSpan TemporaryActivationInterval { get { return AssaultWingCore.TargetElapsedTime + TimeSpan.FromMilliseconds(1); } }
 
         public EditableText(string content, int maxLength, CharacterSet allowedChars, AssaultWingCore game, Action changedCallback)
         {

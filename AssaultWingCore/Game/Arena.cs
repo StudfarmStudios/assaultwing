@@ -260,7 +260,7 @@ namespace AW2.Game
         public void Update()
         {
             ResetCollisionEvents();
-            _world.Step((float)Game.TargetElapsedTime.TotalSeconds);
+            _world.Step((float)AssaultWingCore.TargetElapsedTime.TotalSeconds);
             PerformCustomCollisions();
             if (_areaBoundaryCheckTimer.IsElapsed && Game.NetworkMode != NetworkMode.Client)
             {

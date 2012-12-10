@@ -45,7 +45,7 @@ namespace AW2.Game.GobUtils
                 TurnSpeed = ship.TurnSpeed,
                 ThrustForce = ship.Thruster.MaxForce,
                 Mass = ship.Mass,
-                TargetElapsedTime = ship.Game.TargetElapsedTime,
+                TargetElapsedTime = AW2.Core.AssaultWingCore.TargetElapsedTime,
             };
         }
 

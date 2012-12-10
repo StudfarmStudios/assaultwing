@@ -15,6 +15,7 @@ namespace AW2.Core
     public class AWGame : IDisposable
     {
         public const int TargetFPS = 60;
+        public static readonly TimeSpan TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS);
         private static readonly TimeSpan FastFrameDrawMaxDuration = TimeSpan.FromMilliseconds(2);
 
         public GraphicsDeviceService GraphicsDeviceService { get; private set; }
@@ -22,7 +23,6 @@ namespace AW2.Core
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
         public AWGameComponentCollection Components { get; private set; }
-        public TimeSpan TargetElapsedTime { get { return TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS); } }
         public int FramesDrawnLastSecond { get; private set; }
         public bool FrameDrawIsFast { get { return _frameDrawTimes.Average <= FastFrameDrawMaxDuration; } }
 

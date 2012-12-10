@@ -117,7 +117,7 @@ namespace AW2.Game.Gobs
         {
             base.Update();
             if (!_isRotating && Move.LengthSquared() >= HEADING_MOVEMENT_MINIMUM_SQUARED)
-                RotationSpeed = AWMathHelper.GetAngleSpeedTowards(Rotation, Move.Angle(), HEADING_TURN_SPEED, Game.TargetElapsedTime);
+                RotationSpeed = AWMathHelper.GetAngleSpeedTowards(Rotation, Move.Angle(), HEADING_TURN_SPEED, AW2.Core.AssaultWingCore.TargetElapsedTime);
             _thruster.Thrust(1);
             _thruster.Update();
         }

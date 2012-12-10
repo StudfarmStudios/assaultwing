@@ -158,7 +158,7 @@ namespace AW2.Core
                     }
                     else if (_readyForNextUpdateAndDraw)
                     {
-                        var updateInterval = _game.TargetElapsedTime;
+                        var updateInterval = AssaultWingCore.TargetElapsedTime;
                         var gameTime = new AWGameTime(totalGameTime, updateInterval, now);
                         _nextUpdate += updateInterval;
                         totalGameTime += updateInterval;

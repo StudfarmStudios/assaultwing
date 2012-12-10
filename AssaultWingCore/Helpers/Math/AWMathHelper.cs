@@ -607,7 +607,7 @@ namespace AW2.Helpers
         /// </summary>
         public static int Frames(this TimeSpan time)
         {
-            var ticksInFrame = AssaultWingCore.Instance.TargetElapsedTime.Ticks;
+            var ticksInFrame = AssaultWingCore.TargetElapsedTime.Ticks;
             return (int)((time.Ticks + ticksInFrame / 2) / ticksInFrame);
         }
 

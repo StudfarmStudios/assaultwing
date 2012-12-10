@@ -480,7 +480,7 @@ namespace AW2.Game.Gobs
             if (LocationPredicter == null) return;
             LocationPredicter.UpdateOldShipLocation(new ShipLocationEntry
             {
-                GameTime = Game.DataEngine.ArenaTotalTime - Game.TargetElapsedTime.Multiply(data.FramesAgo),
+                GameTime = Game.DataEngine.ArenaTotalTime - AssaultWingCore.TargetElapsedTime.Multiply(data.FramesAgo),
                 Pos = Pos,
                 Move = Move,
                 Rotation = Rotation,

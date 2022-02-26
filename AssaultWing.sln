@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer Physics", "Farseer 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingCoreContent", "AssaultWingCoreContent\AssaultWingCoreContent.csproj", "{B7498C25-809E-48E1-B88B-CB7C25705431}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingContent", "AssaultWingContent\AssaultWingContent.csproj", "{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{B7498C25-809E-48E1-B88B-CB7C25705431}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7498C25-809E-48E1-B88B-CB7C25705431}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7498C25-809E-48E1-B88B-CB7C25705431}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

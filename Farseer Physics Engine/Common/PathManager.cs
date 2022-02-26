@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace FarseerPhysics.Factories
 {
+    using FarseerPhysics.Common; // Resolve ambiguity of Path (System.IO.Path)
     /// <summary>
     /// An easy to use manager for creating paths.
     /// </summary>

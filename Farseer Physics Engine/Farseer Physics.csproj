@@ -4,6 +4,13 @@
     <TargetFramework>netcoreapp6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>FarseerPhysics</RootNamespace>
+    <AssemblyName>FarseerPhysics</AssemblyName>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>

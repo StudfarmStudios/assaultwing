@@ -5,7 +5,7 @@ texture Texture;
 
 float Intensity = 1;
 
-sampler TextureSampler : SAMPLER0 = sampler_state
+sampler TextureSampler = sampler_state
 {
 	Texture = <Texture>;
 	MagFilter = LINEAR;

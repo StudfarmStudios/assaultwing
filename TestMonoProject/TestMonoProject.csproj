@@ -32,5 +32,6 @@
     <ProjectReference Include="..\Farseer Physics Engine\Farseer Physics.csproj" />
     <ProjectReference Include="..\AssaultWingCoreContent\AssaultWingCoreContent.csproj" />
     <ProjectReference Include="..\AssaultWingContent\AssaultWingContent.csproj" />
+    <ProjectReference Include="..\AssaultWingCore\AssaultWingCore.csproj" />
   </ItemGroup>
 </Project>

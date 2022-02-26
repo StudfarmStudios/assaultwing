@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingCoreContent", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingContent", "AssaultWingContent\AssaultWingContent.csproj", "{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingCore", "AssaultWingCore\AssaultWingCore.csproj", "{615D550F-E182-48A9-AF71-58A9CA6EDDB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA7EA849-6B02-42C0-8B73-B1A90EA541D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{615D550F-E182-48A9-AF71-58A9CA6EDDB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{615D550F-E182-48A9-AF71-58A9CA6EDDB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{615D550F-E182-48A9-AF71-58A9CA6EDDB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{615D550F-E182-48A9-AF71-58A9CA6EDDB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

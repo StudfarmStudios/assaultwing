@@ -29,5 +29,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeterMonoLibTest\PeterMonoLibTest.csproj" />
+    <ProjectReference Include="..\Farseer Physics Engine\Farseer Physics.csproj" />
   </ItemGroup>
 </Project>

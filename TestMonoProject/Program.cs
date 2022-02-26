@@ -1,14 +1,16 @@
 ﻿using System;
+using PeterMonoLibTest;
 
 namespace TestMonoProject
 {
-    public static class Program
+  public static class Program
+  {
+    [STAThread]
+    static void Main()
     {
-        [STAThread]
-        static void Main()
-        {
-            using (var game = new Game1())
-                game.Run();
-        }
+      Console.WriteLine(Class1.five);
+      using (var game = new Game1())
+        game.Run();
     }
+  }
 }

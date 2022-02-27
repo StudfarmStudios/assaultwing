@@ -156,10 +156,12 @@ namespace AW2.Core
         {
             try
             {
-                var sourceRectangle = _parameters.IsFullScreen
-                    ? (XnaRectangle?)null
-                    : new XnaRectangle(0, 0, clientSize.Width, clientSize.Height);
-                GraphicsDevice.Present(sourceRectangle, null, handle);
+                //var sourceRectangle = _parameters.IsFullScreen
+                //    ? (XnaRectangle?)null
+                //    : new XnaRectangle(0, 0, clientSize.Width, clientSize.Height);
+                //GraphicsDevice.Present(sourceRectangle, null, handle);
+                // TODO: MONOGAME PORT: Window / Fullscreen support? handle?
+                GraphicsDevice.Present();
             }
             catch (DeviceLostException)
             {

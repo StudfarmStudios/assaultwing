@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -98,3 +99,4 @@ namespace AW2.Core
         }
     }
 }
+*/

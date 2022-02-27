@@ -11,7 +11,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <ApplicationIcon>AssaultWing.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="AssaultWing.ico" />

@@ -51,6 +51,7 @@ namespace AW2.Net.ConnectionUtils
             {
                 if (_serverSocket != null) throw new InvalidOperationException("Already listening to incoming connections");
                 CreateServerSocket(tcpPort);
+                /*
                 if (StaticPortMapper.IsSupported)
                 {
                     Log.Write("Mapping server ports with UPnP");
@@ -69,6 +70,7 @@ namespace AW2.Net.ConnectionUtils
                     Log.Write(message.Replace('\n', ' '));
                     _game.ShowInfoDialog(message);
                 }
+                */
                 ListenOneConnection(_game);
             }
             catch (Exception)
@@ -89,6 +91,7 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public void StopListening()
         {
+            /*
             if (StaticPortMapper.IsSupported)
             {
                 Log.Write("Removing previous UPnP port mappings");
@@ -109,6 +112,7 @@ namespace AW2.Net.ConnectionUtils
                     _mappedUdpPort = 0;
                 }
             }
+            */
             if (_serverSocket != null)
             {
                 var serverSocketToClose = _serverSocket;

@@ -32,9 +32,9 @@ namespace AW2
         public static void Main(string[] args)
         {
             Thread.CurrentThread.Name = "MainThread";
-            if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
+            //if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
             g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
-            PostInstall.EnsureDone();
+            //PostInstall.EnsureDone();
             AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
             try
             {

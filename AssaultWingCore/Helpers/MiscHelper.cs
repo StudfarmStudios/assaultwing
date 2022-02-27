@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Deployment.Application;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -19,43 +18,26 @@ namespace AW2.Helpers
     /// </summary>
     public static class MiscHelper
     {
-        private static bool? _isNetworkDeployed;
 
-        public static bool IsNetworkDeployed
-        {
-            get
-            {
-                // Only check ApplicationDeployment.IsNetworkDeployed once because it may cause
-                // a first-chance exception which is nasty for debugging.
-                if (!_isNetworkDeployed.HasValue) _isNetworkDeployed = ApplicationDeployment.IsNetworkDeployed;
-                return _isNetworkDeployed.Value;
-            }
-        }
         public static NameValueCollection QueryParams
         {
             get
             {
-                return IsNetworkDeployed && ApplicationDeployment.CurrentDeployment.ActivationUri != null
-                    ? ParseQueryString(ApplicationDeployment.CurrentDeployment.ActivationUri.Query)
-                    : new NameValueCollection();
+                return new NameValueCollection();
             }
         }
         public static Version Version
         {
             get
             {
-                return IsNetworkDeployed
-                    ? ApplicationDeployment.CurrentDeployment.CurrentVersion
-                    : new Version();
+                return new Version();
             }
         }
         public static string DataDirectory
         {
             get
             {
-                return IsNetworkDeployed
-                    ? ApplicationDeployment.CurrentDeployment.DataDirectory
-                    : System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }
         }
         /// <summary>

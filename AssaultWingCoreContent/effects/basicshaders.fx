@@ -35,19 +35,19 @@ technique Simple2DOutputTechnique
 {
     pass VertexShaderPass
     {
-        VertexShader = compile vs_1_1 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VertexShaderFunction();
     }
     pass PixelShaderPass
     {
 		StencilEnable = FALSE;
 		ZEnable = FALSE;
-		PixelShader = compile ps_2_0 PixelShaderFunction();
+		PixelShader = compile ps_4_0 PixelShaderFunction();
 	}
     pass PixelAndVertexShaderPass
     {
 		StencilEnable = FALSE;
 		ZEnable = FALSE;
-		PixelShader = compile ps_2_0 PixelShaderFunction();
-        VertexShader = compile vs_1_1 VertexShaderFunction();
+		PixelShader = compile ps_4_0 PixelShaderFunction();
+        VertexShader = compile vs_4_0 VertexShaderFunction();
 	}
 }

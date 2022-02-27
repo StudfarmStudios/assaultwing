@@ -87,10 +87,10 @@ technique GaussianBlur
 {
     pass P0
     {
-        PixelShader = compile ps_2_0 GaussianBlurH();
+        PixelShader = compile ps_4_0 GaussianBlurH();
     }
     pass P1
     {
-        PixelShader = compile ps_2_0 GaussianBlurV();
+        PixelShader = compile ps_4_0 GaussianBlurV();
     }
 }

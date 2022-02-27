@@ -99,14 +99,14 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_active)
             {
-                var fadeAlphaMultiplier = MathHelper.Clamp((Owner.Arena.TotalTime - _fadeStartTime).Divide(_fadeOutDuration), 0, 1);
+                var fadeAlphaMultiplier = MathHelper.Clamp(((float)(Owner.Arena.TotalTime - _fadeStartTime).Divide(_fadeOutDuration)), 0, 1);
                 Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
                 FiringOperator.UseChargeForOneFrame();
                 if (Charge == 0) DeactivateCloak();
             }
             else if (_applyAlpha)
             {
-                var fadeAlphaMultiplier = 1 - MathHelper.Clamp((Owner.Arena.TotalTime - _fadeStartTime).Divide(_fadeInDuration), 0, 1);
+                var fadeAlphaMultiplier = 1 - MathHelper.Clamp(((float)(Owner.Arena.TotalTime - _fadeStartTime).Divide(_fadeInDuration)), 0, 1);
                 Owner.Alpha = 1 - fadeAlphaMultiplier * _cloakStrengthForVelocity.Evaluate(Owner.Move.Length());
                 if (fadeAlphaMultiplier == 0) _applyAlpha = false;
             }

@@ -91,8 +91,8 @@ namespace AW2.Menu.Equip
         {
             if (ChatPlayer == null) return;
             var text = GetVisibleInputString(ChatPlayer.Name + "> ", _message.Content);
-            ModelRenderer.DrawBorderedText(spriteBatch, Font, text, (TypingPos - view).Round(), Color.White, 1, 1);
-            spriteBatch.Draw(Content.TypingCursor, (TypingPos - view).Round() + new Vector2(Font.MeasureString(text).X + 2, -2), CursorColor);
+            ModelRenderer.DrawBorderedText(spriteBatch, Font, text, Vector2.Round(TypingPos - view), Color.White, 1, 1);
+            spriteBatch.Draw(Content.TypingCursor, Vector2.Round(TypingPos - view) + new Vector2(Font.MeasureString(text).X + 2, -2), CursorColor);
         }
 
         private string GetVisibleInputString(string pretext, string text)

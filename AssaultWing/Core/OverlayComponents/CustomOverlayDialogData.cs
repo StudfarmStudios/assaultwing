@@ -30,7 +30,7 @@ namespace AW2.Core.OverlayComponents
             var font = Menu.MenuContent.FontBig;
             var textCenter = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
             var textSize = font.MeasureString(_text);
-            spriteBatch.DrawString(font, _text, (textCenter - textSize / 2).Round(), Color.White);
+            spriteBatch.DrawString(font, _text, Vector2.Round(textCenter - textSize / 2), Color.White);
         }
     }
 }

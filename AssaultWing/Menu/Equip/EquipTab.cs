@@ -219,7 +219,7 @@ namespace AW2.Menu.Equip
                 spriteBatch.Draw(Content.PlayerNameBackgroundTexture, GetPlayerPanePos(playerI) - view, player.Color);
                 spriteBatch.Draw(Content.PlayerNameBorderTexture, GetPlayerPanePos(playerI) - view, Color.White);
                 spriteBatch.Draw(Content.PlayerPaneTexture, GetPlayerPanePos(playerI) - view + PlayerPaneMainDeltaPos, Color.White);
-                spriteBatch.DrawString(Content.FontSmall, player.Name, (GetPlayerNamePos(playerI, player.Name) - view).Round(), Color.White);
+                spriteBatch.DrawString(Content.FontSmall, player.Name, Vector2.Round(GetPlayerNamePos(playerI, player.Name) - view), Color.White);
 
                 // Draw icons of selected equipment.
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship].Draw(view, spriteBatch);
@@ -237,13 +237,13 @@ namespace AW2.Menu.Equip
                 {
                     var textSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content);
                     var textCursorPos = hiliteTexturePos + new Vector2(textSize.X / 2 + 91, 24);
-                    spriteBatch.Draw(Content.ListTextCursorTexture, textCursorPos.Round(), Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
+                    spriteBatch.Draw(Content.ListTextCursorTexture, Vector2.Round(textCursorPos), Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
                 }
 
                 var cursorTexture = _currentItems[playerI] == EquipMenuItem.Name ? Content.ListCursorTexture : Content.CursorMainTexture;
                 var cursorTexturePos = _currentItems[playerI] == EquipMenuItem.Name ? GetPlayerPanePos(playerI) - view : GetPlayerCursorPos(playerI) - view;
                 spriteBatch.Draw(cursorTexture, cursorTexturePos, Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
-                spriteBatch.DrawString(Content.FontSmall, playerItemName, (GetPlayerItemNamePos(playerI, playerItemName) - view).Round(), Color.White);
+                spriteBatch.DrawString(Content.FontSmall, playerItemName, Vector2.Round(GetPlayerItemNamePos(playerI, playerItemName) - view), Color.White);
             }
         }
 
@@ -259,7 +259,7 @@ namespace AW2.Menu.Equip
             var infoDataValueLineHeight = 21;
             var infoDataValuePos = InfoDataPos - view + new Vector2(350, 8);
             var valuePos = infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(value.ToString()).X, -infoDataValueLineHeight * line);
-            spriteBatch.DrawString(Content.FontSmall, value.ToString(), valuePos.Round(), EquipInfo.GetColor(value));
+            spriteBatch.DrawString(Content.FontSmall, value.ToString(), Vector2.Round(valuePos), EquipInfo.GetColor(value));
         }
 
         private void DrawShipInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
@@ -284,7 +284,7 @@ namespace AW2.Menu.Equip
             DrawInfoValue(view, spriteBatch, 3, info.Steering);
             DrawInfoValue(view, spriteBatch, 4, info.ModEnergy);
             DrawInfoValue(view, spriteBatch, 5, info.SpecialEnergy);
-            spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoTextPos(info.InfoText) - view).Round(), new Color(218, 159, 33));
+            spriteBatch.DrawString(Content.FontSmall, info.InfoText, Vector2.Round(GetInfoTextPos(info.InfoText) - view), new Color(218, 159, 33));
         }
 
         private void DrawShipDeviceInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
@@ -310,7 +310,7 @@ namespace AW2.Menu.Equip
             DrawInfoValue(view, spriteBatch, 0, info.ReloadSpeed);
             DrawInfoValue(view, spriteBatch, 1, info.EnergyUsage);
             DrawInfoValue(view, spriteBatch, 2, info.UsageType);
-            spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoTextPos(info.InfoText) - view).Round(), new Color(218, 159, 33));
+            spriteBatch.DrawString(Content.FontSmall, info.InfoText, Vector2.Round(GetInfoTextPos(info.InfoText) - view), new Color(218, 159, 33));
         }
 
         private void DrawWeaponInfoDisplay(Vector2 view, SpriteBatch spriteBatch)

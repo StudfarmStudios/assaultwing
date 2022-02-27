@@ -350,19 +350,19 @@ namespace AW2.Menu
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             var versionText = "Assault Wing " + MiscHelper.Version;
             _spriteBatch.DrawString(MenuContent.FontSmall, versionText,
-                new Vector2(10, ViewportHeight - MenuContent.FontSmall.LineSpacing).Round(), Color.White);
+                Vector2.Round(new Vector2(10, ViewportHeight - MenuContent.FontSmall.LineSpacing)), Color.White);
             if (IsHelpTextVisible)
             {
                 var helpTextPos = new Vector2(
                     (int)(((float)ViewportWidth - MenuContent.FontSmall.MeasureString(ActiveComponent.HelpText).X) / 2),
                     ViewportHeight - MenuContent.FontSmall.LineSpacing);
-                _spriteBatch.DrawString(MenuContent.FontSmall, ActiveComponent.HelpText, helpTextPos.Round(), Color.White);
+                _spriteBatch.DrawString(MenuContent.FontSmall, ActiveComponent.HelpText, Vector2.Round(helpTextPos), Color.White);
             }
             var copyrightText = "Studfarm Studios";
             var copyrightTextPos = new Vector2(
                 ViewportWidth - (int)MenuContent.FontSmall.MeasureString(copyrightText).X - 10,
                 ViewportHeight - MenuContent.FontSmall.LineSpacing);
-            _spriteBatch.DrawString(MenuContent.FontSmall, copyrightText, copyrightTextPos.Round(), Color.White);
+            _spriteBatch.DrawString(MenuContent.FontSmall, copyrightText, Vector2.Round(copyrightTextPos), Color.White);
             _spriteBatch.End();
         }
 

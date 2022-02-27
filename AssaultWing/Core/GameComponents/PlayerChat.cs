@@ -41,7 +41,7 @@ namespace AW2.Core.GameComponents
 
         private Viewport Viewport { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport; } }
         private Vector2 TopLeftCorner { get { return new Vector2(Viewport.Width - ChatAreaWidth, Viewport.Height - ChatAreaHeight); } }
-        private Vector2 TypingPos { get { return TopLeftCorner + new Vector2(12, ChatAreaHeight - 20).Round(); } }
+        private Vector2 TypingPos { get { return TopLeftCorner + Vector2.Round(new Vector2(12, ChatAreaHeight - 20)); } }
         private float ChatAreaWidth { get { return _chatBackgroundTexture.Width; } }
         private float ChatAreaHeight { get { return IsTyping ? _chatBackgroundTexture.Height : _chatBackgroundTexture.Height - 172; } }
         private float ChatTextWidth { get { return ChatAreaWidth - 22; } }
@@ -155,7 +155,7 @@ namespace AW2.Core.GameComponents
             if (CanScrollDown) _spriteBatch.Draw(_scrollArrowGlowTexture, scrollPos + new Vector2(-12, 216), arrowGlowColor);
             _spriteBatch.Draw(_scrollArrowDownTexture, scrollPos + new Vector2(0, 230), ArrowDownColor);
 
-            _spriteBatch.Draw(_typeLineBackgroundTexture, typeLinePos.Round(), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            _spriteBatch.Draw(_typeLineBackgroundTexture, Vector2.Round(typeLinePos), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             _spriteBatch.Draw(_scrollTrackTexture, scrollPos + new Vector2(0, 24), Color.White);
 
             if (IsScrollable) _spriteBatch.Draw(_scrollMarkerTexture, scrollPos + new Vector2(-4, GetScrollMarkerYPosition()), Color.White);

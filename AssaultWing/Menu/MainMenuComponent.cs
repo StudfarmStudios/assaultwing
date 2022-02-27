@@ -112,7 +112,7 @@ namespace AW2.Menu
                  let name = items.Item1.Name
                  where name != ""
                  select name).ToArray());
-            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, title, titlePos.Round(), Color.LightGray);
+            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, title, Vector2.Round(titlePos), Color.LightGray);
             CurrentItemIndexer.ForEachVisible((realIndex, visibleIndex, isSelected) =>
             {
                 if (isSelected) CurrentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);
@@ -149,7 +149,7 @@ namespace AW2.Menu
         private void DrawScheduledBattleDisplay(Vector2 view, SpriteBatch spriteBatch)
         {
             var backgroundPos = _pos - view + new Vector2(440, 600);
-            var textStartPos = (backgroundPos + new Vector2(50, 43)).Round();
+            var textStartPos = Vector2.Round(backgroundPos + new Vector2(50, 43));
             spriteBatch.DrawString(Content.FontBig, "Next Scheduled Game in:", textStartPos, Color.White);
             spriteBatch.DrawString(Content.FontSmall, "Everybody's Welcome to Join!\n\nYou can find all our Scheduled Games by selecting\n\"Find more in Forums\" in this menu.  (and you are of\ncourse free to play whenever you want)", textStartPos + new Vector2(0, 27), Color.White);
             var currentTime = DateTime.Now;

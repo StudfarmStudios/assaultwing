@@ -113,11 +113,11 @@ namespace AW2.Menu
             _currentArena.ForEachVisible((realIndex, visibleIndex, isSelected) =>
             {
                 var arenaNamePos = firstArenaNamePos + visibleIndex * lineDeltaPos;
-                spriteBatch.DrawString(Content.FontSmall, ArenaInfos[realIndex].Name, arenaNamePos.Round(), Color.White);
+                spriteBatch.DrawString(Content.FontSmall, ArenaInfos[realIndex].Name, Vector2.Round(arenaNamePos), Color.White);
                 if (isSelected)
                 {
                     var arenaTagPos = firstArenaTagPos + visibleIndex * lineDeltaPos;
-                    spriteBatch.Draw(_tagTexture, arenaTagPos.Round(), Color.White);
+                    spriteBatch.Draw(_tagTexture, Vector2.Round(arenaTagPos), Color.White);
 
                     // Draw cursor and highlight.
                     var highlightPos = _pos - view + new Vector2(124, 223) + visibleIndex * lineDeltaPos;
@@ -138,20 +138,20 @@ namespace AW2.Menu
             var previewTexture = MenuEngine.Game.Content.Load<Texture2D>(previewName);
             spriteBatch.Draw(previewTexture, ArenaPreviewPos - view, Color.White);
             spriteBatch.Draw(_infoBackgroundTexture, InfoBoxPos - view, Color.White);
-            spriteBatch.DrawString(Content.FontBig, info.Name, (InfoBoxHeaderPos - view).Round(), Color.White);
+            spriteBatch.DrawString(Content.FontBig, info.Name, Vector2.Round(InfoBoxHeaderPos - view), Color.White);
             Action<string, string, int, Color> drawInfoLine = (item, value, line, valueColor) =>
             {
                 var itemPos = GetInfoBoxLinePos(line) - view;
                 var valuePos = itemPos + infoBoxColumnWidth - new Vector2(Content.FontSmall.MeasureString(value).X, 0);
-                spriteBatch.DrawString(Content.FontSmall, item, itemPos.Round(), Color.White);
-                spriteBatch.DrawString(Content.FontSmall, value, valuePos.Round(), valueColor);
+                spriteBatch.DrawString(Content.FontSmall, item, Vector2.Round(itemPos), Color.White);
+                spriteBatch.DrawString(Content.FontSmall, value, Vector2.Round(valuePos), valueColor);
             };
             drawInfoLine("Size", info.Size.ToString(), 0, ArenaInfo.GetColorForSize(info.Size));
             drawInfoLine("Ideal Players", info.IdealPlayers, 1, Color.YellowGreen);
             drawInfoLine("Bonus Amount", info.BonusAmount.ToString(), 2, ArenaInfo.GetColorForBonusAmount(info.BonusAmount));
             drawInfoLine("Docks", info.Docks, 3, Color.YellowGreen);
             drawInfoLine("Flight Easiness", info.FlightEasiness.ToString(), 4, ArenaInfo.GetColorForFlightEasiness(info.FlightEasiness));
-            spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoBoxLinePos(0) - view + infoBoxColumnWidth + new Vector2(16, 0)).Round(), new Color(218, 159, 33));
+            spriteBatch.DrawString(Content.FontSmall, info.InfoText, Vector2.Round(GetInfoBoxLinePos(0) - view + infoBoxColumnWidth + new Vector2(16, 0)), new Color(218, 159, 33));
         }
 
         private void InitializeControlCallbacks()

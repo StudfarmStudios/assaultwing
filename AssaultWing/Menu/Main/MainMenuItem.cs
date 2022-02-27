@@ -72,7 +72,7 @@ namespace AW2.Menu.Main
         {
             var highlightToTextDelta = new Vector2(34, 1);
             var pos = GetHighlightPos(origin, visibleIndex) + highlightToTextDelta;
-            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, text, pos.Round(), Color.White);
+            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, text, Vector2.Round(pos), Color.White);
         }
 
         protected virtual void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta, int visibleIndex)

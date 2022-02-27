@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using Microsoft.Xna.Framework;
 
@@ -53,7 +52,7 @@ namespace AW2.Core
         {
             _exitSemaphore.Wait();
             if (_exiting) return;
-            _gameUpdateAndDrawLoopAsyncResult = ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
+            GameUpdateAndDrawLoop();
         }
 
         /// <summary>
@@ -103,7 +102,7 @@ namespace AW2.Core
             _exitSemaphore.Release();
         }
 
-        private void GameUpdateAndDrawLoop()
+        private async void GameUpdateAndDrawLoop()
         {
 #if !DEBUG
             try
@@ -117,6 +116,8 @@ namespace AW2.Core
                 _exceptionHandler(e);
             }
 #endif
+            _game.EndRun();
+            _exitSemaphore.Release();
         }
 
         private void GameUpdateAndDrawLoopImpl()
@@ -172,14 +173,6 @@ namespace AW2.Core
                     }
                 }
             }
-        }
-
-        private void GameUpdateAndDrawLoopEnd(IAsyncResult result)
-        {
-            var deleg = (Action)((AsyncResult)result).AsyncDelegate;
-            deleg.EndInvoke(result);
-            _game.EndRun();
-            _exitSemaphore.Release();
         }
     }
 }

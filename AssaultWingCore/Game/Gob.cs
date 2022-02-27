@@ -952,7 +952,7 @@ namespace AW2.Game
                         writer.WriteAngle8((float)Rotation);
                         writer.WriteNormalized16((Vector2)Pos, MIN_GOB_COORDINATE, MAX_GOB_COORDINATE);
                         writer.WriteHalf((Vector2)Move);
-                        writer.Write((Half)RotationSpeed);
+                        writer.Write((AW2.Helpers.Half)RotationSpeed);
                         if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
                     }
                 }

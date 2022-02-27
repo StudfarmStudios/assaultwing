@@ -251,7 +251,7 @@ namespace AW2.Game.Gobs
         {
             if (!_destructible || holeRadius <= 0) return 0;
             if (Game.NetworkMode == NetworkMode.Client) return 0;
-            var posInIndexMap = Vector2.Transform(holePos, WorldToIndexMapTransform).Round();
+            var posInIndexMap = Vector2.Round(Vector2.Transform(holePos, WorldToIndexMapTransform));
             // FIXME: change removeCount int->bool + fix fallout
             var removeCount = 0;
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius),

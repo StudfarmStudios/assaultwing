@@ -539,7 +539,7 @@ namespace AW2.Game.Gobs
             var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
             var nameAlpha = (IsHiding ? Alpha : 1) * 0.8f;
             var nameColor = Color.Multiply(Owner.Color, nameAlpha);
-            spriteBatch.DrawString(PlayerNameFont, Owner.Name, playerNamePos.Round(), nameColor);
+            spriteBatch.DrawString(PlayerNameFont, Owner.Name, Vector2.Round(playerNamePos), nameColor);
         }
 
         public override void InflictDamage(float damageAmount, DamageInfo cause)

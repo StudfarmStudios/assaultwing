@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMonoProject", "TestMonoProject\TestMonoProject.csproj", "{EB06EA07-B6B9-4F51-AED8-2E2D1BF78D42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeterMonoLibTest", "PeterMonoLibTest\PeterMonoLibTest.csproj", "{D4F86BA6-C78F-4B9B-A942-A9521611E1BA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer Physics", "Farseer Physics Engine\Farseer Physics.csproj", "{6A8F989D-0596-470F-9D6C-A4F4F0460863}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingCoreContent", "AssaultWingCoreContent\AssaultWingCoreContent.csproj", "{B7498C25-809E-48E1-B88B-CB7C25705431}"
@@ -30,10 +28,6 @@ Global
 		{EB06EA07-B6B9-4F51-AED8-2E2D1BF78D42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB06EA07-B6B9-4F51-AED8-2E2D1BF78D42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB06EA07-B6B9-4F51-AED8-2E2D1BF78D42}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4F86BA6-C78F-4B9B-A942-A9521611E1BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4F86BA6-C78F-4B9B-A942-A9521611E1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4F86BA6-C78F-4B9B-A942-A9521611E1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4F86BA6-C78F-4B9B-A942-A9521611E1BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6A8F989D-0596-470F-9D6C-A4F4F0460863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6A8F989D-0596-470F-9D6C-A4F4F0460863}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A8F989D-0596-470F-9D6C-A4F4F0460863}.Release|Any CPU.ActiveCfg = Release|Any CPU

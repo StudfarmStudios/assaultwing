@@ -86,8 +86,8 @@ namespace AW2.Game.Gobs
             var drawColor = Color.Multiply(DrawColor, _alphaCurve.Evaluate(AgeInGameSeconds));
             if (AgeInGameSeconds > _scaleCurve.Keys.Last().Position)
             {
-                textPos = textPos.Round();
-                textOrigin = textOrigin.Round();
+                textPos = Vector2.Round(textPos);
+                textOrigin = Vector2.Round(textOrigin);
             }
             var spriteDepth = 0.1f + (0.1f * ID) / Gob.MAX_ID; // Between 0.1 and 0.2
             spriteBatch.Draw(IconBackground, backgroundPos, null, drawColor,

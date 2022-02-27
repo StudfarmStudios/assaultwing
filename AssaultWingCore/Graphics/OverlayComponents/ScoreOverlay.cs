@@ -69,10 +69,10 @@ namespace AW2.Graphics.OverlayComponents
             var rowAlpha = entry.IsActive ? 1 : 0.5f;
             var isHighlighted = Game.DataEngine.FindSpectator(entry.ID) == _player;
             var rowColor = Color.Multiply(isHighlighted ? Color.White : entry.Color, rowAlpha);
-            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Name, namePos.Round(), rowColor, 0.9f, 1);
-            ModelRenderer.DrawBorderedText(spriteBatch, Content.ScoreFont, entry.Score.ToString(), scorePos.Round(), rowColor, 0.9f, 1);
-            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Kills.ToString(), killsPos.Round(), rowColor, 0.9f, 1);
-            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Deaths.ToString(), deathsPos.Round(), rowColor, 0.9f, 1);
+            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Name, Vector2.Round(namePos), rowColor, 0.9f, 1);
+            ModelRenderer.DrawBorderedText(spriteBatch, Content.ScoreFont, entry.Score.ToString(), Vector2.Round(scorePos), rowColor, 0.9f, 1);
+            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Kills.ToString(), Vector2.Round(killsPos), rowColor, 0.9f, 1);
+            ModelRenderer.DrawBorderedText(spriteBatch, Content.ConsoleFont, entry.Deaths.ToString(), Vector2.Round(deathsPos), rowColor, 0.9f, 1);
         }
     }
 }

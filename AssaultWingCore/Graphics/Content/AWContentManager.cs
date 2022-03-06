@@ -118,7 +118,7 @@ namespace AW2.Graphics.Content
                     return Paths.SOUNDS;
                 return Paths.MUSIC;
             }
-            else if (type == typeof(Video)) return Paths.VIDEO;
+            //else if (type == typeof(Video)) return Paths.VIDEO;
             throw new ArgumentException("Cannot load content of unexpected type " + type.Name);
         }
     }

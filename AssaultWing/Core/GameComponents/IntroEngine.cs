@@ -59,7 +59,7 @@ namespace AW2.Core.GameComponents
         {
             base.LoadContent();
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
-            _introVideo = new AWVideo(Game.Content.Load<Video>("aw_intro"), Game.Settings.Sound.SoundVolume);
+            _introVideo = null; // new AWVideo(Game.Content.Load<Video>("aw_intro"), Game.Settings.Sound.SoundVolume);
         }
 
         public override void UnloadContent()

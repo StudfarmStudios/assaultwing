@@ -52,7 +52,7 @@ namespace AW2.Core
         {
             _exitSemaphore.Wait();
             if (_exiting) return;
-            GameUpdateAndDrawLoop();
+            Task.Run(GameUpdateAndDrawLoop);
         }
 
         /// <summary>

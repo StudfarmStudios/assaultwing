@@ -18,6 +18,8 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace AW2.Core
 {
@@ -65,8 +67,8 @@ namespace AW2.Core
         /// </summary>
         public Queue<string> NetworkingErrors { get; private set; }
 
-        public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
-            : base(graphicsDeviceService, args)
+        public AssaultWing(GameServiceContainer serviceContainer, CommandLineOptions args)
+            : base(serviceContainer, args)
         {
             CustomControls = new List<Tuple<Control, Action>>();
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this);

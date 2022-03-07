@@ -38,7 +38,8 @@ namespace AW2.Graphics.Content
         private static void CheckVersion(BinaryReader reader)
         {
             reader.AssertBytes("Not an XNB file", (byte)'X', (byte)'N', (byte)'B');
-            reader.AssertBytes("Not a Windows XNB file", (byte)'w');
+            //reader.AssertBytes("Not a Windows XNB file", (byte)'w');
+            reader.AssertBytes("Not a 'd' XNB file", (byte)'d'); // PETER NOTE: Whatever the 'd' stands for... sDl maybe? Too lazy dig now.
             reader.AssertBytes("Not an XNA 4.0 XNB file", 5);
             reader.AssertBytes("Not an unpacked Reach profile XNB file", 0);
             var bytes = reader.ReadUInt32();

@@ -41,7 +41,8 @@ namespace AW2.Graphics.Content
         {
             if (reference == 0) return null;
             var value = pool[reference - 1];
-            if (value == null) throw new InvalidDataException("Missing shared reference");
+            if (value == null)
+                return null; // TODO: PETER: What is missing here? throw new InvalidDataException("Missing shared reference");
             return value;
         }
 

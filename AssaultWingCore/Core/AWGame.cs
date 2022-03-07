@@ -18,7 +18,7 @@ namespace AW2.Core
         public static readonly TimeSpan TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS);
         private static readonly TimeSpan FastFrameDrawMaxDuration = TimeSpan.FromMilliseconds(2);
 
-        public GraphicsDeviceService GraphicsDeviceService { get; private set; }
+        public IGraphicsDeviceService GraphicsDeviceService { get; private set; }
         public RenderTarget2D DefaultRenderTarget { get; private set; }
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
@@ -37,11 +37,10 @@ namespace AW2.Core
         private RunningSequenceTimeSpan _frameDrawTimes;
         private Stopwatch _frameDrawStopwatch;
 
-        public AWGame(GraphicsDeviceService graphicsDeviceService)
+        public AWGame(GameServiceContainer serviceContainer)
         {
-            GraphicsDeviceService = graphicsDeviceService;
-            Services = new GameServiceContainer();
-            if (graphicsDeviceService != null) Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
+            GraphicsDeviceService = serviceContainer.GetService<GraphicsDeviceManager>();
+            Services = serviceContainer;
             Components = new AWGameComponentCollection();
             GameTime = new AWGameTime();
             _framerateTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };

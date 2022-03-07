@@ -14,6 +14,7 @@ using AW2.Helpers;
 using AW2.Settings;
 using AW2.Sound;
 using AW2.UI;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Core
 {
@@ -81,8 +82,8 @@ namespace AW2.Core
 
         #endregion AssaultWing properties
 
-        public AssaultWingCore(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
-            : base(graphicsDeviceService)
+        public AssaultWingCore(GameServiceContainer serviceContainer, CommandLineOptions args)
+            : base(serviceContainer)
         {
             Log.Write("Assault Wing version " + MiscHelper.Version);
             CommandLineOptions = args;

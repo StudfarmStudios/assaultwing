@@ -61,7 +61,7 @@ namespace AW2
 
         public void Run()
         {
-            Application.Run(_form);
+            _form.Run();
         }
 
         public void Exit()

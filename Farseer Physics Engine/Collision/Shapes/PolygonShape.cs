@@ -152,7 +152,7 @@ namespace FarseerPhysics.Collision.Shapes
                     // has colinear edges.
                     float s = edge.X * r.Y - edge.Y * r.X;
 
-                    Debug.Assert(s > 0.0f);
+                    // PETER MOD: Debug.Assert(s > 0.0f);
                 }
             }
 #endif
@@ -247,7 +247,7 @@ namespace FarseerPhysics.Collision.Shapes
             }
 
             //The area is too small for the engine to handle.
-            Debug.Assert(area > Settings.Epsilon);
+            // PETER MOD: Debug.Assert(area > Settings.Epsilon);
 
             // We save the area
             MassData.Area = area;

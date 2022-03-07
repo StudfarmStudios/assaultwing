@@ -28,6 +28,11 @@ namespace AW2.Core.GameComponents
 
         private void BeginIntro()
         {
+            if (_introVideo == null)
+            {
+                Mode = ModeType.Finished;
+                return;
+            }
             Log.Write("Starting intro");
             try
             {
@@ -76,6 +81,10 @@ namespace AW2.Core.GameComponents
         public override void Draw()
         {
             if (Mode == ModeType.NotStarted) BeginIntro();
+            if (_introVideo == null)
+            {
+                return;
+            }
             Game.GraphicsDeviceService.GraphicsDevice.Clear(Color.Black);
             var videoFrame = _introVideo.GetTexture();
             if (videoFrame != null)

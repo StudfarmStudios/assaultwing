@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using Viewport = AW2.Graphics.AWViewport;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Graphics
 {
@@ -11,7 +12,7 @@ namespace AW2.Graphics
     {
         public delegate Viewport ViewportConstructor(int viewportIndex, Rectangle viewportArea);
 
-        private GraphicsDeviceService _graphicsDeviceService;
+        private IGraphicsDeviceService _graphicsDeviceService;
         private List<Viewport> _items;
         private List<ViewportSeparator> _separators;
         private Point _lastGraphicsDeviceViewportSize;
@@ -29,7 +30,7 @@ namespace AW2.Graphics
 
         #region Public methods
 
-        public AWViewportCollection(GraphicsDeviceService graphicsDeviceService, int viewports, ViewportConstructor viewportConstructor)
+        public AWViewportCollection(IGraphicsDeviceService graphicsDeviceService, int viewports, ViewportConstructor viewportConstructor)
         {
             if (viewports < 0) throw new ArgumentException("Nonnegative number of viewports required");
             _graphicsDeviceService = graphicsDeviceService;

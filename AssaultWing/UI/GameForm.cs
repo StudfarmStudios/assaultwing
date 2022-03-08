@@ -32,6 +32,7 @@ namespace AW2.UI
         public GameForm(CommandLineOptions commandLineOptions) : base()
         {
             _graphics = new GraphicsDeviceManager(this);
+
             Services.AddService(_graphics);
             Services.AddService(Content); // ContentMananger
             InitializeGame(commandLineOptions);
@@ -95,9 +96,9 @@ namespace AW2.UI
                 GetTitle = () => {return "foo";}, // () => Text,
                 SetTitle = (Action<string>)((text) => {}), //text => BeginInvoke((Action)(() => Text = text)),
                 GetClientBounds = () => { return new Rectangle(0, 0, 100, 100); }, // _isFullScreen ? ClientRectangle.ToXnaRectangle() : _gameView.ClientRectangle.ToXnaRectangle(),
-                GetFullScreen = () => _isFullScreen,
-                SetWindowed = (Action)(() => {}), //() => BeginInvoke((Action)SetWindowed),
-                SetFullScreen = (Action<int, int>)((width, height) => {}), //(width, height) => BeginInvoke((Action<int, int>)SetFullScreen, width, height),
+                GetFullScreen = () => _graphics.IsFullScreen,
+                SetWindowed = (Action)(() => {if(_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}), //() => BeginInvoke((Action)SetWindowed),
+                SetFullScreen = (Action<int, int>)((width, height) => {if(!_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}), //(width, height) => BeginInvoke((Action<int, int>)SetFullScreen, width, height),
                 IsVerticalSynced = () => _graphics.SynchronizeWithVerticalRetrace,
                 EnableVerticalSync = (Action)(() => {}), // BeginInvoke((Action)_graphicsDeviceService.EnableVerticalSync),
                 DisableVerticalSync = (Action)(() => {}),// () => BeginInvoke((Action)_graphicsDeviceService.DisableVerticalSync),
@@ -115,6 +116,10 @@ namespace AW2.UI
         {
             if (!_gameInitialized)
             {
+                _graphics.PreferredBackBufferWidth = 1920;
+                _graphics.PreferredBackBufferHeight = 1080;
+                _graphics.ApplyChanges();
+
                 _gameInitialized = true;
                 _game.Initialize();
                 _game.BeginRun();

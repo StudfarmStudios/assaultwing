@@ -1,128 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <ProjectGuid>{FF44F1A3-3395-4645-A965-79D9D8DEA986}</ProjectGuid>
-    <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AW2</RootNamespace>
-    <AssemblyName>AWUnitTests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-    <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
-    <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>Reach</XnaProfile>
-    <XnaCrossPlatformGroupID>c1dfbaa9-88da-4886-a199-e954921096eb</XnaCrossPlatformGroupID>
-    <XnaOutputType>Library</XnaOutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>false</XnaCompressContent>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>true</XnaCompressContent>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseDev|x86'">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\x86\ReleaseDev</OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="mscorlib" />
-    <Reference Include="nunit.framework, Version=2.5.9.10348, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.XML" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="NUnit" Version="3.13.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+    <PackageReference Include="coverlet.collector" Version="3.1.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Core\CommandLineOptionsTest.cs" />
-    <Compile Include="FarseerPhysics\Collision\AABBTest.cs" />
-    <Compile Include="Game\Arenas\NavigatorTest.cs" />
-    <Compile Include="Game\GobTest.cs" />
-    <Compile Include="Game\GobUtils\CoronerTest.cs" />
-    <Compile Include="Game\GobUtils\DamageInfoTest.cs" />
-    <Compile Include="Game\GobUtils\ShipLocationPredicterTest.cs" />
-    <Compile Include="Game\GobUtils\TargetSelectorTest.cs" />
-    <Compile Include="Game\GobUtils\WallIndexMapTest.cs" />
-    <Compile Include="Game\Logic\GameplayModeTest.cs" />
-    <Compile Include="Game\Players\TeamTest.cs" />
-    <Compile Include="Game\Weapons\LightningGunTest.cs" />
-    <Compile Include="Graphics\AWViewportCollectionTest.cs" />
-    <Compile Include="Graphics\WrappedTextTest.cs" />
-    <Compile Include="Helpers\AWMathHelperTest.cs" />
-    <Compile Include="Helpers\AWTimerTest.cs" />
-    <Compile Include="Helpers\ClonableTest.cs" />
-    <Compile Include="Helpers\ConverterTest.cs" />
-    <Compile Include="Helpers\Geometric\GeometryTest.cs" />
-    <Compile Include="Helpers\Geometric\PolygonTest.cs" />
-    <Compile Include="Helpers\Geometric\RectangleTest.cs" />
-    <Compile Include="Helpers\LazyProxyTest.cs" />
-    <Compile Include="Helpers\Math\RunningSequenceTest.cs" />
-    <Compile Include="Helpers\MiscHelperTest.cs" />
-    <Compile Include="Helpers\RandomHelperTest.cs" />
-    <Compile Include="Helpers\Serialization\NetworkBinaryReaderTest.cs" />
-    <Compile Include="Helpers\Serialization\NetworkBinaryWriterTest.cs" />
-    <Compile Include="Helpers\Serialization\SerializationTest.cs" />
-    <Compile Include="Menu\ScrollableListTest.cs" />
-    <Compile Include="Net\Messages\PingTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\CharacterSetTest.cs" />
+    <ProjectReference Include="..\AssaultWingCore\AssaultWingCore.csproj" />
+    <ProjectReference Include="..\AssaultWing\AssaultWing.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AssaultWingCore\AssaultWingCore.csproj">
-      <Project>{1813E562-567E-4D87-BDDF-4E1DE1E47022}</Project>
-      <Name>AssaultWingCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AssaultWing\AssaultWing.csproj">
-      <Project>{930EB940-D07F-408D-A5C6-A1C8D49636CB}</Project>
-      <Name>AssaultWing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Farseer Physics Engine\Farseer Physics XNA.csproj">
-      <Project>{0A850700-1ABB-4288-A391-6726B90EBEB9}</Project>
-      <Name>Farseer Physics XNA</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
-  <!--
-      To modify your build process, add your task inside one of the targets below and uncomment it. 
-      Other similar extension points exist, see Microsoft.Common.targets.
-      <Target Name="BeforeBuild">
-      </Target>
-      <Target Name="AfterBuild">
-      </Target>
-    -->
+
+
 </Project>

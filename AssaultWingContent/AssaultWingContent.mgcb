@@ -30,7 +30,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_altar.X
+/build:models/alienworld_altar.X;Content/models/alienworld_altar.X
 
 #begin models/alienworld_brain.X
 /importer:XImporter
@@ -49,7 +49,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_brain.X
+/build:models/alienworld_brain.X;Content/models/alienworld_brain.X
 
 #begin models/alienworld_egg.X
 /importer:XImporter
@@ -68,7 +68,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_egg.X
+/build:models/alienworld_egg.X;Content/models/alienworld_egg.X
 
 #begin models/alienworld_eye.X
 /importer:XImporter
@@ -87,7 +87,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_eye.X
+/build:models/alienworld_eye.X;Content/models/alienworld_eye.X
 
 #begin models/alienworld_leaf1.X
 /importer:XImporter
@@ -106,7 +106,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_leaf1.X
+/build:models/alienworld_leaf1.X;Content/models/alienworld_leaf1.X
 
 #begin models/alienworld_leaf2.X
 /importer:XImporter
@@ -125,7 +125,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_leaf2.X
+/build:models/alienworld_leaf2.X;Content/models/alienworld_leaf2.X
 
 #begin models/alienworld_pillar.X
 /importer:XImporter
@@ -144,7 +144,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_pillar.X
+/build:models/alienworld_pillar.X;Content/models/alienworld_pillar.X
 
 #begin models/alienworld_pole.X
 /importer:XImporter
@@ -163,7 +163,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_pole.X
+/build:models/alienworld_pole.X;Content/models/alienworld_pole.X
 
 #begin models/alienworld_probe.X
 /importer:XImporter
@@ -182,7 +182,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_probe.X
+/build:models/alienworld_probe.X;Content/models/alienworld_probe.X
 
 #begin models/alienworld_stairs.X
 /importer:XImporter
@@ -201,7 +201,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_stairs.X
+/build:models/alienworld_stairs.X;Content/models/alienworld_stairs.X
 
 #begin models/alienworld_wall_1.X
 /importer:XImporter
@@ -220,7 +220,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_1.X
+/build:models/alienworld_wall_1.X;Content/models/alienworld_wall_1.X
 
 #begin models/alienworld_wall_2.X
 /importer:XImporter
@@ -239,7 +239,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_2.X
+/build:models/alienworld_wall_2.X;Content/models/alienworld_wall_2.X
 
 #begin models/alienworld_wall_3.X
 /importer:XImporter
@@ -258,7 +258,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_3.X
+/build:models/alienworld_wall_3.X;Content/models/alienworld_wall_3.X
 
 #begin models/alienworld_wall_4.X
 /importer:XImporter
@@ -277,7 +277,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_4.X
+/build:models/alienworld_wall_4.X;Content/models/alienworld_wall_4.X
 
 #begin models/alienworld_wall_5.X
 /importer:XImporter
@@ -296,7 +296,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_5.X
+/build:models/alienworld_wall_5.X;Content/models/alienworld_wall_5.X
 
 #begin models/alienworld_wall_6.X
 /importer:XImporter
@@ -315,7 +315,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_6.X
+/build:models/alienworld_wall_6.X;Content/models/alienworld_wall_6.X
 
 #begin models/alienworld_wall_7.X
 /importer:XImporter
@@ -334,7 +334,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_7.X
+/build:models/alienworld_wall_7.X;Content/models/alienworld_wall_7.X
 
 #begin models/alienworld_wall_8.X
 /importer:XImporter
@@ -353,7 +353,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_8.X
+/build:models/alienworld_wall_8.X;Content/models/alienworld_wall_8.X
 
 #begin models/alienworld_worm.X
 /importer:XImporter
@@ -372,7 +372,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_worm.X
+/build:models/alienworld_worm.X;Content/models/alienworld_worm.X
 
 #begin models/amazon_chest_1.X
 /importer:XImporter
@@ -391,7 +391,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_chest_1.X
+/build:models/amazon_chest_1.X;Content/models/amazon_chest_1.X
 
 #begin models/amazon_darkwall_1.X
 /importer:XImporter
@@ -410,7 +410,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_darkwall_1.X
+/build:models/amazon_darkwall_1.X;Content/models/amazon_darkwall_1.X
 
 #begin models/amazon_darkwall_2.X
 /importer:XImporter
@@ -429,7 +429,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_darkwall_2.X
+/build:models/amazon_darkwall_2.X;Content/models/amazon_darkwall_2.X
 
 #begin models/amazon_golds.X
 /importer:XImporter
@@ -448,7 +448,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_golds.X
+/build:models/amazon_golds.X;Content/models/amazon_golds.X
 
 #begin models/amazon_grass_1.X
 /importer:XImporter
@@ -467,7 +467,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_grass_1.X
+/build:models/amazon_grass_1.X;Content/models/amazon_grass_1.X
 
 #begin models/amazon_hack_1.X
 /importer:XImporter
@@ -486,7 +486,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_hack_1.X
+/build:models/amazon_hack_1.X;Content/models/amazon_hack_1.X
 
 #begin models/amazon_leaf_1.X
 /importer:XImporter
@@ -505,7 +505,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_leaf_1.X
+/build:models/amazon_leaf_1.X;Content/models/amazon_leaf_1.X
 
 #begin models/amazon_rock_1.X
 /importer:XImporter
@@ -524,7 +524,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_rock_1.X
+/build:models/amazon_rock_1.X;Content/models/amazon_rock_1.X
 
 #begin models/amazon_shovel_1.X
 /importer:XImporter
@@ -543,7 +543,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_shovel_1.X
+/build:models/amazon_shovel_1.X;Content/models/amazon_shovel_1.X
 
 #begin models/amazon_snare_1.X
 /importer:XImporter
@@ -562,7 +562,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_snare_1.X
+/build:models/amazon_snare_1.X;Content/models/amazon_snare_1.X
 
 #begin models/amazon_temple_1.X
 /importer:XImporter
@@ -581,7 +581,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_temple_1.X
+/build:models/amazon_temple_1.X;Content/models/amazon_temple_1.X
 
 #begin models/amazon_trunk.X
 /importer:XImporter
@@ -600,7 +600,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_trunk.X
+/build:models/amazon_trunk.X;Content/models/amazon_trunk.X
 
 #begin models/amazon_wall_1.X
 /importer:XImporter
@@ -619,7 +619,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_1.X
+/build:models/amazon_wall_1.X;Content/models/amazon_wall_1.X
 
 #begin models/amazon_wall_10.X
 /importer:XImporter
@@ -638,7 +638,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_10.X
+/build:models/amazon_wall_10.X;Content/models/amazon_wall_10.X
 
 #begin models/amazon_wall_11.X
 /importer:XImporter
@@ -657,7 +657,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_11.X
+/build:models/amazon_wall_11.X;Content/models/amazon_wall_11.X
 
 #begin models/amazon_wall_12.X
 /importer:XImporter
@@ -676,7 +676,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_12.X
+/build:models/amazon_wall_12.X;Content/models/amazon_wall_12.X
 
 #begin models/amazon_wall_2.X
 /importer:XImporter
@@ -695,7 +695,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_2.X
+/build:models/amazon_wall_2.X;Content/models/amazon_wall_2.X
 
 #begin models/amazon_wall_3.X
 /importer:XImporter
@@ -714,7 +714,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_3.X
+/build:models/amazon_wall_3.X;Content/models/amazon_wall_3.X
 
 #begin models/amazon_wall_4.X
 /importer:XImporter
@@ -733,7 +733,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_4.X
+/build:models/amazon_wall_4.X;Content/models/amazon_wall_4.X
 
 #begin models/amazon_wall_5.X
 /importer:XImporter
@@ -752,7 +752,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_5.X
+/build:models/amazon_wall_5.X;Content/models/amazon_wall_5.X
 
 #begin models/amazon_wall_6.X
 /importer:XImporter
@@ -771,7 +771,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_6.X
+/build:models/amazon_wall_6.X;Content/models/amazon_wall_6.X
 
 #begin models/amazon_wall_7.X
 /importer:XImporter
@@ -790,7 +790,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_7.X
+/build:models/amazon_wall_7.X;Content/models/amazon_wall_7.X
 
 #begin models/amazon_wall_8.X
 /importer:XImporter
@@ -809,7 +809,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_8.X
+/build:models/amazon_wall_8.X;Content/models/amazon_wall_8.X
 
 #begin models/amazon_wall_9.X
 /importer:XImporter
@@ -828,7 +828,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_9.X
+/build:models/amazon_wall_9.X;Content/models/amazon_wall_9.X
 
 #begin models/berserker.X
 /importer:XImporter
@@ -847,7 +847,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/berserker.X
+/build:models/berserker.X;Content/models/berserker.X
 
 #begin models/bloodbowl_axe.X
 /importer:XImporter
@@ -866,7 +866,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_axe.X
+/build:models/bloodbowl_axe.X;Content/models/bloodbowl_axe.X
 
 #begin models/bloodbowl_bg_wall1.X
 /importer:XImporter
@@ -885,7 +885,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_bg_wall1.X
+/build:models/bloodbowl_bg_wall1.X;Content/models/bloodbowl_bg_wall1.X
 
 #begin models/bloodbowl_bg_wall2.X
 /importer:XImporter
@@ -904,7 +904,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_bg_wall2.X
+/build:models/bloodbowl_bg_wall2.X;Content/models/bloodbowl_bg_wall2.X
 
 #begin models/bloodbowl_bg_wall3.X
 /importer:XImporter
@@ -923,7 +923,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_bg_wall3.X
+/build:models/bloodbowl_bg_wall3.X;Content/models/bloodbowl_bg_wall3.X
 
 #begin models/bloodbowl_bones.X
 /importer:XImporter
@@ -942,7 +942,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_bones.X
+/build:models/bloodbowl_bones.X;Content/models/bloodbowl_bones.X
 
 #begin models/bloodbowl_castlewall.X
 /importer:XImporter
@@ -961,7 +961,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_castlewall.X
+/build:models/bloodbowl_castlewall.X;Content/models/bloodbowl_castlewall.X
 
 #begin models/bloodbowl_demonskull.X
 /importer:XImporter
@@ -980,7 +980,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_demonskull.X
+/build:models/bloodbowl_demonskull.X;Content/models/bloodbowl_demonskull.X
 
 #begin models/bloodbowl_gravestone.X
 /importer:XImporter
@@ -999,7 +999,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_gravestone.X
+/build:models/bloodbowl_gravestone.X;Content/models/bloodbowl_gravestone.X
 
 #begin models/bloodbowl_horn.X
 /importer:XImporter
@@ -1018,7 +1018,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_horn.X
+/build:models/bloodbowl_horn.X;Content/models/bloodbowl_horn.X
 
 #begin models/bloodbowl_lavachunk1.X
 /importer:XImporter
@@ -1037,7 +1037,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_lavachunk1.X
+/build:models/bloodbowl_lavachunk1.X;Content/models/bloodbowl_lavachunk1.X
 
 #begin models/bloodbowl_lavachunk2.X
 /importer:XImporter
@@ -1056,7 +1056,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_lavachunk2.X
+/build:models/bloodbowl_lavachunk2.X;Content/models/bloodbowl_lavachunk2.X
 
 #begin models/bloodbowl_metalbar.X
 /importer:XImporter
@@ -1075,7 +1075,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_metalbar.X
+/build:models/bloodbowl_metalbar.X;Content/models/bloodbowl_metalbar.X
 
 #begin models/bloodbowl_rock1.X
 /importer:XImporter
@@ -1094,7 +1094,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_rock1.X
+/build:models/bloodbowl_rock1.X;Content/models/bloodbowl_rock1.X
 
 #begin models/bloodbowl_rock2.X
 /importer:XImporter
@@ -1113,7 +1113,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_rock2.X
+/build:models/bloodbowl_rock2.X;Content/models/bloodbowl_rock2.X
 
 #begin models/bloodbowl_rock3.X
 /importer:XImporter
@@ -1132,7 +1132,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_rock3.X
+/build:models/bloodbowl_rock3.X;Content/models/bloodbowl_rock3.X
 
 #begin models/bloodbowl_shield.X
 /importer:XImporter
@@ -1151,7 +1151,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_shield.X
+/build:models/bloodbowl_shield.X;Content/models/bloodbowl_shield.X
 
 #begin models/bloodbowl_spear.X
 /importer:XImporter
@@ -1170,7 +1170,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_spear.X
+/build:models/bloodbowl_spear.X;Content/models/bloodbowl_spear.X
 
 #begin models/bloodbowl_spikefence.X
 /importer:XImporter
@@ -1189,7 +1189,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_spikefence.X
+/build:models/bloodbowl_spikefence.X;Content/models/bloodbowl_spikefence.X
 
 #begin models/bloodbowl_volcano.X
 /importer:XImporter
@@ -1208,7 +1208,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_volcano.X
+/build:models/bloodbowl_volcano.X;Content/models/bloodbowl_volcano.X
 
 #begin models/bloodbowl_wall_1.X
 /importer:XImporter
@@ -1227,7 +1227,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_1.X
+/build:models/bloodbowl_wall_1.X;Content/models/bloodbowl_wall_1.X
 
 #begin models/bloodbowl_wall_10.X
 /importer:XImporter
@@ -1246,7 +1246,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_10.X
+/build:models/bloodbowl_wall_10.X;Content/models/bloodbowl_wall_10.X
 
 #begin models/bloodbowl_wall_11.X
 /importer:XImporter
@@ -1265,7 +1265,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_11.X
+/build:models/bloodbowl_wall_11.X;Content/models/bloodbowl_wall_11.X
 
 #begin models/bloodbowl_wall_12.X
 /importer:XImporter
@@ -1284,7 +1284,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_12.X
+/build:models/bloodbowl_wall_12.X;Content/models/bloodbowl_wall_12.X
 
 #begin models/bloodbowl_wall_2.X
 /importer:XImporter
@@ -1303,7 +1303,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_2.X
+/build:models/bloodbowl_wall_2.X;Content/models/bloodbowl_wall_2.X
 
 #begin models/bloodbowl_wall_3.X
 /importer:XImporter
@@ -1322,7 +1322,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_3.X
+/build:models/bloodbowl_wall_3.X;Content/models/bloodbowl_wall_3.X
 
 #begin models/bloodbowl_wall_4.X
 /importer:XImporter
@@ -1341,7 +1341,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_4.X
+/build:models/bloodbowl_wall_4.X;Content/models/bloodbowl_wall_4.X
 
 #begin models/bloodbowl_wall_5.X
 /importer:XImporter
@@ -1360,7 +1360,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_5.X
+/build:models/bloodbowl_wall_5.X;Content/models/bloodbowl_wall_5.X
 
 #begin models/bloodbowl_wall_6.X
 /importer:XImporter
@@ -1379,7 +1379,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_6.X
+/build:models/bloodbowl_wall_6.X;Content/models/bloodbowl_wall_6.X
 
 #begin models/bloodbowl_wall_7.X
 /importer:XImporter
@@ -1398,7 +1398,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_7.X
+/build:models/bloodbowl_wall_7.X;Content/models/bloodbowl_wall_7.X
 
 #begin models/bloodbowl_wall_8.X
 /importer:XImporter
@@ -1417,7 +1417,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_8.X
+/build:models/bloodbowl_wall_8.X;Content/models/bloodbowl_wall_8.X
 
 #begin models/bloodbowl_wall_9.X
 /importer:XImporter
@@ -1436,7 +1436,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_9.X
+/build:models/bloodbowl_wall_9.X;Content/models/bloodbowl_wall_9.X
 
 #begin models/bonus.X
 /importer:XImporter
@@ -1455,7 +1455,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bonus.X
+/build:models/bonus.X;Content/models/bonus.X
 
 #begin models/bot.X
 /importer:XImporter
@@ -1474,7 +1474,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bot.X
+/build:models/bot.X;Content/models/bot.X
 
 #begin models/bouncefire.X
 /importer:XImporter
@@ -1493,7 +1493,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bouncefire.X
+/build:models/bouncefire.X;Content/models/bouncefire.X
 
 #begin models/bugger.X
 /importer:XImporter
@@ -1512,7 +1512,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bugger.X
+/build:models/bugger.X;Content/models/bugger.X
 
 #begin models/chainend.X
 /importer:XImporter
@@ -1531,7 +1531,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/chainend.X
+/build:models/chainend.X;Content/models/chainend.X
 
 #begin models/clustermine.X
 /importer:XImporter
@@ -1550,7 +1550,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/clustermine.X
+/build:models/clustermine.X;Content/models/clustermine.X
 
 #begin models/dock.X
 /importer:XImporter
@@ -1569,7 +1569,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dock.X
+/build:models/dock.X;Content/models/dock.X
 
 #begin models/dumbfire.X
 /importer:XImporter
@@ -1588,7 +1588,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dumbfire.X
+/build:models/dumbfire.X;Content/models/dumbfire.X
 
 #begin models/dummymodel.x
 /importer:XImporter
@@ -1607,7 +1607,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dummymodel.x
+/build:models/dummymodel.x;Content/models/dummymodel.x
 
 #begin models/dust_fragment_1.X
 /importer:XImporter
@@ -1626,7 +1626,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dust_fragment_1.X
+/build:models/dust_fragment_1.X;Content/models/dust_fragment_1.X
 
 #begin models/dust_fragment_2.X
 /importer:XImporter
@@ -1645,7 +1645,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dust_fragment_2.X
+/build:models/dust_fragment_2.X;Content/models/dust_fragment_2.X
 
 #begin models/dust_fragment_3.X
 /importer:XImporter
@@ -1664,7 +1664,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dust_fragment_3.X
+/build:models/dust_fragment_3.X;Content/models/dust_fragment_3.X
 
 #begin models/fragment.X
 /importer:XImporter
@@ -1683,7 +1683,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/fragment.X
+/build:models/fragment.X;Content/models/fragment.X
 
 #begin models/junk_airduct.X
 /importer:XImporter
@@ -1702,7 +1702,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_airduct.X
+/build:models/junk_airduct.X;Content/models/junk_airduct.X
 
 #begin models/junk_crate_1.X
 /importer:XImporter
@@ -1721,7 +1721,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_crate_1.X
+/build:models/junk_crate_1.X;Content/models/junk_crate_1.X
 
 #begin models/junk_curvedpipe.X
 /importer:XImporter
@@ -1740,7 +1740,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_curvedpipe.X
+/build:models/junk_curvedpipe.X;Content/models/junk_curvedpipe.X
 
 #begin models/junk_falling_crate.X
 /importer:XImporter
@@ -1759,7 +1759,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_falling_crate.X
+/build:models/junk_falling_crate.X;Content/models/junk_falling_crate.X
 
 #begin models/junk_falling_pipe.X
 /importer:XImporter
@@ -1778,7 +1778,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_falling_pipe.X
+/build:models/junk_falling_pipe.X;Content/models/junk_falling_pipe.X
 
 #begin models/junk_junk_shoot.X
 /importer:XImporter
@@ -1797,7 +1797,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_junk_shoot.X
+/build:models/junk_junk_shoot.X;Content/models/junk_junk_shoot.X
 
 #begin models/junk_metalwall_1.X
 /importer:XImporter
@@ -1816,7 +1816,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_metalwall_1.X
+/build:models/junk_metalwall_1.X;Content/models/junk_metalwall_1.X
 
 #begin models/junk_pipe_1.X
 /importer:XImporter
@@ -1835,7 +1835,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_pipe_1.X
+/build:models/junk_pipe_1.X;Content/models/junk_pipe_1.X
 
 #begin models/junk_rail_1.X
 /importer:XImporter
@@ -1854,7 +1854,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_rail_1.X
+/build:models/junk_rail_1.X;Content/models/junk_rail_1.X
 
 #begin models/junk_squarewall_1.X
 /importer:XImporter
@@ -1873,7 +1873,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_squarewall_1.X
+/build:models/junk_squarewall_1.X;Content/models/junk_squarewall_1.X
 
 #begin models/junk_straightpipe.X
 /importer:XImporter
@@ -1892,7 +1892,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_straightpipe.X
+/build:models/junk_straightpipe.X;Content/models/junk_straightpipe.X
 
 #begin models/junk_valve.X
 /importer:XImporter
@@ -1911,7 +1911,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_valve.X
+/build:models/junk_valve.X;Content/models/junk_valve.X
 
 #begin models/junk_waveplate.X
 /importer:XImporter
@@ -1930,7 +1930,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_waveplate.X
+/build:models/junk_waveplate.X;Content/models/junk_waveplate.X
 
 #begin models/lumipesu_bg_wall1.X
 /importer:XImporter
@@ -1949,7 +1949,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/lumipesu_bg_wall1.X
+/build:models/lumipesu_bg_wall1.X;Content/models/lumipesu_bg_wall1.X
 
 #begin models/lumipesu_bg_wall2.X
 /importer:XImporter
@@ -1968,7 +1968,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/lumipesu_bg_wall2.X
+/build:models/lumipesu_bg_wall2.X;Content/models/lumipesu_bg_wall2.X
 
 #begin models/lumipesu_bg_wall3.X
 /importer:XImporter
@@ -1987,7 +1987,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/lumipesu_bg_wall3.X
+/build:models/lumipesu_bg_wall3.X;Content/models/lumipesu_bg_wall3.X
 
 #begin models/megabonus.X
 /importer:XImporter
@@ -2006,7 +2006,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/megabonus.X
+/build:models/megabonus.X;Content/models/megabonus.X
 
 #begin models/mine.X
 /importer:XImporter
@@ -2025,7 +2025,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/mine.X
+/build:models/mine.X;Content/models/mine.X
 
 #begin models/missile.X
 /importer:XImporter
@@ -2044,7 +2044,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/missile.X
+/build:models/missile.X;Content/models/missile.X
 
 #begin models/snake.X
 /importer:XImporter
@@ -2063,7 +2063,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snake.X
+/build:models/snake.X;Content/models/snake.X
 
 #begin models/snake_bullet.X
 /importer:XImporter
@@ -2082,7 +2082,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snake_bullet.X
+/build:models/snake_bullet.X;Content/models/snake_bullet.X
 
 #begin models/snow_birds.X
 /importer:XImporter
@@ -2101,7 +2101,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_birds.X
+/build:models/snow_birds.X;Content/models/snow_birds.X
 
 #begin models/snow_hockeystick.X
 /importer:XImporter
@@ -2120,7 +2120,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_hockeystick.X
+/build:models/snow_hockeystick.X;Content/models/snow_hockeystick.X
 
 #begin models/snow_iglu.X
 /importer:XImporter
@@ -2139,7 +2139,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_iglu.X
+/build:models/snow_iglu.X;Content/models/snow_iglu.X
 
 #begin models/snow_shovel.X
 /importer:XImporter
@@ -2158,7 +2158,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_shovel.X
+/build:models/snow_shovel.X;Content/models/snow_shovel.X
 
 #begin models/snow_skipoles.X
 /importer:XImporter
@@ -2177,7 +2177,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_skipoles.X
+/build:models/snow_skipoles.X;Content/models/snow_skipoles.X
 
 #begin models/snow_skis.X
 /importer:XImporter
@@ -2196,7 +2196,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_skis.X
+/build:models/snow_skis.X;Content/models/snow_skis.X
 
 #begin models/snow_sledge.X
 /importer:XImporter
@@ -2215,7 +2215,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_sledge.X
+/build:models/snow_sledge.X;Content/models/snow_sledge.X
 
 #begin models/snow_tree.X
 /importer:XImporter
@@ -2234,7 +2234,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_tree.X
+/build:models/snow_tree.X;Content/models/snow_tree.X
 
 #begin models/snow_wall_1.X
 /importer:XImporter
@@ -2253,7 +2253,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_1.X
+/build:models/snow_wall_1.X;Content/models/snow_wall_1.X
 
 #begin models/snow_wall_10.X
 /importer:XImporter
@@ -2272,7 +2272,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_10.X
+/build:models/snow_wall_10.X;Content/models/snow_wall_10.X
 
 #begin models/snow_wall_11.X
 /importer:XImporter
@@ -2291,7 +2291,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_11.X
+/build:models/snow_wall_11.X;Content/models/snow_wall_11.X
 
 #begin models/snow_wall_12.X
 /importer:XImporter
@@ -2310,7 +2310,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_12.X
+/build:models/snow_wall_12.X;Content/models/snow_wall_12.X
 
 #begin models/snow_wall_2.X
 /importer:XImporter
@@ -2329,7 +2329,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_2.X
+/build:models/snow_wall_2.X;Content/models/snow_wall_2.X
 
 #begin models/snow_wall_3.X
 /importer:XImporter
@@ -2348,7 +2348,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_3.X
+/build:models/snow_wall_3.X;Content/models/snow_wall_3.X
 
 #begin models/snow_wall_4.X
 /importer:XImporter
@@ -2367,7 +2367,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_4.X
+/build:models/snow_wall_4.X;Content/models/snow_wall_4.X
 
 #begin models/snow_wall_5.X
 /importer:XImporter
@@ -2386,7 +2386,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_5.X
+/build:models/snow_wall_5.X;Content/models/snow_wall_5.X
 
 #begin models/snow_wall_6.X
 /importer:XImporter
@@ -2405,7 +2405,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_6.X
+/build:models/snow_wall_6.X;Content/models/snow_wall_6.X
 
 #begin models/snow_wall_7.X
 /importer:XImporter
@@ -2424,7 +2424,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_7.X
+/build:models/snow_wall_7.X;Content/models/snow_wall_7.X
 
 #begin models/snow_wall_8.X
 /importer:XImporter
@@ -2443,7 +2443,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_8.X
+/build:models/snow_wall_8.X;Content/models/snow_wall_8.X
 
 #begin models/snow_wall_9.X
 /importer:XImporter
@@ -2462,7 +2462,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_9.X
+/build:models/snow_wall_9.X;Content/models/snow_wall_9.X
 
 #begin models/snowman.X
 /importer:XImporter
@@ -2481,7 +2481,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snowman.X
+/build:models/snowman.X;Content/models/snowman.X
 
 #begin models/straight_chain.X
 /importer:XImporter
@@ -2500,7 +2500,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/straight_chain.X
+/build:models/straight_chain.X;Content/models/straight_chain.X
 
 #begin models/trizooka.X
 /importer:XImporter
@@ -2519,7 +2519,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/trizooka.X
+/build:models/trizooka.X;Content/models/trizooka.X
 
 #begin models/uchain.X
 /importer:XImporter
@@ -2538,7 +2538,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/uchain.X
+/build:models/uchain.X;Content/models/uchain.X
 
 #begin models/windlord.X
 /importer:XImporter
@@ -2557,7 +2557,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/windlord.X
+/build:models/windlord.X;Content/models/windlord.X
 
 #begin models/windlord_claw.X
 /importer:XImporter
@@ -2576,7 +2576,7 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/windlord_claw.X
+/build:models/windlord_claw.X;Content/models/windlord_claw.X
 
 #begin models/windlord_claw2.X
 /importer:XImporter
@@ -2595,5 +2595,5 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/windlord_claw2.X
+/build:models/windlord_claw2.X;Content/models/windlord_claw2.X
 

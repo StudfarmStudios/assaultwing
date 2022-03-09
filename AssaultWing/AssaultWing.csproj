@@ -8,6 +8,7 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -33,7 +34,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PeterMonoLibTest\PeterMonoLibTest.csproj" />
     <ProjectReference Include="..\Farseer Physics Engine\Farseer Physics.csproj" />
     <ProjectReference Include="..\AssaultWingCoreContent\AssaultWingCoreContent.csproj" />
     <ProjectReference Include="..\AssaultWingContent\AssaultWingContent.csproj" />

@@ -208,7 +208,7 @@ namespace AW2.Helpers
             Assert.Throws<ArgumentException>(() => AWMathHelper.ClampAngle(0, 0, MathHelper.TwoPi + 0.1f));
             Assert.AreEqual(1, AWMathHelper.ClampAngle(0, 1, 2));
             Assert.AreEqual(2, AWMathHelper.ClampAngle(3, 1, 2));
-            Assert.AreEqual(MathHelper.Pi, AWMathHelper.ClampAngle(-MathHelper.Pi, MathHelper.PiOver2, 3 * MathHelper.PiOver2));
+            Assert.AreEqual(MathHelper.Pi, AWMathHelper.ClampAngle(-MathHelper.Pi, MathHelper.PiOver2, 3 * MathHelper.PiOver2), 0.0001);
             Assert.AreEqual(MathHelper.TwoPi, AWMathHelper.ClampAngle(0.1f, MathHelper.Pi, MathHelper.TwoPi));
         }
 

@@ -2,14 +2,15 @@ using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+#if WINFORMS
 using System.Windows.Forms;
+#endif
 using AW2.Core;
 using AW2.Helpers;
 using AW2.UI;
 
 namespace AW2
 {
-#if WINDOWS || XBOX
     public class AssaultWingProgram : IDisposable
     {
         private const string AW_BUG_REPORT_SERVER = "assaultwing.com";
@@ -52,10 +53,12 @@ namespace AW2
         public AssaultWingProgram()
         {
             Log.Write("Assault Wing started");
-            Application.ThreadException += ThreadExceptionHandler;
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+
+            // TODO: Peter: unhandled exception handling and reporting:
+            // something like:
+            // System.AppDomain.CurrentDomain.UnhandledException += ThreadExceptionHandler;
+
+
             _form = new GameForm(g_commandLineOptions);
         }
 
@@ -73,7 +76,8 @@ namespace AW2
         {
             if (_form != null) _form.Dispose();
             _form = null;
-            Application.ThreadException -= ThreadExceptionHandler;
+            // PETER MOD: Remove exception handler
+            //Application.ThreadException -= ThreadExceptionHandler;
         }
 
         private void ThreadExceptionHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
@@ -95,6 +99,9 @@ namespace AW2
                 " and the Assault Wing run log \"" + Log.LogFileName + "\"?";
             var report = string.Format("Assault Wing {0}\nCrashed on {1:u}\nHost {2}\n\n{3}",
                 MiscHelper.Version, DateTime.Now.ToUniversalTime(), Environment.MachineName, e.ToString());
+
+            // TODO: Peter: Report exception to the user
+#if WINFORMS
             var result = g_commandLineOptions.DedicatedServer
                 ? DialogResult.Yes
                 : MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
@@ -103,6 +110,7 @@ namespace AW2
 
             // Raise a Windows event to notify any dedicated server keepalive task to relaunch the server.
             System.Diagnostics.EventLog.WriteEvent("Application Error", new System.Diagnostics.EventInstance(1000, 2), "AssaultWing.exe");
+#endif
 
             g_reportingException = false;
         }
@@ -118,6 +126,5 @@ namespace AW2
             tcpClient.Close();
         }
     }
-#endif
 }
 

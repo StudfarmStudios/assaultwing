@@ -95,7 +95,7 @@ namespace AW2.UI
             {
                 GetTitle = () => {return "foo";}, // () => Text,
                 SetTitle = (Action<string>)((text) => {}), //text => BeginInvoke((Action)(() => Text = text)),
-                GetClientBounds = () => { return new Rectangle(0, 0, 100, 100); }, // _isFullScreen ? ClientRectangle.ToXnaRectangle() : _gameView.ClientRectangle.ToXnaRectangle(),
+                GetClientBounds = () => { return Window.ClientBounds; }, // _isFullScreen ? ClientRectangle.ToXnaRectangle() : _gameView.ClientRectangle.ToXnaRectangle(),
                 GetFullScreen = () => _graphics.IsFullScreen,
                 SetWindowed = (Action)(() => {if(_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}), //() => BeginInvoke((Action)SetWindowed),
                 SetFullScreen = (Action<int, int>)((width, height) => {if(!_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}), //(width, height) => BeginInvoke((Action<int, int>)SetFullScreen, width, height),

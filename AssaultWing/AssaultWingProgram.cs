@@ -1,5 +1,6 @@
 using System;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 #if WINFORMS
@@ -36,7 +37,10 @@ namespace AW2
             //if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
             g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
             //PostInstall.EnsureDone();
-            AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                // TODO: Peter: Is this shortcuts disabling necessary and is there a better way
+                AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
+            }
             try
             {
                 using (Instance = new AssaultWingProgram())
@@ -46,7 +50,9 @@ namespace AW2
             }
             finally
             {
-                AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                    AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
+                }
             }
         }
 

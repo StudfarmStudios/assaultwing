@@ -18,9 +18,10 @@ namespace AW2.Settings
             var goodAspectRatio = currentMode.AspectRatio;
             // Note: XNA Reach profile limits texture sizes to 2048x2048. This limits maximum screen size
             // because some display effects require creating a texture that covers the screen.
+            var HiDefProfile = true;
             var modes = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes[SurfaceFormat.Color]
-                .Where(mode => mode.Height >= 600 && mode.Height <= 2048
-                    && mode.Width >= 1024 && mode.Width <= 2048
+                .Where(mode => (HiDefProfile || (mode.Height <= 2048 && mode.Width <= 2048))
+                    && mode.Width >= 1024 && mode.Height >= 600
                     && Math.Abs(goodAspectRatio - mode.AspectRatio) < 0.1)
                 .Select(mode => Tuple.Create(mode.Width, mode.Height));
             if (modes.Any()) return modes;

@@ -93,17 +93,17 @@ namespace AW2.UI
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {
-                GetTitle = () => {return "foo";}, // () => Text,
-                SetTitle = (Action<string>)((text) => {}), //text => BeginInvoke((Action)(() => Text = text)),
-                GetClientBounds = () => { return Window.ClientBounds; }, // _isFullScreen ? ClientRectangle.ToXnaRectangle() : _gameView.ClientRectangle.ToXnaRectangle(),
+                GetTitle = () => {return Window.Title;},
+                SetTitle = (Action<string>)((text) => {Window.Title = text;}),
+                GetClientBounds = () => { return _graphics.IsFullScreen ? Window.ClientBounds : new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height); },
                 GetFullScreen = () => _graphics.IsFullScreen,
-                SetWindowed = (Action)(() => {if(_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}), //() => BeginInvoke((Action)SetWindowed),
-                SetFullScreen = (Action<int, int>)((width, height) => {if(!_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}), //(width, height) => BeginInvoke((Action<int, int>)SetFullScreen, width, height),
+                SetWindowed = (Action)(() => {if(_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}),
+                SetFullScreen = (Action<int, int>)((width, height) => {if(!_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}),
                 IsVerticalSynced = () => _graphics.SynchronizeWithVerticalRetrace,
-                EnableVerticalSync = (Action)(() => {}), // BeginInvoke((Action)_graphicsDeviceService.EnableVerticalSync),
-                DisableVerticalSync = (Action)(() => {}),// () => BeginInvoke((Action)_graphicsDeviceService.DisableVerticalSync),
-                EnsureCursorHidden = (Action)(() => {}),//() => BeginInvoke((Action)EnsureCursorHidden),
-                EnsureCursorShown = (Action)(() => {}),//() => BeginInvoke((Action)EnsureCursorShown),
+                EnableVerticalSync = (Action)(() => {_graphics.SynchronizeWithVerticalRetrace = true;}),
+                DisableVerticalSync = (Action)(() => {_graphics.SynchronizeWithVerticalRetrace = false;}),
+                EnsureCursorHidden = (Action)(() => {IsMouseVisible = false;}),
+                EnsureCursorShown = (Action)(() => {IsMouseVisible = true;}),
             });
             
             //_gameView.Draw += _game.Draw;

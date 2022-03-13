@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
-using System.Windows.Forms;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -117,7 +116,8 @@ namespace AW2.Net.ConnectionUtils
         protected AWSocket(Socket socket, MessageHandler messageHandler)
         {
             if (socket == null) throw new ArgumentNullException("socket", "Null socket argument");
-            Application.ApplicationExit += ApplicationExitCallback;
+            // TODO: Peter: create / find a different exit callback system
+            // Application.ApplicationExit += ApplicationExitCallback;
             _socket = socket;
             _sendCache = new Dictionary<IPEndPoint, Tuple<SocketAsyncEventArgs, NetworkBinaryWriter>>();
             ConfigureSocket(_socket);
@@ -184,7 +184,8 @@ namespace AW2.Net.ConnectionUtils
                     catch (SocketException) { }
             });
             if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
-            Application.ApplicationExit -= ApplicationExitCallback;
+            // TODO: Peter: create / find a different exit callback system
+            // Application.ApplicationExit -= ApplicationExitCallback;
             UseSocket(socket => socket.Close());
         }
 

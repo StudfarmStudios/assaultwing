@@ -9,3 +9,4 @@ AWUnitTests/TestResult.xml
 AWUnitTests/AssaultWing.VisualState.xml
 .vs/
 launchSettings.json
+.vscode/

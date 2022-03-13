@@ -17,13 +17,6 @@ namespace AW2.UI
 
         private AssaultWing _game;
         private GraphicsDeviceManager _graphics;
-
-        private bool _isFullScreen;
-        private int _isChangingFullScreen;
-        private Tuple<int, int> _pendingFullScreenSize;
-        private bool _isCursorHidden;
-        private bool _isCursorForcedVisible;
-
         private Stopwatch _stopWatch = new Stopwatch();
         private StringBuilder _logCache;
 
@@ -31,6 +24,7 @@ namespace AW2.UI
 
         public GameForm(CommandLineOptions commandLineOptions) : base()
         {
+            Window.AllowUserResizing = true;
             _graphics = new GraphicsDeviceManager(this);
 
             Services.AddService(_graphics);
@@ -41,6 +35,7 @@ namespace AW2.UI
 
         public void FinishGame()
         {
+            Game.EndRun();
         }
 
         public new void Dispose()
@@ -57,16 +52,26 @@ namespace AW2.UI
         }
         public void SetWindowed()
         {
-            // TODO: Peter: Do we need this?
-
+            if(_graphics.IsFullScreen) {
+                _graphics.ToggleFullScreen();
+            }
+        }
+        public void SetFullScreen(int width, int height)
+        {
+            if(!_graphics.IsFullScreen) {
+                _graphics.ToggleFullScreen();                
+            }
+            _graphics.PreferredBackBufferWidth = width;
+            _graphics.PreferredBackBufferHeight = height;
+            _graphics.ApplyChanges();            
         }
         public void Close() {
-            // TODO: Peter: do we need this?
+            Game.EndRun();
+            Exit();
         }
         public void ForceCursorShown()
         {
-            _isCursorForcedVisible = true;
-            // TODO: Peter? Do we need this?
+            IsMouseVisible = true;
         }
         
 
@@ -97,8 +102,8 @@ namespace AW2.UI
                 SetTitle = (Action<string>)((text) => {Window.Title = text;}),
                 GetClientBounds = () => { return _graphics.IsFullScreen ? Window.ClientBounds : new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height); },
                 GetFullScreen = () => _graphics.IsFullScreen,
-                SetWindowed = (Action)(() => {if(_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}),
-                SetFullScreen = (Action<int, int>)((width, height) => {if(!_graphics.IsFullScreen) {_graphics.ToggleFullScreen();}}),
+                SetWindowed = (Action)(SetWindowed),
+                SetFullScreen = (Action<int, int>)(SetFullScreen),
                 IsVerticalSynced = () => _graphics.SynchronizeWithVerticalRetrace,
                 EnableVerticalSync = (Action)(() => {_graphics.SynchronizeWithVerticalRetrace = true;}),
                 DisableVerticalSync = (Action)(() => {_graphics.SynchronizeWithVerticalRetrace = false;}),
@@ -116,11 +121,9 @@ namespace AW2.UI
         {
             if (!_gameInitialized)
             {
-                _graphics.PreferredBackBufferWidth = 1920;
-                _graphics.PreferredBackBufferHeight = 1080;
-                _graphics.ApplyChanges();
-
                 _gameInitialized = true;
+
+                ApplyInitialInMenuGraphicsSettings();
                 _game.Initialize();
                 _game.BeginRun();
             }
@@ -137,6 +140,18 @@ namespace AW2.UI
 
                 base.Update(gameTime);
             }
+        }
+
+        private void ApplyInitialInMenuGraphicsSettings() {
+            var displayMode = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode;
+            var gfxSetup = Game.Settings.Graphics;
+
+
+            _graphics.PreferredBackBufferWidth = Math.Max(800, displayMode.Width / 2);
+            _graphics.PreferredBackBufferHeight = Math.Max(600, displayMode.Height / 2);
+        
+            _graphics.SynchronizeWithVerticalRetrace = gfxSetup.IsVerticalSynced;
+            _graphics.ApplyChanges();            
         }
 
 

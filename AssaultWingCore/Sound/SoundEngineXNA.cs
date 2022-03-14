@@ -76,7 +76,7 @@ namespace AW2.Sound
         {
             try
             {
-                string filePath = Game.Content.RootDirectory + "\\corecontent\\sounds\\sounddefs.xml";
+                string filePath = Path.Combine(Game.Content.RootDirectory, "CoreContent/sounds/sounddefs.xml");
                 var document = new XmlDocument();
                 document.Load(filePath);
                 var soundNodes = document.SelectNodes("group/sound");

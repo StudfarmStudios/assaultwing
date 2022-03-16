@@ -170,20 +170,20 @@ namespace AW2.Menu
                 if (_currentArena.IsCurrentValidIndex)
                 {
                     SelectCurrentArena();
-                    MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    MenuEngine.Game.SoundEngine.PlaySound("menuChangeItem");
                     MenuEngine.Activate(MenuComponentType.Equip);
                 }
             }));
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Up, () =>
             {
                 _currentArena.CurrentIndex--;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
 
             }));
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Down, () =>
             {
                 _currentArena.CurrentIndex++;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
             }));
         }
 

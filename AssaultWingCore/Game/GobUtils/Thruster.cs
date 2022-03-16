@@ -102,7 +102,7 @@ namespace AW2.Game.GobUtils
             if (HasSound)
             {
                 _thrusterSound = Owner.Game.SoundEngine.CreateSound(_runningSound, Owner);
-                _thrusterTurnSound = Owner.Game.SoundEngine.CreateSound("LowEngine", Owner);
+                _thrusterTurnSound = Owner.Game.SoundEngine.CreateSound("lowengine", Owner);
             }
         }
 

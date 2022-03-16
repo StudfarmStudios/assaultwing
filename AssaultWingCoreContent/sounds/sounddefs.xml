@@ -12,7 +12,7 @@
 	<sound name="collision" volume="0.2"/>
   <sound name="dropMines" volume="0.5"/>
   <sound name="mineHit" volume="1.0"/>
-	<sound name="dummySound"/>
+	<sound name="dummysound"/>
   <sound name="engine" loop="true" volume="0.25"/>
   <sound name="lowengine" loop="true" volume="0.25"/>
   <sound name="buggerEngine" loop="true" volume="0.9"/>
@@ -31,8 +31,8 @@
 	<sound name="missile" volume="0.3"/>
   <sound name="missileHit" volume="1.0"/>
 	<sound name="newCraft" volume="1.0"/>
-	<sound name="playermessage" volume="0.25"/>
-	<sound name="shipCollision" volume="0.3"/>
+	<sound name="playerMessage" volume="0.25"/>
+	<sound name="shipcollision" volume="0.3"/>
   <sound name="talon" volume="0.1"/>
 	<sound name="weaponFail" volume="0.3"/>
 	<sound name="venomSpray" volume="0.3"/>

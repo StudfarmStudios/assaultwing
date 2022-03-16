@@ -31,7 +31,7 @@ namespace AW2.Menu.Equip
             {
                 int matchTabItemCount = Enum.GetValues(typeof(MatchTabItem)).Length;
                 _tabItem = (MatchTabItem)(((int)_tabItem + itemIndexDelta + matchTabItemCount) % matchTabItemCount);
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
             if (Controls.Activate.Pulse && _tabItem == MatchTabItem.Type)

@@ -32,7 +32,7 @@
 
   <typeName>fusion cone</typeName>
   <gunBarrels>Middle</gunBarrels>
-  <fireSound>FusionConeFire</fireSound>
+  <fireSound>fusionConeFire</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>
   <iconName>b_icon_antimattercone</iconName>

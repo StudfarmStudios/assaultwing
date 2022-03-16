@@ -93,7 +93,7 @@ namespace AW2.Game.Gobs
             ThrustToStraightenToHeading,
         };
 
-        private const string SHIP_BIRTH_SOUND = "NewCraft";
+        private const string SHIP_BIRTH_SOUND = "newCraft";
         private static readonly ControlState[] g_defaultControlStates;
 
         #region Ship fields related to flying

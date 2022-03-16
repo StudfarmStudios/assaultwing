@@ -85,7 +85,7 @@ namespace AW2.Menu
                 ApplyControlsSettings();
             }
             _currentItemsHistory.Pop();
-            MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            MenuEngine.Game.SoundEngine.PlaySound("menuChangeItem");
         }
 
         public override void Update()
@@ -177,12 +177,12 @@ namespace AW2.Menu
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Up, () =>
             {
                 CurrentItemIndexer.CurrentIndex--;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Down, () =>
             {
                 CurrentItemIndexer.CurrentIndex++;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Activate, () => CurrentItem.Action()));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Left, () => CurrentItem.ActionLeft()));

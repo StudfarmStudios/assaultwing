@@ -122,13 +122,13 @@ namespace AW2.Menu.Equip
             {
                 var player = indexedPlayer.Item1;
                 int playerI = indexedPlayer.Item2;
-                ConditionalPlayerAction(Controls.PlayerDirs[playerI].Up.Pulse, playerI, "MenuBrowseItem", () =>
+                ConditionalPlayerAction(Controls.PlayerDirs[playerI].Up.Pulse, playerI, "menuBrowseItem", () =>
                 {
                     var minItem = IsPlayerNameEditable(player) ? EquipMenuItem.Name : EquipMenuItem.Ship;
                     if (_currentItems[playerI] > minItem)
                         --_currentItems[playerI];
                 });
-                ConditionalPlayerAction(Controls.PlayerDirs[playerI].Down.Pulse, playerI, "MenuBrowseItem", () =>
+                ConditionalPlayerAction(Controls.PlayerDirs[playerI].Down.Pulse, playerI, "menuBrowseItem", () =>
                 {
                     if ((int)_currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
                         ++_currentItems[playerI];
@@ -140,9 +140,9 @@ namespace AW2.Menu.Equip
                 {
                     int selectionChange = 0;
                     ConditionalPlayerAction(Controls.PlayerDirs[playerI].Left.Pulse,
-                        playerI, "MenuChangeItem", () => selectionChange = -1);
+                        playerI, "menuChangeItem", () => selectionChange = -1);
                     ConditionalPlayerAction(Controls.PlayerDirs[playerI].Right.Pulse,
-                        playerI, "MenuChangeItem", () => selectionChange = 1);
+                        playerI, "menuChangeItem", () => selectionChange = 1);
                     if (selectionChange != 0)
                         _equipmentSelectors[playerI, (int)_currentItems[playerI]].CurrentValue += selectionChange;
                 }

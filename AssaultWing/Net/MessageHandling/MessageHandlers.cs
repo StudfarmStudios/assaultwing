@@ -108,7 +108,7 @@ namespace AW2.Net.MessageHandling
             if (Game.NetworkMode == NetworkMode.Client) return;
             if (mess.Success)
             {
-                Game.SoundEngine.PlaySound("MenuChangeItem");
+                Game.SoundEngine.PlaySound("menuChangeItem");
                 Game.StartClient(mess.GameServerEndPoints);
             }
             else

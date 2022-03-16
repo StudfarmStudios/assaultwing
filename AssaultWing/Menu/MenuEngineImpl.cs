@@ -186,7 +186,7 @@ namespace AW2.Menu
                 _menuChangeSound.Stop();
                 _menuChangeSound.Dispose();
             }
-            _menuChangeSound = Game.SoundEngine.PlaySound("MenuChangeStart");
+            _menuChangeSound = Game.SoundEngine.PlaySound("menuChangeStart");
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
             _activeComponentSoundPlayedOnce = _activeComponentActivatedOnce = false;
@@ -222,7 +222,7 @@ namespace AW2.Menu
             {
                 _activeComponentSoundPlayedOnce = true;
                 _menuChangeSound.Stop();
-                Game.SoundEngine.PlaySound("MenuChangeEnd");
+                Game.SoundEngine.PlaySound("menuChangeEnd");
             }
 
             foreach (var component in _components) component.Update();

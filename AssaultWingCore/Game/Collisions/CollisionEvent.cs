@@ -168,7 +168,7 @@ namespace AW2.Game.Collisions
             if (gob1MakesSound && gob2MakesSound) return CollisionSoundType.ShipCollision;
             if (gob1MakesSound || gob2MakesSound)
                 return gob1.MoveType == GobUtils.MoveType.Dynamic && gob2.MoveType == GobUtils.MoveType.Dynamic
-                    ? CollisionSoundType.ShipCollision :  CollisionSoundType.Collision;
+                    ? CollisionSoundType.shipCollision :  CollisionSoundType.collision;
             return CollisionSoundType.None;
         }
 

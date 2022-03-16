@@ -10,6 +10,12 @@ namespace AW2.Helpers
     /// </summary>
     public static class Paths
     {
+
+        /// <summary>
+        /// The install directory.
+        /// </summary>
+        public static readonly string CONTENT_ROOT = "";
+
         /// <summary>
         /// Root path for all content.
         /// </summary>

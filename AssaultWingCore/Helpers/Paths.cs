@@ -77,6 +77,11 @@ namespace AW2.Helpers
         public static readonly string SOUNDS = @"CoreContent/sounds";
 
         /// <summary>
+        /// Path to the sound definitions file.
+        /// </summary>
+        public static readonly string SOUND_DEFS = "CoreContent/sounds/sounddefs.xml";
+
+        /// <summary>
         /// Path to videos.
         /// </summary>
         public static readonly string VIDEO = @"CoreContent/video";

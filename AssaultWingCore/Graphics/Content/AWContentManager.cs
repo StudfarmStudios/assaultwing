@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -58,12 +58,26 @@ namespace AW2.Graphics.Content
         }
 
         /// <summary>
+        /// Resolve a string from Paths using RootDirectory
+        /// </summary>
+        // TODO: Peter: Make all searches to go through this function. This now works because RootDirectory is usually empty.
+        public string ResolveContentPath(string contentPath)
+        {
+            if (RootDirectory.Length == 0 && contentPath.Length == 0) {
+                return Environment.CurrentDirectory;
+            } else {
+                // TODO: Peter: Handle case where contentPath is nonempty AND RootDirectory is nonempty
+                return contentPath;
+            }
+        }
+
+        /// <summary>
         /// Returns the names of all assets. Only XNB files are considered
         /// as containing assets. Unprocessed XML files are ignored.
         /// </summary>
         public IEnumerable<string> GetAssetNames()
         {
-            foreach (var filename in Directory.GetFiles(RootDirectory, "*.xnb", SearchOption.AllDirectories))
+            foreach (var filename in Directory.GetFiles(ResolveContentPath(Paths.CONTENT_ROOT), "*.xnb", SearchOption.AllDirectories))
             {
                 // Skip texture names that are part of 3D models.
                 if (!IsModelTextureFilename(filename)) yield return Path.GetFileNameWithoutExtension(filename);

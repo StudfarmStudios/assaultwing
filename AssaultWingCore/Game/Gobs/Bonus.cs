@@ -47,7 +47,7 @@ namespace AW2.Game.Gobs
             if (myArea.Type == CollisionAreaType.BonusCollect && theirShip != null)
             {
                 DoBonusAction(theirShip);
-                Game.SoundEngine.PlaySound("BonusCollection", this);
+                Game.SoundEngine.PlaySound("bonusCollection", this);
                 DeathGobTypes = _collectGobTypes;
                 Die();
                 return true;

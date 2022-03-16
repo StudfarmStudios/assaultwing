@@ -92,7 +92,7 @@ namespace AW2.Menu.Main
             if (loginPilots) Game.WebData.LoginPilots();
             RefreshNetworkItems(force: true);
             _menuComponent.PushItems(NetworkItems);
-            Game.SoundEngine.PlaySound("MenuChangeItem");
+            Game.SoundEngine.PlaySound("menuChangeItem");
         }
 
         public void Click_ConnectToGameServer(string gameServerManagementID, string shortServerName)
@@ -121,13 +121,13 @@ namespace AW2.Menu.Main
                 () =>
                 {
                     _menuComponent.PushItems(SetupItems);
-                    Game.SoundEngine.PlaySound("MenuChangeItem");
+                    Game.SoundEngine.PlaySound("menuChangeItem");
                 }));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Quit",
                 () =>
                 {
                     AssaultWingProgram.Instance.Exit();
-                    Game.SoundEngine.PlaySound("MenuChangeItem");
+                    Game.SoundEngine.PlaySound("menuChangeItem");
                 }));
         }
 
@@ -207,7 +207,7 @@ namespace AW2.Menu.Main
             Func<Action, Action> decorateAction = plainAction => () =>
             {
                 plainAction();
-                Game.SoundEngine.PlaySound("MenuChangeItem");
+                Game.SoundEngine.PlaySound("menuChangeItem");
             };
             return new MainMenuItem(MenuEngine, getName, decorateAction(action),
                 decorateAction(actionLeft ?? (() => { })),

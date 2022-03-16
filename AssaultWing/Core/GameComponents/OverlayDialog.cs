@@ -36,7 +36,7 @@ namespace AW2.Core.GameComponents
             {
                 Game.Window.ForceDisableKeypresses = true;
                 Game.UIEngine.PushExclusiveControls(dialogData.Controls);
-                Game.SoundEngine.PlaySound("EscPause");
+                Game.SoundEngine.PlaySound("escPause");
             }
             Enabled = Visible = true;
         }
@@ -53,7 +53,7 @@ namespace AW2.Core.GameComponents
             if (_data.Any())
             {
                 Game.UIEngine.PushExclusiveControls(_data.First().Controls);
-                Game.SoundEngine.PlaySound("EscPause");
+                Game.SoundEngine.PlaySound("escPause");
             }
             else
             {

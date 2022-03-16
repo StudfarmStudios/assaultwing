@@ -23,13 +23,13 @@ namespace AW2.Menu.Equip
             if (Controls.Dirs.Down.Pulse)
             {
                 PlayerList.CurrentIndex++;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
             if (Controls.Dirs.Up.Pulse)
             {
                 PlayerList.CurrentIndex--;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
         }

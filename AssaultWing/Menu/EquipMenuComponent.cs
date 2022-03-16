@@ -142,7 +142,7 @@ namespace AW2.Menu
         {
             _tabIndex = (_tabIndex + step).Modulo(_tabs.Count);
             _tab = _tabs[_tabIndex];
-            MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            MenuEngine.Game.SoundEngine.PlaySound("menuChangeItem");
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
         }
 

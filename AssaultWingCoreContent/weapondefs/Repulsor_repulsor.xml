@@ -30,7 +30,7 @@
   <particleEngineNames>
     <Item>electric shockwave</Item>
   </particleEngineNames>
-  <fireSound>DropMines</fireSound>
+  <fireSound>dropMines</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>
   <iconName>dummytexture</iconName>

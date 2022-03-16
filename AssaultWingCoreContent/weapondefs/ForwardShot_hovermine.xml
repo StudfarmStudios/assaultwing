@@ -31,7 +31,7 @@
     <Item>monstermine</Item>
   </upgradeNames>
   <iconName>b_icon_mines</iconName>
-  <fireSound>DropMines</fireSound>
+  <fireSound>dropMines</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <shotTypeName>mine</shotTypeName>

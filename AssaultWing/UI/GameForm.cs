@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using AW2.Graphics.Content;
 
 namespace AW2.UI
 {
@@ -28,7 +29,9 @@ namespace AW2.UI
             _graphics = new GraphicsDeviceManager(this);
 
             Services.AddService(_graphics);
-            Services.AddService(Content); // ContentMananger
+            var AWContentManager = new AWContentManager(Services, Content.RootDirectory);
+            Content = AWContentManager;
+            Services.AddService(AWContentManager);
             InitializeGame(commandLineOptions);
             InitializeGameForm();
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,8 +20,8 @@ namespace AW2.Graphics.Content
         private Dictionary<string, object> _loadedModelSkeletons = new Dictionary<string, object>();
         private bool _ignoreGraphicsContent;
 
-        public AWContentManager(IServiceProvider serviceProvider)
-            : base(serviceProvider, ".\\")
+        public AWContentManager(IServiceProvider serviceProvider, string rootDirectory)
+            : base(serviceProvider, rootDirectory)
         {
             _ignoreGraphicsContent = serviceProvider.GetService(typeof(IGraphicsDeviceService)) == null;
         }

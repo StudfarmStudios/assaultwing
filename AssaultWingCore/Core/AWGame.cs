@@ -41,6 +41,7 @@ namespace AW2.Core
         {
             GraphicsDeviceService = serviceContainer.GetService<GraphicsDeviceManager>();
             Services = serviceContainer;
+            Content = Services.GetService<AWContentManager>();
             Components = new AWGameComponentCollection();
             GameTime = new AWGameTime();
             _framerateTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
@@ -60,7 +61,6 @@ namespace AW2.Core
 
         public virtual void Initialize()
         {
-            Content = new AWContentManager(Services);
             foreach (var item in Components)
             {
                 Log.Write("Initializing " + item.GetType().Name);

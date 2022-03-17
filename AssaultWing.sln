@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWing", "AssaultWing\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWUnitTests", "AWUnitTests\AWUnitTests.csproj", "{319CB50D-622D-4296-B524-D72FB3DFB246}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DedicatedServer", "DedicatedServer\DedicatedServer.csproj", "{99BCBB77-2668-4D61-97C2-150775B4E837}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{319CB50D-622D-4296-B524-D72FB3DFB246}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{319CB50D-622D-4296-B524-D72FB3DFB246}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{319CB50D-622D-4296-B524-D72FB3DFB246}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99BCBB77-2668-4D61-97C2-150775B4E837}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99BCBB77-2668-4D61-97C2-150775B4E837}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99BCBB77-2668-4D61-97C2-150775B4E837}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99BCBB77-2668-4D61-97C2-150775B4E837}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

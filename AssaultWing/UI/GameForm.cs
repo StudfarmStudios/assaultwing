@@ -133,8 +133,13 @@ namespace AW2.UI
                 var awGameTime = new AWGameTime(gameTime.TotalGameTime, gameTime.ElapsedGameTime, _stopWatch.Elapsed);
 
                 _game.Update(awGameTime);
-                // TODO: PETER: 2nd call is a hack as the game code assumes certain cycle between updates and draws and we are just being too simplistic here
-                _game.Update(awGameTime); 
+
+                while (_game.LogicStateChanged) {
+                    _game.LogicStateChanged = false;
+                    // There is at least one case where the logic state change expects update to be called again before calling
+                    // paint again or it will crash.
+                    _game.Update(awGameTime);
+                }
 
                 _game.Draw();
 

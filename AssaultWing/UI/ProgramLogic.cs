@@ -15,6 +15,7 @@ namespace AW2.UI
     /// </summary>
     public abstract class ProgramLogic
     {
+        private bool _gameStateChanged = true;
         private int _gameState;
         protected int GameState
         {
@@ -23,7 +24,16 @@ namespace AW2.UI
             {
                 DisableGameState(_gameState);
                 _gameState = value;
+                _gameStateChanged = true;
                 EnableGameState(value);
+            }
+        }
+
+        public bool GameStateChanged
+        {
+            get { return _gameStateChanged; }
+            set {
+                _gameStateChanged = value;
             }
         }
 

@@ -126,9 +126,12 @@ namespace AW2.Game.Gobs
                 var boundingBox = gobVertices.GetBoundingBox();
                 _drawBoundsMin = boundingBox.Min + Pos;
                 _drawBoundsMax = boundingBox.Max + Pos;
+                /* TODO: Investigate why index map from BIN doesn't work. Need to regenerate BINs maybe?
                 var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
                 _indexMap = new WallIndexMap(_removedTriangleIndices.Add, boundingBox, binReader);
                 binReader.Close();
+                */
+                _indexMap = CreateIndexMap(); // FIXME: Workaround for broken BIN files above. 3x slower
                 CreateCollisionAreas();
             }
             WallActivatedCounter++;

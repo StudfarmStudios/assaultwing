@@ -10,28 +10,38 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using AW2.Graphics.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.UI
 {
-    public partial class GameForm : Microsoft.Xna.Framework.Game
+    public class DummyGraphicsDeviceService : IGraphicsDeviceService
+    {
+        public GraphicsDevice GraphicsDevice { get; }
+        public event EventHandler<EventArgs> DeviceCreated;
+        public event EventHandler<EventArgs> DeviceDisposing;
+        public event EventHandler<EventArgs> DeviceReset;
+        public event EventHandler<EventArgs> DeviceResetting;
+    }
+
+    public partial class GameForm : IDisposable
     {
 
         private AssaultWing _game;
-        private GraphicsDeviceManager _graphics;
+        private IGraphicsDeviceService _graphics;
         private Stopwatch _stopWatch = new Stopwatch();
         private StringBuilder _logCache;
+        private readonly GameServiceContainer Services = new GameServiceContainer();
 
         public AssaultWing Game { get { return _game; } }
 
         public GameForm(CommandLineOptions commandLineOptions) : base()
         {
-            Window.AllowUserResizing = true;
-            _graphics = new GraphicsDeviceManager(this);
 
+            _graphics = new DummyGraphicsDeviceService();
             Services.AddService(_graphics);
-            var AWContentManager = new AWContentManager(Services, Content.RootDirectory);
-            Content = AWContentManager;
+            var AWContentManager = new AWContentManager(Services, rootDirectory: "");
             Services.AddService(AWContentManager);
+
             InitializeGame(commandLineOptions);
             InitializeGameForm();
         }
@@ -51,40 +61,32 @@ namespace AW2.UI
             _game = null;
             _stopWatch.Stop();
             AW2.Helpers.Log.Written -= AddToLogView;
-            base.Dispose();
+            //base.Dispose();
         }
         public void SetWindowed()
         {
-            if(_graphics.IsFullScreen) {
-                _graphics.ToggleFullScreen();
-            }
+
         }
         public void SetFullScreen(int width, int height)
         {
-            if(!_graphics.IsFullScreen) {
-                _graphics.ToggleFullScreen();                
-            }
-            _graphics.PreferredBackBufferWidth = width;
-            _graphics.PreferredBackBufferHeight = height;
-            _graphics.ApplyChanges();            
+        
         }
         public void Close() {
             Game.EndRun();
-            Exit();
+            //Exit();
         }
         public void ForceCursorShown()
         {
-            IsMouseVisible = true;
         }
         
 
-        protected override void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
                 _stopWatch.Stop();
             }            
-            base.Dispose(disposing);
+            //base.Dispose(disposing);
         }
 
         private void InitializeGameForm()
@@ -101,17 +103,17 @@ namespace AW2.UI
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {
-                GetTitle = () => {return Window.Title;},
-                SetTitle = (Action<string>)((text) => {Window.Title = text;}),
-                GetClientBounds = () => { return _graphics.IsFullScreen ? Window.ClientBounds : new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height); },
-                GetFullScreen = () => _graphics.IsFullScreen,
+                GetTitle = () => {return "AssaultWing";},
+                SetTitle = (Action<string>)((text) => {;}),
+                GetClientBounds = () => { return new Rectangle(0, 0, 800, 600); },
+                GetFullScreen = () => false,
                 SetWindowed = (Action)(SetWindowed),
                 SetFullScreen = (Action<int, int>)(SetFullScreen),
-                IsVerticalSynced = () => _graphics.SynchronizeWithVerticalRetrace,
-                EnableVerticalSync = (Action)(() => {_graphics.SynchronizeWithVerticalRetrace = true;}),
-                DisableVerticalSync = (Action)(() => {_graphics.SynchronizeWithVerticalRetrace = false;}),
-                EnsureCursorHidden = (Action)(() => {IsMouseVisible = false;}),
-                EnsureCursorShown = (Action)(() => {IsMouseVisible = true;}),
+                IsVerticalSynced = () => false,
+                EnableVerticalSync = (Action)(() => {}),
+                DisableVerticalSync = (Action)(() => {}),
+                EnsureCursorHidden = (Action)(() => {}),
+                EnsureCursorShown = (Action)(() => {}),
             });
             
             //_gameView.Draw += _game.Draw;
@@ -120,13 +122,13 @@ namespace AW2.UI
         }
 
         private bool _gameInitialized = false;
-        protected override void Update(GameTime gameTime)
+        protected void Update(GameTime gameTime)
         {
             if (!_gameInitialized)
             {
                 _gameInitialized = true;
 
-                ApplyInitialInMenuGraphicsSettings();
+                // ApplyInitialInMenuGraphicsSettings();
                 _game.Initialize();
                 _game.BeginRun();
             }
@@ -144,24 +146,21 @@ namespace AW2.UI
                     _game.Update(awGameTime);
                 }
 
-                _game.Draw();
+                //_game.Draw();
 
-                base.Update(gameTime);
+                //base.Update(gameTime);
             }
         }
 
-        private void ApplyInitialInMenuGraphicsSettings() {
-            var displayMode = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode;
-            var gfxSetup = Game.Settings.Graphics;
-
-
-            _graphics.PreferredBackBufferWidth = Math.Max(800, displayMode.Width / 2);
-            _graphics.PreferredBackBufferHeight = Math.Max(600, displayMode.Height / 2);
-        
-            _graphics.SynchronizeWithVerticalRetrace = gfxSetup.IsVerticalSynced;
-            _graphics.ApplyChanges();            
+        public void Run()
+        {
+            // TODO: Peter: AWGameRunner?
+            while (true)
+            {
+                Update(new GameTime());
+                Thread.Sleep(1000/60);
+            }
         }
-
 
         private void AddToLogView(string text)
         {

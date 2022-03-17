@@ -85,5 +85,24 @@ namespace AW2.Core
                 ExtraDeviceName = args.GetValue("mod"),
             };
         }
+
+        // Dedicated server command line
+        public CommandLineOptions(string[] commandLineArgs)
+        {
+            var args = new ProgramArgs(commandLineArgs, new NameValueCollection(), "");
+            DedicatedServer = true;
+            SaveTemplates = args.IsSet("save_templates");
+            DeleteTemplates = args.IsSet("delete_templates");
+            ArenaFilename = args.GetValue("arena");
+            if (args.IsSet("quickstart")) QuickStart = new QuickStartOptions
+            {
+                GameServerEndPoints = args.GetValues("server"),
+                GameServerName = args.GetValue("server_name") ?? "Some Server",
+                LoginToken = args.GetValue("login_token"),
+                ShipName = args.GetValue("ship"),
+                Weapon2Name = args.GetValue("weapon"),
+                ExtraDeviceName = args.GetValue("mod"),
+            };
+        }
     }
 }

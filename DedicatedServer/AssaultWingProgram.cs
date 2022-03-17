@@ -30,30 +30,29 @@ namespace AW2
 
         public static AssaultWingProgram Instance { get; private set; }
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int d_sdl_setenv(string name, string value, int overwrite);
+
+        //[DllImport("SDL2.dll")]
+        public static d_sdl_setenv SDL_setenv;
+
         [STAThread]
         public static void Main(string[] args)
         {
+            //SDL_setenv = Native.LoadFunction<d_sdl_setenv>(sdl, nameof(SDL_setenv));
+
+            // SDL_setenv("SDL_VIDEODRIVER", "dummy", overwrite: 0);
+
             Thread.CurrentThread.Name = "MainThread";
             //if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
-            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
+            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs());
             //PostInstall.EnsureDone();
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                // TODO: Peter: Is this shortcuts disabling necessary and is there a better way
-                AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
-            }
-            try
+
+            using (Instance = new AssaultWingProgram())
             {
-                using (Instance = new AssaultWingProgram())
-                {
-                    Instance.Run();
-                }
+                Instance.Run();
             }
-            finally
-            {
-                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                    AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
-                }
-            }
+
         }
 
         public AssaultWingProgram()
@@ -71,6 +70,7 @@ namespace AW2
         public void Run()
         {
             _form.Run();
+
         }
 
         public void Exit()

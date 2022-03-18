@@ -10,7 +10,7 @@ namespace AW2.Graphics
 {
     public static class ModelRenderer
     {
-        private const string OUTLINE_MESH_NAME_PREFIX = "mesh_Outline";
+        private const string OUTLINE_MESH_NAME_PREFIX = "Outline";
 
         private static GraphicsDevice GraphicsDevice { get { return AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice; } }
 

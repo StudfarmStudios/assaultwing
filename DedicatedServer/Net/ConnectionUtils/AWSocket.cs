@@ -291,7 +291,16 @@ namespace AW2.Net.ConnectionUtils
                 from nic in NetworkInterface.GetAllNetworkInterfaces()
                 where nic.GetIPProperties().UnicastAddresses.Any(addr => addr.Address.Equals(nicIP))
                 select nic.GetPhysicalAddress().GetAddressBytes();
-            return addresses.First();
+            if (addresses.Any())
+            {
+                return addresses.First();
+            } else
+            {
+                Random rnd = new Random();
+                byte[] b = new byte[6];
+                rnd.NextBytes(b);
+                return b;
+            }
         }
 
         private void SendToCompleted(object sender, SocketAsyncEventArgs args)

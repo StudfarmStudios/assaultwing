@@ -51,7 +51,7 @@ namespace AW2.Core
 
         public string SelectedArenaName { get; set; }
         private ProgramLogic Logic { get; set; }
-        public bool LogicStateChanged { get { return Logic.GameStateChanged;} set { Logic.GameStateChanged = value; }}
+        public override bool UpdateNeeded { get { return Logic.GameStateChanged;} set { Logic.GameStateChanged = value; }}
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
         public MessageHandlers MessageHandlers { get; private set; }

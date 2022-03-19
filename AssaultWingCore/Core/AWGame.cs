@@ -38,6 +38,11 @@ namespace AW2.Core
         private Stopwatch _frameDrawStopwatch;
         private bool _ignoreGraphicsContent;
 
+        // <summary>
+        // In some special cases Update needs to be called multiple times before being ready to paint.
+        // </summary>
+        public virtual bool UpdateNeeded { get; set; }        
+
         public AWGame(GameServiceContainer serviceContainer, bool ignoreGraphicsContent)
         {
             _ignoreGraphicsContent = ignoreGraphicsContent;

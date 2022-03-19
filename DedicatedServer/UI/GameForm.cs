@@ -28,7 +28,7 @@ namespace AW2.UI
 
         private AssaultWing _game;
         private IGraphicsDeviceService _graphics;
-        private Stopwatch _stopWatch = new Stopwatch();
+        private AWGameRunner _awGameRunner;
         private StringBuilder _logCache;
         private readonly GameServiceContainer Services = new GameServiceContainer();
 
@@ -36,7 +36,6 @@ namespace AW2.UI
 
         public GameForm(CommandLineOptions commandLineOptions) : base()
         {
-
             _graphics = new DummyGraphicsDeviceService();
             Services.AddService(_graphics);
             var AWContentManager = new AWContentManager(Services, rootDirectory: "", ignoreGraphicsContent: true);
@@ -44,6 +43,7 @@ namespace AW2.UI
 
             InitializeGame(commandLineOptions);
             InitializeGameForm();
+            _awGameRunner = new AWGameRunner(_game, () => {}, useParentTime: false, sleepIfEarly: true, graphicsEnabled: false);
         }
 
         public void FinishGame()
@@ -51,15 +51,16 @@ namespace AW2.UI
             Game.EndRun();
         }
 
-        public new void Dispose()
+        public void Dispose()
         {
+            _awGameRunner.Dispose();
+
             if (_game != null)
             {
                 _game.UnloadContent();
                 _game.Dispose();
             }
             _game = null;
-            _stopWatch.Stop();
             AW2.Helpers.Log.Written -= AddToLogView;
             //base.Dispose();
         }
@@ -81,17 +82,11 @@ namespace AW2.UI
         
 
         protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _stopWatch.Stop();
-            }            
-            //base.Dispose(disposing);
+        {     
         }
 
         private void InitializeGameForm()
         {
-            _stopWatch.Start();
             AW2.Helpers.Log.Written += AddToLogView;
             _logCache = new StringBuilder();
         }
@@ -121,45 +116,11 @@ namespace AW2.UI
             //_gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }
 
-        private bool _gameInitialized = false;
-        protected void Update(GameTime gameTime)
-        {
-            if (!_gameInitialized)
-            {
-                _gameInitialized = true;
-
-                // ApplyInitialInMenuGraphicsSettings();
-                _game.Initialize();
-                _game.BeginRun();
-            }
-
-            if (_gameInitialized)
-            {
-                var awGameTime = new AWGameTime(gameTime.TotalGameTime, gameTime.ElapsedGameTime, _stopWatch.Elapsed);
-
-                _game.Update(awGameTime);
-
-                while (_game.LogicStateChanged) {
-                    _game.LogicStateChanged = false;
-                    // There is at least one case where the logic state change expects update to be called again before calling
-                    // paint again or it will crash.
-                    _game.Update(awGameTime);
-                }
-
-                //_game.Draw();
-
-                //base.Update(gameTime);
-            }
-        }
-
         public void Run()
         {
-            // TODO: Peter: AWGameRunner?
-            while (true)
+            while (true) // TODO: Peter: exit logic
             {
-                // TODO: Proper game time
-                Update(new GameTime(_stopWatch.Elapsed, TimeSpan.FromMilliseconds(1000/60)));
-                Thread.Sleep(1000/60);
+                _awGameRunner.Update(new GameTime());
             }
         }
 

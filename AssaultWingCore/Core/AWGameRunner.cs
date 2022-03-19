@@ -7,171 +7,126 @@ namespace AW2.Core
 {
     public class AWGameRunner
     {
-        public delegate void UpdateAndDrawAction(AWGameTime gameTime);
-
+        public delegate void Initialize();
+        private Initialize _initialize;
         private AWGame _game;
         private Stopwatch _timer;
-        private Action<Action> _invoker;
-        private Action<Exception> _exceptionHandler;
-        private UpdateAndDrawAction _updateAndDraw;
-        private bool _paused;
-        private bool _pauseDisabled;
-        private object _pausedLock;
-        private bool _exiting;
-        private SemaphoreSlim _exitSemaphore;
-        private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
-        private bool _readyForNextUpdateAndDraw;
-        private TimeSpan _nextUpdate;
+        private bool _gameInitialized;
+        private bool _graphicsEnabled;
+        private bool _sleepIfEarly;
+        private bool _useParentTime;
+        private bool _debug = false;
+        private TimeSpan _now;
 
-        public event Action Initialized;
+        private TimeSpan _nextUpdate;
+        private TimeSpan totalGameTime = TimeSpan.Zero;
 
         /// <summary>
         /// If true, then the next frame update should have started already; any pending frame draw
         /// should be skipped to catch up.
         /// </summary>
-        public bool IsTimeForNextUpdate { get { return _timer.Elapsed + Waiter.PRECISION >= _nextUpdate; } }
+        public bool IsTimeForNextUpdate { get { return CheckIsTimeForNextUpdate(_timer.Elapsed); } }
 
-        /// <param name="invoker">A delegate that invokes a delegate in the main thread.</param>
-        /// <param name="updateAndDraw">A delegate that updates the game world and draws the game screen.</param>
-        public AWGameRunner(AWGame game, Action<Action> invoker, Action<Exception> exceptionHandler, UpdateAndDrawAction updateAndDraw)
+        public AWGameRunner(AWGame game, Initialize initialize, bool useParentTime, bool sleepIfEarly, bool graphicsEnabled)
         {
-            if (game == null || exceptionHandler == null || updateAndDraw == null) throw new ArgumentNullException();
             _game = game;
-            _invoker = invoker;
-            _exceptionHandler = exceptionHandler;
-            _updateAndDraw = updateAndDraw;
+            _initialize = initialize;
             _timer = new Stopwatch();
-            _pausedLock = new object();
-            _exitSemaphore = new SemaphoreSlim(1, 1);
-        }
-
-        /// <summary>
-        /// Starts running the game in a background thread.
-        /// </summary>
-        public void Run()
-        {
-            _exitSemaphore.Wait();
-            if (_exiting) return;
-            Task.Run(GameUpdateAndDrawLoop);
-        }
-
-        /// <summary>
-        /// To be called when a frame update and draw has finished.
-        /// </summary>
-        public void UpdateAndDrawFinished()
-        {
-            _readyForNextUpdateAndDraw = true;
-        }
-
-        /// <summary>
-        /// Prevents the update and draw loop from running but doesn't stop update timer.
-        /// Use only for short pauses.
-        /// </summary>
-        public void Pause()
-        {
-            if (_pauseDisabled) return;
-            lock (_pausedLock)
-            {
-                if (_paused) return;
-                Monitor.Enter(_timer, ref _paused);
-            }
-        }
-
-        /// <summary>
-        /// Resumes from a previous <see cref="Pause"/>.
-        /// </summary>
-        public void Resume()
-        {
-            lock (_pausedLock)
-            {
-                if (!_paused) return;
-                Monitor.Exit(_timer);
-                _paused = false;
-            }
-        }
-
-        /// <summary>
-        /// Exits the previously started thread that updates and draws the game.
-        /// </summary>
-        public void Exit()
-        {
-            _exiting = true;
-            _pauseDisabled = true;
-            Resume();
-            _exitSemaphore.Wait();
-            _exitSemaphore.Release();
-        }
-
-        private async void GameUpdateAndDrawLoop()
-        {
-#if !DEBUG
-            try
-            {
-#endif
-                GameUpdateAndDrawLoopImpl();
-#if !DEBUG
-            }
-            catch (Exception e)
-            {
-                _exceptionHandler(e);
-            }
-#endif
-            _game.EndRun();
-            _exitSemaphore.Release();
-        }
-
-        private void GameUpdateAndDrawLoopImpl()
-        {
-            _invoker(() =>
-            {
-                try
-                {
-                    _game.Initialize();
-                    _game.BeginRun();
-                }
-                catch (Exception e)
-                {
-                    _exceptionHandler(e);
-                }
-            });
-            var totalGameTime = TimeSpan.Zero;
             _timer.Start();
-            if (Initialized != null)
+            _sleepIfEarly = sleepIfEarly;
+            _graphicsEnabled = graphicsEnabled;
+            _useParentTime = useParentTime;
+        }
+
+        public void Dispose()
+        {
+            _timer.Stop();
+        }
+
+        private bool CheckIsTimeForNextUpdate(TimeSpan now) { return now + Waiter.PRECISION >= _nextUpdate; }
+
+        public void DebugLog(string message)
+        {
+            if (_debug)
             {
-                Initialized();
-                Initialized = null;
+                Debug.WriteLine($"AWGameRunner: { _now / AssaultWingCore.TargetElapsedTime:0.##}: {message}");
             }
-            _readyForNextUpdateAndDraw = true;
-            while (!_exiting)
+        }
+
+        public void Update(GameTime parentTime)
+        {
+            _now = _timer.Elapsed;
+
+            if (!_gameInitialized)
             {
-                lock (_timer)
+                DebugLog($"Initialize, precision {Waiter.PRECISION.TotalMilliseconds:0.##}ms, TargetElapsedTime {AssaultWingCore.TargetElapsedTime.TotalMilliseconds:0.####}ms");
+
+                _gameInitialized = true;
+
+                _initialize(); // Do client initializes
+
+                // Initialize the game
+                _game.Initialize();
+                _game.BeginRun();
+
+                _now = _timer.Elapsed;
+                _nextUpdate = _now;
+            }
+
+            if (!_useParentTime && !CheckIsTimeForNextUpdate(_now))
+            {
+                var sleep = _nextUpdate - _now;
+                DebugLog($"It's not yet time for update. {sleep.TotalMilliseconds:0.#}ms early");
+
+                if (_sleepIfEarly)
                 {
-                    var now = _timer.Elapsed;
-                    if (!IsTimeForNextUpdate)
-                    {
-                        // It's not yet time for update.
-                        Waiter.Instance.Sleep(_nextUpdate - now);
-                    }
-                    else if (now > _nextUpdate + TimeSpan.FromSeconds(10))
-                    {
-                        // Update is lagging a lot; skip over the missed updates.
-                        _nextUpdate = now;
-                    }
-                    else if (_readyForNextUpdateAndDraw)
-                    {
-                        var updateInterval = AssaultWingCore.TargetElapsedTime;
-                        var gameTime = new AWGameTime(totalGameTime, updateInterval, now);
-                        _nextUpdate += updateInterval;
-                        totalGameTime += updateInterval;
-                        _readyForNextUpdateAndDraw = false;
-                        _updateAndDraw(gameTime);
-                    }
-                    else
-                    {
-                        // We didn't make it in time for a frame update. Wait for a while and try again.
-                        Waiter.Instance.Sleep(TimeSpan.FromMilliseconds(5));
-                    }
+                    Waiter.Instance.Sleep(sleep);
+                    _now = _timer.Elapsed;
+                } else
+                {
+                    _nextUpdate = _now;
                 }
+            }
+
+            if (_now > _nextUpdate + TimeSpan.FromSeconds(10))
+            {
+                DebugLog("Update is lagging a lot; skip over the missed updates.");
+                _nextUpdate = _now;
+            }
+
+            do
+            {
+                var updateInterval = AssaultWingCore.TargetElapsedTime;
+                AWGameTime gameTime;
+                if (_useParentTime)
+                {
+                    gameTime = new AWGameTime(parentTime.TotalGameTime, parentTime.ElapsedGameTime, _now);
+                } else
+                {
+                    gameTime = new AWGameTime(totalGameTime, updateInterval, _now);
+                }
+                _nextUpdate += updateInterval;
+                totalGameTime += updateInterval;
+
+                do
+                {
+                    DebugLog("Update");
+                    _game.UpdateNeeded = false;
+                    // There is at least one case where the logic state change expects update to be called again before calling
+                    // paint again or it will crash.
+                    _game.Update(gameTime);
+                } while (_game.UpdateNeeded);
+
+                _now = _timer.Elapsed;
+                // Loop updates to catch up with the updates if necessary
+            } while (!_useParentTime && CheckIsTimeForNextUpdate(_now));
+
+
+            // We can't skip paint or we risk graphics flickering
+            if (_graphicsEnabled)
+            {
+                DebugLog("Paint");
+                _game.Draw();
             }
         }
     }

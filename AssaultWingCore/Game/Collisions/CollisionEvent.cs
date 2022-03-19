@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using AW2.Helpers.Serialization;
 using AW2.Core;
+using System.Globalization;
 
 namespace AW2.Game.Collisions
 {
@@ -151,7 +152,7 @@ namespace AW2.Game.Collisions
             var game = _area1.Owner.Game;
             var sound = GetCollisionSound();
             var soundPos = _area1.Owner.MoveType == GobUtils.MoveType.Dynamic ? _area1.Owner : _area2.Owner;
-            if (sound != CollisionSoundType.None) game.SoundEngine.PlaySound(sound.ToString(), soundPos);
+            if (sound != CollisionSoundType.None) game.SoundEngine.PlaySound(sound.EffectName(), soundPos);
             IrreversibleSideEffectsPerformed = irreversibleSideEffects || sound != CollisionSoundType.None;
         }
 
@@ -168,7 +169,7 @@ namespace AW2.Game.Collisions
             if (gob1MakesSound && gob2MakesSound) return CollisionSoundType.ShipCollision;
             if (gob1MakesSound || gob2MakesSound)
                 return gob1.MoveType == GobUtils.MoveType.Dynamic && gob2.MoveType == GobUtils.MoveType.Dynamic
-                    ? CollisionSoundType.shipCollision :  CollisionSoundType.collision;
+                    ? CollisionSoundType.ShipCollision :  CollisionSoundType.Collision;
             return CollisionSoundType.None;
         }
 

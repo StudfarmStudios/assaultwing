@@ -46,7 +46,13 @@ namespace AW2.Helpers
         public static string Capitalize(this string value)
         {
             if (value == "") return "";
-            return value.Substring(0, 1).ToUpper() + value.Substring(1);
+            return value.Substring(0, 1).ToUpperInvariant() + value.Substring(1);
+        }
+
+        public static string Uncapitalize(this string value)
+        {
+            if (value == "") return "";
+            return value.Substring(0, 1).ToLowerInvariant() + value.Substring(1);
         }
 
         /// <summary>
@@ -56,9 +62,9 @@ namespace AW2.Helpers
         {
             if (value == "") return "";
             var result = new StringBuilder(value);
-            result[0] = char.ToUpper(result[0]);
+            result[0] = char.ToUpperInvariant(result[0]);
             for (int i = 0; i < result.Length - 1; ++i)
-                if (result[i] == ' ') result[i + 1] = char.ToUpper(result[i + 1]);
+                if (result[i] == ' ') result[i + 1] = char.ToUpperInvariant(result[i + 1]);
             return result.ToString();
         }
 

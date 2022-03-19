@@ -49,7 +49,7 @@ namespace AW2.Graphics.OverlayComponents
         {
             CustomAlignment = () => new Vector2(0, 300);
             _player = viewport.Owner;
-            _messageBeeper = new MessageBeeper(_player.Game, "PlayerMessage", () => Messages.FirstOrDefault());
+            _messageBeeper = new MessageBeeper(_player.Game, "playerMessage", () => Messages.FirstOrDefault());
         }
 
         public override void LoadContent()

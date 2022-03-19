@@ -16,7 +16,7 @@
                 case CollisionSoundType.Collision: 
                     return "collision";
                 case CollisionSoundType.ShipCollision: 
-                    return "shipCollision";
+                    return "shipcollision";
                 default:
                     return "none";
             }

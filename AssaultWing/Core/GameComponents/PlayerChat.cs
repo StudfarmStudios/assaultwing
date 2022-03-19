@@ -85,7 +85,7 @@ namespace AW2.Core.GameComponents
             _scrollDownControl = new KeyboardKey(Keys.Down);
             _cursorBlinkStartTime = _game.GameTime.TotalRealTime;
             _scrollArrowGlowStartTime = _game.GameTime.TotalRealTime;
-            _messageBeeper = new MessageBeeper(game, "PlayerMessage", () => Messages.FirstOrDefault());
+            _messageBeeper = new MessageBeeper(game, "playerMessage", () => Messages.FirstOrDefault());
         }
 
         public override void LoadContent()

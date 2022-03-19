@@ -29,9 +29,9 @@
   <blockSuccessPengs>
     <Item>shield block</Item>
   </blockSuccessPengs>
-  <blockSuccessSound>ShieldBlock</blockSuccessSound>
-  <blockFailSound>ShieldFail</blockFailSound>
-  <fireSound>ShieldActivate</fireSound>
+  <blockSuccessSound>shieldBlock</blockSuccessSound>
+  <blockFailSound>shieldFail</blockFailSound>
+  <fireSound>shieldActivate</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <iconName>menu_equip_mod_shield</iconName>

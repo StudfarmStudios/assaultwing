@@ -206,7 +206,6 @@ namespace AW2.Sound
         private SoundInstance CreateSoundInternal(string soundName, Func<Vector2?> getEmitterPos, Func<Vector2?> getEmitterMove)
         {
             if (!Enabled) return new SoundInstanceDummy();
-            soundName = soundName;
             if (!_soundCues.ContainsKey(soundName))
             {
                 throw new ArgumentException("Sound " + soundName + " does not exist!");

@@ -23,7 +23,7 @@
   </upgradeNames>
   <iconName>b_icon_berserkers</iconName>
   <shotSpeed>650</shotSpeed>
-  <fireSound>VenomSpray</fireSound>
+  <fireSound>venomSpray</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <shotCount>1</shotCount>

@@ -30,7 +30,7 @@
     <Item>berserkers</Item>
   </upgradeNames>
   <iconName>b_icon_berserkers</iconName>
-  <fireSound>Missile</fireSound>
+  <fireSound>missile</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>rocket</shotTypeName>

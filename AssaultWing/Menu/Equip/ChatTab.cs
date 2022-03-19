@@ -57,7 +57,7 @@ namespace AW2.Menu.Equip
         {
             _sendControl = new KeyboardKey(Keys.Enter);
             _message = new EditableText("", 1000, new CharacterSet(Content.FontChat.Characters), MenuEngine.Game, () => { });
-            _messageBeeper = new MessageBeeper(MenuEngine.Game, "PlayerMessage", () => Messages.FirstOrDefault());
+            _messageBeeper = new MessageBeeper(MenuEngine.Game, "playerMessage", () => Messages.FirstOrDefault());
             _cursorBlinkStartTime = MenuEngine.Game.GameTime.TotalRealTime;
         }
 

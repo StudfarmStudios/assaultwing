@@ -23,7 +23,7 @@
   </upgradeNames>
   <iconName>b_icon_berserkers</iconName>
   <shotSpeed>570</shotSpeed>
-  <fireSound>Talon</fireSound>
+  <fireSound>talon</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <shotCount>6</shotCount>

@@ -62,7 +62,7 @@ namespace AW2.Game.Gobs
             _radialFlow = new RadialFlow();
             _impactHoleRadius = 100;
             _particleEngineNames = new[] { (CanonicalString)"dummypeng" };
-            _sound = "Explosion";
+            _sound = "explosion";
         }
 
         public Explosion(CanonicalString typeName)

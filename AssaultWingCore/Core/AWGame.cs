@@ -36,9 +36,11 @@ namespace AW2.Core
         private AWTimer _framerateTimer;
         private RunningSequenceTimeSpan _frameDrawTimes;
         private Stopwatch _frameDrawStopwatch;
+        private bool _ignoreGraphicsContent;
 
-        public AWGame(GameServiceContainer serviceContainer)
+        public AWGame(GameServiceContainer serviceContainer, bool ignoreGraphicsContent)
         {
+            _ignoreGraphicsContent = ignoreGraphicsContent;
             GraphicsDeviceService = serviceContainer.GetService<GraphicsDeviceManager>();
             Services = serviceContainer;
             Content = Services.GetService<AWContentManager>();

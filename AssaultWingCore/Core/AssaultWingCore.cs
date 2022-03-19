@@ -83,12 +83,12 @@ namespace AW2.Core
         #endregion AssaultWing properties
 
         public AssaultWingCore(GameServiceContainer serviceContainer, CommandLineOptions args)
-            : base(serviceContainer)
+            : base(serviceContainer, ignoreGraphicsContent: args.DedicatedServer)
         {
             Log.Write("Assault Wing version " + MiscHelper.Version);
             CommandLineOptions = args;
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
-            Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
+            Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);            
             NetworkMode = NetworkMode.Standalone;
             InitializeComponents();
             _standingsTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1));

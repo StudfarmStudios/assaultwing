@@ -19,11 +19,10 @@ namespace AW2.Graphics.Content
         private Dictionary<string, object> _loadedContent = new Dictionary<string, object>();
         private Dictionary<string, object> _loadedModelSkeletons = new Dictionary<string, object>();
         private bool _ignoreGraphicsContent;
-
-        public AWContentManager(IServiceProvider serviceProvider, string rootDirectory)
+        public AWContentManager(IServiceProvider serviceProvider, string rootDirectory, bool ignoreGraphicsContent)
             : base(serviceProvider, rootDirectory)
         {
-            _ignoreGraphicsContent = serviceProvider.GetService(typeof(IGraphicsDeviceService)) == null;
+            _ignoreGraphicsContent = ignoreGraphicsContent;
         }
 
         public bool Exists<T>(string assetName)

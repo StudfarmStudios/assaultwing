@@ -29,7 +29,7 @@ namespace AW2.UI
             _graphics = new GraphicsDeviceManager(this);
 
             Services.AddService(_graphics);
-            var AWContentManager = new AWContentManager(Services, Content.RootDirectory);
+            var AWContentManager = new AWContentManager(Services, Content.RootDirectory, ignoreGraphicsContent: commandLineOptions.DedicatedServer);
             Content = AWContentManager;
             Services.AddService(AWContentManager);
             InitializeGame(commandLineOptions);

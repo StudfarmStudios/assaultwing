@@ -39,7 +39,7 @@ namespace AW2.UI
 
             _graphics = new DummyGraphicsDeviceService();
             Services.AddService(_graphics);
-            var AWContentManager = new AWContentManager(Services, rootDirectory: "");
+            var AWContentManager = new AWContentManager(Services, rootDirectory: "", ignoreGraphicsContent: true);
             Services.AddService(AWContentManager);
 
             InitializeGame(commandLineOptions);
@@ -157,7 +157,8 @@ namespace AW2.UI
             // TODO: Peter: AWGameRunner?
             while (true)
             {
-                Update(new GameTime());
+                // TODO: Proper game time
+                Update(new GameTime(_stopWatch.Elapsed, TimeSpan.FromMilliseconds(1000/60)));
                 Thread.Sleep(1000/60);
             }
         }

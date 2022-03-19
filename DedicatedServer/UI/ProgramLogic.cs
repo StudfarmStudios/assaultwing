@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
 using AW2.Core.GameComponents;
-using AW2.Core.OverlayComponents;
-using AW2.Menu;
+
 
 namespace AW2.UI
 {
@@ -58,7 +57,6 @@ namespace AW2.UI
         public virtual void ShowMainMenuAndResetGameplay() { }
         public virtual void ShowEquipMenu() { }
 
-        public virtual void ShowDialog(OverlayDialogData dialogData) { }
         public virtual void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions) { }
 
         /// <summary>

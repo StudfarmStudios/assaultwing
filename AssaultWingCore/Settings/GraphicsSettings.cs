@@ -12,6 +12,8 @@ namespace AW2.Settings
         public bool IsVerticalSynced { get; set; }
         public bool InGameFullscreen { get; set; }
 
+        public bool GraphicsEnabled { get; set; }
+
         public static IEnumerable<Tuple<int, int>> GetDisplayModes()
         {
             var currentMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
@@ -28,13 +30,16 @@ namespace AW2.Settings
             return new[] { Tuple.Create(currentMode.Width, currentMode.Height) };
         }
 
-        public GraphicsSettings()
+        public GraphicsSettings(bool graphicsEnabled)
         {
+            GraphicsEnabled = graphicsEnabled;
             Reset();
         }
 
         public void Reset()
         {
+            if (!GraphicsEnabled) return;
+
             var resolution = GetDefaultFullscreenResolution();
             FullscreenWidth = resolution.Item1;
             FullscreenHeight = resolution.Item2;
@@ -44,6 +49,8 @@ namespace AW2.Settings
 
         public void Validate()
         {
+            if (!GraphicsEnabled) return;
+
             if (GetDisplayModes().Contains(Tuple.Create(FullscreenWidth, FullscreenHeight))) return;
 
             // Find a close match to the requested display mode.

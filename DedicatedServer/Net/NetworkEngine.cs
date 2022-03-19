@@ -189,7 +189,9 @@ namespace AW2.Net
             _startServerConnectionHandler = connectionHandler;
             _connectionAttemptListener = new ConnectionAttemptListener(_game);
             _connectionAttemptListener.StartListening(Game.Settings.Net.GameServerPort, UDPSocket.PrivateLocalEndPoint.Port);
-            RegisterServerToManagementServer();
+
+            // Peter: Management server stuff commented out
+            // RegisterServerToManagementServer();
         }
 
         /// <summary>
@@ -354,7 +356,8 @@ namespace AW2.Net
             switch (Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    CheckManagementServerConnection();
+                    // Peter: Management server stuff commented out 
+                    // CheckManagementServerConnection();
                     HandleConnectionHandshakingOnServer();
                     break;
                 case NetworkMode.Client:

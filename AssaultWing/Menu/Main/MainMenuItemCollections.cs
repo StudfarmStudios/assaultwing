@@ -74,6 +74,7 @@ namespace AW2.Menu.Main
                 RefreshNetworkItems();
             };
             InitializeLoginItems();
+
             InitializeSetupItems();
         }
 

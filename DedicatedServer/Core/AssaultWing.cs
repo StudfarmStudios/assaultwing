@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core.GameComponents;
-using AW2.Core.OverlayComponents;
 using AW2.Game;
 using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
@@ -47,7 +46,6 @@ namespace AW2.Core
         /// </summary>
         public static new AssaultWing Instance { get { return (AssaultWing)AssaultWingCore.Instance; } }
         public bool IsClientAllowedToStartArena { get; set; }
-        public Control ChatStartControl { get; set; }
 
         public string SelectedArenaName { get; set; }
         private ProgramLogic Logic { get; set; }
@@ -73,12 +71,9 @@ namespace AW2.Core
         {
             CustomControls = new List<Tuple<Control, Action>>();
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
-            if (CommandLineOptions.DedicatedServer)
-                Logic = new DedicatedServerLogic(this);
-            else if (CommandLineOptions.QuickStart != null)
-                Logic = new QuickStartLogic(this, CommandLineOptions.QuickStart);
-            else
-                Logic = new UserControlledLogic(this);
+
+            Logic = new DedicatedServerLogic(this);
+
             ArenaLoadTask = new BackgroundTask();
             NetworkingErrors = new Queue<string>();
             _gameSettingsSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
@@ -89,7 +84,7 @@ namespace AW2.Core
             WebData = new WebData(this, 21);
             Components.Add(NetworkEngine);
             Components.Add(WebData);
-            ChatStartControl = Settings.Controls.Chat.GetControl();
+
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
@@ -97,7 +92,6 @@ namespace AW2.Core
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
-            AW2.Graphics.PlayerViewport.CustomOverlayCreators.Add(viewport => new SystemStatusOverlay(viewport));
 
             // Replace the dummy StatsBase by a proper StatsSender.
             Components.Remove(comp => comp is StatsBase);
@@ -133,12 +127,6 @@ namespace AW2.Core
             }
         }
 
-        // TODO !!! Inline >>>
-        public void ShowDialog(OverlayDialogData dialogData) { Logic.ShowDialog(dialogData); }
-        public void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions) { Logic.ShowCustomDialog(text, groupName, actions); }
-        public void ShowInfoDialog(string text, string groupName = null) { Logic.ShowInfoDialog(text, groupName); }
-        public void HideDialog(string groupName = null) { Logic.HideDialog(groupName); }
-        // TODO !!! Inline <<<
 
         public void ShowConnectingToGameServerDialog(string shortServerName)
         {
@@ -155,12 +143,7 @@ namespace AW2.Core
             Spectator.CreateStatsData = spectator => new SpectatorStats(spectator);
             DataEngine.GameplayMode = DataEngine.GetTypeTemplates<GameplayMode>().First();
             SelectedArenaName = DataEngine.GameplayMode.Arenas.First();
-            if (CommandLineOptions.DedicatedServer)
-                WebData.Feed("1D");
-            else if (CommandLineOptions.QuickStart != null)
-                WebData.Feed("1Q");
-            else
-                WebData.Feed("1");
+
             Logic.Initialize();
             base.BeginRun();
         }
@@ -498,7 +481,7 @@ namespace AW2.Core
 
         private void SpectatorAddedHandler(Spectator spectator)
         {
-            if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
+            //if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
             spectator.ArenaStatistics.Rating = () => spectator.GetStats().Rating;
             spectator.ResetForArena();
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
@@ -554,7 +537,7 @@ namespace AW2.Core
             }
             else
             {
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null));
+                // MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null));
                 NetworkEngine.GameServerConnection = result.Value;
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
                 var joinRequest = new GameServerHandshakeRequestTCP

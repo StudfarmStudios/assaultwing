@@ -9,7 +9,6 @@ using AW2.Helpers;
 using AW2.Net.Connections;
 using AW2.Net.Messages;
 using AW2.Net.MessageHandling;
-using AW2.Core.OverlayComponents;
 
 namespace AW2.Net.ConnectionUtils
 {

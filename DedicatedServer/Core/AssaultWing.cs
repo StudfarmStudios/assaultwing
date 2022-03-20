@@ -551,8 +551,9 @@ namespace AW2.Core
 
         public void UpdateGameServerInfoToManagementServer()
         {
-            var managementMessage = new UpdateGameServerMessage { CurrentClients = DataEngine.Players.Count() };
-            NetworkEngine.ManagementServerConnection.Send(managementMessage);
+            // TODO: Peter: Removed to avoid requiring management server
+            //var managementMessage = new UpdateGameServerMessage { CurrentClients = DataEngine.Players.Count() };
+            //NetworkEngine.ManagementServerConnection.Send(managementMessage);
         }
 
         private void AfterEveryFrame()

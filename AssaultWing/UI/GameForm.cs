@@ -10,6 +10,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using AW2.Graphics.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace AW2.UI
 {
@@ -44,6 +45,8 @@ namespace AW2.UI
 
         public new void Dispose()
         {
+            Window.KeyDown += KeyDownHandler;
+
             _awGameRunner.Dispose();
             if (_game != null)
             {
@@ -85,8 +88,15 @@ namespace AW2.UI
 
         private void InitializeGameForm()
         {
+            Window.KeyDown += KeyDownHandler;
             AW2.Helpers.Log.Written += AddToLogView;
             _logCache = new StringBuilder();
+        }
+
+        private void KeyDownHandler(object sender, InputKeyEventArgs e)
+        {
+
+            _game.Window.OnKeyPress((char)e.Key); // Ugly but somewhat works because the key enum values are ascii values mostly
         }
 
         private void InitializeGame(CommandLineOptions commandLineOptions)

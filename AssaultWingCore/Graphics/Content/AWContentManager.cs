@@ -111,9 +111,9 @@ namespace AW2.Graphics.Content
 
         private static string GetAssetFullName<T>(string assetName)
         {
-            return assetName.Contains(@"\")
-                ? assetName
-                : Path.Combine(GetAssetPath(assetName, typeof(T)), assetName);
+            return Path.GetDirectoryName(assetName) == ""
+                ? Path.Combine(GetAssetPath(assetName, typeof(T)), assetName)
+                : assetName;
         }
 
         private static string GetAssetPath(string assetName, Type type)

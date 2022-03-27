@@ -38,8 +38,10 @@ namespace AW2.Net
         public void RequestData()
         {
             var nextScheduledGameUri = Game.Settings.Net.DataServerAddress + "/nextgame";
-            var nextScheduledGameRequest = WebRequest.Create(nextScheduledGameUri);
-            nextScheduledGameRequest.BeginGetResponse(NextScheduledGameRequestDone, nextScheduledGameRequest);
+
+            // TODO: Peter: Commented out management server info querying to silence errors
+            //var nextScheduledGameRequest = WebRequest.Create(nextScheduledGameUri);
+            //nextScheduledGameRequest.BeginGetResponse(NextScheduledGameRequestDone, nextScheduledGameRequest);
         }
 
         public void Feed(string tag)
@@ -90,6 +92,8 @@ namespace AW2.Net
 
         private void RequestFromStats(AsyncCallback callback, string path, string query = null)
         {
+            // TODO: Peter: Commented out management server info querying to silence errors
+            /*
             if (Game.Settings.Net.StatsServerAddress == "") return;
             if (ServicePointManager.ServerCertificateValidationCallback == null)
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) => true;
@@ -99,6 +103,7 @@ namespace AW2.Net
             };
             var loginRequest = WebRequest.Create(uriBuilder.Uri);
             loginRequest.BeginGetResponse(callback, loginRequest);
+            */
         }
 
         private void BeginRequestPlayerLoginToken(string name, string password)

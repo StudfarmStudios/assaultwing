@@ -72,9 +72,9 @@ namespace AW2.Net
             Send(new
             {
                 Hit = hitter.TypeName.Value,
-                HitOwner = hitter.Owner.GetStats().LoginToken,
+                HitOwner = hitter.Owner.StatsData.LoginToken,
                 Target = target.TypeName.Value,
-                TargetOwner = target.Owner.GetStats().LoginToken,
+                TargetOwner = target.Owner.StatsData.LoginToken,
                 Pos = pos.HasValue ? pos.Value : hitter.Pos,
                 BirthPos = hitter.BirthPos,
                 Type = game.DataEngine.Minions.Contains(target) ? "Minion" : "Misc",
@@ -86,14 +86,14 @@ namespace AW2.Net
             return new
             {
                 Name = spectator.Name,
-                LoginToken = spectator.GetStats().LoginToken,
+                LoginToken = spectator.StatsData.LoginToken,
                 Connected = !spectator.IsDisconnected,
             };
         }
 
         public override string GetStatsString(Spectator spectator)
         {
-            return spectator.GetStats().LoginToken;
+            return spectator.StatsData.LoginToken;
         }
 
         private void HandleSocketErrors()
@@ -181,7 +181,7 @@ namespace AW2.Net
                     if (loginToken != "")
                     {
                         var spectator = GetSpectatorOrNull(loginToken);
-                        if (spectator != null) spectator.GetStats().Update(obj);
+                        if (spectator != null) spectator.StatsData.Update(obj);
                     }
                     else if (announcement != "")
                     {
@@ -214,7 +214,7 @@ namespace AW2.Net
 
         private Spectator GetSpectatorOrNull(string loginToken)
         {
-            return Game.DataEngine.Spectators.FirstOrDefault(spec => spec.GetStats().LoginToken == loginToken);
+            return Game.DataEngine.Spectators.FirstOrDefault(spec => spec.StatsData.LoginToken == loginToken);
         }
     }
 }

@@ -143,7 +143,6 @@ namespace AW2.Core
         public override void BeginRun()
         {
             Log.Write("Assault Wing begins to run");
-            Spectator.CreateStatsData = spectator => new SpectatorStats(spectator);
             DataEngine.GameplayMode = DataEngine.GetTypeTemplates<GameplayMode>().First();
             SelectedArenaName = DataEngine.GameplayMode.Arenas.First();
             if (CommandLineOptions.DedicatedServer)
@@ -490,7 +489,7 @@ namespace AW2.Core
         private void SpectatorAddedHandler(Spectator spectator)
         {
             if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
-            spectator.ArenaStatistics.Rating = () => spectator.GetStats().Rating;
+            spectator.ArenaStatistics.Rating = () => spectator.StatsData.Rating;
             spectator.ResetForArena();
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;
@@ -523,7 +522,7 @@ namespace AW2.Core
         private void SpectatorRemovedHandler(Spectator spectator)
         {
             if (NetworkMode != NetworkMode.Server) return;
-            Stats.Send(new { RemovePlayer = spectator.GetStats().LoginToken, Name = spectator.Name });
+            Stats.Send(new { RemovePlayer = spectator.StatsData.LoginToken, Name = spectator.Name });
             UpdateGameServerInfoToManagementServer();
             NetworkEngine.SendToGameClients(new SpectatorOrTeamDeletionMessage { SpectatorOrTeamID = spectator.ID });
         }
@@ -755,14 +754,14 @@ namespace AW2.Core
         {
             Log.Write("Adding spectator {0}", newSpectator.Name);
             DataEngine.Spectators.Add(newSpectator);
-            Stats.Send(new { AddPlayer = newSpectator.GetStats().LoginToken, Name = newSpectator.Name });
+            Stats.Send(new { AddPlayer = newSpectator.StatsData.LoginToken, Name = newSpectator.Name });
         }
 
         public void ReconnectRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
         {
             Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
             oldSpectator.ReconnectOnServer(newSpectator);
-            Stats.Send(new { AddPlayer = oldSpectator.GetStats().LoginToken, Name = oldSpectator.Name });
+            Stats.Send(new { AddPlayer = oldSpectator.StatsData.LoginToken, Name = oldSpectator.Name });
         }
 
         public void RefuseRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
@@ -776,7 +775,7 @@ namespace AW2.Core
         {
             DataEngine.ProcessPendingRemoteSpectatorsOnServer(spectator =>
             {
-                var stats = spectator.GetStats();
+                var stats = spectator.StatsData;
                 var mess = new SpectatorSettingsReply
                 {
                     SpectatorLocalID = spectator.LocalID,
@@ -787,7 +786,7 @@ namespace AW2.Core
                 {
                     if (stats.PilotId == null) return false;
                     var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec =>
-                        spec.GetStats().IsLoggedIn && spec.GetStats().PilotId == stats.PilotId);
+                        spec.StatsData.IsLoggedIn && spec.StatsData.PilotId == stats.PilotId);
                     if (oldSpectator == null)
                     {
                         AddRemoteSpectator(spectator);
@@ -807,7 +806,7 @@ namespace AW2.Core
                 else
                 {
                     var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec =>
-                        !spec.GetStats().IsLoggedIn && spec.IPAddress.Equals(spectator.IPAddress) && spec.Name == spectator.Name);
+                        !spec.StatsData.IsLoggedIn && spec.IPAddress.Equals(spectator.IPAddress) && spec.Name == spectator.Name);
                     if (oldSpectator == null)
                     {
                         AddRemoteSpectator(spectator);

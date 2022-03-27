@@ -58,7 +58,7 @@ namespace AW2.Net
             }
             foreach (var spec in Game.DataEngine.Spectators)
             {
-                if (spec.GetStats().IsLoggedIn) continue;
+                if (spec.StatsData.IsLoggedIn) continue;
                 var plrs = Game.Settings.Players;
                 var password = plrs.Player1.Name == spec.Name ? plrs.Player1.Password :
                     spec.Name == AW2.Settings.PlayerSettings.BOTS_NAME ? plrs.BotsPassword :
@@ -80,14 +80,14 @@ namespace AW2.Net
 
         public void UpdatePilotRanking(Spectator spectator)
         {
-            if (spectator.GetStats().PilotId == null) return;
-            var requestPath = string.Format("pilot/id/{0}/rankings", spectator.GetStats().PilotId);
+            if (spectator.StatsData.PilotId == null) return;
+            var requestPath = string.Format("pilot/id/{0}/rankings", spectator.StatsData.PilotId);
             RequestFromStats(response => PilotDataRequestDone(response, spectator, "pilot ranking"), requestPath);
         }
 
         public void UnloginPilots()
         {
-            foreach (var spec in Game.DataEngine.Spectators) spec.GetStats().Logout();
+            foreach (var spec in Game.DataEngine.Spectators) spec.StatsData.Logout();
         }
 
         private void RequestFromStats(AsyncCallback callback, string path, string query = null)
@@ -138,8 +138,8 @@ namespace AW2.Net
                 if (username == "") return;
                 var spectator = Game.DataEngine.Spectators.FirstOrDefault(plr => plr.IsLocal && plr.Name == username);
                 if (spectator == null) return;
-                spectator.GetStats().LoginTime = Game.GameTime.TotalRealTime;
-                spectator.GetStats().Update(response);
+                spectator.StatsData.LoginTime = Game.GameTime.TotalRealTime;
+                spectator.StatsData.Update(response);
                 UpdatePilotRanking(spectator);
             });
         }
@@ -150,7 +150,7 @@ namespace AW2.Net
             {
                 var response = JObject.Parse(responseString);
                 if (response["error"] != null) Log.Write("Error in {0} query: {1}", requestName, response["error"]);
-                spectator.GetStats().Update(response);
+                spectator.StatsData.Update(response);
             });
         }
 

@@ -20,7 +20,6 @@ namespace AW2.Game.Logic
         [SetUp]
         public void Setup()
         {
-            Spectator.CreateStatsData = spectator => new MockStats();
             _gameplayMode = new GameplayMode(lifeScore: 1, killScore: 4, deathScore: -2, damageCombatPoints: 0, bonusesCombatPoints: 0);
             _team1 = new Team("Avengers", null) { ID = 11 };
             _team2 = new Team("X-Men", null) { ID = 12 };

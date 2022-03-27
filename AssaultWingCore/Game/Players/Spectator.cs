@@ -8,6 +8,7 @@ using AW2.Game.Logic;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.UI;
+using AW2.Net;
 
 namespace AW2.Game.Players
 {
@@ -25,8 +26,6 @@ namespace AW2.Game.Players
         private static int g_nextLocalID;
 
         private bool _teamAssignmentDeserialized;
-
-        public static Func<Spectator, INetworkSerializable> CreateStatsData;
 
         /// <summary>
         /// Meaningful only on a game client.
@@ -59,7 +58,7 @@ namespace AW2.Game.Players
         /// <summary>
         /// Data received from the statistics server.
         /// </summary>
-        public INetworkSerializable StatsData { get; set; }
+        public SpectatorStats StatsData { get; set; }
 
         /// <summary>
         /// The last known IP address of the connection of the spectator. For local players it's 127.0.0.1.
@@ -122,7 +121,7 @@ namespace AW2.Game.Players
             IPAddress = ipAddress ?? IPAddress.Loopback;
             ArenaStatistics = new ArenaStatistics();
             PreviousArenaStatistics = new ArenaStatistics();
-            StatsData = CreateStatsData(this);
+            StatsData = new SpectatorStats(this);
         }
 
         /// <param name="onScreen">Location of the viewport on screen.</param>

@@ -51,7 +51,7 @@ namespace AW2.UI
                     // Cancel quickstart FIXME !!! If user Escapes server connection dialog, we should cancel. Doesn't happen now!
                     if (!MainMenuNetworkItemsActive) { _state = StateType.Idle; break; }
 
-                    //if (!Game.DataEngine.LocalPlayer.GetStats().IsLoggedIn) break;
+                    //if (!Game.DataEngine.LocalPlayer.StatsData.IsLoggedIn) break;
                     HideDialog("Update pilot data");
                     //SetPlayerSettings();
                     if (TryConnectToGameServer())

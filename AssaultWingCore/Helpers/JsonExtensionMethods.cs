@@ -10,12 +10,8 @@ using AW2.Net;
 
 namespace AW2.Helpers
 {
-    public static class ExtensionMethods
+    public static class JsonExtensionMethods
     {
-        public static SpectatorStats GetStats(this Spectator spectator)
-        {
-            return (SpectatorStats)spectator.StatsData;
-        }
 
         /// <summary>
         /// Returns a string value from a JObject, or the empty string if some part of
@@ -34,14 +30,5 @@ namespace AW2.Helpers
             return element.ToString();
         }
 
-        public static string GetString(this RegistryKey key, string name)
-        {
-            return (string)key.GetValue(name);
-        }
-
-        public static Rectangle ToXnaRectangle(this System.Drawing.Rectangle a)
-        {
-            return new Rectangle(a.X, a.Y, a.Width, a.Height);
-        }
     }
 }

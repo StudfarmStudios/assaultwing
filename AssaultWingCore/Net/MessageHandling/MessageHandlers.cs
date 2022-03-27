@@ -349,7 +349,7 @@ namespace AW2.Net.MessageHandling
             var ipAddress = Game.NetworkEngine.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address;
             var newSpectator = GetSpectator(mess, mode);
             newSpectator.LocalID = mess.SpectatorID;
-            var newStats = newSpectator.GetStats();
+            var newStats = newSpectator.StatsData;
             if (newStats.IsLoggedIn) Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
             Game.DataEngine.AddPendingRemoteSpectatorOnServer(newSpectator);
         }
@@ -357,7 +357,7 @@ namespace AW2.Net.MessageHandling
         private void TryCreateAndAddNewSpectatorOnClient(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
             var newSpectator = GetSpectator(mess, mode);
-            var newStats = newSpectator.GetStats();
+            var newStats = newSpectator.StatsData;
             if (newStats.IsLoggedIn) Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
             Game.AddRemoteSpectator(newSpectator);
             newSpectator.ID = mess.SpectatorID;

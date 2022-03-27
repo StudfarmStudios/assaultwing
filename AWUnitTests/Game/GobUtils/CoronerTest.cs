@@ -19,7 +19,6 @@ namespace AW2.Game.GobUtils
         [SetUp]
         public void Setup()
         {
-            Spectator.CreateStatsData = spectator => new MockStats();
             Coroner.ResetPhraseSets();
             _avengers = new Team("Avengers", null);
             _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());

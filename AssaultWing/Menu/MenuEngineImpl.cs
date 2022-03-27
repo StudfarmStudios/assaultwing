@@ -52,7 +52,7 @@ namespace AW2.Menu
         private Texture2D _backgroundTexture;
         private Texture2D _loggedInPilot;
 
-        public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
+        public new AssaultWing<ClientEvent> Game { get { return (AssaultWing<ClientEvent>)base.Game; } }
         public MenuContent MenuContent { get; private set; }
         public ProgressBar ProgressBar { get; private set; }
         public MenuControls Controls { get; private set; }
@@ -89,7 +89,7 @@ namespace AW2.Menu
             g_loggedInPilot.Keys.Add(new CurveKey(1.7f, 1, 0, 0, CurveContinuity.Smooth));
         }
 
-        public MenuEngineImpl(AssaultWing game, int updateOrder)
+        public MenuEngineImpl(AssaultWing<ClientEvent> game, int updateOrder)
             : base(game, updateOrder)
         {
             Controls = new MenuControls();

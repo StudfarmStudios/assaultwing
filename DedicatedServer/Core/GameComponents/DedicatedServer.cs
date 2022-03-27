@@ -29,12 +29,12 @@ namespace AW2.Core.GameComponents
         private string _previousArenaName;
         private List<TimeSpan> _arenaTimeoutMessages;
 
-        public new AssaultWing Game { get; private set; }
+        public new AssaultWing<DedicatedServerEvent> Game { get; private set; }
 
         private NetSettings Settings { get { return Game.Settings.Net; } }
         private TimeSpan Now { get { return Game.GameTime.TotalRealTime; } }
 
-        public DedicatedServer(AssaultWing game, int updateOrder)
+        public DedicatedServer(AssaultWing<DedicatedServerEvent> game, int updateOrder)
             : base(game, updateOrder)
         {
             Game = game;

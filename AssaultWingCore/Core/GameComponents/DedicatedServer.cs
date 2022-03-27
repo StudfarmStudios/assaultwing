@@ -29,12 +29,12 @@ namespace AW2.Core.GameComponents
         private string _previousArenaName;
         private List<TimeSpan> _arenaTimeoutMessages;
 
-        public new AssaultWing Game { get; private set; }
+        public new AssaultWingCore Game { get; private set; }
 
         private NetSettings Settings { get { return Game.Settings.Net; } }
         private TimeSpan Now { get { return Game.GameTime.TotalRealTime; } }
 
-        public DedicatedServer(AssaultWing game, int updateOrder)
+        public DedicatedServer(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
             Game = game;
@@ -56,7 +56,8 @@ namespace AW2.Core.GameComponents
             Game.NetworkEngine.EnsureConnectionToManagementServer();
             if (Game.StartServer() != null)
             {
-                AssaultWingProgram.Instance.Exit();
+                // TODO: Peter: Handle exit from DedicatedServer
+                // AssaultWingProgram.Instance.Exit();
                 _nextEvent = TimeSpan.MaxValue;
             }
             else

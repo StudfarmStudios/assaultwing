@@ -21,7 +21,7 @@ namespace AW2.Core.GameComponents
         private const int SCROLL_MARKER_POSITION_MIN = 25;
         private const int SCROLL_MARKER_POSITION_MAX = 208;
 
-        private AssaultWing _game;
+        private AssaultWing<ClientEvent> _game;
         private Control _chatSendControl, _escapeControl, _scrollUpControl, _scrollDownControl;
         private EditableText _message;
         private SpriteBatch _spriteBatch;
@@ -61,7 +61,7 @@ namespace AW2.Core.GameComponents
         private bool CanScrollUp { get { return _scrollPosition < MessageLines.Count - VisibleLines; } }
         private bool CanScrollDown { get { return _scrollPosition > 0; } }
 
-        public PlayerChat(AssaultWing game, int updateOrder)
+        public PlayerChat(AssaultWing<ClientEvent> game, int updateOrder)
             : base(game, updateOrder)
         {
             g_cursorBlinkCurve = new Curve();

@@ -26,7 +26,7 @@ namespace AW2.Menu.Main
 
         private MainMenuComponent _menuComponent;
         private MenuEngineImpl MenuEngine { get { return _menuComponent.MenuEngine; } }
-        private AssaultWing Game { get { return MenuEngine.Game; } }
+        private AssaultWing<ClientEvent> Game { get { return MenuEngine.Game; } }
         private TimeSpan _lastNetworkItemsUpdate;
         private TimeSpan? _gameServerListReplyDeadline;
         private EditableText _loginName;
@@ -322,9 +322,9 @@ traffic or the server is down.");
         private MainMenuItem GetControlsItem(string name, Func<IControlType> get, Action<IControlType> set)
         {
             return new MainMenuItem(MenuEngine, () => string.Format("{0}\t\x9{1}", name, get()),
-                () => Game.ShowDialog(
-                    new ControlSelectionOverlayDialogData(MenuEngine, "Press control for " + name,
-                        control => set(control))));
+                () => Game.ExternalProgramLogicEvent( new ClientEvent {
+                    dialogData = new ControlSelectionOverlayDialogData(MenuEngine, "Press control for " + name,
+                        control => set(control)) }));
         }
 
         private MainMenuItemCollection GetAudioItems()

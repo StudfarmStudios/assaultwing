@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
 using AW2.Core.GameComponents;
-using AW2.Core.OverlayComponents;
-using AW2.Menu;
 
 namespace AW2.UI
 {
@@ -13,7 +11,7 @@ namespace AW2.UI
     /// flow from components to others throughout a run of the program. Examples of logics are
     /// dedicated server and standard desktop launch.
     /// </summary>
-    public abstract class ProgramLogic
+    public abstract class ProgramLogic<E>
     {
         private bool _gameStateChanged = true;
         private int _gameState;
@@ -37,10 +35,10 @@ namespace AW2.UI
             }
         }
 
-        public AssaultWing Game { get; private set; }
+        public AssaultWing<E> Game { get; private set; }
         public virtual bool IsGameplay { get { return true; } }
 
-        public ProgramLogic(AssaultWing game)
+        public ProgramLogic(AssaultWing<E> game)
         {
             Game = game;
         }
@@ -58,7 +56,7 @@ namespace AW2.UI
         public virtual void ShowMainMenuAndResetGameplay() { }
         public virtual void ShowEquipMenu() { }
 
-        public virtual void ShowDialog(OverlayDialogData dialogData) { }
+        public virtual void ExternalEvent(E e) { }
         public virtual void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions) { }
 
         /// <summary>

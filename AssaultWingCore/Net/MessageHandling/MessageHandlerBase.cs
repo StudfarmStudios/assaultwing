@@ -32,7 +32,7 @@ namespace AW2.Net.MessageHandling
 
         private static IEnumerable<Connection> GetConnections(SourceType source)
         {
-            var net = AssaultWing.Instance.NetworkEngine;
+            var net = AssaultWingCore.Instance.NetworkEngine;
             switch (source)
             {
                 case SourceType.Client:

@@ -27,7 +27,7 @@ namespace AW2.Net
         /// </summary>
         public ThreadSafeWrapper<Queue<string>> LoginErrors { get; private set; }
 
-        public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
+        public new AssaultWing<DedicatedServerEvent> Game { get { return (AssaultWing<DedicatedServerEvent>)base.Game; } }
 
         public WebData(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)

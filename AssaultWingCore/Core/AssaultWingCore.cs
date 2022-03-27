@@ -15,6 +15,10 @@ using AW2.Settings;
 using AW2.Sound;
 using AW2.UI;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Net;
+using AW2.Net.ManagementMessages;
+using AW2.Net.MessageHandling;
+using AW2.Net.Messages;
 
 namespace AW2.Core
 {
@@ -174,6 +178,28 @@ namespace AW2.Core
             ShowPlayerHelp();
             Log.Write("...started arena " + DataEngine.Arena.Info.Name);
         }
+
+        public virtual string StartServer() { return ""; }
+        public string SelectedArenaName { get; set; }
+
+        public NetworkEngine NetworkEngine { get; protected set; }
+        public Queue<string> NetworkingErrors { get; protected set; }
+        public MessageHandlers MessageHandlers { get; protected set; }
+        
+        public WebData WebData { get; protected set; }
+
+        public virtual void GobCreationMessageReceived(GobCreationMessage message, int framesAgo) {}
+
+        public virtual void StartClient(AWEndPoint[] serverEndPoints) {}
+
+        public virtual void PrepareArenaOnClient(CanonicalString gameplayMode, string arenaName, byte arenaIDOnClient, int wallCount) {}
+
+        public virtual void AddRemoteSpectator(Spectator newSpectator) {}
+
+        public virtual void UpdateGameServerInfoToManagementServer() {}
+
+        public virtual void LoadSelectedArena(byte? arenaIDOnClient = null) {}
+
 
         /// <summary>
         /// Finishes playing the current arena.

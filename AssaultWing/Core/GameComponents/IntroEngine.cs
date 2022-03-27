@@ -19,9 +19,9 @@ namespace AW2.Core.GameComponents
         private AWVideo _introVideo;
         private SpriteBatch _spriteBatch;
 
-        public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
+        public new AssaultWing<ClientEvent> Game { get { return (AssaultWing<ClientEvent>)base.Game; } }
 
-        public IntroEngine(AssaultWing game, int updateOrder)
+        public IntroEngine(AssaultWing<ClientEvent> game, int updateOrder)
             : base(game, updateOrder)
         {
         }

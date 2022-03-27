@@ -11,18 +11,19 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using AW2.Graphics.Content;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core.GameComponents;
 
 namespace AW2.UI
 {
     public partial class GameForm : Microsoft.Xna.Framework.Game
     {
 
-        private AssaultWing _game;
+        private AssaultWing<ClientEvent> _game;
         private GraphicsDeviceManager _graphics;
         private AWGameRunner _awGameRunner;
         private StringBuilder _logCache;
 
-        public AssaultWing Game { get { return _game; } }
+        public AssaultWing<ClientEvent> Game { get { return _game; } }
 
         public GameForm(CommandLineOptions commandLineOptions) : base()
         {
@@ -101,8 +102,18 @@ namespace AW2.UI
 
         private void InitializeGame(CommandLineOptions commandLineOptions)
         {
+
+
             //if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
-            _game = new AssaultWing(Services, commandLineOptions);
+            _game = new AssaultWing<ClientEvent>(Services, commandLineOptions, game => {
+                if (commandLineOptions.DedicatedServer)
+                    return new DedicatedServerLogic<ClientEvent>(game);
+                else if (commandLineOptions.QuickStart != null)
+                    return new QuickStartLogic(game, commandLineOptions.QuickStart);
+                else
+                    return new UserControlledLogic(game);
+            });
+            AW2.Graphics.PlayerViewport.CustomOverlayCreators.Add(viewport => new SystemStatusOverlay(viewport));
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {

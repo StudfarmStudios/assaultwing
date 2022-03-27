@@ -17,7 +17,7 @@ namespace AW2.Net.Connections
         /// </summary>
         /// <param name="tcpSocket">An opened TCP socket to the remote host. The
         /// created connection owns the socket and will dispose of it.</param>
-        public GameServerConnection(AssaultWing game, Socket tcpSocket)
+        public GameServerConnection(AssaultWingCore game, Socket tcpSocket)
             : base(game, tcpSocket)
         {
             Name = string.Format("Game Server {0} ({1})", ID, RemoteTCPEndPoint.Address);

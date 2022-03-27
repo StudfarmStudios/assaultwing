@@ -69,7 +69,7 @@ namespace AW2.Net.Connections
 
         #region Properties
 
-        public AssaultWing Game { get; private set; }
+        public AssaultWingCore Game { get; private set; }
 
         /// <summary>
         /// Unique identifier of the connection. At least zero and less than <see cref="MAX_CONNECTIONS"/>.
@@ -170,7 +170,7 @@ namespace AW2.Net.Connections
         /// Starts opening a connection to a remote host.
         /// </summary>
         /// <param name="remoteEndPoints">Alternative end points to connect to.</param>
-        public static void Connect(AssaultWing game, AWEndPoint[] remoteEndPoints)
+        public static void Connect(AssaultWingCore game, AWEndPoint[] remoteEndPoints)
         {
             var sockets = new Socket[remoteEndPoints.Length];
             var asyncState = new ConnectAsyncState(game, sockets, remoteEndPoints);
@@ -338,7 +338,7 @@ namespace AW2.Net.Connections
         /// The client program can create <see cref="Connection">Connections</see>
         /// via the static methods <see cref="StartListening(int, string)"/> and 
         /// <see cref="Connect(IPAddress, int, string)"/>.
-        protected Connection(AssaultWing game, Socket tcpSocket)
+        protected Connection(AssaultWingCore game, Socket tcpSocket)
             : this(game)
         {
             if (tcpSocket == null) throw new ArgumentNullException("tcpSocket", "Null socket argument");
@@ -349,7 +349,7 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Creates a UDP-only connection.
         /// </summary>
-        protected Connection(AssaultWing game)
+        protected Connection(AssaultWingCore game)
         {
             Game = game;
             ID = g_unusedIDs.Dequeue();

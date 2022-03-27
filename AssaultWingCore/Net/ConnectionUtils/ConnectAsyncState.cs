@@ -10,7 +10,7 @@ namespace AW2.Net.ConnectionUtils
     /// </summary>
     public class ConnectAsyncState
     {
-        public AssaultWing Game { get; private set; }
+        public AssaultWingCore Game { get; private set; }
         public Socket[] Sockets { get; private set; }
         public AWEndPoint[] RemoteEndPoints { get; private set; }
         public bool IsCancelled { get; private set; }
@@ -40,7 +40,7 @@ namespace AW2.Net.ConnectionUtils
             return result;
         }
 
-        public ConnectAsyncState(AssaultWing game, Socket[] sockets, AWEndPoint[] remoteEndPoints)
+        public ConnectAsyncState(AssaultWingCore game, Socket[] sockets, AWEndPoint[] remoteEndPoints)
         {
             Game = game;
             Sockets = sockets;

@@ -62,7 +62,7 @@ namespace AW2.Net
         private static readonly TimeSpan HANDSHAKE_TIMEOUT = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan HANDSHAKE_ATTEMPT_INTERVAL = TimeSpan.FromSeconds(0.9);
 
-        private AssaultWing _game;
+        private AssaultWingCore _game;
 
         /// <summary>
         /// Network connection to the management server, 
@@ -95,7 +95,7 @@ namespace AW2.Net
 
         #region Constructor
 
-        public NetworkEngine(AssaultWing game, int updateOrder)
+        public NetworkEngine(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
             _game = game;
@@ -216,7 +216,7 @@ namespace AW2.Net
         /// Poll <c>Connection.ConnectionResults</c> to find out when and if
         /// the connection was successfully estblished.
         /// </summary>
-        public void StartClient(AssaultWing game, AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
+        public void StartClient(AssaultWingCore game, AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Client starts connecting");
             _startClientConnectionHandler = connectionHandler;
@@ -325,7 +325,7 @@ namespace AW2.Net
         /// </summary>
         public TimeSpan GetMessageGameTime(GameplayMessage message)
         {
-            return AssaultWing.TargetElapsedTime.Multiply(message.FrameNumber);
+            return AssaultWingCore.TargetElapsedTime.Multiply(message.FrameNumber);
         }
 
         #endregion Public interface

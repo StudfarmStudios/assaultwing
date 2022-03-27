@@ -28,11 +28,11 @@ namespace AW2.Net.ConnectionUtils
         private int _mappedTcpPort, _mappedUdpPort;
 
         private IAsyncResult _listenResult;
-        private AssaultWing _game;
+        private AssaultWingCore _game;
 
         public bool IsListening { get { return _serverSocket != null; } }
 
-        public ConnectionAttemptListener(AssaultWing game)
+        public ConnectionAttemptListener(AssaultWingCore game)
         {
             _game = game;
         }
@@ -129,7 +129,7 @@ namespace AW2.Net.ConnectionUtils
             _serverSocket.Listen(64);
         }
 
-        private void ListenOneConnection(AssaultWing game)
+        private void ListenOneConnection(AssaultWingCore game)
         {
             if (_serverSocket == null) throw new ApplicationException("Server socket must be opened first");
             try

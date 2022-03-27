@@ -6,12 +6,12 @@ using AW2.Core.GameComponents;
 
 namespace AW2.UI
 {
-    public class DedicatedServerLogic : ProgramLogic
+    public class DedicatedServerLogic : ProgramLogic<DedicatedServerEvent>
     {
         private const int GAMESTATE_INITIALIZING = 0;
         private const int GAMESTATE_GAMEPLAY = 1;
 
-        public DedicatedServerLogic(AssaultWing game)
+        public DedicatedServerLogic(AssaultWing<DedicatedServerEvent> game)
             : base(game)
         {
             var dedicatedServer = new DedicatedServer(game, 13);

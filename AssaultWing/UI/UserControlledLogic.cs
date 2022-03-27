@@ -10,7 +10,7 @@ using AW2.Menu;
 
 namespace AW2.UI
 {
-    public class UserControlledLogic : ProgramLogic
+    public class UserControlledLogic : ProgramLogic<ClientEvent>
     {
         private const int GAMESTATE_INITIALIZING = 0;
         private const int GAMESTATE_INTRO = 1;
@@ -40,7 +40,7 @@ namespace AW2.UI
             }
         }
 
-        public UserControlledLogic(AssaultWing game)
+        public UserControlledLogic(AssaultWing<ClientEvent> game)
             : base(game)
         {
             StartupScreen = new StartupScreen(Game, -1);
@@ -167,7 +167,12 @@ namespace AW2.UI
             GameState = GAMESTATE_GAME_AND_MENU;
         }
 
-        public override void ShowDialog(OverlayDialogData dialogData)
+        public override void ExternalEvent(ClientEvent e)
+        {
+            ShowDialog(e.dialogData);
+        }
+
+        public void ShowDialog(OverlayDialogData dialogData)
         {
             OverlayDialog.Show(dialogData);
         }
@@ -192,7 +197,7 @@ namespace AW2.UI
             return string.Format("{0} {1}", Game.NetworkMode, GameState);
         }
 
-        private void CreateCustomControls(AssaultWing game)
+        private void CreateCustomControls(AssaultWing<ClientEvent> game)
         {
             var escapeControl = new MultiControl
             {

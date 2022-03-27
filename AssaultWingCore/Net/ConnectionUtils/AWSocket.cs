@@ -312,7 +312,7 @@ namespace AW2.Net.ConnectionUtils
 
         private static void SendToCompleted_DebugPrintLag(SocketAsyncEventArgs args)
         {
-            if (!AW2.Core.AssaultWing.Instance.Settings.Net.LagLog) return;
+            if (!AW2.Core.AssaultWingCore.Instance.Settings.Net.LagLog) return;
             try
             {
                 var protocolAndSendTime = (ProtocolAndSendTime)args.UserToken;

@@ -14,7 +14,7 @@ namespace AW2.UI
         private StateType _state;
         private CommandLineOptions.QuickStartOptions _options;
 
-        public QuickStartLogic(AssaultWing game, CommandLineOptions.QuickStartOptions options)
+        public QuickStartLogic(AssaultWing<ClientEvent> game, CommandLineOptions.QuickStartOptions options)
             : base(game)
         {
             _options = options;

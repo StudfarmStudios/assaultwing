@@ -26,13 +26,13 @@ namespace AW2.UI
     public partial class GameForm : IDisposable
     {
 
-        private AssaultWing _game;
+        private AssaultWing<DedicatedServerEvent> _game;
         private IGraphicsDeviceService _graphics;
         private AWGameRunner _awGameRunner;
         private StringBuilder _logCache;
         private readonly GameServiceContainer Services = new GameServiceContainer();
 
-        public AssaultWing Game { get { return _game; } }
+        public AssaultWing<DedicatedServerEvent> Game { get { return _game; } }
 
         public GameForm(CommandLineOptions commandLineOptions) : base()
         {
@@ -94,7 +94,7 @@ namespace AW2.UI
         private void InitializeGame(CommandLineOptions commandLineOptions)
         {
             //if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
-            _game = new AssaultWing(Services, commandLineOptions);
+            _game = new AssaultWing<DedicatedServerEvent>(Services, commandLineOptions, game => new DedicatedServerLogic(game));
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {

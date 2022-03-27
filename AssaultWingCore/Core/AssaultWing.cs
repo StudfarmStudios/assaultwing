@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core.GameComponents;
-using AW2.Core.OverlayComponents;
 using AW2.Game;
 using AW2.Game.Collisions;
 using AW2.Game.GobUtils;
@@ -24,7 +23,7 @@ using Microsoft.Xna.Framework;
 namespace AW2.Core
 {
     [System.Diagnostics.DebuggerDisplay("AssaultWing {Logic}")]
-    public class AssaultWing : AssaultWingCore
+    public class AssaultWing<E> : AssaultWingCore
     {
         private AWTimer _gameSettingsSendTimer;
         private AWTimer _arenaStateSendTimer;
@@ -45,17 +44,13 @@ namespace AW2.Core
         /// <summary>
         /// The AssaultWing instance. Avoid using this remnant of the old times.
         /// </summary>
-        public static new AssaultWing Instance { get { return (AssaultWing)AssaultWingCore.Instance; } }
+        public static new AssaultWing<E> Instance { get { return (AssaultWing<E>)AssaultWingCore.Instance; } }
         public bool IsClientAllowedToStartArena { get; set; }
         public Control ChatStartControl { get; set; }
 
-        public string SelectedArenaName { get; set; }
-        private ProgramLogic Logic { get; set; }
+        private ProgramLogic<E> Logic { get; set; }
         public override bool UpdateNeeded { get { return Logic.GameStateChanged;} set { Logic.GameStateChanged = value; }}
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
-        public NetworkEngine NetworkEngine { get; private set; }
-        public MessageHandlers MessageHandlers { get; private set; }
-        public WebData WebData { get; private set; }
         public List<Tuple<Control, Action>> CustomControls { get; private set; }
         public BackgroundTask ArenaLoadTask { get; private set; }
         public bool IsReadyToStartArena { get; set; }
@@ -68,17 +63,14 @@ namespace AW2.Core
         /// </summary>
         public Queue<string> NetworkingErrors { get; private set; }
 
-        public AssaultWing(GameServiceContainer serviceContainer, CommandLineOptions args)
+        public delegate ProgramLogic<E> MakeProgramLogic(AssaultWing<E> game);
+
+        public AssaultWing(GameServiceContainer serviceContainer, CommandLineOptions args, MakeProgramLogic makeProgramLogic)
             : base(serviceContainer, args)
         {
             CustomControls = new List<Tuple<Control, Action>>();
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
-            if (CommandLineOptions.DedicatedServer)
-                Logic = new DedicatedServerLogic(this);
-            else if (CommandLineOptions.QuickStart != null)
-                Logic = new QuickStartLogic(this, CommandLineOptions.QuickStart);
-            else
-                Logic = new UserControlledLogic(this);
+            Logic = makeProgramLogic(this);
             ArenaLoadTask = new BackgroundTask();
             NetworkingErrors = new Queue<string>();
             _gameSettingsSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
@@ -97,7 +89,6 @@ namespace AW2.Core
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
-            AW2.Graphics.PlayerViewport.CustomOverlayCreators.Add(viewport => new SystemStatusOverlay(viewport));
 
             // Replace the dummy StatsBase by a proper StatsSender.
             Components.Remove(comp => comp is StatsBase);
@@ -134,7 +125,7 @@ namespace AW2.Core
         }
 
         // TODO !!! Inline >>>
-        public void ShowDialog(OverlayDialogData dialogData) { Logic.ShowDialog(dialogData); }
+        public void ExternalProgramLogicEvent(E e) { Logic.ExternalEvent(e); }
         public void ShowCustomDialog(string text, string groupName, params TriggeredCallback[] actions) { Logic.ShowCustomDialog(text, groupName, actions); }
         public void ShowInfoDialog(string text, string groupName = null) { Logic.ShowInfoDialog(text, groupName); }
         public void HideDialog(string groupName = null) { Logic.HideDialog(groupName); }
@@ -171,7 +162,7 @@ namespace AW2.Core
             base.EndRun();
         }
 
-        public void PrepareArenaOnClient(CanonicalString gameplayMode, string arenaName, byte arenaIDOnClient, int wallCount)
+        override public void PrepareArenaOnClient(CanonicalString gameplayMode, string arenaName, byte arenaIDOnClient, int wallCount)
         {
             Debug.Assert(NetworkMode == Core.NetworkMode.Client);
             DataEngine.GameplayMode = (GameplayMode)DataEngine.GetTypeTemplate(gameplayMode);
@@ -185,7 +176,7 @@ namespace AW2.Core
         /// Prepares a new play session to start from the arena called <see cref="SelectedArenaName"/>.
         /// Call <see cref="StartArena"/> after this method returns to start playing the arena.
         /// </summary>
-        public void LoadSelectedArena(byte? arenaIDOnClient = null)
+        override public void LoadSelectedArena(byte? arenaIDOnClient = null)
         {
             if (NetworkMode != Core.NetworkMode.Client) DataEngine.RemoveEmptyTeams();
             var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)SelectedArenaName);
@@ -254,7 +245,7 @@ namespace AW2.Core
         /// Turns this game instance into a game server to whom other game instances
         /// can connect as game clients. Returns null on success, short error description on failure.
         /// </summary>
-        public string StartServer()
+        override public string StartServer()
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
@@ -288,7 +279,7 @@ namespace AW2.Core
         /// <summary>
         /// Turns this game instance into a game client by connecting to a game server.
         /// </summary>
-        public void StartClient(AWEndPoint[] serverEndPoints)
+        override public void StartClient(AWEndPoint[] serverEndPoints)
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
@@ -351,7 +342,7 @@ namespace AW2.Core
             }
         }
 
-        public void GobCreationMessageReceived(GobCreationMessage message, int framesAgo)
+        override public void GobCreationMessageReceived(GobCreationMessage message, int framesAgo)
         {
             lock (_gobCreationMessages) _gobCreationMessages.Add(Tuple.Create(message, framesAgo));
         }
@@ -566,7 +557,7 @@ namespace AW2.Core
             }
         }
 
-        public void UpdateGameServerInfoToManagementServer()
+        override public void UpdateGameServerInfoToManagementServer()
         {
             var managementMessage = new UpdateGameServerMessage { CurrentClients = DataEngine.Players.Count() };
             NetworkEngine.ManagementServerConnection.Send(managementMessage);
@@ -760,7 +751,7 @@ namespace AW2.Core
             foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(mess);
         }
 
-        public void AddRemoteSpectator(Spectator newSpectator)
+        override public void AddRemoteSpectator(Spectator newSpectator)
         {
             Log.Write("Adding spectator {0}", newSpectator.Name);
             DataEngine.Spectators.Add(newSpectator);

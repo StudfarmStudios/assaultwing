@@ -20,9 +20,9 @@ namespace AW2.Net.MessageHandling
     {
         public event Action<string> GameServerConnectionClosing; // parameter is info
 
-        private AssaultWing Game { get; set; }
+        private AssaultWingCore Game { get; set; }
 
-        public MessageHandlers(AssaultWing game)
+        public MessageHandlers(AssaultWingCore game)
         {
             Game = game;
         }

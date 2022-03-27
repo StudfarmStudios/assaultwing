@@ -18,9 +18,9 @@ namespace AW2.Core.GameComponents
         private Texture2D _dialogTexture;
         private Queue<OverlayDialogData> _data;
 
-        public new AssaultWing Game { get; private set; }
+        public new AssaultWing<ClientEvent> Game { get; private set; }
 
-        public OverlayDialog(AssaultWing game, int updateOrder)
+        public OverlayDialog(AssaultWing<ClientEvent> game, int updateOrder)
             : base(game, updateOrder)
         {
             Game = game;

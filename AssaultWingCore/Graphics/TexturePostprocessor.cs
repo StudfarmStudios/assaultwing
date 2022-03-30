@@ -132,11 +132,11 @@ namespace AW2.Graphics
             }
 
             if (effect.Parameters["TextureWidth"] != null) {
-                effect.Parameters["TextureWidth"].SetValue(tex.Width);
+                effect.Parameters["TextureWidth"].SetValue((float)tex.Width);
             }
 
             if (effect.Parameters["TextureHeight"] != null) {
-                effect.Parameters["TextureHeight"].SetValue(tex.Height);
+                effect.Parameters["TextureHeight"].SetValue((float)tex.Height);
             }
 
             float halfTexelWidth = 0.5f / tex.Width;

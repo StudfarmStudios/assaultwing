@@ -46,8 +46,7 @@ namespace AW2.UI
 
         public new void Dispose()
         {
-            Window.KeyDown += KeyDownHandler;
-
+            Window.TextInput -= TextInputHandler;
             _awGameRunner.Dispose();
             if (_game != null)
             {
@@ -89,15 +88,14 @@ namespace AW2.UI
 
         private void InitializeGameForm()
         {
-            Window.KeyDown += KeyDownHandler;
+            Window.TextInput += TextInputHandler;
             AW2.Helpers.Log.Written += AddToLogView;
             _logCache = new StringBuilder();
         }
 
-        private void KeyDownHandler(object sender, InputKeyEventArgs e)
+        private void TextInputHandler(object sender, TextInputEventArgs e)
         {
-
-            _game.Window.OnKeyPress((char)e.Key); // Ugly but somewhat works because the key enum values are ascii values mostly
+            _game.Window.OnKeyPress(e.Character);
         }
 
         private void InitializeGame(CommandLineOptions commandLineOptions)

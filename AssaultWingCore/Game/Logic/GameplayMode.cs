@@ -118,6 +118,8 @@ namespace AW2.Game.Logic
         /// </summary>
         public TeamOperation ChooseTeam(Spectator spectator, IEnumerable<Team> allTeams)
         {
+            return TeamOperation.AssignToNewTeam(spectator.Name, spectator); // HACK to keep each player in their own team; doesn't work correctly if botsEnabled == true
+
             if (allTeams.Count() < 2) return TeamOperation.AssignToNewTeam(GetFreeTeamNames(allTeams).First(), spectator);
             var ratingContext = GetRatingContext(allTeams);
             return TeamOperation.AssignToExistingTeam(allTeams.OrderBy(ratingContext.Rate).First(), spectator);

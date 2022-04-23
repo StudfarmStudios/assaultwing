@@ -1,0 +1,46 @@
+"AppBuild"
+{
+	"AppID" "1971370" // your AppID
+	"Desc" "The Assault Wing steam build"
+
+    // The assaultwing source root directory.
+    // The steam build should be run with working directory at steambuild under the assaultwing root.
+	"ContentRoot" ".." 
+
+    // build output folder for build logs and build cache files
+	"BuildOutput" "output\" 
+
+	"Depots"
+	{
+		"1001" // The content depot. Currently this can be built on Windows only.
+		{
+			"FileMapping"
+			{
+                // Take models from this particular location so Release vs debug does not have an effect
+                // TODO: Why the models must be duplicated in 2 folders Content/models and plain models?
+				"LocalPath" "AssaultWingContent\bin\DesktopGL\AssaultWingContent"
+				"DepotPath" "." // mapped into the root of the depot
+				"recursive" "1" // include all subfolders
+			}
+			"FileMapping"
+			{
+                // Take the CoreContent from this particular location so Release vs debug does not have an effect
+				"LocalPath" "AssaultWingCoreContent\bin\DesktopGL\AssaultWingCoreContent"
+				"DepotPath" "." // mapped into the root of the depot
+				"recursive" "1" // include all subfolders
+			}
+		}
+		"1002" // The windows Release binary stuff
+		{
+			"FileMapping"
+			{
+				"LocalPath" "AssaultWing\bin\Release\netcoreapp6.0"
+				"DepotPath" "." // mapped into the root of the depot
+				"recursive" "1" // include all subfolders
+			}
+	        "FileExclusion" "Content/*" // in the content depot, but copied here by the build
+            "FileExclusion" "CoreContent/*" // in the content depot, but copied here by the build
+            "FileExclusion" "models/*" // in the content depot, but copied here by the build
+		}        
+	}
+}

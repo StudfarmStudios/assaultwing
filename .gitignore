@@ -10,3 +10,4 @@ AWUnitTests/AssaultWing.VisualState.xml
 .vs/
 launchSettings.json
 .vscode/
+steambuild/

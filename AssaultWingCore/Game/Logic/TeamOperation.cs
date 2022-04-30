@@ -72,5 +72,20 @@ namespace AW2.Game.Logic
         }
 
         private TeamOperation() { }
+
+        public override string ToString() => Type switch
+        {
+            ChoiceType.AssignToExistingTeam => ExistingSpectatorToString + " to team " + ExistingTeamToString,
+            ChoiceType.AssignToNewTeam => ExistingSpectatorToString + $" to new team '{NewTeamName}'",
+            ChoiceType.CreateToExistingTeam => $"New spectator '{NewSpectatorName}' to team " + ExistingTeamToString,
+            ChoiceType.CreateToNewTeam => $"New spectator '{NewSpectatorName}' to new team '{NewTeamName}'",
+            ChoiceType.Remove => $"Remove " + ExistingSpectatorToString,
+            _ => throw new InvalidOperationException($"Unexpected {nameof(TeamOperation)} {Type}")
+        };
+
+        private string ExistingSpectatorToString =>
+            $"{ExistingSpectator.GetType().Name} '{ExistingSpectator.Name}'";
+        private string ExistingTeamToString =>
+            $"'{ExistingTeam.Name}' ({ExistingTeam.ID})";
     }
 }

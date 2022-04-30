@@ -1,4 +1,12 @@
-﻿using System;
+﻿// If ALL_VS_ALL is true then
+// - Each player will be in their own team
+// - If bots are included then there will be one BotPlayer in its own team
+// If ALL_VS_ALL is false then
+// - There will be two teams that are balanced based on human player rankings
+// - If bots are included then there will be one BotPlayer in each team alongside human players
+#define ALL_VS_ALL
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -130,6 +138,9 @@ namespace AW2.Game.Logic
         /// </summary>
         public IEnumerable<TeamOperation> BalanceTeams(IEnumerable<Team> teams)
         {
+#if ALL_VS_ALL
+            yield break;
+#else
             if (teams.Count() < 2) yield break;
             var ratingContext = GetRatingContext(teams);
             var spectators = teams
@@ -145,6 +156,7 @@ namespace AW2.Game.Logic
                 resultTeams[weakestTeam] += ratingContext.Rate(spec);
                 yield return TeamOperation.AssignToExistingTeam(weakestTeam, spec);
             }
+#endif
         }
 
         public int RateLocally(Spectator spectator, IEnumerable<Spectator> allSpectators)
@@ -157,6 +169,19 @@ namespace AW2.Game.Logic
         /// </summary>
         public IEnumerable<TeamOperation> UpdateBotPlayerConfiguration(IEnumerable<Team> teams, AWSettings settings)
         {
+#if ALL_VS_ALL
+            // Always remove bots from teams that have players.
+            // If bots are excluded completely then also remove bots from their independent team.
+            var removeExtraBots = teams
+                .Where(team => !settings.Players.BotsEnabled || team.Members.OfType<Player>().Any())
+                .SelectMany(team => team.Members.OfType<BotPlayer>())
+                .Select(TeamOperation.Remove);
+            bool hasIndependentBots = teams.Any(team => team.Members.All(spec => spec is BotPlayer));
+            var addIndependentBots = !settings.Players.BotsEnabled || hasIndependentBots
+                ? Array.Empty<TeamOperation>()
+                : new[] { TeamOperation.CreateToNewTeam("Bots", "Bots") };
+            return removeExtraBots.Union(addIndependentBots);
+#else
             var removeExtraBots = teams
                 .SelectMany(team => team.Members.OfType<BotPlayer>().Skip(1))
                 .Select(botPlayer => TeamOperation.Remove(botPlayer));
@@ -171,6 +196,7 @@ namespace AW2.Game.Logic
                 ? GetFreeTeamNames(teams).Take(2 - teams.Count()).Select(name => TeamOperation.CreateToNewTeam(name, GetBotPlayerName(name)))
                 : new TeamOperation[0];
             return removeExtraBots.Union(switchOnOrOff).Union(addMissingTeams);
+#endif
         }
 
         private string GetBotPlayerName(string teamName)

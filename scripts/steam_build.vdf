@@ -12,35 +12,36 @@
 
 	"Depots"
 	{
-		"1001" // The content depot. Currently this can be built on Windows only.
+		"1971371" // The content depot. Currently this can be built on Windows only.
 		{
 			"FileMapping"
 			{
                 // Take models from this particular location so Release vs debug does not have an effect
-                // TODO: Why the models must be duplicated in 2 folders Content/models and plain models?
-				"LocalPath" "AssaultWingContent\bin\DesktopGL\AssaultWingContent"
+				"LocalPath" "AssaultWingContent\bin\DesktopGL\AssaultWingContent\*"
 				"DepotPath" "." // mapped into the root of the depot
 				"recursive" "1" // include all subfolders
 			}
 			"FileMapping"
 			{
                 // Take the CoreContent from this particular location so Release vs debug does not have an effect
-				"LocalPath" "AssaultWingCoreContent\bin\DesktopGL\AssaultWingCoreContent"
+				"LocalPath" "AssaultWingCoreContent\bin\DesktopGL\AssaultWingCoreContent\*"
 				"DepotPath" "." // mapped into the root of the depot
 				"recursive" "1" // include all subfolders
 			}
 		}
-		"1002" // The windows Release binary stuff
+		"1971375" // The windows Release binary stuff
 		{
 			"FileMapping"
 			{
-				"LocalPath" "AssaultWing\bin\Release\netcoreapp6.0"
+				"LocalPath" "AssaultWing\bin\Release\netcoreapp6.0\*"
 				"DepotPath" "." // mapped into the root of the depot
 				"recursive" "1" // include all subfolders
 			}
 	        "FileExclusion" "Content/*" // in the content depot, but copied here by the build
             "FileExclusion" "CoreContent/*" // in the content depot, but copied here by the build
-            "FileExclusion" "models/*" // in the content depot, but copied here by the build
-		}        
+            "FileExclusion" "Log*.txt" // Sometimes these can be left over if this is not 1 100% clean build
+            "FileExclusion" "AssaultWing_config.xml" // Sometimes this can be left over if this is not 1 100% clean build
+            "FileExclusion" "*.pdb" // No debug files
+		}
 	}
 }

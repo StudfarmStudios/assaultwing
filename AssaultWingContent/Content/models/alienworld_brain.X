@@ -4243,7 +4243,7 @@ Frame Cylinder01 {
     0.007843;0.019608;0.000000;;
 
     TextureFilename Diffuse {
-     "alienworld_brains.png";
+     "../textures/alienworld_brains.png";
     }
    }
   }

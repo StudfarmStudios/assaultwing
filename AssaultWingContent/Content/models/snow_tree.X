@@ -2809,7 +2809,7 @@ Frame Cone01 {
     0.007843;0.047059;0.000000;;
 
     TextureFilename Diffuse {
-     "snow_tree.png";
+     "../textures/snow_tree.png";
     }
    }
   }

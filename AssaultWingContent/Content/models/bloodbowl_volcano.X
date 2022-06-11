@@ -451,7 +451,7 @@ Frame Cylinder01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_volcano.png";
+     "../textures/bloodbowl_volcano.png";
     }
    }
   }

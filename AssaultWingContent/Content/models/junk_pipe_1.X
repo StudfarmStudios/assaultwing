@@ -3100,7 +3100,7 @@ Frame Pipe_1 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_pipe_1.png";
+     "../textures/junk_pipe_1.png";
     }
    }
   }

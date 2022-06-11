@@ -844,7 +844,7 @@ Frame Box01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "snow_hockeystick.png";
+     "../textures/snow_hockeystick.png";
     }
    }
   }

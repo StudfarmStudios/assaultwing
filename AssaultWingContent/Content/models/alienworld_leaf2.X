@@ -787,7 +787,7 @@ Frame leaf2 {
     0.129412;0.066667;0.000000;;
 
     TextureFilename Diffuse {
-     "alienworld_leaf2.png";
+     "../textures/alienworld_leaf2.png";
     }
    }
   }

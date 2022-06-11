@@ -625,7 +625,7 @@ Frame Cylinder03 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_bg_rock_3.png";
+     "../textures/bloodbowl_bg_rock_3.png";
     }
    }
   }

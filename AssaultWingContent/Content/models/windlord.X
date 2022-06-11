@@ -5426,7 +5426,7 @@ Frame Box01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "windlord.png";
+     "../textures/windlord.png";
     }
    }
   }
@@ -6452,7 +6452,7 @@ Frame Outline_01 {
     0.176471;0.952941;1.000000;;
 
     TextureFilename Diffuse {
-     "ship_outline.png";
+     "../textures/ship_outline.png";
     }
    }
   }

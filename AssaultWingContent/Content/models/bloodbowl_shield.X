@@ -2374,7 +2374,7 @@ Frame Line01 {
     0.031373;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_shield.png";
+     "../textures/bloodbowl_shield.png";
     }
    }
   }

@@ -1219,7 +1219,7 @@ Frame Cylinder02 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_bg_rock_2.png";
+     "../textures/bloodbowl_bg_rock_2.png";
     }
    }
   }

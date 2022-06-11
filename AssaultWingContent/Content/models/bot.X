@@ -3323,7 +3323,7 @@ Frame body {
     0.145098;0.133333;0.133333;;
 
     TextureFilename Diffuse {
-     "bot_body.png";
+     "../textures/bot_body.png";
     }
    }
   }
@@ -4234,7 +4234,7 @@ Frame body {
      0.145098;0.133333;0.133333;;
 
      TextureFilename Diffuse {
-      "bot_fan.png";
+      "../textures/bot_fan.png";
      }
     }
    }

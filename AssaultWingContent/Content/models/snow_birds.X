@@ -1999,7 +1999,7 @@ Frame Cylinder01 {
     0.027451;0.027451;0.027451;;
 
     TextureFilename Diffuse {
-     "snow_birds.png";
+     "../textures/snow_birds.png";
     }
    }
   }

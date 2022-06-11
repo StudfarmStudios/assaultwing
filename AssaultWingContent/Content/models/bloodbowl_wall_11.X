@@ -727,7 +727,7 @@ Frame wall_11 {
     0.031373;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_moltenrock.png";
+     "../textures/bloodbowl_moltenrock.png";
     }
    }
   }

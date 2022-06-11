@@ -1030,7 +1030,7 @@ Frame Box01 {
     0.145098;0.133333;0.133333;;
 
     TextureFilename Diffuse {
-     "mines.png";
+     "../textures/mines.png";
     }
    }
   }
@@ -2416,7 +2416,7 @@ Frame Outline_01 {
     0.000000;0.964706;1.000000;;
 
     TextureFilename Diffuse {
-     "ship_outline.png";
+     "../textures/ship_outline.png";
     }
    }
   }

@@ -2191,7 +2191,7 @@ Frame Line01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "amazonas_grass_1.png";
+     "../textures/amazonas_grass_1.png";
     }
    }
   }

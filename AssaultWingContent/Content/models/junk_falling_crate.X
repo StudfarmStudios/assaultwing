@@ -268,7 +268,7 @@ Frame Box01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_falling_crate.png";
+     "../textures/junk_falling_crate.png";
     }
    }
   }

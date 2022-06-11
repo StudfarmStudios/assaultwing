@@ -1759,7 +1759,7 @@ Frame Sphere01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "snow_iglu.png";
+     "../textures/snow_iglu.png";
     }
    }
   }

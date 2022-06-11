@@ -1699,7 +1699,7 @@ Frame Arc01 {
     0.203922;0.129412;0.000000;;
 
     TextureFilename Diffuse {
-     "amazonas_chest_1.png";
+     "../textures/amazonas_chest_1.png";
     }
    }
   }

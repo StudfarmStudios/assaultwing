@@ -2618,7 +2618,7 @@ Frame Head {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "snake.png";
+     "../textures/snake.png";
     }
    }
   }
@@ -3847,7 +3847,7 @@ Frame Head {
      0.000000;0.000000;0.000000;;
 
      TextureFilename Diffuse {
-      "snake.png";
+      "../textures/snake.png";
      }
     }
    }
@@ -5061,7 +5061,7 @@ Frame Head {
       0.000000;0.000000;0.000000;;
 
       TextureFilename Diffuse {
-       "snake.png";
+       "../textures/snake.png";
       }
      }
     }
@@ -6275,7 +6275,7 @@ Frame Head {
        0.000000;0.000000;0.000000;;
 
        TextureFilename Diffuse {
-        "snake.png";
+        "../textures/snake.png";
        }
       }
      }
@@ -7300,7 +7300,7 @@ Frame Head {
         0.000000;0.000000;0.000000;;
 
         TextureFilename Diffuse {
-         "snake.png";
+         "../textures/snake.png";
         }
        }
       }
@@ -7653,7 +7653,7 @@ Frame Head {
          0.176471;0.952941;1.000000;;
 
          TextureFilename Diffuse {
-          "ship_outline.png";
+          "../textures/ship_outline.png";
          }
         }
        }
@@ -7990,7 +7990,7 @@ Frame Head {
         0.176471;0.952941;1.000000;;
 
         TextureFilename Diffuse {
-         "ship_outline.png";
+         "../textures/ship_outline.png";
         }
        }
       }
@@ -8327,7 +8327,7 @@ Frame Head {
        0.176471;0.952941;1.000000;;
 
        TextureFilename Diffuse {
-        "ship_outline.png";
+        "../textures/ship_outline.png";
        }
       }
      }
@@ -8664,7 +8664,7 @@ Frame Head {
       0.176471;0.952941;1.000000;;
 
       TextureFilename Diffuse {
-       "ship_outline.png";
+       "../textures/ship_outline.png";
       }
      }
     }
@@ -9259,7 +9259,7 @@ Frame Head {
      0.176471;0.952941;1.000000;;
 
      TextureFilename Diffuse {
-      "ship_outline.png";
+      "../textures/ship_outline.png";
      }
     }
    }

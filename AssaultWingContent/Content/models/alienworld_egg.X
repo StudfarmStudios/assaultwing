@@ -1648,7 +1648,7 @@ Frame Line01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "alienworld_egg.png";
+     "../textures/alienworld_egg.png";
     }
    }
   }

@@ -11947,7 +11947,7 @@ Frame Dock {
     0.000000;0.000000;0.031373;;
 
     TextureFilename Diffuse {
-     "dock.png";
+     "../textures/dock.png";
     }
    }
   }

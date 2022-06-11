@@ -1342,7 +1342,7 @@ Frame SquareWall_16 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_metalwall1.png";
+     "../textures/junk_metalwall1.png";
     }
    }
   }

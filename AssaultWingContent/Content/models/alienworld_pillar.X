@@ -1162,7 +1162,7 @@ Frame Cylinder01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "alienworld_pillar.png";
+     "../textures/alienworld_pillar.png";
     }
    }
   }

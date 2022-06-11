@@ -793,7 +793,7 @@ Frame Box01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_junk_shoot.png";
+     "../textures/junk_junk_shoot.png";
     }
    }
   }

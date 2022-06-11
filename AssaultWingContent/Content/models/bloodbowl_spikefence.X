@@ -2479,7 +2479,7 @@ Frame Cylinder13 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_spikefence.png";
+     "../textures/bloodbowl_spikefence.png";
     }
    }
   }

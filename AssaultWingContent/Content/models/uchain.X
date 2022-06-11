@@ -5593,7 +5593,7 @@ Frame Donut33 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_uchain.png";
+     "../textures/junk_uchain.png";
     }
    }
   }

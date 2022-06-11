@@ -1222,7 +1222,7 @@ Frame Box01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "amazonas_hack_1.png";
+     "../textures/amazonas_hack_1.png";
     }
    }
   }

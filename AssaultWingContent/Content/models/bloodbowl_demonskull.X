@@ -2464,7 +2464,7 @@ Frame Line02 {
     0.058824;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_demonskull.png";
+     "../textures/bloodbowl_demonskull.png";
     }
    }
   }

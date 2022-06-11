@@ -1426,7 +1426,7 @@ Frame darkwall_1 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "amazonas_darkwall.png";
+     "../textures/amazonas_darkwall.png";
     }
    }
   }

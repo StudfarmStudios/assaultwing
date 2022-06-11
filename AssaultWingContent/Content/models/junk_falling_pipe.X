@@ -466,7 +466,7 @@ Frame Cylinder01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_falling_pipe.png";
+     "../textures/junk_falling_pipe.png";
     }
    }
   }

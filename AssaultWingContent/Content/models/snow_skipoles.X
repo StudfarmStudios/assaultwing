@@ -982,7 +982,7 @@ Frame Cylinder02 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "snow_skipoles.png";
+     "../textures/snow_skipoles.png";
     }
    }
   }

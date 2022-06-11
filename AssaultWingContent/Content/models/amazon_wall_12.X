@@ -604,7 +604,7 @@ Frame wall_12 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "amazonas_wall_1.png";
+     "../textures/amazonas_wall_1.png";
     }
    }
   }

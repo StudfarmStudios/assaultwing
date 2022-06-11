@@ -898,7 +898,7 @@ Frame Cylinder01 {
     0.000000;0.047059;0.066667;;
 
     TextureFilename Diffuse {
-     "bonus.png";
+     "../textures/bonus.png";
     }
    }
   }

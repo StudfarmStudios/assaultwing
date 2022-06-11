@@ -2674,7 +2674,7 @@ Frame Line01 {
     0.192157;0.145098;0.000000;;
 
     TextureFilename Diffuse {
-     "amazonas_golds.png";
+     "../textures/amazonas_golds.png";
     }
    }
   }

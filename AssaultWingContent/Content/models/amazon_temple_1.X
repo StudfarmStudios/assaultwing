@@ -3724,7 +3724,7 @@ Frame Box06 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "amazonas_temple_1.png";
+     "../textures/amazonas_temple_1.png";
     }
    }
   }

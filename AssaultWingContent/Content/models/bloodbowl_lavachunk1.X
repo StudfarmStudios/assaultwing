@@ -449,7 +449,7 @@ Frame Line01 {
     0.388235;0.184314;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_lavachunk.png";
+     "../textures/bloodbowl_lavachunk.png";
     }
    }
   }

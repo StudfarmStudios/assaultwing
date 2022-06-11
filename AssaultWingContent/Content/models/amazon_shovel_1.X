@@ -1066,7 +1066,7 @@ Frame Cylinder01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "amazonas_shovel_1.png";
+     "../textures/amazonas_shovel_1.png";
     }
    }
   }

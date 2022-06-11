@@ -2293,7 +2293,7 @@ Frame NGon04 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_valve.png";
+     "../textures/junk_valve.png";
     }
    }
   }

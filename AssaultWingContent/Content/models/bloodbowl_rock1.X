@@ -1354,7 +1354,7 @@ Frame Cylinder01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_bg_rock_1.png";
+     "../textures/bloodbowl_bg_rock_1.png";
     }
    }
   }

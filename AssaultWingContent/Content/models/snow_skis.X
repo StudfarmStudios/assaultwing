@@ -2470,7 +2470,7 @@ Frame Line01 {
     0.090196;0.090196;0.090196;;
 
     TextureFilename Diffuse {
-     "snow_skis.png";
+     "../textures/snow_skis.png";
     }
    }
   }

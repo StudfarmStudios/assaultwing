@@ -1267,7 +1267,7 @@ Frame Rail_02 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_rail.png";
+     "../textures/junk_rail.png";
     }
    }
   }

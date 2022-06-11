@@ -1675,7 +1675,7 @@ Frame altar {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "alienworld_altar.png";
+     "../textures/alienworld_altar.png";
     }
    }
   }

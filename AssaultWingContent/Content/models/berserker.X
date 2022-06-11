@@ -1102,7 +1102,7 @@ Frame Cylinder01 {
     0.019608;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "berserker.png";
+     "../textures/berserker.png";
     }
    }
   }

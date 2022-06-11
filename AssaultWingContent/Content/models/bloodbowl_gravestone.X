@@ -1261,7 +1261,7 @@ Frame gravestone {
     0.011765;0.015686;0.007843;;
 
     TextureFilename Diffuse {
-     "bloodbowl_gravestone.png";
+     "../textures/bloodbowl_gravestone.png";
     }
    }
   }

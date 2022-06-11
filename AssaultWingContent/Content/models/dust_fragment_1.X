@@ -538,7 +538,7 @@ Frame Line01 {
     0.113725;0.058824;0.000000;;
 
     TextureFilename Diffuse {
-     "dust_fragment.png";
+     "../textures/dust_fragment.png";
     }
    }
   }

@@ -265,7 +265,7 @@ Frame Cylinder01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_metalbar.png";
+     "../textures/bloodbowl_metalbar.png";
     }
    }
   }

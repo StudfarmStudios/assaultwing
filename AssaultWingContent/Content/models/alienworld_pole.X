@@ -5533,7 +5533,7 @@ Frame Line01 {
     0.015686;0.031373;0.000000;;
 
     TextureFilename Diffuse {
-     "alienworld_pole.png";
+     "../textures/alienworld_pole.png";
     }
    }
   }

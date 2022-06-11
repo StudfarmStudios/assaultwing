@@ -1468,7 +1468,7 @@ Frame Line03 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "snow_dark.png";
+     "../textures/snow_dark.png";
     }
    }
   }

@@ -3163,7 +3163,7 @@ Frame GeoSphere01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "alienworld_eye.png";
+     "../textures/alienworld_eye.png";
     }
    }
   }

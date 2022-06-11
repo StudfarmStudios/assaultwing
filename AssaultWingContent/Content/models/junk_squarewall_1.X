@@ -1231,7 +1231,7 @@ Frame SquareWall_15 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_wall2.png";
+     "../textures/junk_wall2.png";
     }
    }
   }

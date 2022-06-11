@@ -1756,7 +1756,7 @@ Frame Waveplane_03 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "junk_waveplate.png";
+     "../textures/junk_waveplate.png";
     }
    }
   }

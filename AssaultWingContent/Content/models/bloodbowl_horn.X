@@ -1831,7 +1831,7 @@ Frame Cone02 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_horn.png";
+     "../textures/bloodbowl_horn.png";
     }
    }
   }

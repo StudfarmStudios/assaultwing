@@ -2947,7 +2947,7 @@ Frame Line05 {
     0.027451;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "bloodbowl_bones.png";
+     "../textures/bloodbowl_bones.png";
     }
    }
   }

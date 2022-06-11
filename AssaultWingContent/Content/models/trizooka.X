@@ -718,7 +718,7 @@ Frame Cylinder01 {
     0.031373;0.125490;0.011765;;
 
     TextureFilename Diffuse {
-     "trizooka.png";
+     "../textures/trizooka.png";
     }
    }
   }

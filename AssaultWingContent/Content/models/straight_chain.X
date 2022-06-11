@@ -5593,7 +5593,7 @@ Frame Donut01 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "straightchain.png";
+     "../textures/straightchain.png";
     }
    }
   }

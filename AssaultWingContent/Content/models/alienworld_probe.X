@@ -3133,7 +3133,7 @@ Frame Cylinder01 {
     0.000000;0.011765;0.027451;;
 
     TextureFilename Diffuse {
-     "alienworld_probe.png";
+     "../textures/alienworld_probe.png";
     }
    }
   }

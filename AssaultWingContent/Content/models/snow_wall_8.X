@@ -1492,7 +1492,7 @@ Frame wall_8 {
     0.000000;0.003922;0.058824;;
 
     TextureFilename Diffuse {
-     "snowwall.png";
+     "../textures/snowwall.png";
     }
    }
   }

@@ -466,7 +466,7 @@ Frame Sphere02 {
     0.086275;0.184314;0.000000;;
 
     TextureFilename Diffuse {
-     "megabonus.png";
+     "../textures/megabonus.png";
     }
    }
   }

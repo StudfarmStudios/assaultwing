@@ -511,7 +511,7 @@ Frame SquareWall_1 {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "dummytexture.png";
+     "../textures/dummytexture.png";
     }
    }
   }

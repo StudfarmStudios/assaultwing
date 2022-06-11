@@ -217,7 +217,7 @@ Frame Bullet {
     0.113725;0.086275;0.000000;;
 
     TextureFilename Diffuse {
-     "fragment.png";
+     "../textures/fragment.png";
     }
    }
   }

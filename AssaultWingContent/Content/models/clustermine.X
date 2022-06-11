@@ -994,7 +994,7 @@ Frame Sphere02 {
     0.145098;0.133333;0.133333;;
 
     TextureFilename Diffuse {
-     "clustermine.png";
+     "../textures/clustermine.png";
     }
    }
   }
@@ -2188,7 +2188,7 @@ Frame Outline_02 {
     0.000000;0.964706;1.000000;;
 
     TextureFilename Diffuse {
-     "ship_outline.png";
+     "../textures/ship_outline.png";
     }
    }
   }

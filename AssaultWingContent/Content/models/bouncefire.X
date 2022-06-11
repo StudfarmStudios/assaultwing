@@ -754,7 +754,7 @@ Frame dumbfire {
     0.525490;0.156863;0.156863;;
 
     TextureFilename Diffuse {
-     "dumbfire.png";
+     "../textures/dumbfire.png";
     }
    }
   }

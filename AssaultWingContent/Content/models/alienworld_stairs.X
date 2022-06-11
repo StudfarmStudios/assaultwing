@@ -538,7 +538,7 @@ Frame stairs {
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {
-     "alienworld_stairs.png";
+     "../textures/alienworld_stairs.png";
     }
    }
   }

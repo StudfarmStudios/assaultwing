@@ -11,3 +11,6 @@ AWUnitTests/AssaultWing.VisualState.xml
 launchSettings.json
 .vscode/
 steambuild/
+
+# steam build output
+scripts/output

@@ -6,7 +6,8 @@ set -euo pipefail
 IFS=$'\n\t'
 
 if [ $# -lt 1 ]; then
-  echo "Usage: bash $0 [Configuration] $#"
+  echo "This is a bash script built to work on plain Linux (TBD) OR Windows drive mounted on WSL2."
+  echo "Usage: $0 [Configuration]"
   echo "Configuration: 'Release' for release. If 'Debug', do developer publish."
   exit 2
 elif [ $# -gt 1 ]; then
@@ -40,3 +41,6 @@ platform_run dotnet clean $SOLUTION --nologo --verbosity=quiet
 # /target:Publish
 echo dotnet build
 platform_run dotnet build $SOLUTION --nologo --verbosity=quiet /p:Configuration=$CONFIGURATION "/p:Platform=Any Cpu"
+
+echo Built: */bin/*
+

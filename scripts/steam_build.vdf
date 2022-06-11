@@ -29,19 +29,19 @@
 				"recursive" "1" // include all subfolders
 			}
 		}
-		"1971375" // The windows Release binary stuff
+		"1971375" // The windows Debug / Release binary stuff (currently Debug / Release must be edited in here manually)
 		{
 			"FileMapping"
 			{
-				"LocalPath" "AssaultWing\bin\Release\netcoreapp6.0\*"
+				"LocalPath" "AssaultWing\bin\Debug\netcoreapp6.0\*"
 				"DepotPath" "." // mapped into the root of the depot
 				"recursive" "1" // include all subfolders
 			}
-	        "FileExclusion" "Content/*" // in the content depot, but copied here by the build
-            "FileExclusion" "CoreContent/*" // in the content depot, but copied here by the build
-            "FileExclusion" "Log*.txt" // Sometimes these can be left over if this is not 1 100% clean build
-            "FileExclusion" "AssaultWing_config.xml" // Sometimes this can be left over if this is not 1 100% clean build
-            "FileExclusion" "*.pdb" // No debug files
+			"FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\Content*"
+			"FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\CoreContent*"
+            "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\Log*.txt" // Sometimes these can be left over if this is not 1 100% clean build
+            "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\AssaultWing_config.xml" // Sometimes this can be left over if this is not 1 100% clean build
+            "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\*.pdb" // No debug files
 		}
 	}
 }

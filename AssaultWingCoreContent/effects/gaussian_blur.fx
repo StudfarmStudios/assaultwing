@@ -34,7 +34,7 @@ struct PS_INPUT
 
 float4 GaussianBlurH(PS_INPUT Input) : COLOR0 { 
    // float4 sum = tex2D(samplerState, Input.TexCoord);
-    float4 sum = (0,0,0,0);
+    float4 sum = float4(0,0,0,0);
     float4 tex;
 
 	float pixelsizeX = 1.0 / TextureWidth;
@@ -59,7 +59,7 @@ float4 GaussianBlurH(PS_INPUT Input) : COLOR0 {
 
 float4 GaussianBlurV(PS_INPUT Input) : COLOR0 { 
    // float4 sum = tex2D(samplerState, Input.TexCoord);
-    float4 sum = (0,0,0,0);
+    float4 sum = float4(0,0,0,0);
     float4 tex;
 
     float pixelsizeY = 1.0 / TextureHeight;

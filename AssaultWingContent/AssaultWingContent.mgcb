@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin models/alienworld_altar.X
+#begin Content/models/alienworld_altar.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -30,9 +30,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_altar.X;Content/models/alienworld_altar.X
+/build:Content/models/alienworld_altar.X;Content/models/alienworld_altar.X
 
-#begin models/alienworld_brain.X
+#begin Content/models/alienworld_brain.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -49,9 +49,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_brain.X;Content/models/alienworld_brain.X
+/build:Content/models/alienworld_brain.X;Content/models/alienworld_brain.X
 
-#begin models/alienworld_egg.X
+#begin Content/models/alienworld_egg.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -68,9 +68,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_egg.X;Content/models/alienworld_egg.X
+/build:Content/models/alienworld_egg.X;Content/models/alienworld_egg.X
 
-#begin models/alienworld_eye.X
+#begin Content/models/alienworld_eye.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -87,9 +87,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_eye.X;Content/models/alienworld_eye.X
+/build:Content/models/alienworld_eye.X;Content/models/alienworld_eye.X
 
-#begin models/alienworld_leaf1.X
+#begin Content/models/alienworld_leaf1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -106,9 +106,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_leaf1.X;Content/models/alienworld_leaf1.X
+/build:Content/models/alienworld_leaf1.X;Content/models/alienworld_leaf1.X
 
-#begin models/alienworld_leaf2.X
+#begin Content/models/alienworld_leaf2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -125,9 +125,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_leaf2.X;Content/models/alienworld_leaf2.X
+/build:Content/models/alienworld_leaf2.X;Content/models/alienworld_leaf2.X
 
-#begin models/alienworld_pillar.X
+#begin Content/models/alienworld_pillar.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -144,9 +144,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_pillar.X;Content/models/alienworld_pillar.X
+/build:Content/models/alienworld_pillar.X;Content/models/alienworld_pillar.X
 
-#begin models/alienworld_pole.X
+#begin Content/models/alienworld_pole.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -163,9 +163,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_pole.X;Content/models/alienworld_pole.X
+/build:Content/models/alienworld_pole.X;Content/models/alienworld_pole.X
 
-#begin models/alienworld_probe.X
+#begin Content/models/alienworld_probe.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -182,9 +182,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_probe.X;Content/models/alienworld_probe.X
+/build:Content/models/alienworld_probe.X;Content/models/alienworld_probe.X
 
-#begin models/alienworld_stairs.X
+#begin Content/models/alienworld_stairs.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -201,9 +201,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_stairs.X;Content/models/alienworld_stairs.X
+/build:Content/models/alienworld_stairs.X;Content/models/alienworld_stairs.X
 
-#begin models/alienworld_wall_1.X
+#begin Content/models/alienworld_wall_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -220,9 +220,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_1.X;Content/models/alienworld_wall_1.X
+/build:Content/models/alienworld_wall_1.X;Content/models/alienworld_wall_1.X
 
-#begin models/alienworld_wall_2.X
+#begin Content/models/alienworld_wall_2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -239,9 +239,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_2.X;Content/models/alienworld_wall_2.X
+/build:Content/models/alienworld_wall_2.X;Content/models/alienworld_wall_2.X
 
-#begin models/alienworld_wall_3.X
+#begin Content/models/alienworld_wall_3.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -258,9 +258,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_3.X;Content/models/alienworld_wall_3.X
+/build:Content/models/alienworld_wall_3.X;Content/models/alienworld_wall_3.X
 
-#begin models/alienworld_wall_4.X
+#begin Content/models/alienworld_wall_4.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -277,9 +277,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_4.X;Content/models/alienworld_wall_4.X
+/build:Content/models/alienworld_wall_4.X;Content/models/alienworld_wall_4.X
 
-#begin models/alienworld_wall_5.X
+#begin Content/models/alienworld_wall_5.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -296,9 +296,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_5.X;Content/models/alienworld_wall_5.X
+/build:Content/models/alienworld_wall_5.X;Content/models/alienworld_wall_5.X
 
-#begin models/alienworld_wall_6.X
+#begin Content/models/alienworld_wall_6.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -315,9 +315,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_6.X;Content/models/alienworld_wall_6.X
+/build:Content/models/alienworld_wall_6.X;Content/models/alienworld_wall_6.X
 
-#begin models/alienworld_wall_7.X
+#begin Content/models/alienworld_wall_7.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -334,9 +334,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_7.X;Content/models/alienworld_wall_7.X
+/build:Content/models/alienworld_wall_7.X;Content/models/alienworld_wall_7.X
 
-#begin models/alienworld_wall_8.X
+#begin Content/models/alienworld_wall_8.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -353,9 +353,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_wall_8.X;Content/models/alienworld_wall_8.X
+/build:Content/models/alienworld_wall_8.X;Content/models/alienworld_wall_8.X
 
-#begin models/alienworld_worm.X
+#begin Content/models/alienworld_worm.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -372,9 +372,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/alienworld_worm.X;Content/models/alienworld_worm.X
+/build:Content/models/alienworld_worm.X;Content/models/alienworld_worm.X
 
-#begin models/amazon_chest_1.X
+#begin Content/models/amazon_chest_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -391,9 +391,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_chest_1.X;Content/models/amazon_chest_1.X
+/build:Content/models/amazon_chest_1.X;Content/models/amazon_chest_1.X
 
-#begin models/amazon_darkwall_1.X
+#begin Content/models/amazon_darkwall_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -410,9 +410,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_darkwall_1.X;Content/models/amazon_darkwall_1.X
+/build:Content/models/amazon_darkwall_1.X;Content/models/amazon_darkwall_1.X
 
-#begin models/amazon_darkwall_2.X
+#begin Content/models/amazon_darkwall_2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -429,9 +429,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_darkwall_2.X;Content/models/amazon_darkwall_2.X
+/build:Content/models/amazon_darkwall_2.X;Content/models/amazon_darkwall_2.X
 
-#begin models/amazon_golds.X
+#begin Content/models/amazon_golds.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -448,9 +448,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_golds.X;Content/models/amazon_golds.X
+/build:Content/models/amazon_golds.X;Content/models/amazon_golds.X
 
-#begin models/amazon_grass_1.X
+#begin Content/models/amazon_grass_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -467,9 +467,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_grass_1.X;Content/models/amazon_grass_1.X
+/build:Content/models/amazon_grass_1.X;Content/models/amazon_grass_1.X
 
-#begin models/amazon_hack_1.X
+#begin Content/models/amazon_hack_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -486,9 +486,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_hack_1.X;Content/models/amazon_hack_1.X
+/build:Content/models/amazon_hack_1.X;Content/models/amazon_hack_1.X
 
-#begin models/amazon_leaf_1.X
+#begin Content/models/amazon_leaf_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -505,9 +505,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_leaf_1.X;Content/models/amazon_leaf_1.X
+/build:Content/models/amazon_leaf_1.X;Content/models/amazon_leaf_1.X
 
-#begin models/amazon_rock_1.X
+#begin Content/models/amazon_rock_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -524,9 +524,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_rock_1.X;Content/models/amazon_rock_1.X
+/build:Content/models/amazon_rock_1.X;Content/models/amazon_rock_1.X
 
-#begin models/amazon_shovel_1.X
+#begin Content/models/amazon_shovel_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -543,9 +543,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_shovel_1.X;Content/models/amazon_shovel_1.X
+/build:Content/models/amazon_shovel_1.X;Content/models/amazon_shovel_1.X
 
-#begin models/amazon_snare_1.X
+#begin Content/models/amazon_snare_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -562,9 +562,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_snare_1.X;Content/models/amazon_snare_1.X
+/build:Content/models/amazon_snare_1.X;Content/models/amazon_snare_1.X
 
-#begin models/amazon_temple_1.X
+#begin Content/models/amazon_temple_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -581,9 +581,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_temple_1.X;Content/models/amazon_temple_1.X
+/build:Content/models/amazon_temple_1.X;Content/models/amazon_temple_1.X
 
-#begin models/amazon_trunk.X
+#begin Content/models/amazon_trunk.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -600,9 +600,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_trunk.X;Content/models/amazon_trunk.X
+/build:Content/models/amazon_trunk.X;Content/models/amazon_trunk.X
 
-#begin models/amazon_wall_1.X
+#begin Content/models/amazon_wall_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -619,9 +619,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_1.X;Content/models/amazon_wall_1.X
+/build:Content/models/amazon_wall_1.X;Content/models/amazon_wall_1.X
 
-#begin models/amazon_wall_10.X
+#begin Content/models/amazon_wall_10.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -638,9 +638,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_10.X;Content/models/amazon_wall_10.X
+/build:Content/models/amazon_wall_10.X;Content/models/amazon_wall_10.X
 
-#begin models/amazon_wall_11.X
+#begin Content/models/amazon_wall_11.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -657,9 +657,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_11.X;Content/models/amazon_wall_11.X
+/build:Content/models/amazon_wall_11.X;Content/models/amazon_wall_11.X
 
-#begin models/amazon_wall_12.X
+#begin Content/models/amazon_wall_12.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -676,9 +676,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_12.X;Content/models/amazon_wall_12.X
+/build:Content/models/amazon_wall_12.X;Content/models/amazon_wall_12.X
 
-#begin models/amazon_wall_2.X
+#begin Content/models/amazon_wall_2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -695,9 +695,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_2.X;Content/models/amazon_wall_2.X
+/build:Content/models/amazon_wall_2.X;Content/models/amazon_wall_2.X
 
-#begin models/amazon_wall_3.X
+#begin Content/models/amazon_wall_3.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -714,9 +714,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_3.X;Content/models/amazon_wall_3.X
+/build:Content/models/amazon_wall_3.X;Content/models/amazon_wall_3.X
 
-#begin models/amazon_wall_4.X
+#begin Content/models/amazon_wall_4.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -733,9 +733,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_4.X;Content/models/amazon_wall_4.X
+/build:Content/models/amazon_wall_4.X;Content/models/amazon_wall_4.X
 
-#begin models/amazon_wall_5.X
+#begin Content/models/amazon_wall_5.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -752,9 +752,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_5.X;Content/models/amazon_wall_5.X
+/build:Content/models/amazon_wall_5.X;Content/models/amazon_wall_5.X
 
-#begin models/amazon_wall_6.X
+#begin Content/models/amazon_wall_6.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -771,9 +771,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_6.X;Content/models/amazon_wall_6.X
+/build:Content/models/amazon_wall_6.X;Content/models/amazon_wall_6.X
 
-#begin models/amazon_wall_7.X
+#begin Content/models/amazon_wall_7.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -790,9 +790,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_7.X;Content/models/amazon_wall_7.X
+/build:Content/models/amazon_wall_7.X;Content/models/amazon_wall_7.X
 
-#begin models/amazon_wall_8.X
+#begin Content/models/amazon_wall_8.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -809,9 +809,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_8.X;Content/models/amazon_wall_8.X
+/build:Content/models/amazon_wall_8.X;Content/models/amazon_wall_8.X
 
-#begin models/amazon_wall_9.X
+#begin Content/models/amazon_wall_9.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -828,9 +828,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/amazon_wall_9.X;Content/models/amazon_wall_9.X
+/build:Content/models/amazon_wall_9.X;Content/models/amazon_wall_9.X
 
-#begin models/berserker.X
+#begin Content/models/berserker.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -847,9 +847,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/berserker.X;Content/models/berserker.X
+/build:Content/models/berserker.X;Content/models/berserker.X
 
-#begin models/bloodbowl_axe.X
+#begin Content/models/bloodbowl_axe.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -866,9 +866,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_axe.X;Content/models/bloodbowl_axe.X
+/build:Content/models/bloodbowl_axe.X;Content/models/bloodbowl_axe.X
 
-#begin models/bloodbowl_bg_wall1.X
+#begin Content/models/bloodbowl_bg_wall1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -885,9 +885,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_bg_wall1.X;Content/models/bloodbowl_bg_wall1.X
+/build:Content/models/bloodbowl_bg_wall1.X;Content/models/bloodbowl_bg_wall1.X
 
-#begin models/bloodbowl_bg_wall2.X
+#begin Content/models/bloodbowl_bg_wall2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -904,9 +904,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_bg_wall2.X;Content/models/bloodbowl_bg_wall2.X
+/build:Content/models/bloodbowl_bg_wall2.X;Content/models/bloodbowl_bg_wall2.X
 
-#begin models/bloodbowl_bg_wall3.X
+#begin Content/models/bloodbowl_bg_wall3.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -923,9 +923,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_bg_wall3.X;Content/models/bloodbowl_bg_wall3.X
+/build:Content/models/bloodbowl_bg_wall3.X;Content/models/bloodbowl_bg_wall3.X
 
-#begin models/bloodbowl_bones.X
+#begin Content/models/bloodbowl_bones.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -942,9 +942,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_bones.X;Content/models/bloodbowl_bones.X
+/build:Content/models/bloodbowl_bones.X;Content/models/bloodbowl_bones.X
 
-#begin models/bloodbowl_castlewall.X
+#begin Content/models/bloodbowl_castlewall.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -961,9 +961,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_castlewall.X;Content/models/bloodbowl_castlewall.X
+/build:Content/models/bloodbowl_castlewall.X;Content/models/bloodbowl_castlewall.X
 
-#begin models/bloodbowl_demonskull.X
+#begin Content/models/bloodbowl_demonskull.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -980,9 +980,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_demonskull.X;Content/models/bloodbowl_demonskull.X
+/build:Content/models/bloodbowl_demonskull.X;Content/models/bloodbowl_demonskull.X
 
-#begin models/bloodbowl_gravestone.X
+#begin Content/models/bloodbowl_gravestone.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -999,9 +999,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_gravestone.X;Content/models/bloodbowl_gravestone.X
+/build:Content/models/bloodbowl_gravestone.X;Content/models/bloodbowl_gravestone.X
 
-#begin models/bloodbowl_horn.X
+#begin Content/models/bloodbowl_horn.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1018,9 +1018,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_horn.X;Content/models/bloodbowl_horn.X
+/build:Content/models/bloodbowl_horn.X;Content/models/bloodbowl_horn.X
 
-#begin models/bloodbowl_lavachunk1.X
+#begin Content/models/bloodbowl_lavachunk1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1037,9 +1037,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_lavachunk1.X;Content/models/bloodbowl_lavachunk1.X
+/build:Content/models/bloodbowl_lavachunk1.X;Content/models/bloodbowl_lavachunk1.X
 
-#begin models/bloodbowl_lavachunk2.X
+#begin Content/models/bloodbowl_lavachunk2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1056,9 +1056,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_lavachunk2.X;Content/models/bloodbowl_lavachunk2.X
+/build:Content/models/bloodbowl_lavachunk2.X;Content/models/bloodbowl_lavachunk2.X
 
-#begin models/bloodbowl_metalbar.X
+#begin Content/models/bloodbowl_metalbar.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1075,9 +1075,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_metalbar.X;Content/models/bloodbowl_metalbar.X
+/build:Content/models/bloodbowl_metalbar.X;Content/models/bloodbowl_metalbar.X
 
-#begin models/bloodbowl_rock1.X
+#begin Content/models/bloodbowl_rock1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1094,9 +1094,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_rock1.X;Content/models/bloodbowl_rock1.X
+/build:Content/models/bloodbowl_rock1.X;Content/models/bloodbowl_rock1.X
 
-#begin models/bloodbowl_rock2.X
+#begin Content/models/bloodbowl_rock2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1113,9 +1113,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_rock2.X;Content/models/bloodbowl_rock2.X
+/build:Content/models/bloodbowl_rock2.X;Content/models/bloodbowl_rock2.X
 
-#begin models/bloodbowl_rock3.X
+#begin Content/models/bloodbowl_rock3.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1132,9 +1132,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_rock3.X;Content/models/bloodbowl_rock3.X
+/build:Content/models/bloodbowl_rock3.X;Content/models/bloodbowl_rock3.X
 
-#begin models/bloodbowl_shield.X
+#begin Content/models/bloodbowl_shield.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1151,9 +1151,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_shield.X;Content/models/bloodbowl_shield.X
+/build:Content/models/bloodbowl_shield.X;Content/models/bloodbowl_shield.X
 
-#begin models/bloodbowl_spear.X
+#begin Content/models/bloodbowl_spear.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1170,9 +1170,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_spear.X;Content/models/bloodbowl_spear.X
+/build:Content/models/bloodbowl_spear.X;Content/models/bloodbowl_spear.X
 
-#begin models/bloodbowl_spikefence.X
+#begin Content/models/bloodbowl_spikefence.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1189,9 +1189,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_spikefence.X;Content/models/bloodbowl_spikefence.X
+/build:Content/models/bloodbowl_spikefence.X;Content/models/bloodbowl_spikefence.X
 
-#begin models/bloodbowl_volcano.X
+#begin Content/models/bloodbowl_volcano.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1208,9 +1208,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_volcano.X;Content/models/bloodbowl_volcano.X
+/build:Content/models/bloodbowl_volcano.X;Content/models/bloodbowl_volcano.X
 
-#begin models/bloodbowl_wall_1.X
+#begin Content/models/bloodbowl_wall_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1227,9 +1227,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_1.X;Content/models/bloodbowl_wall_1.X
+/build:Content/models/bloodbowl_wall_1.X;Content/models/bloodbowl_wall_1.X
 
-#begin models/bloodbowl_wall_10.X
+#begin Content/models/bloodbowl_wall_10.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1246,9 +1246,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_10.X;Content/models/bloodbowl_wall_10.X
+/build:Content/models/bloodbowl_wall_10.X;Content/models/bloodbowl_wall_10.X
 
-#begin models/bloodbowl_wall_11.X
+#begin Content/models/bloodbowl_wall_11.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1265,9 +1265,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_11.X;Content/models/bloodbowl_wall_11.X
+/build:Content/models/bloodbowl_wall_11.X;Content/models/bloodbowl_wall_11.X
 
-#begin models/bloodbowl_wall_12.X
+#begin Content/models/bloodbowl_wall_12.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1284,9 +1284,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_12.X;Content/models/bloodbowl_wall_12.X
+/build:Content/models/bloodbowl_wall_12.X;Content/models/bloodbowl_wall_12.X
 
-#begin models/bloodbowl_wall_2.X
+#begin Content/models/bloodbowl_wall_2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1303,9 +1303,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_2.X;Content/models/bloodbowl_wall_2.X
+/build:Content/models/bloodbowl_wall_2.X;Content/models/bloodbowl_wall_2.X
 
-#begin models/bloodbowl_wall_3.X
+#begin Content/models/bloodbowl_wall_3.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1322,9 +1322,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_3.X;Content/models/bloodbowl_wall_3.X
+/build:Content/models/bloodbowl_wall_3.X;Content/models/bloodbowl_wall_3.X
 
-#begin models/bloodbowl_wall_4.X
+#begin Content/models/bloodbowl_wall_4.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1341,9 +1341,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_4.X;Content/models/bloodbowl_wall_4.X
+/build:Content/models/bloodbowl_wall_4.X;Content/models/bloodbowl_wall_4.X
 
-#begin models/bloodbowl_wall_5.X
+#begin Content/models/bloodbowl_wall_5.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1360,9 +1360,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_5.X;Content/models/bloodbowl_wall_5.X
+/build:Content/models/bloodbowl_wall_5.X;Content/models/bloodbowl_wall_5.X
 
-#begin models/bloodbowl_wall_6.X
+#begin Content/models/bloodbowl_wall_6.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1379,9 +1379,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_6.X;Content/models/bloodbowl_wall_6.X
+/build:Content/models/bloodbowl_wall_6.X;Content/models/bloodbowl_wall_6.X
 
-#begin models/bloodbowl_wall_7.X
+#begin Content/models/bloodbowl_wall_7.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1398,9 +1398,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_7.X;Content/models/bloodbowl_wall_7.X
+/build:Content/models/bloodbowl_wall_7.X;Content/models/bloodbowl_wall_7.X
 
-#begin models/bloodbowl_wall_8.X
+#begin Content/models/bloodbowl_wall_8.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1417,9 +1417,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_8.X;Content/models/bloodbowl_wall_8.X
+/build:Content/models/bloodbowl_wall_8.X;Content/models/bloodbowl_wall_8.X
 
-#begin models/bloodbowl_wall_9.X
+#begin Content/models/bloodbowl_wall_9.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1436,9 +1436,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bloodbowl_wall_9.X;Content/models/bloodbowl_wall_9.X
+/build:Content/models/bloodbowl_wall_9.X;Content/models/bloodbowl_wall_9.X
 
-#begin models/bonus.X
+#begin Content/models/bonus.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1455,9 +1455,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bonus.X;Content/models/bonus.X
+/build:Content/models/bonus.X;Content/models/bonus.X
 
-#begin models/bot.X
+#begin Content/models/bot.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1474,9 +1474,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bot.X;Content/models/bot.X
+/build:Content/models/bot.X;Content/models/bot.X
 
-#begin models/bouncefire.X
+#begin Content/models/bouncefire.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1493,9 +1493,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bouncefire.X;Content/models/bouncefire.X
+/build:Content/models/bouncefire.X;Content/models/bouncefire.X
 
-#begin models/bugger.X
+#begin Content/models/bugger.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1512,9 +1512,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/bugger.X;Content/models/bugger.X
+/build:Content/models/bugger.X;Content/models/bugger.X
 
-#begin models/chainend.X
+#begin Content/models/chainend.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1531,9 +1531,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/chainend.X;Content/models/chainend.X
+/build:Content/models/chainend.X;Content/models/chainend.X
 
-#begin models/clustermine.X
+#begin Content/models/clustermine.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1550,9 +1550,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/clustermine.X;Content/models/clustermine.X
+/build:Content/models/clustermine.X;Content/models/clustermine.X
 
-#begin models/dock.X
+#begin Content/models/dock.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1569,9 +1569,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dock.X;Content/models/dock.X
+/build:Content/models/dock.X;Content/models/dock.X
 
-#begin models/dumbfire.X
+#begin Content/models/dumbfire.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1588,9 +1588,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dumbfire.X;Content/models/dumbfire.X
+/build:Content/models/dumbfire.X;Content/models/dumbfire.X
 
-#begin models/dummymodel.x
+#begin Content/models/dummymodel.x
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1607,9 +1607,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dummymodel.x;Content/models/dummymodel.x
+/build:Content/models/dummymodel.x;Content/models/dummymodel.x
 
-#begin models/dust_fragment_1.X
+#begin Content/models/dust_fragment_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1626,9 +1626,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dust_fragment_1.X;Content/models/dust_fragment_1.X
+/build:Content/models/dust_fragment_1.X;Content/models/dust_fragment_1.X
 
-#begin models/dust_fragment_2.X
+#begin Content/models/dust_fragment_2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1645,9 +1645,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dust_fragment_2.X;Content/models/dust_fragment_2.X
+/build:Content/models/dust_fragment_2.X;Content/models/dust_fragment_2.X
 
-#begin models/dust_fragment_3.X
+#begin Content/models/dust_fragment_3.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1664,9 +1664,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/dust_fragment_3.X;Content/models/dust_fragment_3.X
+/build:Content/models/dust_fragment_3.X;Content/models/dust_fragment_3.X
 
-#begin models/fragment.X
+#begin Content/models/fragment.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1683,9 +1683,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/fragment.X;Content/models/fragment.X
+/build:Content/models/fragment.X;Content/models/fragment.X
 
-#begin models/junk_airduct.X
+#begin Content/models/junk_airduct.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1702,9 +1702,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_airduct.X;Content/models/junk_airduct.X
+/build:Content/models/junk_airduct.X;Content/models/junk_airduct.X
 
-#begin models/junk_crate_1.X
+#begin Content/models/junk_crate_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1721,9 +1721,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_crate_1.X;Content/models/junk_crate_1.X
+/build:Content/models/junk_crate_1.X;Content/models/junk_crate_1.X
 
-#begin models/junk_curvedpipe.X
+#begin Content/models/junk_curvedpipe.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1740,9 +1740,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_curvedpipe.X;Content/models/junk_curvedpipe.X
+/build:Content/models/junk_curvedpipe.X;Content/models/junk_curvedpipe.X
 
-#begin models/junk_falling_crate.X
+#begin Content/models/junk_falling_crate.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1759,9 +1759,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_falling_crate.X;Content/models/junk_falling_crate.X
+/build:Content/models/junk_falling_crate.X;Content/models/junk_falling_crate.X
 
-#begin models/junk_falling_pipe.X
+#begin Content/models/junk_falling_pipe.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1778,9 +1778,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_falling_pipe.X;Content/models/junk_falling_pipe.X
+/build:Content/models/junk_falling_pipe.X;Content/models/junk_falling_pipe.X
 
-#begin models/junk_junk_shoot.X
+#begin Content/models/junk_junk_shoot.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1797,9 +1797,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_junk_shoot.X;Content/models/junk_junk_shoot.X
+/build:Content/models/junk_junk_shoot.X;Content/models/junk_junk_shoot.X
 
-#begin models/junk_metalwall_1.X
+#begin Content/models/junk_metalwall_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1816,9 +1816,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_metalwall_1.X;Content/models/junk_metalwall_1.X
+/build:Content/models/junk_metalwall_1.X;Content/models/junk_metalwall_1.X
 
-#begin models/junk_pipe_1.X
+#begin Content/models/junk_pipe_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1835,9 +1835,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_pipe_1.X;Content/models/junk_pipe_1.X
+/build:Content/models/junk_pipe_1.X;Content/models/junk_pipe_1.X
 
-#begin models/junk_rail_1.X
+#begin Content/models/junk_rail_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1854,9 +1854,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_rail_1.X;Content/models/junk_rail_1.X
+/build:Content/models/junk_rail_1.X;Content/models/junk_rail_1.X
 
-#begin models/junk_squarewall_1.X
+#begin Content/models/junk_squarewall_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1873,9 +1873,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_squarewall_1.X;Content/models/junk_squarewall_1.X
+/build:Content/models/junk_squarewall_1.X;Content/models/junk_squarewall_1.X
 
-#begin models/junk_straightpipe.X
+#begin Content/models/junk_straightpipe.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1892,9 +1892,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_straightpipe.X;Content/models/junk_straightpipe.X
+/build:Content/models/junk_straightpipe.X;Content/models/junk_straightpipe.X
 
-#begin models/junk_valve.X
+#begin Content/models/junk_valve.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1911,9 +1911,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_valve.X;Content/models/junk_valve.X
+/build:Content/models/junk_valve.X;Content/models/junk_valve.X
 
-#begin models/junk_waveplate.X
+#begin Content/models/junk_waveplate.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1930,9 +1930,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/junk_waveplate.X;Content/models/junk_waveplate.X
+/build:Content/models/junk_waveplate.X;Content/models/junk_waveplate.X
 
-#begin models/lumipesu_bg_wall1.X
+#begin Content/models/lumipesu_bg_wall1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1949,9 +1949,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/lumipesu_bg_wall1.X;Content/models/lumipesu_bg_wall1.X
+/build:Content/models/lumipesu_bg_wall1.X;Content/models/lumipesu_bg_wall1.X
 
-#begin models/lumipesu_bg_wall2.X
+#begin Content/models/lumipesu_bg_wall2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1968,9 +1968,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/lumipesu_bg_wall2.X;Content/models/lumipesu_bg_wall2.X
+/build:Content/models/lumipesu_bg_wall2.X;Content/models/lumipesu_bg_wall2.X
 
-#begin models/lumipesu_bg_wall3.X
+#begin Content/models/lumipesu_bg_wall3.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -1987,9 +1987,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/lumipesu_bg_wall3.X;Content/models/lumipesu_bg_wall3.X
+/build:Content/models/lumipesu_bg_wall3.X;Content/models/lumipesu_bg_wall3.X
 
-#begin models/megabonus.X
+#begin Content/models/megabonus.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2006,9 +2006,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/megabonus.X;Content/models/megabonus.X
+/build:Content/models/megabonus.X;Content/models/megabonus.X
 
-#begin models/mine.X
+#begin Content/models/mine.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2025,9 +2025,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/mine.X;Content/models/mine.X
+/build:Content/models/mine.X;Content/models/mine.X
 
-#begin models/missile.X
+#begin Content/models/missile.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2044,9 +2044,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/missile.X;Content/models/missile.X
+/build:Content/models/missile.X;Content/models/missile.X
 
-#begin models/snake.X
+#begin Content/models/snake.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2063,9 +2063,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snake.X;Content/models/snake.X
+/build:Content/models/snake.X;Content/models/snake.X
 
-#begin models/snake_bullet.X
+#begin Content/models/snake_bullet.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2082,9 +2082,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snake_bullet.X;Content/models/snake_bullet.X
+/build:Content/models/snake_bullet.X;Content/models/snake_bullet.X
 
-#begin models/snow_birds.X
+#begin Content/models/snow_birds.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2101,9 +2101,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_birds.X;Content/models/snow_birds.X
+/build:Content/models/snow_birds.X;Content/models/snow_birds.X
 
-#begin models/snow_hockeystick.X
+#begin Content/models/snow_hockeystick.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2120,9 +2120,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_hockeystick.X;Content/models/snow_hockeystick.X
+/build:Content/models/snow_hockeystick.X;Content/models/snow_hockeystick.X
 
-#begin models/snow_iglu.X
+#begin Content/models/snow_iglu.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2139,9 +2139,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_iglu.X;Content/models/snow_iglu.X
+/build:Content/models/snow_iglu.X;Content/models/snow_iglu.X
 
-#begin models/snow_shovel.X
+#begin Content/models/snow_shovel.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2158,9 +2158,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_shovel.X;Content/models/snow_shovel.X
+/build:Content/models/snow_shovel.X;Content/models/snow_shovel.X
 
-#begin models/snow_skipoles.X
+#begin Content/models/snow_skipoles.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2177,9 +2177,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_skipoles.X;Content/models/snow_skipoles.X
+/build:Content/models/snow_skipoles.X;Content/models/snow_skipoles.X
 
-#begin models/snow_skis.X
+#begin Content/models/snow_skis.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2196,9 +2196,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_skis.X;Content/models/snow_skis.X
+/build:Content/models/snow_skis.X;Content/models/snow_skis.X
 
-#begin models/snow_sledge.X
+#begin Content/models/snow_sledge.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2215,9 +2215,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_sledge.X;Content/models/snow_sledge.X
+/build:Content/models/snow_sledge.X;Content/models/snow_sledge.X
 
-#begin models/snow_tree.X
+#begin Content/models/snow_tree.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2234,9 +2234,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_tree.X;Content/models/snow_tree.X
+/build:Content/models/snow_tree.X;Content/models/snow_tree.X
 
-#begin models/snow_wall_1.X
+#begin Content/models/snow_wall_1.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2253,9 +2253,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_1.X;Content/models/snow_wall_1.X
+/build:Content/models/snow_wall_1.X;Content/models/snow_wall_1.X
 
-#begin models/snow_wall_10.X
+#begin Content/models/snow_wall_10.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2272,9 +2272,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_10.X;Content/models/snow_wall_10.X
+/build:Content/models/snow_wall_10.X;Content/models/snow_wall_10.X
 
-#begin models/snow_wall_11.X
+#begin Content/models/snow_wall_11.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2291,9 +2291,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_11.X;Content/models/snow_wall_11.X
+/build:Content/models/snow_wall_11.X;Content/models/snow_wall_11.X
 
-#begin models/snow_wall_12.X
+#begin Content/models/snow_wall_12.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2310,9 +2310,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_12.X;Content/models/snow_wall_12.X
+/build:Content/models/snow_wall_12.X;Content/models/snow_wall_12.X
 
-#begin models/snow_wall_2.X
+#begin Content/models/snow_wall_2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2329,9 +2329,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_2.X;Content/models/snow_wall_2.X
+/build:Content/models/snow_wall_2.X;Content/models/snow_wall_2.X
 
-#begin models/snow_wall_3.X
+#begin Content/models/snow_wall_3.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2348,9 +2348,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_3.X;Content/models/snow_wall_3.X
+/build:Content/models/snow_wall_3.X;Content/models/snow_wall_3.X
 
-#begin models/snow_wall_4.X
+#begin Content/models/snow_wall_4.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2367,9 +2367,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_4.X;Content/models/snow_wall_4.X
+/build:Content/models/snow_wall_4.X;Content/models/snow_wall_4.X
 
-#begin models/snow_wall_5.X
+#begin Content/models/snow_wall_5.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2386,9 +2386,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_5.X;Content/models/snow_wall_5.X
+/build:Content/models/snow_wall_5.X;Content/models/snow_wall_5.X
 
-#begin models/snow_wall_6.X
+#begin Content/models/snow_wall_6.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2405,9 +2405,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_6.X;Content/models/snow_wall_6.X
+/build:Content/models/snow_wall_6.X;Content/models/snow_wall_6.X
 
-#begin models/snow_wall_7.X
+#begin Content/models/snow_wall_7.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2424,9 +2424,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_7.X;Content/models/snow_wall_7.X
+/build:Content/models/snow_wall_7.X;Content/models/snow_wall_7.X
 
-#begin models/snow_wall_8.X
+#begin Content/models/snow_wall_8.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2443,9 +2443,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_8.X;Content/models/snow_wall_8.X
+/build:Content/models/snow_wall_8.X;Content/models/snow_wall_8.X
 
-#begin models/snow_wall_9.X
+#begin Content/models/snow_wall_9.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2462,9 +2462,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snow_wall_9.X;Content/models/snow_wall_9.X
+/build:Content/models/snow_wall_9.X;Content/models/snow_wall_9.X
 
-#begin models/snowman.X
+#begin Content/models/snowman.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2481,9 +2481,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/snowman.X;Content/models/snowman.X
+/build:Content/models/snowman.X;Content/models/snowman.X
 
-#begin models/straight_chain.X
+#begin Content/models/straight_chain.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2500,9 +2500,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/straight_chain.X;Content/models/straight_chain.X
+/build:Content/models/straight_chain.X;Content/models/straight_chain.X
 
-#begin models/trizooka.X
+#begin Content/models/trizooka.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2519,9 +2519,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/trizooka.X;Content/models/trizooka.X
+/build:Content/models/trizooka.X;Content/models/trizooka.X
 
-#begin models/uchain.X
+#begin Content/models/uchain.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2538,9 +2538,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/uchain.X;Content/models/uchain.X
+/build:Content/models/uchain.X;Content/models/uchain.X
 
-#begin models/windlord.X
+#begin Content/models/windlord.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2557,9 +2557,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/windlord.X;Content/models/windlord.X
+/build:Content/models/windlord.X;Content/models/windlord.X
 
-#begin models/windlord_claw.X
+#begin Content/models/windlord_claw.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2576,9 +2576,9 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/windlord_claw.X;Content/models/windlord_claw.X
+/build:Content/models/windlord_claw.X;Content/models/windlord_claw.X
 
-#begin models/windlord_claw2.X
+#begin Content/models/windlord_claw2.X
 /importer:XImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -2595,5 +2595,5 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:models/windlord_claw2.X;Content/models/windlord_claw2.X
+/build:Content/models/windlord_claw2.X;Content/models/windlord_claw2.X
 

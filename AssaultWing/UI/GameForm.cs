@@ -25,8 +25,10 @@ namespace AW2.UI
 
         public AssaultWing<ClientEvent> Game { get { return _game; } }
 
-        public GameForm(CommandLineOptions commandLineOptions) : base()
+        public GameForm(CommandLineOptions commandLineOptions, SteamApiService steamApiService) : base()
         {
+            Services.AddService(steamApiService);
+
             Window.AllowUserResizing = true;
             _graphics = new GraphicsDeviceManager(this);
 
@@ -111,6 +113,7 @@ namespace AW2.UI
                 else
                     return new UserControlledLogic(game);
             });
+
             AW2.Graphics.PlayerViewport.CustomOverlayCreators.Add(viewport => new SystemStatusOverlay(viewport));
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl

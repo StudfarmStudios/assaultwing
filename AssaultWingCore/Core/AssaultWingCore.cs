@@ -58,6 +58,7 @@ namespace AW2.Core
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngineXNA SoundEngine { get; private set; }
         public StatsBase Stats { get; set; }
+        public SteamComponent SteamComponent { get; set; }
 
         /// <summary>
         /// The current mode of network operation of the game.
@@ -94,6 +95,7 @@ namespace AW2.Core
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);            
             NetworkMode = NetworkMode.Standalone;
+
             InitializeComponents();
             _standingsTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1));
         }
@@ -109,14 +111,19 @@ namespace AW2.Core
             _uiEngine = new UIEngineImpl(this, 1);
             Stats = new StatsBase(this, 7);
             SoundEngine = new SoundEngineXNA(this, 5);
+
+            SteamComponent = new SteamComponent(this, 0);
+
             Components.Add(PreFrameLogicEngine);
             Components.Add(LogicEngine);
             Components.Add(PostFrameLogicEngine);
             Components.Add(SoundEngine);
             Components.Add(_uiEngine);
             Components.Add(Stats);
+            Components.Add(SteamComponent);
             SoundEngine.Enabled = !CommandLineOptions.DedicatedServer;
             _uiEngine.Enabled = true;
+            SteamComponent.Enabled = true;
 
             if (!CommandLineOptions.DedicatedServer)
             {

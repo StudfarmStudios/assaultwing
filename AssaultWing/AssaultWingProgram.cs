@@ -64,8 +64,10 @@ namespace AW2
             // something like:
             // System.AppDomain.CurrentDomain.UnhandledException += ThreadExceptionHandler;
 
+            // Steam must be initialized before graphics for the overlay to work.
+            var steamApiService = new AW2.Core.SteamApiService();
 
-            _form = new GameForm(g_commandLineOptions);
+            _form = new GameForm(g_commandLineOptions, steamApiService);
         }
 
         public void Run()

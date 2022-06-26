@@ -191,7 +191,7 @@ namespace AW2.Menu.Main
             SetupItems = new MainMenuItemCollection("Setup");
             SetupItems.Add(GetSetupItemBase(() => "Reset All Settings to Defaults",
                 () => Game.ShowCustomDialog("Are you sure to reset all settings\nto their defaults? (Yes/No)", null,
-                    new TriggeredCallback(TriggeredCallback.YES_CONTROL, Game.Settings.Reset),
+                    new TriggeredCallback(TriggeredCallback.YES_CONTROL, () => Game.Settings.Reset(Game)),
                     new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }))));
             SetupItems.Add(GetSetupItemBase(() => "Audio Setup", () => _menuComponent.PushItems(GetAudioItems())));
             SetupItems.Add(GetSetupItemBase(() => "Graphics Setup", () => _menuComponent.PushItems(GetGraphicsItems())));

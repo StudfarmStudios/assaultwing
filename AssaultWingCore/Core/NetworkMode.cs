@@ -7,6 +7,7 @@
     {
         /// <summary>
         /// Acting as a standalone game session, no networking involved.
+        /// This is the "Shared keyboard" 2 player mode.
         /// </summary>
         Standalone,
 

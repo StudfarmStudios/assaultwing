@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -162,7 +162,8 @@ namespace AW2.Menu.Equip
 
         private bool IsPlayerNameEditable(Player player)
         {
-            return MenuEngine.Game.NetworkMode != NetworkMode.Standalone && !player.StatsData.IsLoggedIn;
+            // TODO: Changing name in the menu does not work properly in Standalone (shared keyboard) mode.
+            return MenuEngine.Game.NetworkMode != NetworkMode.Standalone;
         }
 
         private void UpdateSelectors()
@@ -328,6 +329,7 @@ namespace AW2.Menu.Equip
 
         private void DrawNameChangeInfo(Vector2 view, SpriteBatch spriteBatch)
         {
+            // TODO: Changing name in the menu does not work properly in Standalone (shared keyboard) mode.
             if (!MenuPanePlayers.Any() || MenuEngine.Game.NetworkMode == NetworkMode.Standalone) return;
             if (!_playerNameChanged && MenuPanePlayers.First().Item1.Name != MenuEngine.Game.Settings.Players.DefaultPlayerName) _playerNameChanged = true;
             if (_playerNameChanged) return;

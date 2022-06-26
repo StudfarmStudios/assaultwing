@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -329,7 +329,7 @@ namespace AW2.Menu.Equip
         private void DrawNameChangeInfo(Vector2 view, SpriteBatch spriteBatch)
         {
             if (!MenuPanePlayers.Any() || MenuEngine.Game.NetworkMode == NetworkMode.Standalone) return;
-            if (!_playerNameChanged && MenuPanePlayers.First().Item1.Name != AW2.Settings.PlayerSettings.PLAYER1DEFAULT.Name) _playerNameChanged = true;
+            if (!_playerNameChanged && MenuPanePlayers.First().Item1.Name != MenuEngine.Game.Settings.Players.DefaultPlayerName) _playerNameChanged = true;
             if (_playerNameChanged) return;
             var moveTime = (float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds;
             var nameChangeInfoPos = MenuComponent.Pos - view + new Vector2(250 + g_nameInfoMove.Evaluate(moveTime), 180);

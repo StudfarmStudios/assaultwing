@@ -10,11 +10,14 @@ namespace AW2.Core
     public SteamApiService()
     {
       InitializeSteamApi();
+      SetupCallbacks();
     }
+    protected Callback<GameOverlayActivated_t> gameOverlayActivatedCallback;
 
     public void InitializeSteamApi()
     {
-      if (Initialized) {
+      if (Initialized)
+      {
         return;
       }
 
@@ -32,10 +35,32 @@ namespace AW2.Core
       }
     }
 
+    private void SetupCallbacks()
+    {
+      gameOverlayActivatedCallback = Callback<GameOverlayActivated_t>.Create(OnGameOverlayActivated);
+    }
+
+    public string UserNick {
+      get {return SteamFriends.GetPersonaName();}
+    }
+
+    private void OnGameOverlayActivated(GameOverlayActivated_t callback)
+    {
+      if (callback.m_bActive != 0)
+      {
+        Log.Write("Steam Overlay has been activated");
+      }
+      else
+      {
+        Log.Write("Steam Overlay has been closed");
+      }
+    }
+
     public void Dispose()
     {
       Initialized = false;
       SteamAPI.Shutdown();
+      Log.Write("SteamAPI.Shutdown()");
     }
 
   }

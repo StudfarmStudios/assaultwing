@@ -26,3 +26,9 @@ For example depending where the unzipped SDK is:
 
     rsync -av ../../steamworks_sdk/tools/ContentBuilder/ steambuild/` 
 
+## Notes on quick local testing
+
+With the following the game can be made to quickly connect to a local
+`DedicatedServer` process running in another terminal.
+
+    AssaultWing.exe --quickstart --server_name local --server 127.0.0.1:16727:16727

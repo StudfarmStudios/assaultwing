@@ -67,16 +67,14 @@ namespace AW2.Settings
         }
 
         public void UpdateFromSteam(AssaultWingCore game) {
-            if (!PlayerNameCustomized) {
+            if (!GetPlayerNameCustomized()) {
                 Player1.Name = game.Services.GetService<SteamApiService>().UserNick;
                 DefaultPlayerName = Player1.Name;
             }
         }
 
-        public bool PlayerNameCustomized {
-            get {
-                return DefaultPlayerName != Player1.Name;
-            }
+        public bool GetPlayerNameCustomized() {
+            return DefaultPlayerName != Player1.Name;
         }
 
         public void Validate(AssaultWingCore game)

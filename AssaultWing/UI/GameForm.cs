@@ -57,6 +57,9 @@ namespace AW2.UI
             }
             _game = null;
             AW2.Helpers.Log.Written -= AddToLogView;
+
+            Services.GetService<SteamApiService>().Dispose();
+            
             base.Dispose();
         }
         public void SetWindowed()

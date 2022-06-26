@@ -35,6 +35,7 @@ namespace AW2.Settings
             var graphicsEnabled = !game.CommandLineOptions.DedicatedServer;
             Log.Write("Creating a new settings file " + filename);
             var newSettings = new AWSettings(graphicsEnabled: graphicsEnabled) { Filename = filename };
+            newSettings.Reset(game);
             newSettings.ToFile();
             return newSettings;
         }

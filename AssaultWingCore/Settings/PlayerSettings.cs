@@ -43,6 +43,7 @@ namespace AW2.Settings
         public bool BotsEnabled { get; set; }
         public string BotsPassword { get; set; }
         public TimeSpan TeamRebalancingInterval { get; set; }
+        public string DefaultPlayerName {get; set; }
 
         public PlayerSettings()
         {
@@ -56,16 +57,34 @@ namespace AW2.Settings
             BotsEnabled = true;
             BotsPassword = "";
             TeamRebalancingInterval = TimeSpan.FromSeconds(15);
+            DefaultPlayerName = Player1.Name;
         }
 
         public void Reset(AssaultWingCore game)
         {
             InitialValues();
+            UpdateFromSteam(game);
+        }
+
+        public void UpdateFromSteam(AssaultWingCore game) {
+            if (!PlayerNameCustomized) {
+                Player1.Name = game.Services.GetService<SteamApiService>().UserNick;
+                DefaultPlayerName = Player1.Name;
+            }
+        }
+
+        public bool PlayerNameCustomized {
+            get {
+                return DefaultPlayerName != Player1.Name;
+            }
         }
 
         public void Validate(AssaultWingCore game)
         {
             if (CanonicalString.CanRegister) return; // cannot validate until CanonicalStrings are frozen
+
+            UpdateFromSteam(game);
+
             Validate(game, Player1, PLAYER1DEFAULT);
             Validate(game, Player2, PLAYER2DEFAULT);
         }

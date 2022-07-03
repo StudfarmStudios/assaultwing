@@ -13,6 +13,12 @@ namespace AW2.Core
       SetupCallbacks();
     }
     protected Callback<GameOverlayActivated_t> gameOverlayActivatedCallback;
+    private SteamAPIWarningMessageHook_t steamAPIWarningMessageHook;
+
+    private static void DebugTextHook(int severity, System.Text.StringBuilder message)
+    {
+      Log.Write($"Steam debug message: [severity {severity}] {message}");
+    }
 
     public void InitializeSteamApi()
     {
@@ -25,6 +31,8 @@ namespace AW2.Core
       if (Initialized)
       {
         Log.Write("SteamAPI initialized.");
+        steamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(DebugTextHook);
+        SteamClient.SetWarningMessageHook(steamAPIWarningMessageHook);
       }
       else
       {

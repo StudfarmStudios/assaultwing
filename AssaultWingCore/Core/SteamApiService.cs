@@ -40,8 +40,9 @@ namespace AW2.Core
       gameOverlayActivatedCallback = Callback<GameOverlayActivated_t>.Create(OnGameOverlayActivated);
     }
 
-    public string UserNick {
-      get {return SteamFriends.GetPersonaName();}
+    public string UserNick
+    {
+      get { return SteamFriends.GetPersonaName(); }
     }
 
     private void OnGameOverlayActivated(GameOverlayActivated_t callback)

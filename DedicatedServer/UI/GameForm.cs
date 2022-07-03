@@ -41,6 +41,8 @@ namespace AW2.UI
             var AWContentManager = new AWContentManager(Services, rootDirectory: "", ignoreGraphicsContent: true);
             Services.AddService(AWContentManager);
 
+            Services.AddService(new SteamApiService());
+
             InitializeGame(commandLineOptions);
             InitializeGameForm();
             _awGameRunner = new AWGameRunner(_game, () => {}, useParentTime: false, sleepIfEarly: true, graphicsEnabled: false);

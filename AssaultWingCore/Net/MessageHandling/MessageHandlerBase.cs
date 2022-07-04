@@ -7,7 +7,7 @@ namespace AW2.Net.MessageHandling
 {
     public abstract class MessageHandlerBase
     {
-        public enum SourceType { Client, Server, Management };
+        public enum SourceType { Client, Server };
 
         public bool Disposed { get; private set; }
         private SourceType Source { get; set; }
@@ -41,9 +41,6 @@ namespace AW2.Net.MessageHandling
                     break;
                 case SourceType.Server:
                     if (net.IsConnectedToGameServer) yield return net.GameServerConnection;
-                    break;
-                case SourceType.Management:
-                    if (net.IsConnectedToManagementServer) yield return net.ManagementServerConnection;
                     break;
                 default: throw new ApplicationException("Invalid SourceType " + source);
             }

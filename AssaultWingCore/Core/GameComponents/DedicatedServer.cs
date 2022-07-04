@@ -52,8 +52,7 @@ namespace AW2.Core.GameComponents
         {
             if (_initialized) return;
             _initialized = true;
-            Game.MessageHandlers.ActivateHandlers(Game.MessageHandlers.GetStandaloneMenuHandlers(mess => { }));
-            Game.NetworkEngine.EnsureConnectionToManagementServer();
+            // TODO: Peter: Steam network, do we need something like the GetStandaloneMenuHandlers that was here
             if (Game.StartServer() != null)
             {
                 // TODO: Peter: Handle exit from DedicatedServer

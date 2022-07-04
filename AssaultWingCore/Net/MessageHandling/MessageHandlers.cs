@@ -10,7 +10,6 @@ using AW2.Game.Players;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Net.Connections;
-using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
 using AW2.UI;
 
@@ -39,14 +38,7 @@ namespace AW2.Net.MessageHandling
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
         }
 
-        public IEnumerable<MessageHandlerBase> GetStandaloneMenuHandlers(Action<GameServerListReply> handleGameServerListReply)
-        {
-            yield return new MessageHandler<GameServerListReply>(MessageHandlerBase.SourceType.Management, handleGameServerListReply);
-            yield return new MessageHandler<JoinGameServerReply>(MessageHandlerBase.SourceType.Management, HandleJoinGameServerReply);
-
-            // These messages only game servers receive
-            yield return new MessageHandler<PingMessage>(MessageHandlerBase.SourceType.Management, HandlePingMessage);
-        }
+        // TODO: Peter: Steam network, do we need something like the GetStandaloneMenuHandlers that was here?
 
         public IEnumerable<MessageHandlerBase> GetClientMenuHandlers()
         {
@@ -103,24 +95,8 @@ namespace AW2.Net.MessageHandling
 
         #region Handler implementations
 
-        private void HandleJoinGameServerReply(JoinGameServerReply mess)
-        {
-            if (Game.NetworkMode == NetworkMode.Client) return;
-            if (mess.Success)
-            {
-                Game.SoundEngine.PlaySound("menuChangeItem");
-                Game.StartClient(mess.GameServerEndPoints);
-            }
-            else
-                Game.NetworkingErrors.Enqueue("Couldn't connect to server:\n" + mess.FailMessage); // TODO: Proper line wrapping in dialogs
-        }
-
-        private void HandlePingMessage(PingMessage mess)
-        {
-            Game.NetworkEngine.ManagementServerConnection.Send(new PongMessage());
-            Game.NetworkEngine.ManagementServerConnection.OnPingReceived();
-        }
-
+        // TODO: Peter: Steam network, connecting to selected server
+        
         private void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
             var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer;
@@ -350,7 +326,7 @@ namespace AW2.Net.MessageHandling
             var newSpectator = GetSpectator(mess, mode);
             newSpectator.LocalID = mess.SpectatorID;
             var newStats = newSpectator.StatsData;
-            if (newStats.IsLoggedIn) Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
+            // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotData was here)
             Game.DataEngine.AddPendingRemoteSpectatorOnServer(newSpectator);
         }
 
@@ -358,7 +334,7 @@ namespace AW2.Net.MessageHandling
         {
             var newSpectator = GetSpectator(mess, mode);
             var newStats = newSpectator.StatsData;
-            if (newStats.IsLoggedIn) Game.WebData.UpdatePilotData(newSpectator, newStats.LoginToken);
+            // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotData was here)
             Game.AddRemoteSpectator(newSpectator);
             newSpectator.ID = mess.SpectatorID;
             newSpectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;

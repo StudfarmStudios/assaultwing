@@ -9,7 +9,6 @@ using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Connections;
 using AW2.Net.ConnectionUtils;
-using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 
@@ -33,9 +32,6 @@ namespace AW2.Net
     /// messages via <c>SendToServer</c> and receiving messages via
     /// <c>ReceiveFromServer</c>.
     /// </para><para>
-    /// All game instances can have a connection to a game management
-    /// server. This hasn't been implemented yet.
-    /// </para><para>
     /// <see cref="NetworkEngine"/> reacts to incoming messages according
     /// to message handlers that other components register.
     /// </para>
@@ -46,7 +42,6 @@ namespace AW2.Net
 
         private enum ConnectionType
         {
-            ManagementServer,
             GameServer,
             GameClient
         }
@@ -57,20 +52,11 @@ namespace AW2.Net
 
         public const int UDP_CONNECTION_PORT_FIRST = 'A' * 256 + 'W';
         public const int UDP_CONNECTION_PORT_LAST = UDP_CONNECTION_PORT_FIRST + 9;
-        private const int MANAGEMENT_SERVER_PORT_DEFAULT = 'A' * 256 + 'W';
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
         private static readonly TimeSpan HANDSHAKE_TIMEOUT = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan HANDSHAKE_ATTEMPT_INTERVAL = TimeSpan.FromSeconds(0.9);
 
         private AssaultWingCore _game;
-
-        /// <summary>
-        /// Network connection to the management server, 
-        /// or <c>null</c> if no such live connection exists.
-        /// </summary>
-        private ManagementServerConnection _managementServerConnection;
-        private bool _managementServerConnectionLost;
-        private AWTimer _managementServerConnectionCheckTimer;
 
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
@@ -102,7 +88,6 @@ namespace AW2.Net
             GameClientConnections = new List<GameClientConnection>();
             _removedClientConnections = new List<GameClientConnection>();
             _udpMessagesToHandle = new ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>>(new List<Tuple<Message, IPEndPoint>>());
-            _managementServerConnectionCheckTimer = new AWTimer(() => _game.GameTime.TotalRealTime, TimeSpan.FromSeconds(10)) { SkipPastIntervals = true };
             MessageHandlers = new List<MessageHandlerBase>();
             InitializeUDPSocket();
         }
@@ -122,11 +107,6 @@ namespace AW2.Net
         public bool IsConnectedToGameServer { get { return GameServerConnection != null; } }
 
         /// <summary>
-        /// Are we connected to the management server.
-        /// </summary>
-        public bool IsConnectedToManagementServer { get { return _managementServerConnection != null; } }
-
-        /// <summary>
         /// Network connections to game clients. Nonempty only on a game server.
         /// </summary>
         public List<GameClientConnection> GameClientConnections { get; private set; }
@@ -137,15 +117,6 @@ namespace AW2.Net
         /// (including the case that we are the game server).
         /// </summary>
         public Connection GameServerConnection { get; set; }
-
-        public ManagementServerConnection ManagementServerConnection
-        {
-            get
-            {
-                if (_managementServerConnection == null) throw new ConnectionException("No connection to management server");
-                return _managementServerConnection;
-            }
-        }
 
         /// <summary>
         /// UDP socket for use with all remote connections.
@@ -164,19 +135,6 @@ namespace AW2.Net
             return clientKey;
         }
 
-        /// <summary>
-        /// Does nothing if a connection to the management server already exists.
-        /// Otherwise, finds a management server and initialises <see cref="ManagementServerConnection"/>.
-        /// May use DNS and take some time to finish. May throw <see cref="ArgumentException"/>.
-        /// </summary>
-        public void EnsureConnectionToManagementServer()
-        {
-            if (_managementServerConnection != null) return;
-            var managementServerEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.ManagementServerAddress);
-            if (managementServerEndPoint.Port == 0)
-                managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
-            _managementServerConnection = new ManagementServerConnection(_game, managementServerEndPoint);
-        }
 
         /// <summary>
         /// Turns this game instance into a game server to whom other game instances
@@ -189,9 +147,6 @@ namespace AW2.Net
             _startServerConnectionHandler = connectionHandler;
             _connectionAttemptListener = new ConnectionAttemptListener(_game);
             _connectionAttemptListener.StartListening(Game.Settings.Net.GameServerPort, UDPSocket.PrivateLocalEndPoint.Port);
-
-            // Peter: Management server stuff commented out
-            // RegisterServerToManagementServer();
         }
 
         /// <summary>
@@ -202,7 +157,6 @@ namespace AW2.Net
         {
             Log.Write("Stopping game server");
             MessageHandlers.Clear();
-            UnregisterServerFromManagementServer();
             _connectionAttemptListener.StopListening();
             _connectionAttemptListener = null;
             var shutdownNotice = new ConnectionClosingMessage { Info = "server shut down" };
@@ -356,8 +310,6 @@ namespace AW2.Net
             switch (Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    // Peter: Management server stuff commented out 
-                    // CheckManagementServerConnection();
                     HandleConnectionHandshakingOnServer();
                     break;
                 case NetworkMode.Client:
@@ -385,8 +337,6 @@ namespace AW2.Net
         {
             get
             {
-                if (IsConnectedToManagementServer)
-                    yield return _managementServerConnection;
                 if (IsConnectedToGameServer)
                     yield return GameServerConnection;
                 if (GameClientConnections != null)
@@ -458,26 +408,6 @@ namespace AW2.Net
             GameClientConnections.Clear();
         }
 
-        private void RegisterServerToManagementServer()
-        {
-            var message = new RegisterGameServerMessage
-            {
-                GameServerName = Game.Settings.Net.GameServerName,
-                MaxClients = Game.Settings.Net.GameServerMaxPlayers,
-                TCPPort = Game.Settings.Net.GameServerPort,
-                LocalEndPoint = new AWEndPoint(UDPSocket.PrivateLocalEndPoint, Game.Settings.Net.GameServerPort),
-                AWVersion = MiscHelper.Version,
-            };
-            ManagementServerConnection.Send(message);
-            _game.UpdateGameServerInfoToManagementServer();
-        }
-
-        private void UnregisterServerFromManagementServer()
-        {
-            var message = new UnregisterGameServerMessage();
-            ManagementServerConnection.Send(message);
-        }
-
         private void InitializeUDPSocket()
         {
             for (int udpPort = UDP_CONNECTION_PORT_FIRST; UDPSocket == null && udpPort <= UDP_CONNECTION_PORT_LAST; udpPort++)
@@ -508,9 +438,7 @@ namespace AW2.Net
 
         private int HandleUDPMessage(ArraySegment<byte> buffer, IPEndPoint remoteEndPoint)
         {
-            var message = IsConnectedToManagementServer && remoteEndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint)
-                ? ManagementMessage.Deserialize(buffer, Game.GameTime.TotalRealTime)
-                : Message.Deserialize(buffer, Game.GameTime.TotalRealTime);
+            var message = Message.Deserialize(buffer, Game.GameTime.TotalRealTime);
             if (Game.NetworkMode == NetworkMode.Server && message is GameServerHandshakeRequestUDP)
                 HandleGameServerHandshakeRequestUDP((GameServerHandshakeRequestUDP)message, remoteEndPoint);
             else
@@ -532,20 +460,12 @@ namespace AW2.Net
             {
                 foreach (var messageAndEndPoint in messages)
                 {
-                    if (messageAndEndPoint.Item1 is ManagementMessage)
+                    // Messages from unknown sources will be silently ignored.
+                    var connection = GetConnection(messageAndEndPoint.Item2);
+                    if (connection != null)
                     {
-                        messageAndEndPoint.Item1.ConnectionID = ManagementServerConnection.ID;
-                        ManagementServerConnection.Messages.Do(queue => queue.Enqueue(messageAndEndPoint.Item1));
-                    }
-                    else
-                    {
-                        // Messages from unknown sources will be silently ignored.
-                        var connection = GetConnection(messageAndEndPoint.Item2);
-                        if (connection != null)
-                        {
-                            messageAndEndPoint.Item1.ConnectionID = connection.ID;
-                            connection.HandleMessage(messageAndEndPoint.Item1, messageAndEndPoint.Item2);
-                        }
+                        messageAndEndPoint.Item1.ConnectionID = connection.ID;
+                        connection.HandleMessage(messageAndEndPoint.Item1, messageAndEndPoint.Item2);
                     }
                 }
                 messages.Clear();
@@ -608,17 +528,6 @@ namespace AW2.Net
             MessageHandlers = MessageHandlers.Except(MessageHandlers.Where(handler => handler.Disposed)).ToList();
         }
 
-        private void CheckManagementServerConnection()
-        {
-            if (!_managementServerConnectionCheckTimer.IsElapsed) return;
-            var managementServerConnectionLostEarlier = _managementServerConnectionLost;
-            _managementServerConnectionLost = !ManagementServerConnection.HasReceivedPingsRecently;
-            if (!_managementServerConnectionLost) return;
-            if (!managementServerConnectionLostEarlier)
-                Log.Write("Connection to management server lost. Clients may not be able to join. Reconnecting...");
-            RegisterServerToManagementServer();
-        }
-
         private void HandleConnectionHandshakingOnServer()
         {
             foreach (var conn in GameClientConnections)
@@ -655,8 +564,6 @@ namespace AW2.Net
                 GameClientConnections.Remove(connection);
             }
             _removedClientConnections.Clear();
-            if (_managementServerConnection != null && _managementServerConnection.IsDisposed)
-                _managementServerConnection = null;
             if (GameServerConnection != null && GameServerConnection.IsDisposed)
                 GameServerConnection = null;
             if (Game.DataEngine.Arena != null)

@@ -43,7 +43,7 @@ namespace AW2.UI
                     break;
                 case StateType.UpdatePilotData:
                     if (!MainMenuNetworkItemsActive) break;
-                    Game.WebData.UpdatePilotData(Game.DataEngine.LocalPlayer, _options.LoginToken);
+                    // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotData was here)
                     ShowInfoDialog("Fetching pilot record...", "Update pilot data");
                     _state = StateType.ConnectToGameServer;
                     break;
@@ -91,7 +91,6 @@ namespace AW2.UI
 
         private bool TryConnectToGameServer()
         {
-            Game.WebData.UpdatePilotRanking(Game.DataEngine.LocalPlayer);
             var gameServerEndPoints = new AWEndPoint[0];
             try
             {

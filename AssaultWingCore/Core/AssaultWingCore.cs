@@ -16,7 +16,6 @@ using AW2.Sound;
 using AW2.UI;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Net;
-using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 
@@ -186,8 +185,6 @@ namespace AW2.Core
         public Queue<string> NetworkingErrors { get; protected set; }
         public MessageHandlers MessageHandlers { get; protected set; }
         
-        public WebData WebData { get; protected set; }
-
         public virtual void GobCreationMessageReceived(GobCreationMessage message, int framesAgo) {}
 
         public virtual void StartClient(AWEndPoint[] serverEndPoints) {}

@@ -13,7 +13,6 @@ using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Net;
 using AW2.Net.Connections;
-using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
@@ -78,9 +77,7 @@ namespace AW2.Core
             _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
 
             NetworkEngine = new NetworkEngine(this, 30);
-            WebData = new WebData(this, 21);
             Components.Add(NetworkEngine);
-            Components.Add(WebData);
             ChatStartControl = Settings.Controls.Chat.GetControl();
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
@@ -145,12 +142,6 @@ namespace AW2.Core
             Log.Write("Assault Wing begins to run");
             DataEngine.GameplayMode = DataEngine.GetTypeTemplates<GameplayMode>().First();
             SelectedArenaName = DataEngine.GameplayMode.Arenas.First();
-            if (CommandLineOptions.DedicatedServer)
-                WebData.Feed("1D");
-            else if (CommandLineOptions.QuickStart != null)
-                WebData.Feed("1Q");
-            else
-                WebData.Feed("1");
             Logic.Initialize();
             base.BeginRun();
         }
@@ -198,7 +189,6 @@ namespace AW2.Core
         public override void StartArena()
         {
             Stats.BasicInfoSent = false;
-            WebData.Feed("2" + (int)NetworkMode);
             switch (NetworkMode)
             {
                 case NetworkMode.Server:
@@ -216,7 +206,6 @@ namespace AW2.Core
         public override void RefreshGameSettings()
         {
             base.RefreshGameSettings();
-            WebData.LoginPilots();
         }
 
         public void InitializePlayers(int count)
@@ -410,7 +399,9 @@ namespace AW2.Core
                     st.Deaths,
                 }).ToArray()
             });
-            foreach (var spec in DataEngine.Spectators) if (spec.IsLocal) WebData.UpdatePilotRanking(spec);
+            foreach (var spec in DataEngine.Spectators) if (spec.IsLocal) {
+              // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotRanking was here)
+            }
             Logic.FinishArena();
 #if NETWORK_PROFILING
             ProfilingNetworkBinaryWriter.DumpStats();
@@ -544,7 +535,7 @@ namespace AW2.Core
             }
             else
             {
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null));
+                // TODO: Peter: Steam network, do we need something like the GetStandaloneMenuHandlers that was here
                 NetworkEngine.GameServerConnection = result.Value;
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
                 var joinRequest = new GameServerHandshakeRequestTCP
@@ -558,8 +549,7 @@ namespace AW2.Core
 
         override public void UpdateGameServerInfoToManagementServer()
         {
-            var managementMessage = new UpdateGameServerMessage { CurrentClients = DataEngine.Players.Count() };
-            NetworkEngine.ManagementServerConnection.Send(managementMessage);
+            // TODO: Peter: update DataEngine.Players.Count() to Steam
         }
 
         private void AfterEveryFrame()

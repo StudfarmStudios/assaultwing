@@ -15,9 +15,11 @@ namespace AW2.UI
             : base(game)
         {
             var dedicatedServer = new DedicatedServer(game, 13);
-            game.Components.Add(new SteamServerComponent(game, 0));
+            var steamServerComponent = new SteamServerComponent(game, 0);
+            game.Components.Add(steamServerComponent);
             game.Components.Add(dedicatedServer);
             dedicatedServer.Enabled = true;
+            steamServerComponent.Enabled = true;
         }
 
         public override void StartArena()

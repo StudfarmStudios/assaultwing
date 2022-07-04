@@ -79,13 +79,13 @@ namespace AW2.Core
     private void SetupCallbacks()
     {
       callbacks.Clear();
-      callbacks.Add(Callback<SteamServersConnected_t>.Create(OnSteamServersConnected));
-      callbacks.Add(Callback<SteamServerConnectFailure_t>.Create(OnSteamServersConnectFailure));
-      callbacks.Add(Callback<SteamServersDisconnected_t>.Create(OnSteamServersDisconnected));
-      callbacks.Add(Callback<GSPolicyResponse_t>.Create(OnPolicyResponse));
-      callbacks.Add(Callback<ValidateAuthTicketResponse_t>.Create(OnValidateAuthTicketResponse));
-      callbacks.Add(Callback<P2PSessionRequest_t>.Create(OnP2PSessionRequest));
-      callbacks.Add(Callback<P2PSessionConnectFail_t>.Create(OnP2PSessionConnectFail));
+      callbacks.Add(Callback<SteamServersConnected_t>.CreateGameServer(OnSteamServersConnected));
+      callbacks.Add(Callback<SteamServerConnectFailure_t>.CreateGameServer(OnSteamServersConnectFailure));
+      callbacks.Add(Callback<SteamServersDisconnected_t>.CreateGameServer(OnSteamServersDisconnected));
+      callbacks.Add(Callback<GSPolicyResponse_t>.CreateGameServer(OnPolicyResponse));
+      callbacks.Add(Callback<ValidateAuthTicketResponse_t>.CreateGameServer(OnValidateAuthTicketResponse));
+      callbacks.Add(Callback<P2PSessionRequest_t>.CreateGameServer(OnP2PSessionRequest));
+      callbacks.Add(Callback<P2PSessionConnectFail_t>.CreateGameServer(OnP2PSessionConnectFail));
     }
 
     private void OnSteamServersConnected(SteamServersConnected_t tag)

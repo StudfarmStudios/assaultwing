@@ -32,17 +32,3 @@ With the following the game can be made to quickly connect to a local
 `DedicatedServer` process running in another terminal.
 
     AssaultWing.exe --quickstart --server_name local --server 127.0.0.1:16727:16727
-
-## LogOnAnonymous Notes
-
-Reasons why we don't get the result callback:
-- Callbacks not working (possible)
-- Problem in config in app store (possible)
-- connection problems in wifi (not possible)
-- Steamworks.NET broken (possible)
-- Wrong API used (possible)
-- Some API call misising (possible)
-
-Compiled the "Space War" Steamworks example 
-with XCode and verified with a break point that _it_ gets
-the callback.

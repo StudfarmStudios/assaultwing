@@ -93,23 +93,23 @@ namespace AW2.Core
       Log.Write("Server connected to Steam");
       SendUpdatedServerDetailsToSteam();
     }
-    void OnSteamServersConnectFailure(SteamServerConnectFailure_t tag)
+    void OnSteamServersConnectFailure(SteamServerConnectFailure_t failure)
     {
-      Log.Write("Server failed to connect to Steam");
+      Log.Write($"Server failed to connect to Steam, result: {failure.m_eResult}, still retrying: {failure.m_bStillRetrying}");
     }
 
-    void OnSteamServersDisconnected(SteamServersDisconnected_t tag)
+    void OnSteamServersDisconnected(SteamServersDisconnected_t result)
     {
-      Log.Write("Server lost connection to Steam");
+      Log.Write($"Server lost connection to Steam, result: {result.m_eResult}");
     }
 
-    void OnPolicyResponse(GSPolicyResponse_t tag)
+    void OnPolicyResponse(GSPolicyResponse_t response)
     {
-      Log.Write("Steam server policy response received");
+      Log.Write($"Steam server policy response received, secure: {response.m_bSecure}");
       // TODO: VAC secure and server auth stuff here
     }
-    void OnValidateAuthTicketResponse(ValidateAuthTicketResponse_t tag) {
-      Log.Write("Steam validate auth ticket response received");
+    void OnValidateAuthTicketResponse(ValidateAuthTicketResponse_t response) {
+      Log.Write($"Steam validate auth ticket response received: {response.m_eAuthSessionResponse}");
     }
 
     void OnP2PSessionRequest(P2PSessionRequest_t request) {

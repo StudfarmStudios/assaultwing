@@ -3,11 +3,20 @@ using System;
 namespace AW2.Net
 {
     /// <summary>
+    /// A covariant interface of Result for when upcasting is needed.
+    /// </summary>
+    public interface IResult<out T> {
+        public T Value { get; }
+        public bool Successful { get ; }
+        public Exception Error { get ; }
+    }
+    
+    /// <summary>
     /// The result of an operation whose return value is of a type.
     /// Each result carries the identifier of the operation for identification purposes.
     /// </summary>
     /// <typeparam name="T">The type of the return value of the operation.</typeparam>
-    public class Result<T>
+    public class Result<T> : IResult<T>
     {
         private T _value;
         private Exception _error;

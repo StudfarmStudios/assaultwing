@@ -245,11 +245,7 @@ namespace AW2.Net.MessageHandling
             {
                 connection.ConnectionStatus.ClientKey = mess.GameClientKey;
                 connection.ConnectionStatus.State = ConnectionUtils.GameClientStatus.StateType.Active;
-                // Send dummy UDP packets to probable UDP end points of the client to increase
-                // probability of our NAT forwarding UDP packets from the client to us.
-                var ping = new PingRequestMessage();
-                for (int port = NetworkEngine.UDP_CONNECTION_PORT_FIRST; port <= NetworkEngine.UDP_CONNECTION_PORT_LAST; port++)
-                    net.UDPSocket.Send(ping.Serialize, new IPEndPoint(net.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address, port));
+                net.DoClientUdpHandshake(mess);
             }
         }
 

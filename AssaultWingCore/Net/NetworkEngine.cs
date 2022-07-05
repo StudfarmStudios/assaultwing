@@ -50,8 +50,8 @@ namespace AW2.Net
 
         #region Fields
 
-        public const int UDP_CONNECTION_PORT_FIRST = 'A' * 256 + 'W';
-        public const int UDP_CONNECTION_PORT_LAST = UDP_CONNECTION_PORT_FIRST + 9;
+        private const int UDP_CONNECTION_PORT_FIRST = 'A' * 256 + 'W';
+        private const int UDP_CONNECTION_PORT_LAST = UDP_CONNECTION_PORT_FIRST + 9;
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
         private static readonly TimeSpan HANDSHAKE_TIMEOUT = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan HANDSHAKE_ATTEMPT_INTERVAL = TimeSpan.FromSeconds(0.9);
@@ -212,6 +212,15 @@ namespace AW2.Net
                 foreach (var player in Game.DataEngine.Players)
                     player.Messages.Add(new PlayerMessage(message, PlayerMessage.DEFAULT_COLOR));
             }
+        }
+
+        public void DoClientUdpHandshake(GameServerHandshakeRequestTCP mess) {
+            // Send dummy UDP packets to probable UDP end points of the client to increase
+            // probability of our NAT forwarding UDP packets from the client to us.
+
+            var ping = new PingRequestMessage();
+            for (int port = NetworkEngine.UDP_CONNECTION_PORT_FIRST; port <= NetworkEngine.UDP_CONNECTION_PORT_LAST; port++)
+                UDPSocket.Send(ping.Serialize, new IPEndPoint(GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address, port));            
         }
 
         public GameClientConnection GetGameClientConnection(int connectionID)
@@ -431,6 +440,7 @@ namespace AW2.Net
             UDPSocket = null;
         }
 
+  
         private void FlushUnhandledUDPMessages()
         {
             _udpMessagesToHandle.Do(list => list.Clear());

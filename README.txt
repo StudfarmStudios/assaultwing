@@ -32,3 +32,7 @@ With the following the game can be made to quickly connect to a local
 `DedicatedServer` process running in another terminal.
 
     AssaultWing.exe --quickstart --server_name local --server 127.0.0.1:16727:16727
+
+## Misc TODOs
+
+- Disable the StatsSender or set up the backend.

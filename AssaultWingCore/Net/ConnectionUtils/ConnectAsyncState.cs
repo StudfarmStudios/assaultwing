@@ -21,20 +21,20 @@ namespace AW2.Net.ConnectionUtils
         /// or null if the connection attempt was cancelled.
         /// </summary>
         /// <param name="asyncResult">The result of the asynchronous operation.</param>
-        public static Result<Connection> ConnectionAttemptCallback(IAsyncResult asyncResult, Func<Connection> createConnection)
+        public static Result<ConnectionRaw> ConnectionAttemptCallback(IAsyncResult asyncResult, Func<ConnectionRaw> createConnection)
         {
-            Result<Connection> result = null;
+            Result<ConnectionRaw> result = null;
             var state = (ConnectAsyncState)asyncResult.AsyncState;
             if (!state.IsCancelled)
             {
                 try
                 {
                     var newConnection = createConnection();
-                    result = new Result<Connection>(newConnection);
+                    result = new Result<ConnectionRaw>(newConnection);
                 }
                 catch (Exception e)
                 {
-                    result = new Result<Connection>(e);
+                    result = new Result<ConnectionRaw>(e);
                 }
             }
             return result;

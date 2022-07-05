@@ -63,7 +63,7 @@ namespace AW2.Game.Players
         /// <summary>
         /// The last known IP address of the connection of the spectator. For local players it's 127.0.0.1.
         /// </summary>
-        public IPAddress IPAddress { get; private set; }
+        public string LastKnownConnectionAddressString { get; private set; }
 
         /// <summary>
         /// Is the spectator connected from a remote game instance.
@@ -113,12 +113,12 @@ namespace AW2.Game.Players
 
         private ConnectionStatusType ConnectionStatus { get; set; }
 
-        public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL, IPAddress ipAddress = null)
+        public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL, string lastKnownConnectionAddressString = null)
         {
             Game = game;
             ConnectionID = connectionId;
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
-            IPAddress = ipAddress ?? IPAddress.Loopback;
+            LastKnownConnectionAddressString = lastKnownConnectionAddressString ?? IPAddress.Loopback.ToString();
             ArenaStatistics = new ArenaStatistics();
             PreviousArenaStatistics = new ArenaStatistics();
             StatsData = new SpectatorStats(this);

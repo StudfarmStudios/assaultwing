@@ -76,23 +76,6 @@ namespace AW2.Net.MessageHandling
             yield return new GameplayMessageHandler<ClientGameStateUpdateMessage>(MessageHandlerBase.SourceType.Client, networkEngine, HandleClientGameStateUpdateMessage);
         }
 
-        public void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)
-        {
-            if (!result.Successful)
-                Log.Write("Some client failed to connect: " + result.Error);
-            else if (allowNewConnection())
-            {
-                Game.NetworkEngine.GameClientConnections.Add((GameClientConnection)result.Value);
-                Log.Write("Server obtained {0} from {1}", result.Value.Name, result.Value.RemoteTCPEndPoint);
-            }
-            else
-            {
-                var mess = new ConnectionClosingMessage { Info = "game server refused joining" };
-                result.Value.Send(mess);
-                Log.Write("Server refused connection from " + result.Value.RemoteTCPEndPoint);
-            }
-        }
-
         #region Handler implementations
 
         // TODO: Peter: Steam network, connecting to selected server
@@ -318,7 +301,6 @@ namespace AW2.Net.MessageHandling
 
         private void TryCreateAndAddNewSpectatorOnServer(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
-            var ipAddress = Game.NetworkEngine.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address;
             var newSpectator = GetSpectator(mess, mode);
             newSpectator.LocalID = mess.SpectatorID;
             var newStats = newSpectator.StatsData;
@@ -338,16 +320,16 @@ namespace AW2.Net.MessageHandling
 
         private Spectator GetSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
-            var ipAddress = Game.NetworkEngine.GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address;
+            var lastKnownConnectionAddressString = Game.NetworkEngine.GetConnectionAddressString(mess.ConnectionID);
             Spectator newSpectator;
             switch (mess.Subclass)
             {
                 case SpectatorSettingsRequest.SubclassType.Player:
                     newSpectator = new Player(Game, "<uninitialised>", CanonicalString.Null, CanonicalString.Null,
-                        CanonicalString.Null, mess.ConnectionID, ipAddress);
+                        CanonicalString.Null, mess.ConnectionID, lastKnownConnectionAddressString = lastKnownConnectionAddressString);
                     break;
                 case SpectatorSettingsRequest.SubclassType.BotPlayer:
-                    newSpectator = new BotPlayer(Game, mess.ConnectionID, ipAddress);
+                    newSpectator = new BotPlayer(Game, mess.ConnectionID, lastKnownConnectionAddressString = lastKnownConnectionAddressString);
                     break;
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }

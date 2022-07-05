@@ -76,7 +76,7 @@ namespace AW2.Core
             _arenaStateSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
             _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
 
-            NetworkEngine = new NetworkEngine(this, 30);
+            NetworkEngine = new NetworkEngineRaw(this, 30);
             Components.Add(NetworkEngine);
             ChatStartControl = Settings.Controls.Chat.GetControl();
             _frameStepControl = new KeyboardKey(Keys.F8);
@@ -243,8 +243,7 @@ namespace AW2.Core
             try
             {
                 // TODO: Allow rejoin even if there are no free slots.
-                NetworkEngine.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result,
-                    allowNewConnection: () => DataEngine.Players.Count() < Settings.Net.GameServerMaxPlayers));
+                NetworkEngine.StartServer(allowNewConnection: () => DataEngine.Players.Count() < Settings.Net.GameServerMaxPlayers);
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerMenuHandlers());
                 return null;
             }
@@ -518,25 +517,17 @@ namespace AW2.Core
             NetworkEngine.SendToGameClients(new SpectatorOrTeamDeletionMessage { SpectatorOrTeamID = spectator.ID });
         }
 
-        private void ConnectionResultOnClientCallback(Result<Connection> result)
+        private void ConnectionResultOnClientCallback(IResult<Connection> result)
         {
             Logic.HideDialog("Connecting to server");
-            if (NetworkEngine.IsConnectedToGameServer)
-            {
-                // Silently ignore extra server connection attempts.
-                if (result.Successful) result.Value.Dispose();
-                return;
-            }
 
             if (!result.Successful)
             {
-                Log.Write("Failed to connect to server: " + result.Error);
                 StopClient("Failed to connect to server.");
             }
             else
             {
                 // TODO: Peter: Steam network, do we need something like the GetStandaloneMenuHandlers that was here
-                NetworkEngine.GameServerConnection = result.Value;
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
                 var joinRequest = new GameServerHandshakeRequestTCP
                 {
@@ -756,9 +747,9 @@ namespace AW2.Core
 
         public void RefuseRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
         {
-            var ipAddress = NetworkEngine.GetConnection(newSpectator.ConnectionID).RemoteTCPEndPoint.Address;
+            var addressString = NetworkEngine.GetConnectionAddressString(newSpectator.ConnectionID);
             Log.Write("Refusing spectator {0} from {1} because he's already logged in from {2}.",
-                newSpectator.Name, ipAddress, (object)oldSpectator.IPAddress ?? "the local host");
+                newSpectator.Name, addressString, (object)oldSpectator.LastKnownConnectionAddressString ?? "the local host");
         }
 
         private void ProcessPendingRemoteSpectatorsOnServer()
@@ -796,7 +787,7 @@ namespace AW2.Core
                 else
                 {
                     var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec =>
-                        !spec.StatsData.IsLoggedIn && spec.IPAddress.Equals(spectator.IPAddress) && spec.Name == spectator.Name);
+                        !spec.StatsData.IsLoggedIn && spec.LastKnownConnectionAddressString.Equals(spectator.LastKnownConnectionAddressString) && spec.Name == spectator.Name);
                     if (oldSpectator == null)
                     {
                         AddRemoteSpectator(spectator);

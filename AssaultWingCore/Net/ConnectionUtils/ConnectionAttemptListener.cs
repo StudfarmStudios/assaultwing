@@ -138,7 +138,7 @@ namespace AW2.Net.ConnectionUtils
             }
             catch (SocketException e)
             {
-                Connection.HandleNewConnection(new Result<Connection>(e));
+                ConnectionRaw.HandleNewConnection(new Result<ConnectionRaw>(e));
             }
         }
 
@@ -146,16 +146,16 @@ namespace AW2.Net.ConnectionUtils
         {
             if (_serverSocket == null) return; // Not listening anymore. Calling EndAccept would throw ObjectDisposedException
             var result = ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateClientConnection(asyncResult));
-            Connection.HandleNewConnection(result);
+            ConnectionRaw.HandleNewConnection(result);
         }
 
-        private static Connection CreateClientConnection(IAsyncResult asyncResult)
+        private static ConnectionRaw CreateClientConnection(IAsyncResult asyncResult)
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
             var socketToNewHost = state.Sockets.Single().EndAccept(asyncResult);
             try
             {
-                return new GameClientConnection(state.Game, socketToNewHost);
+                return new GameClientConnectionRaw(state.Game, socketToNewHost);
             }
             catch (Exception)
             {

@@ -505,42 +505,6 @@ namespace AW2.Net
                 (conn.RemoteUDPEndPointAlternative != null && conn.RemoteUDPEndPointAlternative.Equals(remoteUDPEndPoint))));
         }
 
-        private void HandleClientState()
-        {
-            if (Game.NetworkMode != NetworkMode.Server) return;
-            var serverIsPlayingArena = Game.DataEngine.Arena != null && Game.LogicEngine.Enabled;
-            foreach (var conn in _GameClientConnections)
-            {
-                var clientIsPlayingArena = conn.ConnectionStatus.IsRunningArena;
-                // Note: Some gobs refer to players, so start arena not until player info has been sent.
-                if (!clientIsPlayingArena && serverIsPlayingArena && conn.ConnectionStatus.HasPlayerSettings)
-                    MakeClientStartArena(conn);
-                else if (clientIsPlayingArena && !serverIsPlayingArena)
-                    MakeClientStopArena(conn);
-            }
-        }
-
-        private void MakeClientStartArena(GameClientConnectionRaw conn)
-        {
-            var arenaName = _game.SelectedArenaName;
-            var startGameMessage = new StartGameMessage
-            {
-                GameplayMode = _game.DataEngine.GameplayMode.Name,
-                ArenaID = Game.DataEngine.Arena.ID,
-                ArenaToPlay = arenaName,
-                ArenaTimeLeft = Game.DataEngine.ArenaFinishTime == TimeSpan.Zero ? TimeSpan.Zero : Game.DataEngine.ArenaFinishTime - Game.GameTime.TotalRealTime,
-                WallCount = Game.DataEngine.Arena.Gobs.All<AW2.Game.Gobs.Wall>().Count()
-            };
-            conn.Send(startGameMessage);
-            conn.ConnectionStatus.CurrentArenaName = arenaName;
-        }
-
-        private void MakeClientStopArena(GameClientConnectionRaw conn)
-        {
-            conn.Send(new ArenaFinishMessage());
-            conn.ConnectionStatus.CurrentArenaName = null;
-        }
-
         private void ApplicationExitCallback(object caller, EventArgs args)
         {
             Dispose();

@@ -169,5 +169,41 @@ namespace AW2.Net
         }        
     
         public abstract byte[] GetAssaultWingInstanceKey();
+
+        protected void HandleClientState()
+        {
+            if (Game.NetworkMode != NetworkMode.Server) return;
+            var serverIsPlayingArena = Game.DataEngine.Arena != null && Game.LogicEngine.Enabled;
+            foreach (var conn in GameClientConnections)
+            {
+                var clientIsPlayingArena = conn.ConnectionStatus.IsRunningArena;
+                // Note: Some gobs refer to players, so start arena not until player info has been sent.
+                if (!clientIsPlayingArena && serverIsPlayingArena && conn.ConnectionStatus.HasPlayerSettings)
+                    MakeClientStartArena(conn);
+                else if (clientIsPlayingArena && !serverIsPlayingArena)
+                    MakeClientStopArena(conn);
+            }
+        }
+
+        protected void MakeClientStartArena(GameClientConnection conn)
+        {
+            var arenaName = Game.SelectedArenaName;
+            var startGameMessage = new StartGameMessage
+            {
+                GameplayMode = Game.DataEngine.GameplayMode.Name,
+                ArenaID = Game.DataEngine.Arena.ID,
+                ArenaToPlay = arenaName,
+                ArenaTimeLeft = Game.DataEngine.ArenaFinishTime == TimeSpan.Zero ? TimeSpan.Zero : Game.DataEngine.ArenaFinishTime - Game.GameTime.TotalRealTime,
+                WallCount = Game.DataEngine.Arena.Gobs.All<AW2.Game.Gobs.Wall>().Count()
+            };
+            conn.Send(startGameMessage);
+            conn.ConnectionStatus.CurrentArenaName = arenaName;
+        }
+
+        protected void MakeClientStopArena(GameClientConnection conn)
+        {
+            conn.Send(new ArenaFinishMessage());
+            conn.ConnectionStatus.CurrentArenaName = null;
+        }
     }
 }

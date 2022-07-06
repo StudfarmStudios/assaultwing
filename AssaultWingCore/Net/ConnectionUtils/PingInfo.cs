@@ -31,7 +31,7 @@ namespace AW2.Net.ConnectionUtils
         /// <summary>
         /// The connection whose ping this instance is measuring.
         /// </summary>
-        public Connection BaseConnection { get; set; }
+        public ConnectionBase BaseConnection { get; set; }
 
         /// <summary>
         /// Round-trip ping time of the underlying connection.
@@ -48,7 +48,7 @@ namespace AW2.Net.ConnectionUtils
         private TimeSpan NowGameTime { get { return AssaultWingCore.Instance.GameTime.TotalGameTime; } }
         private TimeSpan NowRealTime { get { return AssaultWingCore.Instance.GameTime.TotalRealTime; } }
 
-        public PingInfo(Connection baseConnection)
+        public PingInfo(ConnectionBase baseConnection)
         {
             BaseConnection = baseConnection;
             _pingTimes = new TimeSpan[PING_AVERAGED_COUNT];

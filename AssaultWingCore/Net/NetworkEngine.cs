@@ -113,6 +113,8 @@ namespace AW2.Net
     
         public abstract string GetConnectionAddressString(int connectionID);
     
+        protected abstract IEnumerable<ConnectionBase> AllConnections { get; }
+
         /// <summary>
         /// Returns the number of frames elapsed since the message was sent.
         /// </summary>
@@ -138,6 +140,33 @@ namespace AW2.Net
         {
             return AssaultWingCore.TargetElapsedTime.Multiply(message.FrameNumber);
         }
+
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        protected void PurgeUnhandledMessages()
+        {
+            Type lastMessageType = null; // to avoid flooding log messages
+            Connection lastConnection = null;
+            foreach (var connection in AllConnections)
+                connection.Messages.Do(queue => queue.Prune(
+                    message => message.CreationTime < Game.GameTime.TotalRealTime - TimeSpan.FromSeconds(30),
+                    message =>
+                    {
+                        if (lastMessageType != message.GetType() || lastConnection != connection)
+                        {
+                            lastMessageType = message.GetType();
+                            lastConnection = connection;
+                            Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
+                        }
+                    }));
+        }        
+
+        protected void DetectSilentConnections()
+        {
+            foreach (var conn in AllConnections)
+                if (conn.PingInfo.IsMissingReplies)
+                    conn.QueueError("Ping replies missing.");
+        }        
     
         public abstract byte[] GetAssaultWingInstanceKey();
     }

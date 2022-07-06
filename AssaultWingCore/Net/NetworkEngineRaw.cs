@@ -319,7 +319,7 @@ namespace AW2.Net
 
         #region Private methods
 
-        private IEnumerable<ConnectionRaw> AllConnections
+        override protected IEnumerable<ConnectionRaw> AllConnections
         {
             get
             {
@@ -396,13 +396,6 @@ namespace AW2.Net
                     }
                 }
             });
-        }
-
-        private void DetectSilentConnections()
-        {
-            foreach (var conn in AllConnections)
-                if (conn.PingInfo.IsMissingReplies)
-                    conn.Errors.Do(queue => queue.Enqueue("Ping replies missing."));
         }
 
         private void HandleErrors()
@@ -495,7 +488,7 @@ namespace AW2.Net
                     if (connection != null)
                     {
                         messageAndEndPoint.Item1.ConnectionID = connection.ID;
-                        connection.HandleMessage(messageAndEndPoint.Item1, messageAndEndPoint.Item2);
+                        connection.HandleMessage(messageAndEndPoint.Item1);
                     }
                 }
                 messages.Clear();
@@ -606,24 +599,6 @@ namespace AW2.Net
             _GameClientConnections.RemoveAll(c => c.IsDisposed);
         }
 
-        [System.Diagnostics.Conditional("DEBUG")]
-        private void PurgeUnhandledMessages()
-        {
-            Type lastMessageType = null; // to avoid flooding log messages
-            Connection lastConnection = null;
-            foreach (var connection in AllConnections)
-                connection.Messages.Do(queue => queue.Prune(
-                    message => message.CreationTime < Game.GameTime.TotalRealTime - TimeSpan.FromSeconds(30),
-                    message =>
-                    {
-                        if (lastMessageType != message.GetType() || lastConnection != connection)
-                        {
-                            lastMessageType = message.GetType();
-                            lastConnection = connection;
-                            Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
-                        }
-                    }));
-        }
 
         #endregion Private methods
     }

@@ -3,6 +3,7 @@ using AW2.Net.ConnectionUtils;
 namespace AW2.Net.Connections
 {
     /// <summary>
+    /// A minimal interface for connections.
     /// A connection to a remote host over a network. Communication between 
     /// the local and remote host is done by messages. 
     /// </summary>
@@ -25,6 +26,9 @@ namespace AW2.Net.Connections
     {
         public T TryDequeueMessage<T>() where T : Message;
 
+        /// <summary>
+        /// Unique identifier of the connection. At least zero and less than <see cref="MAX_CONNECTIONS"/>.
+        /// </summary>
         public int ID { get; }
         public void Send(Message message);
 
@@ -34,5 +38,6 @@ namespace AW2.Net.Connections
         /// A meta-value for <see cref="ID"/> denoting an invalid value.
         /// </summary>
         public const int INVALID_ID = -1;
+        protected const int MAX_CONNECTIONS = 32;
     }
 }

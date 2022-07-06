@@ -31,17 +31,9 @@ namespace AW2.Net.Connections
     /// 
     /// This class is thread safe.
     /// </remarks>
-    public abstract class ConnectionRaw : Connection
+    public abstract class ConnectionRaw : ConnectionBase
     {
         #region Fields
-
-        private const int MAX_CONNECTIONS = 32;
-        private static readonly TimeSpan SIMULATED_NETWORK_LAG = TimeSpan.FromSeconds(0.0);
-
-        /// <summary>
-        /// Least int that is known not to have been used as a connection identifier.
-        /// </summary>
-        private static Queue<int> g_unusedIDs = new Queue<int>(Enumerable.Range(0, MAX_CONNECTIONS));
 
         private static List<ConnectAsyncState> g_connectAsyncStates = new List<ConnectAsyncState>();
 
@@ -63,18 +55,6 @@ namespace AW2.Net.Connections
         #endregion Fields
 
         #region Properties
-
-        public AssaultWingCore Game { get; private set; }
-
-        /// <summary>
-        /// Unique identifier of the connection. At least zero and less than <see cref="MAX_CONNECTIONS"/>.
-        /// </summary>
-        public int ID { get; private set; }
-
-        /// <summary>
-        /// Short, human-readable name of the connection.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// Has the connection handshake been completed. Sending UDP messages is not possible before the
@@ -134,11 +114,6 @@ namespace AW2.Net.Connections
         public IPEndPoint RemoteUDPEndPointAlternative { get; set; }
 
         /// <summary>
-        /// Received messages that are waiting for consumption by the client program.
-        /// </summary>
-        public ThreadSafeWrapper<ITypedQueue<Message>> Messages { get; private set; }
-
-        /// <summary>
         /// Results of connection attempts.
         /// </summary>
         public static ThreadSafeWrapper<Queue<Result<ConnectionRaw>>> ConnectionResults { get; private set; }
@@ -154,8 +129,6 @@ namespace AW2.Net.Connections
                 return _tcpSocket.Errors;
             }
         }
-
-        public PingInfo PingInfo { get; private set; }
 
         #endregion Properties
 
@@ -199,7 +172,7 @@ namespace AW2.Net.Connections
         /// Sends a message to the remote host. The message is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
-        public virtual void Send(Message message)
+        override public void Send(Message message)
         {
             if (IsDisposed) return;
             try
@@ -215,13 +188,6 @@ namespace AW2.Net.Connections
             {
                 Errors.Do(queue => queue.Enqueue("SocketException in Send: " + e.SocketErrorCode));
             }
-        }
-
-        public T TryDequeueMessage<T>() where T : Message
-        {
-            T value = default(T);
-            Messages.Do(queue => value = queue.TryDequeue<T>(m => m.CreationTime <= Game.GameTime.TotalRealTime - SIMULATED_NETWORK_LAG));
-            return value;
         }
 
         /// <summary>
@@ -278,15 +244,10 @@ namespace AW2.Net.Connections
             {
                 var message = Message.Deserialize(buffer, Game.GameTime.TotalRealTime);
                 message.ConnectionID = ID;
-                HandleMessage(message, remoteEndPoint);
+                HandleMessage(message);
                 return messageLength;
             }
             return 0;
-        }
-
-        public void HandleMessage(Message message, IPEndPoint remoteEndPoint)
-        {
-            Messages.Do(queue => queue.Enqueue(message));
         }
 
         public static void HandleNewConnection(Result<ConnectionRaw> result)
@@ -314,15 +275,18 @@ namespace AW2.Net.Connections
             DisposeImpl(error);
         }
 
+        override public void QueueError(string message) {
+            Errors.Do(queue => queue.Enqueue(message));
+        }
+
         /// <summary>
         /// Performs the actual disposing.
         /// </summary>
         /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
         protected virtual void DisposeImpl(bool error)
         {
-            Log.Write("Disposing " + Name);
             _tcpSocket.Dispose();
-            g_unusedIDs.Enqueue(ID);
+            DisposeId();
         }
 
         /// <summary>
@@ -334,23 +298,11 @@ namespace AW2.Net.Connections
         /// via the static methods <see cref="StartListening(int, string)"/> and 
         /// <see cref="Connect(IPAddress, int, string)"/>.
         protected ConnectionRaw(AssaultWingCore game, Socket tcpSocket)
-            : this(game)
+            : base(game)
         {
             if (tcpSocket == null) throw new ArgumentNullException("tcpSocket", "Null socket argument");
             if (!tcpSocket.Connected) throw new ArgumentException("Socket not connected", "tcpSocket");
             _tcpSocket = new AWTCPSocket(tcpSocket, HandleMessageBuffer);
-        }
-
-        /// <summary>
-        /// Creates a UDP-only connection.
-        /// </summary>
-        protected ConnectionRaw(AssaultWingCore game)
-        {
-            Game = game;
-            ID = g_unusedIDs.Dequeue();
-            Name = "Connection " + ID;
-            Messages = new ThreadSafeWrapper<ITypedQueue<Message>>(new TypedQueue<Message>());
-            PingInfo = new PingInfo(this);
         }
 
         /// <summary>

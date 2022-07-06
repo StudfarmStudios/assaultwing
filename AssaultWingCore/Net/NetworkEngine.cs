@@ -34,12 +34,13 @@ namespace AW2.Net
 
         public NetworkEngine(AssaultWingCore game, int updateOrder) : base(game, updateOrder)
         {
+            MessageHandlers = new List<MessageHandlerBase>();
         }
     
         /// <summary>
         /// The handlers of network messages.
         /// </summary>
-        public abstract List<MessageHandlerBase> MessageHandlers { get; }
+        public List<MessageHandlerBase> MessageHandlers { get; private set; }
     
     
         /// <summary>
@@ -105,7 +106,7 @@ namespace AW2.Net
         /// <summary>
         /// Are we connected to a game server.
         /// </summary>
-        public abstract bool IsConnectedToGameServer { get; }
+        public bool IsConnectedToGameServer { get { return GameServerConnection != null; } }
     
         public abstract GameClientConnection GetGameClientConnection(int connectionID);
     
@@ -169,6 +170,11 @@ namespace AW2.Net
         }        
     
         public abstract byte[] GetAssaultWingInstanceKey();
+
+        protected void RemoveDisposedMessageHandlers()
+        {
+            MessageHandlers = MessageHandlers.Except(MessageHandlers.Where(handler => handler.Disposed)).ToList();
+        }
 
         protected void HandleClientState()
         {

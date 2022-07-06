@@ -78,25 +78,12 @@ namespace AW2.Net
             _GameClientConnections = new List<GameClientConnectionRaw>();
             _removedClientConnections = new List<GameClientConnectionRaw>();
             _udpMessagesToHandle = new ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>>(new List<Tuple<Message, IPEndPoint>>());
-            _MessageHandlers = new List<MessageHandlerBase>();
             InitializeUDPSocket();
         }
 
         #endregion Constructor
 
         #region Public interface
-
-        private List<MessageHandlerBase> _MessageHandlers;
-
-        /// <summary>
-        /// The handlers of network messages.
-        /// </summary>
-        override public List<MessageHandlerBase> MessageHandlers { get { return _MessageHandlers;} }
-
-        /// <summary>
-        /// Are we connected to a game server.
-        /// </summary>
-        override public bool IsConnectedToGameServer { get { return _GameServerConnection != null; } }
 
         private List<GameClientConnectionRaw> _GameClientConnections;
 
@@ -452,7 +439,6 @@ namespace AW2.Net
             UDPSocket.Dispose();
             UDPSocket = null;
         }
-
   
         private void FlushUnhandledUDPMessages()
         {
@@ -508,11 +494,6 @@ namespace AW2.Net
         private void ApplicationExitCallback(object caller, EventArgs args)
         {
             Dispose();
-        }
-
-        private void RemoveDisposedMessageHandlers()
-        {
-            _MessageHandlers = _MessageHandlers.Except(MessageHandlers.Where(handler => handler.Disposed)).ToList();
         }
 
         private void HandleConnectionHandshakingOnServer()

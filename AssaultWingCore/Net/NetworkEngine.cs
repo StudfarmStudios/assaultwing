@@ -84,12 +84,31 @@ namespace AW2.Net
         /// Sends a message to all game clients. Use this method instead of enumerating
         /// over <see cref="GameClientConnections"/> and sending to each separately.
         /// </summary>
-        public abstract void SendToGameClients(Message message);
-    
+        public void SendToGameClients(Message message)
+        {
+            foreach (var conn in GameClientConnections) conn.Send(message);
+        }
+
         /// <summary>
         /// Round-trip ping time to the game server.
         /// </summary>
-        public abstract TimeSpan ServerPingTime { get; }
+        public TimeSpan ServerPingTime
+        {
+            get
+            {
+                if (!IsConnectedToGameServer)
+                    throw new InvalidOperationException("Cannot ping server without connection");
+                return GameServerConnection.PingInfo.PingTime;
+            }
+        }
+
+        /// <summary>
+        /// Round-trip ping time to a game client.
+        /// </summary>
+        public TimeSpan GetClientPingTime(int connectionID)
+        {
+            return GetGameClientConnection(connectionID).PingInfo.PingTime;
+        }
     
         /// <summary>
         /// Network connections to game clients. Nonempty only on a game server.

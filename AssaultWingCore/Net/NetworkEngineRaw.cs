@@ -225,36 +225,6 @@ namespace AW2.Net
             return result.RemoteTCPEndPoint.Address.ToString();
         }
 
-        /// <summary>
-        /// Sends a message to all game clients. Use this method instead of enumerating
-        /// over <see cref="GameClientConnections"/> and sending to each separately.
-        /// </summary>
-        override public void SendToGameClients(Message message)
-        {
-            foreach (var conn in GameClientConnections) conn.Send(message);
-        }
-
-        /// <summary>
-        /// Round-trip ping time to the game server.
-        /// </summary>
-        override public TimeSpan ServerPingTime
-        {
-            get
-            {
-                if (!IsConnectedToGameServer)
-                    throw new InvalidOperationException("Cannot ping server without connection");
-                return GameServerConnection.PingInfo.PingTime;
-            }
-        }
-
-        /// <summary>
-        /// Round-trip ping time to a game client.
-        /// </summary>
-        public TimeSpan GetClientPingTime(int connectionID)
-        {
-            return GetGameClientConnection(connectionID).PingInfo.PingTime;
-        }
-
         #endregion Public interface
 
         #region GameComponent methods

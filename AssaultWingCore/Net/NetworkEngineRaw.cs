@@ -52,8 +52,6 @@ namespace AW2.Net
         private static readonly TimeSpan HANDSHAKE_TIMEOUT = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan HANDSHAKE_ATTEMPT_INTERVAL = TimeSpan.FromSeconds(0.9);
 
-        private AssaultWingCore _game;
-
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
         /// </summary>
@@ -74,7 +72,6 @@ namespace AW2.Net
         public NetworkEngineRaw(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
-            _game = game;
             _GameClientConnections = new List<GameClientConnectionRaw>();
             _removedClientConnections = new List<GameClientConnectionRaw>();
             _udpMessagesToHandle = new ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>>(new List<Tuple<Message, IPEndPoint>>());
@@ -127,7 +124,7 @@ namespace AW2.Net
         {
             Log.Write("Starting game server");
             AllowNewServerConnection = allowNewConnection;
-            _connectionAttemptListener = new ConnectionAttemptListener(_game);
+            _connectionAttemptListener = new ConnectionAttemptListener(Game);
             _connectionAttemptListener.StartListening(Game.Settings.Net.GameServerPort, UDPSocket.PrivateLocalEndPoint.Port);
         }
 

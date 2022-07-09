@@ -69,7 +69,7 @@ namespace AW2.Settings
         public void UpdateFromSteam(AssaultWingCore game) {
             if (!GetPlayerNameCustomized()) {
                 var steamApiService = game.Services.GetService<SteamApiService>();
-                if (steamApiService != null) {
+                if (steamApiService != null && steamApiService.Initialized) {
                     Player1.Name = steamApiService.UserNick;
                     DefaultPlayerName = Player1.Name;
                 }

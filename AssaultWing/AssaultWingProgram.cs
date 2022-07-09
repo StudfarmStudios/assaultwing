@@ -86,8 +86,12 @@ namespace AW2
 
         public void Dispose()
         {
-            if (_form != null) _form.Dispose();
-            _form = null;
+            try {
+                if (_form != null) _form.Dispose();
+                _form = null;
+            } catch(Exception e) {
+                Log.Write("Unhandled exception in Dispose", e);
+            }
             // PETER MOD: Remove exception handler
             //Application.ThreadException -= ThreadExceptionHandler;
         }

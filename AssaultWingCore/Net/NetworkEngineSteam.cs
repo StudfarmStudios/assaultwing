@@ -7,6 +7,7 @@ using AW2.Net.Connections;
 using AW2.Net.ConnectionUtils;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
+using Steamworks;
 
 namespace AW2.Net
 {
@@ -34,18 +35,35 @@ namespace AW2.Net
     /// <seealso cref="Message.ConnectionID"/>
     public class NetworkEngineSteam : NetworkEngine
     {
+        private List<GameClientConnectionSteam> _GameClientConnections = new List<GameClientConnectionSteam>();
+        private Func<bool> AllowNewServerConnection;
+
+        /// <summary>
+        /// Unlike the old code, don't encode any identifiable information. Just a random GUID.
+        /// </summary>
+        private readonly Guid InstanceKey = Guid.NewGuid();
+
         public NetworkEngineSteam(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
         }
 
-        public override IEnumerable<GameClientConnection> GameClientConnections => throw new NotImplementedException();
+        public override IEnumerable<GameClientConnection> GameClientConnections { get { return _GameClientConnections; } }
 
         private ConnectionSteam _GameServerConnection;
 
         public override Connection GameServerConnection { get { return _GameServerConnection; } }
 
-        protected override IEnumerable<ConnectionBase> AllConnections => throw new NotImplementedException();
+        override protected IEnumerable<ConnectionSteam> AllConnections
+        {
+            get
+            {
+                if (IsConnectedToGameServer)
+                    yield return _GameServerConnection;
+                if (_GameClientConnections != null)
+                    foreach (var conn in _GameClientConnections) yield return conn;
+            }
+        }
 
         public override void DoClientUdpHandshake(GameServerHandshakeRequestTCP mess)
         {
@@ -59,12 +77,14 @@ namespace AW2.Net
 
         public override byte[] GetAssaultWingInstanceKey()
         {
-            throw new NotImplementedException();
+            return InstanceKey.ToByteArray();
         }
 
         public override Connection GetConnection(int connectionID)
         {
-            throw new NotImplementedException();
+            var result = AllConnections.First(conn => conn.ID == connectionID);
+            if (result == null) throw new ArgumentException("Connection not found with ID " + connectionID);
+            return result;
         }
 
         public override string GetConnectionAddressString(int connectionID)
@@ -72,26 +92,40 @@ namespace AW2.Net
             throw new NotImplementedException();
         }
 
-        public override GameClientConnection GetGameClientConnection(int connectionID)
+        override public GameClientConnectionSteam GetGameClientConnection(int connectionID)
         {
-            throw new NotImplementedException();
+            return _GameClientConnections.First(conn => conn.ID == connectionID);
         }
 
         public override void StartClient(AssaultWingCore game, AWEndPoint[] serverEndPoints, Action<IResult<Connection>> connectionHandler)
         {
-            var rawEndPoints = serverEndPoints.OfType<AWEndPointSteam>().ToArray() ?? Array.Empty<AWEndPointSteam>();
+            var steamEndPoints = serverEndPoints.OfType<AWEndPointSteam>().ToArray() ?? Array.Empty<AWEndPointSteam>();
             var endPointsString = string.Join(", ", serverEndPoints.Select(e => e.ToString()));
-            if (rawEndPoints.Length != serverEndPoints.Length) {
+            if (steamEndPoints.Length != serverEndPoints.Length) {
                 throw new ArgumentException("NetworkEngineSteam can only handle end points of the format ip:host:port and other steam network identity formats.\n" + 
                     $"Some of these are not compatible '{endPointsString}'");
             }
             Log.Write($"Client starts connecting to {endPointsString}");
-            throw new NotImplementedException();
+            foreach (var endpoint in steamEndPoints) {
+                if (endpoint.UseDirectIp) {
+                    // Don't hide the client IP address from the server by using the steam relay network.
+                    SteamNetworkingSockets.ConnectByIPAddress(ref endpoint.DirectIp, 0, new SteamNetworkingConfigValue_t[] {});
+                } else {
+                    SteamNetworkingSockets.ConnectP2P(ref endpoint.SteamNetworkingIdentity, 0, 0, new SteamNetworkingConfigValue_t[] {});
+                }
+            }
         }
 
         public override void StartServer(Func<bool> allowNewConnection)
         {
-            throw new NotImplementedException();
+            var port = (ushort)Game.Settings.Net.GameServerPort;
+            Log.Write($"Starting game server on port {port} and Steam P2P");
+            AllowNewServerConnection = allowNewConnection;
+            SteamNetworkingIPAddr portOnlyAddr = new SteamNetworkingIPAddr();
+            portOnlyAddr.Clear();
+            portOnlyAddr.m_port = port;
+            SteamNetworkingSockets.CreateListenSocketIP(ref portOnlyAddr, 0, new SteamNetworkingConfigValue_t[]{});
+            SteamNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{});
         }
 
         public override void StopClient()

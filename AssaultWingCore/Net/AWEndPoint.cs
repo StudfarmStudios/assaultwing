@@ -51,23 +51,39 @@ namespace AW2.Net
 
     public class AWEndPointSteam : AWEndPoint 
     {
-        private SteamNetworkingIdentity _SteamNetworkingIdentity;
-
-        public SteamNetworkingIdentity SteamNetworkingIdentity { get {return _SteamNetworkingIdentity;} }
+        public SteamNetworkingIdentity SteamNetworkingIdentity;
+        public SteamNetworkingIPAddr DirectIp;
+        public readonly bool UseDirectIp;
 
         public AWEndPointSteam(string parsed) {
-            if (!_SteamNetworkingIdentity.ParseString(parsed)) {
-                throw new ArgumentException($"Unknown Steam Networking ID {parsed}. Example: ip:127.0.0.1:1234");
+            var directPrefix = "direct:";
+            if (parsed.StartsWith(directPrefix)) {
+                if (!DirectIp.ParseString(parsed.Substring(directPrefix.Length))) {
+                    throw new ArgumentException($"Unknown direct IP address {parsed}. Example: direct:127.0.0.1:1234");
+                }
+                UseDirectIp = true;
+            } else {
+                if (!SteamNetworkingIdentity.ParseString(parsed)) {
+                    throw new ArgumentException($"Unknown Steam Networking ID {parsed}. Example: ip:127.0.0.1:1234");
+                }
             }
         }
 
         public override string ToString()
         {
-            // Example: ip:10.10.10.10:123
-            SteamNetworkingIdentity localTemp = _SteamNetworkingIdentity; // hack around a weird bug of ToString crashin
-            string buffer;
-            localTemp.ToString(out buffer);
-            return buffer;
+            if (UseDirectIp) {
+                SteamNetworkingIPAddr localTemp = DirectIp; // hack around a weird bug of ToString crashing
+                string buffer;
+                localTemp.ToString(out buffer, true);
+                return buffer;
+            }
+            else {
+                // Example: ip:10.10.10.10:123
+                SteamNetworkingIdentity localTemp = SteamNetworkingIdentity; // hack around a weird bug of ToString crashing
+                string buffer;
+                localTemp.ToString(out buffer);
+                return buffer;
+            }
         }        
     }
 }

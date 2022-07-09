@@ -5,6 +5,7 @@ namespace AW2.Core
 {
   public class SteamApiService : IDisposable
   {
+    private List<IDisposable> callbacks = new List<IDisposable>();
     public bool Initialized { get; private set; }
 
     public SteamApiService()
@@ -45,7 +46,8 @@ namespace AW2.Core
 
     private void SetupCallbacks()
     {
-      gameOverlayActivatedCallback = Callback<GameOverlayActivated_t>.Create(OnGameOverlayActivated);
+      callbacks.Add(Callback<GameOverlayActivated_t>.Create(OnGameOverlayActivated));
+      callbacks.Add(Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnSteamNetConnectionStatusChanged));
     }
 
     public string UserNick
@@ -64,6 +66,11 @@ namespace AW2.Core
         Log.Write("Steam Overlay has been closed");
       }
     }
+
+    void OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status) {
+      Log.Write($"OnSteamNetConnectionStatusChanged: oldState:{status.m_eOldState}, conn: {status.m_hConn}, info: {status.m_info}");
+      SteamNetworkingSockets.CloseConnection(status.m_hConn, 0, "Not listening", false);
+    }    
 
     public void Dispose()
     {

@@ -127,7 +127,7 @@ namespace AW2.Core
       SteamGameServer.SetPasswordProtected(false);
       SteamGameServer.SetServerName("TODO server");
       SteamGameServer.SetBotPlayerCount(0); // optional, defaults to zero
-      SteamGameServer.SetMapName("TOOD map");
+      SteamGameServer.SetMapName("TODO map");
     }
 
     public override void Update()

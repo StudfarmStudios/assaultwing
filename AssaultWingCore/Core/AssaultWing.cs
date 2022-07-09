@@ -76,7 +76,13 @@ namespace AW2.Core
             _arenaStateSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
             _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
 
-            NetworkEngine = new NetworkEngineRaw(this, 30);
+            if (Services.GetService<SteamApiService>().Initialized) {
+                NetworkEngine = new NetworkEngineSteam(this, 30);
+            } else {
+                Log.Write("Creating NetworkEngineRaw instead of NetworkEngineSteam due to SteamAPI not being initialized.");
+                NetworkEngine = new NetworkEngineRaw(this, 30);
+            }
+                
             Components.Add(NetworkEngine);
             ChatStartControl = Settings.Controls.Chat.GetControl();
             _frameStepControl = new KeyboardKey(Keys.F8);

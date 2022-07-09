@@ -151,9 +151,15 @@ namespace AW2.Net
         /// </summary>
         override public void StartClient(AssaultWingCore game, AWEndPoint[] serverEndPoints, Action<IResult<Connection>> connectionHandler)
         {
-            Log.Write("Client starts connecting");
+            var rawEndPoints = serverEndPoints.OfType<AWEndPointRaw>().ToArray() ?? Array.Empty<AWEndPointRaw>();
+            var endPointsString = string.Join(", ", serverEndPoints.Select(e => e.ToString()));
+            if (rawEndPoints.Length != serverEndPoints.Length) {
+                throw new ArgumentException("NetworkEngineRaw can only handle end points of the format raw:host:port:port.\n" + 
+                    $"Some of these are not compatible '{endPointsString}'");
+            }
+            Log.Write($"Client starts connecting to {endPointsString}");
             _startClientConnectionHandler = connectionHandler;
-            ConnectionRaw.Connect(game, serverEndPoints);
+            ConnectionRaw.Connect(game, rawEndPoints);
         }
 
         /// <summary>

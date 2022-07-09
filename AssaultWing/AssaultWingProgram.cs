@@ -33,7 +33,7 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            //try {
+            try {
                 Thread.CurrentThread.Name = "MainThread";
                 //if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
                 g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
@@ -55,9 +55,9 @@ namespace AW2
                         AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
                     }
                 }
-            //} catch (Exception e) {
-            //    Log.Write("Unhandled exception", e);
-            //}
+            } catch (Exception e) {
+                Log.Write("Unhandled exception", e);
+            }
         }
 
         public AssaultWingProgram()

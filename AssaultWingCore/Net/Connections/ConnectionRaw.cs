@@ -138,7 +138,7 @@ namespace AW2.Net.Connections
         /// Starts opening a connection to a remote host.
         /// </summary>
         /// <param name="remoteEndPoints">Alternative end points to connect to.</param>
-        public static void Connect(AssaultWingCore game, AWEndPoint[] remoteEndPoints)
+        public static void Connect(AssaultWingCore game, AWEndPointRaw[] remoteEndPoints)
         {
             var sockets = new Socket[remoteEndPoints.Length];
             var asyncState = new ConnectAsyncState(game, sockets, remoteEndPoints);

@@ -41,7 +41,9 @@ namespace AW2.Net
 
         public override IEnumerable<GameClientConnection> GameClientConnections => throw new NotImplementedException();
 
-        public override Connection GameServerConnection => throw new NotImplementedException();
+        private ConnectionSteam _GameServerConnection;
+
+        public override Connection GameServerConnection { get { return _GameServerConnection; } }
 
         protected override IEnumerable<ConnectionBase> AllConnections => throw new NotImplementedException();
 
@@ -77,6 +79,13 @@ namespace AW2.Net
 
         public override void StartClient(AssaultWingCore game, AWEndPoint[] serverEndPoints, Action<IResult<Connection>> connectionHandler)
         {
+            var rawEndPoints = serverEndPoints.OfType<AWEndPointSteam>().ToArray() ?? Array.Empty<AWEndPointSteam>();
+            var endPointsString = string.Join(", ", serverEndPoints.Select(e => e.ToString()));
+            if (rawEndPoints.Length != serverEndPoints.Length) {
+                throw new ArgumentException("NetworkEngineSteam can only handle end points of the format ip:host:port and other steam network identity formats.\n" + 
+                    $"Some of these are not compatible '{endPointsString}'");
+            }
+            Log.Write($"Client starts connecting to {endPointsString}");
             throw new NotImplementedException();
         }
 

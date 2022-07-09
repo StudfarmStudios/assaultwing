@@ -31,7 +31,14 @@ For example depending where the unzipped SDK is:
 With the following the game can be made to quickly connect to a local
 `DedicatedServer` process running in another terminal.
 
-    AssaultWing.exe --quickstart --server_name local --server 127.0.0.1:16727:16727
+When Steam is not present:
+
+    AssaultWing.exe --quickstart --server_name local --server raw:127.0.0.1:16727:16727
+
+With Steam networking engine:
+
+    AssaultWing.exe --quickstart --server_name local --server ip:127.0.0.1:16727
+
 
 ## Misc TODOs
 

@@ -35,7 +35,11 @@ When Steam is not present:
 
     AssaultWing.exe --quickstart --server_name local --server raw:127.0.0.1:16727:16727
 
-With Steam networking engine:
+With Steam networking engine using direct connection:
+
+    AssaultWing.exe --quickstart --server_name local --server direct:127.0.0.1:16727
+
+With Steam networking engine using Steam Relay:
 
     AssaultWing.exe --quickstart --server_name local --server ip:127.0.0.1:16727
 

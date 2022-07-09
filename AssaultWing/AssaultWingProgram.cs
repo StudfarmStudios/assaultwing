@@ -33,27 +33,31 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            Thread.CurrentThread.Name = "MainThread";
-            //if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
-            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
-            //PostInstall.EnsureDone();
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                // TODO: Peter: Is this shortcuts disabling necessary and is there a better way
-                AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
-            }
-            try
-            {
-                using (Instance = new AssaultWingProgram())
-                {
-                    Instance.Run();
-                }
-            }
-            finally
-            {
+            //try {
+                Thread.CurrentThread.Name = "MainThread";
+                //if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
+                g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
+                //PostInstall.EnsureDone();
                 if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                    AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
+                    // TODO: Peter: Is this shortcuts disabling necessary and is there a better way
+                    AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
                 }
-            }
+                try
+                {
+                    using (Instance = new AssaultWingProgram())
+                    {
+                        Instance.Run();
+                    }
+                }
+                finally
+                {
+                    if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                        AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
+                    }
+                }
+            //} catch (Exception e) {
+            //    Log.Write("Unhandled exception", e);
+            //}
         }
 
         public AssaultWingProgram()

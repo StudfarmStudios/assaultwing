@@ -1,16 +1,22 @@
 ﻿using System.Net;
 using AW2.Helpers;
 using Steamworks;
+using Microsoft.Xna.Framework;
+using AW2.Core;
 
 namespace AW2.Net
 {
     public abstract class AWEndPoint {
-        public static AWEndPoint Parse(string text)
+        public static AWEndPoint Parse(GameServiceContainer Services, string text)
         {
             if (text.StartsWith("raw:")) {
                 return AWEndPointRaw.ParseRaw(text.Substring(4)); // raw:host:udpport:tcpport
             } else {
-                return new AWEndPointSteam(text); // ip:127.0.0.1:1234 steamid:12345671234512345
+                if (Services.GetService<SteamApiService>().Initialized) {
+                    return new AWEndPointSteam(text); // ip:127.0.0.1:1234 steamid:12345671234512345
+                } else {
+                    throw new ArgumentException($"SteamAPI is not initialized. Can't attempt parsing endpoint {text} as a Steam Networking endpoint.");
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
@@ -94,7 +94,7 @@ namespace AW2.UI
             var gameServerEndPoints = new AWEndPoint[0];
             try
             {
-                gameServerEndPoints = _options.GameServerEndPoints.Select(str => AWEndPoint.Parse(str)).ToArray();
+                gameServerEndPoints = _options.GameServerEndPoints.Select(str => AWEndPoint.Parse(Game.Services, str)).ToArray();
             }
             catch
             {

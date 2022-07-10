@@ -33,12 +33,12 @@ namespace AW2.Net.Connections
         /// </summary>
         private static Queue<int> g_unusedIDs = new Queue<int>(Enumerable.Range(0, Connection.MAX_CONNECTIONS));
 
-        protected AssaultWingCore Game { get; }
+        protected AssaultWingCore Game { get; init; }
 
         /// <summary>
         /// Unique identifier of the connection. At least zero and less than <see cref="MAX_CONNECTIONS"/>.
         /// </summary>
-        public int ID { get; }
+        public int ID { get; init; }
 
         /// <summary>
         /// Short, human-readable name of the connection.
@@ -50,7 +50,7 @@ namespace AW2.Net.Connections
         /// </summary>
         public ThreadSafeWrapper<ITypedQueue<Message>> Messages { get; }
         
-        public PingInfo PingInfo { get; }
+        public PingInfo PingInfo { get; init; }
 
         abstract public void Send(Message message);
 

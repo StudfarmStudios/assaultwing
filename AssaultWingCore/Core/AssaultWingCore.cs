@@ -94,6 +94,7 @@ namespace AW2.Core
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);            
             NetworkMode = NetworkMode.Standalone;
+            NetworkingErrors = new Queue<string>();
 
             InitializeComponents();
             _standingsTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1));
@@ -189,7 +190,13 @@ namespace AW2.Core
         public string SelectedArenaName { get; set; }
 
         public NetworkEngine NetworkEngine { get; protected set; }
-        public Queue<string> NetworkingErrors { get; protected set; }
+        
+        /// <summary>
+        /// Errors that occurred when establishing or maintaining a network game instance.
+        /// These errors are eventually reported to the user and game state is reset out of networking.
+        /// </summary>
+        public Queue<string> NetworkingErrors { get; init; }
+
         public MessageHandlers MessageHandlers { get; protected set; }
         
         public virtual void GobCreationMessageReceived(GobCreationMessage message, int framesAgo) {}

@@ -56,12 +56,6 @@ namespace AW2.Core
         public override bool IsShipControlsEnabled { get { return Logic.IsGameplay; } }
         public Guid GameServerGUID { get; private set; }
 
-        /// <summary>
-        /// Errors that occurred when establishing or maintaining a network game instance.
-        /// These errors are eventually reported to the user and game state is reset out of networking.
-        /// </summary>
-        public Queue<string> NetworkingErrors { get; private set; }
-
         public delegate ProgramLogic<E> MakeProgramLogic(AssaultWing<E> game);
 
         public AssaultWing(GameServiceContainer serviceContainer, CommandLineOptions args, MakeProgramLogic makeProgramLogic)
@@ -71,7 +65,6 @@ namespace AW2.Core
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
             Logic = makeProgramLogic(this);
             ArenaLoadTask = new BackgroundTask();
-            NetworkingErrors = new Queue<string>();
             _gameSettingsSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
             _arenaStateSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
             _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };

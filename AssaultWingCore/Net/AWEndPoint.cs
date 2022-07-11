@@ -9,8 +9,8 @@ namespace AW2.Net
     public abstract class AWEndPoint {
         public static AWEndPoint Parse(GameServiceContainer Services, string text)
         {
-            if (text.StartsWith("raw:")) {
-                return AWEndPointRaw.ParseRaw(text.Substring(4)); // raw:host:udpport:tcpport
+            if (text.StartsWith(AWEndPointRaw.RawPrefix)) {
+                return AWEndPointRaw.ParseRaw(text.Substring(AWEndPointRaw.RawPrefix.Length)); // raw:host:udpport:tcpport
             } else {
                 if (Services.GetService<SteamApiService>().Initialized) {
                     return new AWEndPointSteam(text); // ip:127.0.0.1:1234 steamid:12345671234512345
@@ -45,8 +45,10 @@ namespace AW2.Net
 
         public override string ToString()
         {
-            return string.Format("{0}:{1}", UDPEndPoint, TCPEndPoint.Port);
+            return $"{RawPrefix}:{UDPEndPoint}:{TCPEndPoint.Port}";
         }
+
+        public static readonly string RawPrefix = "raw:";
     }
 
     public class AWEndPointSteam : AWEndPoint 
@@ -56,9 +58,8 @@ namespace AW2.Net
         public readonly bool UseDirectIp;
 
         public AWEndPointSteam(string parsed) {
-            var directPrefix = "direct:";
-            if (parsed.StartsWith(directPrefix)) {
-                if (!DirectIp.ParseString(parsed.Substring(directPrefix.Length))) {
+            if (parsed.StartsWith(DirectPrefix)) {
+                if (!DirectIp.ParseString(parsed.Substring(DirectPrefix.Length))) {
                     throw new ArgumentException($"Unknown direct IP address {parsed}. Example: direct:127.0.0.1:1234");
                 }
                 UseDirectIp = true;
@@ -72,18 +73,12 @@ namespace AW2.Net
         public override string ToString()
         {
             if (UseDirectIp) {
-                SteamNetworkingIPAddr localTemp = DirectIp; // hack around a weird bug of ToString crashing
-                string buffer;
-                localTemp.ToString(out buffer, true);
-                return buffer;
+                return DirectPrefix + Steam.IpAddrToString(DirectIp);
             }
             else {
-                // Example: ip:10.10.10.10:123
-                SteamNetworkingIdentity localTemp = SteamNetworkingIdentity; // hack around a weird bug of ToString crashing
-                string buffer;
-                localTemp.ToString(out buffer);
-                return buffer;
+                return Steam.IdentityToString(SteamNetworkingIdentity);
             }
-        }        
+        }
+        private static readonly string DirectPrefix = "direct:";
     }
 }

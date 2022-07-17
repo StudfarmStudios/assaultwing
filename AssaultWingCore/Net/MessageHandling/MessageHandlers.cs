@@ -222,7 +222,7 @@ namespace AW2.Net.MessageHandling
                 Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo + extraInfo);
                 var reply = new ConnectionClosingMessage { Info = "of version mismatch (canonical strings).\nPlease install the latest version from\nwww.assaultwing.com" };
                 connection.Send(reply);
-                net.DropClient(mess.ConnectionID);
+                net.DropClient(connection);
             }
             else
             {

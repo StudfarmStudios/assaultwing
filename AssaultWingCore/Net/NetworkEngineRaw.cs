@@ -175,29 +175,14 @@ namespace AW2.Net
             FlushUnhandledUDPMessages();
         }
 
-        /// <summary>
-        /// Drops the connection to a game client. To be called only as the game server.
-        /// </summary>
-        override public void DropClient(int connectionID)
-        {
-            if (Game.NetworkMode != NetworkMode.Server)
-                throw new InvalidOperationException("Cannot drop client in mode " + Game.NetworkMode);
-
-            var connection = GetGameClientConnection(connectionID);
-            if (_removedClientConnections.Contains(connection)) return;
-            Log.Write("Dropping " + connection.Name);
-            connection.ConnectionStatus.State = GameClientStatus.StateType.Dropped;
-            _removedClientConnections.Add(connection);
-
-            var droppedPlayers = Game.DataEngine.Spectators.Where(plr => plr.ConnectionID == connection.ID);
-            foreach (var plr in droppedPlayers) plr.Disconnect();
-            if (droppedPlayers.Any())
-            {
-                var message = string.Join(" and ", droppedPlayers.Select(plr => plr.Name).ToArray()) + " left the game";
-                foreach (var player in Game.DataEngine.Players)
-                    player.Messages.Add(new PlayerMessage(message, PlayerMessage.DEFAULT_COLOR));
-            }
+        public override bool IsRemovedClientConnection(GameClientConnection connection) {
+            return _removedClientConnections.Contains(connection);
         }
+
+        public override void AddRemovedClientConnection(GameClientConnection connection) {
+            _removedClientConnections.Add((GameClientConnectionRaw)connection);
+        }
+
 
         /// <summary>
         /// Send dummy UDP packets to probable UDP end points of the client to increase
@@ -478,7 +463,7 @@ namespace AW2.Net
                 if (!conn.IsHandshaken && Game.GameTime.TotalRealTime > conn.FirstHandshakeAttempt + HANDSHAKE_TIMEOUT)
                 {
                     conn.Send(new ConnectionClosingMessage { Info = "handshake failed" });
-                    DropClient(conn.ID);
+                    DropClient(conn);
                 }
             }
         }
@@ -507,13 +492,9 @@ namespace AW2.Net
             _removedClientConnections.Clear();
             if (_GameServerConnection != null && _GameServerConnection.IsDisposed)
                 _GameServerConnection = null;
-            if (Game.DataEngine.Arena != null)
-            {
-                foreach (var conn in _GameClientConnections)
-                    if (conn.IsDisposed)
-                        foreach (var gob in Game.DataEngine.Arena.GobsInRelevantLayers)
-                            gob.ClientStatus[1 << conn.ID] = false;
-            }
+            
+            ProcessDisposedConnections();
+
             _GameClientConnections.RemoveAll(c => c.IsDisposed);
         }
 

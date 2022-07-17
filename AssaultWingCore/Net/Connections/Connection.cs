@@ -39,5 +39,9 @@ namespace AW2.Net.Connections
         /// </summary>
         public const int INVALID_ID = -1;
         protected const int MAX_CONNECTIONS = 32;
+
+        public bool IsDisposed {get;}
+
+        public string Name {get;}
     }
 }

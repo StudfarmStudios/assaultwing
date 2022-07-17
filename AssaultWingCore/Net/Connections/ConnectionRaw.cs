@@ -38,11 +38,6 @@ namespace AW2.Net.Connections
         private static List<ConnectAsyncState> g_connectAsyncStates = new List<ConnectAsyncState>();
 
         /// <summary>
-        /// If greater than zero, then the connection is disposed and thus no longer usable.
-        /// </summary>
-        private int _isDisposed;
-
-        /// <summary>
         /// TCP socket to the connected remote host.
         /// </summary>
         private AWTCPSocket _tcpSocket;
@@ -67,8 +62,6 @@ namespace AW2.Net.Connections
         /// </summary>
         public TimeSpan FirstHandshakeAttempt { get; set; }
         public TimeSpan PreviousHandshakeAttempt { get; set; }
-
-        public bool IsDisposed { get { return _isDisposed > 0; } }
 
         /// <summary>
         /// The remote TCP end point of the connection.
@@ -191,14 +184,6 @@ namespace AW2.Net.Connections
         }
 
         /// <summary>
-        /// Closes the connection and frees resources it has allocated.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
         /// Reacts to errors that may have occurred during the connection's
         /// operation in background threads.
         /// </summary>
@@ -265,16 +250,6 @@ namespace AW2.Net.Connections
             ConnectionResults = new ThreadSafeWrapper<Queue<Result<ConnectionRaw>>>(new Queue<Result<ConnectionRaw>>());
         }
 
-        /// <summary>
-        /// Closes the connection and frees resources it has allocated.
-        /// </summary>
-        /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
-        protected void Dispose(bool error)
-        {
-            if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
-            DisposeImpl(error);
-        }
-
         override public void QueueError(string message) {
             Errors.Do(queue => queue.Enqueue(message));
         }
@@ -283,7 +258,7 @@ namespace AW2.Net.Connections
         /// Performs the actual disposing.
         /// </summary>
         /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
-        protected virtual void DisposeImpl(bool error)
+        override protected void DisposeImpl(bool error)
         {
             _tcpSocket.Dispose();
             DisposeId();

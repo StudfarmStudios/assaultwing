@@ -24,9 +24,40 @@ namespace AW2.Net.Connections
     /// 
     /// This class is thread safe.
     /// </remarks>
-    public abstract class ConnectionBase : Connection
+    public abstract class ConnectionBase : Connection, IDisposable
     {
         private static readonly TimeSpan SIMULATED_NETWORK_LAG = TimeSpan.FromSeconds(0.0);
+
+        /// <summary>
+        /// If greater than zero, then the connection is disposed and thus no longer usable.
+        /// </summary>
+        private int _isDisposed;
+
+        public bool IsDisposed { get { return _isDisposed > 0; } }
+
+        /// <summary>
+        /// Closes the connection and frees resources it has allocated.
+        /// </summary>
+        /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
+        protected void Dispose(bool error)
+        {
+            if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
+            DisposeImpl(error);
+        }
+
+        /// <summary>
+        /// Closes the connection and frees resources it has allocated.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Performs the actual disposing.
+        /// </summary>
+        /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
+        protected abstract void DisposeImpl(bool error);
 
         /// <summary>
         /// Least int that is known not to have been used as a connection identifier.
@@ -94,5 +125,6 @@ namespace AW2.Net.Connections
         /// of the connection. The error will also be logged with appropriate meta dat
         /// </summary>
         abstract public void QueueError(string message);
+
     }
 }

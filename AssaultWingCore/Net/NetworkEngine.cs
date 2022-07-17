@@ -3,6 +3,8 @@ using AW2.Net.Connections;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.Helpers;
+using AW2.Net.ConnectionUtils;
+using AW2.Game;
 
 namespace AW2.Net
 {
@@ -72,7 +74,54 @@ namespace AW2.Net
         /// <summary>
         /// Drops the connection to a game client. To be called only as the game server.
         /// </summary>
-        public abstract void DropClient(int connectionID);
+        public void DropClient(GameClientConnection connection)
+        {
+            if (Game.NetworkMode != NetworkMode.Server)
+                throw new InvalidOperationException("Cannot drop client in mode " + Game.NetworkMode);
+
+            if (IsRemovedClientConnection(connection)) return;
+            if (GameClientConnections.Contains(connection)) {
+                Log.Write($"DropClient called for unknown client connection {connection.Name}");
+                return;
+            }
+            Log.Write("Dropping " + connection.Name);
+            connection.ConnectionStatus.State = GameClientStatus.StateType.Dropped;
+            AddRemovedClientConnection(connection);
+
+            var droppedPlayers = Game.DataEngine.Spectators.Where(plr => plr.ConnectionID == connection.ID);
+            foreach (var plr in droppedPlayers) plr.Disconnect();
+            if (droppedPlayers.Any())
+            {
+                var message = string.Join(" and ", droppedPlayers.Select(plr => plr.Name).ToArray()) + " left the game";
+                foreach (var player in Game.DataEngine.Players)
+                    player.Messages.Add(new PlayerMessage(message, PlayerMessage.DEFAULT_COLOR));
+            }
+        }
+
+        /// <summary>
+        /// Called from Update when connections to be removed have been disposed, but
+        /// not yet removed from the list of game client connections.
+        /// </summary>
+        protected void ProcessDisposedConnections() {
+            if (Game.DataEngine.Arena != null)
+            {
+                foreach (var conn in GameClientConnections)
+                    if (conn.IsDisposed)
+                        foreach (var gob in Game.DataEngine.Arena.GobsInRelevantLayers)
+                            gob.ClientStatus[1 << conn.ID] = false;
+            }
+        }
+
+    
+        /// <summary>
+        /// Is already in the list of removed connections.
+        /// </summary>
+        public abstract bool IsRemovedClientConnection(GameClientConnection connection);
+
+        /// <summary>
+        /// Add to the list of removed client connections to be actually cleaned up handled later.
+        /// </summary>
+        public abstract void AddRemovedClientConnection(GameClientConnection connection);
     
         /// <summary>
         /// Send dummy UDP packets to probable UDP end points of the client to increase

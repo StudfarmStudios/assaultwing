@@ -1,4 +1,6 @@
 using AW2.Core;
+using Steamworks;
+using AW2.Helpers;
 
 namespace AW2.Net.Connections
 {
@@ -21,11 +23,16 @@ namespace AW2.Net.Connections
     /// 
     /// This class is thread safe.
     /// </remarks>
-    public abstract class ConnectionSteam : ConnectionBase
+    public abstract class ConnectionSteam : ConnectionBase, IDisposable
     {
-        protected ConnectionSteam(AssaultWingCore game)
+        public HSteamNetConnection Handle { get; init; }
+        public SteamNetConnectionInfo_t Info { get; set; }
+
+        protected ConnectionSteam(AssaultWingCore game, HSteamNetConnection handle, SteamNetConnectionInfo_t info)
             : base(game)
         {
+            Handle = handle;
+            Info = info;
         }
 
         public override void QueueError(string message)
@@ -35,7 +42,27 @@ namespace AW2.Net.Connections
 
         public override void Send(Message message)
         {
-            throw new NotImplementedException();
+            if (IsDisposed) return;
+            switch (message.SendType)
+            {
+                case MessageSendType.TCP: 
+                    Log.Write($"TODO: Send reliable {message.Type}");
+                    break;
+                case MessageSendType.UDP:
+                    Log.Write($"TODO: Send unreliable {message.Type}");
+                    break;
+                default: throw new MessageException("Unknown send type " + message.SendType);
+            }
+        }
+
+        /// <summary>
+        /// Performs the actual disposing.
+        /// </summary>
+        /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
+        override protected void DisposeImpl(bool error)
+        {
+            SteamNetworkingSockets.CloseConnection(Handle, 0, "Disposed", true);
+            DisposeId();
         }
     }
 }

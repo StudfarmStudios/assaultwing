@@ -1,6 +1,6 @@
-using System.Net.Sockets;
 using AW2.Core;
 using AW2.Net.ConnectionUtils;
+using Steamworks;
 
 namespace AW2.Net.Connections
 {
@@ -14,11 +14,17 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Creates a new connection to a game client.
         /// </summary>
-        public GameClientConnectionSteam(AssaultWingCore game)
-            : base(game)
+        public GameClientConnectionSteam(AssaultWingCore game, HSteamNetConnection handle, SteamNetConnectionInfo_t info)
+            : base(game, handle, info)
         {
-            Name = string.Format("Game Client {0}");
+            Name = $"Game Client {ID}";
             ConnectionStatus = new GameClientStatus();
+        }
+
+        protected override void DisposeImpl(bool error)
+        {
+            Game.NetworkEngine.DropClient(this);
+            base.DisposeImpl(error);
         }
     }
 }

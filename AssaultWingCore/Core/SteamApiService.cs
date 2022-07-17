@@ -3,9 +3,43 @@ using Steamworks;
 
 namespace AW2.Core
 {
+
   public class SteamApiService : IDisposable
   {
-    private List<IDisposable> callbacks = new List<IDisposable>();
+    public class CallbackBundleKey {};
+
+    interface ICallbackBundle<out T> : IDisposable where T : CallbackBundleKey {}
+
+    public class CallbackBundle<T> : ICallbackBundle<T> where T : CallbackBundleKey, new() {
+      private List<IDisposable> Callbacks = new List<IDisposable>();
+      public bool Disposed => Callbacks.Count == 0;
+      public static readonly CallbackBundle<T> Bundle = new CallbackBundle<T>();
+
+      public void Add<C>(Callback<C> callback) {
+        Callbacks.Add(callback);
+      }
+
+      public void Dispose() {
+        var callbacks = Callbacks;
+        Callbacks.Clear();
+        foreach (var cb in callbacks) {
+          cb.Dispose();
+        }
+      }
+    };
+
+    private Dictionary<Type, ICallbackBundle<CallbackBundleKey>> CallbackBundles = new Dictionary<Type, ICallbackBundle<CallbackBundleKey>>();
+
+    CallbackBundle<T> GetCallbackBundle<T>() where T : CallbackBundleKey, new() {
+        var bundle = CallbackBundle<T>.Bundle;
+        if (!CallbackBundles.ContainsKey(typeof(T))) {
+          CallbackBundles.Add(typeof(T), bundle);
+        }
+        return bundle;
+    }
+
+    // public delegate string SteamNetworkConnecting(HSteamNetConnection conn, SteamNetConnectionInfo_t info);
+
     public bool Initialized { get; private set; }
 
     public SteamApiService()
@@ -13,8 +47,7 @@ namespace AW2.Core
       InitializeSteamApi();
       SetupCallbacks();
     }
-    protected Callback<GameOverlayActivated_t> gameOverlayActivatedCallback;
-    private SteamAPIWarningMessageHook_t steamAPIWarningMessageHook;
+    private SteamAPIWarningMessageHook_t? steamAPIWarningMessageHook;
 
     private static void DebugTextHook(int severity, System.Text.StringBuilder message)
     {
@@ -44,10 +77,16 @@ namespace AW2.Core
       }
     }
 
+    public void Callback<K, T>(Callback<T>.DispatchDelegate func) where K : CallbackBundleKey, new() {
+      GetCallbackBundle<K>().Add(Callback<T>.Create(func));
+    }
+
+    private class DebugLoggingBundle : CallbackBundleKey {};
+
     private void SetupCallbacks()
     {
-      callbacks.Add(Callback<GameOverlayActivated_t>.Create(OnGameOverlayActivated));
-      callbacks.Add(Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnSteamNetConnectionStatusChanged));
+      Callback<DebugLoggingBundle, GameOverlayActivated_t>(LogGameOverlayActivated);
+      Callback<DebugLoggingBundle, SteamNetConnectionStatusChangedCallback_t>(LogSteamNetConnectionStatusChanged);
     }
 
     public string UserNick
@@ -55,26 +94,23 @@ namespace AW2.Core
       get { return SteamFriends.GetPersonaName(); }
     }
 
-    private void OnGameOverlayActivated(GameOverlayActivated_t callback)
+    private void LogGameOverlayActivated(GameOverlayActivated_t callback)
     {
-      if (callback.m_bActive != 0)
-      {
-        Log.Write("Steam Overlay has been activated");
-      }
-      else
-      {
-        Log.Write("Steam Overlay has been closed");
-      }
+      Log.Write($"Steam Overlay: {callback.m_bActive}");
     }
 
-    void OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status) {
-      Log.Write($"OnSteamNetConnectionStatusChanged: oldState:{status.m_eOldState}, conn: {status.m_hConn}, info: {status.m_info}");
-      SteamNetworkingSockets.CloseConnection(status.m_hConn, 0, "Not listening", false);
+    void LogSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status) {
+      Log.Write($"OnSteamNetConnectionStatusChanged: oldState:{status.m_eOldState}, conn: {status.m_hConn}, addrRemote:{Steam.IpAddrToString(status.m_info.m_addrRemote)}, endReason: {status.m_info.m_eEndReason}, state: {status.m_info.m_eState}, identityRemote: {Steam.IdentityToString(status.m_info.m_identityRemote)}, connDescription: {status.m_info.m_szConnectionDescription}, endDebug: {status.m_info.m_szEndDebug}");
     }    
+
 
     public void Dispose()
     {
       Initialized = false;
+      var bundles = CallbackBundles;
+      foreach (var b in bundles) {
+        b.Value.Dispose();
+      }
       SteamAPI.Shutdown();
       Log.Write("SteamAPI.Shutdown()");
     }

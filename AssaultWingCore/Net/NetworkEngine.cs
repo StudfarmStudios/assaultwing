@@ -80,7 +80,7 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot drop client in mode " + Game.NetworkMode);
 
             if (IsRemovedClientConnection(connection)) return;
-            if (GameClientConnections.Contains(connection)) {
+            if (!GameClientConnections.Contains(connection)) {
                 Log.Write($"DropClient called for unknown client connection {connection.Name}");
                 return;
             }

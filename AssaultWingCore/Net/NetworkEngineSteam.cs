@@ -41,7 +41,7 @@ namespace AW2.Net
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
         /// </summary>
-        private List<GameClientConnectionSteam> _removedClientConnections;
+        private List<GameClientConnectionSteam> _removedClientConnections = new List<GameClientConnectionSteam>();
 
         /// <summary>
         /// Unlike the old code, don't encode any identifiable information. Just a random GUID.

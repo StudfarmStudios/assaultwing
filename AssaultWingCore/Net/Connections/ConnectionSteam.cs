@@ -1,6 +1,8 @@
 using AW2.Core;
 using Steamworks;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
+using System.Runtime.InteropServices;
 
 namespace AW2.Net.Connections
 {
@@ -25,6 +27,11 @@ namespace AW2.Net.Connections
     /// </remarks>
     public abstract class ConnectionSteam : ConnectionBase, IDisposable
     {
+        private const int BUFFER_LENGTH = 65536;
+
+        private readonly byte[] Buffer = new byte[BUFFER_LENGTH];
+        private GCHandle PinnedBuffer;
+
         public HSteamNetConnection Handle { get; init; }
         public SteamNetConnectionInfo_t Info { get; set; }
 
@@ -33,6 +40,7 @@ namespace AW2.Net.Connections
         {
             Handle = handle;
             Info = info;
+            PinnedBuffer = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
         }
 
         public override void QueueError(string message)
@@ -43,15 +51,43 @@ namespace AW2.Net.Connections
         public override void Send(Message message)
         {
             if (IsDisposed) return;
+
+            // TODO: Consider implementing a stream to write directly to memory allocated by Steam to avoid copying
+            // Some background on how this could work maybe 
+            // https://github.com/rlabrecque/Steamworks.NET/issues/388
+            // https://github.com/rlabrecque/Steamworks.NET/issues/411
+            
+            var steamMessageIntPtr = SteamNetworkingUtils.AllocateMessage(0);
+            //SteamNetworkingMessage_t steamMessage = SteamNetworkingMessage_t.FromIntPtr(steamMessageIntPtr);
+            //steamMessage.m_pData = (IntPtr)PinnedBuffer.AddrOfPinnedObject();
+            
+
+            var writer = NetworkBinaryWriter.Create(new MemoryStream(Buffer));
+            message.Serialize(writer);
+            writer.GetBaseStream().Flush();
+            //steamMessage.m_cbSize = (uint)writer.GetBaseStream().Position;
+            //steamMessage.m_conn = Handle;
+
+            int flags;
             switch (message.SendType)
             {
-                case MessageSendType.TCP: 
-                    Log.Write($"TODO: Send reliable {message.Type}");
+                case MessageSendType.TCP:
+                    flags = Constants.k_nSteamNetworkingSend_Reliable;
                     break;
                 case MessageSendType.UDP:
-                    Log.Write($"TODO: Send unreliable {message.Type}");
+                    flags = Constants.k_nSteamNetworkingSend_UnreliableNoDelay | Constants.k_nSteamNetworkingSend_UnreliableNoNagle;
                     break;
                 default: throw new MessageException("Unknown send type " + message.SendType);
+            }
+            
+            var size = writer.GetBaseStream().Position;
+            long messageNumber;
+            var result = SteamNetworkingSockets.SendMessageToConnection(Handle, (IntPtr)PinnedBuffer.AddrOfPinnedObject(), (uint)size, flags, out messageNumber);
+
+            if (result != EResult.k_EResultOK) {
+                Log.Write($"Error {result} sending message {message.Type} flags:{flags} num:{messageNumber} size:{size}");
+            } else {
+                // Log.Write($"Sending message {message.Type} flags:{flags} num:{messageNumber} size:{size}");
             }
         }
 
@@ -63,6 +99,7 @@ namespace AW2.Net.Connections
         {
             SteamNetworkingSockets.CloseConnection(Handle, 0, "Disposed", true);
             DisposeId();
+            PinnedBuffer.Free();
         }
     }
 }

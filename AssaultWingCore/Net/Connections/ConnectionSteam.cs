@@ -25,17 +25,19 @@ namespace AW2.Net.Connections
     /// 
     /// This class is thread safe.
     /// </remarks>
-    public abstract class ConnectionSteam : ConnectionBase, IDisposable
+    public class ConnectionSteam : ConnectionBase, IDisposable
     {
         private const int BUFFER_LENGTH = 65536;
 
         private readonly byte[] Buffer = new byte[BUFFER_LENGTH];
         private GCHandle PinnedBuffer;
+        
+        private readonly IntPtr[] ReceiveBuffers = new IntPtr[16];
 
         public HSteamNetConnection Handle { get; init; }
         public SteamNetConnectionInfo_t Info { get; set; }
 
-        protected ConnectionSteam(AssaultWingCore game, HSteamNetConnection handle, SteamNetConnectionInfo_t info)
+        public ConnectionSteam(AssaultWingCore game, HSteamNetConnection handle, SteamNetConnectionInfo_t info)
             : base(game)
         {
             Handle = handle;
@@ -46,6 +48,30 @@ namespace AW2.Net.Connections
         public override void QueueError(string message)
         {
             throw new NotImplementedException();
+        }
+
+        public void ReceiveMessages() {
+
+            int messageCount = SteamNetworkingSockets.ReceiveMessagesOnConnection(Handle, ReceiveBuffers, ReceiveBuffers.Length);
+            for (int i = 0; i < messageCount; i++)
+            {
+                try
+                {
+                    SteamNetworkingMessage_t steamMessage = Marshal.PtrToStructure<SteamNetworkingMessage_t>(ReceiveBuffers[i]);
+                    byte[] messageBytes = new byte[steamMessage.m_cbSize];
+                    Marshal.Copy(steamMessage.m_pData, messageBytes, 0, messageBytes.Length);
+                    var message = Message.Deserialize(messageBytes, Game.GameTime.TotalRealTime);
+                    if (message != null) {
+                        message.ConnectionID = ID;
+                        Log.Write($"Received message {message.Type} flags:{steamMessage.m_nFlags} num:{steamMessage.m_nMessageNumber} size:{steamMessage.m_cbSize}");
+                        HandleMessage(message);
+                    }
+                }
+                finally
+                {
+                    Marshal.DestroyStructure<SteamNetworkingMessage_t>(ReceiveBuffers[i]);
+                }
+            }
         }
 
         public override void Send(Message message)

@@ -236,5 +236,33 @@ namespace AW2.Net
         {
             throw new NotImplementedException();
         }
+
+        public override void Update()
+        {
+            foreach (var conn in AllConnections) {
+                conn.ReceiveMessages();
+            }
+            
+            HandleClientState();
+
+            foreach (var conn in AllConnections) {
+                conn.PingInfo.Update(); // send pings, they are unreliable and we don't use Nagle for unreliables, so they should be sent quickly
+            }
+
+            // enumerate over a copy to allow adding MessageHandlers during enumeration
+            foreach (var handler in MessageHandlers.ToList()) {
+                if (!handler.Disposed) handler.HandleMessages();
+            }
+
+            RemoveDisposedMessageHandlers();
+
+            // TODO: Assuming we don't need connection handshaking like the NetworkEngineRaw does.
+            // Assuming the Steam Network code keeps the connection alive.
+
+            DetectSilentConnections();
+
+            RemoveClosedConnections();
+            PurgeUnhandledMessages();
+        }
     }
 }

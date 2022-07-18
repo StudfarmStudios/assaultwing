@@ -40,6 +40,11 @@ namespace AW2.Net
         }
     
         /// <summary>
+        /// Handler of connection results for client that is connecting to a game server.
+        /// </summary>
+        protected Action<IResult<Connection>>? StartClientConnectionHandler { get; set; }
+
+        /// <summary>
         /// The handlers of network messages.
         /// </summary>
         public List<MessageHandlerBase> MessageHandlers { get; private set; }
@@ -279,5 +284,6 @@ namespace AW2.Net
             conn.Send(new ArenaFinishMessage());
             conn.ConnectionStatus.CurrentArenaName = null;
         }
+
     }
 }

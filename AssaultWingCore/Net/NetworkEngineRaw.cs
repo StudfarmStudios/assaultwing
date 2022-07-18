@@ -57,11 +57,6 @@ namespace AW2.Net
         /// </summary>
         private List<GameClientConnectionRaw> _removedClientConnections;
 
-        /// <summary>
-        /// Handler of connection results for client that is connecting to a game server.
-        /// </summary>
-        private Action<IResult<Connection>> _startClientConnectionHandler;
-
         private ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>> _udpMessagesToHandle;
         private ConnectionAttemptListener _connectionAttemptListener;
 
@@ -158,7 +153,7 @@ namespace AW2.Net
                     $"Some of these are not compatible '{endPointsString}'");
             }
             Log.Write($"Client starts connecting to {endPointsString}");
-            _startClientConnectionHandler = connectionHandler;
+            StartClientConnectionHandler = connectionHandler;
             ConnectionRaw.Connect(game, rawEndPoints);
         }
 
@@ -314,7 +309,7 @@ namespace AW2.Net
                 _GameServerConnection = conn;
             }
 
-            _startClientConnectionHandler(result);
+            StartClientConnectionHandler(result);
         }
 
 

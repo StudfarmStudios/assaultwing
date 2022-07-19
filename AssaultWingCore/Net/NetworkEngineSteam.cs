@@ -67,7 +67,10 @@ namespace AW2.Net
 
         public override void DoClientUdpHandshake(GameServerHandshakeRequestTCP mess)
         {
-            throw new NotImplementedException();
+            // Here in the original network engine the servers sends UDP packets towards the
+            // probable ports where the client upstream connection might be coming from to
+            // increase chances if the NAT busting / UPnP working. I don't think we need
+            // it with Steam networking.
         }
 
         public override bool IsRemovedClientConnection(GameClientConnection connection) {
@@ -92,7 +95,9 @@ namespace AW2.Net
 
         public override string GetConnectionAddressString(int connectionID)
         {
-            throw new NotImplementedException();
+            var result = AllConnections.First(conn => conn.ID == connectionID);
+            if (result == null) return $"Unknown connection {connectionID}";
+            return Steam.IdentityToString(result.Info.m_identityRemote); // TODO: Not sure if this is best thing to print here
         }
 
         override public GameClientConnectionSteam GetGameClientConnection(int connectionID)

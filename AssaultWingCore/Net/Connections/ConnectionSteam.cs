@@ -47,7 +47,8 @@ namespace AW2.Net.Connections
 
         public override void QueueError(string message)
         {
-            throw new NotImplementedException();
+            Log.Write($"Closing connection {Name} due to error: {message}");
+            DisposeImpl(true);
         }
 
         public void ReceiveMessages() {

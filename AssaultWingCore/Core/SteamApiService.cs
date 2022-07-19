@@ -101,8 +101,12 @@ namespace AW2.Core
 
     void LogSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status) {
       Log.Write($"OnSteamNetConnectionStatusChanged: oldState:{status.m_eOldState}, conn: {status.m_hConn}, addrRemote:{Steam.IpAddrToString(status.m_info.m_addrRemote)}, endReason: {status.m_info.m_eEndReason}, state: {status.m_info.m_eState}, identityRemote: {Steam.IdentityToString(status.m_info.m_identityRemote)}, connDescription: {status.m_info.m_szConnectionDescription}, endDebug: {status.m_info.m_szEndDebug}");
-    }    
+    }
 
+    public void DisposeCallbackBundle<T>() where T : CallbackBundleKey {
+      var t = typeof(T);
+      CallbackBundles.GetValueOrDefault(t)?.Dispose();
+    }
 
     public void Dispose()
     {

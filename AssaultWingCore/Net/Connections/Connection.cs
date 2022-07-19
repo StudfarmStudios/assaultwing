@@ -32,7 +32,7 @@ namespace AW2.Net.Connections
         public int ID { get; }
         public void Send(Message message);
 
-        public PingInfo PingInfo { get; }
+        public PingInfo PingInfo { get; init; }
 
         /// <summary>
         /// A meta-value for <see cref="ID"/> denoting an invalid value.

@@ -25,12 +25,14 @@ namespace AW2.Net.Connections
     /// 
     /// This class is thread safe.
     /// </remarks>
-    public class ConnectionSteam : ConnectionBase, IDisposable
+    abstract public class ConnectionSteam : ConnectionBase, IDisposable
     {
         private const int BUFFER_LENGTH = 65536;
 
         private readonly byte[] Buffer = new byte[BUFFER_LENGTH];
         private GCHandle PinnedBuffer;
+
+        private readonly List<string> Errors = new List<string>();
         
         private readonly IntPtr[] ReceiveBuffers = new IntPtr[16];
 
@@ -47,8 +49,17 @@ namespace AW2.Net.Connections
 
         public override void QueueError(string message)
         {
-            Log.Write($"Closing connection {Name} due to error: {message}");
-            DisposeImpl(true);
+            Errors.Add(message);
+        }
+
+        public void HandleErrors() {
+            foreach (var e in Errors) {
+                Log.Write($"Closing connection {Name} due to error: {e}");
+            }
+
+            if (Errors.Count > 0) {
+                Dispose(true);
+            }
         }
 
         public void ReceiveMessages() {
@@ -124,7 +135,7 @@ namespace AW2.Net.Connections
         /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
         override protected void DisposeImpl(bool error)
         {
-            SteamNetworkingSockets.CloseConnection(Handle, 0, "Disposed", true);
+            SteamNetworkingSockets.CloseConnection(Handle, 0, "Connection disposed by peer", true);
             DisposeId();
             PinnedBuffer.Free();
         }

@@ -50,9 +50,11 @@ namespace AW2.Net
 
         public override IEnumerable<GameClientConnection> GameClientConnections { get { return _GameClientConnections; } }
 
-        private ConnectionSteam? _GameServerConnection;
+        private GameServerConnectionSteam? _GameServerConnection;
 
         public override Connection GameServerConnection { get { return _GameServerConnection; } }
+
+        private readonly List<HSteamListenSocket> ListenSockets = new List<HSteamListenSocket>();
 
         override protected IEnumerable<ConnectionSteam> AllConnections
         {
@@ -151,8 +153,8 @@ namespace AW2.Net
             SteamNetworkingIPAddr portOnlyAddr = new SteamNetworkingIPAddr();
             portOnlyAddr.Clear();
             portOnlyAddr.m_port = port;
-            SteamNetworkingSockets.CreateListenSocketIP(ref portOnlyAddr, 0, new SteamNetworkingConfigValue_t[]{});
-            SteamNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{});
+            ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketIP(ref portOnlyAddr, 0, new SteamNetworkingConfigValue_t[]{}));
+            ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{}));
         }
 
         private Callback<T>.DispatchDelegate LogCallbackError<T>(Callback<T>.DispatchDelegate action) {
@@ -177,7 +179,7 @@ namespace AW2.Net
             switch(status.m_info.m_eState) {
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
                     if (_GameServerConnection == null && handler != null) {
-                        _GameServerConnection = new ConnectionSteam(Game, status.m_hConn, status.m_info);
+                        _GameServerConnection = new GameServerConnectionSteam(Game, status.m_hConn, status.m_info);
                         var result = new Result<Connection>(_GameServerConnection);
                         StartClientConnectionHandler = null;
                         handler(result);
@@ -201,8 +203,7 @@ namespace AW2.Net
                     } else {
                         Log.Write($"Terminal error state for server connection, closing. state: {status.m_info.m_eState}, identity: {identity}");
                         SteamNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Server connection lost", true);
-                        _GameServerConnection?.Dispose();
-                        _GameServerConnection = null;
+                        _GameServerConnection.QueueError("Server connection lost");
                     }
                 break;
          
@@ -254,7 +255,7 @@ namespace AW2.Net
                         SteamNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Unknown connection closed", true);
                     } else {
                         Log.Write($"Terminal error state for client connection, closing {connection.Name}. state: {status.m_info.m_eState}, identity: {identity}");
-                        connection.Dispose();
+                        connection.QueueError("Client connection lost");
                     }
                 break;
          
@@ -269,8 +270,9 @@ namespace AW2.Net
                 _GameClientConnections.Remove(connection);
             }
             _removedClientConnections.Clear();
-            if (_GameServerConnection != null && _GameServerConnection.IsDisposed)
+            if (_GameServerConnection != null && _GameServerConnection.IsDisposed) {
                 _GameServerConnection = null;
+            }
             
             ProcessDisposedConnections();
 
@@ -280,12 +282,39 @@ namespace AW2.Net
 
         public override void StopClient()
         {
-            throw new NotImplementedException();
+            Log.Write("Client closes connection");
+            SteamApiService.DisposeCallbackBundle<ClientCallbacks>();
+            MessageHandlers.Clear();
+            DisposeConnections();
         }
 
         public override void StopServer()
         {
-            throw new NotImplementedException();
+            Log.Write("Stopping game server");
+
+
+            foreach (var s in ListenSockets) {
+                SteamNetworkingSockets.CloseListenSocket(s);
+            }
+
+            SteamApiService.DisposeCallbackBundle<ServerCallbacks>();
+            MessageHandlers.Clear();
+            var shutdownNotice = new ConnectionClosingMessage { Info = "server shut down" };
+            foreach (var conn in GameClientConnections) conn.Send(shutdownNotice);
+            DisposeConnections();
+        }
+
+        private void DisposeConnections()
+        {
+            foreach (var conn in AllConnections) conn.Dispose();
+            _GameClientConnections.Clear();
+            _GameServerConnection = null;
+        }
+
+        public override void Dispose()
+        {
+            DisposeConnections();
+            base.Dispose();
         }
 
         public override void Update()
@@ -311,6 +340,8 @@ namespace AW2.Net
             // Assuming the Steam Network code keeps the connection alive.
 
             DetectSilentConnections();
+
+            foreach (var conn in AllConnections) conn.HandleErrors();
 
             RemoveClosedConnections();
             PurgeUnhandledMessages();

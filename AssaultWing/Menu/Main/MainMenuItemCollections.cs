@@ -20,14 +20,12 @@ namespace AW2.Menu.Main
     {
         private const string NO_SERVERS_FOUND = "No servers found";
         private const string INCOMPATIBLE_SERVERS_FOUND = "Some incompatible servers";
-        private static readonly TimeSpan GAME_SERVER_LIST_REPLY_TIMEOUT = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan GAME_SERVER_LIST_REQUEST_INTERVAL = TimeSpan.FromSeconds(15);
 
         private MainMenuComponent _menuComponent;
         private MenuEngineImpl MenuEngine { get { return _menuComponent.MenuEngine; } }
         private AssaultWing<ClientEvent> Game { get { return MenuEngine.Game; } }
         private TimeSpan _lastNetworkItemsUpdate;
-        private TimeSpan? _gameServerListReplyDeadline;
         private EditableText _loginName;
         private EditableText _loginPassword;
 

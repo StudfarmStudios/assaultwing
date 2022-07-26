@@ -20,6 +20,11 @@ namespace AW2.Menu.Main
         /// </summary>
         public Action Update { get; set; }
 
+         /// <summary>
+        /// Called when menu items enter inactive state and can release some resources.
+        /// </summary>
+        public Action Deactivate { get; set; }
+
         public MainMenuItemCollection(string name)
         {
             if (name == null) throw new ArgumentNullException("Null or empty menu mode name");

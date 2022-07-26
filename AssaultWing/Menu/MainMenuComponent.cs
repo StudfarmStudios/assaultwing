@@ -38,8 +38,10 @@ namespace AW2.Menu
                 base.Active = value;
                 if (value)
                 {
-                    ResetItems();
+                    PopulateItems();
                     MenuEngine.Game.Settings.ToFile();
+                } else {
+                    ClearItems();
                 }
             }
         }
@@ -84,6 +86,8 @@ namespace AW2.Menu
                 ApplyGraphicsSettings();
                 ApplyControlsSettings();
             }
+            // TODO: Peter: Move other side effects above to the Deactivate()
+            _currentItemsHistory.Peek().Item1.Deactivate();
             _currentItemsHistory.Pop();
             MenuEngine.Game.SoundEngine.PlaySound("menuChangeItem");
         }
@@ -94,6 +98,7 @@ namespace AW2.Menu
             if (CurrentItems != ItemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
                 throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode + " in " + CurrentItems.Name);
             _commonCallbacks.Update();
+            if (!Active) return; // The callbacks / actions can deactivate this
             foreach (var menuItem in CurrentItems) menuItem.Update();
             CurrentItems.Update();
         }
@@ -158,9 +163,16 @@ namespace AW2.Menu
             spriteBatch.DrawString(Content.FontBig, text, textStartPos + new Vector2(260, 6), Color.YellowGreen);
         }
 
-        private void ResetItems()
-        {
+        private void ClearItems() {
+            foreach (var tuple in _currentItemsHistory) {
+                var deactivate = tuple.Item1.Deactivate;
+                if (deactivate != null) deactivate();
+            }
             _currentItemsHistory.Clear();
+        }
+
+        private void PopulateItems()
+        {
             PushItems(ItemCollections.StartItems);
         }
 

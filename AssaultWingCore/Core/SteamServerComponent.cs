@@ -8,6 +8,9 @@ namespace AW2.Core
     // To keep the callback registrations live
     private List<IDisposable> callbacks = new List<IDisposable>();
 
+    private static readonly TimeSpan GAME_SERVER_DETAILS_UPDATE_INTERVAL = TimeSpan.FromSeconds(30);
+    private TimeSpan _lastNetworkItemsUpdate;
+
     private bool Initialized;
 
     public SteamServerComponent(AssaultWingCore game, int updateOrder)
@@ -42,6 +45,7 @@ namespace AW2.Core
   		SteamGameServer.SetModDir("AssaultWing");
 		  SteamGameServer.SetProduct("Assault Wing");
 		  SteamGameServer.SetGameDescription("A fast-paced physics-based shooter for many players over the internet.");
+      SendUpdatedServerDetailsToSteam();
 
       if (Initialized) {
         // TODO: Support for server accounts? (LogOn and not LogOnAnonymous)
@@ -121,13 +125,21 @@ namespace AW2.Core
     }
 
 
-    void SendUpdatedServerDetailsToSteam()
+    public void SendUpdatedServerDetailsToSteam()
     {
-      SteamGameServer.SetMaxPlayerCount(64); // TODO: Max players
+      if (!Initialized)
+      {
+        return;
+      }
+
+      _lastNetworkItemsUpdate = Game.GameTime.TotalRealTime;
+
+      SteamGameServer.SetServerName(Game.Settings.Net.GameServerName);
+      SteamGameServer.SetMapName(Game.SelectedArenaName);
+      SteamGameServer.SetKeyValue("GameplayMode", Game.DataEngine.GameplayMode.Name);
+      SteamGameServer.SetBotPlayerCount(Game.DataEngine.Minions.Count());
+      SteamGameServer.SetMaxPlayerCount(Game.Settings.Net.GameServerMaxPlayers);
       SteamGameServer.SetPasswordProtected(false);
-      SteamGameServer.SetServerName("TODO server");
-      SteamGameServer.SetBotPlayerCount(0); // optional, defaults to zero
-      SteamGameServer.SetMapName("TODO map");
     }
 
     public override void Update()
@@ -138,6 +150,10 @@ namespace AW2.Core
       }
 
       GameServer.RunCallbacks();
+
+      if (_lastNetworkItemsUpdate + GAME_SERVER_DETAILS_UPDATE_INTERVAL <= Game.GameTime.TotalRealTime) {
+        SendUpdatedServerDetailsToSteam(); // periodically publish things like player count
+      }
     }
 
     public override void Dispose()

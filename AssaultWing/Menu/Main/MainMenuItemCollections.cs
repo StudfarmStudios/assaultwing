@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
@@ -6,6 +6,7 @@ using AW2.Core.OverlayComponents;
 using AW2.Helpers;
 using AW2.Settings;
 using AW2.UI;
+using AW2.Net;
 
 namespace AW2.Menu.Main
 {
@@ -93,10 +94,10 @@ namespace AW2.Menu.Main
             Game.SoundEngine.PlaySound("menuChangeItem");
         }
 
-        public void Click_ConnectToGameServer(string gameServerManagementID, string shortServerName)
+        public void Click_ConnectToGameServer(GameServerInfo server)
         {
             // TODO: Peter: Steam network, connecting to selected server
-            Game.ShowConnectingToGameServerDialog(shortServerName);
+            Game.ShowConnectingToGameServerDialog(server.Name);
         }
 
         private void EnsureStandaloneMessageHandlersActivated()
@@ -202,17 +203,34 @@ namespace AW2.Menu.Main
         private void RequestGameServerList()
         {
             var steamApiService = SteamApiService;
+            
             if (steamApiService != null && steamApiService.Initialized && SteamServerBrowser is null) {
-                Log.Write("Requesting server list");
-                SteamServerBrowser = new SteamServerBrowser();
+                SteamServerBrowser = new SteamServerBrowser(HandleSteamGameServer);
+            }
+
+            if (SteamServerBrowser is not null) {
                 SteamServerBrowser.RequestServerList();
             }
         }
 
-        private void HandleGameServerListReply(object mess)
+        private void HandleSteamGameServer(GameServerInfo server)
         {
-            // TODO: Peter: Steam network, connecting to selected server            
-        }
+            NetworkItems.RemoveAll(item => item.Name() == NO_SERVERS_FOUND);
+            if (server.AWVersion.IsCompatibleWith(MiscHelper.Version))
+            {
+                var shortServerName = server.Name.Substring(0, Math.Min(12, server.Name.Length));
+                var menuItemText = string.Format("Join {0}\t\x10[{1}{2}/{3}]", shortServerName, server.CurrentPlayers,
+                    server.WaitingPlayers == 0 ? "" : "+" + server.WaitingPlayers, server.MaxPlayers);
+                NetworkItems.Insert(1, new MainMenuItem(MenuEngine,
+                    () => menuItemText,
+                    () => Click_ConnectToGameServer(server)));
+                }
+            else
+            {
+                if (!NetworkItems.Any(item => item.Name() == INCOMPATIBLE_SERVERS_FOUND))
+                    NetworkItems.Insert(Math.Max(0, NetworkItems.Count - 2), new MainMenuItem(MenuEngine, () => INCOMPATIBLE_SERVERS_FOUND, () => { }));
+            }
+        }      
 
         private MainMenuItemCollection GetControlsItems()
         {

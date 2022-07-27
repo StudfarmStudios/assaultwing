@@ -1,54 +1,70 @@
 using AW2.Helpers;
 using Steamworks;
+using AW2.Net;
 
 namespace AW2.Core
 {
 
     public class SteamServerBrowser : IDisposable
     {
+        public delegate void HandleServerDelegate(GameServerInfo info);
         private readonly AppId_t AppId;
+
+        private readonly HandleServerDelegate HandleServer;
 
         private ISteamMatchmakingServerListResponse ServerListResponse { get; init; }
 
         private HServerListRequest? ServerListRequest;
 
-        public SteamServerBrowser()
+        public SteamServerBrowser(HandleServerDelegate handleServer)
         {
+            HandleServer = handleServer;
             ServerListResponse = new ISteamMatchmakingServerListResponse(ServerResponded, ServerFailedToRespond, RefreshComplete);
             AppId = SteamUtils.GetAppID();
         }
 
         private void ServerResponded(HServerListRequest request, int serverIndex)
         {
-            Log.Write($"ServerResponded {serverIndex}");
+            var server = GameServerInfoForRequest(request, serverIndex);
+            Log.Write($"ServerResponded {server}");
+            HandleServer(server);
         }
 
         private void ServerFailedToRespond(HServerListRequest request, int serverIndex)
         {
-            Log.Write($"ServerFailedToRespond {serverIndex}");
-            var details = SteamMatchmakingServers.GetServerDetails(request, serverIndex);
-            Log.Write($"server details {serverIndex} version:{details.m_nServerVersion} map:{details.GetMap()} name:{details.GetServerName()} addr:{details.m_NetAdr.GetConnectionAddressString()}");
+            var server = GameServerInfoForRequest(request, serverIndex);
+            Log.Write($"ServerFailedToRespond {server}");
+            HandleServer(server);
         }
 
         private void RefreshComplete(HServerListRequest request, EMatchMakingServerResponse response)
         {
-            Log.Write($"RefreshComplete {response}");
-            Log.Write($"GetServerCount {SteamMatchmakingServers.GetServerCount(request)}");
+            Log.Write($"RefreshComplete {response} GetServerCount {SteamMatchmakingServers.GetServerCount(request)}");
+        }
+
+        public GameServerInfo GameServerInfoForRequest(HServerListRequest request, int serverIndex) {
+            return new GameServerInfo {
+                ServerIndex = serverIndex,
+                SteamDetails = SteamMatchmakingServers.GetServerDetails(request, serverIndex),
+                AWVersion = MiscHelper.Version,
+            };
         }
 
         public void RequestServerList()
         {
             Cancel();
+            Log.Write("RequestInternetServerList");
             ServerListRequest = SteamMatchmakingServers.RequestInternetServerList(AppId, new MatchMakingKeyValuePair_t[] { }, 0, ServerListResponse);
         }
 
         public void Cancel()
         {
-            if (ServerListRequest is not null)
+            var query = ServerListRequest;
+            if (query is not null)
             {
-                var query = ServerListRequest;
                 ServerListRequest = null;
-                SteamMatchmakingServers.CancelQuery(ServerListRequest.Value);
+                Log.Write("Cancel ServerListRequest");
+                SteamMatchmakingServers.CancelQuery(query.Value);
             }
         }
 

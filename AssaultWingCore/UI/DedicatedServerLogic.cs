@@ -11,21 +11,24 @@ namespace AW2.UI
         private const int GAMESTATE_INITIALIZING = 0;
         private const int GAMESTATE_GAMEPLAY = 1;
 
+        private SteamServerComponent SteamServerComponent {get; init;}
+
         public DedicatedServerLogic(AssaultWing<E> game)
             : base(game)
         {
             var dedicatedServer = new DedicatedServer(game, 13);
-            var steamServerComponent = new SteamServerComponent(game, 0);
-            game.Components.Add(steamServerComponent);
+            SteamServerComponent = new SteamServerComponent(game, 0);
+            game.Components.Add(SteamServerComponent);
             game.Components.Add(dedicatedServer);
             dedicatedServer.Enabled = true;
-            steamServerComponent.Enabled = true;
+            SteamServerComponent.Enabled = true;
         }
 
         public override void StartArena()
         {
             Game.StartArenaBase();
             GameState = GAMESTATE_GAMEPLAY;
+            SteamServerComponent.SendUpdatedServerDetailsToSteam();
         }
 
         public override void FinishArena()

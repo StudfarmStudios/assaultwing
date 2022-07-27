@@ -1,13 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Core.OverlayComponents;
-using AW2.Game;
 using AW2.Helpers;
-using AW2.Net.MessageHandling;
 using AW2.Settings;
 using AW2.UI;
 
@@ -49,6 +45,9 @@ namespace AW2.Menu.Main
         /// </summary>
         public MainMenuItemCollection SetupItems { get; private set; }
 
+        private SteamApiService SteamApiService => Game.Services.GetService<SteamApiService>();
+        private SteamServerBrowser? SteamServerBrowser { get; set; }
+
         private string InitialLoginName
         {
             get
@@ -68,6 +67,11 @@ namespace AW2.Menu.Main
             {
                 EnsureStandaloneMessageHandlersActivated();
                 RefreshNetworkItems();
+            };
+            NetworkItems.Deactivate = () =>
+            {
+                Log.Write("menu NetworkItems deactivate");
+                StopRefreshingNetworkItems();
             };
 
             InitializeSetupItems();
@@ -188,9 +192,21 @@ namespace AW2.Menu.Main
             RequestGameServerList();
         }
 
+        private void StopRefreshingNetworkItems() {
+            if (SteamServerBrowser is null) {
+                SteamServerBrowser.Dispose();
+                SteamServerBrowser = null;
+            }
+        }
+
         private void RequestGameServerList()
         {
-            // TODO: Peter: Steam network, connecting to selected server
+            var steamApiService = SteamApiService;
+            if (steamApiService != null && steamApiService.Initialized && SteamServerBrowser is null) {
+                Log.Write("Requesting server list");
+                SteamServerBrowser = new SteamServerBrowser();
+                SteamServerBrowser.RequestServerList();
+            }
         }
 
         private void HandleGameServerListReply(object mess)

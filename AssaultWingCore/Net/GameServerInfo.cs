@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿using AW2.Game.Logic;
 namespace AW2.Net
 {
     /// <summary>
@@ -7,16 +6,19 @@ namespace AW2.Net
     /// </summary>
     public class GameServerInfo
     {
-        public string Name { get; set; }
-        public int MaxPlayers { get; set; }
-        public int CurrentPlayers { get; set; }
-        public int WaitingPlayers { get; set; }
+        public string Name { get; init; }
 
-        /// <summary>
-        /// Identifier given by the management server.
-        /// </summary>
-        public string ManagementID { get; set; }
+        public string ArenaName {get; init; }
 
-        public Version AWVersion { get; set; }
+        public GameplayMode GameplayMode {get; init; }
+        public int MaxPlayers { get; init; }
+        public int CurrentPlayers { get; init; }
+        public int Bots { get; init; }
+
+        public int Ping { get; init; }
+
+        public int WaitingPlayers { get; init; }
+
+        public Version AWVersion { get; init; }
     }
 }

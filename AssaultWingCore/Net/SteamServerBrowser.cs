@@ -26,11 +26,14 @@ namespace AW2.Core
         private void ServerFailedToRespond(HServerListRequest request, int serverIndex)
         {
             Log.Write($"ServerFailedToRespond {serverIndex}");
+            var details = SteamMatchmakingServers.GetServerDetails(request, serverIndex);
+            Log.Write($"server details {serverIndex} version:{details.m_nServerVersion} map:{details.GetMap()} name:{details.GetServerName()} addr:{details.m_NetAdr.GetConnectionAddressString()}");
         }
 
         private void RefreshComplete(HServerListRequest request, EMatchMakingServerResponse response)
         {
             Log.Write($"RefreshComplete {response}");
+            Log.Write($"GetServerCount {SteamMatchmakingServers.GetServerCount(request)}");
         }
 
         public void RequestServerList()

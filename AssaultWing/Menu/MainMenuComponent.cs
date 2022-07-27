@@ -123,7 +123,6 @@ namespace AW2.Menu
             if (CurrentItems == ItemCollections.NetworkItems)
             {
                 DrawAdditionalMessageBox(view, spriteBatch);
-                DrawPilotLoginStatus(view, spriteBatch);
                 DrawScheduledBattleDisplay(view, spriteBatch);
             }
             var scrollUpPos = _pos - view + new Vector2(653, 260);
@@ -136,16 +135,6 @@ namespace AW2.Menu
         {
             var backgroundPos = _pos - view + new Vector2(440, 600);
             spriteBatch.Draw(MenuEngine.MenuContent.SmallStatusPaneTexture, backgroundPos, Color.White);
-        }
-
-        private void DrawPilotLoginStatus(Vector2 view, SpriteBatch spriteBatch)
-        {
-            var ballPos = _pos - view + new Vector2(790, 355);
-            var localPlayer = MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal);
-            var statusBall = localPlayer != null && localPlayer.StatsData.IsLoggedIn
-                ? MenuEngine.MenuContent.PlayerLoginStatusGreen
-                : MenuEngine.MenuContent.PlayerLoginStatusRed;
-            spriteBatch.Draw(statusBall, ballPos, Color.White);
         }
 
         private void DrawScheduledBattleDisplay(Vector2 view, SpriteBatch spriteBatch)

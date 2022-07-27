@@ -1,4 +1,6 @@
-﻿using AW2.Game.Logic;
+﻿using System;
+using AW2.Game.Logic;
+using Steamworks;
 namespace AW2.Net
 {
     /// <summary>
@@ -6,19 +8,28 @@ namespace AW2.Net
     /// </summary>
     public class GameServerInfo
     {
-        public string Name { get; init; }
+        public int ServerIndex {get; init;}
+        public gameserveritem_t SteamDetails { get; init; }
+        public string Name => SteamDetails.GetServerName();
 
-        public string ArenaName {get; init; }
+        public string ArenaName => SteamDetails.GetMap();
 
-        public GameplayMode GameplayMode {get; init; }
-        public int MaxPlayers { get; init; }
-        public int CurrentPlayers { get; init; }
-        public int Bots { get; init; }
+        public string GameplayMode => ""; // TODO: Peter: Server rules query?
 
-        public int Ping { get; init; }
+        public int MaxPlayers => SteamDetails.m_nMaxPlayers;
+        public int CurrentPlayers => SteamDetails.m_nPlayers;
+        public int Bots => SteamDetails.m_nBotPlayers;
 
-        public int WaitingPlayers { get; init; }
+        public int Ping => SteamDetails.m_nPing;
 
-        public Version AWVersion { get; init; }
+        public int WaitingPlayers { get; init; } // TODO: Peter: Server rules query?
+
+        public System.Version AWVersion { get; init; } // TODO: Peter: Server rules query?
+
+        override public string ToString() {
+            var details = SteamDetails;
+            return $"GameServerInfo index:{ServerIndex} steam version:{details.m_nServerVersion} map:{details.GetMap()} name:{details.GetServerName()} addr:{details.m_NetAdr.GetConnectionAddressString()}";
+        }
+
     }
 }

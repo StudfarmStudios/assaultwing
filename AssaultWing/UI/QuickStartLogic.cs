@@ -38,7 +38,7 @@ namespace AW2.UI
                     break;
                 case StateType.OpenBattlefrontMenu:
                     if (!MainMenuActive) break;
-                    MenuEngine.MainMenu.ItemCollections.Click_NetworkGame(loginPilots: false);
+                    MenuEngine.MainMenu.ItemCollections.Click_NetworkGame();
                     _state = StateType.UpdatePilotData;
                     break;
                 case StateType.UpdatePilotData:

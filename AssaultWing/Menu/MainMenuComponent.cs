@@ -77,8 +77,9 @@ namespace AW2.Menu
         private void PopItems()
         {
             if (_currentItemsHistory.Count == 1) return; // Already at top level.
-            if (CurrentItems == _itemCollections.LoginItems || CurrentItems == _itemCollections.SetupItems)
+            if (CurrentItems == _itemCollections.SetupItems) {
                 MenuEngine.Game.Settings.ToFile();
+            }
             if (_currentItemsHistory.Count == 2)
             {
                 // Returning to top level.

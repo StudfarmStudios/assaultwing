@@ -23,8 +23,6 @@ namespace AW2.Menu.Main
         private MenuEngineImpl MenuEngine { get { return _menuComponent.MenuEngine; } }
         private AssaultWing<ClientEvent> Game { get { return MenuEngine.Game; } }
         private TimeSpan _lastNetworkItemsUpdate;
-        private EditableText _loginName;
-        private EditableText _loginPassword;
 
         /// <summary>
         /// The very first menu when the game starts.
@@ -37,27 +35,12 @@ namespace AW2.Menu.Main
         public MainMenuItemCollection NetworkItems { get; private set; }
 
         /// <summary>
-        /// Menu for registered pilots.
-        /// </summary>
-        public MainMenuItemCollection LoginItems { get; private set; }
-
-        /// <summary>
         /// Menu for choosing general settings.
         /// </summary>
         public MainMenuItemCollection SetupItems { get; private set; }
 
         private SteamApiService SteamApiService => Game.Services.GetService<SteamApiService>();
         private SteamServerBrowser? SteamServerBrowser { get; set; }
-
-        private string InitialLoginName
-        {
-            get
-            {
-                return Game.DataEngine.LocalPlayer != null
-                    ? Game.DataEngine.LocalPlayer.Name
-                    : Game.Settings.Players.Player1.Name;
-            }
-        }
 
         public MainMenuItemCollections(MainMenuComponent menuComponent)
         {
@@ -85,7 +68,7 @@ namespace AW2.Menu.Main
             Game.RefreshGameSettings();
         }
 
-        public void Click_NetworkGame(bool loginPilots)
+        public void Click_NetworkGame()
         {
             Game.InitializePlayers(1);
             
@@ -110,7 +93,7 @@ namespace AW2.Menu.Main
         {
             StartItems = new MainMenuItemCollection("");
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", Click_LocalGame));
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", () => Click_NetworkGame(loginPilots: true)));
+            StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", () => Click_NetworkGame()));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
                 () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
@@ -173,14 +156,7 @@ namespace AW2.Menu.Main
             if (!force && _lastNetworkItemsUpdate + GAME_SERVER_LIST_REQUEST_INTERVAL > Game.GameTime.TotalRealTime) return;
             _lastNetworkItemsUpdate = Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
-            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Log in with Your Pilot",
-                () =>
-                {
-                    _loginName.Content = InitialLoginName;
-                    _menuComponent.PushItems(LoginItems);
-                }));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => NO_SERVERS_FOUND, () => { }));
-            NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Find More in Forums", () => Game.OpenURL("http://www.assaultwing.com/letsplay")));
             NetworkItems.Add(new MainMenuItem(MenuEngine, () => "Create a Server",
                 () =>
                 {
@@ -203,7 +179,7 @@ namespace AW2.Menu.Main
         private void RequestGameServerList()
         {
             var steamApiService = SteamApiService;
-            
+
             if (steamApiService != null && steamApiService.Initialized && SteamServerBrowser is null) {
                 SteamServerBrowser = new SteamServerBrowser(HandleSteamGameServer);
             }

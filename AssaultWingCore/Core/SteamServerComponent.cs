@@ -136,7 +136,8 @@ namespace AW2.Core
 
       SteamGameServer.SetServerName(Game.Settings.Net.GameServerName);
       SteamGameServer.SetMapName(Game.SelectedArenaName);
-      SteamGameServer.SetKeyValue("GameplayMode", Game.DataEngine.GameplayMode.Name);
+      SteamGameServer.SetKeyValue("GameplayMode", Game.DataEngine.GameplayMode?.Name ?? "");
+      SteamGameServer.SetKeyValue("WaitingPlayerCount", $"{Game.DataEngine.Spectators.Count - Game.DataEngine.Players.Count()}");
       SteamGameServer.SetBotPlayerCount(Game.DataEngine.Minions.Count());
       SteamGameServer.SetMaxPlayerCount(Game.Settings.Net.GameServerMaxPlayers);
       SteamGameServer.SetPasswordProtected(false);

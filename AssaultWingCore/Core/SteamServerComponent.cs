@@ -97,7 +97,8 @@ namespace AW2.Core
 
     private void OnSteamServersConnected(SteamServersConnected_t tag)
     {
-      Log.Write("Server connected to Steam");
+      var steamId = SteamGameServer.GetSteamID();
+      Log.Write($"Server logged on to Steam, Steam id:{steamId}, anonAccount: {steamId.BAnonAccount()}, gameServerAccount: {steamId.BGameServerAccount()}, individualAccount: {steamId.BIndividualAccount()}");
       SendUpdatedServerDetailsToSteam();
     }
     void OnSteamServersConnectFailure(SteamServerConnectFailure_t failure)

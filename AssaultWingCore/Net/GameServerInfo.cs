@@ -31,21 +31,37 @@ namespace AW2.Net
             return $"GameServerInfo index:{ServerIndex} steam version:{details.m_nServerVersion} map:{details.GetMap()} name:{details.GetServerName()} addr:{details.m_NetAdr.GetConnectionAddressString()}";
         }
 
-        public AWEndPoint[] GameServerEndPoints {
+        public AWEndPoint SteamIdEndpoint {
             get {
                 SteamNetworkingIdentity steamIdNetworkingIdentity = new SteamNetworkingIdentity();
                 steamIdNetworkingIdentity.SetSteamID(SteamDetails.m_steamID);
-                var steamIdEndpoint = new AWEndPointSteam(steamIdNetworkingIdentity);
-                
+                return new AWEndPointSteam(steamIdNetworkingIdentity);
+            }
+        }
+
+        public AWEndPoint SteamNetworkingIpEndpoint {
+            get {
                 SteamNetworkingIPAddr steamNetworkingIpAddr = new SteamNetworkingIPAddr();
                 steamNetworkingIpAddr.SetIPv4(SteamDetails.m_NetAdr.GetIP(), SteamDetails.m_NetAdr.GetConnectionPort());
                 SteamNetworkingIdentity addrNetworkingIdentity = new SteamNetworkingIdentity();
                 addrNetworkingIdentity.SetIPAddr(steamNetworkingIpAddr);
-                var steamIpAddrEndpoint = new AWEndPointSteam(steamIdNetworkingIdentity);
+                return new AWEndPointSteam(addrNetworkingIdentity);
+            }
+        }
 
-                var directIpAddrEndpoint = new AWEndPointSteam(steamNetworkingIpAddr);
+        public AWEndPoint DirectIpEndpoint {
+            get {
+                SteamNetworkingIPAddr steamNetworkingIpAddr = new SteamNetworkingIPAddr();
+                steamNetworkingIpAddr.SetIPv4(SteamDetails.m_NetAdr.GetIP(), SteamDetails.m_NetAdr.GetConnectionPort());
+                return new AWEndPointSteam(steamNetworkingIpAddr);
+            }
+        }
 
-                return new AWEndPoint[]{directIpAddrEndpoint, steamIpAddrEndpoint, steamIdEndpoint};
+        public AWEndPoint[] GameServerEndPoints {
+            get {
+                // TODO: Peter: Allow attempting multiple connections. Now 1 failing kills the rest.
+                // SteamNetworkingIpEndpoint, SteamIdEndpoint
+                return new AWEndPoint[]{DirectIpEndpoint};
             }
         }
 

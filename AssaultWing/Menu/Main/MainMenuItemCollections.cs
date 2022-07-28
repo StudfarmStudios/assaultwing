@@ -186,7 +186,7 @@ namespace AW2.Menu.Main
             }
 
             if (SteamServerBrowser is not null) {
-                SteamServerBrowser.RequestServerList();
+                SteamServerBrowser.RequestInternetServerList();
             }
         }
 

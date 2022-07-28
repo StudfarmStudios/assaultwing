@@ -50,11 +50,18 @@ namespace AW2.Core
             };
         }
 
-        public void RequestServerList()
+        public void RequestInternetServerList()
         {
             Cancel();
             Log.Write("RequestInternetServerList");
             ServerListRequest = SteamMatchmakingServers.RequestInternetServerList(AppId, new MatchMakingKeyValuePair_t[] { }, 0, ServerListResponse);
+        }
+
+        public void RequestLanServerList()
+        {
+            Cancel();
+            Log.Write("RequestLANServerList");
+            ServerListRequest = SteamMatchmakingServers.RequestLANServerList(AppId, ServerListResponse);
         }
 
         public void Cancel()

@@ -46,6 +46,7 @@ namespace AW2.Net
         public NetworkEngineSteam(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
+            SteamNetworking.AllowP2PPacketRelay(true);
         }
 
         public override IEnumerable<GameClientConnection> GameClientConnections { get { return _GameClientConnections; } }

@@ -87,11 +87,16 @@ namespace AW2.Core
     {
       Callback<DebugLoggingBundle, GameOverlayActivated_t>(LogGameOverlayActivated);
       Callback<DebugLoggingBundle, SteamNetConnectionStatusChangedCallback_t>(LogSteamNetConnectionStatusChanged);
+      Callback<DebugLoggingBundle, SteamRelayNetworkStatus_t>(LogSteamRelayNetworkStatus);
     }
 
     public string UserNick
     {
       get { return SteamFriends.GetPersonaName(); }
+    }
+
+    private void LogSteamRelayNetworkStatus(SteamRelayNetworkStatus_t status) {
+      Log.Write($"SteamRelayNetworkStatus available: {status.m_eAvail}, any relay available: {status.m_eAvailAnyRelay}, config: {status.m_eAvailNetworkConfig}");
     }
 
     private void LogGameOverlayActivated(GameOverlayActivated_t callback)

@@ -12,10 +12,12 @@ namespace AW2.Core
     private TimeSpan _lastNetworkItemsUpdate;
 
     private bool Initialized;
+    private bool ConsoleServer;
 
-    public SteamServerComponent(AssaultWingCore game, int updateOrder)
+    public SteamServerComponent(AssaultWingCore game, int updateOrder, bool consoleServer)
         : base(game, updateOrder)
     {
+      ConsoleServer = consoleServer;
     }
 
     private static void DebugTextHook(int severity, System.Text.StringBuilder message)
@@ -45,6 +47,7 @@ namespace AW2.Core
   		SteamGameServer.SetModDir("AssaultWing");
 		  SteamGameServer.SetProduct("Assault Wing");
 		  SteamGameServer.SetGameDescription("A fast-paced physics-based shooter for many players over the internet.");
+      SteamGameServer.SetDedicatedServer(ConsoleServer); // Our terminology does not match the steams.
       SendUpdatedServerDetailsToSteam();
 
       if (Initialized) {

@@ -96,7 +96,7 @@ namespace AW2.UI
         private void InitializeGame(CommandLineOptions commandLineOptions)
         {
             //if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
-            _game = new AssaultWing<DedicatedServerEvent>(Services, commandLineOptions, game => new DedicatedServerLogic<DedicatedServerEvent>(game));
+            _game = new AssaultWing<DedicatedServerEvent>(Services, commandLineOptions, game => new DedicatedServerLogic<DedicatedServerEvent>(game, consoleServer: true));
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {

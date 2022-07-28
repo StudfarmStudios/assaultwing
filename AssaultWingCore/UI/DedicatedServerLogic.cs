@@ -13,11 +13,11 @@ namespace AW2.UI
 
         private SteamServerComponent SteamServerComponent {get; init;}
 
-        public DedicatedServerLogic(AssaultWing<E> game)
+        public DedicatedServerLogic(AssaultWing<E> game, bool consoleServer)
             : base(game)
         {
             var dedicatedServer = new DedicatedServer(game, 13);
-            SteamServerComponent = new SteamServerComponent(game, 0);
+            SteamServerComponent = new SteamServerComponent(game, 0, consoleServer = consoleServer);
             game.Components.Add(SteamServerComponent);
             game.Components.Add(dedicatedServer);
             dedicatedServer.Enabled = true;

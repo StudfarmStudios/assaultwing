@@ -110,7 +110,7 @@ namespace AW2.UI
             //if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
             _game = new AssaultWing<ClientEvent>(Services, commandLineOptions, game => {
                 if (commandLineOptions.DedicatedServer)
-                    return new DedicatedServerLogic<ClientEvent>(game);
+                    return new DedicatedServerLogic<ClientEvent>(game, consoleServer: false);
                 else if (commandLineOptions.QuickStart != null)
                     return new QuickStartLogic(game, commandLineOptions.QuickStart);
                 else

@@ -57,6 +57,15 @@ namespace AW2.Net
         public SteamNetworkingIPAddr DirectIp;
         public readonly bool UseDirectIp;
 
+        public AWEndPointSteam(SteamNetworkingIdentity steamNetworkingIdentity) {
+            SteamNetworkingIdentity = steamNetworkingIdentity;
+        }
+
+        public AWEndPointSteam(SteamNetworkingIPAddr steamNetworkingIPAddr) {
+            UseDirectIp = true;
+            DirectIp = steamNetworkingIPAddr;
+        }
+
         public AWEndPointSteam(string parsed) {
             if (parsed.StartsWith(DirectPrefix)) {
                 if (!DirectIp.ParseString(parsed.Substring(DirectPrefix.Length))) {

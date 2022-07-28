@@ -31,5 +31,23 @@ namespace AW2.Net
             return $"GameServerInfo index:{ServerIndex} steam version:{details.m_nServerVersion} map:{details.GetMap()} name:{details.GetServerName()} addr:{details.m_NetAdr.GetConnectionAddressString()}";
         }
 
+        public AWEndPoint[] GameServerEndPoints {
+            get {
+                SteamNetworkingIdentity steamIdNetworkingIdentity = new SteamNetworkingIdentity();
+                steamIdNetworkingIdentity.SetSteamID(SteamDetails.m_steamID);
+                var steamIdEndpoint = new AWEndPointSteam(steamIdNetworkingIdentity);
+                
+                SteamNetworkingIPAddr steamNetworkingIpAddr = new SteamNetworkingIPAddr();
+                steamNetworkingIpAddr.SetIPv4(SteamDetails.m_NetAdr.GetIP(), SteamDetails.m_NetAdr.GetConnectionPort());
+                SteamNetworkingIdentity addrNetworkingIdentity = new SteamNetworkingIdentity();
+                addrNetworkingIdentity.SetIPAddr(steamNetworkingIpAddr);
+                var steamIpAddrEndpoint = new AWEndPointSteam(steamIdNetworkingIdentity);
+
+                var directIpAddrEndpoint = new AWEndPointSteam(steamNetworkingIpAddr);
+
+                return new AWEndPoint[]{directIpAddrEndpoint, steamIpAddrEndpoint, steamIdEndpoint};
+            }
+        }
+
     }
 }

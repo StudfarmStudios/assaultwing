@@ -79,7 +79,8 @@ namespace AW2.Menu.Main
 
         public void Click_ConnectToGameServer(GameServerInfo server)
         {
-            // TODO: Peter: Steam network, connecting to selected server
+            Game.SoundEngine.PlaySound("menuChangeItem");
+            Game.StartClient(server.GameServerEndPoints);
             Game.ShowConnectingToGameServerDialog(server.Name);
         }
 

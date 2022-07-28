@@ -171,7 +171,7 @@ namespace AW2.Menu.Main
         }
 
         private void StopRefreshingNetworkItems() {
-            if (SteamServerBrowser is null) {
+            if (SteamServerBrowser is not null) {
                 SteamServerBrowser.Dispose();
                 SteamServerBrowser = null;
             }

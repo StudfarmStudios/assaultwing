@@ -61,19 +61,24 @@ namespace AW2.Core
         return;
       }
 
-      Initialized = SteamAPI.Init();
-      if (Initialized)
-      {
-        Log.Write("SteamAPI initialized.");
-        steamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(DebugTextHook);
-        SteamClient.SetWarningMessageHook(steamAPIWarningMessageHook);
-      }
-      else
-      {
-        Log.Write("SteamAPI.Init() failed.");
-        // Should we throw here? throw new ApplicationException("SteamAPI.Init() failed.")
-        // Throwing is also problematic bc then it seems the error messages from SteamAPI don't have time to
-        // get logged.
+      try {
+        Initialized = SteamAPI.Init();
+        if (Initialized)
+        {
+          Log.Write("SteamAPI initialized.");
+          steamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(DebugTextHook);
+          SteamClient.SetWarningMessageHook(steamAPIWarningMessageHook);
+        }
+        else
+        {
+          Log.Write("SteamAPI.Init() failed.");
+          // Should we throw here? throw new ApplicationException("SteamAPI.Init() failed.")
+          // Throwing is also problematic bc then it seems the error messages from SteamAPI don't have time to
+          // get logged.
+        }
+      } catch (Exception e) {
+        // This can happen if DLL's are not in the right place at least
+        Log.Write("SteamAPI.Init() failed with error", e);
       }
     }
 

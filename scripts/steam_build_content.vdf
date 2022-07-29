@@ -1,0 +1,17 @@
+{
+    // The content depot 1971371. Currently this can be built on Windows only.
+    "FileMapping"
+    {
+        // Take models from this particular location so Release vs debug does not have an effect
+        "LocalPath" "AssaultWingContent\bin\DesktopGL\AssaultWingContent\*"
+        "DepotPath" "." // mapped into the root of the depot
+        "recursive" "1" // include all subfolders
+    }
+    "FileMapping"
+    {
+        // Take the CoreContent from this particular location so Release vs debug does not have an effect
+        "LocalPath" "AssaultWingCoreContent\bin\DesktopGL\AssaultWingCoreContent\*"
+        "DepotPath" "." // mapped into the root of the depot
+        "recursive" "1" // include all subfolders
+    }
+}

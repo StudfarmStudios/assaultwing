@@ -34,10 +34,12 @@ namespace AW2.UI
 
         public AssaultWing<DedicatedServerEvent> Game { get { return _game; } }
 
-        public GameForm(CommandLineOptions commandLineOptions, SteamGameServerService steamGameServerService) : base()
+        public GameForm(CommandLineOptions commandLineOptions) : base()
         {
-            Services.AddService(steamGameServerService);
+            // Try to initialize steam game server service early on so we know if 
+            // we should use NetworkEngineSteam or NetworkEngineRaw.
             Services.AddService(new SteamApiService());
+            Services.AddService(new SteamGameServerService());
 
             _graphics = new DummyGraphicsDeviceService();
             Services.AddService(_graphics);

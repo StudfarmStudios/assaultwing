@@ -120,13 +120,15 @@ namespace AW2.Core
 
     public void Dispose()
     {
-      Initialized = false;
-      var bundles = CallbackBundles;
-      foreach (var b in bundles) {
-        b.Value.Dispose();
+      if (Initialized) {
+        Initialized = false;
+        var bundles = CallbackBundles;
+        foreach (var b in bundles) {
+          b.Value.Dispose();
+        }
+        SteamAPI.Shutdown();
+        Log.Write("SteamAPI.Shutdown()");
       }
-      SteamAPI.Shutdown();
-      Log.Write("SteamAPI.Shutdown()");
     }
 
   }

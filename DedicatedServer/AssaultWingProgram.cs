@@ -63,8 +63,11 @@ namespace AW2
             // something like:
             // System.AppDomain.CurrentDomain.UnhandledException += ThreadExceptionHandler;
 
+            // Try to initialize steam game server service early on so we know if 
+            // we should use NetworkEngineSteam or NetworkEngineRaw.
+            var steamGameServerService = new AW2.Core.SteamGameServerService();
 
-            _form = new GameForm(g_commandLineOptions);
+            _form = new GameForm(g_commandLineOptions, steamGameServerService);
         }
 
         public void Run()

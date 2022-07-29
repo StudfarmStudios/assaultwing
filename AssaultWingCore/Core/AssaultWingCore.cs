@@ -59,6 +59,8 @@ namespace AW2.Core
         public StatsBase Stats { get; set; }
         public SteamComponent SteamComponent { get; set; }
 
+        public bool IsSteam { get; set; }
+
         /// <summary>
         /// The current mode of network operation of the game.
         /// </summary>

@@ -69,10 +69,13 @@ namespace AW2.Core
             _arenaStateSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
             _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
 
-            if (Services.GetService<SteamApiService>().Initialized || (Components.Get<SteamServerComponent>()?.Initialized ?? false)) {
+            // If either steam server APIs or the regular APIs are initialized, we consider us being in the Steam mode.
+            IsSteam = Services.GetService<SteamApiService>().Initialized || (Services.GetService<SteamGameServerService>()?.Initialized ?? false);
+            if (IsSteam) {
+                Log.Write("AssaultWing is in Steam mode");
                 NetworkEngine = new NetworkEngineSteam(this, 30);
             } else {
-                Log.Write("Creating NetworkEngineRaw instead of NetworkEngineSteam due to neither SteamAPI and SteamGameServer not being initialized.");
+                Log.Write("AssaultWing is not in SteamMode, due to neither SteamAPI nor SteamGameServer being initialized. Creating NetworkEngineRaw (instead of NetworkEngineSteam).");
                 NetworkEngine = new NetworkEngineRaw(this, 30);
             }
                 

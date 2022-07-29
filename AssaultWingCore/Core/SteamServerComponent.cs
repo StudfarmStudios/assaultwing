@@ -17,66 +17,33 @@ namespace AW2.Core
     public SteamServerComponent(AssaultWingCore game, int updateOrder, bool consoleServer)
         : base(game, updateOrder)
     {
+      SteamGameServerService? steamGameServerService = Game.Services.GetService<SteamGameServerService>();
+      if (steamGameServerService is null) {
+        steamGameServerService = new SteamGameServerService();
+        Game.Services.AddService(steamGameServerService);
+      }
       ConsoleServer = consoleServer;
     }
 
-    private static void DebugTextHook(int severity, System.Text.StringBuilder message)
-    {
-      Log.Write($"Steam server debug message: [severity {severity}] {message}");
-    }
-
-    private SteamAPIWarningMessageHook_t steamAPIWarningMessageHook;
-
     public override void Initialize() {
-
-      Initialized = InitializeSteamGameServerApi();
-      if (Initialized) {
-        SetupCallbacks();
-
-        steamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(DebugTextHook);
-        SteamGameServerUtils.SetWarningMessageHook(steamAPIWarningMessageHook);
-
-        // SteamGameServer.SetModDir(...); do we need this? Space war example sets this to game dir, but docs say it is default empty which is ok
-        SteamGameServer.SetModDir("AssaultWing");
-        SteamGameServer.SetProduct("Assault Wing");
-        SteamGameServer.SetGameDescription("A fast-paced physics-based shooter for many players over the internet.");
-        SteamGameServer.SetDedicatedServer(ConsoleServer); // Our terminology does not match the steams.
-        SendUpdatedServerDetailsToSteam();
-
-        // TODO: Support for server accounts? (LogOn and not LogOnAnonymous)
-        Log.Write("Logging in steam server");
-        SteamGameServer.LogOnAnonymous(); // does not work?
-        SteamGameServer.SetAdvertiseServerActive(true);
+      if (!Game.IsSteam) {
+        return;
       }
-    }
-    public bool InitializeSteamGameServerApi()
-    {
-      Log.Write("Initializing Steam GameServer");
-      try {
-        uint chosenIp = 0;
-        ushort GamePort = 16727;
-        ushort QueryPort = 16726;
-        var serverMode = EServerMode.eServerModeNoAuthentication;
-        var assaultWingVersion = "0.0.0.0";
-        // https://github.com/rlabrecque/Steamworks.NET/blob/master/com.rlabrecque.steamworks.net/Runtime/Steam.cs#L157
-        // https://github.com/rlabrecque/Steamworks.NET/blob/master/com.rlabrecque.steamworks.net/Runtime/autogen/SteamEnums.cs#L1297
-        var initialized = GameServer.Init(chosenIp, GamePort, QueryPort, serverMode, assaultWingVersion);
-        if (initialized)
-        {
-          Log.Write("Steam GameServer initialized.");
-        }
-        else
-        {
-          Log.Write("GameServer.Init() failed.");
-          // Should we throw here? throw new ApplicationException("SteamAPI.Init() failed.")
-          // Throwing is also problematic bc then it seems the error messages from SteamAPI don't have time to
-          // get logged.
-        }
-        return initialized;
-      } catch (Exception e) {
-        Log.Write("GameServer.Init() failed with error", e);
-        return false;
-      }
+      Initialized = true;
+
+      SetupCallbacks();
+
+      // SteamGameServer.SetModDir(...); do we need this? Space war example sets this to game dir, but docs say it is default empty which is ok
+      SteamGameServer.SetModDir("AssaultWing");
+      SteamGameServer.SetProduct("Assault Wing");
+      SteamGameServer.SetGameDescription("A fast-paced physics-based shooter for many players over the internet.");
+      SteamGameServer.SetDedicatedServer(ConsoleServer); // Our terminology does not match the steams.
+      SendUpdatedServerDetailsToSteam();
+
+      // TODO: Support for server accounts? (LogOn and not LogOnAnonymous)
+      Log.Write("Logging in steam server");
+      SteamGameServer.LogOnAnonymous(); // does not work?
+      SteamGameServer.SetAdvertiseServerActive(true);
     }
 
     private void SetupCallbacks()
@@ -159,8 +126,9 @@ namespace AW2.Core
 
     public override void Dispose()
     {
-      Log.Write("Steam GameServer.Shutdown()");
       if (Initialized) {
+        Initialized = false;
+        Log.Write("Steam GameServer.Shutdown()");
         GameServer.Shutdown();
       }
     }

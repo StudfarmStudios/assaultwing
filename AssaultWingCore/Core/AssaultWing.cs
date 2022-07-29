@@ -69,10 +69,10 @@ namespace AW2.Core
             _arenaStateSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
             _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
 
-            if (Services.GetService<SteamApiService>().Initialized) {
+            if (Services.GetService<SteamApiService>().Initialized || (Components.Get<SteamServerComponent>()?.Initialized ?? false)) {
                 NetworkEngine = new NetworkEngineSteam(this, 30);
             } else {
-                Log.Write("Creating NetworkEngineRaw instead of NetworkEngineSteam due to SteamAPI not being initialized.");
+                Log.Write("Creating NetworkEngineRaw instead of NetworkEngineSteam due to neither SteamAPI and SteamGameServer not being initialized.");
                 NetworkEngine = new NetworkEngineRaw(this, 30);
             }
                 

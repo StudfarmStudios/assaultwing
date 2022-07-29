@@ -11,7 +11,7 @@ namespace AW2.Core
     private static readonly TimeSpan GAME_SERVER_DETAILS_UPDATE_INTERVAL = TimeSpan.FromSeconds(30);
     private TimeSpan _lastNetworkItemsUpdate;
 
-    private bool Initialized;
+    public bool Initialized {get; private set;}
     private bool ConsoleServer;
 
     public SteamServerComponent(AssaultWingCore game, int updateOrder, bool consoleServer)

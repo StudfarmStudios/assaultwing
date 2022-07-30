@@ -102,16 +102,10 @@ namespace AW2.Net.Connections
             // https://github.com/rlabrecque/Steamworks.NET/issues/388
             // https://github.com/rlabrecque/Steamworks.NET/issues/411
             
-            var steamMessageIntPtr = SteamNetworkingUtils.AllocateMessage(0);
-            //SteamNetworkingMessage_t steamMessage = SteamNetworkingMessage_t.FromIntPtr(steamMessageIntPtr);
-            //steamMessage.m_pData = (IntPtr)PinnedBuffer.AddrOfPinnedObject();
-            
 
             var writer = NetworkBinaryWriter.Create(new MemoryStream(Buffer));
             message.Serialize(writer);
             writer.GetBaseStream().Flush();
-            //steamMessage.m_cbSize = (uint)writer.GetBaseStream().Position;
-            //steamMessage.m_conn = Handle;
 
             int flags;
             switch (message.SendType)

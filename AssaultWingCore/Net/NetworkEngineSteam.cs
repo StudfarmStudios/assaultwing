@@ -153,8 +153,8 @@ namespace AW2.Net
             SteamNetworkingIPAddr portOnlyAddr = new SteamNetworkingIPAddr();
             portOnlyAddr.Clear();
             portOnlyAddr.m_port = port;
-            ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketIP(ref portOnlyAddr, 0, new SteamNetworkingConfigValue_t[]{}));
-            ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{}));
+            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyAddr, 0, new SteamNetworkingConfigValue_t[]{}));
+            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{}));
         }
 
         private Callback<T>.DispatchDelegate LogCallbackError<T>(Callback<T>.DispatchDelegate action) {
@@ -221,7 +221,7 @@ namespace AW2.Net
             switch(status.m_info.m_eState) {
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connecting:
                     if (AllowNewServerConnection()) {
-                        var acceptResult = SteamNetworkingSockets.AcceptConnection(status.m_hConn);
+                        var acceptResult = SteamGameServerNetworkingSockets.AcceptConnection(status.m_hConn);
                         switch (acceptResult) {
                             case EResult.k_EResultOK:
                                 if (connection == null) {
@@ -252,7 +252,7 @@ namespace AW2.Net
                     if (connection == null) {
                         // Should not happen:
                         Log.Write($"Terminal error state for unknown client connection. state: {status.m_info.m_eState}, identity: {identity}");
-                        SteamNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Unknown connection closed", true);
+                        SteamGameServerNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Unknown connection closed", true);
                     } else {
                         Log.Write($"Terminal error state for client connection, closing {connection.Name}. state: {status.m_info.m_eState}, identity: {identity}");
                         connection.QueueError("Client connection lost");
@@ -294,7 +294,7 @@ namespace AW2.Net
 
 
             foreach (var s in ListenSockets) {
-                SteamNetworkingSockets.CloseListenSocket(s);
+                SteamGameServerNetworkingSockets.CloseListenSocket(s);
             }
 
             SteamApiService.DisposeCallbackBundle<ServerCallbacks>();

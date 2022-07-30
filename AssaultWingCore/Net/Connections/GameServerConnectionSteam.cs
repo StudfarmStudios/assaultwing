@@ -22,8 +22,20 @@ namespace AW2.Net.Connections
 
         protected override void DisposeImpl(bool error)
         {
-            if (error) Game.NetworkingErrors.Enqueue("Connection to server lost.");
+            SteamNetworkingSockets.CloseConnection(Handle, 0, "Connection disposed by the client", true);
+            if (error) Game.NetworkingErrors.Enqueue("Connection to the server lost.");
             base.DisposeImpl(error);
         }
+
+        protected override int ReceiveMessages(IntPtr[] outMessages, int maxMessages)
+        {
+            return SteamNetworkingSockets.ReceiveMessagesOnConnection(Handle, outMessages, maxMessages);
+        }
+
+        protected override EResult SendMessage(IntPtr data, uint size, int flags, out long outMessageNumber)
+        {
+            return SteamNetworkingSockets.SendMessageToConnection(Handle, data, size, flags, out outMessageNumber);
+        }
+
     }
 }

@@ -39,6 +39,13 @@ namespace AW2.Net.Connections
         public HSteamNetConnection Handle { get; init; }
         public SteamNetConnectionInfo_t Info { get; set; }
 
+        // Implemented by subclass because server and client use separate Steam interfaces to allow for dedicated
+        // server to operate without proper Steam user.
+        abstract protected int ReceiveMessages(IntPtr[] outMessages, int maxMessages);
+        // Implemented by subclass because server and client use separate Steam interfaces to allow for dedicated
+        // server to operate without proper Steam user.
+        abstract protected EResult SendMessage(IntPtr data, uint size, int flags, out long outMessageNumber);
+
         public ConnectionSteam(AssaultWingCore game, HSteamNetConnection handle, SteamNetConnectionInfo_t info)
             : base(game)
         {
@@ -64,7 +71,7 @@ namespace AW2.Net.Connections
 
         public void ReceiveMessages() {
 
-            int messageCount = SteamNetworkingSockets.ReceiveMessagesOnConnection(Handle, ReceiveBuffers, ReceiveBuffers.Length);
+            int messageCount = ReceiveMessages(ReceiveBuffers, ReceiveBuffers.Length);
             for (int i = 0; i < messageCount; i++)
             {
                 try
@@ -120,7 +127,7 @@ namespace AW2.Net.Connections
             
             var size = writer.GetBaseStream().Position;
             long messageNumber;
-            var result = SteamNetworkingSockets.SendMessageToConnection(Handle, (IntPtr)PinnedBuffer.AddrOfPinnedObject(), (uint)size, flags, out messageNumber);
+            var result = SendMessage((IntPtr)PinnedBuffer.AddrOfPinnedObject(), (uint)size, flags, out messageNumber);
 
             if (result != EResult.k_EResultOK) {
                 Log.Write($"Error {result} sending message {message.Type} flags:{flags} num:{messageNumber} size:{size}");
@@ -135,7 +142,6 @@ namespace AW2.Net.Connections
         /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
         override protected void DisposeImpl(bool error)
         {
-            SteamNetworkingSockets.CloseConnection(Handle, 0, "Connection disposed by peer", true);
             DisposeId();
             PinnedBuffer.Free();
         }

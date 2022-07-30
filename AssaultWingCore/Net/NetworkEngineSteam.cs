@@ -145,7 +145,7 @@ namespace AW2.Net
 
         public override void StartServer(Func<bool> allowNewConnection)
         {
-            SteamApiService.Callback<ServerCallbacks, SteamNetConnectionStatusChangedCallback_t>(
+            SteamApiService.ServerCallback<ServerCallbacks, SteamNetConnectionStatusChangedCallback_t>(
                 LogCallbackError<SteamNetConnectionStatusChangedCallback_t>(OnServerConnectionStatusChanged));
             var port = (ushort)Game.Settings.Net.GameServerPort;
             Log.Write($"Starting game server on port {port} and Steam P2P");

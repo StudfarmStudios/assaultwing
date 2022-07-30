@@ -19,7 +19,7 @@ namespace AW2.Core
     {
       SteamGameServerService? steamGameServerService = Game.Services.GetService<SteamGameServerService>();
       if (steamGameServerService is null) {
-        steamGameServerService = new SteamGameServerService();
+        steamGameServerService = new SteamGameServerService(Game.Services.GetService<SteamApiService>());
         Game.Services.AddService(steamGameServerService);
       }
       ConsoleServer = consoleServer;

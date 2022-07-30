@@ -9,12 +9,13 @@ namespace AW2.Core
     public bool Initialized {get; private set;}
     private SteamAPIWarningMessageHook_t? steamAPIWarningMessageHook;
 
-    public SteamGameServerService()
+    public SteamGameServerService(SteamApiService steamApiService)
     {
       Initialized = InitializeSteamGameServerApi();
       if (Initialized) {
           steamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(DebugTextHook);
           SteamGameServerUtils.SetWarningMessageHook(steamAPIWarningMessageHook);
+          steamApiService.SetupServerCallbacks();
       }
     }
 

@@ -6,6 +6,7 @@ namespace AW2.Core
 
   public class SteamApiService : IDisposable
   {
+    // TODO: Move the callback stuff to a separate service bc it is shared with SteamGameServerService
     public class CallbackBundleKey {};
 
     interface ICallbackBundle<out T> : IDisposable where T : CallbackBundleKey {}
@@ -38,14 +39,14 @@ namespace AW2.Core
         return bundle;
     }
 
-    // public delegate string SteamNetworkConnecting(HSteamNetConnection conn, SteamNetConnectionInfo_t info);
-
     public bool Initialized { get; private set; }
 
     public SteamApiService()
     {
       InitializeSteamApi();
-      SetupCallbacks();
+      if (Initialized) {
+        SetupCallbacks();
+      }
     }
     private SteamAPIWarningMessageHook_t? steamAPIWarningMessageHook;
 
@@ -86,6 +87,10 @@ namespace AW2.Core
       GetCallbackBundle<K>().Add(Callback<T>.Create(func));
     }
 
+    public void ServerCallback<K, T>(Callback<T>.DispatchDelegate func) where K : CallbackBundleKey, new() {
+      GetCallbackBundle<K>().Add(Callback<T>.CreateGameServer(func));
+    }
+
     private class DebugLoggingBundle : CallbackBundleKey {};
 
     private void SetupCallbacks()
@@ -93,6 +98,12 @@ namespace AW2.Core
       Callback<DebugLoggingBundle, GameOverlayActivated_t>(LogGameOverlayActivated);
       Callback<DebugLoggingBundle, SteamNetConnectionStatusChangedCallback_t>(LogSteamNetConnectionStatusChanged);
       Callback<DebugLoggingBundle, SteamRelayNetworkStatus_t>(LogSteamRelayNetworkStatus);
+    }
+
+    public void SetupServerCallbacks()
+    {
+      ServerCallback<DebugLoggingBundle, SteamNetConnectionStatusChangedCallback_t>(LogSteamNetConnectionStatusChanged);
+      ServerCallback<DebugLoggingBundle, SteamRelayNetworkStatus_t>(LogSteamRelayNetworkStatus);
     }
 
     public string UserNick

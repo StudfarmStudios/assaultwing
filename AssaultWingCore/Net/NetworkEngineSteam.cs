@@ -150,10 +150,14 @@ namespace AW2.Net
             var port = (ushort)Game.Settings.Net.GameServerPort;
             Log.Write($"Starting game server on port {port} and Steam P2P");
             AllowNewServerConnection = allowNewConnection;
-            SteamNetworkingIPAddr portOnlyAddr = new SteamNetworkingIPAddr();
-            portOnlyAddr.Clear();
-            portOnlyAddr.m_port = port;
-            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyAddr, 0, new SteamNetworkingConfigValue_t[]{}));
+            SteamNetworkingIPAddr portOnlyIpv4Addr = new SteamNetworkingIPAddr();
+            portOnlyIpv4Addr.Clear();
+            portOnlyIpv4Addr.SetIPv4(0, port);
+            SteamNetworkingIPAddr portOnlyIpv6Addr = new SteamNetworkingIPAddr();
+            portOnlyIpv6Addr.Clear();
+            portOnlyIpv6Addr.SetIPv6(new byte[] {0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0}, port);
+            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv4Addr, 0, new SteamNetworkingConfigValue_t[]{}));
+            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv6Addr, 0, new SteamNetworkingConfigValue_t[]{}));
             ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{}));
         }
 

@@ -82,7 +82,7 @@ namespace AW2.Net.Connections
                     var message = Message.Deserialize(messageBytes, Game.GameTime.TotalRealTime);
                     if (message != null) {
                         message.ConnectionID = ID;
-                        Log.Write($"Received message {message.Type} flags:{steamMessage.m_nFlags} num:{steamMessage.m_nMessageNumber} size:{steamMessage.m_cbSize}");
+                        // Log.Write($"Received message {message.Type} flags:{steamMessage.m_nFlags} num:{steamMessage.m_nMessageNumber} size:{steamMessage.m_cbSize}");
                         HandleMessage(message);
                     }
                 }

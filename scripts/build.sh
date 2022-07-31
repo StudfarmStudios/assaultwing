@@ -28,50 +28,11 @@ elif [ $# -gt 4 ]; then
   exit 2
 fi
 
-if [[ -z "${AW_STEAM_BUILD_ACCOUNT:=}" || -z "${AW_STEAM_BUILD_PASSWORD:=}" ]]; then
-  echo "Environment variables AW_STEAM_BUILD_ACCOUNT and AW_STEAM_BUILD_PASSWORD must be defined"
-  exit 2
-fi
-
 PLATFORM=$1
 APP=$2
 CONFIGURATION=$3
 MODE=${4:-}
 
-case "$PLATFORM" in
-  linux)
-    echo "Linux platform selected"	   
-    STEAM_CMD='steambuild/builder_linux/steamcmd.sh'
-    # The linux tools are not executable "out of the box"... fix that here
-    chmod -c a+rx $STEAM_CMD
-    chmod -c a+rx 'steambuild/builder_linux/linux32/steamcmd'
-    STEAM_PLATFORM='linux'
-    STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
-    DISABLE_CONTENT_BUILDING=true
-    ;;
-  windows_wsl2)
-    echo "Windows drive mounted in WSL2 selected"
-    STEAM_CMD='steambuild\builder\steamcmd.exe'
-    STEAM_PLATFORM='windows'
-    STEAM_SCRIPT_FOLDER_RELATIVE='..\..\scripts\'
-    DISABLE_CONTENT_BUILDING=false # Content building only works on windows
-    ;;
-  mac)
-    echo "Mac builds TBD"
-    STEAM_CMD='steambuild/builder_mac/steamcmd.sh'
-    # TODO: Test mac build with steam
-    #chmod a+rx $STEAM_CMD
-    #chmod a+rx 'steambuild/builder_linux/linux32/steamcmd'
-    STEAM_PLATFORM='mac'
-    STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
-    DISABLE_CONTENT_BUILDING=true
-    # exit 2
-    ;;
-  *)
-    echo "Unknown platform parameter '$PLATFORM'"
-    exit 2  
-esac
-    
 case "$APP" in
   assault_wing)
     echo "Building Assault Wing"
@@ -100,16 +61,28 @@ esac
 
 case "$MODE" in
   skip_build)
-    echo "skip_build: Only doing the steam upload part!"
+    echo "skip_build: Only doing the Steam upload part!"
+    CLEAN=0
+    BUILD=0
+    BUILD_STEAM=1
     ;;
   skip_clean)
     echo "skip_clean: Skipping clean. Build may not be 100% repeatable"
+    CLEAN=0
+    BUILD=1
+    BUILD_STEAM=1
     ;;
   skip_clean_and_steam)
     echo "skip_clean_and_steam: Skipping both clean build and the steam upload."
+    CLEAN=0
+    BUILD=1
+    BUILD_STEAM=0
     ;;
   "")
     echo "No special mode"
+    CLEAN=1
+    BUILD=1
+    BUILD_STEAM=1
     ;;
   *)
     echo "Unknown mode '$MODE'"
@@ -117,12 +90,58 @@ case "$MODE" in
 esac
 
 
+case "$PLATFORM" in
+  linux)
+    echo "Linux platform selected"	   
+    STEAM_CMD='steambuild/builder_linux/steamcmd.sh'
+    if (( $BUILD_STEAM )); then
+      # The linux tools are not executable "out of the box"... fix that here
+      chmod -c a+rx $STEAM_CMD
+      chmod -c a+rx 'steambuild/builder_linux/linux32/steamcmd'
+    fi
+    STEAM_PLATFORM='linux'
+    STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
+    DISABLE_CONTENT_BUILDING=true
+    ;;
+  windows_wsl2)
+    echo "Windows drive mounted in WSL2 selected"
+    STEAM_CMD='steambuild\builder\steamcmd.exe'
+    STEAM_PLATFORM='windows'
+    STEAM_SCRIPT_FOLDER_RELATIVE='..\..\scripts\'
+    DISABLE_CONTENT_BUILDING=false # Content building only works on windows
+    ;;
+  mac)
+    echo "Mac builds TBD"
+    STEAM_CMD='steambuild/builder_mac/steamcmd.sh'
+    if (( $BUILD_STEAM )); then
+      # TODO: Test mac build with steam
+      chmod a+rx $STEAM_CMD
+      chmod a+rx 'steambuild/builder_linux/linux32/steamcmd'
+    fi
+    STEAM_PLATFORM='mac'
+    STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
+    DISABLE_CONTENT_BUILDING=true
+    # exit 2
+    ;;
+  *)
+    echo "Unknown platform parameter '$PLATFORM'"
+    exit 2  
+esac
+
+if (( $BUILD_STEAM )); then
+  if [[ -z "${AW_STEAM_BUILD_ACCOUNT:=}" || -z "${AW_STEAM_BUILD_PASSWORD:=}" ]]; then
+    echo "Environment variables AW_STEAM_BUILD_ACCOUNT and AW_STEAM_BUILD_PASSWORD must be defined"
+    exit 2
+  fi
+fi
+
 echo "STEAM_CMD=$STEAM_CMD"
 echo "PLATFORM=$PLATFORM"
 echo "DOTNET_CONFIGURATION=$DOTNET_CONFIGURATION"
 echo "MODE=$MODE"
 echo "APP=$APP"
 echo "AW_STEAM_BUILD_ACCOUNT=$AW_STEAM_BUILD_ACCOUNT"
+echo "DISABLE_CONTENT_BUILDING=$DISABLE_CONTENT_BUILDING"
     
 #ROOT=$(pwd)
 #SOLUTION="${ROOT}\AssaultWing.sln"
@@ -171,9 +190,9 @@ build() {
   echo Built: */bin/*
 }
 
-if [[ "$MODE" != "skip_build" ]]; then
+if (( $BUILD )); then
   echo "Configuration=${CONFIGURATION}"
-  if [[ "$MODE" != "skip_clean" && "$MODE" != "skip_clean_and_steam" ]]; then
+  if (( $CLEAN )); then
     raw_clean
     clean_build_setup
   fi  
@@ -182,7 +201,7 @@ else
   echo "Skipping cleaning and building due to '$MODE'"
 fi
 
-if [[ $MODE != "skip_steam" && "$MODE" != "skip_clean_and_steam" ]]; then
+if (( $BUILD_STEAM )); then
   platform_run "$STEAM_CMD" +login "$AW_STEAM_BUILD_ACCOUNT" "$AW_STEAM_BUILD_PASSWORD" +run_app_build "${STEAM_SCRIPT_FOLDER_RELATIVE}${STEAM_BUILD_FILE}" +quit
 fi
 

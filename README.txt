@@ -8,16 +8,38 @@ github.com/vvnurmi/assaultwing
 
 Assault Wing is a fast-paced physics-based shooter for many players over the internet.
 
-To compile, use Microsoft Visual C# 2010 Express and XNA Game Studio 4.0 Refresh.
+To compile, use the .NET 6 or later (6 is the current LTS version). Other dependencies
+are fetched from nuget, except the Steamworks SDK.
 
+The Steamworks SDK which needs to be manually downloaded and copied into place
+if doing a Steam build to be uloaded to Steam.
 
-## Notes on Steam builds
+As an IDE either a recent Visual Studio or Visual Studio Code can be used.
+
+## Building
+
+On windows simple `dotnet build` should work, however there is also a more
+complex build script `scripts/build.sh` to provide some automation.
+
+Here are some examples:
+```bash
+# Linux incremental debug build
+./scripts/build.sh linux assault_wing debug skip_clean_and_steam
+# Linux clean debug build uploaded to Steam
+./scripts/build.sh linux assault_wing debug
+# Linux clean debug build of the dedicated server uploaded to Steam
+./scripts/build.sh linux dedicated_server debug
+```
+
+The build script without parameters outputs further help.                                                                                                                                         
+
+## Setting up Steam builds
 
 Writing some notes here about what was done to create the steam build,
 although mostly it is just basic stuff from the documentation at 
 https://partner.steamgames.com/doc/sdk/uploading
 
-Get the steam SDK zip and unzip in a suitable location. Currently used version:
+Get the Steamworks SDK zip and unzip in a suitable location. Currently used version:
   
   - steamworks_sdk_153a.zip
 

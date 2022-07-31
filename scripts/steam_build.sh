@@ -47,16 +47,25 @@ case "$PLATFORM" in
     chmod -c a+rx 'steambuild/builder_linux/linux32/steamcmd'
     STEAM_PLATFORM='linux'
     STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
+    DISABLE_CONTENT_BUILDING=true
     ;;
   windows_wsl2)
     echo "Windows drive mounted in WSL2 selected"
     STEAM_CMD='steambuild\builder\steamcmd.exe'
     STEAM_PLATFORM='windows'
     STEAM_SCRIPT_FOLDER_RELATIVE='..\..\scripts\'
+    DISABLE_CONTENT_BUILDING=false # Content building only works on windows
     ;;
   mac)
     echo "Mac builds TBD"
-    exit 2
+    STEAM_CMD='steambuild/builder_mac/steamcmd.sh'
+    # TODO: Test mac build with steam
+    #chmod a+rx $STEAM_CMD
+    #chmod a+rx 'steambuild/builder_linux/linux32/steamcmd'
+    STEAM_PLATFORM='mac'
+    STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
+    DISABLE_CONTENT_BUILDING=true
+    # exit 2
     ;;
   *)
     echo "Unknown platform parameter '$PLATFORM'"
@@ -157,7 +166,7 @@ build() {
   # It seems we need to define build profiles to build for Linux & Mac here. https://github.com/dotnet/sdk/issues/14281#issuecomment-863499124
   # /target:Publish
   echo dotnet build
-  platform_run dotnet build $SOLUTION --nologo --verbosity=quiet /p:Configuration=$DOTNET_CONFIGURATION "/p:Platform=Any Cpu"
+  platform_run dotnet build $SOLUTION --nologo --verbosity=quiet "/p:DisableContentBuilding=${DISABLE_CONTENT_BUILDING}" "/p:Configuration=$DOTNET_CONFIGURATION" "/p:Platform=Any Cpu"
 
   echo Built: */bin/*
 }

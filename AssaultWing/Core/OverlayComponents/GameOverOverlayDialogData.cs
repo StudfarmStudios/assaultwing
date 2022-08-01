@@ -38,7 +38,7 @@ namespace AW2.Core.OverlayComponents
             var titleText = "Arena Standings";
             var titleSize = FontHuge.MeasureString(titleText);
             var titlePos = textCenter - new Vector2(titleSize.X / 2, 0);
-            spriteBatch.DrawString(FontHuge, titleText, titlePos.Round(), Color.White);
+            spriteBatch.DrawString(FontHuge, titleText, Vector2.Round(titlePos), Color.White);
             AdvanceLine(ref textCenter, FontHuge);
             AdvanceLine(ref textCenter, FontSmall);
             DrawStandings(spriteBatch, ref textCenter);
@@ -46,7 +46,7 @@ namespace AW2.Core.OverlayComponents
             var infoText = "Press Enter";
             var infoSize = FontSmall.MeasureString(infoText);
             var infoPos = textCenter - new Vector2(infoSize.X / 2, 0);
-            spriteBatch.DrawString(FontSmall, infoText, infoPos.Round(), Color.White);
+            spriteBatch.DrawString(FontSmall, infoText, Vector2.Round(infoPos), Color.White);
         }
 
         private void DrawStandings(SpriteBatch spriteBatch, ref Vector2 textCenter)

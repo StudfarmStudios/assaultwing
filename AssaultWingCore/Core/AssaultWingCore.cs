@@ -14,6 +14,10 @@ using AW2.Helpers;
 using AW2.Settings;
 using AW2.Sound;
 using AW2.UI;
+using Microsoft.Xna.Framework.Graphics;
+using AW2.Net;
+using AW2.Net.MessageHandling;
+using AW2.Net.Messages;
 
 namespace AW2.Core
 {
@@ -53,6 +57,9 @@ namespace AW2.Core
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngineXNA SoundEngine { get; private set; }
         public StatsBase Stats { get; set; }
+        public SteamComponent SteamComponent { get; set; }
+
+        public bool IsSteam { get; set; }
 
         /// <summary>
         /// The current mode of network operation of the game.
@@ -81,14 +88,16 @@ namespace AW2.Core
 
         #endregion AssaultWing properties
 
-        public AssaultWingCore(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
-            : base(graphicsDeviceService)
+        public AssaultWingCore(GameServiceContainer serviceContainer, CommandLineOptions args)
+            : base(serviceContainer, ignoreGraphicsContent: args.DedicatedServer)
         {
             Log.Write("Assault Wing version " + MiscHelper.Version);
             CommandLineOptions = args;
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
-            Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
+            Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);            
             NetworkMode = NetworkMode.Standalone;
+            NetworkingErrors = new Queue<string>();
+
             InitializeComponents();
             _standingsTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1));
         }
@@ -104,14 +113,19 @@ namespace AW2.Core
             _uiEngine = new UIEngineImpl(this, 1);
             Stats = new StatsBase(this, 7);
             SoundEngine = new SoundEngineXNA(this, 5);
+
+            SteamComponent = new SteamComponent(this, 0);
+
             Components.Add(PreFrameLogicEngine);
             Components.Add(LogicEngine);
             Components.Add(PostFrameLogicEngine);
             Components.Add(SoundEngine);
             Components.Add(_uiEngine);
             Components.Add(Stats);
+            Components.Add(SteamComponent);
             SoundEngine.Enabled = !CommandLineOptions.DedicatedServer;
             _uiEngine.Enabled = true;
+            SteamComponent.Enabled = true;
 
             if (!CommandLineOptions.DedicatedServer)
             {
@@ -173,6 +187,32 @@ namespace AW2.Core
             ShowPlayerHelp();
             Log.Write("...started arena " + DataEngine.Arena.Info.Name);
         }
+
+        public virtual string StartServer() { return ""; }
+        public string SelectedArenaName { get; set; }
+
+        public NetworkEngine NetworkEngine { get; protected set; }
+        
+        /// <summary>
+        /// Errors that occurred when establishing or maintaining a network game instance.
+        /// These errors are eventually reported to the user and game state is reset out of networking.
+        /// </summary>
+        public Queue<string> NetworkingErrors { get; init; }
+
+        public MessageHandlers MessageHandlers { get; protected set; }
+        
+        public virtual void GobCreationMessageReceived(GobCreationMessage message, int framesAgo) {}
+
+        public virtual void StartClient(AWEndPoint[] serverEndPoints) {}
+
+        public virtual void PrepareArenaOnClient(CanonicalString gameplayMode, string arenaName, byte arenaIDOnClient, int wallCount) {}
+
+        public virtual void AddRemoteSpectator(Spectator newSpectator) {}
+
+        public virtual void UpdateGameServerInfoToManagementServer() {}
+
+        public virtual void LoadSelectedArena(byte? arenaIDOnClient = null) {}
+
 
         /// <summary>
         /// Finishes playing the current arena.

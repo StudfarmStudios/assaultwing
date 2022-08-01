@@ -49,7 +49,7 @@ namespace AW2.Graphics.OverlayComponents
         {
             CustomAlignment = () => new Vector2(0, 300);
             _player = viewport.Owner;
-            _messageBeeper = new MessageBeeper(_player.Game, "PlayerMessage", () => Messages.FirstOrDefault());
+            _messageBeeper = new MessageBeeper(_player.Game, "playerMessage", () => Messages.FirstOrDefault());
         }
 
         public override void LoadContent()
@@ -74,8 +74,8 @@ namespace AW2.Graphics.OverlayComponents
                 var textSize = _chatBoxFont.MeasureString(item.Message.Text);
                 var preTextPos = new Vector2((Dimensions.X - textSize.X - preTextSize.X) / 2, messageY);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);
-                ModelRenderer.DrawBorderedText(spriteBatch, _chatBoxFont, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR, alpha, SHADOW_THICKNESS);
-                ModelRenderer.DrawBorderedText(spriteBatch, _chatBoxFont, item.Message.Text, textPos.Round(), item.Message.TextColor, alpha, SHADOW_THICKNESS);
+                ModelRenderer.DrawBorderedText(spriteBatch, _chatBoxFont, item.Message.PreText, Vector2.Round(preTextPos), PlayerMessage.PRETEXT_COLOR, alpha, SHADOW_THICKNESS);
+                ModelRenderer.DrawBorderedText(spriteBatch, _chatBoxFont, item.Message.Text, Vector2.Round(textPos), item.Message.TextColor, alpha, SHADOW_THICKNESS);
                 messageY += _chatBoxFont.LineSpacing;
             }
         }

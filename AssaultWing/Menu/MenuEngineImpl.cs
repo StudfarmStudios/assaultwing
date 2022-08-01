@@ -52,7 +52,7 @@ namespace AW2.Menu
         private Texture2D _backgroundTexture;
         private Texture2D _loggedInPilot;
 
-        public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
+        public new AssaultWing<ClientEvent> Game { get { return (AssaultWing<ClientEvent>)base.Game; } }
         public MenuContent MenuContent { get; private set; }
         public ProgressBar ProgressBar { get; private set; }
         public MenuControls Controls { get; private set; }
@@ -69,7 +69,7 @@ namespace AW2.Menu
             get
             {
                 var localPlayer = Game.DataEngine.LocalPlayer;
-                if (localPlayer == null || !localPlayer.GetStats().IsLoggedIn) return null;
+                if (localPlayer == null || !localPlayer.StatsData.IsLoggedIn) return null;
                 return localPlayer;
             }
         }
@@ -89,7 +89,7 @@ namespace AW2.Menu
             g_loggedInPilot.Keys.Add(new CurveKey(1.7f, 1, 0, 0, CurveContinuity.Smooth));
         }
 
-        public MenuEngineImpl(AssaultWing game, int updateOrder)
+        public MenuEngineImpl(AssaultWing<ClientEvent> game, int updateOrder)
             : base(game, updateOrder)
         {
             Controls = new MenuControls();
@@ -149,8 +149,10 @@ namespace AW2.Menu
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
-            foreach (var component in _components)
-                if (component != null) component.UnloadContent();
+            if (_components != null) {
+                foreach (var component in _components)
+                    if (component != null) component.UnloadContent();
+            }
         }
 
         public override void Initialize()
@@ -186,7 +188,7 @@ namespace AW2.Menu
                 _menuChangeSound.Stop();
                 _menuChangeSound.Dispose();
             }
-            _menuChangeSound = Game.SoundEngine.PlaySound("MenuChangeStart");
+            _menuChangeSound = Game.SoundEngine.PlaySound("menuChangeStart");
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
             _activeComponentSoundPlayedOnce = _activeComponentActivatedOnce = false;
@@ -222,7 +224,7 @@ namespace AW2.Menu
             {
                 _activeComponentSoundPlayedOnce = true;
                 _menuChangeSound.Stop();
-                Game.SoundEngine.PlaySound("MenuChangeEnd");
+                Game.SoundEngine.PlaySound("menuChangeEnd");
             }
 
             foreach (var component in _components) component.Update();
@@ -300,9 +302,9 @@ namespace AW2.Menu
         {
             if (LocalPlayer == null)
                 _previousLoggedInLoginToken = null;
-            else if (LocalPlayer.GetStats().LoginToken != _previousLoggedInLoginToken)
+            else if (LocalPlayer.StatsData.LoginToken != _previousLoggedInLoginToken)
             {
-                _previousLoggedInLoginToken = LocalPlayer.GetStats().LoginToken;
+                _previousLoggedInLoginToken = LocalPlayer.StatsData.LoginToken;
                 _loggedInPlayerAnimationStartTime = Game.GameTime.TotalRealTime;
             }
         }
@@ -350,19 +352,19 @@ namespace AW2.Menu
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             var versionText = "Assault Wing " + MiscHelper.Version;
             _spriteBatch.DrawString(MenuContent.FontSmall, versionText,
-                new Vector2(10, ViewportHeight - MenuContent.FontSmall.LineSpacing).Round(), Color.White);
+                Vector2.Round(new Vector2(10, ViewportHeight - MenuContent.FontSmall.LineSpacing)), Color.White);
             if (IsHelpTextVisible)
             {
                 var helpTextPos = new Vector2(
                     (int)(((float)ViewportWidth - MenuContent.FontSmall.MeasureString(ActiveComponent.HelpText).X) / 2),
                     ViewportHeight - MenuContent.FontSmall.LineSpacing);
-                _spriteBatch.DrawString(MenuContent.FontSmall, ActiveComponent.HelpText, helpTextPos.Round(), Color.White);
+                _spriteBatch.DrawString(MenuContent.FontSmall, ActiveComponent.HelpText, Vector2.Round(helpTextPos), Color.White);
             }
             var copyrightText = "Studfarm Studios";
             var copyrightTextPos = new Vector2(
                 ViewportWidth - (int)MenuContent.FontSmall.MeasureString(copyrightText).X - 10,
                 ViewportHeight - MenuContent.FontSmall.LineSpacing);
-            _spriteBatch.DrawString(MenuContent.FontSmall, copyrightText, copyrightTextPos.Round(), Color.White);
+            _spriteBatch.DrawString(MenuContent.FontSmall, copyrightText, Vector2.Round(copyrightTextPos), Color.White);
             _spriteBatch.End();
         }
 
@@ -371,8 +373,8 @@ namespace AW2.Menu
             var localPlayer = LocalPlayer;
             if (localPlayer == null) return;
             var playerRating = string.Format(CultureInfo.InvariantCulture, "{0} ({1:f0})",
-                localPlayer.GetStats().RatingRank.ToOrdinalString(),
-                localPlayer.GetStats().Rating.ToString("f0"));
+                localPlayer.StatsData.RatingRank.ToOrdinalString(),
+                localPlayer.StatsData.Rating.ToString("f0"));
             var nameSize = MenuContent.FontSmall.MeasureString(localPlayer.Name);
             var ratingSize = MenuContent.FontBig.MeasureString(playerRating);
             var backgroundPos = new Vector2(ViewportWidth - _loggedInPilot.Width + 4, -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier()));

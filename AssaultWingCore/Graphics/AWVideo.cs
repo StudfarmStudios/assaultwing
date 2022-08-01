@@ -10,27 +10,27 @@ namespace AW2.Graphics
     /// </summary>
     public class AWVideo : IDisposable
     {
-        private VideoPlayer _videoPlayer;
+        //private VideoPlayer _videoPlayer;
         private bool _beginPassed;
         private bool _isFinished;
 
         public bool IsFinished { get { CheckState(); return _isFinished; } }
 
-        public AWVideo(Video video, float volume)
-        {
-            _videoPlayer = new VideoPlayer{ Volume = volume };
-            _videoPlayer.Play(video);
-            _videoPlayer.Stop();
-        }
+        //public AWVideo(Video video, float volume)
+        //{
+            //_videoPlayer = new VideoPlayer{ Volume = volume };
+            //_videoPlayer.Play(video);
+            //_videoPlayer.Stop();
+        //}
 
         public void Play()
         {
-            _videoPlayer.Resume();
+            //_videoPlayer.Resume();
         }
 
         public void Stop()
         {
-            if (!_videoPlayer.IsDisposed) _videoPlayer.Stop();
+            //if (!_videoPlayer.IsDisposed) _videoPlayer.Stop();
         }
 
         /// <summary>
@@ -39,8 +39,9 @@ namespace AW2.Graphics
         public Texture2D GetTexture()
         {
             CheckState();
-            if (IsFinished) return null;
-            return _videoPlayer.GetTexture();
+            //if (IsFinished) return null;
+            //return _videoPlayer.GetTexture();
+            return null;
         }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace AW2.Graphics
         /// </summary>
         public void Dispose()
         {
-            _videoPlayer.Dispose();
+            //_videoPlayer.Dispose();
         }
 
         private void CheckState()
@@ -57,14 +58,14 @@ namespace AW2.Graphics
             // When XNA content is disposed, the video player loses its video.
             // The video player may also skip to the beginning of the video if a long
             // time passes between frame updates.
-            if (_videoPlayer.IsDisposed || _videoPlayer.Video == null)
-            {
-                _isFinished = true;
-                return;
-            }
-            if (_videoPlayer.PlayPosition == _videoPlayer.Video.Duration) _isFinished = true;
-            if (_videoPlayer.PlayPosition > TimeSpan.Zero) _beginPassed = true;
-            if (_videoPlayer.PlayPosition == TimeSpan.Zero && _beginPassed) _isFinished = true;
+            //if (_videoPlayer.IsDisposed || _videoPlayer.Video == null)
+            //{
+            //    _isFinished = true;
+            //    return;
+            //}
+            //if (_videoPlayer.PlayPosition == _videoPlayer.Video.Duration) _isFinished = true;
+            //if (_videoPlayer.PlayPosition > TimeSpan.Zero) _beginPassed = true;
+            //if (_videoPlayer.PlayPosition == TimeSpan.Zero && _beginPassed) _isFinished = true;
         }
     }
 }

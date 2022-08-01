@@ -31,7 +31,7 @@ namespace AW2.Menu.Equip
             {
                 int matchTabItemCount = Enum.GetValues(typeof(MatchTabItem)).Length;
                 _tabItem = (MatchTabItem)(((int)_tabItem + itemIndexDelta + matchTabItemCount) % matchTabItemCount);
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
             if (Controls.Activate.Pulse && _tabItem == MatchTabItem.Type)
@@ -72,13 +72,13 @@ namespace AW2.Menu.Equip
 
             spriteBatch.Draw(Content.PlayerNameBackground, LeftPanePos - view, Color.White);
 
-            spriteBatch.DrawString(Content.FontSmall, MatchTabItem.Type.ToString(), currentPos.Round(), Color.GreenYellow);
-            spriteBatch.DrawString(Content.FontSmall, MenuEngine.Game.DataEngine.GameplayMode.Name, (currentPos + new Vector2(0, 20)).Round(), Color.White);
+            spriteBatch.DrawString(Content.FontSmall, MatchTabItem.Type.ToString(), Vector2.Round(currentPos), Color.GreenYellow);
+            spriteBatch.DrawString(Content.FontSmall, MenuEngine.Game.DataEngine.GameplayMode.Name, Vector2.Round(currentPos + new Vector2(0, 20)), Color.White);
             currentPos += lineHeight;
 
             var arenaName = MenuEngine.Game.SelectedArenaName;
-            spriteBatch.DrawString(Content.FontSmall, MatchTabItem.Arena.ToString(), currentPos.Round(), Color.GreenYellow);
-            spriteBatch.DrawString(Content.FontSmall, arenaName, (currentPos + new Vector2(0, 20)).Round(), Color.White);
+            spriteBatch.DrawString(Content.FontSmall, MatchTabItem.Arena.ToString(), Vector2.Round(currentPos), Color.GreenYellow);
+            spriteBatch.DrawString(Content.FontSmall, arenaName, Vector2.Round(currentPos + new Vector2(0, 20)), Color.White);
 
             float cursorTime = (float)(MenuEngine.Game.GameTime.TotalRealTime - MenuComponent.ListCursorFadeStartTime).TotalSeconds;
             spriteBatch.Draw(Content.ListCursorTexture, cursorPos, Color.White);
@@ -90,7 +90,7 @@ namespace AW2.Menu.Equip
             var infoDisplayPos = MenuComponent.Pos - view + new Vector2(595, 220);
             var firstInfoLinePos = infoDisplayPos + new Vector2(0, 50);
 
-            spriteBatch.DrawString(Content.FontBig, "Gametype Settings", infoDisplayPos.Round(), Color.White);
+            spriteBatch.DrawString(Content.FontBig, "Gametype Settings", Vector2.Round(infoDisplayPos), Color.White);
 
             Action<int, string, string> drawInfoLine = (line, item, value) =>
             {
@@ -98,8 +98,8 @@ namespace AW2.Menu.Equip
                 var infoWidth = new Vector2(320, 0);
                 var itemPos = firstInfoLinePos + lineHeight * line;
                 var valuePos = itemPos + infoWidth - new Vector2(Content.FontSmall.MeasureString(value).X, 0);
-                spriteBatch.DrawString(Content.FontSmall, item, itemPos.Round(), Color.White);
-                spriteBatch.DrawString(Content.FontSmall, value, valuePos.Round(), Color.GreenYellow);
+                spriteBatch.DrawString(Content.FontSmall, item, Vector2.Round(itemPos), Color.White);
+                spriteBatch.DrawString(Content.FontSmall, value, Vector2.Round(valuePos), Color.GreenYellow);
             };
             drawInfoLine(0, "Enemy", "Everyone");
             drawInfoLine(1, "Players", "Max 16");
@@ -112,7 +112,7 @@ namespace AW2.Menu.Equip
 
             var explanation = "Currently gametype settings cannot be changed.";
             var explanationPos = firstInfoLinePos + new Vector2(0, 192);
-            spriteBatch.DrawString(Content.FontSmall, explanation, explanationPos.Round(), new Color(218, 159, 33));
+            spriteBatch.DrawString(Content.FontSmall, explanation, Vector2.Round(explanationPos), new Color(218, 159, 33));
         }
 
         private void DrawArenaInfo(Vector2 view, SpriteBatch spriteBatch)
@@ -127,11 +127,11 @@ namespace AW2.Menu.Equip
             string previewName = content.Exists<Texture2D>(arenaInfo.PreviewName) ? arenaInfo.PreviewName : "no_preview";
             var previewTexture = content.Load<Texture2D>(previewName);
 
-            spriteBatch.DrawString(Content.FontBig, "Arena info", currentPos.Round(), Color.White);
+            spriteBatch.DrawString(Content.FontBig, "Arena info", Vector2.Round(currentPos), Color.White);
             currentPos += new Vector2(0, 50);
-            spriteBatch.DrawString(Content.FontSmall, "Current arena:", currentPos.Round(), Color.White);
-            spriteBatch.DrawString(Content.FontSmall, arenaName, (currentPos + new Vector2(Content.FontSmall.MeasureString("Current arena:  ").X, 0)).Round(), Color.GreenYellow);
-            if (IsArenaSelectable) spriteBatch.DrawString(Content.FontSmall, "Press Enter to change.", (currentPos + infoWidth + new Vector2(10, 0)).Round(), new Color(218, 159, 33));
+            spriteBatch.DrawString(Content.FontSmall, "Current arena:", Vector2.Round(currentPos), Color.White);
+            spriteBatch.DrawString(Content.FontSmall, arenaName, Vector2.Round(currentPos + new Vector2(Content.FontSmall.MeasureString("Current arena:  ").X, 0)), Color.GreenYellow);
+            if (IsArenaSelectable) spriteBatch.DrawString(Content.FontSmall, "Press Enter to change.", Vector2.Round(currentPos + infoWidth + new Vector2(10, 0)), new Color(218, 159, 33));
             currentPos += new Vector2(0, Content.FontSmall.LineSpacing);
             spriteBatch.Draw(previewTexture, currentPos, null, Color.White, 0, new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
         }

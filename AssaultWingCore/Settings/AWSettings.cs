@@ -32,17 +32,19 @@ namespace AW2.Settings
                 }
                 Log.Write("Errors while reading settings from " + filename);
             }
+            var graphicsEnabled = !game.CommandLineOptions.DedicatedServer;
             Log.Write("Creating a new settings file " + filename);
-            var newSettings = new AWSettings { Filename = filename };
+            var newSettings = new AWSettings(graphicsEnabled: graphicsEnabled) { Filename = filename };
+            newSettings.Reset(game);
             newSettings.ToFile();
             return newSettings;
         }
 
-        public AWSettings()
+        public AWSettings(bool graphicsEnabled)
         {
             Sound = new SoundSettings();
             Net = new NetSettings();
-            Graphics = new GraphicsSettings();
+            Graphics = new GraphicsSettings(graphicsEnabled: graphicsEnabled);
             Players = new PlayerSettings();
             Controls = new ControlsSettings();
             System = new SystemSettings();
@@ -54,12 +56,12 @@ namespace AW2.Settings
             TypeLoader.SaveTemplate(this, Filename, typeof(AWSettings), typeof(TypeParameterAttribute));
         }
 
-        public void Reset()
+        public void Reset(AssaultWingCore game)
         {
             Sound.Reset();
             Net.Reset();
             Graphics.Reset();
-            Players.Reset();
+            Players.Reset(game);
             Controls.Reset();
             System.Reset();
         }

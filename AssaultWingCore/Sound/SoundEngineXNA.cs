@@ -76,14 +76,14 @@ namespace AW2.Sound
         {
             try
             {
-                string filePath = Game.Content.RootDirectory + "\\corecontent\\sounds\\sounddefs.xml";
+                string filePath = Game.Content.ResolveContentPath(Paths.SOUND_DEFS);
                 var document = new XmlDocument();
                 document.Load(filePath);
                 var soundNodes = document.SelectNodes("group/sound");
                 var errors = false;
                 foreach (XmlNode sound in soundNodes)
                 {
-                    var baseName = sound.Attributes["name"].Value.ToLower(CultureInfo.InvariantCulture);
+                    var baseName = sound.Attributes["name"].Value;
 
                     var loopAttribute = sound.Attributes["loop"];
                     bool loop = (loopAttribute != null ? Boolean.Parse(loopAttribute.Value) : false);
@@ -206,7 +206,6 @@ namespace AW2.Sound
         private SoundInstance CreateSoundInternal(string soundName, Func<Vector2?> getEmitterPos, Func<Vector2?> getEmitterMove)
         {
             if (!Enabled) return new SoundInstanceDummy();
-            soundName = soundName.ToLower(CultureInfo.InvariantCulture);
             if (!_soundCues.ContainsKey(soundName))
             {
                 throw new ArgumentException("Sound " + soundName + " does not exist!");

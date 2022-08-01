@@ -32,7 +32,7 @@ namespace AW2.Core.OverlayComponents
         private Func<int> _subtaskCompletedCount;
 
         public MenuEngineImpl Menu { get; private set; }
-        public AssaultWing Game { get { return Menu.Game; } }
+        public AssaultWing<ClientEvent> Game { get { return Menu.Game; } }
         public bool IsFinished { get; private set; }
         public override Point Dimensions { get { return new Point(BackgroundTexture.Width, BackgroundTexture.Height); } }
         private Texture2D BackgroundTexture { get { return Menu.MenuContent.ProgressBarBackgroundTexture; } }

@@ -29,7 +29,7 @@
   <upgradeNames>
   </upgradeNames>
   <iconName>b_icon_bouncegun</iconName>
-  <fireSound>Bazooka</fireSound>
+  <fireSound>bazooka</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>
   <shotTypeName>bomb</shotTypeName>

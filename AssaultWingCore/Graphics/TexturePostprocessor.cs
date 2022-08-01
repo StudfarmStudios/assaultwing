@@ -123,10 +123,22 @@ namespace AW2.Graphics
         private void PrepareEffect(Effect effect)
         {
             var tex = _targets[_sourceIndex].GetTexture();
-            effect.Parameters["T"].SetValue((float)AssaultWingCore.Instance.DataEngine.ArenaTotalTime.TotalSeconds);
-            effect.Parameters["Texture"].SetValue(tex);
-            effect.Parameters["TextureWidth"].SetValue(tex.Width);
-            effect.Parameters["TextureHeight"].SetValue(tex.Height);
+            if (effect.Parameters["T"]!= null) {
+                effect.Parameters["T"].SetValue((float)AssaultWingCore.Instance.DataEngine.ArenaTotalTime.TotalSeconds);
+            }
+
+            if (effect.Parameters["Texture"] != null) {
+                effect.Parameters["Texture"].SetValue(tex);
+            }
+
+            if (effect.Parameters["TextureWidth"] != null) {
+                effect.Parameters["TextureWidth"].SetValue((float)tex.Width);
+            }
+
+            if (effect.Parameters["TextureHeight"] != null) {
+                effect.Parameters["TextureHeight"].SetValue((float)tex.Height);
+            }
+
             float halfTexelWidth = 0.5f / tex.Width;
             float halfTexelHeight = 0.5f / tex.Height;
             _vertexData[0].Position = new Vector3(-1 - halfTexelWidth, -1 + halfTexelHeight, 0);

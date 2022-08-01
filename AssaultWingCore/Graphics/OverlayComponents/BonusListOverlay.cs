@@ -181,7 +181,7 @@ namespace AW2.Graphics.OverlayComponents
             var bonusText = bonusAction.BonusText;
             var textSize = _bonusFont.MeasureString(bonusText);
             var textPos = bonusPos - backgroundOrigin + new Vector2(32, 25.5f - textSize.Y / 2);
-            spriteBatch.DrawString(_bonusFont, bonusText, textPos.Round(), Color.White);
+            spriteBatch.DrawString(_bonusFont, bonusText, Vector2.Round(textPos), Color.White);
         }
 
         /// <summary>

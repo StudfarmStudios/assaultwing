@@ -19,15 +19,20 @@ namespace AW2.Core.GameComponents
         private AWVideo _introVideo;
         private SpriteBatch _spriteBatch;
 
-        public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
+        public new AssaultWing<ClientEvent> Game { get { return (AssaultWing<ClientEvent>)base.Game; } }
 
-        public IntroEngine(AssaultWing game, int updateOrder)
+        public IntroEngine(AssaultWing<ClientEvent> game, int updateOrder)
             : base(game, updateOrder)
         {
         }
 
         private void BeginIntro()
         {
+            if (_introVideo == null)
+            {
+                Mode = ModeType.Finished;
+                return;
+            }
             Log.Write("Starting intro");
             try
             {
@@ -59,7 +64,7 @@ namespace AW2.Core.GameComponents
         {
             base.LoadContent();
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
-            _introVideo = new AWVideo(Game.Content.Load<Video>("aw_intro"), Game.Settings.Sound.SoundVolume);
+            _introVideo = null; // new AWVideo(Game.Content.Load<Video>("aw_intro"), Game.Settings.Sound.SoundVolume);
         }
 
         public override void UnloadContent()
@@ -76,6 +81,10 @@ namespace AW2.Core.GameComponents
         public override void Draw()
         {
             if (Mode == ModeType.NotStarted) BeginIntro();
+            if (_introVideo == null)
+            {
+                return;
+            }
             Game.GraphicsDeviceService.GraphicsDevice.Clear(Color.Black);
             var videoFrame = _introVideo.GetTexture();
             if (videoFrame != null)

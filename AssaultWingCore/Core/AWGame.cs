@@ -18,7 +18,7 @@ namespace AW2.Core
         public static readonly TimeSpan TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS);
         private static readonly TimeSpan FastFrameDrawMaxDuration = TimeSpan.FromMilliseconds(2);
 
-        public GraphicsDeviceService GraphicsDeviceService { get; private set; }
+        public IGraphicsDeviceService GraphicsDeviceService { get; private set; }
         public RenderTarget2D DefaultRenderTarget { get; private set; }
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
@@ -36,12 +36,19 @@ namespace AW2.Core
         private AWTimer _framerateTimer;
         private RunningSequenceTimeSpan _frameDrawTimes;
         private Stopwatch _frameDrawStopwatch;
+        private bool _ignoreGraphicsContent;
 
-        public AWGame(GraphicsDeviceService graphicsDeviceService)
+        // <summary>
+        // In some special cases Update needs to be called multiple times before being ready to paint.
+        // </summary>
+        public virtual bool UpdateNeeded { get; set; }        
+
+        public AWGame(GameServiceContainer serviceContainer, bool ignoreGraphicsContent)
         {
-            GraphicsDeviceService = graphicsDeviceService;
-            Services = new GameServiceContainer();
-            if (graphicsDeviceService != null) Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
+            _ignoreGraphicsContent = ignoreGraphicsContent;
+            GraphicsDeviceService = serviceContainer.GetService<GraphicsDeviceManager>();
+            Services = serviceContainer;
+            Content = Services.GetService<AWContentManager>();
             Components = new AWGameComponentCollection();
             GameTime = new AWGameTime();
             _framerateTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
@@ -61,7 +68,6 @@ namespace AW2.Core
 
         public virtual void Initialize()
         {
-            Content = new AWContentManager(Services);
             foreach (var item in Components)
             {
                 Log.Write("Initializing " + item.GetType().Name);

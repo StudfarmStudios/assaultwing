@@ -18,7 +18,7 @@ namespace AW2.Core.OverlayComponents
         private TriggeredCallback[] _actions;
         private TimeSpan _firstUpdate;
 
-        public AssaultWing Game { get { return Menu.Game; } }
+        public AssaultWing<ClientEvent> Game { get { return Menu.Game; } }
         public MenuEngineImpl Menu { get; private set; }
 
         /// <summary>

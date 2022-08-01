@@ -6,4 +6,20 @@
         Collision = 0x01,
         ShipCollision = 0x02,
     }
+
+    public static class CollisionSoundTypeExtension
+    {
+        public static string EffectName (this CollisionSoundType sound)
+        {
+            switch(sound)
+            {
+                case CollisionSoundType.Collision: 
+                    return "collision";
+                case CollisionSoundType.ShipCollision: 
+                    return "shipcollision";
+                default:
+                    return "none";
+            }
+        }
+    }
 }

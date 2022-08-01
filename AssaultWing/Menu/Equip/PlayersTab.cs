@@ -23,13 +23,13 @@ namespace AW2.Menu.Equip
             if (Controls.Dirs.Down.Pulse)
             {
                 PlayerList.CurrentIndex++;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
             if (Controls.Dirs.Up.Pulse)
             {
                 PlayerList.CurrentIndex--;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
         }
@@ -61,17 +61,17 @@ namespace AW2.Menu.Equip
 
             spriteBatch.Draw(shipPicture, infoDisplayPos, null, Color.White, 0,
                 new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
-            spriteBatch.DrawString(Content.FontBig, "Ship", (infoDisplayPos + new Vector2(149, 15)).Round(), Color.White);
+            spriteBatch.DrawString(Content.FontBig, "Ship", Vector2.Round(infoDisplayPos + new Vector2(149, 15)), Color.White);
             spriteBatch.Draw(shipTitlePicture, infoDisplayPos + new Vector2(140, 37), Color.White);
 
             spriteBatch.Draw(devicePicture, infoDisplayPos + new Vector2(0, 120), null, Color.White, 0,
                 new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
-            spriteBatch.DrawString(Content.FontBig, "Ship Modification", (infoDisplayPos + new Vector2(0, 120) + new Vector2(149, 15)).Round(), Color.White);
+            spriteBatch.DrawString(Content.FontBig, "Ship Modification", Vector2.Round(infoDisplayPos + new Vector2(0, 120) + new Vector2(149, 15)), Color.White);
             spriteBatch.Draw(deviceTitlePicture, infoDisplayPos + new Vector2(0, 120) + new Vector2(140, 37), Color.White);
 
             spriteBatch.Draw(weaponPicture, infoDisplayPos + new Vector2(0, 240), null, Color.White, 0,
                 new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
-            spriteBatch.DrawString(Content.FontBig, "Special Weapon", (infoDisplayPos + new Vector2(0, 240) + new Vector2(149, 15)).Round(), Color.White);
+            spriteBatch.DrawString(Content.FontBig, "Special Weapon", Vector2.Round(infoDisplayPos + new Vector2(0, 240) + new Vector2(149, 15)), Color.White);
             spriteBatch.Draw(weaponTitlePicture, infoDisplayPos + new Vector2(0, 240) + new Vector2(140, 37), Color.White);
         }
     }

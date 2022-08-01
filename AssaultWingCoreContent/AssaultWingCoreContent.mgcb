@@ -1,0 +1,3539 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin
+/intermediateDir:obj
+/platform:Windows
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+
+#begin arenas/Arena_AlienWorld.bin
+/copy:arenas/Arena_AlienWorld.bin;CoreContent/arenas/Arena_AlienWorld.bin
+
+#begin arenas/Arena_AlienWorld.xml
+/copy:arenas/Arena_AlienWorld.xml;CoreContent/arenas/Arena_AlienWorld.xml
+
+#begin arenas/Arena_Amazonas.bin
+/copy:arenas/Arena_Amazonas.bin;CoreContent/arenas/Arena_Amazonas.bin
+
+#begin arenas/Arena_Amazonas.xml
+/copy:arenas/Arena_Amazonas.xml;CoreContent/arenas/Arena_Amazonas.xml
+
+#begin arenas/Arena_Blood Bowl.bin
+/copy:arenas/Arena_Blood Bowl.bin;CoreContent/arenas/Arena_Blood Bowl.bin
+
+#begin arenas/Arena_Blood Bowl.xml
+/copy:arenas/Arena_Blood Bowl.xml;CoreContent/arenas/Arena_Blood Bowl.xml
+
+#begin arenas/Arena_Junk.bin
+/copy:arenas/Arena_Junk.bin;CoreContent/arenas/Arena_Junk.bin
+
+#begin arenas/Arena_Junk.xml
+/copy:arenas/Arena_Junk.xml;CoreContent/arenas/Arena_Junk.xml
+
+#begin arenas/Arena_Lumipesu.bin
+/copy:arenas/Arena_Lumipesu.bin;CoreContent/arenas/Arena_Lumipesu.bin
+
+#begin arenas/Arena_Lumipesu.xml
+/copy:arenas/Arena_Lumipesu.xml;CoreContent/arenas/Arena_Lumipesu.xml
+
+#begin effects/basicshaders.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effects/basicshaders.fx;CoreContent/effects/basicshaders.fx
+
+#begin effects/bomber_rage.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effects/bomber_rage.fx;CoreContent/effects/bomber_rage.fx
+
+#begin effects/gaussian_blur.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effects/gaussian_blur.fx;CoreContent/effects/gaussian_blur.fx
+
+#begin fonts/ChatFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/ChatFont.spritefont;CoreContent/fonts/ChatFont.spritefont
+
+#begin fonts/ConsoleFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/ConsoleFont.spritefont;CoreContent/fonts/ConsoleFont.spritefont
+
+#begin fonts/MenuFontBig.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/MenuFontBig.spritefont;CoreContent/fonts/MenuFontBig.spritefont
+
+#begin fonts/MenuFontHuge.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/MenuFontHuge.spritefont;CoreContent/fonts/MenuFontHuge.spritefont
+
+#begin fonts/MenuFontSmall.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/MenuFontSmall.spritefont;CoreContent/fonts/MenuFontSmall.spritefont
+
+#begin fonts/ScoreFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/ScoreFont.spritefont;CoreContent/fonts/ScoreFont.spritefont
+
+#begin gameplaymodes/GameplayMode_mayhem.xml
+/copy:gameplaymodes/GameplayMode_mayhem.xml;CoreContent/gameplaymodes/GameplayMode_mayhem.xml
+
+#begin gobdefs/ArenaMessage_bonusmessage.xml
+/copy:gobdefs/ArenaMessage_bonusmessage.xml;CoreContent/gobdefs/ArenaMessage_bonusmessage.xml
+
+#begin gobdefs/ArenaMessage_deathmessage.xml
+/copy:gobdefs/ArenaMessage_deathmessage.xml;CoreContent/gobdefs/ArenaMessage_deathmessage.xml
+
+#begin gobdefs/BonusAction_deploy turret bonus action.xml
+/copy:gobdefs/BonusAction_deploy turret bonus action.xml;CoreContent/gobdefs/BonusAction_deploy turret bonus action.xml
+
+#begin gobdefs/BonusAction_full repair bonus action.xml
+/copy:gobdefs/BonusAction_full repair bonus action.xml;CoreContent/gobdefs/BonusAction_full repair bonus action.xml
+
+#begin gobdefs/BonusAction_nanobot repair bonus action.xml
+/copy:gobdefs/BonusAction_nanobot repair bonus action.xml;CoreContent/gobdefs/BonusAction_nanobot repair bonus action.xml
+
+#begin gobdefs/BonusAction_speedloader bonus action.xml
+/copy:gobdefs/BonusAction_speedloader bonus action.xml;CoreContent/gobdefs/BonusAction_speedloader bonus action.xml
+
+#begin gobdefs/BonusAction_suicide bomber bonus action.xml
+/copy:gobdefs/BonusAction_suicide bomber bonus action.xml;CoreContent/gobdefs/BonusAction_suicide bomber bonus action.xml
+
+#begin gobdefs/BonusAction_venom_damage bonus action.xml
+/copy:gobdefs/BonusAction_venom_damage bonus action.xml;CoreContent/gobdefs/BonusAction_venom_damage bonus action.xml
+
+#begin gobdefs/BonusAction_weapon upgrade bonus action.xml
+/copy:gobdefs/BonusAction_weapon upgrade bonus action.xml;CoreContent/gobdefs/BonusAction_weapon upgrade bonus action.xml
+
+#begin gobdefs/Bot_bazooka bot.xml
+/copy:gobdefs/Bot_bazooka bot.xml;CoreContent/gobdefs/Bot_bazooka bot.xml
+
+#begin gobdefs/Bot_bazooka turret.xml
+/copy:gobdefs/Bot_bazooka turret.xml;CoreContent/gobdefs/Bot_bazooka turret.xml
+
+#begin gobdefs/Bot_fusion cone bot.xml
+/copy:gobdefs/Bot_fusion cone bot.xml;CoreContent/gobdefs/Bot_fusion cone bot.xml
+
+#begin gobdefs/Bot_lightning turret.xml
+/copy:gobdefs/Bot_lightning turret.xml;CoreContent/gobdefs/Bot_lightning turret.xml
+
+#begin gobdefs/Bot_mine bot.xml
+/copy:gobdefs/Bot_mine bot.xml;CoreContent/gobdefs/Bot_mine bot.xml
+
+#begin gobdefs/Bot_rocket bot.xml
+/copy:gobdefs/Bot_rocket bot.xml;CoreContent/gobdefs/Bot_rocket bot.xml
+
+#begin gobdefs/BounceBullet_falling crate.xml
+/copy:gobdefs/BounceBullet_falling crate.xml;CoreContent/gobdefs/BounceBullet_falling crate.xml
+
+#begin gobdefs/BounceBullet_falling pipe.xml
+/copy:gobdefs/BounceBullet_falling pipe.xml;CoreContent/gobdefs/BounceBullet_falling pipe.xml
+
+#begin gobdefs/BounceBullet_large fragment.xml
+/copy:gobdefs/BounceBullet_large fragment.xml;CoreContent/gobdefs/BounceBullet_large fragment.xml
+
+#begin gobdefs/BounceBullet_lava chunk.xml
+/copy:gobdefs/BounceBullet_lava chunk.xml;CoreContent/gobdefs/BounceBullet_lava chunk.xml
+
+#begin gobdefs/Bullet_bomb.xml
+/copy:gobdefs/Bullet_bomb.xml;CoreContent/gobdefs/Bullet_bomb.xml
+
+#begin gobdefs/Bullet_dummygobtype.xml
+/copy:gobdefs/Bullet_dummygobtype.xml;CoreContent/gobdefs/Bullet_dummygobtype.xml
+
+#begin gobdefs/Bullet_dust fragment.xml
+/copy:gobdefs/Bullet_dust fragment.xml;CoreContent/gobdefs/Bullet_dust fragment.xml
+
+#begin gobdefs/Bullet_exploding fragment.xml
+/copy:gobdefs/Bullet_exploding fragment.xml;CoreContent/gobdefs/Bullet_exploding fragment.xml
+
+#begin gobdefs/Bullet_talon.xml
+/copy:gobdefs/Bullet_talon.xml;CoreContent/gobdefs/Bullet_talon.xml
+
+#begin gobdefs/Bullet_trizooka shot.xml
+/copy:gobdefs/Bullet_trizooka shot.xml;CoreContent/gobdefs/Bullet_trizooka shot.xml
+
+#begin gobdefs/CollisionTrigger_door opener.xml
+/copy:gobdefs/CollisionTrigger_door opener.xml;CoreContent/gobdefs/CollisionTrigger_door opener.xml
+
+#begin gobdefs/DefinedBonus_deploy turret bonus.xml
+/copy:gobdefs/DefinedBonus_deploy turret bonus.xml;CoreContent/gobdefs/DefinedBonus_deploy turret bonus.xml
+
+#begin gobdefs/DefinedBonus_full repair.xml
+/copy:gobdefs/DefinedBonus_full repair.xml;CoreContent/gobdefs/DefinedBonus_full repair.xml
+
+#begin gobdefs/DefinedBonus_kamikaze.xml
+/copy:gobdefs/DefinedBonus_kamikaze.xml;CoreContent/gobdefs/DefinedBonus_kamikaze.xml
+
+#begin gobdefs/DefinedBonus_repairsystem.xml
+/copy:gobdefs/DefinedBonus_repairsystem.xml;CoreContent/gobdefs/DefinedBonus_repairsystem.xml
+
+#begin gobdefs/DefinedBonus_upgradeweapon1loadtime.xml
+/copy:gobdefs/DefinedBonus_upgradeweapon1loadtime.xml;CoreContent/gobdefs/DefinedBonus_upgradeweapon1loadtime.xml
+
+#begin gobdefs/DefinedBonus_upgradeweapon2.xml
+/copy:gobdefs/DefinedBonus_upgradeweapon2.xml;CoreContent/gobdefs/DefinedBonus_upgradeweapon2.xml
+
+#begin gobdefs/Dock_dock.xml
+/copy:gobdefs/Dock_dock.xml;CoreContent/gobdefs/Dock_dock.xml
+
+#begin gobdefs/Explosion_berserker explosion.xml
+/copy:gobdefs/Explosion_berserker explosion.xml;CoreContent/gobdefs/Explosion_berserker explosion.xml
+
+#begin gobdefs/Explosion_bomb explosion.xml
+/copy:gobdefs/Explosion_bomb explosion.xml;CoreContent/gobdefs/Explosion_bomb explosion.xml
+
+#begin gobdefs/Explosion_clustermine explosion.xml
+/copy:gobdefs/Explosion_clustermine explosion.xml;CoreContent/gobdefs/Explosion_clustermine explosion.xml
+
+#begin gobdefs/Explosion_mine explosion.xml
+/copy:gobdefs/Explosion_mine explosion.xml;CoreContent/gobdefs/Explosion_mine explosion.xml
+
+#begin gobdefs/Explosion_rocket explosion.xml
+/copy:gobdefs/Explosion_rocket explosion.xml;CoreContent/gobdefs/Explosion_rocket explosion.xml
+
+#begin gobdefs/Explosion_selfdestruct.xml
+/copy:gobdefs/Explosion_selfdestruct.xml;CoreContent/gobdefs/Explosion_selfdestruct.xml
+
+#begin gobdefs/Explosion_ship explosion.xml
+/copy:gobdefs/Explosion_ship explosion.xml;CoreContent/gobdefs/Explosion_ship explosion.xml
+
+#begin gobdefs/FloatingBullet_clustermine.xml
+/copy:gobdefs/FloatingBullet_clustermine.xml;CoreContent/gobdefs/FloatingBullet_clustermine.xml
+
+#begin gobdefs/FloatingBullet_mine.xml
+/copy:gobdefs/FloatingBullet_mine.xml;CoreContent/gobdefs/FloatingBullet_mine.xml
+
+#begin gobdefs/Lightning_bot lightning.xml
+/copy:gobdefs/Lightning_bot lightning.xml;CoreContent/gobdefs/Lightning_bot lightning.xml
+
+#begin gobdefs/Lightning_lightning.xml
+/copy:gobdefs/Lightning_lightning.xml;CoreContent/gobdefs/Lightning_lightning.xml
+
+#begin gobdefs/MovingWall_moving wall.xml
+/copy:gobdefs/MovingWall_moving wall.xml;CoreContent/gobdefs/MovingWall_moving wall.xml
+
+#begin gobdefs/PropModel_prop model.xml
+/copy:gobdefs/PropModel_prop model.xml;CoreContent/gobdefs/PropModel_prop model.xml
+
+#begin gobdefs/Rocket_berserker.xml
+/copy:gobdefs/Rocket_berserker.xml;CoreContent/gobdefs/Rocket_berserker.xml
+
+#begin gobdefs/Rocket_rocket.xml
+/copy:gobdefs/Rocket_rocket.xml;CoreContent/gobdefs/Rocket_rocket.xml
+
+#begin gobdefs/Ship_Bugger.xml
+/copy:gobdefs/Ship_Bugger.xml;CoreContent/gobdefs/Ship_Bugger.xml
+
+#begin gobdefs/Ship_Windlord.xml
+/copy:gobdefs/Ship_Windlord.xml;CoreContent/gobdefs/Ship_Windlord.xml
+
+#begin gobdefs/SnakeShip_Plissken.xml
+/copy:gobdefs/SnakeShip_Plissken.xml;CoreContent/gobdefs/SnakeShip_Plissken.xml
+
+#begin gobdefs/SpawnGob_bonus spawn.xml
+/copy:gobdefs/SpawnGob_bonus spawn.xml;CoreContent/gobdefs/SpawnGob_bonus spawn.xml
+
+#begin gobdefs/SpawnPlayer_player spawn.xml
+/copy:gobdefs/SpawnPlayer_player spawn.xml;CoreContent/gobdefs/SpawnPlayer_player spawn.xml
+
+#begin gobdefs/Triforce_antimatter jet.xml
+/copy:gobdefs/Triforce_antimatter jet.xml;CoreContent/gobdefs/Triforce_antimatter jet.xml
+
+#begin gobdefs/Triforce_fusion jet.xml
+/copy:gobdefs/Triforce_fusion jet.xml;CoreContent/gobdefs/Triforce_fusion jet.xml
+
+#begin gobdefs/VenomDrop_venom drop.xml
+/copy:gobdefs/VenomDrop_venom drop.xml;CoreContent/gobdefs/VenomDrop_venom drop.xml
+
+#begin gobdefs/WallModel_wall model.xml
+/copy:gobdefs/WallModel_wall model.xml;CoreContent/gobdefs/WallModel_wall model.xml
+
+#begin music/BG_Amazon.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:music/BG_Amazon.mp3;CoreContent/music/BG_Amazon.mp3
+
+#begin music/BG_Dark.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:music/BG_Dark.mp3;CoreContent/music/BG_Dark.mp3
+
+#begin music/jyri_1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:music/jyri_1.mp3;CoreContent/music/jyri_1.mp3
+
+#begin music/menu music.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:music/menu music.mp3;CoreContent/music/menu music.mp3
+
+#begin music/toikka_1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:music/toikka_1.mp3;CoreContent/music/toikka_1.mp3
+
+#begin particledefs/Peng_airstreaks.xml
+/copy:particledefs/Peng_airstreaks.xml;CoreContent/particledefs/Peng_airstreaks.xml
+
+#begin particledefs/Peng_amazon rain.xml
+/copy:particledefs/Peng_amazon rain.xml;CoreContent/particledefs/Peng_amazon rain.xml
+
+#begin particledefs/Peng_amazon rainfall.xml
+/copy:particledefs/Peng_amazon rainfall.xml;CoreContent/particledefs/Peng_amazon rainfall.xml
+
+#begin particledefs/Peng_amazon steam.xml
+/copy:particledefs/Peng_amazon steam.xml;CoreContent/particledefs/Peng_amazon steam.xml
+
+#begin particledefs/Peng_antimattercone_hit1.xml
+/copy:particledefs/Peng_antimattercone_hit1.xml;CoreContent/particledefs/Peng_antimattercone_hit1.xml
+
+#begin particledefs/Peng_antimattercone_surround.xml
+/copy:particledefs/Peng_antimattercone_surround.xml;CoreContent/particledefs/Peng_antimattercone_surround.xml
+
+#begin particledefs/Peng_basic_muzzle_fire.xml
+/copy:particledefs/Peng_basic_muzzle_fire.xml;CoreContent/particledefs/Peng_basic_muzzle_fire.xml
+
+#begin particledefs/Peng_bazooka electric ball.xml
+/copy:particledefs/Peng_bazooka electric ball.xml;CoreContent/particledefs/Peng_bazooka electric ball.xml
+
+#begin particledefs/Peng_bazooka electric streaks.xml
+/copy:particledefs/Peng_bazooka electric streaks.xml;CoreContent/particledefs/Peng_bazooka electric streaks.xml
+
+#begin particledefs/Peng_blink fail target.xml
+/copy:particledefs/Peng_blink fail target.xml;CoreContent/particledefs/Peng_blink fail target.xml
+
+#begin particledefs/Peng_blink fail.xml
+/copy:particledefs/Peng_blink fail.xml;CoreContent/particledefs/Peng_blink fail.xml
+
+#begin particledefs/Peng_bonus birth.xml
+/copy:particledefs/Peng_bonus birth.xml;CoreContent/particledefs/Peng_bonus birth.xml
+
+#begin particledefs/Peng_bonus blink.xml
+/copy:particledefs/Peng_bonus blink.xml;CoreContent/particledefs/Peng_bonus blink.xml
+
+#begin particledefs/Peng_bonus collect flash.xml
+/copy:particledefs/Peng_bonus collect flash.xml;CoreContent/particledefs/Peng_bonus collect flash.xml
+
+#begin particledefs/Peng_bonus collect.xml
+/copy:particledefs/Peng_bonus collect.xml;CoreContent/particledefs/Peng_bonus collect.xml
+
+#begin particledefs/Peng_bonus death dust.xml
+/copy:particledefs/Peng_bonus death dust.xml;CoreContent/particledefs/Peng_bonus death dust.xml
+
+#begin particledefs/Peng_bot birth electric ball.xml
+/copy:particledefs/Peng_bot birth electric ball.xml;CoreContent/particledefs/Peng_bot birth electric ball.xml
+
+#begin particledefs/Peng_bot birth electric streaks.xml
+/copy:particledefs/Peng_bot birth electric streaks.xml;CoreContent/particledefs/Peng_bot birth electric streaks.xml
+
+#begin particledefs/Peng_bot birth glowdust.xml
+/copy:particledefs/Peng_bot birth glowdust.xml;CoreContent/particledefs/Peng_bot birth glowdust.xml
+
+#begin particledefs/Peng_bot bonus spray.xml
+/copy:particledefs/Peng_bot bonus spray.xml;CoreContent/particledefs/Peng_bot bonus spray.xml
+
+#begin particledefs/Peng_bot electric ball.xml
+/copy:particledefs/Peng_bot electric ball.xml;CoreContent/particledefs/Peng_bot electric ball.xml
+
+#begin particledefs/Peng_bot electric streaks.xml
+/copy:particledefs/Peng_bot electric streaks.xml;CoreContent/particledefs/Peng_bot electric streaks.xml
+
+#begin particledefs/Peng_bot thrust.xml
+/copy:particledefs/Peng_bot thrust.xml;CoreContent/particledefs/Peng_bot thrust.xml
+
+#begin particledefs/Peng_bubble_reflection.xml
+/copy:particledefs/Peng_bubble_reflection.xml;CoreContent/particledefs/Peng_bubble_reflection.xml
+
+#begin particledefs/Peng_bugger_engine_1.xml
+/copy:particledefs/Peng_bugger_engine_1.xml;CoreContent/particledefs/Peng_bugger_engine_1.xml
+
+#begin particledefs/Peng_bugger_engine_2.xml
+/copy:particledefs/Peng_bugger_engine_2.xml;CoreContent/particledefs/Peng_bugger_engine_2.xml
+
+#begin particledefs/Peng_bugger_engine_3.xml
+/copy:particledefs/Peng_bugger_engine_3.xml;CoreContent/particledefs/Peng_bugger_engine_3.xml
+
+#begin particledefs/Peng_buggerlights.xml
+/copy:particledefs/Peng_buggerlights.xml;CoreContent/particledefs/Peng_buggerlights.xml
+
+#begin particledefs/Peng_bullet explo.xml
+/copy:particledefs/Peng_bullet explo.xml;CoreContent/particledefs/Peng_bullet explo.xml
+
+#begin particledefs/Peng_bullet fragments.xml
+/copy:particledefs/Peng_bullet fragments.xml;CoreContent/particledefs/Peng_bullet fragments.xml
+
+#begin particledefs/Peng_dock effect occupied.xml
+/copy:particledefs/Peng_dock effect occupied.xml;CoreContent/particledefs/Peng_dock effect occupied.xml
+
+#begin particledefs/Peng_dock effect.xml
+/copy:particledefs/Peng_dock effect.xml;CoreContent/particledefs/Peng_dock effect.xml
+
+#begin particledefs/Peng_docklight.xml
+/copy:particledefs/Peng_docklight.xml;CoreContent/particledefs/Peng_docklight.xml
+
+#begin particledefs/Peng_dockredlight.xml
+/copy:particledefs/Peng_dockredlight.xml;CoreContent/particledefs/Peng_dockredlight.xml
+
+#begin particledefs/Peng_dumb glow.xml
+/copy:particledefs/Peng_dumb glow.xml;CoreContent/particledefs/Peng_dumb glow.xml
+
+#begin particledefs/Peng_dumbfirethrust1.xml
+/copy:particledefs/Peng_dumbfirethrust1.xml;CoreContent/particledefs/Peng_dumbfirethrust1.xml
+
+#begin particledefs/Peng_dummypeng.xml
+/copy:particledefs/Peng_dummypeng.xml;CoreContent/particledefs/Peng_dummypeng.xml
+
+#begin particledefs/Peng_dust fragments.xml
+/copy:particledefs/Peng_dust fragments.xml;CoreContent/particledefs/Peng_dust fragments.xml
+
+#begin particledefs/Peng_electric_shockwave.xml
+/copy:particledefs/Peng_electric_shockwave.xml;CoreContent/particledefs/Peng_electric_shockwave.xml
+
+#begin particledefs/Peng_explo center selfdestruct.xml
+/copy:particledefs/Peng_explo center selfdestruct.xml;CoreContent/particledefs/Peng_explo center selfdestruct.xml
+
+#begin particledefs/Peng_explo center.xml
+/copy:particledefs/Peng_explo center.xml;CoreContent/particledefs/Peng_explo center.xml
+
+#begin particledefs/Peng_explo dots.xml
+/copy:particledefs/Peng_explo dots.xml;CoreContent/particledefs/Peng_explo dots.xml
+
+#begin particledefs/Peng_explo shockwave.xml
+/copy:particledefs/Peng_explo shockwave.xml;CoreContent/particledefs/Peng_explo shockwave.xml
+
+#begin particledefs/Peng_explo smoke.xml
+/copy:particledefs/Peng_explo smoke.xml;CoreContent/particledefs/Peng_explo smoke.xml
+
+#begin particledefs/Peng_explo white flash.xml
+/copy:particledefs/Peng_explo white flash.xml;CoreContent/particledefs/Peng_explo white flash.xml
+
+#begin particledefs/Peng_fragment explo.xml
+/copy:particledefs/Peng_fragment explo.xml;CoreContent/particledefs/Peng_fragment explo.xml
+
+#begin particledefs/Peng_fragment smoke.xml
+/copy:particledefs/Peng_fragment smoke.xml;CoreContent/particledefs/Peng_fragment smoke.xml
+
+#begin particledefs/Peng_fragments.xml
+/copy:particledefs/Peng_fragments.xml;CoreContent/particledefs/Peng_fragments.xml
+
+#begin particledefs/Peng_fusioncone_hit1.xml
+/copy:particledefs/Peng_fusioncone_hit1.xml;CoreContent/particledefs/Peng_fusioncone_hit1.xml
+
+#begin particledefs/Peng_fusioncone_surround.xml
+/copy:particledefs/Peng_fusioncone_surround.xml;CoreContent/particledefs/Peng_fusioncone_surround.xml
+
+#begin particledefs/Peng_hexagon_bubble.xml
+/copy:particledefs/Peng_hexagon_bubble.xml;CoreContent/particledefs/Peng_hexagon_bubble.xml
+
+#begin particledefs/Peng_junk bonus spray.xml
+/copy:particledefs/Peng_junk bonus spray.xml;CoreContent/particledefs/Peng_junk bonus spray.xml
+
+#begin particledefs/Peng_junk junk spray.xml
+/copy:particledefs/Peng_junk junk spray.xml;CoreContent/particledefs/Peng_junk junk spray.xml
+
+#begin particledefs/Peng_junk sparkrain.xml
+/copy:particledefs/Peng_junk sparkrain.xml;CoreContent/particledefs/Peng_junk sparkrain.xml
+
+#begin particledefs/Peng_junk_background_flashes.xml
+/copy:particledefs/Peng_junk_background_flashes.xml;CoreContent/particledefs/Peng_junk_background_flashes.xml
+
+#begin particledefs/Peng_junk_steam.xml
+/copy:particledefs/Peng_junk_steam.xml;CoreContent/particledefs/Peng_junk_steam.xml
+
+#begin particledefs/Peng_large fragment explo.xml
+/copy:particledefs/Peng_large fragment explo.xml;CoreContent/particledefs/Peng_large fragment explo.xml
+
+#begin particledefs/Peng_large fragments.xml
+/copy:particledefs/Peng_large fragments.xml;CoreContent/particledefs/Peng_large fragments.xml
+
+#begin particledefs/Peng_lava spray.xml
+/copy:particledefs/Peng_lava spray.xml;CoreContent/particledefs/Peng_lava spray.xml
+
+#begin particledefs/Peng_lumipesu snowfall.xml
+/copy:particledefs/Peng_lumipesu snowfall.xml;CoreContent/particledefs/Peng_lumipesu snowfall.xml
+
+#begin particledefs/Peng_medium explo center.xml
+/copy:particledefs/Peng_medium explo center.xml;CoreContent/particledefs/Peng_medium explo center.xml
+
+#begin particledefs/Peng_medium explo shockwave.xml
+/copy:particledefs/Peng_medium explo shockwave.xml;CoreContent/particledefs/Peng_medium explo shockwave.xml
+
+#begin particledefs/Peng_medium explo smoke.xml
+/copy:particledefs/Peng_medium explo smoke.xml;CoreContent/particledefs/Peng_medium explo smoke.xml
+
+#begin particledefs/Peng_medium explo white flash.xml
+/copy:particledefs/Peng_medium explo white flash.xml;CoreContent/particledefs/Peng_medium explo white flash.xml
+
+#begin particledefs/Peng_megabonus blink.xml
+/copy:particledefs/Peng_megabonus blink.xml;CoreContent/particledefs/Peng_megabonus blink.xml
+
+#begin particledefs/Peng_mine warning.xml
+/copy:particledefs/Peng_mine warning.xml;CoreContent/particledefs/Peng_mine warning.xml
+
+#begin particledefs/Peng_muzzle_blue_flame.xml
+/copy:particledefs/Peng_muzzle_blue_flame.xml;CoreContent/particledefs/Peng_muzzle_blue_flame.xml
+
+#begin particledefs/Peng_nanobot repair.xml
+/copy:particledefs/Peng_nanobot repair.xml;CoreContent/particledefs/Peng_nanobot repair.xml
+
+#begin particledefs/Peng_player birth stars.xml
+/copy:particledefs/Peng_player birth stars.xml;CoreContent/particledefs/Peng_player birth stars.xml
+
+#begin particledefs/Peng_player birth strokes.xml
+/copy:particledefs/Peng_player birth strokes.xml;CoreContent/particledefs/Peng_player birth strokes.xml
+
+#begin particledefs/Peng_playerglow.xml
+/copy:particledefs/Peng_playerglow.xml;CoreContent/particledefs/Peng_playerglow.xml
+
+#begin particledefs/Peng_ramdamage.xml
+/copy:particledefs/Peng_ramdamage.xml;CoreContent/particledefs/Peng_ramdamage.xml
+
+#begin particledefs/Peng_ramshield.xml
+/copy:particledefs/Peng_ramshield.xml;CoreContent/particledefs/Peng_ramshield.xml
+
+#begin particledefs/Peng_selfdestruct_stars.xml
+/copy:particledefs/Peng_selfdestruct_stars.xml;CoreContent/particledefs/Peng_selfdestruct_stars.xml
+
+#begin particledefs/Peng_selfdestruct_strokes.xml
+/copy:particledefs/Peng_selfdestruct_strokes.xml;CoreContent/particledefs/Peng_selfdestruct_strokes.xml
+
+#begin particledefs/Peng_selfdestruct_wave.xml
+/copy:particledefs/Peng_selfdestruct_wave.xml;CoreContent/particledefs/Peng_selfdestruct_wave.xml
+
+#begin particledefs/Peng_shield_block.xml
+/copy:particledefs/Peng_shield_block.xml;CoreContent/particledefs/Peng_shield_block.xml
+
+#begin particledefs/Peng_shield_fail.xml
+/copy:particledefs/Peng_shield_fail.xml;CoreContent/particledefs/Peng_shield_fail.xml
+
+#begin particledefs/Peng_ship explo center.xml
+/copy:particledefs/Peng_ship explo center.xml;CoreContent/particledefs/Peng_ship explo center.xml
+
+#begin particledefs/Peng_ship explo shockwave.xml
+/copy:particledefs/Peng_ship explo shockwave.xml;CoreContent/particledefs/Peng_ship explo shockwave.xml
+
+#begin particledefs/Peng_ship explo smoke.xml
+/copy:particledefs/Peng_ship explo smoke.xml;CoreContent/particledefs/Peng_ship explo smoke.xml
+
+#begin particledefs/Peng_ship explo white flash.xml
+/copy:particledefs/Peng_ship explo white flash.xml;CoreContent/particledefs/Peng_ship explo white flash.xml
+
+#begin particledefs/Peng_ship_smoke.xml
+/copy:particledefs/Peng_ship_smoke.xml;CoreContent/particledefs/Peng_ship_smoke.xml
+
+#begin particledefs/Peng_slimeglow.xml
+/copy:particledefs/Peng_slimeglow.xml;CoreContent/particledefs/Peng_slimeglow.xml
+
+#begin particledefs/Peng_slimetrail.xml
+/copy:particledefs/Peng_slimetrail.xml;CoreContent/particledefs/Peng_slimetrail.xml
+
+#begin particledefs/Peng_snake haze.xml
+/copy:particledefs/Peng_snake haze.xml;CoreContent/particledefs/Peng_snake haze.xml
+
+#begin particledefs/Peng_snake_engine.xml
+/copy:particledefs/Peng_snake_engine.xml;CoreContent/particledefs/Peng_snake_engine.xml
+
+#begin particledefs/Peng_star flash.xml
+/copy:particledefs/Peng_star flash.xml;CoreContent/particledefs/Peng_star flash.xml
+
+#begin particledefs/Peng_trizooka glow.xml
+/copy:particledefs/Peng_trizooka glow.xml;CoreContent/particledefs/Peng_trizooka glow.xml
+
+#begin particledefs/Peng_venom explo.xml
+/copy:particledefs/Peng_venom explo.xml;CoreContent/particledefs/Peng_venom explo.xml
+
+#begin particledefs/Peng_venom fragments.xml
+/copy:particledefs/Peng_venom fragments.xml;CoreContent/particledefs/Peng_venom fragments.xml
+
+#begin particledefs/Peng_venom poisoning.xml
+/copy:particledefs/Peng_venom poisoning.xml;CoreContent/particledefs/Peng_venom poisoning.xml
+
+#begin particledefs/Peng_venom splash.xml
+/copy:particledefs/Peng_venom splash.xml;CoreContent/particledefs/Peng_venom splash.xml
+
+#begin particledefs/Peng_volcano.xml
+/copy:particledefs/Peng_volcano.xml;CoreContent/particledefs/Peng_volcano.xml
+
+#begin particledefs/Peng_windlord_claws.xml
+/copy:particledefs/Peng_windlord_claws.xml;CoreContent/particledefs/Peng_windlord_claws.xml
+
+#begin particledefs/Peng_windlord_engine_1.xml
+/copy:particledefs/Peng_windlord_engine_1.xml;CoreContent/particledefs/Peng_windlord_engine_1.xml
+
+#begin particledefs/Peng_windlord_engine_2.xml
+/copy:particledefs/Peng_windlord_engine_2.xml;CoreContent/particledefs/Peng_windlord_engine_2.xml
+
+#begin sounds/angry01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/angry01.wav;CoreContent/sounds/angry01.wav
+
+#begin sounds/angry02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/angry02.wav;CoreContent/sounds/angry02.wav
+
+#begin sounds/angry03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/angry03.wav;CoreContent/sounds/angry03.wav
+
+#begin sounds/bad01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bad01.wav;CoreContent/sounds/bad01.wav
+
+#begin sounds/bad02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bad02.wav;CoreContent/sounds/bad02.wav
+
+#begin sounds/bad03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bad03.wav;CoreContent/sounds/bad03.wav
+
+#begin sounds/bazooka01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bazooka01.wav;CoreContent/sounds/bazooka01.wav
+
+#begin sounds/bazooka02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bazooka02.wav;CoreContent/sounds/bazooka02.wav
+
+#begin sounds/bazooka03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bazooka03.wav;CoreContent/sounds/bazooka03.wav
+
+#begin sounds/bazooka04.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bazooka04.wav;CoreContent/sounds/bazooka04.wav
+
+#begin sounds/bazooka05.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bazooka05.wav;CoreContent/sounds/bazooka05.wav
+
+#begin sounds/blink01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/blink01.wav;CoreContent/sounds/blink01.wav
+
+#begin sounds/blink02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/blink02.wav;CoreContent/sounds/blink02.wav
+
+#begin sounds/bonusCollection01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bonusCollection01.wav;CoreContent/sounds/bonusCollection01.wav
+
+#begin sounds/bonusCollection02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/bonusCollection02.wav;CoreContent/sounds/bonusCollection02.wav
+
+#begin sounds/buggerEngine01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/buggerEngine01.wav;CoreContent/sounds/buggerEngine01.wav
+
+#begin sounds/collision01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/collision01.wav;CoreContent/sounds/collision01.wav
+
+#begin sounds/collision02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/collision02.wav;CoreContent/sounds/collision02.wav
+
+#begin sounds/dropMines01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/dropMines01.wav;CoreContent/sounds/dropMines01.wav
+
+#begin sounds/dummysound01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/dummysound01.wav;CoreContent/sounds/dummysound01.wav
+
+#begin sounds/engine01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/engine01.wav;CoreContent/sounds/engine01.wav
+
+#begin sounds/escPause01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/escPause01.wav;CoreContent/sounds/escPause01.wav
+
+#begin sounds/escPause02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/escPause02.wav;CoreContent/sounds/escPause02.wav
+
+#begin sounds/explosion01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/explosion01.wav;CoreContent/sounds/explosion01.wav
+
+#begin sounds/explosion02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/explosion02.wav;CoreContent/sounds/explosion02.wav
+
+#begin sounds/explosion03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/explosion03.wav;CoreContent/sounds/explosion03.wav
+
+#begin sounds/fusionConeFire01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/fusionConeFire01.wav;CoreContent/sounds/fusionConeFire01.wav
+
+#begin sounds/fusionConeHit01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/fusionConeHit01.wav;CoreContent/sounds/fusionConeHit01.wav
+
+#begin sounds/fusionConeHit02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/fusionConeHit02.wav;CoreContent/sounds/fusionConeHit02.wav
+
+#begin sounds/fusionConeHitWall01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sounds/fusionConeHitWall01.wav;CoreContent/sounds/fusionConeHitWall01.wav
+
+#begin sounds/good01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/good01.wav;CoreContent/sounds/good01.wav
+
+#begin sounds/homeBaseLoop01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/homeBaseLoop01.wav;CoreContent/sounds/homeBaseLoop01.wav
+
+#begin sounds/homeBaseLoopLow01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/homeBaseLoopLow01.wav;CoreContent/sounds/homeBaseLoopLow01.wav
+
+#begin sounds/lightningWeapon01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/lightningWeapon01.wav;CoreContent/sounds/lightningWeapon01.wav
+
+#begin sounds/lowengine01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/lowengine01.wav;CoreContent/sounds/lowengine01.wav
+
+#begin sounds/menuBrowseItem01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuBrowseItem01.wav;CoreContent/sounds/menuBrowseItem01.wav
+
+#begin sounds/menuBrowseItem02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuBrowseItem02.wav;CoreContent/sounds/menuBrowseItem02.wav
+
+#begin sounds/menuBrowseItem03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuBrowseItem03.wav;CoreContent/sounds/menuBrowseItem03.wav
+
+#begin sounds/menuChangeEnd01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeEnd01.wav;CoreContent/sounds/menuChangeEnd01.wav
+
+#begin sounds/menuChangeEnd02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeEnd02.wav;CoreContent/sounds/menuChangeEnd02.wav
+
+#begin sounds/menuChangeEnd03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeEnd03.wav;CoreContent/sounds/menuChangeEnd03.wav
+
+#begin sounds/menuChangeEnd04.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeEnd04.wav;CoreContent/sounds/menuChangeEnd04.wav
+
+#begin sounds/menuChangeEnd05.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeEnd05.wav;CoreContent/sounds/menuChangeEnd05.wav
+
+#begin sounds/menuChangeItem01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeItem01.wav;CoreContent/sounds/menuChangeItem01.wav
+
+#begin sounds/menuChangeStart01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeStart01.wav;CoreContent/sounds/menuChangeStart01.wav
+
+#begin sounds/menuChangeStart02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeStart02.wav;CoreContent/sounds/menuChangeStart02.wav
+
+#begin sounds/menuChangeStart03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeStart03.wav;CoreContent/sounds/menuChangeStart03.wav
+
+#begin sounds/menuChangeStart04.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeStart04.wav;CoreContent/sounds/menuChangeStart04.wav
+
+#begin sounds/menuChangeStart05.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/menuChangeStart05.wav;CoreContent/sounds/menuChangeStart05.wav
+
+#begin sounds/meow01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/meow01.wav;CoreContent/sounds/meow01.wav
+
+#begin sounds/meow02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/meow02.wav;CoreContent/sounds/meow02.wav
+
+#begin sounds/meow03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/meow03.wav;CoreContent/sounds/meow03.wav
+
+#begin sounds/meow04.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/meow04.wav;CoreContent/sounds/meow04.wav
+
+#begin sounds/meow05.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/meow05.wav;CoreContent/sounds/meow05.wav
+
+#begin sounds/meow06.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/meow06.wav;CoreContent/sounds/meow06.wav
+
+#begin sounds/mineHit01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/mineHit01.wav;CoreContent/sounds/mineHit01.wav
+
+#begin sounds/missile01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/missile01.wav;CoreContent/sounds/missile01.wav
+
+#begin sounds/missileHit01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/missileHit01.wav;CoreContent/sounds/missileHit01.wav
+
+#begin sounds/missileHit02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/missileHit02.wav;CoreContent/sounds/missileHit02.wav
+
+#begin sounds/missileHit03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/missileHit03.wav;CoreContent/sounds/missileHit03.wav
+
+#begin sounds/newCraft01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/newCraft01.wav;CoreContent/sounds/newCraft01.wav
+
+#begin sounds/newCraft02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/newCraft02.wav;CoreContent/sounds/newCraft02.wav
+
+#begin sounds/newCraft03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/newCraft03.wav;CoreContent/sounds/newCraft03.wav
+
+#begin sounds/newCraft04.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/newCraft04.wav;CoreContent/sounds/newCraft04.wav
+
+#begin sounds/newCraft05.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/newCraft05.wav;CoreContent/sounds/newCraft05.wav
+
+#begin sounds/playerMessage01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/playerMessage01.wav;CoreContent/sounds/playerMessage01.wav
+
+#begin sounds/plisskenEngine01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/plisskenEngine01.wav;CoreContent/sounds/plisskenEngine01.wav
+
+#begin sounds/purpur01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/purpur01.wav;CoreContent/sounds/purpur01.wav
+
+#begin sounds/shieldActivate01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/shieldActivate01.wav;CoreContent/sounds/shieldActivate01.wav
+
+#begin sounds/shieldBlock01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/shieldBlock01.wav;CoreContent/sounds/shieldBlock01.wav
+
+#begin sounds/shieldFail01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/shieldFail01.wav;CoreContent/sounds/shieldFail01.wav
+
+#begin sounds/shipcollision01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/shipcollision01.wav;CoreContent/sounds/shipcollision01.wav
+
+#begin sounds/shipcollision02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/shipcollision02.wav;CoreContent/sounds/shipcollision02.wav
+
+#begin sounds/shipcollision03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/shipcollision03.wav;CoreContent/sounds/shipcollision03.wav
+
+#begin sounds/sounddefs.xml
+/copy:sounds/sounddefs.xml;CoreContent/sounds/sounddefs.xml
+
+#begin sounds/talon01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon01.wav;CoreContent/sounds/talon01.wav
+
+#begin sounds/talon02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon02.wav;CoreContent/sounds/talon02.wav
+
+#begin sounds/talon03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon03.wav;CoreContent/sounds/talon03.wav
+
+#begin sounds/talon04.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon04.wav;CoreContent/sounds/talon04.wav
+
+#begin sounds/talon05.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon05.wav;CoreContent/sounds/talon05.wav
+
+#begin sounds/talon06.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon06.wav;CoreContent/sounds/talon06.wav
+
+#begin sounds/talon07.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon07.wav;CoreContent/sounds/talon07.wav
+
+#begin sounds/talon08.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon08.wav;CoreContent/sounds/talon08.wav
+
+#begin sounds/talon09.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon09.wav;CoreContent/sounds/talon09.wav
+
+#begin sounds/talon10.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/talon10.wav;CoreContent/sounds/talon10.wav
+
+#begin sounds/venomSpray01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/venomSpray01.wav;CoreContent/sounds/venomSpray01.wav
+
+#begin sounds/weaponFail01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/weaponFail01.wav;CoreContent/sounds/weaponFail01.wav
+
+#begin sounds/windlordEngine01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Medium
+/build:sounds/windlordEngine01.wav;CoreContent/sounds/windlordEngine01.wav
+
+#begin textures/alienworld_parallax_background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/alienworld_parallax_background.png;CoreContent/textures/alienworld_parallax_background.png
+
+#begin textures/alienworld_parallax_dust.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/alienworld_parallax_dust.png;CoreContent/textures/alienworld_parallax_dust.png
+
+#begin textures/alienworld_parallax_dust_small.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/alienworld_parallax_dust_small.png;CoreContent/textures/alienworld_parallax_dust_small.png
+
+#begin textures/alienworld_parallax_greenhaze.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/alienworld_parallax_greenhaze.png;CoreContent/textures/alienworld_parallax_greenhaze.png
+
+#begin textures/amazonas_bg_parallax.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/amazonas_bg_parallax.png;CoreContent/textures/amazonas_bg_parallax.png
+
+#begin textures/amazonas_fog_parallax.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/amazonas_fog_parallax.png;CoreContent/textures/amazonas_fog_parallax.png
+
+#begin textures/b_icon_add_kill.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_add_kill.png;CoreContent/textures/b_icon_add_kill.png
+
+#begin textures/b_icon_antimattercone.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_antimattercone.png;CoreContent/textures/b_icon_antimattercone.png
+
+#begin textures/b_icon_berserkers.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_berserkers.png;CoreContent/textures/b_icon_berserkers.png
+
+#begin textures/b_icon_bouncegun.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_bouncegun.png;CoreContent/textures/b_icon_bouncegun.png
+
+#begin textures/b_icon_general.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_general.png;CoreContent/textures/b_icon_general.png
+
+#begin textures/b_icon_mines.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_mines.png;CoreContent/textures/b_icon_mines.png
+
+#begin textures/b_icon_rapid_fire_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_rapid_fire_1.png;CoreContent/textures/b_icon_rapid_fire_1.png
+
+#begin textures/b_icon_repair.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_repair.png;CoreContent/textures/b_icon_repair.png
+
+#begin textures/b_icon_suicide.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_suicide.png;CoreContent/textures/b_icon_suicide.png
+
+#begin textures/b_icon_take_life.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_take_life.png;CoreContent/textures/b_icon_take_life.png
+
+#begin textures/b_icon_venomdrop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/b_icon_venomdrop.png;CoreContent/textures/b_icon_venomdrop.png
+
+#begin textures/ball_logged_in.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/ball_logged_in.png;CoreContent/textures/ball_logged_in.png
+
+#begin textures/ball_not_logged_in.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/ball_not_logged_in.png;CoreContent/textures/ball_not_logged_in.png
+
+#begin textures/dummytexture.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/dummytexture.png;CoreContent/textures/dummytexture.png
+
+#begin textures/gui_bonus_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_bonus_bg.png;CoreContent/textures/gui_bonus_bg.png
+
+#begin textures/gui_bonus_duration.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_bonus_duration.png;CoreContent/textures/gui_bonus_duration.png
+
+#begin textures/gui_bonuscollect_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_bonuscollect_bg.png;CoreContent/textures/gui_bonuscollect_bg.png
+
+#begin textures/gui_chat_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_chat_bg.png;CoreContent/textures/gui_chat_bg.png
+
+#begin textures/gui_chat_scroll_arrow_down.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_chat_scroll_arrow_down.png;CoreContent/textures/gui_chat_scroll_arrow_down.png
+
+#begin textures/gui_chat_scroll_arrow_glow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_chat_scroll_arrow_glow.png;CoreContent/textures/gui_chat_scroll_arrow_glow.png
+
+#begin textures/gui_chat_scroll_arrow_up.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_chat_scroll_arrow_up.png;CoreContent/textures/gui_chat_scroll_arrow_up.png
+
+#begin textures/gui_chat_scroll_marker.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_chat_scroll_marker.png;CoreContent/textures/gui_chat_scroll_marker.png
+
+#begin textures/gui_chat_scroll_track.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_chat_scroll_track.png;CoreContent/textures/gui_chat_scroll_track.png
+
+#begin textures/gui_chat_typeline_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_chat_typeline_bg.png;CoreContent/textures/gui_chat_typeline_bg.png
+
+#begin textures/gui_chat_typeline_cursor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_chat_typeline_cursor.png;CoreContent/textures/gui_chat_typeline_cursor.png
+
+#begin textures/gui_playerinfo_bar_loadamount.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_bar_loadamount.png;CoreContent/textures/gui_playerinfo_bar_loadamount.png
+
+#begin textures/gui_playerinfo_bar_main.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_bar_main.png;CoreContent/textures/gui_playerinfo_bar_main.png
+
+#begin textures/gui_playerinfo_bar_ship.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_bar_ship.png;CoreContent/textures/gui_playerinfo_bar_ship.png
+
+#begin textures/gui_playerinfo_bar_special.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_bar_special.png;CoreContent/textures/gui_playerinfo_bar_special.png
+
+#begin textures/gui_playerinfo_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_bg.png;CoreContent/textures/gui_playerinfo_bg.png
+
+#begin textures/gui_playerinfo_loaded.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_loaded.png;CoreContent/textures/gui_playerinfo_loaded.png
+
+#begin textures/gui_playerinfo_ship.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_ship.png;CoreContent/textures/gui_playerinfo_ship.png
+
+#begin textures/gui_playerinfo_white_ball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_white_ball.png;CoreContent/textures/gui_playerinfo_white_ball.png
+
+#begin textures/gui_playerinfo_white_rect.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerinfo_white_rect.png;CoreContent/textures/gui_playerinfo_white_rect.png
+
+#begin textures/gui_playerlist_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_playerlist_bg.png;CoreContent/textures/gui_playerlist_bg.png
+
+#begin textures/gui_radar_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_radar_bg.png;CoreContent/textures/gui_radar_bg.png
+
+#begin textures/gui_tracker_bonus.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_tracker_bonus.png;CoreContent/textures/gui_tracker_bonus.png
+
+#begin textures/gui_tracker_dock.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_tracker_dock.png;CoreContent/textures/gui_tracker_dock.png
+
+#begin textures/gui_tracker_player.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_tracker_player.png;CoreContent/textures/gui_tracker_player.png
+
+#begin textures/gui_tracker_rockettarget.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/gui_tracker_rockettarget.png;CoreContent/textures/gui_tracker_rockettarget.png
+
+#begin textures/ingame_dialog.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/ingame_dialog.png;CoreContent/textures/ingame_dialog.png
+
+#begin textures/junk_background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/junk_background.png;CoreContent/textures/junk_background.png
+
+#begin textures/junk_smog.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/junk_smog.png;CoreContent/textures/junk_smog.png
+
+#begin textures/lightning.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/lightning.png;CoreContent/textures/lightning.png
+
+#begin textures/lightning_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/lightning_2.png;CoreContent/textures/lightning_2.png
+
+#begin textures/lightning_3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/lightning_3.png;CoreContent/textures/lightning_3.png
+
+#begin textures/logged_in_pilot_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/logged_in_pilot_bg.png;CoreContent/textures/logged_in_pilot_bg.png
+
+#begin textures/menu_equip_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_bg.png;CoreContent/textures/menu_equip_bg.png
+
+#begin textures/menu_equip_btn_ready.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_btn_ready.png;CoreContent/textures/menu_equip_btn_ready.png
+
+#begin textures/menu_equip_btn_ready_hilite.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_btn_ready_hilite.png;CoreContent/textures/menu_equip_btn_ready_hilite.png
+
+#begin textures/menu_equip_cursor_large.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_cursor_large.png;CoreContent/textures/menu_equip_cursor_large.png
+
+#begin textures/menu_equip_deviceinfo_headers.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_deviceinfo_headers.png;CoreContent/textures/menu_equip_deviceinfo_headers.png
+
+#begin textures/menu_equip_devicename_blink.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicename_blink.png;CoreContent/textures/menu_equip_devicename_blink.png
+
+#begin textures/menu_equip_devicename_catmoflage.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicename_catmoflage.png;CoreContent/textures/menu_equip_devicename_catmoflage.png
+
+#begin textures/menu_equip_devicename_repulsor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicename_repulsor.png;CoreContent/textures/menu_equip_devicename_repulsor.png
+
+#begin textures/menu_equip_devicename_revthrust.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicename_revthrust.png;CoreContent/textures/menu_equip_devicename_revthrust.png
+
+#begin textures/menu_equip_devicename_shield.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicename_shield.png;CoreContent/textures/menu_equip_devicename_shield.png
+
+#begin textures/menu_equip_devicepicture_blink.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicepicture_blink.png;CoreContent/textures/menu_equip_devicepicture_blink.png
+
+#begin textures/menu_equip_devicepicture_catmoflage.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicepicture_catmoflage.png;CoreContent/textures/menu_equip_devicepicture_catmoflage.png
+
+#begin textures/menu_equip_devicepicture_repulsor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicepicture_repulsor.png;CoreContent/textures/menu_equip_devicepicture_repulsor.png
+
+#begin textures/menu_equip_devicepicture_revthrust.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicepicture_revthrust.png;CoreContent/textures/menu_equip_devicepicture_revthrust.png
+
+#begin textures/menu_equip_devicepicture_shield.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_devicepicture_shield.png;CoreContent/textures/menu_equip_devicepicture_shield.png
+
+#begin textures/menu_equip_hilite_large.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_hilite_large.png;CoreContent/textures/menu_equip_hilite_large.png
+
+#begin textures/menu_equip_mod_blink.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_mod_blink.png;CoreContent/textures/menu_equip_mod_blink.png
+
+#begin textures/menu_equip_mod_catmoflage.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_mod_catmoflage.png;CoreContent/textures/menu_equip_mod_catmoflage.png
+
+#begin textures/menu_equip_mod_repulsor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_mod_repulsor.png;CoreContent/textures/menu_equip_mod_repulsor.png
+
+#begin textures/menu_equip_mod_revthrust.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_mod_revthrust.png;CoreContent/textures/menu_equip_mod_revthrust.png
+
+#begin textures/menu_equip_mod_shield.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_mod_shield.png;CoreContent/textures/menu_equip_mod_shield.png
+
+#begin textures/menu_equip_player_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_player_bg.png;CoreContent/textures/menu_equip_player_bg.png
+
+#begin textures/menu_equip_player_name_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_player_name_bg.png;CoreContent/textures/menu_equip_player_name_bg.png
+
+#begin textures/menu_equip_player_name_bg_empty.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_player_name_bg_empty.png;CoreContent/textures/menu_equip_player_name_bg_empty.png
+
+#begin textures/menu_equip_player_name_border.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_player_name_border.png;CoreContent/textures/menu_equip_player_name_border.png
+
+#begin textures/menu_equip_player_name_changeinfo.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_player_name_changeinfo.png;CoreContent/textures/menu_equip_player_name_changeinfo.png
+
+#begin textures/menu_equip_player_name_cursor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_player_name_cursor.png;CoreContent/textures/menu_equip_player_name_cursor.png
+
+#begin textures/menu_equip_player_name_hilite.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_player_name_hilite.png;CoreContent/textures/menu_equip_player_name_hilite.png
+
+#begin textures/menu_equip_player_name_textcursor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_player_name_textcursor.png;CoreContent/textures/menu_equip_player_name_textcursor.png
+
+#begin textures/menu_equip_readytofight.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_readytofight.png;CoreContent/textures/menu_equip_readytofight.png
+
+#begin textures/menu_equip_ship_hyperion.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_ship_hyperion.png;CoreContent/textures/menu_equip_ship_hyperion.png
+
+#begin textures/menu_equip_ship_prowler.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_ship_prowler.png;CoreContent/textures/menu_equip_ship_prowler.png
+
+#begin textures/menu_equip_ship_snake.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_ship_snake.png;CoreContent/textures/menu_equip_ship_snake.png
+
+#begin textures/menu_equip_shipinfo_headers.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_shipinfo_headers.png;CoreContent/textures/menu_equip_shipinfo_headers.png
+
+#begin textures/menu_equip_shipname_bugger.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_shipname_bugger.png;CoreContent/textures/menu_equip_shipname_bugger.png
+
+#begin textures/menu_equip_shipname_snake.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_shipname_snake.png;CoreContent/textures/menu_equip_shipname_snake.png
+
+#begin textures/menu_equip_shipname_windlord.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_shipname_windlord.png;CoreContent/textures/menu_equip_shipname_windlord.png
+
+#begin textures/menu_equip_shippicture_bugger.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_shippicture_bugger.png;CoreContent/textures/menu_equip_shippicture_bugger.png
+
+#begin textures/menu_equip_shippicture_snake.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_shippicture_snake.png;CoreContent/textures/menu_equip_shippicture_snake.png
+
+#begin textures/menu_equip_shippicture_windlord.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_shippicture_windlord.png;CoreContent/textures/menu_equip_shippicture_windlord.png
+
+#begin textures/menu_equip_small_status_display.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_small_status_display.png;CoreContent/textures/menu_equip_small_status_display.png
+
+#begin textures/menu_equip_status_display.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_status_display.png;CoreContent/textures/menu_equip_status_display.png
+
+#begin textures/menu_equip_status_display_extra.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_status_display_extra.png;CoreContent/textures/menu_equip_status_display_extra.png
+
+#begin textures/menu_equip_tab_chat.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_tab_chat.png;CoreContent/textures/menu_equip_tab_chat.png
+
+#begin textures/menu_equip_tab_equipment.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_tab_equipment.png;CoreContent/textures/menu_equip_tab_equipment.png
+
+#begin textures/menu_equip_tab_gamesettings.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_tab_gamesettings.png;CoreContent/textures/menu_equip_tab_gamesettings.png
+
+#begin textures/menu_equip_tab_hilite.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_tab_hilite.png;CoreContent/textures/menu_equip_tab_hilite.png
+
+#begin textures/menu_equip_tab_players.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_tab_players.png;CoreContent/textures/menu_equip_tab_players.png
+
+#begin textures/menu_equip_weaponinfo_headers.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponinfo_headers.png;CoreContent/textures/menu_equip_weaponinfo_headers.png
+
+#begin textures/menu_equip_weaponname_bazooka.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponname_bazooka.png;CoreContent/textures/menu_equip_weaponname_bazooka.png
+
+#begin textures/menu_equip_weaponname_fusioncone.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponname_fusioncone.png;CoreContent/textures/menu_equip_weaponname_fusioncone.png
+
+#begin textures/menu_equip_weaponname_mines.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponname_mines.png;CoreContent/textures/menu_equip_weaponname_mines.png
+
+#begin textures/menu_equip_weaponname_rockets.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponname_rockets.png;CoreContent/textures/menu_equip_weaponname_rockets.png
+
+#begin textures/menu_equip_weaponpicture_bazooka.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponpicture_bazooka.png;CoreContent/textures/menu_equip_weaponpicture_bazooka.png
+
+#begin textures/menu_equip_weaponpicture_fusioncone.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponpicture_fusioncone.png;CoreContent/textures/menu_equip_weaponpicture_fusioncone.png
+
+#begin textures/menu_equip_weaponpicture_mines.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponpicture_mines.png;CoreContent/textures/menu_equip_weaponpicture_mines.png
+
+#begin textures/menu_equip_weaponpicture_rockets.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_weaponpicture_rockets.png;CoreContent/textures/menu_equip_weaponpicture_rockets.png
+
+#begin textures/menu_equip_wep2_dumbfire.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_wep2_dumbfire.png;CoreContent/textures/menu_equip_wep2_dumbfire.png
+
+#begin textures/menu_equip_wep2_fusioncone.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_wep2_fusioncone.png;CoreContent/textures/menu_equip_wep2_fusioncone.png
+
+#begin textures/menu_equip_wep2_mines.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_wep2_mines.png;CoreContent/textures/menu_equip_wep2_mines.png
+
+#begin textures/menu_equip_wep2_rockets.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_equip_wep2_rockets.png;CoreContent/textures/menu_equip_wep2_rockets.png
+
+#begin textures/menu_levels_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_levels_bg.png;CoreContent/textures/menu_levels_bg.png
+
+#begin textures/menu_levels_cursor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_levels_cursor.png;CoreContent/textures/menu_levels_cursor.png
+
+#begin textures/menu_levels_hilite.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_levels_hilite.png;CoreContent/textures/menu_levels_hilite.png
+
+#begin textures/menu_levels_infobox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_levels_infobox.png;CoreContent/textures/menu_levels_infobox.png
+
+#begin textures/menu_levels_tag.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_levels_tag.png;CoreContent/textures/menu_levels_tag.png
+
+#begin textures/menu_main_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_main_bg.png;CoreContent/textures/menu_main_bg.png
+
+#begin textures/menu_main_cursor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_main_cursor.png;CoreContent/textures/menu_main_cursor.png
+
+#begin textures/menu_main_hilite.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_main_hilite.png;CoreContent/textures/menu_main_hilite.png
+
+#begin textures/menu_progressbar_advancer.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_progressbar_advancer.png;CoreContent/textures/menu_progressbar_advancer.png
+
+#begin textures/menu_progressbar_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_progressbar_bg.png;CoreContent/textures/menu_progressbar_bg.png
+
+#begin textures/menu_progressbar_fill.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_progressbar_fill.png;CoreContent/textures/menu_progressbar_fill.png
+
+#begin textures/menu_rustywall_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_rustywall_bg.png;CoreContent/textures/menu_rustywall_bg.png
+
+#begin textures/menu_scrollarrow_down.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_scrollarrow_down.png;CoreContent/textures/menu_scrollarrow_down.png
+
+#begin textures/menu_scrollarrow_hilite.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_scrollarrow_hilite.png;CoreContent/textures/menu_scrollarrow_hilite.png
+
+#begin textures/menu_scrollarrow_up.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/menu_scrollarrow_up.png;CoreContent/textures/menu_scrollarrow_up.png
+
+#begin textures/mini_hpbar_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/mini_hpbar_bg.png;CoreContent/textures/mini_hpbar_bg.png
+
+#begin textures/mini_hpbar_fill.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/mini_hpbar_fill.png;CoreContent/textures/mini_hpbar_fill.png
+
+#begin textures/no_preview.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/no_preview.png;CoreContent/textures/no_preview.png
+
+#begin textures/p_blue_electric_ball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_blue_electric_ball.png;CoreContent/textures/p_blue_electric_ball.png
+
+#begin textures/p_blue_electric_streak_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_blue_electric_streak_1.png;CoreContent/textures/p_blue_electric_streak_1.png
+
+#begin textures/p_blue_electric_streak_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_blue_electric_streak_2.png;CoreContent/textures/p_blue_electric_streak_2.png
+
+#begin textures/p_blue_muzzleflame.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_blue_muzzleflame.png;CoreContent/textures/p_blue_muzzleflame.png
+
+#begin textures/p_blueball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_blueball.png;CoreContent/textures/p_blueball.png
+
+#begin textures/p_bluebolt.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_bluebolt.png;CoreContent/textures/p_bluebolt.png
+
+#begin textures/p_bluebolt2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_bluebolt2.png;CoreContent/textures/p_bluebolt2.png
+
+#begin textures/p_bonusbirth.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_bonusbirth.png;CoreContent/textures/p_bonusbirth.png
+
+#begin textures/p_bonusblink.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_bonusblink.png;CoreContent/textures/p_bonusblink.png
+
+#begin textures/p_bonuscollect.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_bonuscollect.png;CoreContent/textures/p_bonuscollect.png
+
+#begin textures/p_bubble.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_bubble.png;CoreContent/textures/p_bubble.png
+
+#begin textures/p_bubble_reflection.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_bubble_reflection.png;CoreContent/textures/p_bubble_reflection.png
+
+#begin textures/p_dark_smoke.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_dark_smoke.png;CoreContent/textures/p_dark_smoke.png
+
+#begin textures/p_dock_red_light.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_dock_red_light.png;CoreContent/textures/p_dock_red_light.png
+
+#begin textures/p_dots.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_dots.png;CoreContent/textures/p_dots.png
+
+#begin textures/p_drop_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_drop_1.png;CoreContent/textures/p_drop_1.png
+
+#begin textures/p_electric_shockwave.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_electric_shockwave.png;CoreContent/textures/p_electric_shockwave.png
+
+#begin textures/p_explo_center.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_explo_center.png;CoreContent/textures/p_explo_center.png
+
+#begin textures/p_explo_white.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_explo_white.png;CoreContent/textures/p_explo_white.png
+
+#begin textures/p_fusioncone_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_fusioncone_1.png;CoreContent/textures/p_fusioncone_1.png
+
+#begin textures/p_fusioncone_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_fusioncone_2.png;CoreContent/textures/p_fusioncone_2.png
+
+#begin textures/p_fusioncone_circle1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_fusioncone_circle1.png;CoreContent/textures/p_fusioncone_circle1.png
+
+#begin textures/p_fusioncone_circle2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_fusioncone_circle2.png;CoreContent/textures/p_fusioncone_circle2.png
+
+#begin textures/p_green_box.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_green_box.png;CoreContent/textures/p_green_box.png
+
+#begin textures/p_green_circle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_green_circle.png;CoreContent/textures/p_green_circle.png
+
+#begin textures/p_greenbolt.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_greenbolt.png;CoreContent/textures/p_greenbolt.png
+
+#begin textures/p_greenbolt2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_greenbolt2.png;CoreContent/textures/p_greenbolt2.png
+
+#begin textures/p_halo_star.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_halo_star.png;CoreContent/textures/p_halo_star.png
+
+#begin textures/p_health.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_health.png;CoreContent/textures/p_health.png
+
+#begin textures/p_hexagon_bubble.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_hexagon_bubble.png;CoreContent/textures/p_hexagon_bubble.png
+
+#begin textures/p_lightblue_blob.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_lightblue_blob.png;CoreContent/textures/p_lightblue_blob.png
+
+#begin textures/p_lightblue_circle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_lightblue_circle.png;CoreContent/textures/p_lightblue_circle.png
+
+#begin textures/p_megabonusblink.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_megabonusblink.png;CoreContent/textures/p_megabonusblink.png
+
+#begin textures/p_orangeball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_orangeball.png;CoreContent/textures/p_orangeball.png
+
+#begin textures/p_red_arrow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_red_arrow.png;CoreContent/textures/p_red_arrow.png
+
+#begin textures/p_red_blob.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_red_blob.png;CoreContent/textures/p_red_blob.png
+
+#begin textures/p_red_circle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_red_circle.png;CoreContent/textures/p_red_circle.png
+
+#begin textures/p_shockwave.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_shockwave.png;CoreContent/textures/p_shockwave.png
+
+#begin textures/p_smoke.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_smoke.png;CoreContent/textures/p_smoke.png
+
+#begin textures/p_snakehaze.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_snakehaze.png;CoreContent/textures/p_snakehaze.png
+
+#begin textures/p_snow_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_snow_1.png;CoreContent/textures/p_snow_1.png
+
+#begin textures/p_snow_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_snow_2.png;CoreContent/textures/p_snow_2.png
+
+#begin textures/p_snow_3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_snow_3.png;CoreContent/textures/p_snow_3.png
+
+#begin textures/p_snow_4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_snow_4.png;CoreContent/textures/p_snow_4.png
+
+#begin textures/p_white_strokes.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_white_strokes.png;CoreContent/textures/p_white_strokes.png
+
+#begin textures/p_windlord_claw.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_windlord_claw.png;CoreContent/textures/p_windlord_claw.png
+
+#begin textures/p_windlord_claw2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_windlord_claw2.png;CoreContent/textures/p_windlord_claw2.png
+
+#begin textures/p_yellow_circle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_yellow_circle.png;CoreContent/textures/p_yellow_circle.png
+
+#begin textures/p_yellowball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_yellowball.png;CoreContent/textures/p_yellowball.png
+
+#begin textures/p_yellowblueball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/p_yellowblueball.png;CoreContent/textures/p_yellowblueball.png
+
+#begin textures/parallax_icy_backdrop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/parallax_icy_backdrop.png;CoreContent/textures/parallax_icy_backdrop.png
+
+#begin textures/parallax_icy_clouds.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/parallax_icy_clouds.png;CoreContent/textures/parallax_icy_clouds.png
+
+#begin textures/parallax_icy_flakes_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/parallax_icy_flakes_2.png;CoreContent/textures/parallax_icy_flakes_2.png
+
+#begin textures/parallax_red_fog.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/parallax_red_fog.png;CoreContent/textures/parallax_red_fog.png
+
+#begin textures/parallax_rock.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/parallax_rock.png;CoreContent/textures/parallax_rock.png
+
+#begin textures/player_white.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/player_white.png;CoreContent/textures/player_white.png
+
+#begin textures/preview_arena_alienworld.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/preview_arena_alienworld.png;CoreContent/textures/preview_arena_alienworld.png
+
+#begin textures/preview_arena_amazonas.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/preview_arena_amazonas.png;CoreContent/textures/preview_arena_amazonas.png
+
+#begin textures/preview_arena_annalunta.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/preview_arena_annalunta.png;CoreContent/textures/preview_arena_annalunta.png
+
+#begin textures/preview_arena_bloodbowl.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/preview_arena_bloodbowl.png;CoreContent/textures/preview_arena_bloodbowl.png
+
+#begin textures/preview_arena_junk.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/preview_arena_junk.png;CoreContent/textures/preview_arena_junk.png
+
+#begin textures/system_status_overlay_bg.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/system_status_overlay_bg.png;CoreContent/textures/system_status_overlay_bg.png
+
+#begin textures/viewport_border_vertical.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/viewport_border_vertical.png;CoreContent/textures/viewport_border_vertical.png
+
+#begin video/aw_intro.wmv
+/importer:WmvImporter
+/processor:VideoProcessor
+/build:video/aw_intro.wmv;CoreContent/video/aw_intro.wmv
+
+#begin weapondefs/Blink_blink.xml
+/copy:weapondefs/Blink_blink.xml;CoreContent/weapondefs/Blink_blink.xml
+
+#begin weapondefs/Cloak_catmoflage.xml
+/copy:weapondefs/Cloak_catmoflage.xml;CoreContent/weapondefs/Cloak_catmoflage.xml
+
+#begin weapondefs/ForwardShot_bazooka.xml
+/copy:weapondefs/ForwardShot_bazooka.xml;CoreContent/weapondefs/ForwardShot_bazooka.xml
+
+#begin weapondefs/ForwardShot_berserkers.xml
+/copy:weapondefs/ForwardShot_berserkers.xml;CoreContent/weapondefs/ForwardShot_berserkers.xml
+
+#begin weapondefs/ForwardShot_bot bazooka.xml
+/copy:weapondefs/ForwardShot_bot bazooka.xml;CoreContent/weapondefs/ForwardShot_bot bazooka.xml
+
+#begin weapondefs/ForwardShot_bot minelayer.xml
+/copy:weapondefs/ForwardShot_bot minelayer.xml;CoreContent/weapondefs/ForwardShot_bot minelayer.xml
+
+#begin weapondefs/ForwardShot_bot rockets.xml
+/copy:weapondefs/ForwardShot_bot rockets.xml;CoreContent/weapondefs/ForwardShot_bot rockets.xml
+
+#begin weapondefs/ForwardShot_deploy turret.xml
+/copy:weapondefs/ForwardShot_deploy turret.xml;CoreContent/weapondefs/ForwardShot_deploy turret.xml
+
+#begin weapondefs/ForwardShot_dummyweapontype.xml
+/copy:weapondefs/ForwardShot_dummyweapontype.xml;CoreContent/weapondefs/ForwardShot_dummyweapontype.xml
+
+#begin weapondefs/ForwardShot_hovermine.xml
+/copy:weapondefs/ForwardShot_hovermine.xml;CoreContent/weapondefs/ForwardShot_hovermine.xml
+
+#begin weapondefs/ForwardShot_monstermine.xml
+/copy:weapondefs/ForwardShot_monstermine.xml;CoreContent/weapondefs/ForwardShot_monstermine.xml
+
+#begin weapondefs/ForwardShot_rockets.xml
+/copy:weapondefs/ForwardShot_rockets.xml;CoreContent/weapondefs/ForwardShot_rockets.xml
+
+#begin weapondefs/ForwardShot_talon swoop.xml
+/copy:weapondefs/ForwardShot_talon swoop.xml;CoreContent/weapondefs/ForwardShot_talon swoop.xml
+
+#begin weapondefs/ForwardShot_trizooka.xml
+/copy:weapondefs/ForwardShot_trizooka.xml;CoreContent/weapondefs/ForwardShot_trizooka.xml
+
+#begin weapondefs/ForwardShot_venom spray.xml
+/copy:weapondefs/ForwardShot_venom spray.xml;CoreContent/weapondefs/ForwardShot_venom spray.xml
+
+#begin weapondefs/LightningGun_bot lightning gun.xml
+/copy:weapondefs/LightningGun_bot lightning gun.xml;CoreContent/weapondefs/LightningGun_bot lightning gun.xml
+
+#begin weapondefs/LightningGun_lightning gun.xml
+/copy:weapondefs/LightningGun_lightning gun.xml;CoreContent/weapondefs/LightningGun_lightning gun.xml
+
+#begin weapondefs/PowerCone_antimatter cone.xml
+/copy:weapondefs/PowerCone_antimatter cone.xml;CoreContent/weapondefs/PowerCone_antimatter cone.xml
+
+#begin weapondefs/PowerCone_bot fusion cone.xml
+/copy:weapondefs/PowerCone_bot fusion cone.xml;CoreContent/weapondefs/PowerCone_bot fusion cone.xml
+
+#begin weapondefs/PowerCone_fusion cone.xml
+/copy:weapondefs/PowerCone_fusion cone.xml;CoreContent/weapondefs/PowerCone_fusion cone.xml
+
+#begin weapondefs/Repulsor_repulsor.xml
+/copy:weapondefs/Repulsor_repulsor.xml;CoreContent/weapondefs/Repulsor_repulsor.xml
+
+#begin weapondefs/SelfDestruct_suicide bomber.xml
+/copy:weapondefs/SelfDestruct_suicide bomber.xml;CoreContent/weapondefs/SelfDestruct_suicide bomber.xml
+
+#begin weapondefs/Shield_shield.xml
+/copy:weapondefs/Shield_shield.xml;CoreContent/weapondefs/Shield_shield.xml
+

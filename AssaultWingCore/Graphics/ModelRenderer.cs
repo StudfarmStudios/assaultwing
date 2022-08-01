@@ -10,7 +10,7 @@ namespace AW2.Graphics
 {
     public static class ModelRenderer
     {
-        private const string OUTLINE_MESH_NAME_PREFIX = "mesh_Outline";
+        private const string OUTLINE_MESH_NAME_PREFIX = "Outline";
 
         private static GraphicsDevice GraphicsDevice { get { return AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice; } }
 
@@ -35,12 +35,12 @@ namespace AW2.Graphics
                     if (splitIndex < 0) throw new ApplicationException("Pretext char not found");
                     var pretext = line.Text.Substring(0, splitIndex + 1);
                     var properText = line.Text.Substring(splitIndex + 1);
-                    ModelRenderer.DrawBorderedText(spriteBatch, font, pretext, textPos.Round(), AW2.Game.PlayerMessage.PRETEXT_COLOR, 1, 1);
-                    var properPos = textPos + new Vector2(font.MeasureString(pretext).X, 0);
-                    ModelRenderer.DrawBorderedText(spriteBatch, font, properText, properPos.Round(), line.Color, 1, 1);
+                    ModelRenderer.DrawBorderedText(spriteBatch, font, pretext, Vector2.Round(textPos), AW2.Game.PlayerMessage.PRETEXT_COLOR, 1, 1);
+                    var properPos = Vector2.Round(textPos + new Vector2(font.MeasureString(pretext).X, 0));
+                    ModelRenderer.DrawBorderedText(spriteBatch, font, properText, properPos, line.Color, 1, 1);
                 }
                 else
-                    ModelRenderer.DrawBorderedText(spriteBatch, font, line.Text, textPos.Round(), line.Color, 1, 1);
+                    ModelRenderer.DrawBorderedText(spriteBatch, font, line.Text, Vector2.Round(textPos), line.Color, 1, 1);
                 textPos.Y += font.LineSpacing;
             }
         }

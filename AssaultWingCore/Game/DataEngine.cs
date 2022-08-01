@@ -166,6 +166,7 @@ namespace AW2.Game
 
         public void Apply(TeamOperation operation)
         {
+            Log.Write($"Applying team operation: {operation}");
             switch (operation.Type)
             {
                 default: throw new ApplicationException("Unexpected team operation " + operation.Type);

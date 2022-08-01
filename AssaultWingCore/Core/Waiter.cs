@@ -10,11 +10,6 @@ namespace AW2.Core
         private const int PRECISION_MS = 1;
         private static Waiter g_instance;
 
-        [DllImport("winmm.dll")]
-        private static extern uint timeBeginPeriod(uint period);
-        [DllImport("winmm.dll")]
-        private static extern uint timeEndPeriod(uint period);
-
         private bool _disposed;
 
         public static Waiter Instance
@@ -28,7 +23,9 @@ namespace AW2.Core
 
         private Waiter()
         {
-            timeBeginPeriod(PRECISION_MS);
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                WinMm.timeBeginPeriod(PRECISION_MS);
+            }
         }
 
         ~Waiter()
@@ -48,7 +45,9 @@ namespace AW2.Core
         {
             if (_disposed) return;
             _disposed = true;
-            timeEndPeriod(PRECISION_MS);
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                WinMm.timeEndPeriod(PRECISION_MS);
+            }
         }
     }
 }

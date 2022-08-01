@@ -14,7 +14,7 @@ namespace AW2.UI
         private StateType _state;
         private CommandLineOptions.QuickStartOptions _options;
 
-        public QuickStartLogic(AssaultWing game, CommandLineOptions.QuickStartOptions options)
+        public QuickStartLogic(AssaultWing<ClientEvent> game, CommandLineOptions.QuickStartOptions options)
             : base(game)
         {
             _options = options;
@@ -38,12 +38,12 @@ namespace AW2.UI
                     break;
                 case StateType.OpenBattlefrontMenu:
                     if (!MainMenuActive) break;
-                    MenuEngine.MainMenu.ItemCollections.Click_NetworkGame(loginPilots: false);
+                    MenuEngine.MainMenu.ItemCollections.Click_NetworkGame();
                     _state = StateType.UpdatePilotData;
                     break;
                 case StateType.UpdatePilotData:
                     if (!MainMenuNetworkItemsActive) break;
-                    Game.WebData.UpdatePilotData(Game.DataEngine.LocalPlayer, _options.LoginToken);
+                    // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotData was here)
                     ShowInfoDialog("Fetching pilot record...", "Update pilot data");
                     _state = StateType.ConnectToGameServer;
                     break;
@@ -51,9 +51,9 @@ namespace AW2.UI
                     // Cancel quickstart FIXME !!! If user Escapes server connection dialog, we should cancel. Doesn't happen now!
                     if (!MainMenuNetworkItemsActive) { _state = StateType.Idle; break; }
 
-                    if (!Game.DataEngine.LocalPlayer.GetStats().IsLoggedIn) break;
+                    //if (!Game.DataEngine.LocalPlayer.StatsData.IsLoggedIn) break;
                     HideDialog("Update pilot data");
-                    SetPlayerSettings();
+                    //SetPlayerSettings();
                     if (TryConnectToGameServer())
                         _state = StateType.StartGameplay;
                     else
@@ -91,14 +91,14 @@ namespace AW2.UI
 
         private bool TryConnectToGameServer()
         {
-            Game.WebData.UpdatePilotRanking(Game.DataEngine.LocalPlayer);
             var gameServerEndPoints = new AWEndPoint[0];
             try
             {
-                gameServerEndPoints = _options.GameServerEndPoints.Select(str => AWEndPoint.Parse(str)).ToArray();
+                gameServerEndPoints = _options.GameServerEndPoints.Select(str => AWEndPoint.Parse(Game.Services, str)).ToArray();
             }
-            catch
+            catch(Exception e)
             {
+                Log.Write("Failed to parse game server address", e);
                 ShowInfoDialog("Error in game server address.");
                 return false;
             }

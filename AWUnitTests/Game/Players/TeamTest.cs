@@ -20,7 +20,6 @@ namespace AW2.Game.Players
         public void Setup()
         {
             CanonicalString.IsForLocalUseOnly = true;
-            Spectator.CreateStatsData = spectator => new MockStats();
             _arena = new Arena();
             _ship1 = new Ship((CanonicalString)"Bugger") { Owner = _player1, MaxDamageLevel = 100, Arena = _arena };
             _ship2 = new Ship((CanonicalString)"Bugger") { Owner = _player2, MaxDamageLevel = 100, Arena = _arena };

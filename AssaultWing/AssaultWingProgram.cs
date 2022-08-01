@@ -1,16 +1,17 @@
 using System;
-using System.Deployment.Application;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+#if WINFORMS
 using System.Windows.Forms;
+#endif
 using AW2.Core;
 using AW2.Helpers;
 using AW2.UI;
 
 namespace AW2
 {
-#if WINDOWS || XBOX
     public class AssaultWingProgram : IDisposable
     {
         private const string AW_BUG_REPORT_SERVER = "assaultwing.com";
@@ -32,37 +33,52 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            Thread.CurrentThread.Name = "MainThread";
-            if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
-            g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
-            PostInstall.EnsureDone();
-            AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
-            try
-            {
-                using (Instance = new AssaultWingProgram())
-                {
-                    Instance.Run();
+            try {
+                Thread.CurrentThread.Name = "MainThread";
+                //if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
+                g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
+                //PostInstall.EnsureDone();
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                    // TODO: Peter: Is this shortcuts disabling necessary and is there a better way
+                    AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
                 }
-            }
-            finally
-            {
-                AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
+                try
+                {
+                    using (Instance = new AssaultWingProgram())
+                    {
+                        Instance.Run();
+                    }
+                }
+                finally
+                {
+                    if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                        AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
+                    }
+                }
+            } catch (Exception e) {
+                Log.Write("Unhandled exception", e);
             }
         }
 
         public AssaultWingProgram()
         {
             Log.Write("Assault Wing started");
-            Application.ThreadException += ThreadExceptionHandler;
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            _form = new GameForm(g_commandLineOptions);
+
+            // TODO: Peter: unhandled exception handling and reporting:
+            // something like:
+            // System.AppDomain.CurrentDomain.UnhandledException += ThreadExceptionHandler;
+
+            // Steam must be initialized before graphics for the overlay to work.
+            // Another benefit is that now we try to initialize steam API early on so 
+            // we know if we should use NetworkEngineSteam or NetworkEngineRaw.
+            var steamApiService = new AW2.Core.SteamApiService();
+
+            _form = new GameForm(g_commandLineOptions, steamApiService);
         }
 
         public void Run()
         {
-            Application.Run(_form);
+            _form.Run();
         }
 
         public void Exit()
@@ -72,9 +88,14 @@ namespace AW2
 
         public void Dispose()
         {
-            if (_form != null) _form.Dispose();
-            _form = null;
-            Application.ThreadException -= ThreadExceptionHandler;
+            try {
+                if (_form != null) _form.Dispose();
+                _form = null;
+            } catch(Exception e) {
+                Log.Write("Unhandled exception in Dispose", e);
+            }
+            // PETER MOD: Remove exception handler
+            //Application.ThreadException -= ThreadExceptionHandler;
         }
 
         private void ThreadExceptionHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
@@ -96,6 +117,9 @@ namespace AW2
                 " and the Assault Wing run log \"" + Log.LogFileName + "\"?";
             var report = string.Format("Assault Wing {0}\nCrashed on {1:u}\nHost {2}\n\n{3}",
                 MiscHelper.Version, DateTime.Now.ToUniversalTime(), Environment.MachineName, e.ToString());
+
+            // TODO: Peter: Report exception to the user
+#if WINFORMS
             var result = g_commandLineOptions.DedicatedServer
                 ? DialogResult.Yes
                 : MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
@@ -104,6 +128,7 @@ namespace AW2
 
             // Raise a Windows event to notify any dedicated server keepalive task to relaunch the server.
             System.Diagnostics.EventLog.WriteEvent("Application Error", new System.Diagnostics.EventInstance(1000, 2), "AssaultWing.exe");
+#endif
 
             g_reportingException = false;
         }
@@ -119,6 +144,5 @@ namespace AW2
             tcpClient.Close();
         }
     }
-#endif
 }
 

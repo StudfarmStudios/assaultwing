@@ -17,7 +17,7 @@ namespace AW2.Core.GameComponents
         private const int LINE_COUNT = 2;
         private const int TEXT_MARGIN = 5;
 
-        private AssaultWing _game;
+        private AssaultWing<ClientEvent> _game;
 
         public override Point Dimensions { get { return Content.SystemStatusOverlayBackgroundTexture.Dimensions().ToPoint(); } }
 
@@ -27,7 +27,7 @@ namespace AW2.Core.GameComponents
         public SystemStatusOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Right, VerticalAlignment.Top)
         {
-            _game = (AssaultWing)viewport.Owner.Game;
+            _game = (AssaultWing<ClientEvent>)viewport.Owner.Game;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)

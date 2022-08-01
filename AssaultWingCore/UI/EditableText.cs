@@ -43,10 +43,22 @@ namespace AW2.UI
             _game = game;
             _changedCallback = changedCallback;
             WeakEventHandler<char>.Register(game.Window,
-                (window, handler) => window.KeyPress += handler,
-                (window, handler) => window.KeyPress -= handler,
+                RegisterKeyPressHandler,
+                UnRegisterKeyPressHandler,
                 this,
-                (self, sender, args) => self.KeyPressHandler(sender, args));
+                KeyPressHandler);
+        }
+
+        private static void RegisterKeyPressHandler(Window window, Action<Object, char>  handler) {
+            window.KeyPress += handler;
+        }
+
+        private static void UnRegisterKeyPressHandler(Window window, Action<Object, char> handler) {
+            window.KeyPress -= handler;
+        }
+
+        private static void KeyPressHandler(EditableText self, object sender, char arg) {
+            self.KeyPressHandler(sender, arg);
         }
 
         /// <summary>

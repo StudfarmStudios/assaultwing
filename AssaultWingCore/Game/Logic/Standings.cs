@@ -27,7 +27,8 @@ namespace AW2.Game.Logic
 
         public IEnumerable<Standing> GetSpectators()
         {
-            Debug.Assert(!HasTrivialTeams);
+            // TODO: Peter: Trivial teams?
+            // Debug.Assert(!HasTrivialTeams);
             return
                 from x in _standings
                 where x.Item2.Any()

@@ -15,7 +15,7 @@
     <Item>medium explo smoke</Item>
     <Item>explo dots</Item>
   </particleEngineNames>
-  <sound>Explosion</sound>
+  <sound>explosion</sound>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
     <type>None</type>

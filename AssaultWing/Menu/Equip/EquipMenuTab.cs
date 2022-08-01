@@ -55,7 +55,7 @@ namespace AW2.Menu.Equip
             {
                 var plr = playersArray[realIndex];
                 var plrColor = Color.Multiply(plr.Color, plr.IsDisconnected ? 0.5f : 1);
-                spriteBatch.DrawString(Content.FontSmall, plr.Name, currentPlayerPos.Round(), plrColor);
+                spriteBatch.DrawString(Content.FontSmall, plr.Name, Vector2.Round(currentPlayerPos), plrColor);
                 currentPlayerPos += PlayerListLineHeight;
                 if (drawCursor && isSelected)
                 {

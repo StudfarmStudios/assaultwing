@@ -97,8 +97,8 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             CreateDockEffects();
-            _chargingSound = Game.SoundEngine.CreateSound("HomeBaseLoop", this);
-            _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoopLow", this);
+            _chargingSound = Game.SoundEngine.CreateSound("homeBaseLoop", this);
+            _dockSound = Game.SoundEngine.CreateSound("homeBaseLoopLow", this);
             _dockArea = CollisionAreas.First(area => area.Name == "Dock");
         }
 

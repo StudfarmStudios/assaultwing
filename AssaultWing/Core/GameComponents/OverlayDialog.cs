@@ -18,9 +18,9 @@ namespace AW2.Core.GameComponents
         private Texture2D _dialogTexture;
         private Queue<OverlayDialogData> _data;
 
-        public new AssaultWing Game { get; private set; }
+        public new AssaultWing<ClientEvent> Game { get; private set; }
 
-        public OverlayDialog(AssaultWing game, int updateOrder)
+        public OverlayDialog(AssaultWing<ClientEvent> game, int updateOrder)
             : base(game, updateOrder)
         {
             Game = game;
@@ -36,7 +36,7 @@ namespace AW2.Core.GameComponents
             {
                 Game.Window.ForceDisableKeypresses = true;
                 Game.UIEngine.PushExclusiveControls(dialogData.Controls);
-                Game.SoundEngine.PlaySound("EscPause");
+                Game.SoundEngine.PlaySound("escPause");
             }
             Enabled = Visible = true;
         }
@@ -53,7 +53,7 @@ namespace AW2.Core.GameComponents
             if (_data.Any())
             {
                 Game.UIEngine.PushExclusiveControls(_data.First().Controls);
-                Game.SoundEngine.PlaySound("EscPause");
+                Game.SoundEngine.PlaySound("escPause");
             }
             else
             {

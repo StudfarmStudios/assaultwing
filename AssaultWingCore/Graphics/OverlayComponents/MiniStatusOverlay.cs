@@ -67,7 +67,7 @@ namespace AW2.Graphics.OverlayComponents
             if (_player.Ship == null) return Vector2.Zero;
             // Note: Screen Y axis points down and game Y axis points up.
             var newCustomAlignment = new Vector2(0, 40) + (_player.Ship.Pos + _player.Ship.DrawPosOffset - Viewport.CurrentLookAt).MirrorY();
-            var newCustomAlignmentPoint = newCustomAlignment.Round().ToPoint();
+            var newCustomAlignmentPoint = Vector2.Round(newCustomAlignment).ToPoint();
             if (!_previousCustomAlignment.HasValue || !_customAlignmentDampBox.Contains(newCustomAlignmentPoint))
             {
                 _customAlignmentDampBox = _customAlignmentDampBox.MoveToContain(newCustomAlignmentPoint);
@@ -93,11 +93,11 @@ namespace AW2.Graphics.OverlayComponents
             var healthText = ((int)Math.Ceiling(relativeHealth * 100)).ToString() + "%";
             var textSize = _healthFont.MeasureString(healthText);
             var textPos = new Vector2((Dimensions.X - textSize.X) / 2, (_barBackgroundTexture.Height / 2) - (textSize.Y / 2) + 1);
-            spriteBatch.DrawString(_healthFont, healthText, textPos.Round() - Vector2.One, halfBlackColor);
-            spriteBatch.DrawString(_healthFont, healthText, textPos.Round() + new Vector2(1, -1), halfBlackColor);
-            spriteBatch.DrawString(_healthFont, healthText, textPos.Round() + Vector2.One, halfBlackColor);
-            spriteBatch.DrawString(_healthFont, healthText, textPos.Round() + new Vector2(-1, 1), halfBlackColor);
-            spriteBatch.DrawString(_healthFont, healthText, textPos.Round(), halfColor);
+            spriteBatch.DrawString(_healthFont, healthText, Vector2.Round(textPos) - Vector2.One, halfBlackColor);
+            spriteBatch.DrawString(_healthFont, healthText, Vector2.Round(textPos) + new Vector2(1, -1), halfBlackColor);
+            spriteBatch.DrawString(_healthFont, healthText, Vector2.Round(textPos) + Vector2.One, halfBlackColor);
+            spriteBatch.DrawString(_healthFont, healthText, Vector2.Round(textPos) + new Vector2(-1, 1), halfBlackColor);
+            spriteBatch.DrawString(_healthFont, healthText, Vector2.Round(textPos), halfColor);
             return halfColor;
         }
     }

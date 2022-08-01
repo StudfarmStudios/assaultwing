@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 
 namespace FarseerPhysics.Factories
 {
+    using FarseerPhysics.Common; // Resolve ambiguity of Path (System.IO.Path)
+    
     public static class LinkFactory
     {
         /// <summary>

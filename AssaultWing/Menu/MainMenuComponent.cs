@@ -38,8 +38,10 @@ namespace AW2.Menu
                 base.Active = value;
                 if (value)
                 {
-                    ResetItems();
+                    PopulateItems();
                     MenuEngine.Game.Settings.ToFile();
+                } else {
+                    ClearItems();
                 }
             }
         }
@@ -75,8 +77,9 @@ namespace AW2.Menu
         private void PopItems()
         {
             if (_currentItemsHistory.Count == 1) return; // Already at top level.
-            if (CurrentItems == _itemCollections.LoginItems || CurrentItems == _itemCollections.SetupItems)
+            if (CurrentItems == _itemCollections.SetupItems) {
                 MenuEngine.Game.Settings.ToFile();
+            }
             if (_currentItemsHistory.Count == 2)
             {
                 // Returning to top level.
@@ -84,20 +87,19 @@ namespace AW2.Menu
                 ApplyGraphicsSettings();
                 ApplyControlsSettings();
             }
+            // TODO: Peter: Move other side effects above to the Deactivate()
+            _currentItemsHistory.Peek().Item1.Deactivate();
             _currentItemsHistory.Pop();
-            MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            MenuEngine.Game.SoundEngine.PlaySound("menuChangeItem");
         }
 
         public override void Update()
         {
             if (!Active) return;
-            MenuEngine.Game.WebData.LoginErrors.Do(queue =>
-            {
-                while (queue.Any()) MenuEngine.Game.ShowInfoDialog(queue.Dequeue());
-            });
             if (CurrentItems != ItemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
                 throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode + " in " + CurrentItems.Name);
             _commonCallbacks.Update();
+            if (!Active) return; // The callbacks / actions can deactivate this
             foreach (var menuItem in CurrentItems) menuItem.Update();
             CurrentItems.Update();
         }
@@ -112,7 +114,7 @@ namespace AW2.Menu
                  let name = items.Item1.Name
                  where name != ""
                  select name).ToArray());
-            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, title, titlePos.Round(), Color.LightGray);
+            spriteBatch.DrawString(MenuEngine.MenuContent.FontBig, title, Vector2.Round(titlePos), Color.LightGray);
             CurrentItemIndexer.ForEachVisible((realIndex, visibleIndex, isSelected) =>
             {
                 if (isSelected) CurrentItems[realIndex].DrawHighlight(spriteBatch, _pos - view, visibleIndex);
@@ -121,7 +123,6 @@ namespace AW2.Menu
             if (CurrentItems == ItemCollections.NetworkItems)
             {
                 DrawAdditionalMessageBox(view, spriteBatch);
-                DrawPilotLoginStatus(view, spriteBatch);
                 DrawScheduledBattleDisplay(view, spriteBatch);
             }
             var scrollUpPos = _pos - view + new Vector2(653, 260);
@@ -136,24 +137,14 @@ namespace AW2.Menu
             spriteBatch.Draw(MenuEngine.MenuContent.SmallStatusPaneTexture, backgroundPos, Color.White);
         }
 
-        private void DrawPilotLoginStatus(Vector2 view, SpriteBatch spriteBatch)
-        {
-            var ballPos = _pos - view + new Vector2(790, 355);
-            var localPlayer = MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => plr.IsLocal);
-            var statusBall = localPlayer != null && localPlayer.GetStats().IsLoggedIn
-                ? MenuEngine.MenuContent.PlayerLoginStatusGreen
-                : MenuEngine.MenuContent.PlayerLoginStatusRed;
-            spriteBatch.Draw(statusBall, ballPos, Color.White);
-        }
-
         private void DrawScheduledBattleDisplay(Vector2 view, SpriteBatch spriteBatch)
         {
             var backgroundPos = _pos - view + new Vector2(440, 600);
-            var textStartPos = (backgroundPos + new Vector2(50, 43)).Round();
+            var textStartPos = Vector2.Round(backgroundPos + new Vector2(50, 43));
             spriteBatch.DrawString(Content.FontBig, "Next Scheduled Game in:", textStartPos, Color.White);
             spriteBatch.DrawString(Content.FontSmall, "Everybody's Welcome to Join!\n\nYou can find all our Scheduled Games by selecting\n\"Find more in Forums\" in this menu.  (and you are of\ncourse free to play whenever you want)", textStartPos + new Vector2(0, 27), Color.White);
             var currentTime = DateTime.Now;
-            var nextGame = MenuEngine.Game.WebData.NextScheduledGame;
+            DateTime? nextGame = null; // TODO: Peter: What to do with the next game functionality
             var text =
                 !nextGame.HasValue || nextGame + TimeSpan.FromHours(2) <= currentTime ? "Not yet scheduled"
                 : nextGame <= currentTime ? "Now! Join in!"
@@ -162,9 +153,16 @@ namespace AW2.Menu
             spriteBatch.DrawString(Content.FontBig, text, textStartPos + new Vector2(260, 6), Color.YellowGreen);
         }
 
-        private void ResetItems()
-        {
+        private void ClearItems() {
+            foreach (var tuple in _currentItemsHistory) {
+                var deactivate = tuple.Item1.Deactivate;
+                if (deactivate != null) deactivate();
+            }
             _currentItemsHistory.Clear();
+        }
+
+        private void PopulateItems()
+        {
             PushItems(ItemCollections.StartItems);
         }
 
@@ -177,12 +175,12 @@ namespace AW2.Menu
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Up, () =>
             {
                 CurrentItemIndexer.CurrentIndex--;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Down, () =>
             {
                 CurrentItemIndexer.CurrentIndex++;
-                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("menuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Activate, () => CurrentItem.Action()));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(Controls.Dirs.Left, () => CurrentItem.ActionLeft()));

@@ -293,8 +293,8 @@ namespace AW2.Game.Gobs
         {
             var fadeSeconds = (float)_firstHitDelay.TotalSeconds;
             var lifeSeconds = (float)_lifetime.TotalSeconds;
-            if (Age < FadeTime) return Age.Divide(FadeTime);
-            if (IsFadingOut) return Math.Max(0, (BirthTime + _lifetime - Arena.TotalTime).Divide(FadeTime));
+            if (Age < FadeTime) return ((float)Age.Divide(FadeTime));
+            if (IsFadingOut) return Math.Max(0, ((float)(BirthTime + _lifetime - Arena.TotalTime).Divide(FadeTime)));
             return 1;
         }
 

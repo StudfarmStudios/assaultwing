@@ -18,7 +18,7 @@
   </deviceInfo>
 
   <typeName>blink</typeName>
-  <fireSound>Blink</fireSound>
+  <fireSound>blink</fireSound>
   <fireSoundType>Once</fireSoundType>
   <fireEffectType>Once</fireEffectType>
   <blinkMoveSpeed>1000</blinkMoveSpeed>

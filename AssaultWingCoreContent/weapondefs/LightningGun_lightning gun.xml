@@ -20,7 +20,7 @@
   <typeName>lightning gun</typeName>
   <range>350</range>
   <chainLinkRangeMultiplier>0.8</chainLinkRangeMultiplier>
-  <fireSound>LightningWeapon</fireSound>
+  <fireSound>lightningWeapon</fireSound>
   <fireSoundType>EveryShot</fireSoundType>
   <fireEffectType>EveryShot</fireEffectType>
   <upgradeNames>

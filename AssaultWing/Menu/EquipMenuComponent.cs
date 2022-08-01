@@ -142,7 +142,7 @@ namespace AW2.Menu
         {
             _tabIndex = (_tabIndex + step).Modulo(_tabs.Count);
             _tab = _tabs[_tabIndex];
-            MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            MenuEngine.Game.SoundEngine.PlaySound("menuChangeItem");
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
         }
 
@@ -207,8 +207,8 @@ namespace AW2.Menu
                 var statusDisplayTextPos = Pos - view + new Vector2(349, 616);
                 var itemPos = statusDisplayTextPos + statusDisplayRowHeight * line;
                 var valuePos = itemPos + statusDisplayColumnWidth;
-                spriteBatch.DrawString(Content.FontSmall, item, itemPos.Round(), itemColor);
-                spriteBatch.DrawString(Content.FontSmall, value, valuePos.Round(), valueColor);
+                spriteBatch.DrawString(Content.FontSmall, item, Vector2.Round(itemPos), itemColor);
+                spriteBatch.DrawString(Content.FontSmall, value, Vector2.Round(valuePos), valueColor);
             };
             drawInfo(0, "Players", MenuEngine.Game.DataEngine.Players.Count().ToString(), Color.White, Color.GreenYellow);
             drawInfo(1, "Type", MenuEngine.Game.DataEngine.GameplayMode.Name, Color.White, Color.GreenYellow);

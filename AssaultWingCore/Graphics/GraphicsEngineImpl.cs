@@ -60,7 +60,7 @@ namespace AW2.Graphics
             {
                 var tabIndex = rawName.IndexOf('\t', textStartIndex);
                 int textLength = (tabIndex == -1 ? rawName.Length : tabIndex) - textStartIndex;
-                draw(textPos.Round(), rawName.Substring(textStartIndex, textLength));
+                draw(Vector2.Round(textPos), rawName.Substring(textStartIndex, textLength));
                 if (tabIndex == -1) break;
                 var enCount = rawName[tabIndex + 1];
                 textStartIndex = tabIndex + 2;

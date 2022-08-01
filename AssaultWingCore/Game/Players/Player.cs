@@ -254,7 +254,7 @@ namespace AW2.Game.Players
         /// at which the player lives.</param>
         /// <see cref="AW2.Net.Connection.ID"/>
         public Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
-            CanonicalString extraDeviceName, int connectionId, IPAddress ipAddress)
+            CanonicalString extraDeviceName, int connectionId, string lastKnownConnectionAddressString)
             : this(game, name, shipTypeName, weapon2Name, extraDeviceName, new PlayerControls
             {
                 Thrust = new RemoteControl(),
@@ -263,13 +263,13 @@ namespace AW2.Game.Players
                 Fire1 = new RemoteControl(),
                 Fire2 = new RemoteControl(),
                 Extra = new RemoteControl()
-            }, connectionId, ipAddress)
+            }, connectionId, lastKnownConnectionAddressString)
         {
         }
 
         private Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
-            CanonicalString extraDeviceName, PlayerControls controls, int connectionId, IPAddress ipAddress)
-            : base(game, connectionId, ipAddress)
+            CanonicalString extraDeviceName, PlayerControls controls, int connectionId, string lastKnownConnectionAddressString)
+            : base(game, connectionId, lastKnownConnectionAddressString)
         {
             Name = name;
             ShipName = shipTypeName;

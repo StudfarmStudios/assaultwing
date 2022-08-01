@@ -5,7 +5,7 @@ texture Texture;
 
 float Intensity = 1;
 
-sampler TextureSampler : SAMPLER0 = sampler_state
+sampler TextureSampler = sampler_state
 {
 	Texture = <Texture>;
 	MagFilter = LINEAR;
@@ -29,6 +29,6 @@ technique BomberRage
 {
     pass Pass1
     {
-        PixelShader = compile ps_2_0 PixelShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction();
     }
 }

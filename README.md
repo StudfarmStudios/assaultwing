@@ -1,10 +1,11 @@
-Assault Wing - Galactic Battlefront
+# Assault Wing - Galactic Battlefront
 
-assaultwing.com
+[assaultwing.com](assaultwing.com) / [GitHub](github.com/vvnurmi/assaultwing)
 
-github.com/vvnurmi/assaultwing
+© Studfarm Studios
 
-(c) Studfarm Studios
+_Assault Wing is a fast-paced physics-based shooter for many players over the
+internet._
 
 Assault Wing is a fast-paced physics-based shooter for many players over the internet.
 

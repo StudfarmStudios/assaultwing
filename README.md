@@ -7,13 +7,15 @@
 _Assault Wing is a fast-paced physics-based shooter for many players over the
 internet._
 
-Assault Wing is a fast-paced physics-based shooter for many players over the internet.
+## Dependencies
 
-To compile, use the .NET 6 or later (6 is the current LTS version). Other dependencies
-are fetched from nuget, except the Steamworks SDK.
+Assault Wing uses [MonoGame](https://www.monogame.net/) which is an open source
+implementation of the Microsoft XNA 4 Framework. Assault Wing is currently using
+the OpenGL backend of the MonoGame on all platforms. Assault Wing builds and
+runs at least on Windows, Linux and Mac.
 
-The Steamworks SDK which needs to be manually downloaded and copied into place
-if doing a Steam build to be uloaded to Steam.
+To compile, use the .NET 6 or later (6 is the current LTS version). Other
+dependencies are fetched from NuGet, except the optional Steamworks SDK.
 
 As an IDE either a recent Visual Studio or Visual Studio Code can be used.
 

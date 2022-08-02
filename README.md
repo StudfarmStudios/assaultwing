@@ -47,18 +47,21 @@ Here are some examples:
 ```
 
 The build script without parameters outputs further help.                                                                        
+### Notes on Steam builds
 
-## Setting up Steam builds
+The Steamworks SDK is only needed when developing Steam features or uploading a
+build to the Steam. In this case the SDK needs to be manually downloaded from
+(partner.steamgames.com)[https://partner.steamgames.com/doc/sdk] and copied into
+place.
 
-Writing some notes here about what was done to create the steam build,
-although mostly it is just basic stuff from the documentation at 
-https://partner.steamgames.com/doc/sdk/uploading
+Generally we have just followed the the [Steam partner
+documentation](https://partner.steamgames.com/doc/sdk/uploading).
 
-Get the Steamworks SDK zip and unzip in a suitable location. Currently used version:
-  
-  - steamworks_sdk_153a.zip
+Download the latest Steamworks SDK zip and extract to a suitable location. ( As of this writing the latest version of the SDK is 154):
 
-Copy everything from the folder from the SDK `sdk/tools/ContentBuilder/` to `steambuild/` in the project folder.
+Copy everything from the the SDK folder `sdk/tools/ContentBuilder/` to the
+`steambuild/` folder under the Assault Wing repository root folder.
+
 For example depending where the unzipped SDK is:
 
     rsync -av ../../steamworks_sdk/tools/ContentBuilder/ steambuild/` 

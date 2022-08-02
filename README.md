@@ -21,8 +21,20 @@ As an IDE either a recent Visual Studio or Visual Studio Code can be used.
 
 ## Building
 
-On windows simple `dotnet build` should work, however there is also a more
-complex build script `scripts/build.sh` to provide some automation.
+On windows a simple `dotnet build` should work. USe `dotnet test` to run the
+unit test suite.
+
+On other platforms than Windows (Linux, Mac) `/p:DisableContentBuilding=true`
+must be provided on the command line and the data folders (`Content` and
+`CoreContent`) must be made accessible in the working directory when the
+application is run.
+
+### Using the `build.sh` script
+
+The `scripts/build.sh` is a more complex build script intended to provide
+automation and improve repeatability when making the official builds.
+
+Currently the Windows builds using the `build.sh` rely on the WSL2.
 
 Here are some examples:
 ```bash
@@ -34,7 +46,7 @@ Here are some examples:
 ./scripts/build.sh linux dedicated_server debug
 ```
 
-The build script without parameters outputs further help.                                                                                                                                         
+The build script without parameters outputs further help.                                                                        
 
 ## Setting up Steam builds
 

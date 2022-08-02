@@ -69,20 +69,23 @@ For example depending where the unzipped SDK is:
 ## Notes on quick local testing
 
 With the following the game can be made to quickly connect to a local
-`DedicatedServer` process running in another terminal.
+`DedicatedServer` process running in another terminal. This provides a quick way
+to test the game in the full network mode. Multiple client windows can be
+connected to the same server locally.
 
 When Steam is not present:
 
     AssaultWing.exe --quickstart --server_name local --server raw:127.0.0.1:16727:16727
 
-With Steam networking engine using direct connection:
+When testing with Steam your Steam account must be added to the the Steam partner account for Assault Wing. Additionally Steam Client must be running.
+
+With the Steam networking engine using direct connection:
 
     AssaultWing.exe --quickstart --server_name local --server direct:127.0.0.1:16727
 
 With Steam networking engine using Steam Relay:
 
     AssaultWing.exe --quickstart --server_name local --server ip:127.0.0.1:16727
-
 
 ## Misc TODOs
 

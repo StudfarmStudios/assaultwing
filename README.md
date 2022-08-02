@@ -86,11 +86,6 @@ With the Steam networking engine using direct connection:
 With Steam networking engine using Steam Relay:
 
     AssaultWing.exe --quickstart --server_name local --server ip:127.0.0.1:16727
-
-## Misc TODOs
-
-- Disable the StatsSender or set up the backend.
-
 ## The "raw" network protocol handshake
 
 This is just my rough idea based on looking at code how it goes.

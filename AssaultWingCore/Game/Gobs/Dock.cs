@@ -179,7 +179,6 @@ namespace AW2.Game.Gobs
                  select item.Key).ToArray();
             foreach (var gob in noMoreRepairing)
             {
-                if (gob.Owner != null) Game.Stats.Send(new { DockingEnd = Game.Stats.GetStatsString(gob.Owner) });
                 _lastRepairTimes.Remove(gob);
                 ForcedNetworkUpdate = true;
             }
@@ -258,11 +257,6 @@ namespace AW2.Game.Gobs
             if (ship.Owner != null && !_lastRepairTimes.ContainsKey(ship))
             {
                 ForcedNetworkUpdate = true;
-                Game.Stats.Send(new
-                {
-                    Docking = Game.Stats.GetStatsString(ship.Owner),
-                    Pos = ship.Pos,
-                });
             }
             _lastRepairTimes[ship] = Game.GameTime.TotalGameTime;
             var elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;

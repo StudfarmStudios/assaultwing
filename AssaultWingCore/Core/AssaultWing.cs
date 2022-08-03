@@ -88,12 +88,6 @@ namespace AW2.Core
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
-
-            // Replace the dummy StatsBase by a proper StatsSender.
-            Components.Remove(comp => comp is StatsBase);
-            Stats = new StatsSender(this, 7);
-            Components.Add(Stats);
-            Stats.Enabled = true;
         }
 
         protected override void UpdateImpl()
@@ -101,7 +95,6 @@ namespace AW2.Core
             HandleGobCreationMessages();
             base.UpdateImpl();
             ProcessPendingRemoteSpectatorsOnServer();
-            SendServerStateToStats();
             Logic.Update();
             UpdateCustomControls();
             UpdateDebugKeys();
@@ -190,7 +183,6 @@ namespace AW2.Core
 
         public override void StartArena()
         {
-            Stats.BasicInfoSent = false;
             switch (NetworkMode)
             {
                 case NetworkMode.Server:
@@ -388,21 +380,6 @@ namespace AW2.Core
             IsClientAllowedToStartArena = false;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            var standings = DataEngine.GameplayMode.GetStandings(DataEngine.Spectators);
-            Stats.Send(new
-            {
-                ArenaFinished = standings.Select(st => new
-                {
-                    st.Name,
-                    LoginToken = st.StatsData == null ? "" : ((SpectatorStats)st.StatsData).LoginToken,
-                    st.Score,
-                    st.Kills,
-                    st.Deaths,
-                }).ToArray()
-            });
-            foreach (var spec in DataEngine.Spectators) if (spec.IsLocal) {
-              // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotRanking was here)
-            }
             Logic.FinishArena();
 #if NETWORK_PROFILING
             ProfilingNetworkBinaryWriter.DumpStats();
@@ -514,7 +491,6 @@ namespace AW2.Core
         private void SpectatorRemovedHandler(Spectator spectator)
         {
             if (NetworkMode != NetworkMode.Server) return;
-            Stats.Send(new { RemovePlayer = spectator.StatsData.LoginToken, Name = spectator.Name });
             UpdateGameServerInfoToManagementServer();
             NetworkEngine.SendToGameClients(new SpectatorOrTeamDeletionMessage { SpectatorOrTeamID = spectator.ID });
         }
@@ -737,14 +713,12 @@ namespace AW2.Core
         {
             Log.Write("Adding spectator {0}", newSpectator.Name);
             DataEngine.Spectators.Add(newSpectator);
-            Stats.Send(new { AddPlayer = newSpectator.StatsData.LoginToken, Name = newSpectator.Name });
         }
 
         public void ReconnectRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
         {
             Log.Write("Reconnecting spectator {0}", oldSpectator.Name);
             oldSpectator.ReconnectOnServer(newSpectator);
-            Stats.Send(new { AddPlayer = oldSpectator.StatsData.LoginToken, Name = oldSpectator.Name });
         }
 
         public void RefuseRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
@@ -809,25 +783,6 @@ namespace AW2.Core
                 NetworkEngine.GetConnection(spectator.ConnectionID).Send(mess);
                 return true;
             });
-        }
-
-        private void SendServerStateToStats()
-        {
-            if (NetworkMode != Core.NetworkMode.Server || Stats.BasicInfoSent || DataEngine.Arena == null) return;
-            Stats.Send(new { Server = Settings.Net.GameServerName, PID = GameServerGUID });
-            var instanceKeyString = MiscHelper.BytesToString(new ArraySegment<byte>(NetworkEngine.GetAssaultWingInstanceKey()));
-            var arenaUID = string.Format("{0}:{1}", instanceKeyString, DataEngine.Arena.StartTime);
-            Stats.Send(new
-            {
-                Arena = new
-                {
-                    Name = DataEngine.Arena.Info.Name.Value,
-                    Size = DataEngine.Arena.Info.Dimensions,
-                    ID = arenaUID,
-                },
-                Players = DataEngine.Spectators.Select(Stats.GetStatsObject),
-            });
-            Stats.BasicInfoSent = true;
         }
     }
 }

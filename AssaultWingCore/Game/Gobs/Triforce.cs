@@ -266,7 +266,6 @@ namespace AW2.Game.Gobs
         {
             gob.InflictDamage(damage, new DamageInfo(this));
             GobHelper.CreatePengs(_hitEffects, gob);
-            Game.Stats.SendHit(this, gob);
         }
 
         private void PunchWalls(Vector2[] relativeSliceSides)

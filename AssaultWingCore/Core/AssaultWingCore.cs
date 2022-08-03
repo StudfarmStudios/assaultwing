@@ -56,7 +56,6 @@ namespace AW2.Core
         public PostFrameLogicEngine PostFrameLogicEngine { get; private set; }
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngineXNA SoundEngine { get; private set; }
-        public StatsBase Stats { get; set; }
         public SteamComponent SteamComponent { get; set; }
 
         public bool IsSteam { get; set; }
@@ -111,7 +110,6 @@ namespace AW2.Core
             LogicEngine = new LogicEngine(this, 3);
             PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
             _uiEngine = new UIEngineImpl(this, 1);
-            Stats = new StatsBase(this, 7);
             SoundEngine = new SoundEngineXNA(this, 5);
 
             SteamComponent = new SteamComponent(this, 0);
@@ -121,7 +119,6 @@ namespace AW2.Core
             Components.Add(PostFrameLogicEngine);
             Components.Add(SoundEngine);
             Components.Add(_uiEngine);
-            Components.Add(Stats);
             Components.Add(SteamComponent);
             SoundEngine.Enabled = !CommandLineOptions.DedicatedServer;
             _uiEngine.Enabled = true;

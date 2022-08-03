@@ -187,13 +187,6 @@ namespace AW2.Game.Players
         public void OnWeaponFired(ShipDevice device)
         {
             if (!Minions.Contains(device.Owner)) return;
-            Game.Stats.Send(new
-            {
-                Fired = Game.Stats.GetStatsString(this),
-                Role = device.OwnerHandle,
-                Type = device.TypeName.Value,
-                Pos = device.Owner.Pos,
-            });
             // FIXME: It could be possible that the device does not belong to Ship.
             if (device.OwnerHandle != ShipDevice.OwnerHandleType.ExtraDevice) Ship.LastWeaponFiredTime = Game.DataEngine.ArenaTotalTime;
             if (WeaponFired != null) WeaponFired(device.OwnerHandle);
@@ -428,14 +421,6 @@ namespace AW2.Game.Players
                 newShip.Rotation = Gob.DEFAULT_ROTATION; // must initialize rotation for SnakeShip.InitializeTailState()
                 SpawnPlayer.PositionNewMinion(newShip, Game.DataEngine.Arena);
                 Game.DataEngine.Arena.Gobs.Add(newShip);
-            });
-            Game.Stats.Send(new
-            {
-                Ship = ShipName.Value,
-                Weapon2 = Weapon2Name.Value,
-                Device = ExtraDeviceName.Value,
-                Player = Game.Stats.GetStatsString(this),
-                Pos = Ship.Pos,
             });
         }
 

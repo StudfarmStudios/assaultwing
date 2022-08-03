@@ -162,7 +162,6 @@ namespace AW2.Game.Gobs
                 if (target != null)
                 {
                     target.InflictDamage(ImpactDamage, new DamageInfo(this));
-                    Game.Stats.SendHit(this, target, target.Pos);
                 }
                 _damageDealt = true;
             }

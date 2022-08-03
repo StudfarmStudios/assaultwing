@@ -2,14 +2,10 @@
 
 This is a rough list of things to do for the near term development:
 
-- Add .csproj content building switch to enable easy Mac & Linux builds
-- tag / branch the original 10 years old situation
-- Clean up branches
 - Test joining across 2 firewalls or nats
   - If not working, system to try multiple connection methods
     - Fix player clones bug
 - Introduce version numbers
-- Merge to master
 - All steam builds
 - Steam beta setup
   - Figure out how it works

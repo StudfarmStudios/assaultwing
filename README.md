@@ -89,4 +89,5 @@ With Steam networking engine using Steam Relay:
 
 ## Developer Documentation
 
+- [The TODO list](docs/TODO.md)
 - [The Assault Wing network protocol](docs/network-protocol.md)

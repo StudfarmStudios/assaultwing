@@ -59,9 +59,12 @@ namespace AW2.Net
 
         public AWEndPoint[] GameServerEndPoints {
             get {
-                // TODO: Peter: Allow attempting multiple connections. Now 1 failing kills the rest.
-                // SteamNetworkingIpEndpoint, SteamIdEndpoint
-                return new AWEndPoint[]{DirectIpEndpoint};
+                // Returning 3 end points to attempt both direct
+                // (DirectIpEndpoint) and the Steam Datagram Relay based
+                // connection (SteamIdEndpoint). Does the middle one
+                // (SteamNetworkingIpEndpoint) bring any value here or always
+                // just extra load?
+                return new AWEndPoint[]{DirectIpEndpoint, SteamNetworkingIpEndpoint, SteamIdEndpoint};
             }
         }
 

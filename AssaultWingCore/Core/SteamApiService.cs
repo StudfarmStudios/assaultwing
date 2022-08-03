@@ -120,8 +120,14 @@ namespace AW2.Core
       Log.Write($"Steam Overlay: {callback.m_bActive}");
     }
 
+    public static string NetStateToString(ESteamNetworkingConnectionState state) {
+      return state.ToString().Replace("k_ESteamNetworkingConnectionState_", "");
+    }
+
     void LogSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status) {
-      Log.Write($"OnSteamNetConnectionStatusChanged: oldState:{status.m_eOldState}, conn: {status.m_hConn}, addrRemote:{Steam.IpAddrToString(status.m_info.m_addrRemote)}, endReason: {status.m_info.m_eEndReason}, state: {status.m_info.m_eState}, identityRemote: {Steam.IdentityToString(status.m_info.m_identityRemote)}, connDescription: {status.m_info.m_szConnectionDescription}, endDebug: {status.m_info.m_szEndDebug}");
+      var endReason = (status.m_info.m_eEndReason != 0 || status.m_info.m_szEndDebug.Length > 0) ?
+        $" endReason: {status.m_info.m_eEndReason} / \"{status.m_info.m_szEndDebug}\"" : "";
+      Log.Write($"Connection: {status.m_info.m_szConnectionDescription}: {NetStateToString(status.m_eOldState)} -> {NetStateToString(status.m_info.m_eState)}{endReason}");
     }
 
     public void DisposeCallbackBundle<T>() where T : CallbackBundleKey {

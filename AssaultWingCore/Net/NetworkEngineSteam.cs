@@ -129,7 +129,7 @@ namespace AW2.Net
                 throw new ArgumentException("NetworkEngineSteam can only handle end points of the format ip:host:port and other steam network identity formats.\n" + 
                     $"Some of these are not compatible '{endPointsString}'");
             }
-            Log.Write($"Client starts connecting to {endPointsString}");
+            Log.Write($"Client starts connecting to the following end points: {endPointsString}");
 
             foreach (var endpoint in steamEndPoints) {
                 if (endpoint.UseDirectIp) {
@@ -180,6 +180,8 @@ namespace AW2.Net
 
             var handler = StartClientConnectionHandler;
 
+            var logPrefix = $"Connection #{status.m_hConn}";
+
             switch(status.m_info.m_eState) {
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
                     if (_GameServerConnection == null && handler != null) {
@@ -201,16 +203,15 @@ namespace AW2.Net
                         SteamNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Failed to connect", true);
                         handler(result);
                     } else if (_GameServerConnection?.Handle != status.m_hConn) {
-                        // Should not happen:
-                        Log.Write($"Terminal error state for unknown server connection. state: {status.m_info.m_eState}, identity: {identity}");
+                        // This can happen when connecting to multiple AWEndPoints at once.
+                        Log.Write($"{logPrefix} Terminal error state for unknown server connection. state: {SteamApiService.NetStateToString(status.m_info.m_eState)}: {status.m_info.m_eEndReason} / \"{status.m_info.m_szEndDebug}\"");
                         SteamNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Unknown connection closed", true);
                     } else {
-                        Log.Write($"Terminal error state for server connection, closing. state: {status.m_info.m_eState}, identity: {identity}");
+                        Log.Write($"{logPrefix} Terminal error state for server connection, closing. state: {SteamApiService.NetStateToString(status.m_info.m_eState)}: {status.m_info.m_eEndReason} / \"{status.m_info.m_szEndDebug}\"");
                         SteamNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Server connection lost", true);
                         _GameServerConnection.QueueError("Server connection lost");
                     }
                 break;
-         
             }
         }
 
@@ -222,6 +223,8 @@ namespace AW2.Net
                 connection.Info = status.m_info;
             }
 
+            var logPrefix = $"Connection #{status.m_hConn}";
+
             switch(status.m_info.m_eState) {
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connecting:
                     if (AllowNewServerConnection()) {
@@ -231,14 +234,14 @@ namespace AW2.Net
                                 if (connection == null) {
                                     connection = new GameClientConnectionSteam(Game, status.m_hConn, status.m_info);
                                     _GameClientConnections.Add(connection);
-                                    Log.Write($"Game client connection created: {connection.Name}");
+                                    Log.Write($"{logPrefix}: Game client connection created: {connection.Name}");
                                 } else {
                                     // Should not happen:
-                                    Log.Write($"Connection status connecting, but book keepping shows this connection is already active! identity: {identity}, connection: {connection.Name}");
+                                    Log.Write($"{logPrefix}: Error! Connection status connecting, but book keepping shows this connection is already active! connection: {connection.Name}");
                                 }
                                 break;
                             default:
-                                Log.Write($"Accepting client connection failed. result: {acceptResult}, identity: {identity}");
+                                Log.Write($"{logPrefix}: {status.m_hConn} Accepting client connection failed. result: {acceptResult}");
                                 break;
                         }
                     } else {
@@ -247,7 +250,7 @@ namespace AW2.Net
                         }
                         var mess = new ConnectionClosingMessage { Info = "game server refused joining" };
                         connection.Send(mess);
-                        Log.Write($"Server refused connection. identity: {identity} ");
+                        Log.Write($"{logPrefix}: Server refused connection.");
                         connection.Dispose();
                     }
                    break;
@@ -255,10 +258,10 @@ namespace AW2.Net
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
                     if (connection == null) {
                         // Should not happen:
-                        Log.Write($"Terminal error state for unknown client connection. state: {status.m_info.m_eState}, identity: {identity}");
+                        Log.Write($"{logPrefix}: Terminal error state for unknown client connection. state: {SteamApiService.NetStateToString(status.m_info.m_eState)}");
                         SteamGameServerNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Unknown connection closed", true);
                     } else {
-                        Log.Write($"Terminal error state for client connection, closing {connection.Name}. state: {status.m_info.m_eState}, identity: {identity}");
+                        Log.Write($"{logPrefix}: Terminal error state for client connection, closing {connection.Name}. state: {SteamApiService.NetStateToString(status.m_info.m_eState)}");
                         connection.QueueError("Client connection lost");
                     }
                 break;

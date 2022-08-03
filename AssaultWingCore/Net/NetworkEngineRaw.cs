@@ -152,7 +152,7 @@ namespace AW2.Net
                 throw new ArgumentException("NetworkEngineRaw can only handle end points of the format raw:host:port:port.\n" + 
                     $"Some of these are not compatible '{endPointsString}'");
             }
-            Log.Write($"Client starts connecting to {endPointsString}");
+            Log.Write($"Client starts connecting to the following end points: {endPointsString}");
             StartClientConnectionHandler = connectionHandler;
             ConnectionRaw.Connect(game, rawEndPoints);
         }

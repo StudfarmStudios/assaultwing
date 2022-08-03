@@ -85,14 +85,6 @@ namespace AW2.Game.Players
                 SeizeBot(bot);
                 SpawnPlayer.PositionNewMinion(bot, Game.DataEngine.Arena);
                 Arena.Gobs.Add(bot);
-                Game.Stats.Send(new
-                {
-                    Ship = bot.TypeName.Value,
-                    Weapon2 = bot.WeaponName.Value,
-                    Device = "",
-                    Player = Game.Stats.GetStatsString(this),
-                    Pos = bot.Pos,
-                });
             });
         }
 

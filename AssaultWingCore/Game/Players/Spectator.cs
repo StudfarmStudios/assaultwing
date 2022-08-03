@@ -121,7 +121,7 @@ namespace AW2.Game.Players
             LastKnownConnectionAddressString = lastKnownConnectionAddressString ?? IPAddress.Loopback.ToString();
             ArenaStatistics = new ArenaStatistics();
             PreviousArenaStatistics = new ArenaStatistics();
-            StatsData = new SpectatorStats(this);
+            StatsData = new SpectatorStats();
         }
 
         /// <param name="onScreen">Location of the viewport on screen.</param>
@@ -222,7 +222,6 @@ namespace AW2.Game.Players
                     writer.Write((bool)IsDisconnected);
                     writer.WriteID(Team);
                 }
-                StatsData.Serialize(writer, mode);
                 ArenaStatistics.Serialize(writer, mode);
             }
         }
@@ -249,7 +248,6 @@ namespace AW2.Game.Players
                     _teamAssignmentDeserialized = true;
                 }
             }
-            StatsData.Deserialize(reader, mode, framesAgo);
             ArenaStatistics.Deserialize(reader, mode, framesAgo);
         }
 

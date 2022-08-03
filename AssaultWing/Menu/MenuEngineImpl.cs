@@ -40,7 +40,6 @@ namespace AW2.Menu
         private SoundInstance _menuChangeSound;
         private TimeSpan _cursorFadeStartTime;
         private TimeSpan _loggedInPlayerAnimationStartTime;
-        private string _previousLoggedInLoginToken;
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
         private VertexPositionColor[] _shadowVertexData;
@@ -211,7 +210,6 @@ namespace AW2.Menu
 
         public override void Update()
         {
-            UpdateLoggedInBox();
             _view = _viewCurve.Evaluate(Game.GameTime.TotalRealTime);
 
             // Activate 'activeComponent' if the view has just come close enough to its center.
@@ -296,17 +294,6 @@ namespace AW2.Menu
                 }
             _shadowVertexData = vertexData.ToArray();
             _shadowIndexData = indexData.ToArray();
-        }
-
-        private void UpdateLoggedInBox()
-        {
-            if (LocalPlayer == null)
-                _previousLoggedInLoginToken = null;
-            else if (LocalPlayer.StatsData.LoginToken != _previousLoggedInLoginToken)
-            {
-                _previousLoggedInLoginToken = LocalPlayer.StatsData.LoginToken;
-                _loggedInPlayerAnimationStartTime = Game.GameTime.TotalRealTime;
-            }
         }
 
         private void DrawBackground()

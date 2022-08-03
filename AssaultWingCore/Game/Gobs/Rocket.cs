@@ -133,7 +133,6 @@ namespace AW2.Game.Gobs
             if (theirArea.Owner.IsDamageable)
             {
                 theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
-                Game.Stats.SendHit(this, theirArea.Owner);
             }
             Die();
             return true;

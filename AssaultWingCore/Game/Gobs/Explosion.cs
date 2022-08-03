@@ -96,7 +96,6 @@ namespace AW2.Game.Gobs
 
         private void CauseDamage(CollisionArea theirArea)
         {
-            Game.Stats.SendHit(this, theirArea.Owner);
             var damage = _inflictDamage.Evaluate(PhysicsHelper.Distance(theirArea, Pos));
             theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
         }

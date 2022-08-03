@@ -34,7 +34,6 @@ namespace AW2.Game.Gobs
             {
                 theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
                 DoDamageOverTime(theirArea.Owner);
-                Game.Stats.SendHit(this, theirArea.Owner);
             }
             Die();
             return true;

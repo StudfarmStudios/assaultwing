@@ -14,7 +14,6 @@ namespace AW2.Core
         {
             public string[] GameServerEndPoints { get; set; }
             public string GameServerName { get; set; }
-            public string LoginToken { get; set; }
             public string ShipName { get; set; }
             public string Weapon2Name { get; set; }
             public string ExtraDeviceName { get; set; }
@@ -79,7 +78,6 @@ namespace AW2.Core
             {
                 GameServerEndPoints = args.GetValues("server"),
                 GameServerName = args.GetValue("server_name") ?? "Some Server",
-                LoginToken = args.GetValue("login_token"),
                 ShipName = args.GetValue("ship"),
                 Weapon2Name = args.GetValue("weapon"),
                 ExtraDeviceName = args.GetValue("mod"),
@@ -98,7 +96,6 @@ namespace AW2.Core
             {
                 GameServerEndPoints = args.GetValues("server"),
                 GameServerName = args.GetValue("server_name") ?? "Some Server",
-                LoginToken = args.GetValue("login_token"),
                 ShipName = args.GetValue("ship"),
                 Weapon2Name = args.GetValue("weapon"),
                 ExtraDeviceName = args.GetValue("mod"),

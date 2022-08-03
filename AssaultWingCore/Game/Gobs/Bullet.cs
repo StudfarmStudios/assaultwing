@@ -144,7 +144,6 @@ namespace AW2.Game.Gobs
             if (!theirArea.Type.IsPhysical()) return false;
             if (theirArea.Owner.IsDamageable)
             {
-                Game.Stats.SendHit(this, theirArea.Owner);
                 theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
             }
             Arena.MakeHole(Pos, _impactHoleRadius);

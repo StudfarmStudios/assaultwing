@@ -17,7 +17,7 @@ namespace AW2.Net.Connections
         public GameServerConnectionSteam(AssaultWingCore game, HSteamNetConnection handle, SteamNetConnectionInfo_t info)
             : base(game, handle, info)
         {
-            Name = $"Game Server {Steam.IdentityToString(info.m_identityRemote)}";
+            Name = $"Game Server {Steam.IdentityToAddrPreferred(info)}";
         }
 
         protected override void DisposeImpl(bool error)

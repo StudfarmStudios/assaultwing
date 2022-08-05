@@ -44,9 +44,9 @@ namespace AW2.Helpers
                 accumulator += secureId.MakeId($"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa {i}").Length;
             }
             stopWatch.Stop();
-            // This should output something much less than 1ms. Since the server is single threaded it could stutter
+            // This be somethingmuch less than 1ms. Since the server is single threaded it could stutter
             // when a player joins if the SecureId is adjusted to be too slow.
-            Console.WriteLine($"Duration of single operation {((float)stopWatch.ElapsedMilliseconds) / count} ms");
+            Assert.Less(((float)stopWatch.ElapsedMilliseconds) / count, 0.1f);
             Assert.AreEqual(count * 24, accumulator);
         }
     }

@@ -14,7 +14,7 @@ namespace AW2.Helpers
 
         private readonly int SaltSize = 128;
 
-        private readonly int IterationCount = 100; // Adjusted to be fast enough using the test SecureIdTest
+        private readonly int IterationCount = 10; // Adjusted to be fast enough using the test SecureIdTest
 
         private readonly int IdBytes = 16;
 

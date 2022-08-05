@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -293,11 +293,6 @@ namespace AW2.Net.MessageHandling
         }
 
         #endregion
-
-        private Player GetTempPlayer()
-        {
-            return new Player(Game, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
-        }
 
         private void TryCreateAndAddNewSpectatorOnServer(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {

@@ -230,9 +230,9 @@ namespace AW2.Game.Players
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
         /// <param name="extraDeviceName">Name of the type of extra device.</param>
         /// <param name="controls">Player's in-game controls.</param>
-        public Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
+        public Player(AssaultWingCore game, string pilotId, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
             CanonicalString extraDeviceName, PlayerControls controls)
-            : this(game, name, shipTypeName, weapon2Name, extraDeviceName, controls, CONNECTION_ID_LOCAL, null)
+            : this(game, pilotId: pilotId, name: name, shipTypeName: shipTypeName, weapon2Name: weapon2Name, extraDeviceName: extraDeviceName, controls: controls, connectionId: CONNECTION_ID_LOCAL)
         {
         }
 
@@ -246,9 +246,9 @@ namespace AW2.Game.Players
         /// <param name="connectionId">Identifier of the connection to the remote game instance
         /// at which the player lives.</param>
         /// <see cref="AW2.Net.Connection.ID"/>
-        public Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
-            CanonicalString extraDeviceName, int connectionId, string lastKnownConnectionAddressString)
-            : this(game, name, shipTypeName, weapon2Name, extraDeviceName, new PlayerControls
+        public Player(AssaultWingCore game, string pilotId, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
+            CanonicalString extraDeviceName, int connectionId)
+            : this(game, pilotId: pilotId, name: name, shipTypeName: shipTypeName, weapon2Name: weapon2Name, extraDeviceName: extraDeviceName, controls: new PlayerControls
             {
                 Thrust = new RemoteControl(),
                 Left = new RemoteControl(),
@@ -256,13 +256,13 @@ namespace AW2.Game.Players
                 Fire1 = new RemoteControl(),
                 Fire2 = new RemoteControl(),
                 Extra = new RemoteControl()
-            }, connectionId, lastKnownConnectionAddressString)
+            }, connectionId: connectionId)
         {
         }
 
-        private Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
-            CanonicalString extraDeviceName, PlayerControls controls, int connectionId, string lastKnownConnectionAddressString)
-            : base(game, connectionId, lastKnownConnectionAddressString)
+        private Player(AssaultWingCore game, string pilotId, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
+            CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
+            : base(game, pilotId: pilotId, connectionId: connectionId)
         {
             Name = name;
             ShipName = shipTypeName;

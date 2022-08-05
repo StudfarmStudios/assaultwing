@@ -285,5 +285,6 @@ namespace AW2.Net
             conn.ConnectionStatus.CurrentArenaName = null;
         }
 
+        public abstract  string GetPilotId(int connectionID);
     }
 }

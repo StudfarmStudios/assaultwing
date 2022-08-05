@@ -68,7 +68,7 @@ namespace AW2.Menu
             get
             {
                 var localPlayer = Game.DataEngine.LocalPlayer;
-                if (localPlayer == null || !localPlayer.StatsData.IsLoggedIn) return null;
+                if (localPlayer == null || !localPlayer.IsLoggedIn) return null;
                 return localPlayer;
             }
         }

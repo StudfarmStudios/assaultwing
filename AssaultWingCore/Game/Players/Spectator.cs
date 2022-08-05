@@ -49,6 +49,20 @@ namespace AW2.Game.Players
         /// </summary>
         public int LocalID { get; set; }
 
+        /// <summary>This is a securely hashed id meant to detect if a player
+        /// joining is the same player as in some earlier connection. In Steam
+        /// mode the hashed value is the Steam ID. In raw networking mode this
+        /// is a combination of client address and player name. secure hashing
+        /// is used to prevent identifying information of a player from leaking
+        /// to clients of other players.
+        /// </summary>
+        public string PilotId { get; set; }
+        
+        /// <summary>
+        /// This is true in Steam mode and false in raw networking mode.
+        /// </summary>
+        public bool IsLoggedIn { get; set; }
+
         /// <summary>
         /// Identifier of the connection behind which this spectator lives,
         /// or negative if the spectator lives at the local game instance.
@@ -59,11 +73,6 @@ namespace AW2.Game.Players
         /// Data received from the statistics server.
         /// </summary>
         public SpectatorStats StatsData { get; set; }
-
-        /// <summary>
-        /// The last known IP address of the connection of the spectator. For local players it's 127.0.0.1.
-        /// </summary>
-        public string LastKnownConnectionAddressString { get; private set; }
 
         /// <summary>
         /// Is the spectator connected from a remote game instance.
@@ -113,12 +122,12 @@ namespace AW2.Game.Players
 
         private ConnectionStatusType ConnectionStatus { get; set; }
 
-        public Spectator(AssaultWingCore game, int connectionId = CONNECTION_ID_LOCAL, string lastKnownConnectionAddressString = null)
+        public Spectator(AssaultWingCore game, string pilotId, int connectionId = CONNECTION_ID_LOCAL)
         {
             Game = game;
+            pilotId = pilotId;
             ConnectionID = connectionId;
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
-            LastKnownConnectionAddressString = lastKnownConnectionAddressString ?? IPAddress.Loopback.ToString();
             ArenaStatistics = new ArenaStatistics();
             PreviousArenaStatistics = new ArenaStatistics();
             StatsData = new SpectatorStats();

@@ -207,16 +207,16 @@ namespace AW2.Core
             Settings.Players.Validate(this);
             var players = new[]
             {
-                new Player(this, Settings.Players.Player1.Name,
-                    (CanonicalString)Settings.Players.Player1.ShipName,
-                    (CanonicalString)Settings.Players.Player1.Weapon2Name,
-                    (CanonicalString)Settings.Players.Player1.ExtraDeviceName,
-                    PlayerControls.FromSettings(Settings.Controls.Player1)),
-                new Player(this, Settings.Players.Player2.Name,
-                    (CanonicalString)Settings.Players.Player2.ShipName,
-                    (CanonicalString)Settings.Players.Player2.Weapon2Name,
-                    (CanonicalString)Settings.Players.Player2.ExtraDeviceName,
-                    PlayerControls.FromSettings(Settings.Controls.Player2))
+                new Player(this, pilotId: "localPlayer1", name: Settings.Players.Player1.Name,
+                    shipTypeName: (CanonicalString)Settings.Players.Player1.ShipName,
+                    weapon2Name: (CanonicalString)Settings.Players.Player1.Weapon2Name,
+                    extraDeviceName: (CanonicalString)Settings.Players.Player1.ExtraDeviceName,
+                    controls: PlayerControls.FromSettings(Settings.Controls.Player1)),
+                new Player(this, pilotId: "localPlayer2", name: Settings.Players.Player2.Name,
+                    shipTypeName: (CanonicalString)Settings.Players.Player2.ShipName,
+                    weapon2Name: (CanonicalString)Settings.Players.Player2.Weapon2Name,
+                    extraDeviceName: (CanonicalString)Settings.Players.Player2.ExtraDeviceName,
+                    controls: PlayerControls.FromSettings(Settings.Controls.Player2))
             };
             DataEngine.Teams.Clear();
             DataEngine.Spectators.Clear();
@@ -724,62 +724,40 @@ namespace AW2.Core
         public void RefuseRemoteSpectatorOnServer(Spectator newSpectator, Spectator oldSpectator)
         {
             var addressString = NetworkEngine.GetConnectionAddressString(newSpectator.ConnectionID);
-            Log.Write("Refusing spectator {0} from {1} because he's already logged in from {2}.",
-                newSpectator.Name, addressString, (object)oldSpectator.LastKnownConnectionAddressString ?? "the local host");
+            var previousAddressString = NetworkEngine.GetConnectionAddressString(oldSpectator.ConnectionID);
+            Log.Write($"Refusing spectator {newSpectator.Name} from {addressString} because he's already logged in from {previousAddressString}.");
         }
 
         private void ProcessPendingRemoteSpectatorsOnServer()
         {
             DataEngine.ProcessPendingRemoteSpectatorsOnServer(spectator =>
             {
-                var stats = spectator.StatsData;
                 var mess = new SpectatorSettingsReply
                 {
                     SpectatorLocalID = spectator.LocalID,
                     SpectatorID = Spectator.UNINITIALIZED_ID,
                     FailMessage = "",
                 };
-                if (stats.IsLoggedIn)
+
+                if (spectator.PilotId == null) return false;
+
+                var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec => spec.PilotId == spectator.PilotId);
+                if (oldSpectator == null)
                 {
-                    if (stats.PilotId == null) return false;
-                    var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec =>
-                        spec.StatsData.IsLoggedIn && spec.StatsData.PilotId == stats.PilotId);
-                    if (oldSpectator == null)
-                    {
-                        AddRemoteSpectator(spectator);
-                        mess.SpectatorID = spectator.ID;
-                    }
-                    else if (oldSpectator.IsDisconnected)
-                    {
-                        ReconnectRemoteSpectatorOnServer(spectator, oldSpectator);
-                        mess.SpectatorID = oldSpectator.ID;
-                    }
-                    else
-                    {
-                        RefuseRemoteSpectatorOnServer(spectator, oldSpectator);
-                        mess.FailMessage = "Pilot already in game";
-                    }
+                    AddRemoteSpectator(spectator);
+                    mess.SpectatorID = spectator.ID;
+                }
+                else if (oldSpectator.IsDisconnected)
+                {
+                    ReconnectRemoteSpectatorOnServer(spectator, oldSpectator);
+                    mess.SpectatorID = oldSpectator.ID;
                 }
                 else
                 {
-                    var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec =>
-                        !spec.StatsData.IsLoggedIn && spec.LastKnownConnectionAddressString.Equals(spectator.LastKnownConnectionAddressString) && spec.Name == spectator.Name);
-                    if (oldSpectator == null)
-                    {
-                        AddRemoteSpectator(spectator);
-                        mess.SpectatorID = spectator.ID;
-                    }
-                    else if (oldSpectator.IsDisconnected)
-                    {
-                        ReconnectRemoteSpectatorOnServer(spectator, oldSpectator);
-                        mess.SpectatorID = oldSpectator.ID;
-                    }
-                    else
-                    {
-                        AddRemoteSpectator(spectator);
-                        mess.SpectatorID = spectator.ID;
-                    }
+                    RefuseRemoteSpectatorOnServer(spectator, oldSpectator);
+                    mess.FailMessage = "Pilot already in game";
                 }
+
                 NetworkEngine.GetConnection(spectator.ConnectionID).Send(mess);
                 return true;
             });

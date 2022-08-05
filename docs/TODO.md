@@ -2,9 +2,7 @@
 
 This is a rough list of things to do for the near term development:
 
-- Test joining across 2 firewalls or nats
-  - If not working, system to try multiple connection methods
-    - Fix player clones bug
+- Fix the client getting confused when server disconnects immediately upon joining (eg PilotId check)
 - Introduce version numbers
 - All steam builds
 - Change the DisableContentBuilding to just be a platform check

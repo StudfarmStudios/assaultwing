@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -315,16 +315,20 @@ namespace AW2.Net.MessageHandling
 
         private Spectator GetSpectator(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
-            var lastKnownConnectionAddressString = Game.NetworkEngine.GetConnectionAddressString(mess.ConnectionID);
             Spectator newSpectator;
             switch (mess.Subclass)
             {
                 case SpectatorSettingsRequest.SubclassType.Player:
-                    newSpectator = new Player(Game, "<uninitialised>", CanonicalString.Null, CanonicalString.Null,
-                        CanonicalString.Null, mess.ConnectionID, lastKnownConnectionAddressString = lastKnownConnectionAddressString);
+                    newSpectator = new Player(Game, 
+                        pilotId: "<uninitialised pilotId>",
+                        name: "<uninitialised>", 
+                        shipTypeName: CanonicalString.Null, 
+                        weapon2Name: CanonicalString.Null,
+                        extraDeviceName: CanonicalString.Null, 
+                        connectionId: mess.ConnectionID);
                     break;
                 case SpectatorSettingsRequest.SubclassType.BotPlayer:
-                    newSpectator = new BotPlayer(Game, mess.ConnectionID, lastKnownConnectionAddressString = lastKnownConnectionAddressString);
+                    newSpectator = new BotPlayer(Game, pilotId: "<uninitialised bot pilotId>", connectionID: mess.ConnectionID);
                     break;
                 default: throw new ApplicationException("Unexpected spectator subclass " + mess.Subclass);
             }

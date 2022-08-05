@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using AW2.Game.Players;
-using AW2.Helpers;
+using AW2.TestHelpers;
 
 namespace AW2.Game.Logic
 {
@@ -25,12 +25,12 @@ namespace AW2.Game.Logic
             _team2 = new Team("X-Men", null) { ID = 12 };
             _team3 = new Team("Autobots", null) { ID = 13 };
             _team4 = new Team("Decepticons", null) { ID = 14 };
-            _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls()) { ID = 1 };
-            _player2 = new Player(null, "Player 2", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls()) { ID = 2 };
-            _player3 = new Player(null, "Player 3", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls()) { ID = 3 };
-            _player4 = new Player(null, "Player 4", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls()) { ID = 4 };
-            _player5 = new Player(null, "Player 5", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls()) { ID = 5 };
-            _player6 = new Player(null, "Player 6", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls()) { ID = 6 };
+            _player1 = PlayerHelper.Make(1);
+            _player2 = PlayerHelper.Make(2);
+            _player3 = PlayerHelper.Make(3);
+            _player4 = PlayerHelper.Make(4);
+            _player5 = PlayerHelper.Make(5);
+            _player6 = PlayerHelper.Make(6);
         }
 
         [Test]

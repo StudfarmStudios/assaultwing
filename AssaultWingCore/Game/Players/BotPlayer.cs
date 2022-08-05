@@ -31,8 +31,8 @@ namespace AW2.Game.Players
         public override IEnumerable<Gob> Minions { get { return _bots; } }
         private Arena Arena { get { return Game.DataEngine.Arena; } }
 
-        public BotPlayer(AssaultWingCore game, int connectionID = Spectator.CONNECTION_ID_LOCAL, string lastKnownConnectionAddressString = null)
-            : base(game, connectionID, lastKnownConnectionAddressString)
+        public BotPlayer(AssaultWingCore game, string pilotId, int connectionID = Spectator.CONNECTION_ID_LOCAL)
+            : base(game, pilotId: pilotId, connectionId: connectionID)
         {
             _bots = new List<Gob>();
         }

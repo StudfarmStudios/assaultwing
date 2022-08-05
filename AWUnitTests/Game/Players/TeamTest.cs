@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
+using AW2.TestHelpers;
 
 namespace AW2.Game.Players
 {
@@ -21,14 +20,14 @@ namespace AW2.Game.Players
         {
             CanonicalString.IsForLocalUseOnly = true;
             _arena = new Arena();
+            _player1 = PlayerHelper.Make(1);
+            _player2 = PlayerHelper.Make(2);
+            _player3 = PlayerHelper.Make(3);
             _ship1 = new Ship((CanonicalString)"Bugger") { Owner = _player1, MaxDamageLevel = 100, Arena = _arena };
             _ship2 = new Ship((CanonicalString)"Bugger") { Owner = _player2, MaxDamageLevel = 100, Arena = _arena };
             _ship3 = new Ship((CanonicalString)"Bugger") { Owner = _player3, MaxDamageLevel = 100, Arena = _arena };
             _avengers = new Team("Avengers", null);
             _xmen = new Team("X-Men", null);
-            _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
-            _player2 = new Player(null, "Player 2", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
-            _player3 = new Player(null, "Player 3", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
             SeizeShip(_player1, _ship1);
             SeizeShip(_player2, _ship2);
             SeizeShip(_player3, _ship3);

@@ -2,7 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 using AW2.Game.Players;
-using AW2.Helpers;
+using AW2.TestHelpers;
 
 namespace AW2.Game.GobUtils
 {
@@ -21,10 +21,10 @@ namespace AW2.Game.GobUtils
         {
             Coroner.ResetPhraseSets();
             _avengers = new Team("Avengers", null);
-            _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
-            _player2 = new Player(null, "Player 2", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
-            _player3 = new Player(null, "Player 3", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
-            _player4 = new Player(null, "Player 4", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
+            _player1 = PlayerHelper.Make(1);
+            _player2 = PlayerHelper.Make(2);
+            _player3 = PlayerHelper.Make(3);
+            _player4 = PlayerHelper.Make(4);
             _player1.AssignTeam(_avengers);
             _player4.AssignTeam(_avengers);
             _arena = new Arena();

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using NUnit.Framework;
 using AW2.Game.Players;
-using AW2.Helpers;
+using AW2.TestHelpers;
 
 namespace AW2.Game.GobUtils
 {
@@ -19,8 +18,8 @@ namespace AW2.Game.GobUtils
         [SetUp]
         public void Setup()
         {
-            _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
-            _player2 = new Player(null, "Player 2", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
+            _player1 = PlayerHelper.Make(1);
+            _player2 = PlayerHelper.Make(2);
             _arena = new Arena();
             _source = new Gob { ID = 1, Owner = _player1, MaxDamageLevel = 100, Arena = _arena, Pos = Vector2.Zero };
             _hostileGob1 = new Gob { ID = 2, Owner = _player2, MaxDamageLevel = 100, Arena = _arena };

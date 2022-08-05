@@ -46,6 +46,7 @@ namespace AW2.Net
 
         #region Fields
 
+        private SecureId secureId = new SecureId();
         private const int UDP_CONNECTION_PORT_FIRST = 'A' * 256 + 'W';
         private const int UDP_CONNECTION_PORT_LAST = UDP_CONNECTION_PORT_FIRST + 9;
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
@@ -493,6 +494,12 @@ namespace AW2.Net
             _GameClientConnections.RemoveAll(c => c.IsDisposed);
         }
 
+        override public string GetPilotId(int connectionId) {
+            var connectionAddressString = GetConnectionAddressString(connectionId);
+            var id = secureId.MakeId(connectionAddressString);
+            Log.Write($"connectionAddressString: {connectionAddressString} hashed to {id}");
+            return id;
+        }
 
         #endregion Private methods
     }

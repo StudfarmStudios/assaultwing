@@ -3,7 +3,6 @@ using AW2.Helpers;
 using AW2.Net.Connections;
 using AW2.Net.Messages;
 using Steamworks;
-
 namespace AW2.Net
 {
     /// <summary>
@@ -30,6 +29,7 @@ namespace AW2.Net
     /// <seealso cref="Message.ConnectionID"/>
     public class NetworkEngineSteam : NetworkEngine
     {
+        private SecureId secureId = new SecureId();
         private List<GameClientConnectionSteam> _GameClientConnections = new List<GameClientConnectionSteam>();
         private Func<bool> AllowNewServerConnection;
 
@@ -88,7 +88,7 @@ namespace AW2.Net
             return InstanceKey.ToByteArray();
         }
 
-        public override Connection GetConnection(int connectionID)
+        public override ConnectionSteam GetConnection(int connectionID)
         {
             var result = AllConnections.First(conn => conn.ID == connectionID);
             if (result == null) throw new ArgumentException("Connection not found with ID " + connectionID);
@@ -99,7 +99,7 @@ namespace AW2.Net
         {
             var result = AllConnections.First(conn => conn.ID == connectionID);
             if (result == null) return $"Unknown connection {connectionID}";
-            return Steam.IdentityToString(result.Info.m_identityRemote); // TODO: Not sure if this is best thing to print here
+            return Steam.IdentityToAddrPreferred(result.Info);
         }
 
         override public GameClientConnectionSteam GetGameClientConnection(int connectionID)
@@ -353,5 +353,13 @@ namespace AW2.Net
             RemoveClosedConnections();
             PurgeUnhandledMessages();
         }
+        override public string GetPilotId(int connectionId) {
+            var connection = GetConnection(connectionId);
+            var steamId = connection.SteamId;
+            var id = secureId.MakeId(steamId);
+            Log.Write($"steamId: {steamId} hashed to {id}");
+            return id;
+        }
+
     }
 }

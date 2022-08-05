@@ -179,13 +179,13 @@ namespace AW2.Game
                     operation.ExistingSpectator.AssignTeam(team);
                     break;
                 case TeamOperation.ChoiceType.CreateToExistingTeam:
-                    var botPlayer = new BotPlayer(Game) { Name = operation.NewSpectatorName };
+                    var botPlayer = new BotPlayer(Game, pilotId: "botId:" + operation.NewSpectatorName) { Name = operation.NewSpectatorName };
                     Spectators.Add(botPlayer);
                     botPlayer.AssignTeam(operation.ExistingTeam);
                     break;
                 case TeamOperation.ChoiceType.CreateToNewTeam:
                     var team2 = new Team(operation.NewTeamName, FindSpectator);
-                    var botPlayer2 = new BotPlayer(Game) { Name = operation.NewSpectatorName };
+                    var botPlayer2 = new BotPlayer(Game, pilotId: "botId:" + operation.NewSpectatorName) { Name = operation.NewSpectatorName };
                     Teams.Add(team2);
                     Spectators.Add(botPlayer2);
                     botPlayer2.AssignTeam(team2);

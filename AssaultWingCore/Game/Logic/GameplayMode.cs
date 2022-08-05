@@ -1,15 +1,4 @@
-﻿// If ALL_VS_ALL is true then
-// - Each player will be in their own team
-// - If bots are included then there will be one BotPlayer in its own team
-// If ALL_VS_ALL is false then
-// - There will be two teams that are balanced based on human player rankings
-// - If bots are included then there will be one BotPlayer in each team alongside human players
-#define ALL_VS_ALL
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using AW2.Game.Players;
 using AW2.Helpers;
 using AW2.Settings;
@@ -22,6 +11,16 @@ namespace AW2.Game.Logic
     public class GameplayMode
     {
         public CanonicalString Name { get; private set; }
+
+        /// <summary>
+        /// If true then
+        /// - Each player will be in their own team
+        /// - If bots are included then there will be one BotPlayer in its own team
+        /// If false then
+        /// - There will be two teams that are balanced based on human player rankings
+        /// - If bots are included then there will be one BotPlayer in each team alongside human players
+        /// </summary>
+        public bool AllVsAll { get; private set; }
 
         /// <summary>
         /// The arenas available for play in the gameplay mode.
@@ -61,13 +60,14 @@ namespace AW2.Game.Logic
         {
         }
 
-        public GameplayMode(float lifeScore, float killScore, float deathScore, float damageCombatPoints, float bonusesCombatPoints)
+        public GameplayMode(float lifeScore, float killScore, float deathScore, float damageCombatPoints, float bonusesCombatPoints, bool allVsAll = true)
         {
             ScoreMultiplierLives = lifeScore;
             ScoreMultiplierKills = killScore;
             ScoreMultiplierDeaths = deathScore;
             CombatPointsMultiplierInflictedDamage = damageCombatPoints;
             CombatPointsMultiplierCollectedBonuses = bonusesCombatPoints;
+            AllVsAll = allVsAll;
         }
 
         public int CalculateScore(ArenaStatistics statistics)
@@ -126,13 +126,16 @@ namespace AW2.Game.Logic
         /// </summary>
         public TeamOperation ChooseTeam(Spectator spectator, IEnumerable<Team> allTeams)
         {
-#if ALL_VS_ALL
-            return TeamOperation.AssignToNewTeam(spectator.Name, spectator);
-#else
-            if (allTeams.Count() < 2) return TeamOperation.AssignToNewTeam(GetFreeTeamNames(allTeams).First(), spectator);
-            var ratingContext = GetRatingContext(allTeams);
-            return TeamOperation.AssignToExistingTeam(allTeams.OrderBy(ratingContext.Rate).First(), spectator);
-#endif
+            if (AllVsAll)
+            {
+                return TeamOperation.AssignToNewTeam(spectator.Name, spectator);
+            }
+            else
+            {
+                if (allTeams.Count() < 2) return TeamOperation.AssignToNewTeam(GetFreeTeamNames(allTeams).First(), spectator);
+                var ratingContext = GetRatingContext(allTeams);
+                return TeamOperation.AssignToExistingTeam(allTeams.OrderBy(ratingContext.Rate).First(), spectator);
+            }
         }
 
         /// <summary>
@@ -140,25 +143,28 @@ namespace AW2.Game.Logic
         /// </summary>
         public IEnumerable<TeamOperation> BalanceTeams(IEnumerable<Team> teams)
         {
-#if ALL_VS_ALL
-            yield break;
-#else
-            if (teams.Count() < 2) yield break;
-            var ratingContext = GetRatingContext(teams);
-            var spectators = teams
-                .SelectMany(team => team.Members)
-                .Where(spec => !(spec is BotPlayer))
-                .Shuffle()
-                .OrderByDescending(spec => ratingContext.Rate(spec))
-                .ToArray();
-            var resultTeams = teams.Take(2).ToDictionary(team => team, team => 0);
-            foreach (var spec in spectators)
+            if (AllVsAll)
             {
-                var weakestTeam = resultTeams.OrderBy(x => x.Value).First().Key;
-                resultTeams[weakestTeam] += ratingContext.Rate(spec);
-                yield return TeamOperation.AssignToExistingTeam(weakestTeam, spec);
+                yield break;
             }
-#endif
+            else
+            {
+                if (teams.Count() < 2) yield break;
+                var ratingContext = GetRatingContext(teams);
+                var spectators = teams
+                    .SelectMany(team => team.Members)
+                    .Where(spec => !(spec is BotPlayer))
+                    .Shuffle()
+                    .OrderByDescending(spec => ratingContext.Rate(spec))
+                    .ToArray();
+                var resultTeams = teams.Take(2).ToDictionary(team => team, team => 0);
+                foreach (var spec in spectators)
+                {
+                    var weakestTeam = resultTeams.OrderBy(x => x.Value).First().Key;
+                    resultTeams[weakestTeam] += ratingContext.Rate(spec);
+                    yield return TeamOperation.AssignToExistingTeam(weakestTeam, spec);
+                }
+            }
         }
 
         public int RateLocally(Spectator spectator, IEnumerable<Spectator> allSpectators)
@@ -171,34 +177,37 @@ namespace AW2.Game.Logic
         /// </summary>
         public IEnumerable<TeamOperation> UpdateBotPlayerConfiguration(IEnumerable<Team> teams, AWSettings settings)
         {
-#if ALL_VS_ALL
-            // Always remove bots from teams that have players.
-            // If bots are excluded completely then also remove bots from their independent team.
-            var removeExtraBots = teams
-                .Where(team => !settings.Players.BotsEnabled || team.Members.OfType<Player>().Any())
-                .SelectMany(team => team.Members.OfType<BotPlayer>())
-                .Select(TeamOperation.Remove);
-            bool hasIndependentBots = teams.Any(team => team.Members.All(spec => spec is BotPlayer));
-            var addIndependentBots = !settings.Players.BotsEnabled || hasIndependentBots
-                ? Array.Empty<TeamOperation>()
-                : new[] { TeamOperation.CreateToNewTeam("Bots", "Bots") };
-            return removeExtraBots.Union(addIndependentBots);
-#else
-            var removeExtraBots = teams
-                .SelectMany(team => team.Members.OfType<BotPlayer>().Skip(1))
-                .Select(botPlayer => TeamOperation.Remove(botPlayer));
-            var switchOnOrOff = settings.Players.BotsEnabled
-                ? teams
-                    .Where(team => !team.Members.OfType<BotPlayer>().Any())
-                    .Select(team => TeamOperation.CreateToExistingTeam(team, GetBotPlayerName(team.Name)))
-                : teams
+            if (AllVsAll)
+            {
+                // Always remove bots from teams that have players.
+                // If bots are excluded completely then also remove bots from their independent team.
+                var removeExtraBots = teams
+                    .Where(team => !settings.Players.BotsEnabled || team.Members.OfType<Player>().Any())
                     .SelectMany(team => team.Members.OfType<BotPlayer>())
+                    .Select(TeamOperation.Remove);
+                bool hasIndependentBots = teams.Any(team => team.Members.All(spec => spec is BotPlayer));
+                var addIndependentBots = !settings.Players.BotsEnabled || hasIndependentBots
+                    ? Array.Empty<TeamOperation>()
+                    : new[] { TeamOperation.CreateToNewTeam("Bots", "Bots") };
+                return removeExtraBots.Union(addIndependentBots);
+            }
+            else
+            {
+                var removeExtraBots = teams
+                    .SelectMany(team => team.Members.OfType<BotPlayer>().Skip(1))
                     .Select(botPlayer => TeamOperation.Remove(botPlayer));
-            var addMissingTeams = settings.Players.BotsEnabled
-                ? GetFreeTeamNames(teams).Take(2 - teams.Count()).Select(name => TeamOperation.CreateToNewTeam(name, GetBotPlayerName(name)))
-                : new TeamOperation[0];
-            return removeExtraBots.Union(switchOnOrOff).Union(addMissingTeams);
-#endif
+                var switchOnOrOff = settings.Players.BotsEnabled
+                    ? teams
+                        .Where(team => !team.Members.OfType<BotPlayer>().Any())
+                        .Select(team => TeamOperation.CreateToExistingTeam(team, GetBotPlayerName(team.Name)))
+                    : teams
+                        .SelectMany(team => team.Members.OfType<BotPlayer>())
+                        .Select(botPlayer => TeamOperation.Remove(botPlayer));
+                var addMissingTeams = settings.Players.BotsEnabled
+                    ? GetFreeTeamNames(teams).Take(2 - teams.Count()).Select(name => TeamOperation.CreateToNewTeam(name, GetBotPlayerName(name)))
+                    : new TeamOperation[0];
+                return removeExtraBots.Union(switchOnOrOff).Union(addMissingTeams);
+            }
         }
 
         private string GetBotPlayerName(string teamName)

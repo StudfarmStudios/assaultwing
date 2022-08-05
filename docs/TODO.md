@@ -7,6 +7,7 @@ This is a rough list of things to do for the near term development:
     - Fix player clones bug
 - Introduce version numbers
 - All steam builds
+- Change the DisableContentBuilding to just be a platform check
 - Steam beta setup
   - Figure out how it works
   - Invite people

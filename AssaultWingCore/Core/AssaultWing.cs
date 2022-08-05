@@ -739,7 +739,8 @@ namespace AW2.Core
                     FailMessage = "",
                 };
 
-                if (spectator.PilotId == null) return false;
+                // Server always assigns the PilotId. In Steam mode it is a securely hashed steam id
+                spectator.PilotId = NetworkEngine.GetPilotId(spectator.ConnectionID);
 
                 var oldSpectator = DataEngine.Spectators.FirstOrDefault(spec => spec.PilotId == spectator.PilotId);
                 if (oldSpectator == null)

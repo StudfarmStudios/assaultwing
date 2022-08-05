@@ -125,7 +125,8 @@ namespace AW2.Game.Players
         public Spectator(AssaultWingCore game, string pilotId, int connectionId = CONNECTION_ID_LOCAL)
         {
             Game = game;
-            pilotId = pilotId;
+            Name = "<uninitialised>";
+            PilotId = pilotId;
             ConnectionID = connectionId;
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
             ArenaStatistics = new ArenaStatistics();
@@ -221,6 +222,10 @@ namespace AW2.Game.Players
 #endif
             checked
             {
+                if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
+                {
+                    writer.Write((string)PilotId);
+                }
                 if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
                     mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
                 {
@@ -237,6 +242,10 @@ namespace AW2.Game.Players
 
         public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
+            {
+                PilotId = reader.ReadString();
+            }
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
                 mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
             {

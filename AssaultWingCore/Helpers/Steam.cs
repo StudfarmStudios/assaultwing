@@ -15,5 +15,14 @@ namespace AW2.Helpers {
             return buffer;
         }
 
+        public static string IdentityToAddrPreferred(SteamNetConnectionInfo_t info) {
+            if (!info.m_addrRemote.IsIPv6AllZeros() && !info.m_addrRemote.IsFakeIP()) {
+                string buffer;
+                info.m_addrRemote.ToString(out buffer, true);
+                return buffer;
+            } else {
+                return IdentityToString(info.m_identityRemote);
+            }
+        }
     }
 }

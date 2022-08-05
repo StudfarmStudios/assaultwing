@@ -99,7 +99,7 @@ namespace AW2.Net
         {
             var result = AllConnections.First(conn => conn.ID == connectionID);
             if (result == null) return $"Unknown connection {connectionID}";
-            return Steam.IdentityToString(result.Info.m_identityRemote); // TODO: Not sure if this is best thing to print here
+            return Steam.IdentityToAddrPreferred(result.Info);
         }
 
         override public GameClientConnectionSteam GetGameClientConnection(int connectionID)

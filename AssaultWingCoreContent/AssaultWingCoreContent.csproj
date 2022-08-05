@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <MonoGameContentReference Include="AssaultWingCoreContent.mgcb" />

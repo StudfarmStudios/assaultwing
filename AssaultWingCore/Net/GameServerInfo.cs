@@ -39,16 +39,6 @@ namespace AW2.Net
             }
         }
 
-        public AWEndPoint SteamNetworkingIpEndpoint {
-            get {
-                SteamNetworkingIPAddr steamNetworkingIpAddr = new SteamNetworkingIPAddr();
-                steamNetworkingIpAddr.SetIPv4(SteamDetails.m_NetAdr.GetIP(), SteamDetails.m_NetAdr.GetConnectionPort());
-                SteamNetworkingIdentity addrNetworkingIdentity = new SteamNetworkingIdentity();
-                addrNetworkingIdentity.SetIPAddr(steamNetworkingIpAddr);
-                return new AWEndPointSteam(addrNetworkingIdentity);
-            }
-        }
-
         public AWEndPoint DirectIpEndpoint {
             get {
                 SteamNetworkingIPAddr steamNetworkingIpAddr = new SteamNetworkingIPAddr();
@@ -59,12 +49,10 @@ namespace AW2.Net
 
         public AWEndPoint[] GameServerEndPoints {
             get {
-                // Returning 3 end points to attempt both direct
-                // (DirectIpEndpoint) and the Steam Datagram Relay based
-                // connection (SteamIdEndpoint). Does the middle one
-                // (SteamNetworkingIpEndpoint) bring any value here or always
-                // just extra load?
-                return new AWEndPoint[]{DirectIpEndpoint, SteamNetworkingIpEndpoint, SteamIdEndpoint};
+                // Returning 2 end points to attempt both direct
+                // (DirectIpEndpoint) and the Steam Datagram Relay (SDR) based
+                // connection (SteamIdEndpoint).
+                return new AWEndPoint[]{DirectIpEndpoint, SteamIdEndpoint};
             }
         }
 

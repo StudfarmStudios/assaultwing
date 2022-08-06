@@ -135,6 +135,14 @@ if (( $BUILD_STEAM )); then
   fi
 fi
 
+if [[ $(git describe --tags) =~ v([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\$ ]];then 
+  ASSAULT_WING_VERSION="${BASH_REMATCH[1]}"; 
+  echo "Version number found from Git tags: $ASSAULT_WING_VERSION"
+else
+  echo "No Git tag of the format v1.2.3.4 found for this commit. This is a developer build."
+  ASSAULT_WING_VERSION=""
+fi
+
 echo "STEAM_CMD=$STEAM_CMD"
 echo "PLATFORM=$PLATFORM"
 echo "DOTNET_CONFIGURATION=$DOTNET_CONFIGURATION"
@@ -185,7 +193,7 @@ build() {
   # It seems we need to define build profiles to build for Linux & Mac here. https://github.com/dotnet/sdk/issues/14281#issuecomment-863499124
   # /target:Publish
   echo dotnet build
-  platform_run dotnet build $SOLUTION --nologo --verbosity=quiet "/p:Configuration=$DOTNET_CONFIGURATION" "/p:Platform=Any Cpu"
+  platform_run dotnet build $SOLUTION --nologo --verbosity=quiet "/p:AssaultWingVersion=$ASSAULT_WING_VERSION" "/p:Configuration=$DOTNET_CONFIGURATION" "/p:Platform=Any Cpu"
 
   echo Built: */bin/*
 }

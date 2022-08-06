@@ -11,13 +11,16 @@ namespace AW2.Net.Connections
     public class GameServerConnectionSteam : ConnectionSteam
     {
 
+        private readonly AWEndPointSteam _endpoint;
+
         /// <summary>
         /// Creates a new connection to a game server.
         /// </summary>
-        public GameServerConnectionSteam(AssaultWingCore game, HSteamNetConnection handle, SteamNetConnectionInfo_t info)
+        public GameServerConnectionSteam(AssaultWingCore game, HSteamNetConnection handle, SteamNetConnectionInfo_t info, AWEndPointSteam endpoint)
             : base(game, handle, info)
         {
-            Name = $"Game Server {Steam.IdentityToAddrPreferred(info)}";
+            _endpoint = endpoint;
+            Name = $"Game Server {_endpoint}";
         }
 
         protected override void DisposeImpl(bool error)

@@ -12,20 +12,7 @@
 
     "Depots"
     {
-        "1971371" "steam_build_content.vdf"
-        "1971375" // The windows Debug / Release binary stuff
-        {
-            "FileMapping"
-            {
-                "LocalPath" "AssaultWing\bin\Debug\netcoreapp6.0\*"
-                "DepotPath" "." // mapped into the root of the depot
-                "recursive" "1" // include all subfolders
-            }
-            "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\Content*"
-            "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\CoreContent*"
-            "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\Log*.txt" // Sometimes these can be left over if this is not 1 100% clean build
-            "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\AssaultWing_config.xml" // Sometimes this can be left over if this is not 1 100% clean build
-            "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\*.pdb" // No debug files
-        }
+        "1971371" "steam_build_content_files.vdf"
+        "1971375" "steam_build_assault_wing_debug_files.vdf"
     }
 }

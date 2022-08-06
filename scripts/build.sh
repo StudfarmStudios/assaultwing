@@ -108,20 +108,18 @@ case "$PLATFORM" in
     STEAM_CMD='steambuild\builder\steamcmd.exe'
     STEAM_PLATFORM='windows'
     STEAM_SCRIPT_FOLDER_RELATIVE='..\..\scripts\'
-      DISABLE_CONTENT_BUILDING=false # Content building only works on windows
+    DISABLE_CONTENT_BUILDING=false # Content building only works on windows
     ;;
   mac)
-    echo "Mac builds TBD"
-    STEAM_CMD='steambuild/builder_mac/steamcmd.sh'
+    echo "Mac / OSX platform selected"
+    STEAM_CMD='steambuild/builder_osx/steamcmd.sh'
     if (( $BUILD_STEAM )); then
-      # TODO: Test mac build with steam
       chmod a+rx $STEAM_CMD
-      chmod a+rx 'steambuild/builder_linux/linux32/steamcmd'
+      chmod a+rx 'steambuild/builder_osx/steamcmd'
     fi
     STEAM_PLATFORM='mac'
     STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
     DISABLE_CONTENT_BUILDING=true
-    # exit 2
     ;;
   *)
     echo "Unknown platform parameter '$PLATFORM'"

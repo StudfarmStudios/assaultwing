@@ -31,3 +31,4 @@ This is a rough list of things to do for the near term development:
   - Ranking
   - Add back the pilot status view showing rank
 - Re-enable intro video playback somehow
+- Cross compiling building the platforms & Steam depots on a single OS

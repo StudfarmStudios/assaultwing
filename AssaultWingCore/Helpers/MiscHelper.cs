@@ -26,13 +26,8 @@ namespace AW2.Helpers
                 return new NameValueCollection();
             }
         }
-        public static Version Version
-        {
-            get
-            {
-                return new Version();
-            }
-        }
+        public static Version Version => System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version ?? new Version();
+
         public static string DataDirectory
         {
             get

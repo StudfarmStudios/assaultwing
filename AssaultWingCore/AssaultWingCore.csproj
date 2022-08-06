@@ -8,8 +8,24 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(AssaultWingVersion)'==''">
+      <PropertyGroup>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+        <AssemblyFileVersion>0.0.0.0</AssemblyFileVersion>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <AssemblyVersion>$(AssaultWingVersion)</AssemblyVersion>
+        <AssemblyFileVersion>$(AssaultWingVersion)</AssemblyFileVersion>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
 
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />

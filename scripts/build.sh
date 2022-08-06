@@ -133,7 +133,7 @@ if (( $BUILD_STEAM )); then
   fi
 fi
 
-if [[ $(git describe --tags) =~ v([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\$ ]];then 
+if [[ $(git describe --tags) =~ v([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then 
   ASSAULT_WING_VERSION="${BASH_REMATCH[1]}"; 
   echo "Version number found from Git tags: $ASSAULT_WING_VERSION"
 else

@@ -108,7 +108,7 @@ case "$PLATFORM" in
     STEAM_CMD='steambuild\builder\steamcmd.exe'
     STEAM_PLATFORM='windows'
     STEAM_SCRIPT_FOLDER_RELATIVE='..\..\scripts\'
-    DISABLE_CONTENT_BUILDING=false # Content building only works on windows
+      DISABLE_CONTENT_BUILDING=false # Content building only works on windows
     ;;
   mac)
     echo "Mac builds TBD"
@@ -185,7 +185,7 @@ build() {
   # It seems we need to define build profiles to build for Linux & Mac here. https://github.com/dotnet/sdk/issues/14281#issuecomment-863499124
   # /target:Publish
   echo dotnet build
-  platform_run dotnet build $SOLUTION --nologo --verbosity=quiet "/p:DisableContentBuilding=${DISABLE_CONTENT_BUILDING}" "/p:Configuration=$DOTNET_CONFIGURATION" "/p:Platform=Any Cpu"
+  platform_run dotnet build $SOLUTION --nologo --verbosity=quiet "/p:Configuration=$DOTNET_CONFIGURATION" "/p:Platform=Any Cpu"
 
   echo Built: */bin/*
 }

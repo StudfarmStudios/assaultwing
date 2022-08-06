@@ -21,12 +21,13 @@ As an IDE either a recent Visual Studio or Visual Studio Code can be used.
 
 ## Building
 
-On windows a simple `dotnet build` should work. USe `dotnet test` to run the
-unit test suite.
+A simple `dotnet build` should work. Use `dotnet test` to run the test suite.
 
-On other platforms than Windows (Linux, Mac) `/p:DisableContentBuilding=true`
-must be provided on the command line and the data folders (`Content` and
-`CoreContent`) must be made accessible in the working directory when the
+The content building only works on Windows at the moment. To make code building
+work on other platforms, the content building is disabled for non Windows
+platforms (Linux, Mac) in the `AssaultWingContent.csproj` and
+`AssaultWingCoreContent.csproj` files. In this case the data folders (`Content`
+and `CoreContent`) must be made accessible in the working directory when the
 application is run.
 
 ### Using the `build.sh` script

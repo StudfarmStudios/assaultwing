@@ -1,6 +1,0 @@
-#!/bin/sh
-# Assault Wing Management Server for end users
-SERVER_PORT=16727
-LOG_DIR=logs
-SCREEN_NAME=aw-management-server
-run-aw-management-server $SERVER_PORT $LOG_DIR $SCREEN_NAME

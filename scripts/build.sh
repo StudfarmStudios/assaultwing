@@ -1,4 +1,4 @@
-#!/bin/bash
+skip#!/bin/bash
 
 if [ -z "$BASH" ] ;then echo "Please run this script $0 with bash"; exit 1; fi
 
@@ -110,6 +110,7 @@ case "$PLATFORM" in
     STEAM_RELATIVE_REPO_ROOT="../../"
     BUILD_CONTENT=0
     STEAM_DEPOT_PLATFORM_OFFSET=1
+    STEAM_API_LIB="linux64/libsteam_api.so"
     ;;
   windows_wsl2)
     echo "Windows drive mounted in WSL2 selected"
@@ -118,6 +119,7 @@ case "$PLATFORM" in
     STEAM_RELATIVE_REPO_ROOT='..\..\'
     BUILD_CONTENT=1 # Content building only works on windows
     STEAM_DEPOT_PLATFORM_OFFSET=0
+    STEAM_API_LIB="win64/steam_api64.dll"
     ;;
   mac)
     echo "Mac / OSX platform selected"
@@ -130,15 +132,33 @@ case "$PLATFORM" in
     STEAM_RELATIVE_REPO_ROOT="../../"
     BUILD_CONTENT=0
     STEAM_DEPOT_PLATFORM_OFFSET=2
+    STEAM_API_LIB="osx/libsteam_api.dylib"
     ;;
   *)
     echo "Unknown platform parameter '$PLATFORM'"
     exit 2  
 esac
 
+if [[ -z "${STEAMWORKS_SDK_PATH:=}" ]]; then
+  STEAMWORKS_SDK_AVAILABLE=0
+else
+  STEAMWORKS_SDK_AVAILABLE=1
+fi
+
 if (( $BUILD_STEAM )); then
   if [[ -z "${AW_STEAM_BUILD_ACCOUNT:=}" || -z "${AW_STEAM_BUILD_PASSWORD:=}" ]]; then
     echo "Environment variables AW_STEAM_BUILD_ACCOUNT and AW_STEAM_BUILD_PASSWORD must be defined"
+    exit 2
+  fi
+  if (( ! STEAMWORKS_SDK_AVAILABLE )); then
+    echo "Environment variable STEAMWORKS_SDK_PATH must be defined"
+    exit 2
+  fi
+fi
+
+if (( $STEAMWORKS_SDK_AVAILABLE )); then
+  if [[ ! -e "${STEAMWORKS_SDK_PATH}/redistributable_bin" ]]; then
+    echo "Can't find redistributable_bin folder under STEAMWORKS_SDK_PATH=$STEAMWORKS_SDK_PATH"
     exit 2
   fi
 fi
@@ -159,6 +179,9 @@ echo "APP=$APP"
 echo "AW_STEAM_BUILD_ACCOUNT=$AW_STEAM_BUILD_ACCOUNT"
 echo "BUILD_CONTENT=$BUILD_CONTENT"
     
+BUILD_DESCRIPTION="${APP_SHORT} ${ASSAULT_WING_VERSION:-DEV} ${STEAM_PLATFORM} ${CONFIGURATION}"
+echo "BUILD_DESCRIPTION=${BUILD_DESCRIPTION}"
+
 ROOT=.
 SOLUTION="AssaultWing.sln"
 DOTNET_PLATFORM="x64"
@@ -175,50 +198,24 @@ platform_run() {
   fi
 }
 
-# https://stackoverflow.com/a/8088167/1148030
-define(){ IFS='\n' read -r -d '' ${1} || true; }
 
-if (( $BUILD_CONTENT )) && [[ $APP == "assault_wing" ]]; then
-  CONTENT_STEAM_DEPOT_LINE='"1971371" "..\steam_build_content_files.vdf"'
-else
-  CONTENT_STEAM_DEPOT_LINE=''
-fi
-
-# Depot numbers follow a pattern. See docs/steam-deploy.md
-STEAM_DEPOT="$(( $STEAM_APP_ID + $STEAM_DEPOT_PLATFORM_OFFSET + $STEAM_DEPOT_CONFIGURATION_OFFSET ))"
-
-STEAM_BUILD_FILE="steam_build_${APP}_${STEAM_PLATFORM}_${CONFIGURATION}.vdf"
-
-define generated_steam_build_vdf <<EOF
-"AppBuild"
-{
-    "AppID" "${STEAM_APP_ID}" // ${APP_SHORT} Steam AppID
-    "Desc" "${APP_SHORT} ${ASSAULT_WING_VERSION:-DEV} ${STEAM_PLATFORM} ${CONFIGURATION}"
-
-    // The assaultwing source root directory relative to the scripts/output where
-    // this file ${STEAM_BUILD_FILE} is generated to.
-    "ContentRoot" "..\.."
-
-    // Build output folder for build logs and build cache files. It is the same
-    // folder where this generated script is in.
-    "BuildOutput" "."
-
-    "Depots"
-    {
-        ${CONTENT_STEAM_DEPOT_LINE}
-        "${STEAM_DEPOT}" "..\steam_build_${APP}_${CONFIGURATION}_files.vdf"
-    }
-}
-EOF
-
-mkdir -p scripts/output
-echo "Generating Steam build file scripts/output/${STEAM_BUILD_FILE}"
-echo "$generated_steam_build_vdf" > "scripts/output/${STEAM_BUILD_FILE}"
+SERVER_BUILD_FOLDER="DedicatedServer/bin/x64/${DOTNET_CONFIGURATION}/netcoreapp6.0"
+GAME_BUILD_FOLDER="AssaultWing/bin/x64/${DOTNET_CONFIGURATION}/netcoreapp6.0"
 
 raw_clean() {
   echo Cleaning folders
   echo Remove "*/bin/*": */bin/*
   rm -rf */bin/*
+}
+
+copy_steam_files() {
+  echo "Copy steam supporting files from ${STEAMWORKS_SDK_PATH}"
+  rsync -a "${STEAMWORKS_SDK_PATH}/tools/ContentBuilder/" steambuild/
+  mkdir -p "${SERVER_BUILD_FOLDER}" "${GAME_BUILD_FOLDER}"
+  cp -a "${STEAMWORKS_SDK_PATH}/redistributable_bin/${STEAM_API_LIB}" "${SERVER_BUILD_FOLDER}"
+  cp -a "${STEAMWORKS_SDK_PATH}/redistributable_bin/${STEAM_API_LIB}" "${GAME_BUILD_FOLDER}"
+  cp "scripts/steam_appid.txt" $SERVER_BUILD_FOLDER
+  cp "scripts/steam_appid.txt" $GAME_BUILD_FOLDER
 }
 
 clean_build_setup() {
@@ -243,15 +240,56 @@ if (( $BUILD )); then
   if (( $CLEAN )); then
     raw_clean
     clean_build_setup
-  fi  
+  fi
   build
 else 
   echo "Skipping cleaning and building due to '$MODE'"
 fi
 
-STEAM_BUILD_FILE_PATH="${STEAM_RELATIVE_REPO_ROOT}scripts/output/${STEAM_BUILD_FILE}"
+if (( $STEAMWORKS_SDK_AVAILABLE )); then
+  # Copy steam files if they are available. This helps development
+  copy_steam_files  
+fi
 
 if (( $BUILD_STEAM )); then
+  # Depot numbers follow a pattern. See docs/steam-deploy.md
+  STEAM_DEPOT="$(( $STEAM_APP_ID + $STEAM_DEPOT_PLATFORM_OFFSET + $STEAM_DEPOT_CONFIGURATION_OFFSET ))"
+  STEAM_BUILD_FILE="steam_build_${APP}_${STEAM_PLATFORM}_${CONFIGURATION}.vdf"
+  STEAM_BUILD_FILE_PATH="${STEAM_RELATIVE_REPO_ROOT}scripts/output/${STEAM_BUILD_FILE}"
+
+  if (( $BUILD_CONTENT )) && [[ $APP == "assault_wing" ]]; then
+    CONTENT_STEAM_DEPOT_LINE='"1971371" "..\steam_build_content_files.vdf"'
+  else
+    CONTENT_STEAM_DEPOT_LINE=''
+  fi
+
+  mkdir -p scripts/output
+
+  echo "Generating Steam build file scripts/output/${STEAM_BUILD_FILE}"
+
+  cat > "scripts/output/${STEAM_BUILD_FILE}" <<EOF
+"AppBuild"
+{
+    "AppID" "${STEAM_APP_ID}" // ${APP_SHORT} Steam AppID
+    "Desc" "${BUILD_DESCRIPTION}"
+
+    // The assaultwing source root directory relative to the scripts/output where
+    // this file ${STEAM_BUILD_FILE} is generated to.
+    "ContentRoot" "..\.."
+
+    // Build output folder for build logs and build cache files. It is the same
+    // folder where this generated script is in.
+    "BuildOutput" "."
+
+    "Depots"
+    {
+        ${CONTENT_STEAM_DEPOT_LINE}
+        "${STEAM_DEPOT}" "..\steam_build_${APP}_${CONFIGURATION}_files.vdf"
+    }
+}
+EOF
+
+  echo "Uploading ${BUILD_DESCRIPTION} to Steam"
   platform_run "$STEAM_CMD" +login "$AW_STEAM_BUILD_ACCOUNT" "$AW_STEAM_BUILD_PASSWORD" +run_app_build $STEAM_BUILD_FILE_PATH +quit
 fi
 

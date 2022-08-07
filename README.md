@@ -52,21 +52,22 @@ The build script without parameters outputs further help.
 
 The Steamworks SDK is only needed when developing Steam features or uploading a
 build to the Steam. In this case the SDK needs to be manually downloaded from
-(partner.steamgames.com)[https://partner.steamgames.com/doc/sdk] and copied into
-place.
+[partner.steamgames.com](https://partner.steamgames.com/doc/sdk).
 
 Generally we have just followed the [Steam partner
 documentation](https://partner.steamgames.com/doc/sdk/uploading).
 
-Download the latest Steamworks SDK zip and extract to a suitable location.
+Download the latest Steamworks SDK ZIP and extract it to a suitable location.
 (As of this writing the latest version of the SDK is 154):
 
-Copy everything from the the SDK folder `sdk/tools/ContentBuilder/` to the
-`steambuild/` folder under the Assault Wing repository root folder.
+Then the environment variable `STEAMWORKS_SDK_PATH` must point to the unzipped
+SDK. The `scripts/builds.sh` takes care of copying certain files from the SDK.
+Run something like the following to get the Steam API library, `steam_appid.txt`
+and the `steambuild` folder to correct places for Steam development.
 
-For example depending where the unzipped SDK is:
-
-    rsync -av ../../steamworks_sdk/tools/ContentBuilder/ steambuild/` 
+```bash
+./scripts/build.sh MY_PLATFORM_HERE assault_wing debug skip_clean_and_steam
+```
 
 ## Notes on quick local testing
 

@@ -6,6 +6,7 @@
         "DepotPath" "." // mapped into the root of the depot
         "recursive" "1" // include all subfolders
     }
+    "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\steam_appid.txt"
     "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\Content*"
     "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\CoreContent*"
     "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\Log*.txt" // Sometimes these can be left over if this is not 1 100% clean build

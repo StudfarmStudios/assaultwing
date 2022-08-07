@@ -2,7 +2,6 @@
 
 This is a rough list of things to do for the near term development:
 
-- All steam builds
 - Steam beta setup
   - Figure out how it works
   - Invite people

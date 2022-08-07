@@ -33,12 +33,17 @@ APP=$2
 CONFIGURATION=$3
 MODE=${4:-}
 
+
 case "$APP" in
   assault_wing)
     echo "Building Assault Wing"
+    APP_SHORT="AW Game"
+    STEAM_APP_ID=1971370
     ;;
   dedicated_server)
     echo "Building Assault Wing Dedicated Server"
+    APP_SHORT="AW Server"
+    STEAM_APP_ID=2103880
     ;;
   *)
     echo "Unknown app parameter '$APP'"
@@ -49,10 +54,12 @@ case "$CONFIGURATION" in
   debug)
     echo "Debug build selected"
     DOTNET_CONFIGURATION="Debug"
+    STEAM_DEPOT_CONFIGURATION_OFFSET=5
     ;;
   release)
     echo "Release build selected"
     DOTNET_CONFIGURATION="Release"
+    STEAM_DEPOT_CONFIGURATION_OFFSET=2
     ;;
   *)
     echo "Unknown configuration '$CONFIGURATION'"
@@ -100,15 +107,17 @@ case "$PLATFORM" in
       chmod -c a+rx 'steambuild/builder_linux/linux32/steamcmd'
     fi
     STEAM_PLATFORM='linux'
-    STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
-    DISABLE_CONTENT_BUILDING=true
+    STEAM_RELATIVE_REPO_ROOT="../../"
+    BUILD_CONTENT=0
+    STEAM_DEPOT_PLATFORM_OFFSET=1
     ;;
   windows_wsl2)
     echo "Windows drive mounted in WSL2 selected"
     STEAM_CMD='steambuild\builder\steamcmd.exe'
     STEAM_PLATFORM='windows'
-    STEAM_SCRIPT_FOLDER_RELATIVE='..\..\scripts\'
-    DISABLE_CONTENT_BUILDING=false # Content building only works on windows
+    STEAM_RELATIVE_REPO_ROOT='..\..\'
+    BUILD_CONTENT=1 # Content building only works on windows
+    STEAM_DEPOT_PLATFORM_OFFSET=0
     ;;
   mac)
     echo "Mac / OSX platform selected"
@@ -118,8 +127,9 @@ case "$PLATFORM" in
       chmod a+rx 'steambuild/builder_osx/steamcmd'
     fi
     STEAM_PLATFORM='mac'
-    STEAM_SCRIPT_FOLDER_RELATIVE="../../scripts/"
-    DISABLE_CONTENT_BUILDING=true
+    STEAM_RELATIVE_REPO_ROOT="../../"
+    BUILD_CONTENT=0
+    STEAM_DEPOT_PLATFORM_OFFSET=2
     ;;
   *)
     echo "Unknown platform parameter '$PLATFORM'"
@@ -147,19 +157,11 @@ echo "DOTNET_CONFIGURATION=$DOTNET_CONFIGURATION"
 echo "MODE=$MODE"
 echo "APP=$APP"
 echo "AW_STEAM_BUILD_ACCOUNT=$AW_STEAM_BUILD_ACCOUNT"
-echo "DISABLE_CONTENT_BUILDING=$DISABLE_CONTENT_BUILDING"
+echo "BUILD_CONTENT=$BUILD_CONTENT"
     
-#ROOT=$(pwd)
-#SOLUTION="${ROOT}\AssaultWing.sln"
 ROOT=.
 SOLUTION="AssaultWing.sln"
-STEAM_BUILD_FILE="steam_build_${APP}_${STEAM_PLATFORM}_${CONFIGURATION}.vdf"
-echo "STEAM_BUILD_FILE=$STEAM_BUILD_FILE"
-
-if [[ ! -f "scripts/$STEAM_BUILD_FILE" ]]; then
-  echo "Steam build file 'scripts/$STEAM_BUILD_FILE' does not exist."
-  exit 2
-fi
+DOTNET_PLATFORM="x64"
 
 platform_run() {
   if [ "$PLATFORM" = "windows_wsl2" ]; then
@@ -172,6 +174,43 @@ platform_run() {
     "$@"
   fi
 }
+
+# https://stackoverflow.com/a/8088167/1148030
+define(){ IFS='\n' read -r -d '' ${1} || true; }
+
+if (( $BUILD_CONTENT )); then
+  CONTENT_STEAM_DEPOT_LINE='"1971371" "..\steam_build_content_files.vdf"'
+else
+  CONTENT_STEAM_DEPOT_LINE=''
+fi
+
+# Depot numbers follow a pattern. See docs/steam-deploy.md
+STEAM_DEPOT="$(( $STEAM_APP_ID + $STEAM_DEPOT_PLATFORM_OFFSET + $STEAM_DEPOT_CONFIGURATION_OFFSET ))"
+
+define generated_steam_build_vdf <<EOF
+"AppBuild"
+{
+    "AppID" "${STEAM_APP_ID}" // ${APP_SHORT} Steam AppID
+    "Desc" "${APP_SHORT} ${ASSAULT_WING_VERSION:-DEV} ${STEAM_PLATFORM} ${CONFIGURATION}"
+
+    // The assaultwing source root directory.
+    "ContentRoot" ".."
+
+    // build output folder for build logs and build cache files
+    "BuildOutput" "output\"
+
+    "Depots"
+    {
+        ${CONTENT_STEAM_DEPOT_LINE}
+        "${STEAM_DEPOT}" "..\steam_build_${APP}_${CONFIGURATION}_files.vdf"
+    }
+}
+EOF
+
+STEAM_BUILD_FILE="steam_build_${APP}_${STEAM_PLATFORM}_${CONFIGURATION}.vdf"
+mkdir -p output
+echo "Generating Steam build file scripts/output/${STEAM_BUILD_FILE}"
+echo "$generated_steam_build_vdf" > "scripts/output/${STEAM_BUILD_FILE}"
 
 raw_clean() {
   echo Cleaning folders
@@ -191,7 +230,7 @@ build() {
   # It seems we need to define build profiles to build for Linux & Mac here. https://github.com/dotnet/sdk/issues/14281#issuecomment-863499124
   # /target:Publish
   echo dotnet build
-  platform_run dotnet build $SOLUTION --nologo --verbosity=quiet "/p:AssaultWingVersion=$ASSAULT_WING_VERSION" "/p:Configuration=$DOTNET_CONFIGURATION" "/p:Platform=Any Cpu"
+  platform_run dotnet build $SOLUTION --nologo --verbosity=quiet "/p:AssaultWingVersion=$ASSAULT_WING_VERSION" "/p:Configuration=$DOTNET_CONFIGURATION" "/p:Platform=$DOTNET_PLATFORM"
 
   echo Built: */bin/*
 }
@@ -207,7 +246,9 @@ else
   echo "Skipping cleaning and building due to '$MODE'"
 fi
 
+STEAM_BUILD_FILE_PATH="${STEAM_RELATIVE_REPO_ROOT}scripts/output/${STEAM_BUILD_FILE}"
+
 if (( $BUILD_STEAM )); then
-  platform_run "$STEAM_CMD" +login "$AW_STEAM_BUILD_ACCOUNT" "$AW_STEAM_BUILD_PASSWORD" +run_app_build "${STEAM_SCRIPT_FOLDER_RELATIVE}${STEAM_BUILD_FILE}" +quit
+  platform_run "$STEAM_CMD" +login "$AW_STEAM_BUILD_ACCOUNT" "$AW_STEAM_BUILD_PASSWORD" +run_app_build $STEAM_BUILD_FILE_PATH +quit
 fi
 

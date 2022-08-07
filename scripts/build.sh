@@ -178,7 +178,7 @@ platform_run() {
 # https://stackoverflow.com/a/8088167/1148030
 define(){ IFS='\n' read -r -d '' ${1} || true; }
 
-if (( $BUILD_CONTENT )); then
+if (( $BUILD_CONTENT )) && [[ $APP == "assault_wing" ]]; then
   CONTENT_STEAM_DEPOT_LINE='"1971371" "..\steam_build_content_files.vdf"'
 else
   CONTENT_STEAM_DEPOT_LINE=''
@@ -187,17 +187,21 @@ fi
 # Depot numbers follow a pattern. See docs/steam-deploy.md
 STEAM_DEPOT="$(( $STEAM_APP_ID + $STEAM_DEPOT_PLATFORM_OFFSET + $STEAM_DEPOT_CONFIGURATION_OFFSET ))"
 
+STEAM_BUILD_FILE="steam_build_${APP}_${STEAM_PLATFORM}_${CONFIGURATION}.vdf"
+
 define generated_steam_build_vdf <<EOF
 "AppBuild"
 {
     "AppID" "${STEAM_APP_ID}" // ${APP_SHORT} Steam AppID
     "Desc" "${APP_SHORT} ${ASSAULT_WING_VERSION:-DEV} ${STEAM_PLATFORM} ${CONFIGURATION}"
 
-    // The assaultwing source root directory.
-    "ContentRoot" ".."
+    // The assaultwing source root directory relative to the scripts/output where
+    // this file ${STEAM_BUILD_FILE} is generated to.
+    "ContentRoot" "..\.."
 
-    // build output folder for build logs and build cache files
-    "BuildOutput" "output\"
+    // Build output folder for build logs and build cache files. It is the same
+    // folder where this generated script is in.
+    "BuildOutput" "."
 
     "Depots"
     {
@@ -207,8 +211,7 @@ define generated_steam_build_vdf <<EOF
 }
 EOF
 
-STEAM_BUILD_FILE="steam_build_${APP}_${STEAM_PLATFORM}_${CONFIGURATION}.vdf"
-mkdir -p output
+mkdir -p scripts/output
 echo "Generating Steam build file scripts/output/${STEAM_BUILD_FILE}"
 echo "$generated_steam_build_vdf" > "scripts/output/${STEAM_BUILD_FILE}"
 

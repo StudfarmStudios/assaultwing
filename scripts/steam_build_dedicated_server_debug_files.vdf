@@ -2,13 +2,13 @@
 {
     "FileMapping"
     {
-        "LocalPath" "AssaultWing\bin\Debug\netcoreapp6.0\*"
+        "LocalPath" "AssaultWing\bin\x64\Debug\netcoreapp6.0\*"
         "DepotPath" "." // mapped into the root of the depot
         "recursive" "1" // include all subfolders
     }
-    "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\Content*"
-    "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\CoreContent*"
-    "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\Log*.txt" // Sometimes these can be left over if this is not 1 100% clean build
-    "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\AssaultWing_config.xml" // Sometimes this can be left over if this is not 1 100% clean build
-    "FileExclusion" "AssaultWing\bin\Debug\netcoreapp6.0\*.pdb" // No debug files
+    "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\Content*"
+    "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\CoreContent*"
+    "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\Log*.txt" // Sometimes these can be left over if this is not 1 100% clean build
+    "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\AssaultWing_config.xml" // Sometimes this can be left over if this is not 1 100% clean build
+    "FileExclusion" "AssaultWing\bin\x64\Debug\netcoreapp6.0\*.pdb" // No debug files
 }

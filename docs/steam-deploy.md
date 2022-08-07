@@ -1,5 +1,11 @@
 # The Steam deployment of Assault Wing
 
+### Setting builds to default branch
+
+Once all platform builds are done, they must be set to default branch
+for the [main app builds page](https://partner.steamgames.com/apps/builds/1971370)
+and the [dedicated server builds page](https://partner.steamgames.com/apps/builds/2103880).
+
 ### Depots and Steam App IDs
 
 The steam App IDs are:

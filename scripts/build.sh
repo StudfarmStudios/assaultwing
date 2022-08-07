@@ -101,11 +101,7 @@ case "$PLATFORM" in
   linux)
     echo "Linux platform selected"	   
     STEAM_CMD='steambuild/builder_linux/steamcmd.sh'
-    if (( $BUILD_STEAM )); then
-      # The linux tools are not executable "out of the box"... fix that here
-      chmod -c a+rx $STEAM_CMD
-      chmod -c a+rx 'steambuild/builder_linux/linux32/steamcmd'
-    fi
+    STEAM_BUILD_BINARY='steambuild/builder_linux/linux32/steamcmd'
     STEAM_PLATFORM='linux'
     STEAM_RELATIVE_REPO_ROOT="../../"
     BUILD_CONTENT=0
@@ -124,10 +120,7 @@ case "$PLATFORM" in
   mac)
     echo "Mac / OSX platform selected"
     STEAM_CMD='steambuild/builder_osx/steamcmd.sh'
-    if (( $BUILD_STEAM )); then
-      chmod a+rx $STEAM_CMD
-      chmod a+rx 'steambuild/builder_osx/steamcmd'
-    fi
+    STEAM_BUILD_BINARY='steambuild/builder_osx/steamcmd'
     STEAM_PLATFORM='mac'
     STEAM_RELATIVE_REPO_ROOT="../../"
     BUILD_CONTENT=0
@@ -216,6 +209,10 @@ copy_steam_files() {
   cp -a "${STEAMWORKS_SDK_PATH}/redistributable_bin/${STEAM_API_LIB}" "${GAME_BUILD_FOLDER}"
   cp "scripts/steam_appid.txt" $SERVER_BUILD_FOLDER
   cp "scripts/steam_appid.txt" $GAME_BUILD_FOLDER
+  if [[ "$PLATFORM" == 'mac' || "$PLATFORM" == 'linux' ]]; then
+    # On unix like platforms, the Steam tools are not executable "out of the box"... fix that here
+    chmod a+rx $STEAM_CMD $STEAM_BUILD_BINARY
+  fi
 }
 
 clean_build_setup() {

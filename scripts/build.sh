@@ -1,4 +1,4 @@
-skip#!/bin/bash
+#!/bin/bash
 
 if [ -z "$BASH" ] ;then echo "Please run this script $0 with bash"; exit 1; fi
 
@@ -203,7 +203,7 @@ raw_clean() {
 
 copy_steam_files() {
   echo "Copy steam supporting files from ${STEAMWORKS_SDK_PATH}"
-  rsync -a "${STEAMWORKS_SDK_PATH}/tools/ContentBuilder/" steambuild/
+  rsync -ua "${STEAMWORKS_SDK_PATH}/tools/ContentBuilder/" steambuild/
   mkdir -p "${SERVER_BUILD_FOLDER}" "${GAME_BUILD_FOLDER}"
   cp -a "${STEAMWORKS_SDK_PATH}/redistributable_bin/${STEAM_API_LIB}" "${SERVER_BUILD_FOLDER}"
   cp -a "${STEAMWORKS_SDK_PATH}/redistributable_bin/${STEAM_API_LIB}" "${GAME_BUILD_FOLDER}"

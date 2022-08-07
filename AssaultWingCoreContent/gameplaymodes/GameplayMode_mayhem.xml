@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GameplayModeType type="AW2.Game.Logic.GameplayMode">
   <name>mayhem</name>
+  <allVsAll>true</allVsAll>
   <arenas>
     <Item>Blood Bowl</Item>
     <Item>Lumipesu</Item>

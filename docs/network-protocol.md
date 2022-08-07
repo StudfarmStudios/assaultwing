@@ -1,10 +1,10 @@
 # The Assault Wing network protocol
 
-The Assault Wing supports a server mode directly from a client
+Assault Wing supports a server mode directly from a client
 process and it also has a separate console based dedicated server.
 
 The networking is split in 2 major modes. The game protocol is roughly the same
-in both modes, but the low level transport mechnism is different.
+in both modes, but the low level transport mechanism is different.
 
 ## The Steam network mode  
 
@@ -29,7 +29,7 @@ servers can only be done through the command line.
 
 ## The game server handshake
 
-This documentation was created on reverse engineering the code to support the
+This documentation was created by reverse engineering the code to support the
 development of the Steam based network layer. As such it is not authoritative
 and many not be accurate. Hopefully this can be improved later.
 
@@ -41,7 +41,7 @@ and many not be accurate. Hopefully this can be improved later.
 - Client sends GameServerHandshakeRequestTCP
 - Server checks version compatibility (DropClient etc if not ok)
 - Server sets ConnectionStatus for the client connection to Active
-- Server runs DoClientUdpHandshake and sends a series of UDP packets to try to break NAT (not needed on steam)
+- Server runs DoClientUdpHandshake and sends a series of UDP packets to try to break NAT (not needed on Steam)
 - Client runs HandleConnectionHandshakingOnClient and periodically sends GameServerHandshakeRequestUDP
   - Server handles this with HandleGameServerHandshakeRequestUDP:
     - Server updates RemoteUDPEndPoint based on the message if ClientKey matches

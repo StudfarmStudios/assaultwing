@@ -55,10 +55,11 @@ build to the Steam. In this case the SDK needs to be manually downloaded from
 (partner.steamgames.com)[https://partner.steamgames.com/doc/sdk] and copied into
 place.
 
-Generally we have just followed the the [Steam partner
+Generally we have just followed the [Steam partner
 documentation](https://partner.steamgames.com/doc/sdk/uploading).
 
-Download the latest Steamworks SDK zip and extract to a suitable location. ( As of this writing the latest version of the SDK is 154):
+Download the latest Steamworks SDK zip and extract to a suitable location.
+(As of this writing the latest version of the SDK is 154):
 
 Copy everything from the the SDK folder `sdk/tools/ContentBuilder/` to the
 `steambuild/` folder under the Assault Wing repository root folder.

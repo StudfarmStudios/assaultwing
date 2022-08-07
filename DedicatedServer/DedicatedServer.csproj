@@ -7,10 +7,26 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(AssaultWingVersion)'==''">
+      <PropertyGroup>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+        <AssemblyFileVersion>0.0.0.0</AssemblyFileVersion>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <AssemblyVersion>$(AssaultWingVersion)</AssemblyVersion>
+        <AssemblyFileVersion>$(AssaultWingVersion)</AssemblyFileVersion>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>AssaultWing.ico</ApplicationIcon>

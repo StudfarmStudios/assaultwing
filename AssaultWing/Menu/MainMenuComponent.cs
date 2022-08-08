@@ -87,8 +87,8 @@ namespace AW2.Menu
                 ApplyGraphicsSettings();
                 ApplyControlsSettings();
             }
-            // TODO: Peter: Move other side effects above to the Deactivate()
-            _currentItemsHistory.Peek().Item1.Deactivate();
+            var deactivate = _currentItemsHistory.Peek().Item1.Deactivate;
+            if (deactivate != null) deactivate(); // TODO: Peter: Move other side effects above to the Deactivate()            
             _currentItemsHistory.Pop();
             MenuEngine.Game.SoundEngine.PlaySound("menuChangeItem");
         }

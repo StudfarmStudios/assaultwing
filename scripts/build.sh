@@ -191,15 +191,10 @@ platform_run() {
   fi
 }
 
-
-SERVER_BUILD_FOLDER="DedicatedServer/bin/x64/${DOTNET_CONFIGURATION}/netcoreapp6.0"
-GAME_BUILD_FOLDER="AssaultWing/bin/x64/${DOTNET_CONFIGURATION}/netcoreapp6.0"
-
-raw_clean() {
-  echo Cleaning folders
-  echo Remove "*/bin/*": */bin/*
-  rm -rf */bin/*
-}
+FRAMEWORK=netcoreapp6.0
+SERVER_BUILD_FOLDER="DedicatedServer/bin/x64/${DOTNET_CONFIGURATION}/${FRAMEWORK}"
+GAME_BUILD_FOLDER="AssaultWing/bin/x64/${DOTNET_CONFIGURATION}/${FRAMEWORK}"
+MAC_PUBLISH_FOLDER="output/"
 
 copy_steam_files() {
   echo "Copy steam supporting files from ${STEAMWORKS_SDK_PATH}"
@@ -235,7 +230,6 @@ build() {
 if (( $BUILD )); then
   echo "Configuration=${CONFIGURATION}"
   if (( $CLEAN )); then
-    raw_clean
     clean_build_setup
   fi
   build

@@ -51,6 +51,7 @@ namespace AW2.UI
 
         // TODO !!! Make private
         public virtual void PrepareArena(int wallCount) { }
+        public virtual void StartServer() { }
         public virtual void StopServer() { }
         public virtual void StopClient(string errorOrNull) { }
         public virtual void ShowMainMenuAndResetGameplay() { }

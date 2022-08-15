@@ -161,6 +161,11 @@ namespace AW2.Net
             SteamNetworkingIPAddr portOnlyIpv6Addr = new SteamNetworkingIPAddr();
             portOnlyIpv6Addr.Clear();
             portOnlyIpv6Addr.SetIPv6(new byte[] {0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0}, port);
+
+            // ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv4Addr, 0, new SteamNetworkingConfigValue_t[]{}));
+            // ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv6Addr, 0, new SteamNetworkingConfigValue_t[]{}));
+            // ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{}));
+
             ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv4Addr, 0, new SteamNetworkingConfigValue_t[]{}));
             ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv6Addr, 0, new SteamNetworkingConfigValue_t[]{}));
             ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{}));

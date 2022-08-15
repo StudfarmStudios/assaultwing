@@ -232,6 +232,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
+            Logic.StartServer();
             RefreshGameSettings();
             GameServerGUID = Guid.NewGuid();
             try

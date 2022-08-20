@@ -30,7 +30,7 @@ platforms (Linux, Mac) in the `AssaultWingContent.csproj` and
 and `CoreContent`) must be made accessible in the working directory when the
 application is run.
 
-### About Steam builds and the Steamworkds SDK
+### About Steam builds and the Steamworks SDK
 
 The Steamworks SDK is only needed when developing Steam features or uploading a
 build to the Steam. In this case the SDK needs to be manually downloaded from

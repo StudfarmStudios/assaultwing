@@ -1,33 +1,40 @@
 # The Steam deployment of Assault Wing
 
-There are 2 scripts to help working with Steam:
-- `scripts/build.sh` to get builds for local testing of steam features
-- `scripts/steam_build.sh` for uploading official builds to Steam
+There are 2 scripts to work with Steam builds:
+- The `scripts/build.sh` sets up builds for local development of the Steam features.
+- The `scripts/steam_build.sh` builds and uploads official builds to Steam.
 
-The `scripts/build.sh` exists mainly as a documentation and to help
-with copying necessary files for Steam testing.
+The `scripts/build.sh` basically just copies some necessary files for Steam testing to
+the target folders of development builds.
 
 NOTE: Currently the build scripts on Windows expect to be run in the WSL2 environment.
 
-NOTE: Run the scripts without parameters to get further help on the possible
-options
+NOTE: Run the scripts without parameters to get further help on the possible options
 
-Here are some examples:
+Here are some examples of using the scripts:
+
 ```bash
 # Incremental debug build on windows
 ./scripts/build.sh windows_wsl2 debug
+
 # Clean debug build on Linux
 ./scripts/build.sh linux debug clean
+
 # Incremental debug build on Linux
 ./scripts/build.sh linux debug
+
 # On Windows perform a clean debug Windows only build of AssaultWing and stop before uploading to steam
 ./scripts/steam_build.sh windows_wsl2 windows assault_wing debug skip_steam
+
 # On Windows perform a clean debug build for both apps and all platforms
 ./scripts/steam_build.sh windows_wsl2 all all debug
+
 # On Linux perform a clean debug build uploaded to Steam for both apps and all platforms
 ./scripts/steam_build.sh linux all all debug
+
 # On Mac perform an incremenetal debug build for both apps and all platforms, but stop before uploading to steam
 ./scripts/steam_build.sh mac all all debug skip_clean_and_steam
+
 # On Linux do a clean debug build of the dedicated server for Linux uploaded to Steam
 ./scripts/build.sh linux linux dedicated_server debug
 ```
@@ -48,7 +55,7 @@ Download the latest Steamworks SDK ZIP and extract it to a suitable location.
 
 To upload to steam `AW_STEAM_BUILD_ACCOUNT` and `AW_STEAM_BUILD_PASSWORD` must be set.
 
-## `STEAMWORKS_SDK_PATH` Environment variable is required
+## The environment variable `STEAMWORKS_SDK_PATH`
 
 Then the environment variable `STEAMWORKS_SDK_PATH` must point to the unzipped
 SDK. The `scripts/builds.sh` takes care of copying certain files from the SDK.

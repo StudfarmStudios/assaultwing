@@ -56,13 +56,12 @@ namespace AW2.Core
 
     public void Dispose()
     {
-      if (Initialized) {
-        Initialized = false;
+      if (SteamGameServer.BLoggedOn()) {
         Log.Write("SteamGameServer.LogOff()");
         SteamGameServer.LogOff();
       }
+      Log.Write("Steam GameServer.Shutdown()");
+      GameServer.Shutdown();
     }
-
-
   }
 }

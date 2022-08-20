@@ -23,11 +23,12 @@ namespace AW2.UI
 
         public override bool IsGameplay { get { return GameState == GAMESTATE_GAMEPLAY; } }
 
-        private StartupScreen StartupScreen { get; set; }
-        private IntroEngine IntroEngine { get; set; }
-        protected MenuEngineImpl MenuEngine { get; set; }
-        private OverlayDialog OverlayDialog { get; set; }
-        private PlayerChat PlayerChat { get; set; }
+        private StartupScreen StartupScreen { get; init; }
+        private IntroEngine IntroEngine { get; init; }
+        protected MenuEngineImpl MenuEngine { get; init; }
+        private OverlayDialog OverlayDialog { get; init; }
+        private PlayerChat PlayerChat { get; init; }
+        private SteamServerComponent SteamServerComponent { get; init;}
 
         protected bool MainMenuActive { get { return GameState == GAMESTATE_MENU && MenuEngine.MainMenu.Active; } }
         protected bool MainMenuNetworkItemsActive { get { return MainMenuActive && MenuEngine.MainMenu.IsActive(MenuEngine.MainMenu.ItemCollections.NetworkItems); } }
@@ -48,11 +49,13 @@ namespace AW2.UI
             IntroEngine = new IntroEngine(Game, 11);
             PlayerChat = new PlayerChat(Game, 12);
             OverlayDialog = new OverlayDialog(Game, 20);
+            SteamServerComponent = new SteamServerComponent(Game, 0, consoleServer: false);
             Game.Components.Add(StartupScreen);
             Game.Components.Add(MenuEngine);
             Game.Components.Add(IntroEngine);
             Game.Components.Add(PlayerChat);
             Game.Components.Add(OverlayDialog);
+            Game.Components.Add(SteamServerComponent);
             CreateCustomControls(Game);
             Game.MessageHandlers.GameServerConnectionClosing += Handle_GameServerConnectionClosing;
         }
@@ -109,6 +112,11 @@ namespace AW2.UI
             GameState = GAMESTATE_GAMEPLAY;
         }
 
+        public override void StartServer()
+        {   
+            SteamServerComponent.Enabled = true;
+        }
+
         public override void StopServer()
         {
             if (Game.NetworkMode != NetworkMode.Server)
@@ -117,6 +125,7 @@ namespace AW2.UI
             Game.NetworkEngine.StopServer();
             Game.NetworkMode = NetworkMode.Standalone;
             Game.DataEngine.RemoveAllButLocalSpectators();
+            SteamServerComponent.Enabled = false;
         }
 
         public override void StopClient(string errorOrNull)

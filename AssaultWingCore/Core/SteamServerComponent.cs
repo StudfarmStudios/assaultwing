@@ -11,7 +11,7 @@ namespace AW2.Core
     private static readonly TimeSpan GAME_SERVER_DETAILS_UPDATE_INTERVAL = TimeSpan.FromSeconds(30);
     private TimeSpan _lastNetworkItemsUpdate;
 
-    public bool Initialized {get; private set;}
+    private bool EnabledMirror;
     private bool ConsoleServer;
 
     public SteamServerComponent(AssaultWingCore game, int updateOrder, bool consoleServer)
@@ -23,15 +23,23 @@ namespace AW2.Core
         Game.Services.AddService(steamGameServerService);
       }
       ConsoleServer = consoleServer;
+      SetupCallbacks();
     }
 
-    public override void Initialize() {
+    protected override void EnabledOrVisibleChanged() { 
+      if (Enabled)
+        Enable();
+      else
+        Disable();
+    }
+
+    private void Enable() {
       if (!Game.IsSteam) {
         return;
       }
-      Initialized = true;
-
-      SetupCallbacks();
+      if (EnabledMirror)
+        return;
+      EnabledMirror = true;
 
       // SteamGameServer.SetModDir(...); do we need this? Space war example sets this to game dir, but docs say it is default empty which is ok
       SteamGameServer.SetModDir("AssaultWing");
@@ -46,9 +54,25 @@ namespace AW2.Core
       SteamGameServer.SetAdvertiseServerActive(true);
     }
 
+    public void Disable() {
+      if (!EnabledMirror)
+        return;
+      EnabledMirror = false;
+
+      SteamGameServer.SetAdvertiseServerActive(false);
+      Log.Write("SteamGameServer.LogOff()");
+      SteamGameServer.LogOff();
+    }
+
+    private void ClearCallbacks() {
+      foreach (var callback in callbacks) {
+        callback.Dispose();
+      }
+      callbacks.Clear();
+    }
+
     private void SetupCallbacks()
     {
-      callbacks.Clear();
       callbacks.Add(Callback<SteamServersConnected_t>.CreateGameServer(OnSteamServersConnected));
       callbacks.Add(Callback<SteamServerConnectFailure_t>.CreateGameServer(OnSteamServersConnectFailure));
       callbacks.Add(Callback<SteamServersDisconnected_t>.CreateGameServer(OnSteamServersDisconnected));
@@ -94,7 +118,7 @@ namespace AW2.Core
 
     public void SendUpdatedServerDetailsToSteam()
     {
-      if (!Initialized)
+      if (!EnabledMirror)
       {
         return;
       }
@@ -112,7 +136,7 @@ namespace AW2.Core
 
     public override void Update()
     {
-      if (!Initialized)
+      if (!EnabledMirror)
       {
         return;
       }
@@ -126,11 +150,10 @@ namespace AW2.Core
 
     public override void Dispose()
     {
-      if (Initialized) {
-        Initialized = false;
-        Log.Write("Steam GameServer.Shutdown()");
-        GameServer.Shutdown();
+      if (EnabledMirror) {
+        Disable();
       }
+      ClearCallbacks();
     }
 
   }

@@ -1,5 +1,56 @@
 # The Steam deployment of Assault Wing
 
+There are 2 scripts to help working with Steam:
+- `scripts/build.sh` to get builds for local testing of steam features
+- `scripts/steam_build.sh` for uploading official builds to Steam
+
+The `scripts/build.sh` exists mainly as a documentation and to help
+with copying necessary files for Steam testing.
+
+NOTE: Currently the build scripts on Windows expect to be run in the WSL2 environment.
+
+NOTE: Run the scripts without parameters to get further help on the possible
+options
+
+Here are some examples:
+```bash
+# Clean debug build on Linux
+./scripts/build.sh linux debug clean
+# Incremental debug build on Linux
+./scripts/build.sh linux debug
+# On Linux perform a clean debug build uploaded to Steam for both apps and all platforms
+./scripts/steam_build.sh linux all all debug
+# On Windows perform a clean debug build for both apps and all platforms, but stop before uploading to steam
+./scripts/steam_build.sh windows all all debug skip_steam
+# On Mac perform an incremenetal debug build for both apps and all platforms, but stop before uploading to steam
+./scripts/steam_build.sh mac all all debug skip_clean_and_steam
+# On Linux do a clean debug build of the dedicated server for Linux uploaded to Steam
+./scripts/build.sh linux linux dedicated_server debug
+```
+
+## About the Steamworks SDK
+
+The Steamworks SDK is only needed when developing Steam features or uploading a
+build to the Steam. In this case the SDK needs to be manually downloaded from
+[partner.steamgames.com](https://partner.steamgames.com/doc/sdk).
+
+Generally we have just followed the [Steam partner
+documentation](https://partner.steamgames.com/doc/sdk/uploading).
+
+Download the latest Steamworks SDK ZIP and extract it to a suitable location.
+(As of this writing the latest version of the SDK is 154):
+
+## About the Steam credentials
+
+To upload to steam `AW_STEAM_BUILD_ACCOUNT` and `AW_STEAM_BUILD_PASSWORD` must be set.
+
+## `STEAMWORKS_SDK_PATH` Environment variable is required
+
+Then the environment variable `STEAMWORKS_SDK_PATH` must point to the unzipped
+SDK. The `scripts/builds.sh` takes care of copying certain files from the SDK.
+
+Run something like the following to get the Steam API library, `steam_appid.txt`
+and the `steambuild` folder to correct places for Steam development.
 ### Setting builds to default branch
 
 Once all platform builds are done, they must be set to default branch

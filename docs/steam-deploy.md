@@ -14,14 +14,18 @@ options
 
 Here are some examples:
 ```bash
+# Incremental debug build on windows
+./scripts/build.sh windows_wsl2 debug
 # Clean debug build on Linux
 ./scripts/build.sh linux debug clean
 # Incremental debug build on Linux
 ./scripts/build.sh linux debug
+# On Windows perform a clean debug Windows only build of AssaultWing and stop before uploading to steam
+./scripts/steam_build.sh windows_wsl2 windows assault_wing debug skip_steam
+# On Windows perform a clean debug build for both apps and all platforms
+./scripts/steam_build.sh windows_wsl2 all all debug
 # On Linux perform a clean debug build uploaded to Steam for both apps and all platforms
 ./scripts/steam_build.sh linux all all debug
-# On Windows perform a clean debug build for both apps and all platforms, but stop before uploading to steam
-./scripts/steam_build.sh windows all all debug skip_steam
 # On Mac perform an incremenetal debug build for both apps and all platforms, but stop before uploading to steam
 ./scripts/steam_build.sh mac all all debug skip_clean_and_steam
 # On Linux do a clean debug build of the dedicated server for Linux uploaded to Steam

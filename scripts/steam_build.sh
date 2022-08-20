@@ -124,7 +124,7 @@ else
   echo "Skipping cleaning and building due to '$MODE'"
 fi
 
-generate_steam_build_file
+generate_steam_build_files
 
 if (( $BUILD_STEAM )); then
   steam_depot_upload

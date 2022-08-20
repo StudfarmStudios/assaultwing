@@ -64,7 +64,7 @@ set_variables_by_target_platform() {
   esac
 }
 
-set_varables_by_current_platform() {
+set_variables_by_current_platform() {
   case "$CURRENT_PLATFORM" in
   linux)
       echo "Linux platform selected"	   
@@ -72,12 +72,14 @@ set_varables_by_current_platform() {
       STEAM_BUILD_BINARY='steambuild/builder_linux/linux32/steamcmd'
       STEAM_RELATIVE_REPO_ROOT="../../"
       BUILD_CONTENT=0
+      CURRENT_PLATFORM_AS_TARGET_PLATFORM=linux
       ;;
   windows_wsl2)
       echo "Windows drive mounted in WSL2 selected"
       STEAM_CMD='steambuild\builder\steamcmd.exe'
       STEAM_RELATIVE_REPO_ROOT='..\..\'
       BUILD_CONTENT=1 # Content building only works on windows
+      CURRENT_PLATFORM_AS_TARGET_PLATFORM=windows
       ;;
   mac)
       echo "Mac / OSX platform selected"
@@ -85,6 +87,7 @@ set_varables_by_current_platform() {
       STEAM_BUILD_BINARY='steambuild/builder_osx/steamcmd'
       STEAM_RELATIVE_REPO_ROOT="../../"
       BUILD_CONTENT=0
+      CURRENT_PLATFORM_AS_TARGET_PLATFORM=mac
       ;;
   *)
       echo "Unknown current platform parameter '$CURRENT_PLATFORM'"
@@ -137,7 +140,7 @@ set_assault_wing_version_variable() {
 }
 
 set_common_variables() {
-  set_varables_by_current_platform
+  set_variables_by_current_platform
   set_variables_by_configuration
   set_assault_wing_version_variable
   steam_sdk_configuration
@@ -145,10 +148,6 @@ set_common_variables() {
   SOLUTION="AssaultWing.sln"
   DOTNET_PLATFORM="x64"
   DOTNET_FRAMEWORK=netcoreapp6.0
-  STEAM_BUILD_FILE="steam_build_${CONFIGURATION}.vdf"
-  STEAM_BUILD_FILE_PATH="${STEAM_RELATIVE_REPO_ROOT}scripts/output/${STEAM_BUILD_FILE}"
-  TARGET_PLATFORMS_TO_BUILD_PRINTABLE=${TARGET_PLATFORMS_TO_BUILD[*]}
-  APPS_TO_BUILD_PRINTABLE=${APPS_TO_BUILD[*]}
 }
 
 echo_common_variables() {
@@ -158,27 +157,37 @@ echo_common_variables() {
   echo "MODE=${MODE:-<DEFAULT>}"
   echo "AW_STEAM_BUILD_ACCOUNT=${AW_STEAM_BUILD_ACCOUNT:-<UNDEFINED>}"
   echo "BUILD_CONTENT=$BUILD_CONTENT"
+  echo "TARGET_PLATFORMS_TO_BUILD=${TARGET_PLATFORMS_TO_BUILD[@]}"
+  echo "APPS_TO_BUILD=${APPS_TO_BUILD[@]}"
+}
+
+set_app_variables() {
+  STEAM_BUILD_FILE="steam_build_${CONFIGURATION}_${APP}.vdf"
+  STEAM_BUILD_FILE_PATH="${STEAM_RELATIVE_REPO_ROOT}scripts/output/${STEAM_BUILD_FILE}"
+  BUILD_DESCRIPTION="${APP_SHORT} ${ASSAULT_WING_VERSION:-DEV} ${TARGET_PLATFORM} ${CONFIGURATION}"
+}
+
+echo_app_variables() {
   echo "STEAM_BUILD_FILE_PATH=$STEAM_BUILD_FILE_PATH"
-  echo "TARGET_PLATFORMS_TO_BUILD=${TARGET_PLATFORMS_TO_BUILD_PRINTABLE}"
-  echo "APPS_TO_BUILD=${APPS_TO_BUILD_PRINTABLE}"
+  echo "BUILD_DESCRIPTION=${BUILD_DESCRIPTION}"
 }
 
 set_build_variables() {
   set_variables_by_target_platform
   set_variables_by_app
-  BUILD_DESCRIPTION="${APP_SHORT} ${ASSAULT_WING_VERSION:-DEV} ${TARGET_PLATFORM} ${CONFIGURATION}"
   # Depot numbers follow a pattern. See docs/steam-deploy.md
   STEAM_DEPOT="$(( $STEAM_APP_ID + $STEAM_DEPOT_PLATFORM_OFFSET + $STEAM_DEPOT_CONFIGURATION_OFFSET ))"
   APP_BUILD_FOLDER="scripts/output/${APP}-${TARGET_PLATFORM}-${CONFIGURATION}"  
   STEAM_APP_DEPOT_FILE="${APP}-${TARGET_PLATFORM}-${CONFIGURATION}.vdf"
+  set_app_variables
 }
 
 echo_build_variables() {
   echo "TARGET_PLATFORM=$TARGET_PLATFORM"
   echo "DOTNET_CONFIGURATION=$DOTNET_CONFIGURATION"
   echo "APP=$APP"
-  echo "BUILD_DESCRIPTION=${BUILD_DESCRIPTION}"
   echo "STEAM_DEPOT=$STEAM_DEPOT"
+  echo_app_variables
 }
 
 platform_run() {
@@ -208,7 +217,7 @@ clean_build_setup() {
   platform_run dotnet clean $SOLUTION --nologo --verbosity=quiet
 }
 
-publish_one_app() {  
+publish_one_app_target() {  
   if (( $CLEAN )); then
     # A sanity check with the rm to avoid deleting home dir etc
     if [[ "$APP_BUILD_FOLDER" =~ ^scripts/output/.* ]]; then
@@ -236,11 +245,15 @@ publish_one_app() {
 }
 
 publish() {
+  if (( $CLEAN )); then
+    clean_build_setup
+  fi
+
   for TARGET_PLATFORM in ${TARGET_PLATFORMS_TO_BUILD[*]}; do
     for APP in ${APPS_TO_BUILD[*]}; do
       set_build_variables
       echo_build_variables
-      publish_one_app
+      publish_one_app_target
     done
   done
 }
@@ -301,32 +314,32 @@ generate_steam_app_depot_file() {
 EOF
 }
 
-generate_steam_build_file() {
+generate_steam_build_file_for_app() {
   mkdir -p scripts/output
 
   STEAM_APP_DEPOT_LINES=""
   for TARGET_PLATFORM in ${TARGET_PLATFORMS_TO_BUILD[*]}; do
-    for APP in ${APPS_TO_BUILD[*]}; do
-      set_build_variables
-      generate_steam_app_depot_file
-      STEAM_APP_DEPOT_LINE="\"${STEAM_DEPOT}\" \"${STEAM_APP_DEPOT_FILE}\""
-      printf -v STEAM_APP_DEPOT_LINES "${STEAM_APP_DEPOT_LINES}\n${STEAM_APP_DEPOT_LINE}"
-    done
+    set_build_variables
+    generate_steam_app_depot_file
+    STEAM_APP_DEPOT_LINE="\"${STEAM_DEPOT}\" \"${STEAM_APP_DEPOT_FILE}\""
+    printf -v STEAM_APP_DEPOT_LINES "${STEAM_APP_DEPOT_LINES}\n${STEAM_APP_DEPOT_LINE}"
   done
 
   echo "Generating the Steam build file scripts/output/${STEAM_BUILD_FILE}"
 
-  if (( $BUILD_CONTENT )); then
+  if (( $BUILD_CONTENT )) && [[ $APP == "assault_wing" ]]; then
     CONTENT_STEAM_DEPOT_LINE='"1971371" "..\steam_build_content_files.vdf"'
+    CONTENT_DESC_PART="content:yes"
   else
     CONTENT_STEAM_DEPOT_LINE=''
+    CONTENT_DESC_PART="content:no"
   fi  
 
   cat > "scripts/output/${STEAM_BUILD_FILE}" <<EOF
 "AppBuild"
 {
     "AppID" "${STEAM_APP_ID}" // ${APP_SHORT} Steam AppID
-    "Desc" "${ASSAULT_WING_VERSION:-DEV} ${TARGET_PLATFORMS_TO_BUILD_PRINTABLE} ${APPS_TO_BUILD_PRINTABLE} ${CONFIGURATION}"
+    "Desc" "${APP} ${ASSAULT_WING_VERSION:-DEV} platforms:${TARGET_PLATFORMS_TO_BUILD[@]} ${CONTENT_DESC_PART} config:${CONFIGURATION}"
 
     // The assaultwing source root directory relative to the scripts/output where
     // this file ${STEAM_BUILD_FILE} is generated to.
@@ -345,7 +358,19 @@ generate_steam_build_file() {
 EOF
 }
 
+generate_steam_build_files() {
+  for APP in ${APPS_TO_BUILD[*]}; do
+    set_app_variables
+    echo_app_variables
+    generate_steam_build_file_for_app
+  done
+}
+
 steam_depot_upload() {
-  echo "Uploading ${BUILD_DESCRIPTION} to Steam"
-  platform_run "$STEAM_CMD" +login "$AW_STEAM_BUILD_ACCOUNT" "$AW_STEAM_BUILD_PASSWORD" +run_app_build $STEAM_BUILD_FILE_PATH +quit
+  for APP in ${APPS_TO_BUILD[*]}; do
+    set_app_variables
+    echo_app_variables
+    echo "Uploading ${BUILD_DESCRIPTION} to Steam"
+    platform_run "$STEAM_CMD" +login "$AW_STEAM_BUILD_ACCOUNT" "$AW_STEAM_BUILD_PASSWORD" +run_app_build $STEAM_BUILD_FILE_PATH +quit
+  done
 }

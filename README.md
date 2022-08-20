@@ -1,6 +1,6 @@
 # Assault Wing - Galactic Battlefront
 
-[assaultwing.com](assaultwing.com) / [GitHub](https://github.com/StudfarmStudios/assaultwing)
+[assaultwing.com](http://assaultwing.com) / [GitHub](https://github.com/StudfarmStudios/assaultwing)
 
 © Studfarm Studios
 
@@ -30,46 +30,26 @@ platforms (Linux, Mac) in the `AssaultWingContent.csproj` and
 and `CoreContent`) must be made accessible in the working directory when the
 application is run.
 
-### Using the `build.sh` script
-
-The `scripts/build.sh` is a more complex build script intended to provide
-automation and improve repeatability when making the official builds.
-
-Currently the Windows builds using the `build.sh` rely on the WSL2.
-
-Here are some examples:
-```bash
-# Linux incremental debug build
-./scripts/build.sh linux assault_wing debug skip_clean_and_steam
-# Linux clean debug build uploaded to Steam
-./scripts/build.sh linux assault_wing debug
-# Linux clean debug build of the dedicated server uploaded to Steam
-./scripts/build.sh linux dedicated_server debug
-```
-
-The build script without parameters outputs further help.                                                                        
-### Notes on Steam builds
+### About Steam builds and the Steamworkds SDK
 
 The Steamworks SDK is only needed when developing Steam features or uploading a
 build to the Steam. In this case the SDK needs to be manually downloaded from
 [partner.steamgames.com](https://partner.steamgames.com/doc/sdk).
 
-Generally we have just followed the [Steam partner
-documentation](https://partner.steamgames.com/doc/sdk/uploading).
-
-Download the latest Steamworks SDK ZIP and extract it to a suitable location.
-(As of this writing the latest version of the SDK is 154):
-
-Then the environment variable `STEAMWORKS_SDK_PATH` must point to the unzipped
-SDK. The `scripts/builds.sh` takes care of copying certain files from the SDK.
-Run something like the following to get the Steam API library, `steam_appid.txt`
-and the `steambuild` folder to correct places for Steam development.
-
-```bash
-./scripts/build.sh MY_PLATFORM_HERE assault_wing debug skip_clean_and_steam
-```
+See [steam-deploy.md](docs/steam-deploy.md) for more details on Steam builds.
 
 ## Notes on quick local testing
+
+After `dotnet build`, simply run one of the following:
+
+```bash
+  cd DedicatedServer/bin/x64/Debug/netcoreapp6.0
+  cd AssaultWing/bin/x64/Debug/netcoreapp6.0
+```
+
+And then run the `AssaultWing` or the `DedicatedServer` executable in that
+folder. Note that on other platforms than Windows you will have to copy
+`Content` and `CoreContent` folders to these folders manually.
 
 With the following the game can be made to quickly connect to a local
 `DedicatedServer` process running in another terminal. This provides a quick way

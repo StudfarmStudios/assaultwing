@@ -61,14 +61,6 @@ namespace AW2.Core
         public AssaultWing(GameServiceContainer serviceContainer, CommandLineOptions args, MakeProgramLogic makeProgramLogic)
             : base(serviceContainer, args)
         {
-            CustomControls = new List<Tuple<Control, Action>>();
-            MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
-            Logic = makeProgramLogic(this);
-            ArenaLoadTask = new BackgroundTask();
-            _gameSettingsSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
-            _arenaStateSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
-            _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
-
             // If either steam server APIs or the regular APIs are initialized, we consider us being in the Steam mode.
             IsSteam = Services.GetService<SteamApiService>().Initialized || (Services.GetService<SteamGameServerService>()?.Initialized ?? false);
             if (IsSteam) {
@@ -78,7 +70,15 @@ namespace AW2.Core
                 Log.Write("AssaultWing is not in SteamMode, due to neither SteamAPI nor SteamGameServer being initialized. Creating NetworkEngineRaw (instead of NetworkEngineSteam).");
                 NetworkEngine = new NetworkEngineRaw(this, 30);
             }
-                
+
+            CustomControls = new List<Tuple<Control, Action>>();
+            MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
+            Logic = makeProgramLogic(this);
+            ArenaLoadTask = new BackgroundTask();
+            _gameSettingsSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
+            _arenaStateSendTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(2)) { SkipPastIntervals = true };
+            _frameNumberSynchronizationTimer = new AWTimer(() => GameTime.TotalRealTime, TimeSpan.FromSeconds(1)) { SkipPastIntervals = true };
+
             Components.Add(NetworkEngine);
             ChatStartControl = Settings.Controls.Chat.GetControl();
             _frameStepControl = new KeyboardKey(Keys.F8);

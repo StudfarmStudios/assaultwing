@@ -21,6 +21,8 @@ As an IDE either a recent Visual Studio or Visual Studio Code can be used.
 
 ## Building
 
+CI Build Status: ![CI status badge](https://github.com/StudfarmStudios/assaultwing/actions/workflows/dotnet.yml/badge.svg "GitHub Actions build status")
+
 A simple `dotnet build` should work. Use `dotnet test` to run the test suite.
 
 The content building only works on Windows at the moment. To make code building

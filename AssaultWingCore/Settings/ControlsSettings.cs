@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
 using AW2.UI;
+using System.Runtime.InteropServices;
 
 namespace AW2.Settings
 {
@@ -26,7 +27,16 @@ namespace AW2.Settings
 
         public override string ToString()
         {
-            return Key.ToString();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                switch(Key) {
+                    case Keys.RightWindows: return "RightCommand";
+                    case Keys.LeftWindows: return "LeftCommand";
+                    default:
+                    return Key.ToString();
+                }
+            } else {
+                return Key.ToString();
+            }
         }
     }
 
@@ -98,15 +108,27 @@ namespace AW2.Settings
 
     public class ControlsSettings
     {
-        public static readonly PlayerControlsSettings PRESET_KEYBOARD_RIGHT = new PlayerControlsSettings
-        {
-            Thrust = new KeyControlType(Keys.Up),
-            Left = new KeyControlType(Keys.Left),
-            Right = new KeyControlType(Keys.Right),
-            Fire1 = new KeyControlType(Keys.RightControl),
-            Fire2 = new KeyControlType(Keys.RightShift),
-            Extra = new KeyControlType(Keys.Down),
-        };
+        private static PlayerControlsSettings DefaultPlayer1Keys() {
+{           var defaultSettings = new PlayerControlsSettings
+            {
+                Thrust = new KeyControlType(Keys.Up),
+                Left = new KeyControlType(Keys.Left),
+                Right = new KeyControlType(Keys.Right),
+                Fire1 = new KeyControlType(Keys.RightControl),
+                Fire2 = new KeyControlType(Keys.RightShift),
+                Extra = new KeyControlType(Keys.Down),
+            };
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                // Mac computers typically don't have the right control key
+                defaultSettings.Fire1 = new KeyControlType(Keys.RightWindows);
+            }
+
+            return defaultSettings;
+        };            
+        }
+
+        public static readonly PlayerControlsSettings PRESET_KEYBOARD_RIGHT = DefaultPlayer1Keys();
         public static readonly PlayerControlsSettings PRESET_KEYBOARD_LEFT = new PlayerControlsSettings
         {
             Thrust = new KeyControlType(Keys.W),

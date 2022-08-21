@@ -38,7 +38,7 @@ The Steamworks SDK is only needed when developing Steam features or uploading a
 build to the Steam. In this case the SDK needs to be manually downloaded from
 [partner.steamgames.com](https://partner.steamgames.com/doc/sdk).
 
-See [steam-deploy.md](docs/steam-deploy.md) for more details on Steam builds.
+See [steam-deploy.md](devdocs/steam-deploy.md) for more details on Steam builds.
 
 ## Notes on quick local testing
 
@@ -74,6 +74,6 @@ With Steam networking engine using Steam Relay:
 
 ## Developer Documentation
 
-- [The TODO list](docs/TODO.md)
-- [Notes about deploying to Steam](docs/steam-deploy.md)
-- [The Assault Wing network protocol](docs/network-protocol.md)
+- [The TODO list](devdocs/TODO.md)
+- [Notes about deploying to Steam](devdocs/steam-deploy.md)
+- [The Assault Wing network protocol](devdocs/network-protocol.md)

@@ -1,0 +1,771 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
+    <head profile="http://www.w3.org/2005/10/profile">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="title" content="Assault Wing" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+        <meta property="og:title" content="Assault Wing" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="http://www.assaultwing.com" />
+        <meta property="og:image" content="http://www.assaultwing.com/images/aw_icon.png" />
+        <meta property="og:site_name" content="Assault Wing" />
+        <meta property="og:description" content="Assault Wing is a free, action packed, ship-flying, gun blazing, explosive game of outwitting your opponents in arenas hidden deep in the far reaches of galaxies." />
+
+        <link rel="icon" type="image/png" href="http://www.assaultwing.com/favicon.ico" />
+
+        <title>Assault Wing</title>
+
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
+
+        <!-- AnythingSlider -->
+        <link rel="stylesheet" href="css/anythingslider.css" type="text/css" media="screen" />
+        <script type="text/javascript" src="js/jquery.anythingslider.js"></script>
+
+        <!-- jQuery Lightbox -->
+        <script type="text/javascript" src="js/jquery.lightbox-0.5.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/jquery.lightbox-0.5.css" media="screen" />
+
+        <style type="text/css">
+            body {
+                background-color: #000;
+                text-align: center;
+                font-family: Verdana, Arial, sans-serif;
+                color: #fff;
+            }
+
+            div.clr {
+                clear: both;
+            }
+
+            div#content {
+                width: 900px;
+                min-height: 1500px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            div#top {
+                position: relative;
+                background: url(images/top_bg2.png) no-repeat;
+                width: 900px;
+                height: 602px;
+                z-index: 10;
+            }
+
+            div#video {
+                position: relative;
+                background: url(images/v_bg.png) no-repeat;
+                width: 900px;
+                height: 400px;
+                z-index: 10;
+                margin-top: 40px;
+            }
+
+            div#screenshots {
+                position: relative;
+                background: url(images/ss_bg.png) no-repeat;
+                width: 900px;
+                height: 367px;
+                z-index: 10;
+                margin-top: 70px;
+            }
+
+            div#footer {
+                width: 900px;
+                height: 20px;
+                color: #393839;
+                text-align: center;
+                font-size: 14px;
+                margin-top: 10px;
+            }
+
+            div#madeBy {
+                width: 900px;
+                height: 30px;
+                color: #393839;
+                text-align: center;
+                font-size: 11px;
+                margin-top: 10px;
+                z-index: 9999;
+            }
+
+            div#madeBy a {
+                color: #393839;
+                z-index: 9999;
+            }
+
+            div#aw_logo {
+                position: absolute;
+                top: 0px;
+                left: 50px;
+                background: url(images/aw_logo.png) no-repeat;
+                width: 430px;
+                height: 429px;
+            }
+
+            div#top_text {
+                position: absolute;
+                top: 65px;
+                left: 487px;
+                width: 262px;
+                height: 68px;
+                background: url(images/top_text.png) no-repeat;
+                z-index: 100;
+            }
+
+            div#top_text2 {
+                position: absolute;
+                top: 230px;
+                left: 535px;
+                width: 258px;
+                height: 67px;
+                background: url(images/top_text2.png) no-repeat;
+                z-index: 100;
+            }
+
+            div#install {
+                position: absolute;
+                top: 145px;
+                left: 542px;
+                width: 205px;
+                height: 50px;
+                background: url(images/but_install_up.png) no-repeat;
+                z-index: 100;
+            }
+
+            div#install:hover {
+                background: url(images/but_install_over.png) no-repeat;
+            }
+
+            div#forums {
+                position: absolute;
+                top: 303px;
+                left: 542px;
+                width: 205px;
+                height: 50px;
+                background: url(images/but_forums_up.png) no-repeat;
+                z-index: 100;
+            }
+
+            div#fb_link {
+                width: 20px;
+                height: 22px;
+                background: url(images/fb_logo.png) no-repeat;
+                position: absolute;
+                top: 315px;
+                left: 762px;
+                z-index: 200;
+            }
+
+            div#forums:hover {
+                background: url(images/but_forums_over.png) no-repeat;
+            }
+
+            div#ships {
+                position: absolute;
+                top: 340px;
+                left: 400px;
+                width: 335px;
+                height: 107px;
+                background: url(images/ships.png) no-repeat;
+                z-index: 50;
+            }
+
+            div#buttons_bg {
+                position: absolute;
+                top: 50px;
+                left: 450px;
+                width: 366px;
+                height: 365px;
+                background: url(images/buttons_underglow.png) no-repeat;
+                z-index: 30;
+                opacity: 0.25;
+            }
+
+            div#fb_like {
+                position: absolute;
+                top: 460px;
+                left: 125px;
+                font-size: 12px;
+                text-align: left;
+                width: 645px;
+                z-index: 100;
+            }
+
+            div#middle_text {
+                color: #bdbdbd;
+                position: absolute;
+                top: 500px;
+                left: 125px;
+                font-size: 12px;
+                text-align: left;
+                width: 645px;
+                z-index: 100;
+            }
+
+            div#videoContainer {
+                position: absolute;
+                top: -15px;
+                left: 175px;
+                width: 630px;
+                height: 400px;
+            }
+
+            div#ssContainer {
+                position: absolute;
+                top: -15px;
+                left: 120px;
+                width: 735px;
+                height: 250px;
+            }
+
+            div#videoTitle {
+                float: left;
+                width: 160px;
+                height: 55px;
+                background: url(images/header_videos.png) no-repeat;
+                z-index: 20;
+                margin-top: -10px;
+            }
+
+            div#ssTitle {
+                float: left;
+                width: 160px;
+                height: 55px;
+                background: url(images/header_pictures.png) no-repeat;
+                z-index: 20;
+                margin-top: -10px;
+            }
+
+            div#videoNumbers, div#ssNumbers {
+                float: left;
+                width: 250px;
+                height: 47px;
+                line-height: 47px;
+                font-size: 20px;
+                text-align: left;
+                margin-left: 20px;
+                color: #afafaf;
+                cursor: pointer;
+            }
+
+            span.videoSelected, span.ssSelected {
+                color: #fff;
+            }
+
+            div#videoBarTop {
+                position: absolute;
+                top: 30px;
+                left: -13px;
+                width: 579px;
+                height: 32px;
+                background: url(images/v_top_bar.png) no-repeat;
+                z-index: 40;
+            }
+
+            div#ssBarTop {
+                position: absolute;
+                top: 30px;
+                left: -13px;
+                width: 682px;
+                height: 32px;
+                background: url(images/ss_bar_top.png) no-repeat;
+                z-index: 40;
+            }
+
+            div#videoArrowRight {
+                position: absolute;
+                top: 150px;
+                left: -38px;
+                background: url(images/arrow_right.png) no-repeat;
+                width: 38px;
+                height: 96px;
+                z-index: 50;
+                cursor: pointer;
+            }
+
+            div#videoArrowRight:hover, div#ssArrowRight:hover {
+                background: url(images/arrow_right_hl.png) no-repeat;
+            }
+
+            div#ssArrowRight {
+                position: absolute;
+                top: 90px;
+                left: -38px;
+                background: url(images/arrow_right.png) no-repeat;
+                width: 38px;
+                height: 96px;
+                z-index: 50;
+                cursor: pointer;
+            }
+
+            div#videoOuterBarRight {
+                position: absolute;
+                top: 50px;
+                left: -20px;
+                background: url(images/v_bar_left_outer.png) no-repeat;
+                width: 19px;
+                height: 333px;
+                z-index: 35;
+            }
+
+            div#ssOuterBarRight {
+                position: absolute;
+                top: 50px;
+                left: -20px;
+                background: url(images/ss_bar_left_outer.png) no-repeat;
+                width: 19px;
+                height: 333px;
+                z-index: 35;
+            }
+
+            div#videoBarRight {
+                position: absolute;
+                top: 50px;
+                left: -8px;
+                width: 20px;
+                height: 331px;
+                background: url(images/v_bar_right.png) no-repeat;
+                z-index: 39;
+            }
+
+            div#ssBarRight {
+                position: absolute;
+                top: 50px;
+                left: -8px;
+                width: 20px;
+                height: 331px;
+                background: url(images/ss_bar_right.png) no-repeat;
+                z-index: 39;
+            }
+
+            div#videoArrowLeft {
+                position: absolute;
+                top: 150px;
+                left: 545px;
+                background: url(images/arrow_left.png) no-repeat;
+                width: 38px;
+                height: 96px;
+                z-index: 50;
+                cursor: pointer;
+            }
+
+            div#videoArrowLeft:hover, div#ssArrowLeft:hover {
+                background: url(images/arrow_left_hl.png) no-repeat;
+            }
+
+            div#ssArrowLeft {
+                position: absolute;
+                top: 90px;
+                left: 650px;
+                background: url(images/arrow_left.png) no-repeat;
+                width: 38px;
+                height: 96px;
+                z-index: 50;
+                cursor: pointer;
+            }
+
+            div#videoOuterBarLeft {
+                position: absolute;
+                top: 50px;
+                left: 549px;
+                background: url(images/v_bar_right_outer.png) no-repeat;
+                width: 19px;
+                height: 333px;
+                z-index: 35;
+            }
+
+            div#ssOuterBarLeft {
+                position: absolute;
+                top: 50px;
+                left: 652px;
+                background: url(images/ss_bar_right_outer.png) no-repeat;
+                width: 19px;
+                height: 188px;
+                z-index: 35;
+            }
+
+            div#videoBarLeft {
+                position: absolute;
+                top: 50px;
+                left: 538px;
+                width: 20px;
+                height: 331px;
+                background: url(images/v_bar_left.png) no-repeat;
+                z-index: 39;
+            }
+
+            div#ssBarLeft {
+                position: absolute;
+                top: 50px;
+                left: 642px;
+                width: 20px;
+                height: 174px;
+                background: url(images/ss_bar_left.png) no-repeat;
+                z-index: 39;
+            }
+
+            div#videoBarBottom {
+                position: absolute;
+                top: 370px;
+                left: -15px;
+                background: url(images/v_bottom_bar.png) no-repeat;
+                width: 579px;
+                height: 32px;
+                z-index: 40;
+            }
+
+            div#ssBarBottom {
+                position: absolute;
+                top: 220px;
+                left: -15px;
+                background: url(images/ss_bar_bottom.png) no-repeat;
+                width: 682px;
+                height: 32px;
+                z-index: 40;
+            }
+
+            div#bottomText {
+                position: absolute;
+                top: 260px;
+                left: 120px;
+                font-size: 13px;
+                color: #fff;
+                z-index: 100;
+                width: 600px;
+                text-align: left;
+            }
+
+            div#bottomText a {
+                color: #DFB92B;
+            }
+
+            div#videoEmbed {
+                position: absolute;
+                top: 53px;
+                left: 8px;
+                width: 535px;
+                height: 325px;
+                z-index: 200;
+            }
+
+            ul#ssEmbed {
+                position: absolute;
+                top: 15px;
+                left: 0px;
+                width: 654px;
+                height: 160px;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            img.ssThumb {
+                width: 156px;
+                height: 156px;
+                float: left;
+                margin-right: 3px;
+                cursor: pointer;
+            }
+
+            div#videoNumbers a, div#ssNumbers a {
+                color: #afafaf;
+                text-decoration: none;
+                margin-right: 5px;
+            }
+
+            a.videoSelected {
+                color: #fff !important;
+            }
+
+            div#videoNumbers a:hover, div#ssNumbers a:hover {
+                text-decoration: underline;
+            }
+
+            span.arrow {
+                display: none !important;
+            }
+
+            div.anythingSlider.activeSlider .anythingWindow {
+                border: none;
+            }
+
+            div.anythingSlider {
+                position: absolute;
+                top: 48px;
+                left: 12px;
+                width: 654px;
+                padding: 0 !important;
+            }
+
+            div.anythingWindow {
+                height: 160px !important;
+            }
+
+            div#lightbox-container-image {
+                z-index: 300;
+            }
+
+            span#lightbox-image-details-currentNumber {
+                display: none !important;
+            }
+
+        </style>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-17534601-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+    <script type="text/javascript">
+        videos = ["http://www.youtube.com/v/MQ49vtHCnfY", "http://www.youtube.com/v/poxXPWh4nCU"];
+        screenshot_amount = 10;
+
+        screenshot_page_width = 654;
+
+        $(document).ready(function() {
+            for (var i = 0; i<videos.length; i++) {
+                if (i == 0) {
+                    $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[i]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
+                    $('#videoNumbers').append('<a id="videoLink_'+i+'" class="videoLink videoSelected" href="javascript: void(0);" onclick="selectVideo('+i+')">'+(i+1)+'</a>');
+                    $('#selectedVideoUrl').val(videos[i]);
+                } else {
+                    $('#videoNumbers').append('<a id="videoLink_'+i+'" class="videoLink" href="javascript: void(0);" onclick="selectVideo('+i+')">'+(i+1)+'</a>');
+                }
+            }
+
+            var screenshot_pages = Math.ceil(screenshot_amount / 4);
+            for (var i = 0;i<screenshot_pages; i++) {
+                if (i == 0) {
+                    $('#ssNumbers').append('<a id="ssLink_'+i+'" class="ssLink videoLink videoSelected" data-page="'+(i+1)+'" href="javascript: void(0);" onclick="selectSsPage('+i+')">'+(i+1)+'</a>');
+                    $('#selectedSSPage').val(i+'');
+                } else {
+                    $('#ssNumbers').append('<a id="ssLink_'+i+'" class="ssLink videoLink" data-page="'+(i+1)+'" href="javascript: void(0);" onclick="selectSsPage('+i+')">'+(i+1)+'</a>');
+                }
+            }
+
+            var html = '<li>';
+            for (var i = 0; i<screenshot_amount; i++) {
+
+                html += '<a href="images/screenshots/ss_'+(i+1)+'.jpg" onclick="_gaq.push([\'_trackEvent\', \'Media\', \'Open screenshot\', \'\']);" ><img class="ssThumb" src="images/screenshots/ss_'+(i+1)+'_thumb.jpg" alt="" /></a>';
+                if ((i+1) % 4 == 0 && i > 0 && i < 8) {
+                    html += '</li><li>';
+                } else if (i == 9) {
+                    html += '</li>';
+                }
+            }
+
+            $('#ssEmbed').append(html);
+
+            $('#ssEmbed').anythingSlider({
+                autoPlay: false,
+                buildNavigation: false
+            });
+
+            $('.ssLink').each(function(index, value) {
+                $(value).unbind('click');
+                $(value).click(function() {
+                    $('.ssLink').removeClass('videoSelected');
+                    $('#ssLink_'+($(value).data('page')-1)).addClass('videoSelected');
+                    $('#ssEmbed').anythingSlider($(value).data('page'));
+                })
+            });
+
+            $('#ssEmbed a').lightBox({
+                keyToClose: 'esc'
+            });
+
+            $('#videoArrowRight').click(function() {
+                var selectedVideo = $('#selectedVideoUrl').val();
+                $('.videoLink').removeClass('videoSelected');
+                for (var i = 0; i<videos.length; i++) {
+                    if (selectedVideo == videos[i]) {
+                        if (i == 0) {
+                            $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[videos.length-1]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
+                            $('#videoLink_'+(videos.length-1)).addClass('videoSelected');
+                            $('#selectedVideoUrl').val(videos[videos.length-1]);
+                        } else {
+                            $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[i-1]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
+                            $('#videoLink_'+(i-1)).addClass('videoSelected');
+                            $('#selectedVideoUrl').val(videos[i-1]);
+                        }
+                    }
+
+
+                }
+            });
+
+            $('#videoArrowLeft').click(function() {
+                var selectedVideo = $('#selectedVideoUrl').val();
+                $('.videoLink').removeClass('videoSelected');
+                for (var i = 0; i<videos.length; i++) {
+                    if (selectedVideo == videos[i]) {
+                        if (i == videos.length-1) {
+                            $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[0]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
+                            $('#videoLink_0').addClass('videoSelected');
+                            $('#selectedVideoUrl').val(videos[0]);
+                        } else {
+                            $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[i+1]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
+                            $('#videoLink_'+(i+1)).addClass('videoSelected');
+                            $('#selectedVideoUrl').val(videos[i+1]);
+                        }
+                    }
+                }
+            });
+
+            $('#ssArrowLeft').click(function() {
+                var selectedPage = parseInt($('#selectedSSPage').val());
+                $('.ssLink').removeClass('videoSelected');
+                if (selectedPage < 2) {
+                    var newPage = selectedPage + 1;
+                } else {
+                    var newPage = 0;
+                }
+                $('#selectedSSPage').val(newPage);
+                $('#ssLink_'+newPage).addClass('videoSelected');
+
+                $('#ssEmbed').data('AnythingSlider').goForward();
+            });
+
+            $('#ssArrowRight').click(function() {
+                var selectedPage = parseInt($('#selectedSSPage').val());
+                $('.ssLink').removeClass('videoSelected');
+                if (selectedPage == 0) {
+                    var newPage = 2;
+                } else {
+                    var newPage = selectedPage-1;
+                }
+
+                $('#selectedSSPage').val(newPage);
+                $('#ssLink_'+newPage).addClass('videoSelected');
+
+                $('#ssEmbed').data('AnythingSlider').goBack();
+            });
+
+        });
+
+        function selectVideo(item) {
+            if (!isNaN(item)) {
+                $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[item]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
+                $('.videoLink').removeClass('videoSelected');
+                $('#videoLink_'+item).addClass('videoSelected');
+                $('#selectedVideoUrl').val(videos[item]);
+            }
+        }
+
+        function selectSsPage(item) {
+            if (!isNaN(item)) {
+                
+            }
+        }
+    </script>
+    </head>
+
+    <body>
+        <img src="images/arrow_left_hl.png" alt="" style="display: none;" />
+        <img src="images/arrow_right_hl.png" alt="" style="display: none;" />
+        <img src="images/but_forums_over.png" alt="" style="display: none;" />
+        <img src="images/but_install_over.png" alt="" style="display: none;" />
+
+        <input id="selectedVideoUrl" value="" type="hidden" />
+        <input id="selectedSSPage" value="" type="hidden" />
+
+        <div id="content">
+            <div id="top">
+                <div id="aw_logo"></div>
+                <div id="top_text"></div>
+                <div id="top_text2"></div>
+                <a href="http://www.assaultwing.com/install/setup.exe" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Install click', '']);">
+                    <div id="install"></div>
+                </a>
+                <a href="http://www.assaultwing.com/forums/" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Forums click', '']);">
+                    <div id="forums"></div>
+                </a>
+                <a href="http://www.facebook.com/pages/Assault-Wing-2/28365656333" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Facebook click', '']);">
+                    <div id="fb_link"></div>
+                </a>
+                <div id="ships"></div>
+                <div id="buttons_bg"></div>
+                <div id="fb_like">
+                    <iframe src="http://www.facebook.com/plugins/like.php?app_id=223725724327983&amp;href=http%3A%2F%2Fwww.assaultwing.com&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=recommend&amp;colorscheme=dark&amp;font&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>
+                </div>
+                <div id="middle_text">
+                    Assault Wing is a free, action packed, ship-flying, gun blazing, explosive game of outwitting your opponents in arenas hidden deep in the far reaches of galaxies.
+                    <br/><br/>
+                    You will choose your ship, special weapon and ship modification and with these you will slaughter your friends and foes alike to pieces smaller than a nanometer.
+                </div>
+            </div>
+
+            <div id="video">
+                <div id="videoContainer">
+                    <div id="videoTitle"></div>
+                    <div id="videoNumbers"></div>
+
+                    <div class="clr"></div>
+
+                    <div id="videoBarTop"></div>
+
+                    <div id="videoArrowRight" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Video browse right', '']);"></div>
+                    <div id="videoOuterBarRight"></div>
+                    <div id="videoBarRight"></div>
+
+                    <div id="videoEmbed"></div>
+
+                    <div id="videoBarLeft"></div>
+                    <div id="videoOuterBarLeft"></div>
+                    <div id="videoArrowLeft" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Video browse left', '']);"></div>
+
+                    <div id="videoBarBottom"></div>
+                </div>
+            </div>
+
+            <div id="screenshots">
+                <div id="ssContainer">
+                    <div id="ssTitle"></div>
+                    <div id="ssNumbers"></div>
+
+                    <div class="clr"></div>
+
+                    <div id="ssBarTop"></div>
+
+                    <div id="ssArrowRight" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Screenshot browse right', '']);"></div>
+                    <div id="ssOuterBarRight"></div>
+                    <div id="ssBarRight"></div>
+
+                    <ul id="ssEmbed"></ul>
+
+                    <div id="ssBarLeft"></div>
+                    <div id="ssOuterBarLeft"></div>
+                    <div id="ssArrowLeft" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Screenshot browse left', '']);"></div>
+
+                    <div id="ssBarBottom"></div>
+                </div>
+
+                <div id="bottomText">
+                    Assault Wing is now public and all feedback is welcome. Take part in this discussion at our <a href="http://www.assaultwing.com/forums/">forums</a>.
+                </div>
+            </div>
+
+
+
+            <div id="footer">
+                Copyright &copy; 2011 Studfarm Studios
+            </div>
+            <div id="madeBy">
+                Site code by <a href="http://www.huttunen.fi">Teemu Huttunen</a>
+            </div>
+        </div>
+	<img src="https://impact.applifier.com/users/tracking?gameId=2220" width="1" height="1" />
+    </body>
+</html>

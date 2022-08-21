@@ -515,20 +515,6 @@
         </style>
 
     <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-17534601-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
-
-    <script type="text/javascript">
         videos = ["http://www.youtube.com/v/MQ49vtHCnfY", "http://www.youtube.com/v/poxXPWh4nCU"];
         screenshot_amount = 10;
 
@@ -558,7 +544,7 @@
             var html = '<li>';
             for (var i = 0; i<screenshot_amount; i++) {
 
-                html += '<a href="images/screenshots/ss_'+(i+1)+'.jpg" onclick="_gaq.push([\'_trackEvent\', \'Media\', \'Open screenshot\', \'\']);" ><img class="ssThumb" src="images/screenshots/ss_'+(i+1)+'_thumb.jpg" alt="" /></a>';
+                html += '<a href="images/screenshots/ss_'+(i+1)+'.jpg"><img class="ssThumb" src="images/screenshots/ss_'+(i+1)+'_thumb.jpg" alt="" /></a>';
                 if ((i+1) % 4 == 0 && i > 0 && i < 8) {
                     html += '</li><li>';
                 } else if (i == 9) {
@@ -686,13 +672,13 @@
                 <div id="aw_logo"></div>
                 <div id="top_text"></div>
                 <div id="top_text2"></div>
-                <a href="http://www.assaultwing.com/install/setup.exe" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Install click', '']);">
+                <a href="http://www.assaultwing.com/install/setup.exe">
                     <div id="install"></div>
                 </a>
-                <a href="http://www.assaultwing.com/forums/" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Forums click', '']);">
+                <a href="http://www.assaultwing.com/forums/">
                     <div id="forums"></div>
                 </a>
-                <a href="http://www.facebook.com/pages/Assault-Wing-2/28365656333" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Facebook click', '']);">
+                <a href="http://www.facebook.com/pages/Assault-Wing-2/28365656333">
                     <div id="fb_link"></div>
                 </a>
                 <div id="ships"></div>
@@ -716,7 +702,7 @@
 
                     <div id="videoBarTop"></div>
 
-                    <div id="videoArrowRight" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Video browse right', '']);"></div>
+                    <div id="videoArrowRight"></div>
                     <div id="videoOuterBarRight"></div>
                     <div id="videoBarRight"></div>
 
@@ -724,7 +710,7 @@
 
                     <div id="videoBarLeft"></div>
                     <div id="videoOuterBarLeft"></div>
-                    <div id="videoArrowLeft" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Video browse left', '']);"></div>
+                    <div id="videoArrowLeft"></div>
 
                     <div id="videoBarBottom"></div>
                 </div>
@@ -739,7 +725,7 @@
 
                     <div id="ssBarTop"></div>
 
-                    <div id="ssArrowRight" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Screenshot browse right', '']);"></div>
+                    <div id="ssArrowRight"></div>
                     <div id="ssOuterBarRight"></div>
                     <div id="ssBarRight"></div>
 
@@ -747,7 +733,7 @@
 
                     <div id="ssBarLeft"></div>
                     <div id="ssOuterBarLeft"></div>
-                    <div id="ssArrowLeft" onclick="_gaq.push(['_trackEvent', 'Navigation', 'Screenshot browse left', '']);"></div>
+                    <div id="ssArrowLeft"></div>
 
                     <div id="ssBarBottom"></div>
                 </div>

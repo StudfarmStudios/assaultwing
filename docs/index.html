@@ -11,7 +11,7 @@
         <meta property="og:site_name" content="Assault Wing" />
         <meta property="og:description" content="Assault Wing is a free, action packed, ship-flying, gun blazing, explosive game of outwitting your opponents in arenas hidden deep in the far reaches of galaxies." />
 
-        <link rel="icon" type="image/png" href="http://www.assaultwing.com/favicon.ico" />
+        <link rel="icon" type="image/png" href="favicon.ico" />
 
         <title>Assault Wing</title>
 
@@ -515,21 +515,17 @@
         </style>
 
     <script type="text/javascript">
-        videos = ["http://www.youtube.com/v/MQ49vtHCnfY", "http://www.youtube.com/v/poxXPWh4nCU"];
+        videos = ["https://www.youtube.com/embed/MQ49vtHCnfY?controls=0", "https://www.youtube.com/embed/poxXPWh4nCU?controls=0"];
         screenshot_amount = 10;
 
         screenshot_page_width = 654;
 
         $(document).ready(function() {
             for (var i = 0; i<videos.length; i++) {
-                if (i == 0) {
-                    $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[i]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
-                    $('#videoNumbers').append('<a id="videoLink_'+i+'" class="videoLink videoSelected" href="javascript: void(0);" onclick="selectVideo('+i+')">'+(i+1)+'</a>');
-                    $('#selectedVideoUrl').val(videos[i]);
-                } else {
-                    $('#videoNumbers').append('<a id="videoLink_'+i+'" class="videoLink" href="javascript: void(0);" onclick="selectVideo('+i+')">'+(i+1)+'</a>');
-                }
+                $('#videoNumbers').append('<a id="videoLink_'+i+'" class="videoLink" href="javascript: void(0);" onclick="selectVideo('+i+')">'+(i+1)+'</a>');
             }
+
+            selectVideo(0);
 
             var screenshot_pages = Math.ceil(screenshot_amount / 4);
             for (var i = 0;i<screenshot_pages; i++) {
@@ -578,17 +574,11 @@
                 for (var i = 0; i<videos.length; i++) {
                     if (selectedVideo == videos[i]) {
                         if (i == 0) {
-                            $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[videos.length-1]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
-                            $('#videoLink_'+(videos.length-1)).addClass('videoSelected');
-                            $('#selectedVideoUrl').val(videos[videos.length-1]);
+                            selectVideo(videos.length - 1)
                         } else {
-                            $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[i-1]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
-                            $('#videoLink_'+(i-1)).addClass('videoSelected');
-                            $('#selectedVideoUrl').val(videos[i-1]);
+                            selectVideo(i - 1)
                         }
                     }
-
-
                 }
             });
 
@@ -598,13 +588,9 @@
                 for (var i = 0; i<videos.length; i++) {
                     if (selectedVideo == videos[i]) {
                         if (i == videos.length-1) {
-                            $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[0]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
-                            $('#videoLink_0').addClass('videoSelected');
-                            $('#selectedVideoUrl').val(videos[0]);
+                            selectVideo(0)
                         } else {
-                            $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[i+1]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
-                            $('#videoLink_'+(i+1)).addClass('videoSelected');
-                            $('#selectedVideoUrl').val(videos[i+1]);
+                            selectVideo(i+1)
                         }
                     }
                 }
@@ -643,7 +629,10 @@
 
         function selectVideo(item) {
             if (!isNaN(item)) {
-                $('#videoEmbed').html('<embed width="535" height="325" type="application/x-shockwave-flash" src="'+videos[item]+'" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars=""/>');
+                $('#videoEmbed').html('<iframe width="535" height="325" type="application/x-shockwave-flash" src="' + 
+                    videos[item] + 
+                    '" title="YouTube video player" frameborder="0" ' + 
+                    'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
                 $('.videoLink').removeClass('videoSelected');
                 $('#videoLink_'+item).addClass('videoSelected');
                 $('#selectedVideoUrl').val(videos[item]);

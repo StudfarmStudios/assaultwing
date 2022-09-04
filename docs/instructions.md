@@ -4,6 +4,9 @@ Here's quick instructions on how to play Assault Wing.
 
 ## Installing
 
+**TODO: The Installing section is out of date. The installer is not available and does not
+work anymore. Update with Steam based information for the Steam launch.**
+
 You can install Assault Wing from http://www.assaultwing.com/install. Just click
 on the Install Assault Wing link and click Install, or Allow or Run if it asks
 you questions. The installer will download and install all prerequisites
@@ -58,6 +61,8 @@ game pad Shoulders will cycle through the menu tabs: Equipment, Players, Chat,
 Game Settings.
 
 # Playing at the Battlefront — Multiplayer over the Internet
+
+**TODO: The Battlefront section is out of date. The matchmaking server does not respond. Update with Steam related information for the Steam launch.**
 
 Assault Wing is the most fun when many players play over the Internet. The
 easiest way is to go to the Battlefront web page. It shows a list of active game

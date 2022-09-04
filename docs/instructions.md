@@ -1,4 +1,4 @@
-# Assault Wing — Instructions   
+# Instructions   
 
 Here's quick instructions on how to play Assault Wing.
 

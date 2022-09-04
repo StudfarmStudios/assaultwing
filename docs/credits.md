@@ -1,5 +1,6 @@
-# Assault Wing — Galactic Battlefront — Credits
+# Credits
 
+*Assault Wing — Galactic Battlefront*
 *Developed by Studfarm Studios © 2011*
 
 **Design:** Pekka Palmu, Ville Nurmi

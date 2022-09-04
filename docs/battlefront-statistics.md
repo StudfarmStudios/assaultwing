@@ -1,4 +1,4 @@
-# Assault Wing — Galactic Battlefront
+# Statistics
 
 As you may well know, Battlefront Statistics show how well each registered
 Assault Wing pilot is currently doing. Here's a little explanation on what the

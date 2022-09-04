@@ -1,4 +1,4 @@
-# Assault Wing — Game Play
+# Game Play
 ## Scoring
 
 The battle is a standard deathmatch. All ships are trying to shoot each other.

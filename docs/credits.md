@@ -4,7 +4,7 @@
 
 **Design:** Pekka Palmu, Ville Nurmi
 
-**Programming:** Ville Nurmi, Johannes Päivinen, Jaakko Lukkari, Pekka Palmu
+**Programming:** Ville Nurmi, Johannes Päivinen, Jaakko Lukkari, Pekka Palmu, Peter Lamberg
 
 **Graphics:** Pekka Palmu
 

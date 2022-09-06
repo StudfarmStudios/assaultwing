@@ -1,0 +1,507 @@
+body {
+    background-color: #000;
+    text-align: center;
+    font-family: Verdana, Arial, sans-serif;
+    color: #fff;
+}
+
+a.page-link:visited, a.page-link {
+    color: #bdbdbd;
+}
+
+a.site-title, a.site-title:visited {
+    color: #fff;
+}
+
+article.post {
+    color: #bdbdbd;
+    text-align: left;
+}
+
+div.post-content > h1 {
+    visibility: collapse;
+}
+
+.footer-col-wrapper {
+    color: #393839;
+}
+
+.highlighter-rouge .highlight, pre > code, pre, code {
+    background: #625a4f;
+}
+
+div.clr {
+    clear: both;
+}
+
+div#content {
+    width: 900px;
+    min-height: 1500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div#top {
+    position: relative;
+    background: url(images/top_bg2.png) no-repeat;
+    width: 900px;
+    height: 602px;
+    z-index: 10;
+}
+
+div#video {
+    position: relative;
+    background: url(images/v_bg.png) no-repeat;
+    width: 900px;
+    height: 400px;
+    z-index: 10;
+    margin-top: 40px;
+}
+
+div#screenshots {
+    position: relative;
+    background: url(images/ss_bg.png) no-repeat;
+    width: 900px;
+    height: 367px;
+    z-index: 10;
+    margin-top: 70px;
+}
+
+div#footer {
+    width: 900px;
+    height: 20px;
+    color: #393839;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+div#madeBy {
+    width: 900px;
+    height: 30px;
+    color: #393839;
+    text-align: center;
+    font-size: 11px;
+    margin-top: 10px;
+    z-index: 9999;
+}
+
+div#madeBy a {
+    color: #393839;
+    z-index: 9999;
+}
+
+div#aw_logo {
+    position: absolute;
+    top: 0px;
+    left: 50px;
+    background: url(images/aw_logo.png) no-repeat;
+    width: 430px;
+    height: 429px;
+}
+
+div#top_text {
+    position: absolute;
+    top: 65px;
+    left: 487px;
+    width: 262px;
+    height: 68px;
+    background: url(images/top_text.png) no-repeat;
+    z-index: 100;
+}
+
+div#top_text2 {
+    position: absolute;
+    top: 230px;
+    left: 535px;
+    width: 258px;
+    height: 67px;
+    background: url(images/top_text2.png) no-repeat;
+    z-index: 100;
+}
+
+div#install {
+    position: absolute;
+    top: 145px;
+    left: 542px;
+    width: 205px;
+    height: 50px;
+    background: url(images/but_install_up.png) no-repeat;
+    z-index: 100;
+}
+
+div#install:hover {
+    background: url(images/but_install_over.png) no-repeat;
+}
+
+div#forums {
+    position: absolute;
+    top: 303px;
+    left: 542px;
+    width: 205px;
+    height: 50px;
+    background: url(images/but_forums_up.png) no-repeat;
+    z-index: 100;
+}
+
+div#fb_link {
+    width: 20px;
+    height: 22px;
+    background: url(images/fb_logo.png) no-repeat;
+    position: absolute;
+    top: 315px;
+    left: 762px;
+    z-index: 200;
+}
+
+div#forums:hover {
+    background: url(images/but_forums_over.png) no-repeat;
+}
+
+div#ships {
+    position: absolute;
+    top: 340px;
+    left: 400px;
+    width: 335px;
+    height: 107px;
+    background: url(images/ships.png) no-repeat;
+    z-index: 50;
+}
+
+div#buttons_bg {
+    position: absolute;
+    top: 50px;
+    left: 450px;
+    width: 366px;
+    height: 365px;
+    background: url(images/buttons_underglow.png) no-repeat;
+    z-index: 30;
+    opacity: 0.25;
+}
+
+div#fb_like {
+    position: absolute;
+    top: 460px;
+    left: 125px;
+    font-size: 12px;
+    text-align: left;
+    width: 645px;
+    z-index: 100;
+}
+
+div#middle_text {
+    color: #bdbdbd;
+    position: absolute;
+    top: 500px;
+    left: 125px;
+    font-size: 12px;
+    text-align: left;
+    width: 645px;
+    z-index: 100;
+}
+
+div#videoContainer {
+    position: absolute;
+    top: -15px;
+    left: 175px;
+    width: 630px;
+    height: 400px;
+}
+
+div#ssContainer {
+    position: absolute;
+    top: -15px;
+    left: 120px;
+    width: 735px;
+    height: 250px;
+}
+
+div#videoTitle {
+    float: left;
+    width: 160px;
+    height: 55px;
+    background: url(images/header_videos.png) no-repeat;
+    z-index: 20;
+    margin-top: -10px;
+}
+
+div#ssTitle {
+    float: left;
+    width: 160px;
+    height: 55px;
+    background: url(images/header_pictures.png) no-repeat;
+    z-index: 20;
+    margin-top: -10px;
+}
+
+div#videoNumbers, div#ssNumbers {
+    float: left;
+    width: 250px;
+    height: 47px;
+    line-height: 47px;
+    font-size: 20px;
+    text-align: left;
+    margin-left: 20px;
+    color: #afafaf;
+    cursor: pointer;
+}
+
+span.videoSelected, span.ssSelected {
+    color: #fff;
+}
+
+div#videoBarTop {
+    position: absolute;
+    top: 30px;
+    left: -13px;
+    width: 579px;
+    height: 32px;
+    background: url(images/v_top_bar.png) no-repeat;
+    z-index: 40;
+}
+
+div#ssBarTop {
+    position: absolute;
+    top: 30px;
+    left: -13px;
+    width: 682px;
+    height: 32px;
+    background: url(images/ss_bar_top.png) no-repeat;
+    z-index: 40;
+}
+
+div#videoArrowRight {
+    position: absolute;
+    top: 150px;
+    left: -38px;
+    background: url(images/arrow_right.png) no-repeat;
+    width: 38px;
+    height: 96px;
+    z-index: 50;
+    cursor: pointer;
+}
+
+div#videoArrowRight:hover, div#ssArrowRight:hover {
+    background: url(images/arrow_right_hl.png) no-repeat;
+}
+
+div#ssArrowRight {
+    position: absolute;
+    top: 90px;
+    left: -38px;
+    background: url(images/arrow_right.png) no-repeat;
+    width: 38px;
+    height: 96px;
+    z-index: 50;
+    cursor: pointer;
+}
+
+div#videoOuterBarRight {
+    position: absolute;
+    top: 50px;
+    left: -20px;
+    background: url(images/v_bar_left_outer.png) no-repeat;
+    width: 19px;
+    height: 333px;
+    z-index: 35;
+}
+
+div#ssOuterBarRight {
+    position: absolute;
+    top: 50px;
+    left: -20px;
+    background: url(images/ss_bar_left_outer.png) no-repeat;
+    width: 19px;
+    height: 333px;
+    z-index: 35;
+}
+
+div#videoBarRight {
+    position: absolute;
+    top: 50px;
+    left: -8px;
+    width: 20px;
+    height: 331px;
+    background: url(images/v_bar_right.png) no-repeat;
+    z-index: 39;
+}
+
+div#ssBarRight {
+    position: absolute;
+    top: 50px;
+    left: -8px;
+    width: 20px;
+    height: 331px;
+    background: url(images/ss_bar_right.png) no-repeat;
+    z-index: 39;
+}
+
+div#videoArrowLeft {
+    position: absolute;
+    top: 150px;
+    left: 545px;
+    background: url(images/arrow_left.png) no-repeat;
+    width: 38px;
+    height: 96px;
+    z-index: 50;
+    cursor: pointer;
+}
+
+div#videoArrowLeft:hover, div#ssArrowLeft:hover {
+    background: url(images/arrow_left_hl.png) no-repeat;
+}
+
+div#ssArrowLeft {
+    position: absolute;
+    top: 90px;
+    left: 650px;
+    background: url(images/arrow_left.png) no-repeat;
+    width: 38px;
+    height: 96px;
+    z-index: 50;
+    cursor: pointer;
+}
+
+div#videoOuterBarLeft {
+    position: absolute;
+    top: 50px;
+    left: 549px;
+    background: url(images/v_bar_right_outer.png) no-repeat;
+    width: 19px;
+    height: 333px;
+    z-index: 35;
+}
+
+div#ssOuterBarLeft {
+    position: absolute;
+    top: 50px;
+    left: 652px;
+    background: url(images/ss_bar_right_outer.png) no-repeat;
+    width: 19px;
+    height: 188px;
+    z-index: 35;
+}
+
+div#videoBarLeft {
+    position: absolute;
+    top: 50px;
+    left: 538px;
+    width: 20px;
+    height: 331px;
+    background: url(images/v_bar_left.png) no-repeat;
+    z-index: 39;
+}
+
+div#ssBarLeft {
+    position: absolute;
+    top: 50px;
+    left: 642px;
+    width: 20px;
+    height: 174px;
+    background: url(images/ss_bar_left.png) no-repeat;
+    z-index: 39;
+}
+
+div#videoBarBottom {
+    position: absolute;
+    top: 370px;
+    left: -15px;
+    background: url(images/v_bottom_bar.png) no-repeat;
+    width: 579px;
+    height: 32px;
+    z-index: 40;
+}
+
+div#ssBarBottom {
+    position: absolute;
+    top: 220px;
+    left: -15px;
+    background: url(images/ss_bar_bottom.png) no-repeat;
+    width: 682px;
+    height: 32px;
+    z-index: 40;
+}
+
+div#bottomText {
+    position: absolute;
+    top: 260px;
+    left: 120px;
+    font-size: 13px;
+    color: #fff;
+    z-index: 100;
+    width: 600px;
+    text-align: left;
+}
+
+div#bottomText a {
+    color: #DFB92B;
+}
+
+div#videoEmbed {
+    position: absolute;
+    top: 53px;
+    left: 8px;
+    width: 535px;
+    height: 325px;
+    z-index: 200;
+}
+
+ul#ssEmbed {
+    position: absolute;
+    top: 15px;
+    left: 0px;
+    width: 654px;
+    height: 160px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+img.ssThumb {
+    width: 156px;
+    height: 156px;
+    float: left;
+    margin-right: 3px;
+    cursor: pointer;
+}
+
+div#videoNumbers a, div#ssNumbers a {
+    color: #afafaf;
+    text-decoration: none;
+    margin-right: 5px;
+}
+
+a.videoSelected {
+    color: #fff !important;
+}
+
+div#videoNumbers a:hover, div#ssNumbers a:hover {
+    text-decoration: underline;
+}
+
+span.arrow {
+    display: none !important;
+}
+
+div.anythingSlider.activeSlider .anythingWindow {
+    border: none;
+}
+
+div.anythingSlider {
+    position: absolute;
+    top: 48px;
+    left: 12px;
+    width: 654px;
+    padding: 0 !important;
+}
+
+div.anythingWindow {
+    height: 160px !important;
+}
+
+div#lightbox-container-image {
+    z-index: 300;
+}
+
+span#lightbox-image-details-currentNumber {
+    display: none !important;
+}

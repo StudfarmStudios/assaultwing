@@ -7,6 +7,12 @@
 _Assault Wing is a fast-paced physics-based shooter for many players over the
 internet._
 
+## Information
+
+- [Quick instructions](docs/instructions.md)
+- [Gameplay and scoring introduction](docs/gameplay.md)
+- [Credits](docs/credits.md)
+
 ## Dependencies
 
 Assault Wing uses [MonoGame](https://www.monogame.net/) which is an open source

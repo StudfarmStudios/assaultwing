@@ -5,6 +5,31 @@ body {
     color: #fff;
 }
 
+a.page-link:visited, a.page-link {
+    color: #bdbdbd;
+}
+
+a.site-title, a.site-title:visited {
+    color: #fff;
+}
+
+article.post {
+    color: #bdbdbd;
+    text-align: left;
+}
+
+div.post-content > h1 {
+    visibility: collapse;
+}
+
+.footer-col-wrapper {
+    color: #393839;
+}
+
+.highlighter-rouge .highlight, pre > code, pre, code {
+    background: #625a4f;
+}
+
 div.clr {
     clear: both;
 }

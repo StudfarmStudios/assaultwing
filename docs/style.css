@@ -5,7 +5,7 @@ body {
     color: #fff;
 }
 
-a.page-link:visited, a.page-link {
+a.page-link:link, a.page-link:visited, a.page-link:hover, a.page-link:active, a.page-link {
     color: #bdbdbd;
 }
 

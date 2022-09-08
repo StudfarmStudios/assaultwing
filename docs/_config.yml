@@ -2,7 +2,7 @@ title: Assault Wing — Galactic Battlefront
 description: >- # this means to ignore newlines until "baseurl:"
   Assault Wing is a fast-paced physics-based shooter for many 
   players over the internet.
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/assaultwing" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  studfarmstudios
 

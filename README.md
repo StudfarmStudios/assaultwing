@@ -1,6 +1,6 @@
 # Assault Wing - Galactic Battlefront
 
-[assaultwing.com](http://assaultwing.com) / [GitHub](https://github.com/StudfarmStudios/assaultwing)
+[assaultwing.com](https://assaultwing.com) / [GitHub](https://github.com/StudfarmStudios/assaultwing)
 
 © Studfarm Studios
 

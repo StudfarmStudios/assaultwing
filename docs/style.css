@@ -100,48 +100,41 @@ div#aw_logo {
     height: 429px;
 }
 
-div#top_text {
+div.menu-item {
     position: absolute;
-    top: 65px;
-    left: 487px;
-    width: 262px;
-    height: 68px;
-    background: url(images/top_text.png) no-repeat;
+    left: 545px;
+    width: calc(205px);
+    height: calc(40px);
+    line-height: 40px;
+    border: 1px solid #CACBC3;
+    border-radius: 3px;
+    text-shadow: 2px 2px 5px #000000;
+    text-align: center;
+    display: inline-block;  
+    color: #efefef;
+    font-family: Verdana, Arial, sans-serif;
+    text-transform: uppercase;
+    font-size: 22px;
+    font-stretch: ultra-condensed;
     z-index: 100;
+    box-shadow: 2px 2px #888888;    
 }
 
-div#top_text2 {
-    position: absolute;
-    top: 230px;
-    left: 535px;
-    width: 258px;
-    height: 67px;
-    background: url(images/top_text2.png) no-repeat;
-    z-index: 100;
+div.menu-item:hover {
+    border-color: white;
+    box-shadow: 2px 2px #999999;
 }
 
-div#install {
-    position: absolute;
-    top: 145px;
-    left: 542px;
-    width: 205px;
-    height: 50px;
-    background: url(images/but_install_up.png) no-repeat;
-    z-index: 100;
+div#menu-item-1 {
+    top: calc(30px + 55px*1);
 }
 
-div#install:hover {
-    background: url(images/but_install_over.png) no-repeat;
+div#menu-item-2 {
+    top: calc(30px + 55px*2);
 }
 
-div#forums {
-    position: absolute;
-    top: 303px;
-    left: 542px;
-    width: 205px;
-    height: 50px;
-    background: url(images/but_forums_up.png) no-repeat;
-    z-index: 100;
+div#menu-item-3 {
+    top: calc(30px + 55px*3);
 }
 
 div#fb_link {
@@ -149,13 +142,9 @@ div#fb_link {
     height: 22px;
     background: url(images/fb_logo.png) no-repeat;
     position: absolute;
-    top: 315px;
-    left: 762px;
+    top: 424px;
+    left: 796px;
     z-index: 200;
-}
-
-div#forums:hover {
-    background: url(images/but_forums_over.png) no-repeat;
 }
 
 div#ships {

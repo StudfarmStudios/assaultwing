@@ -111,6 +111,11 @@ namespace AW2.Core
       get { return SteamFriends.GetPersonaName(); }
     }
 
+    public void ActivateGameOverlayToWebPage(string url)
+    {
+      SteamFriends.ActivateGameOverlayToWebPage(url);
+    }
+
     private void LogSteamRelayNetworkStatus(SteamRelayNetworkStatus_t status) {
       Log.Write($"SteamRelayNetworkStatus available: {status.m_eAvail}, any relay available: {status.m_eAvailAnyRelay}, config: {status.m_eAvailNetworkConfig}");
     }

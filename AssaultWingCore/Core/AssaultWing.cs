@@ -108,10 +108,16 @@ namespace AW2.Core
         {
             try
             {
-                System.Diagnostics.Process.Start(url);
+                if (IsSteam) {
+                    Services.GetService<SteamApiService>().ActivateGameOverlayToWebPage(url);
+                } else {
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo { FileName = url, UseShellExecute = true };
+                    Process.Start(processStartInfo);
+                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.Write("Failed to open URL", e);
                 Logic.ShowInfoDialog("Couldn't open browser.\nPlease open this URL manually:\n" + url);
             }
         }

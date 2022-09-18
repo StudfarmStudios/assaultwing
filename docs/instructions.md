@@ -7,7 +7,7 @@ Here's quick instructions on how to play Assault Wing.
 **TODO: The Installing section is out of date. The installer is not available and does not
 work anymore. Update with Steam based information for the Steam launch.**
 
-You can install Assault Wing from http://www.assaultwing.com/install. Just click
+You can install Assault Wing from https://www.assaultwing.com/install. Just click
 on the Install Assault Wing link and click Install, or Allow or Run if it asks
 you questions. The installer will download and install all prerequisites
 automatically. The installer will create an icon on your desktop where you can
@@ -82,12 +82,12 @@ Before joining a server, you can register yourself a pilot and log in with it.
 If you have done this already previously, the game will remember it and log you
 in automatically each time you enter the Battlefront. In the Battlefront menu
 there is a submenu called Log in with Your Pilot. It contains the Register a New
-Pilot item which links to http://www.assaultwing.com/battlefront/#!/register.
+Pilot item which links to https://www.assaultwing.com/battlefront/#!/register.
 After registering yourself a pilot, enter its name and password in the Login
 menu and press "Log in!". If the login is successful, you will see your pilot
 name appear next to the "Log in!" item. Playing with a registered pilot is extra
 fun because you can then follow your battle statistics and ranking at
-http://www.assaultwing.com/battlefront
+https://www.assaultwing.com/battlefront
 
 Press `Enter` or game pad `A` on a server that has some players or is otherwise
 to your liking and you'll join the server. You're now presented with the ship

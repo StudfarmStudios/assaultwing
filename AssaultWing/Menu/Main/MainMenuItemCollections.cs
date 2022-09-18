@@ -95,10 +95,10 @@ namespace AW2.Menu.Main
             StartItems = new MainMenuItemCollection("");
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", Click_LocalGame));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", () => Click_NetworkGame()));
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
-                () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
+            //StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
+            //    () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
-                () => Game.OpenURL("http://www.assaultwing.com/quickinstructions")));
+                () => Game.OpenURL("https://www.assaultwing.com/instructions.html")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Setup",
                 () =>
                 {

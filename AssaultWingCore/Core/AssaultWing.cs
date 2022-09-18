@@ -108,8 +108,12 @@ namespace AW2.Core
         {
             try
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo { FileName = url, UseShellExecute = true };
-                Process.Start(processStartInfo);
+                if (IsSteam) {
+                    Services.GetService<SteamApiService>().ActivateGameOverlayToWebPage(url);
+                } else {
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo { FileName = url, UseShellExecute = true };
+                    Process.Start(processStartInfo);
+                }
             }
             catch (Exception e)
             {

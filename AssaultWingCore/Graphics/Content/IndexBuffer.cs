@@ -1,4 +1,4 @@
-﻿namespace AW2.Graphics.Content
+namespace AW2.Graphics.Content
 {
     public class IndexBuffer
     {

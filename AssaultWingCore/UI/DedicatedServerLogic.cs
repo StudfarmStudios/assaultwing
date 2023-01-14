@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
@@ -11,7 +11,7 @@ namespace AW2.UI
         private const int GAMESTATE_INITIALIZING = 0;
         private const int GAMESTATE_GAMEPLAY = 1;
 
-        private SteamServerComponent SteamServerComponent {get; init;}
+        private SteamServerComponent SteamServerComponent { get; init; }
 
         public DedicatedServerLogic(AssaultWing<E> game, bool consoleServer)
             : base(game)

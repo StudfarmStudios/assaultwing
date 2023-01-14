@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FarseerPhysics;
 using FarseerPhysics.Collision;
@@ -23,7 +23,7 @@ public class QuadTreeBroadPhase : IBroadPhase
     {
         var fatSpan = span.Fattened;
         _quadTrees = new QuadTree<FixtureProxy>[32];
-        for (int i=0;i<_quadTrees.Length;i++) _quadTrees[i] = new QuadTree<FixtureProxy>(fatSpan, 5, 10);
+        for (int i = 0; i < _quadTrees.Length; i++) _quadTrees[i] = new QuadTree<FixtureProxy>(fatSpan, 5, 10);
         _idRegister = new Dictionary<int, Element<FixtureProxy>>();
         _moveBuffer = new List<Element<FixtureProxy>>();
         _pairBuffer = new List<Pair>();

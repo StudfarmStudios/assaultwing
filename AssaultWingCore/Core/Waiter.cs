@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -23,7 +23,8 @@ namespace AW2.Core
 
         private Waiter()
         {
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 WinMm.timeBeginPeriod(PRECISION_MS);
             }
         }
@@ -45,7 +46,8 @@ namespace AW2.Core
         {
             if (_disposed) return;
             _disposed = true;
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 WinMm.timeEndPeriod(PRECISION_MS);
             }
         }

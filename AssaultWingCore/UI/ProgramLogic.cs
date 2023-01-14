@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
@@ -30,7 +30,8 @@ namespace AW2.UI
         public bool GameStateChanged
         {
             get { return _gameStateChanged; }
-            set {
+            set
+            {
                 _gameStateChanged = value;
             }
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
@@ -96,7 +96,7 @@ namespace AW2.UI
             {
                 gameServerEndPoints = _options.GameServerEndPoints.Select(str => AWEndPoint.Parse(Game.Services, str)).ToArray();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.Write("Failed to parse game server address", e);
                 ShowInfoDialog("Error in game server address.");

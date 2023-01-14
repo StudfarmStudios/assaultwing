@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AW2.Game.Logic;
 using Steamworks;
 namespace AW2.Net
@@ -8,7 +8,7 @@ namespace AW2.Net
     /// </summary>
     public class GameServerInfo
     {
-        public int ServerIndex {get; init;}
+        public int ServerIndex { get; init; }
         public gameserveritem_t SteamDetails { get; init; }
         public string Name => SteamDetails.GetServerName();
 
@@ -26,33 +26,40 @@ namespace AW2.Net
 
         public System.Version AWVersion { get; init; } // TODO: Peter: Server rules query?
 
-        override public string ToString() {
+        override public string ToString()
+        {
             var details = SteamDetails;
             return $"GameServerInfo index:{ServerIndex} steam version:{details.m_nServerVersion} map:{details.GetMap()} name:{details.GetServerName()} addr:{details.m_NetAdr.GetConnectionAddressString()}";
         }
 
-        public AWEndPoint SteamIdEndpoint {
-            get {
+        public AWEndPoint SteamIdEndpoint
+        {
+            get
+            {
                 SteamNetworkingIdentity steamIdNetworkingIdentity = new SteamNetworkingIdentity();
                 steamIdNetworkingIdentity.SetSteamID(SteamDetails.m_steamID);
                 return new AWEndPointSteam(steamIdNetworkingIdentity);
             }
         }
 
-        public AWEndPoint DirectIpEndpoint {
-            get {
+        public AWEndPoint DirectIpEndpoint
+        {
+            get
+            {
                 SteamNetworkingIPAddr steamNetworkingIpAddr = new SteamNetworkingIPAddr();
                 steamNetworkingIpAddr.SetIPv4(SteamDetails.m_NetAdr.GetIP(), SteamDetails.m_NetAdr.GetConnectionPort());
                 return new AWEndPointSteam(steamNetworkingIpAddr);
             }
         }
 
-        public AWEndPoint[] GameServerEndPoints {
-            get {
+        public AWEndPoint[] GameServerEndPoints
+        {
+            get
+            {
                 // Returning 2 end points to attempt both direct
                 // (DirectIpEndpoint) and the Steam Datagram Relay (SDR) based
                 // connection (SteamIdEndpoint).
-                return new AWEndPoint[]{DirectIpEndpoint, SteamIdEndpoint};
+                return new AWEndPoint[] { DirectIpEndpoint, SteamIdEndpoint };
             }
         }
 

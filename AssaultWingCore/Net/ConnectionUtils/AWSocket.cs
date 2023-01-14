@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -294,7 +294,8 @@ namespace AW2.Net.ConnectionUtils
             if (addresses.Any())
             {
                 return addresses.First();
-            } else
+            }
+            else
             {
                 Random rnd = new Random();
                 byte[] b = new byte[6];

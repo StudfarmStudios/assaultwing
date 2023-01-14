@@ -33,12 +33,14 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            try {
+            try
+            {
                 Thread.CurrentThread.Name = "MainThread";
                 //if (MiscHelper.IsNetworkDeployed) Log.Write("Activation URI = '{0}'", ApplicationDeployment.CurrentDeployment.ActivationUri);
                 g_commandLineOptions = new CommandLineOptions(Environment.GetCommandLineArgs(), MiscHelper.QueryParams, AssaultWingCore.GetArgumentText());
                 //PostInstall.EnsureDone();
-                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
                     // TODO: Peter: Is this shortcuts disabling necessary and is there a better way
                     AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: false);
                 }
@@ -51,11 +53,14 @@ namespace AW2
                 }
                 finally
                 {
-                    if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                    if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
                         AccessibilityShortcuts.ToggleAccessibilityShortcutKeys(returnToStarting: true);
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Log.Write("Unhandled exception", e);
             }
         }
@@ -88,10 +93,13 @@ namespace AW2
 
         public void Dispose()
         {
-            try {
+            try
+            {
                 if (_form != null) _form.Dispose();
                 _form = null;
-            } catch(Exception e) {
+            }
+            catch (Exception e)
+            {
                 Log.Write("Unhandled exception in Dispose", e);
             }
             // PETER MOD: Remove exception handler
@@ -145,4 +153,3 @@ namespace AW2
         }
     }
 }
-

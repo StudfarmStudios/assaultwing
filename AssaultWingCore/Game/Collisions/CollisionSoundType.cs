@@ -1,4 +1,4 @@
-﻿namespace AW2.Game.Collisions
+namespace AW2.Game.Collisions
 {
     public enum CollisionSoundType
     {
@@ -9,13 +9,13 @@
 
     public static class CollisionSoundTypeExtension
     {
-        public static string EffectName (this CollisionSoundType sound)
+        public static string EffectName(this CollisionSoundType sound)
         {
-            switch(sound)
+            switch (sound)
             {
-                case CollisionSoundType.Collision: 
+                case CollisionSoundType.Collision:
                     return "collision";
-                case CollisionSoundType.ShipCollision: 
+                case CollisionSoundType.ShipCollision:
                     return "shipcollision";
                 default:
                     return "none";

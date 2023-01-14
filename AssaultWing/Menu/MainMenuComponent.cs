@@ -40,7 +40,9 @@ namespace AW2.Menu
                 {
                     PopulateItems();
                     MenuEngine.Game.Settings.ToFile();
-                } else {
+                }
+                else
+                {
                     ClearItems();
                 }
             }
@@ -77,7 +79,8 @@ namespace AW2.Menu
         private void PopItems()
         {
             if (_currentItemsHistory.Count == 1) return; // Already at top level.
-            if (CurrentItems == _itemCollections.SetupItems) {
+            if (CurrentItems == _itemCollections.SetupItems)
+            {
                 MenuEngine.Game.Settings.ToFile();
             }
             if (_currentItemsHistory.Count == 2)
@@ -153,8 +156,10 @@ namespace AW2.Menu
             spriteBatch.DrawString(Content.FontBig, text, textStartPos + new Vector2(260, 6), Color.YellowGreen);
         }
 
-        private void ClearItems() {
-            foreach (var tuple in _currentItemsHistory) {
+        private void ClearItems()
+        {
+            foreach (var tuple in _currentItemsHistory)
+            {
                 var deactivate = tuple.Item1.Deactivate;
                 if (deactivate != null) deactivate();
             }

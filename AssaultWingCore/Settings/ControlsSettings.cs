@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework.Input;
 using AW2.UI;
 using System.Runtime.InteropServices;
@@ -27,14 +27,18 @@ namespace AW2.Settings
 
         public override string ToString()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                switch(Key) {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                switch (Key)
+                {
                     case Keys.RightWindows: return "RightCommand";
                     case Keys.LeftWindows: return "LeftCommand";
                     default:
-                    return Key.ToString();
+                        return Key.ToString();
                 }
-            } else {
+            }
+            else
+            {
                 return Key.ToString();
             }
         }
@@ -108,24 +112,27 @@ namespace AW2.Settings
 
     public class ControlsSettings
     {
-        private static PlayerControlsSettings DefaultPlayer1Keys() {
-{           var defaultSettings = new PlayerControlsSettings
+        private static PlayerControlsSettings DefaultPlayer1Keys()
+        {
             {
-                Thrust = new KeyControlType(Keys.Up),
-                Left = new KeyControlType(Keys.Left),
-                Right = new KeyControlType(Keys.Right),
-                Fire1 = new KeyControlType(Keys.RightControl),
-                Fire2 = new KeyControlType(Keys.RightShift),
-                Extra = new KeyControlType(Keys.Down),
-            };
-            
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                // Mac computers typically don't have the right control key
-                defaultSettings.Fire1 = new KeyControlType(Keys.RightWindows);
-            }
+                var defaultSettings = new PlayerControlsSettings
+                {
+                    Thrust = new KeyControlType(Keys.Up),
+                    Left = new KeyControlType(Keys.Left),
+                    Right = new KeyControlType(Keys.Right),
+                    Fire1 = new KeyControlType(Keys.RightControl),
+                    Fire2 = new KeyControlType(Keys.RightShift),
+                    Extra = new KeyControlType(Keys.Down),
+                };
 
-            return defaultSettings;
-        };            
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    // Mac computers typically don't have the right control key
+                    defaultSettings.Fire1 = new KeyControlType(Keys.RightWindows);
+                }
+
+                return defaultSettings;
+            };
         }
 
         public static readonly PlayerControlsSettings PRESET_KEYBOARD_RIGHT = DefaultPlayer1Keys();

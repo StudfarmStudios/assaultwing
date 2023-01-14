@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -57,7 +57,7 @@ namespace AW2.Game.Players
         /// to clients of other players.
         /// </summary>
         public string PilotId { get; set; }
-        
+
         /// <summary>
         /// This is true in Steam mode and false in raw networking mode.
         /// </summary>
@@ -109,7 +109,7 @@ namespace AW2.Game.Players
         /// </summary>
         public virtual IEnumerable<Gob> Minions { get { yield break; } }
 
-        public Team Team { get{ return TeamProxy != null ? TeamProxy.GetValue() : null; } set { TeamProxy = value; } }
+        public Team Team { get { return TeamProxy != null ? TeamProxy.GetValue() : null; } set { TeamProxy = value; } }
         public LazyProxy<int, Team> TeamProxy { get; set; }
         public ArenaStatistics ArenaStatistics { get; private set; }
         public ArenaStatistics PreviousArenaStatistics { get; private set; }

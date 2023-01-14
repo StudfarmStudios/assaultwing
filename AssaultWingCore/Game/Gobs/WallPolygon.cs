@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
@@ -21,7 +21,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
-        public WallPolygon() : base() 
+        public WallPolygon() : base()
         {
             _textureName = (CanonicalString)"dummytexture";
         }

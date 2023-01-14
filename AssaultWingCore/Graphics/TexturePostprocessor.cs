@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -123,19 +123,23 @@ namespace AW2.Graphics
         private void PrepareEffect(Effect effect)
         {
             var tex = _targets[_sourceIndex].GetTexture();
-            if (effect.Parameters["T"]!= null) {
+            if (effect.Parameters["T"] != null)
+            {
                 effect.Parameters["T"].SetValue((float)AssaultWingCore.Instance.DataEngine.ArenaTotalTime.TotalSeconds);
             }
 
-            if (effect.Parameters["Texture"] != null) {
+            if (effect.Parameters["Texture"] != null)
+            {
                 effect.Parameters["Texture"].SetValue(tex);
             }
 
-            if (effect.Parameters["TextureWidth"] != null) {
+            if (effect.Parameters["TextureWidth"] != null)
+            {
                 effect.Parameters["TextureWidth"].SetValue((float)tex.Width);
             }
 
-            if (effect.Parameters["TextureHeight"] != null) {
+            if (effect.Parameters["TextureHeight"] != null)
+            {
                 effect.Parameters["TextureHeight"].SetValue((float)tex.Height);
             }
 

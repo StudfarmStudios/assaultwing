@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace AW2.Menu.Main
@@ -20,7 +20,7 @@ namespace AW2.Menu.Main
         /// </summary>
         public Action Update { get; set; }
 
-         /// <summary>
+        /// <summary>
         /// Called when menu items enter inactive state and can release some resources.
         /// </summary>
         public Action Deactivate { get; set; }

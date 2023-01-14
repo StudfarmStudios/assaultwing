@@ -18,11 +18,13 @@ namespace AW2.Helpers
 
         private readonly int IdBytes = 16;
 
-        public SecureId() {
+        public SecureId()
+        {
             Salt = RandomNumberGenerator.GetBytes(SaltSize);
         }
 
-        public string MakeId(string input) {
+        public string MakeId(string input)
+        {
             Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(input, Salt);
             pbkdf2.IterationCount = IterationCount;
             var hashedBytes = pbkdf2.GetBytes(IdBytes);
@@ -30,4 +32,4 @@ namespace AW2.Helpers
             return id;
         }
     }
-} 
+}

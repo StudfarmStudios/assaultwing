@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using NUnit.Framework;
 
@@ -54,7 +54,7 @@ namespace AW2.Helpers.Geometric
             {
                 // Let NUnit exceptions fall through.
                 if (e is AssertionException)
-                    throw e;
+                    throw;
                 Assert.IsFalse(shouldSucceed, "Legal polygon was denied creation");
             }
         }

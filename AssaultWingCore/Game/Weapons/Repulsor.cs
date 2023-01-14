@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;

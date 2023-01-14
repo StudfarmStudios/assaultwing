@@ -1,4 +1,4 @@
-﻿namespace AW2.Core
+namespace AW2.Core
 {
     /// <summary>
     /// Mode of network operation.

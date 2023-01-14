@@ -77,11 +77,13 @@ namespace AW2.Net
             // it with Steam networking.
         }
 
-        public override bool IsRemovedClientConnection(GameClientConnection connection) {
+        public override bool IsRemovedClientConnection(GameClientConnection connection)
+        {
             return _removedClientConnections.Contains(connection);
         }
 
-        public override void AddRemovedClientConnection(GameClientConnection connection) {
+        public override void AddRemovedClientConnection(GameClientConnection connection)
+        {
             _removedClientConnections.Add((GameClientConnectionSteam)connection);
         }
 
@@ -116,7 +118,7 @@ namespace AW2.Net
 
         private SteamApiService SteamApiService => Game.Services.GetService<SteamApiService>();
 
-        private class ClientCallbacks : SteamApiService.CallbackBundleKey {};
+        private class ClientCallbacks : SteamApiService.CallbackBundleKey { };
 
         public override void StartClient(AssaultWingCore game, AWEndPoint[] serverEndPoints, Action<IResult<Connection>> connectionHandler)
         {
@@ -127,26 +129,31 @@ namespace AW2.Net
 
             var steamEndPoints = serverEndPoints.OfType<AWEndPointSteam>().ToArray() ?? Array.Empty<AWEndPointSteam>();
             var endPointsString = string.Join(", ", serverEndPoints.Select(e => e.ToString()));
-            if (steamEndPoints.Length != serverEndPoints.Length) {
-                throw new ArgumentException("NetworkEngineSteam can only handle end points of the format ip:host:port and other steam network identity formats.\n" + 
+            if (steamEndPoints.Length != serverEndPoints.Length)
+            {
+                throw new ArgumentException("NetworkEngineSteam can only handle end points of the format ip:host:port and other steam network identity formats.\n" +
                     $"Some of these are not compatible '{endPointsString}'");
             }
             Log.Write($"Client starts connecting to the following end points: {endPointsString}");
 
-            foreach (var endpoint in steamEndPoints) {
+            foreach (var endpoint in steamEndPoints)
+            {
                 HSteamNetConnection connection;
-                if (endpoint.UseDirectIp) {
+                if (endpoint.UseDirectIp)
+                {
                     // Don't hide the client IP address from the server by using the steam relay network.
-                    connection = SteamNetworkingSockets.ConnectByIPAddress(ref endpoint.DirectIp, 0, new SteamNetworkingConfigValue_t[] {});
-                } else {
-                    connection = SteamNetworkingSockets.ConnectP2P(ref endpoint.SteamNetworkingIdentity, 0, 0, new SteamNetworkingConfigValue_t[] {});
+                    connection = SteamNetworkingSockets.ConnectByIPAddress(ref endpoint.DirectIp, 0, new SteamNetworkingConfigValue_t[] { });
                 }
-                
+                else
+                {
+                    connection = SteamNetworkingSockets.ConnectP2P(ref endpoint.SteamNetworkingIdentity, 0, 0, new SteamNetworkingConfigValue_t[] { });
+                }
+
                 GameServerConnectionAttempts.Add((endpoint, connection));
             }
         }
 
-        private class ServerCallbacks : SteamApiService.CallbackBundleKey {};
+        private class ServerCallbacks : SteamApiService.CallbackBundleKey { };
 
         public override void StartServer(Func<bool> allowNewConnection)
         {
@@ -160,44 +167,53 @@ namespace AW2.Net
             portOnlyIpv4Addr.SetIPv4(0, port);
             SteamNetworkingIPAddr portOnlyIpv6Addr = new SteamNetworkingIPAddr();
             portOnlyIpv6Addr.Clear();
-            portOnlyIpv6Addr.SetIPv6(new byte[] {0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0}, port);
+            portOnlyIpv6Addr.SetIPv6(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, port);
 
             // ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv4Addr, 0, new SteamNetworkingConfigValue_t[]{}));
             // ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv6Addr, 0, new SteamNetworkingConfigValue_t[]{}));
             // ListenSockets.Add(SteamNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{}));
 
-            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv4Addr, 0, new SteamNetworkingConfigValue_t[]{}));
-            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv6Addr, 0, new SteamNetworkingConfigValue_t[]{}));
-            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[]{}));
+            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv4Addr, 0, new SteamNetworkingConfigValue_t[] { }));
+            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketIP(ref portOnlyIpv6Addr, 0, new SteamNetworkingConfigValue_t[] { }));
+            ListenSockets.Add(SteamGameServerNetworkingSockets.CreateListenSocketP2P(0, 0, new SteamNetworkingConfigValue_t[] { }));
         }
 
-        private Callback<T>.DispatchDelegate LogCallbackError<T>(Callback<T>.DispatchDelegate action) {
-            return (T t) => { 
-                try {
+        private Callback<T>.DispatchDelegate LogCallbackError<T>(Callback<T>.DispatchDelegate action)
+        {
+            return (T t) =>
+            {
+                try
+                {
                     action(t);
-                } catch(Exception e) {
+                }
+                catch (Exception e)
+                {
                     Log.Write($"Error processing {typeof(T)}", e);
                 }
             };
         }
 
-        private void HandleGameServerConnectionStatus(GameServerConnectionSteam connection, SteamNetConnectionStatusChangedCallback_t status) {
+        private void HandleGameServerConnectionStatus(GameServerConnectionSteam connection, SteamNetConnectionStatusChangedCallback_t status)
+        {
             connection.Info = status.m_info;
 
-            switch(status.m_info.m_eState) {
+            switch (status.m_info.m_eState)
+            {
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
                     Log.Write($"Connection '{connection.Name}' lost. state: {SteamApiService.NetStateToString(status.m_info.m_eState)}: {status.m_info.m_eEndReason} / \"{status.m_info.m_szEndDebug}\"");
                     SteamNetworkingSockets.CloseConnection(status.m_hConn, 0, "Server connection lost", true);
                     _GameServerConnection?.QueueError("Server connection lost");
-                break;
+                    break;
             }
 
         }
 
-        private void OnClientConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status) {
+        private void OnClientConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status)
+        {
 
-            if (_GameServerConnection != null && _GameServerConnection.Handle.m_HSteamNetConnection == status.m_hConn.m_HSteamNetConnection) {
+            if (_GameServerConnection != null && _GameServerConnection.Handle.m_HSteamNetConnection == status.m_hConn.m_HSteamNetConnection)
+            {
                 HandleGameServerConnectionStatus(_GameServerConnection, status);
                 return;
             }
@@ -205,17 +221,21 @@ namespace AW2.Net
             var thisAttempt = GameServerConnectionAttempts.Find(t => t.Item2.m_HSteamNetConnection == status.m_hConn.m_HSteamNetConnection);
             var otherAttempts = GameServerConnectionAttempts.Where(t => t.Item2.m_HSteamNetConnection != status.m_hConn.m_HSteamNetConnection).ToArray();
 
-            if (thisAttempt.Item1 == null) {
+            if (thisAttempt.Item1 == null)
+            {
                 return; // Ignore statuses for connection attemps that we have already closed and forgotten about.
             }
 
             var endpoint = thisAttempt.Item1;
             var handler = StartClientConnectionHandler;
 
-            switch(status.m_info.m_eState) {
+            switch (status.m_info.m_eState)
+            {
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
-                    if (handler != null) {
-                        foreach (var otherAttempt in otherAttempts) {
+                    if (handler != null)
+                    {
+                        foreach (var otherAttempt in otherAttempts)
+                        {
                             // Close other parallel connections immediately to avoid confusion
                             SteamNetworkingSockets.CloseConnection(otherAttempt.Item2, 0, "Other parallel connection attempt succeeded", false);
                         }
@@ -224,55 +244,70 @@ namespace AW2.Net
                         _GameServerConnection = new GameServerConnectionSteam(Game, status.m_hConn, status.m_info, endpoint);
                         Log.Write($"Connection '{_GameServerConnection.Name}' established.");
                         handler(new Result<Connection>(_GameServerConnection));
-                    } else {
+                    }
+                    else
+                    {
                         EndConnectionAttempt(status, endpoint, "Connected, but another connection already selected.");
                     }
                     break;
 
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
-                    if (otherAttempts.Length == 0) { // Final / only attempt failed
-                        EndConnectionAttempt(status, endpoint, "Failed to connect to server."); 
+                    if (otherAttempts.Length == 0)
+                    { // Final / only attempt failed
+                        EndConnectionAttempt(status, endpoint, "Failed to connect to server.");
                         StartClientConnectionHandler = null;
-                        if (handler != null) {
+                        if (handler != null)
+                        {
                             handler(new Result<Connection>(new ApplicationException("Failed to connect to server")));
                         }
-                    } else {
+                    }
+                    else
+                    {
                         // One of multiple attempts failed. Let others keep trying.
                         EndConnectionAttempt(status, endpoint, $"Other {otherAttempts.Length} attempt(s) ongoing.");
                     }
-                break;
+                    break;
             }
         }
 
-        private void EndConnectionAttempt(SteamNetConnectionStatusChangedCallback_t status, AWEndPointSteam endpoint, string debugMessage) {
+        private void EndConnectionAttempt(SteamNetConnectionStatusChangedCallback_t status, AWEndPointSteam endpoint, string debugMessage)
+        {
             Log.Write($"Ending connection attempt to endpoint {endpoint}. {debugMessage} handle: #{status.m_hConn}, " +
                 $"state: {SteamApiService.NetStateToString(status.m_info.m_eState)}: {status.m_info.m_eEndReason} / \"{status.m_info.m_szEndDebug}\"");
             SteamNetworkingSockets.CloseConnection(status.m_hConn, 0, debugMessage, true);
             GameServerConnectionAttempts.RemoveAll(t => t.Item2.m_HSteamNetConnection == status.m_hConn.m_HSteamNetConnection);
         }
 
-        public void OnServerConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status) {
+        public void OnServerConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t status)
+        {
             var identity = Steam.IdentityToString(status.m_info.m_identityRemote);
             var connection = GetGameClientConnectionByHandle(status.m_hConn);
 
-            if (connection != null) {
+            if (connection != null)
+            {
                 connection.Info = status.m_info;
             }
 
             var logPrefix = $"Connection #{status.m_hConn}";
 
-            switch(status.m_info.m_eState) {
+            switch (status.m_info.m_eState)
+            {
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connecting:
-                    if (AllowNewServerConnection()) {
+                    if (AllowNewServerConnection())
+                    {
                         var acceptResult = SteamGameServerNetworkingSockets.AcceptConnection(status.m_hConn);
-                        switch (acceptResult) {
+                        switch (acceptResult)
+                        {
                             case EResult.k_EResultOK:
-                                if (connection == null) {
+                                if (connection == null)
+                                {
                                     connection = new GameClientConnectionSteam(Game, status.m_hConn, status.m_info);
                                     _GameClientConnections.Add(connection);
                                     Log.Write($"{logPrefix}: Game client connection created: {connection.Name}");
-                                } else {
+                                }
+                                else
+                                {
                                     // Should not happen:
                                     Log.Write($"{logPrefix}: Error! Connection status connecting, but book keepping shows this connection is already active! connection: {connection.Name}");
                                 }
@@ -281,8 +316,11 @@ namespace AW2.Net
                                 Log.Write($"{logPrefix}: {status.m_hConn} Accepting client connection failed. result: {acceptResult}");
                                 break;
                         }
-                    } else {
-                        if (connection == null) {
+                    }
+                    else
+                    {
+                        if (connection == null)
+                        {
                             connection = new GameClientConnectionSteam(Game, status.m_hConn, status.m_info);
                         }
                         var mess = new ConnectionClosingMessage { Info = "game server refused joining" };
@@ -290,19 +328,22 @@ namespace AW2.Net
                         Log.Write($"{logPrefix}: Server refused connection.");
                         connection.Dispose();
                     }
-                   break;
+                    break;
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
-                    if (connection == null) {
+                    if (connection == null)
+                    {
                         // Should not happen:
                         Log.Write($"{logPrefix}: Terminal error state for unknown client connection. state: {SteamApiService.NetStateToString(status.m_info.m_eState)}");
                         SteamGameServerNetworkingSockets.CloseConnection(status.m_hConn, (int)status.m_info.m_eState, "Unknown connection closed", true);
-                    } else {
+                    }
+                    else
+                    {
                         Log.Write($"{logPrefix}: Terminal error state for client connection, closing {connection.Name}. state: {SteamApiService.NetStateToString(status.m_info.m_eState)}");
                         connection.QueueError("Client connection lost");
                     }
-                break;
-         
+                    break;
+
             }
         }
 
@@ -314,10 +355,11 @@ namespace AW2.Net
                 _GameClientConnections.Remove(connection);
             }
             _removedClientConnections.Clear();
-            if (_GameServerConnection != null && _GameServerConnection.IsDisposed) {
+            if (_GameServerConnection != null && _GameServerConnection.IsDisposed)
+            {
                 _GameServerConnection = null;
             }
-            
+
             ProcessDisposedConnections();
 
             _GameClientConnections.RemoveAll(c => c.IsDisposed);
@@ -337,7 +379,8 @@ namespace AW2.Net
             Log.Write("Stopping game server");
 
 
-            foreach (var s in ListenSockets) {
+            foreach (var s in ListenSockets)
+            {
                 SteamGameServerNetworkingSockets.CloseListenSocket(s);
             }
 
@@ -363,18 +406,21 @@ namespace AW2.Net
 
         public override void Update()
         {
-            foreach (var conn in AllConnections) {
+            foreach (var conn in AllConnections)
+            {
                 conn.ReceiveMessages();
             }
-            
+
             HandleClientState();
 
-            foreach (var conn in AllConnections) {
+            foreach (var conn in AllConnections)
+            {
                 conn.PingInfo.Update(); // send pings, they are unreliable and we don't use Nagle for unreliables, so they should be sent quickly
             }
 
             // enumerate over a copy to allow adding MessageHandlers during enumeration
-            foreach (var handler in MessageHandlers.ToList()) {
+            foreach (var handler in MessageHandlers.ToList())
+            {
                 if (!handler.Disposed) handler.HandleMessages();
             }
 
@@ -390,7 +436,8 @@ namespace AW2.Net
             RemoveClosedConnections();
             PurgeUnhandledMessages();
         }
-        override public string GetPilotId(int connectionId) {
+        override public string GetPilotId(int connectionId)
+        {
             var connection = GetConnection(connectionId);
             var steamId = connection.SteamId;
             var id = secureId.MakeId(steamId);

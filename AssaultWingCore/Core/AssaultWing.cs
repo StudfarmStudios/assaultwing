@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -48,7 +48,7 @@ namespace AW2.Core
         public Control ChatStartControl { get; set; }
 
         private ProgramLogic<E> Logic { get; set; }
-        public override bool UpdateNeeded { get { return Logic.GameStateChanged;} set { Logic.GameStateChanged = value; }}
+        public override bool UpdateNeeded { get { return Logic.GameStateChanged; } set { Logic.GameStateChanged = value; } }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public List<Tuple<Control, Action>> CustomControls { get; private set; }
         public BackgroundTask ArenaLoadTask { get; private set; }
@@ -63,10 +63,13 @@ namespace AW2.Core
         {
             // If either steam server APIs or the regular APIs are initialized, we consider us being in the Steam mode.
             IsSteam = Services.GetService<SteamApiService>().Initialized || (Services.GetService<SteamGameServerService>()?.Initialized ?? false);
-            if (IsSteam) {
+            if (IsSteam)
+            {
                 Log.Write("AssaultWing is in Steam mode");
                 NetworkEngine = new NetworkEngineSteam(this, 30);
-            } else {
+            }
+            else
+            {
                 Log.Write("AssaultWing is not in SteamMode, due to neither SteamAPI nor SteamGameServer being initialized. Creating NetworkEngineRaw (instead of NetworkEngineSteam).");
                 NetworkEngine = new NetworkEngineRaw(this, 30);
             }
@@ -108,9 +111,12 @@ namespace AW2.Core
         {
             try
             {
-                if (IsSteam) {
+                if (IsSteam)
+                {
                     Services.GetService<SteamApiService>().ActivateGameOverlayToWebPage(url);
-                } else {
+                }
+                else
+                {
                     ProcessStartInfo processStartInfo = new ProcessStartInfo { FileName = url, UseShellExecute = true };
                     Process.Start(processStartInfo);
                 }
@@ -458,7 +464,7 @@ namespace AW2.Core
         private void GobRemovedFromArenaHandler(Gob gob)
         {
             if (!gob.IsRelevant) return;
-            _pendingGobDeletionMessage =_pendingGobDeletionMessage ?? new GobDeletionMessage();
+            _pendingGobDeletionMessage = _pendingGobDeletionMessage ?? new GobDeletionMessage();
             _pendingGobDeletionMessage.GobIDs.Add(gob.ID);
         }
 

@@ -148,7 +148,8 @@ namespace AW2.Menu
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
-            if (_components != null) {
+            if (_components != null)
+            {
                 foreach (var component in _components)
                     if (component != null) component.UnloadContent();
             }

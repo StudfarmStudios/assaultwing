@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Game.GobUtils
@@ -7,7 +7,7 @@ namespace AW2.Game.GobUtils
     {
         [TypeParameter]
         private EquipInfoAmountType _hull;
-        
+
         [TypeParameter]
         private EquipInfoAmountType _armor;
 

@@ -1,4 +1,4 @@
-﻿/* Poly2Tri
+/* Poly2Tri
  * Copyright (c) 2009-2010, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  *
@@ -237,7 +237,7 @@ namespace Poly2Tri.Triangulation.Polygon
                 _last = p;
                 _points.Add(p);
             }
-            first = (PolygonPoint) _points[0];
+            first = (PolygonPoint)_points[0];
             _last.Next = first;
             first.Previous = _last;
         }

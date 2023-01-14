@@ -1,4 +1,4 @@
-﻿namespace AW2.Net.ConnectionUtils
+namespace AW2.Net.ConnectionUtils
 {
     [System.Diagnostics.DebuggerDisplay("{State}, Arena={CurrentArenaName}, Running={IsRunningArena}")]
     public class GameClientStatus

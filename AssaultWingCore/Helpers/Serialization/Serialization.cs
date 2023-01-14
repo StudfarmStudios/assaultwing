@@ -395,7 +395,7 @@ namespace AW2.Helpers.Serialization
 
             // IEnumerable<T> for some type T requires recursion, too.
             Type iEnumerableElementType = null;
-            if (Array.Exists(type.GetInterfaces(), delegate(Type iface)
+            if (Array.Exists(type.GetInterfaces(), delegate (Type iface)
                 {
                     bool good = iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEnumerable<>);
                     if (good) iEnumerableElementType = iface.GetGenericArguments()[0];

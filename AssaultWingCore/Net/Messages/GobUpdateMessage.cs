@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Game;
@@ -120,13 +120,13 @@ namespace AW2.Net.Messages
 #if NETWORK_PROFILING
                 using (new NetworkProfilingScope("GobUpdateMessageHeader"))
 #endif
-                    checked
-                    {
-                        writer.Write((byte)_gobIds.Count);
-                        writer.Write((byte)_collisionEventCount);
-                        writer.Write((ushort)writeBytes.Length);
-                        foreach (var gobId in _gobIds) writer.Write((short)gobId);
-                    }
+                checked
+                {
+                    writer.Write((byte)_gobIds.Count);
+                    writer.Write((byte)_collisionEventCount);
+                    writer.Write((ushort)writeBytes.Length);
+                    foreach (var gobId in _gobIds) writer.Write((short)gobId);
+                }
                 writer.Write(writeBytes, 0, writeBytes.Length);
             }
         }

@@ -1,4 +1,4 @@
-﻿namespace AW2.Net
+namespace AW2.Net
 {
     /// <summary>
     /// Flags for message headers.

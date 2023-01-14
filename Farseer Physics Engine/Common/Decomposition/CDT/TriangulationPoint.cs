@@ -1,4 +1,4 @@
-﻿/* Poly2Tri
+/* Poly2Tri
  * Copyright (c) 2009-2010, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  *
@@ -50,13 +50,13 @@ namespace Poly2Tri.Triangulation
 
         public float Xf
         {
-            get { return (float) X; }
+            get { return (float)X; }
             set { X = value; }
         }
 
         public float Yf
         {
-            get { return (float) Y; }
+            get { return (float)Y; }
             set { Y = value; }
         }
 

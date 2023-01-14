@@ -1,4 +1,4 @@
-﻿namespace AW2.UI
+namespace AW2.UI
 {
     /// <summary>
     /// The type of a player's control.

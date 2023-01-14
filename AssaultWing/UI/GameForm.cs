@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using AW2.Core;
 using AW2.Helpers;
@@ -59,25 +59,28 @@ namespace AW2.UI
             AW2.Helpers.Log.Written -= AddToLogView;
 
             Services.GetService<SteamApiService>().Dispose();
-            
+
             base.Dispose();
         }
         public void SetWindowed()
         {
-            if(_graphics.IsFullScreen) {
+            if (_graphics.IsFullScreen)
+            {
                 _graphics.ToggleFullScreen();
             }
         }
         public void SetFullScreen(int width, int height)
         {
-            if(!_graphics.IsFullScreen) {
-                _graphics.ToggleFullScreen();                
+            if (!_graphics.IsFullScreen)
+            {
+                _graphics.ToggleFullScreen();
             }
             _graphics.PreferredBackBufferWidth = width;
             _graphics.PreferredBackBufferHeight = height;
-            _graphics.ApplyChanges();            
+            _graphics.ApplyChanges();
         }
-        public void Close() {
+        public void Close()
+        {
             Game.EndRun();
             Exit();
         }
@@ -87,7 +90,7 @@ namespace AW2.UI
         }
 
         protected override void Dispose(bool disposing)
-        {        
+        {
             base.Dispose(disposing);
         }
 
@@ -108,7 +111,8 @@ namespace AW2.UI
 
 
             //if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
-            _game = new AssaultWing<ClientEvent>(Services, commandLineOptions, game => {
+            _game = new AssaultWing<ClientEvent>(Services, commandLineOptions, game =>
+            {
                 if (commandLineOptions.DedicatedServer)
                     return new DedicatedServerLogic<ClientEvent>(game, consoleServer: false);
                 else if (commandLineOptions.QuickStart != null)
@@ -121,19 +125,19 @@ namespace AW2.UI
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {
-                GetTitle = () => {return Window.Title;},
-                SetTitle = (Action<string>)((text) => {Window.Title = text;}),
+                GetTitle = () => { return Window.Title; },
+                SetTitle = (Action<string>)((text) => { Window.Title = text; }),
                 GetClientBounds = () => { return _graphics.IsFullScreen ? Window.ClientBounds : new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height); },
                 GetFullScreen = () => _graphics.IsFullScreen,
                 SetWindowed = (Action)(SetWindowed),
                 SetFullScreen = (Action<int, int>)(SetFullScreen),
                 IsVerticalSynced = () => _graphics.SynchronizeWithVerticalRetrace,
-                EnableVerticalSync = (Action)(() => {_graphics.SynchronizeWithVerticalRetrace = true;}),
-                DisableVerticalSync = (Action)(() => {_graphics.SynchronizeWithVerticalRetrace = false;}),
-                EnsureCursorHidden = (Action)(() => {IsMouseVisible = false;}),
-                EnsureCursorShown = (Action)(() => {IsMouseVisible = true;}),
+                EnableVerticalSync = (Action)(() => { _graphics.SynchronizeWithVerticalRetrace = true; }),
+                DisableVerticalSync = (Action)(() => { _graphics.SynchronizeWithVerticalRetrace = false; }),
+                EnsureCursorHidden = (Action)(() => { IsMouseVisible = false; }),
+                EnsureCursorShown = (Action)(() => { IsMouseVisible = true; }),
             });
-            
+
             //_gameView.Draw += _game.Draw;
             //_gameView.ExternalWndProc += WndProcImpl;
             //_gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
@@ -144,16 +148,17 @@ namespace AW2.UI
             _awGameRunner.Update(gameTime);
         }
 
-        private void ApplyInitialInMenuGraphicsSettings() {
+        private void ApplyInitialInMenuGraphicsSettings()
+        {
             var displayMode = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode;
             var gfxSetup = Game.Settings.Graphics;
 
 
             _graphics.PreferredBackBufferWidth = Math.Max(800, displayMode.Width / 2);
             _graphics.PreferredBackBufferHeight = Math.Max(600, displayMode.Height / 2);
-        
+
             _graphics.SynchronizeWithVerticalRetrace = gfxSetup.IsVerticalSynced;
-            _graphics.ApplyChanges();            
+            _graphics.ApplyChanges();
         }
 
 

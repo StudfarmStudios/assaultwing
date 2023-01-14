@@ -1,4 +1,4 @@
-﻿namespace AW2.Net
+namespace AW2.Net
 {
     /// <summary>
     /// How to send a message over a network.

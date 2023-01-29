@@ -1,2 +1,3 @@
-public struct DedicatedServerEvent {
+public struct DedicatedServerEvent
+{
 }

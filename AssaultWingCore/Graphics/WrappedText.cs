@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +23,7 @@ namespace AW2.Graphics
         public string[] WrapToWidth(float width)
         {
             var lines = new List<string>();
-            for (int startIndex = GetNextWordStart(-1); startIndex < _text.Length; )
+            for (int startIndex = GetNextWordStart(-1); startIndex < _text.Length;)
             {
                 var endIndex = GetPreviousWordEnd(startIndex, startIndex + (int)(width / _enWidth)); // exclusive index
                 if (endIndex == startIndex) endIndex = GetNextWordEnd(endIndex);

@@ -40,7 +40,8 @@ namespace AW2.Helpers
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             var count = 10000;
-            foreach (var i in Enumerable.Range(0, count)) {
+            foreach (var i in Enumerable.Range(0, count))
+            {
                 accumulator += secureId.MakeId($"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa {i}").Length;
             }
             stopWatch.Stop();

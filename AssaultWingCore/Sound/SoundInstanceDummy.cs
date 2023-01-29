@@ -1,4 +1,4 @@
-﻿namespace AW2.Sound
+namespace AW2.Sound
 {
     public class SoundInstanceDummy : SoundInstance
     {

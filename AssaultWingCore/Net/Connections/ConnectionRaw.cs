@@ -250,7 +250,8 @@ namespace AW2.Net.Connections
             ConnectionResults = new ThreadSafeWrapper<Queue<Result<ConnectionRaw>>>(new Queue<Result<ConnectionRaw>>());
         }
 
-        override public void QueueError(string message) {
+        override public void QueueError(string message)
+        {
             Errors.Do(queue => queue.Enqueue(message));
         }
 

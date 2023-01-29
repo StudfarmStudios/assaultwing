@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using AW2.Core;
 using AW2.Helpers;
@@ -49,7 +49,7 @@ namespace AW2.UI
 
             InitializeGame(commandLineOptions);
             InitializeGameForm();
-            _awGameRunner = new AWGameRunner(_game, () => {}, useParentTime: false, sleepIfEarly: true, graphicsEnabled: false);
+            _awGameRunner = new AWGameRunner(_game, () => { }, useParentTime: false, sleepIfEarly: true, graphicsEnabled: false);
         }
 
         public void FinishGame()
@@ -76,19 +76,20 @@ namespace AW2.UI
         }
         public void SetFullScreen(int width, int height)
         {
-        
+
         }
-        public void Close() {
+        public void Close()
+        {
             Game.EndRun();
             //Exit();
         }
         public void ForceCursorShown()
         {
         }
-        
+
 
         protected virtual void Dispose(bool disposing)
-        {     
+        {
         }
 
         private void InitializeGameForm()
@@ -104,19 +105,19 @@ namespace AW2.UI
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {
-                GetTitle = () => {return "AssaultWing";},
-                SetTitle = (Action<string>)((text) => {;}),
+                GetTitle = () => { return "AssaultWing"; },
+                SetTitle = (Action<string>)((text) => {; }),
                 GetClientBounds = () => { return new Rectangle(0, 0, 800, 600); },
                 GetFullScreen = () => false,
                 SetWindowed = (Action)(SetWindowed),
                 SetFullScreen = (Action<int, int>)(SetFullScreen),
                 IsVerticalSynced = () => false,
-                EnableVerticalSync = (Action)(() => {}),
-                DisableVerticalSync = (Action)(() => {}),
-                EnsureCursorHidden = (Action)(() => {}),
-                EnsureCursorShown = (Action)(() => {}),
+                EnableVerticalSync = (Action)(() => { }),
+                DisableVerticalSync = (Action)(() => { }),
+                EnsureCursorHidden = (Action)(() => { }),
+                EnsureCursorShown = (Action)(() => { }),
             });
-            
+
             //_gameView.Draw += _game.Draw;
             //_gameView.ExternalWndProc += WndProcImpl;
             //_gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();

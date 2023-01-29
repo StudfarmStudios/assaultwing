@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 
@@ -46,7 +46,7 @@ namespace AW2.Menu
         public Texture2D HighlightMainTexture { get; private set; }
         public Texture2D WeaponHeaders { get; private set; }
         public Texture2D ListTextCursorTexture { get; private set; }
-        public Texture2D CursorMainTexture{ get; private set; }
+        public Texture2D CursorMainTexture { get; private set; }
 
         #endregion
 

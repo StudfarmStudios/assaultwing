@@ -1,4 +1,4 @@
-﻿namespace AW2.Graphics
+namespace AW2.Graphics
 {
     /// <summary>
     /// Type of horizontal alignment.

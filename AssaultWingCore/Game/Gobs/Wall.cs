@@ -81,7 +81,7 @@ namespace AW2.Game.Gobs
         {
             MoveType = MoveType.Static;
             _destructible = true;
-            Set3DModel(new[] 
+            Set3DModel(new[]
                 {
                     new VertexPositionNormalTexture(new Vector3(0,0,0), -Vector3.UnitX, Vector2.Zero),
                     new VertexPositionNormalTexture(new Vector3(100,0,0), Vector3.UnitX, Vector2.UnitX),

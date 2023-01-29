@@ -37,10 +37,10 @@ namespace AW2.Core.OverlayComponents
             _keysDownSinceEntry = new List<Keys>(Keyboard.GetState().GetPressedKeys());
             _gamePadButtonsDownsinceEntry =
                 (from gamePad in Enumerable.Range(0, 4)
-                from button in Enum.GetValues(typeof(GamePadButtonType)).Cast<GamePadButtonType>()
-                let buttonControlType = new GamePadButtonControlType(gamePad, button)
-                where buttonControlType.GetControl().Pulse
-                select buttonControlType).ToList();
+                 from button in Enum.GetValues(typeof(GamePadButtonType)).Cast<GamePadButtonType>()
+                 let buttonControlType = new GamePadButtonControlType(gamePad, button)
+                 where buttonControlType.GetControl().Pulse
+                 select buttonControlType).ToList();
         }
 
         public override void Update()

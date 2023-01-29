@@ -25,7 +25,7 @@ namespace AW2.Helpers
             public Color Color;
 
             public DebugDrawContext(Matrix view, Matrix projection)
-                :this (view, projection, Matrix.Identity)
+                : this(view, projection, Matrix.Identity)
             {
             }
 

@@ -123,9 +123,9 @@ namespace FarseerPhysics.Collision.Shapes
                 int i2 = i + 1 < vertices.Count ? i + 1 : 0;
                 Vector2 edge = Vertices[i2] - Vertices[i1];
 
-                #if FARSEER_INPUT_DEBUG
+#if FARSEER_INPUT_DEBUG
                 Debug.Assert(edge.LengthSquared() > Settings.Epsilon * Settings.Epsilon);
-                #endif
+#endif
 
                 Vector2 temp = new Vector2(edge.Y, -edge.X);
                 temp.Normalize();

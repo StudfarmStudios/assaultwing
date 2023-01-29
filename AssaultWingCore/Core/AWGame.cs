@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
@@ -41,7 +41,7 @@ namespace AW2.Core
         // <summary>
         // In some special cases Update needs to be called multiple times before being ready to paint.
         // </summary>
-        public virtual bool UpdateNeeded { get; set; }        
+        public virtual bool UpdateNeeded { get; set; }
 
         public AWGame(GameServiceContainer serviceContainer, bool ignoreGraphicsContent)
         {

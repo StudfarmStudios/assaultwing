@@ -2,22 +2,22 @@ using Steamworks;
 
 namespace AW2.Core
 {
-  public class SteamComponent : AWGameComponent
-  {
-    public SteamComponent(AssaultWingCore game, int updateOrder)
-        : base(game, updateOrder)
+    public class SteamComponent : AWGameComponent
     {
-    }
- 
-    public override void Update()
-    {
-      if (!Game.Services.GetService<SteamApiService>().Initialized)
-      {
-        return;
-      }
+        public SteamComponent(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
+        {
+        }
 
-      SteamAPI.RunCallbacks();
-    }
+        public override void Update()
+        {
+            if (!Game.Services.GetService<SteamApiService>().Initialized)
+            {
+                return;
+            }
 
-  }
+            SteamAPI.RunCallbacks();
+        }
+
+    }
 }

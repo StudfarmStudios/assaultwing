@@ -80,7 +80,7 @@ namespace AW2.Net.Connections
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
         public ThreadSafeWrapper<ITypedQueue<Message>> Messages { get; }
-        
+
         public PingInfo PingInfo { get; init; }
 
         abstract public void Send(Message message);
@@ -103,7 +103,8 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Implementation must call this when disposing a connection.
         /// </summary>
-        protected void DisposeId() {
+        protected void DisposeId()
+        {
             Log.Write("Disposing " + Name);
             g_unusedIDs.Enqueue(ID);
         }

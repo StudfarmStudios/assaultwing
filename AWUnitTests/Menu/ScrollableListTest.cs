@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -42,7 +42,7 @@ namespace AW2.Menu
         {
             Action<int[], int[], bool[], ScrollableList> assertForEachVisible = (expReals, expVisibles, expSelects, selList) =>
             {
-                Assert.IsTrue(expReals.Length == expVisibles.Length && expReals.Length==expSelects.Length);
+                Assert.IsTrue(expReals.Length == expVisibles.Length && expReals.Length == expSelects.Length);
                 List<Tuple<int, int, bool>> results = new List<Tuple<int, int, bool>>();
                 selList.ForEachVisible((realIndex, visibleIndex, isSelected) => results.Add(Tuple.Create(realIndex, visibleIndex, isSelected)));
                 for (int i = 0; i < expReals.Length; i++)

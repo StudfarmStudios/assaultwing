@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -51,8 +51,8 @@ namespace AW2.Helpers
         /// <summary>
         /// The task has completed.
         /// </summary>
-        Completed, 
-        
+        Completed,
+
         /// <summary>
         /// The task has been queued but hasn't started execution.
         /// </summary>
@@ -152,10 +152,10 @@ namespace AW2.Helpers
                         _threads.Remove(item);
                         returnValue = WorkItemStatus.Aborted;
                     }
-                    else 
+                    else
                         returnValue = WorkItemStatus.Executing;
                 }
-                else 
+                else
                     returnValue = WorkItemStatus.Completed;
             }
             if (joiningThread != null)

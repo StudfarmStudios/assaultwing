@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -79,7 +79,7 @@ namespace AW2.Net.MessageHandling
         #region Handler implementations
 
         // TODO: Peter: Steam network, connecting to selected server
-        
+
         private void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
             var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer;
@@ -319,12 +319,12 @@ namespace AW2.Net.MessageHandling
             switch (mess.Subclass)
             {
                 case SpectatorSettingsRequest.SubclassType.Player:
-                    newSpectator = new Player(Game, 
+                    newSpectator = new Player(Game,
                         pilotId: "<uninitialised pilotId>",
-                        name: "<uninitialised>", 
-                        shipTypeName: CanonicalString.Null, 
+                        name: "<uninitialised>",
+                        shipTypeName: CanonicalString.Null,
                         weapon2Name: CanonicalString.Null,
-                        extraDeviceName: CanonicalString.Null, 
+                        extraDeviceName: CanonicalString.Null,
                         connectionId: mess.ConnectionID);
                     break;
                 case SpectatorSettingsRequest.SubclassType.BotPlayer:

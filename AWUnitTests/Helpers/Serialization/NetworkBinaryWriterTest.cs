@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -60,7 +60,7 @@ namespace AW2.Helpers.Serialization
             MemoryStream ms2 = new MemoryStream();
             NetworkBinaryWriter writer1 = new NetworkBinaryWriter(ms1);
             NetworkBinaryWriter writer2 = new ProfilingNetworkBinaryWriter(ms2);
-            
+
             writer1.Write(new byte[] { 0xca, 0xfe, 0xd0 }, 1, 2);
             writer2.Write(new byte[] { 0xca, 0xfe, 0xd0 }, 1, 2);
 
@@ -72,17 +72,17 @@ namespace AW2.Helpers.Serialization
 
             writer1.Write((char)'m');
             writer2.Write((char)'m');
-            
+
             writer1.Write((short)32100);
             writer2.Write((short)32100);
             writer1.Write((ushort)49200);
             writer2.Write((ushort)49200);
-            
+
             writer1.Write((int)0x1337f00d);
             writer2.Write((int)0x1337f00d);
             writer1.Write((uint)0xdeadbeef);
             writer2.Write((uint)0xdeadbeef);
-            
+
             writer1.Write((byte)0x3c);
             writer2.Write((byte)0x3c);
 

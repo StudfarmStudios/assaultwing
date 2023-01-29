@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
@@ -28,7 +28,7 @@ namespace AW2.UI
         protected MenuEngineImpl MenuEngine { get; init; }
         private OverlayDialog OverlayDialog { get; init; }
         private PlayerChat PlayerChat { get; init; }
-        private SteamServerComponent SteamServerComponent { get; init;}
+        private SteamServerComponent SteamServerComponent { get; init; }
 
         protected bool MainMenuActive { get { return GameState == GAMESTATE_MENU && MenuEngine.MainMenu.Active; } }
         protected bool MainMenuNetworkItemsActive { get { return MainMenuActive && MenuEngine.MainMenu.IsActive(MenuEngine.MainMenu.ItemCollections.NetworkItems); } }
@@ -87,7 +87,7 @@ namespace AW2.UI
         public override void Update()
         {
             HandleNetworkingErrors();
-            if (GameState == GAMESTATE_INTRO && IntroEngine.Mode == IntroEngine.ModeType.Finished) 
+            if (GameState == GAMESTATE_INTRO && IntroEngine.Mode == IntroEngine.ModeType.Finished)
                 ShowMainMenuAndResetGameplay();
             if (EquipMenuActive) CheckArenaStart();
             if (Game.ArenaLoadTask.TaskCompleted) Handle_ArenaLoadingFinished();
@@ -113,7 +113,7 @@ namespace AW2.UI
         }
 
         public override void StartServer()
-        {   
+        {
             SteamServerComponent.Enabled = true;
         }
 

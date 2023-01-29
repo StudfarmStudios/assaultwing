@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -170,28 +170,28 @@ namespace AW2.Game.Gobs
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
-                checked
+            checked
+            {
+                // Note: Gob.{Pos,Rotation,Move,RotationSpeed} are computed from Host
+                // and don't need to be serialized except at birth.
+                var baseSerializationMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
+                    ? mode
+                    : mode & ~SerializationModeFlags.VaryingDataFromServer;
+                base.Serialize(writer, baseSerializationMode);
+                if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
                 {
-                    // Note: Gob.{Pos,Rotation,Move,RotationSpeed} are computed from Host
-                    // and don't need to be serialized except at birth.
-                    var baseSerializationMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
-                        ? mode
-                        : mode & ~SerializationModeFlags.VaryingDataFromServer;
-                    base.Serialize(writer, baseSerializationMode);
-                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
-                    {
-                        var hostID = Host != null ? Host.ID : Gob.INVALID_ID;
-                        writer.Write((short)hostID);
-                        writer.Write((byte)HostBoneIndex);
-                    }
-                    if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
-                    {
-                        writer.Write((byte)_wallPunchPosesForClient.Count);
-                        foreach (var wallPunchPos in _wallPunchPosesForClient)
-                            writer.WriteHalf(wallPunchPos);
-                        _wallPunchPosesForClient.Clear();
-                    }
+                    var hostID = Host != null ? Host.ID : Gob.INVALID_ID;
+                    writer.Write((short)hostID);
+                    writer.Write((byte)HostBoneIndex);
                 }
+                if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
+                {
+                    writer.Write((byte)_wallPunchPosesForClient.Count);
+                    foreach (var wallPunchPos in _wallPunchPosesForClient)
+                        writer.WriteHalf(wallPunchPos);
+                    _wallPunchPosesForClient.Clear();
+                }
+            }
         }
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)

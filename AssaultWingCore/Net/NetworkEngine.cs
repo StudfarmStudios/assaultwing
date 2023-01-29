@@ -38,7 +38,7 @@ namespace AW2.Net
         {
             MessageHandlers = new List<MessageHandlerBase>();
         }
-    
+
         /// <summary>
         /// Handler of connection results for client that is connecting to a game server.
         /// </summary>
@@ -48,34 +48,34 @@ namespace AW2.Net
         /// The handlers of network messages.
         /// </summary>
         public List<MessageHandlerBase> MessageHandlers { get; private set; }
-    
-    
+
+
         /// <summary>
         /// Turns this game instance into a game server to whom other game instances
         /// can connect as game clients.
         /// </summary>
         /// <param name="connectionHandler">Handler of connection result.</param>
         public abstract void StartServer(Func<bool> allowNewConnection);
-    
+
         /// <summary>
         /// Turns this game server into a standalone game instance and disposes of
         /// any connections to game clients.
         /// </summary>
         public abstract void StopServer();
-    
+
         /// <summary> 
         /// Turns this game instance into a game client by connecting to a game server.
         /// Poll <c>Connection.ConnectionResults</c> to find out when and if
         /// the connection was successfully estblished.
         /// </summary>
         public abstract void StartClient(AssaultWingCore game, AWEndPoint[] serverEndPoints, Action<IResult<Connection>> connectionHandler);
-    
+
         /// <summary>
         /// Turns this game client into a standalone game instance by disconnecting
         /// from the game server.
         /// </summary>
         public abstract void StopClient();
-    
+
         /// <summary>
         /// Drops the connection to a game client. To be called only as the game server.
         /// </summary>
@@ -85,7 +85,8 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot drop client in mode " + Game.NetworkMode);
 
             if (IsRemovedClientConnection(connection)) return;
-            if (!GameClientConnections.Contains(connection)) {
+            if (!GameClientConnections.Contains(connection))
+            {
                 Log.Write($"DropClient called for unknown client connection {connection.Name}");
                 return;
             }
@@ -107,7 +108,8 @@ namespace AW2.Net
         /// Called from Update when connections to be removed have been disposed, but
         /// not yet removed from the list of game client connections.
         /// </summary>
-        protected void ProcessDisposedConnections() {
+        protected void ProcessDisposedConnections()
+        {
             if (Game.DataEngine.Arena != null)
             {
                 foreach (var conn in GameClientConnections)
@@ -117,7 +119,7 @@ namespace AW2.Net
             }
         }
 
-    
+
         /// <summary>
         /// Is already in the list of removed connections.
         /// </summary>
@@ -127,13 +129,13 @@ namespace AW2.Net
         /// Add to the list of removed client connections to be actually cleaned up handled later.
         /// </summary>
         public abstract void AddRemovedClientConnection(GameClientConnection connection);
-    
+
         /// <summary>
         /// Send dummy UDP packets to probable UDP end points of the client to increase
         /// probability of our NAT forwarding UDP packets from the client to us.
         /// </summary>
         public abstract void DoClientUdpHandshake(GameServerHandshakeRequestTCP mess);
-    
+
         /// <summary>
         /// Sends a message to all game clients. Use this method instead of enumerating
         /// over <see cref="GameClientConnections"/> and sending to each separately.
@@ -163,30 +165,30 @@ namespace AW2.Net
         {
             return GetGameClientConnection(connectionID).PingInfo.PingTime;
         }
-    
+
         /// <summary>
         /// Network connections to game clients. Nonempty only on a game server.
         /// </summary>
         public abstract IEnumerable<GameClientConnection> GameClientConnections { get; }
-    
+
         /// <summary>
         /// Network connection to the game server of the current game session,
         /// or <c>null</c> if no such live connection exists
         /// (including the case that we are the game server).
         /// </summary>
         public abstract Connection GameServerConnection { get; }
-    
+
         /// <summary>
         /// Are we connected to a game server.
         /// </summary>
         public bool IsConnectedToGameServer { get { return GameServerConnection != null; } }
-    
+
         public abstract GameClientConnection GetGameClientConnection(int connectionID);
-    
+
         public abstract Connection GetConnection(int connectionID);
-    
+
         public abstract string GetConnectionAddressString(int connectionID);
-    
+
         protected abstract IEnumerable<ConnectionBase> AllConnections { get; }
 
         /// <summary>
@@ -194,19 +196,19 @@ namespace AW2.Net
         /// </summary>
         public int GetMessageAge(GameplayMessage message)
         {
-          var messageAgeInFrames = Game.DataEngine.ArenaFrameCount - message.FrameNumber;
-          // Crude assumption for LagLog: GetMessageAge is called only once for each received message.
-          if (Game.Settings.Net.LagLog) _gobUpdateLags.Add(messageAgeInFrames, Game.GameTime.TotalRealTime);
-          return Math.Max(0, messageAgeInFrames);
+            var messageAgeInFrames = Game.DataEngine.ArenaFrameCount - message.FrameNumber;
+            // Crude assumption for LagLog: GetMessageAge is called only once for each received message.
+            if (Game.Settings.Net.LagLog) _gobUpdateLags.Add(messageAgeInFrames, Game.GameTime.TotalRealTime);
+            return Math.Max(0, messageAgeInFrames);
         }
-    
+
         public string GetDebugPrintLagStringOrNull()
         {
-          var gobUpdateLags = _gobUpdateLags.Prune(Game.GameTime.TotalRealTime);
-          return gobUpdateLags.Count == 0 ? null : string.Format("{0} updates' frame lag Min={1} Max={2} Avg={3}",
-              gobUpdateLags.Count, gobUpdateLags.Min, gobUpdateLags.Max, gobUpdateLags.Average);
+            var gobUpdateLags = _gobUpdateLags.Prune(Game.GameTime.TotalRealTime);
+            return gobUpdateLags.Count == 0 ? null : string.Format("{0} updates' frame lag Min={1} Max={2} Avg={3}",
+                gobUpdateLags.Count, gobUpdateLags.Min, gobUpdateLags.Max, gobUpdateLags.Average);
         }
-    
+
         /// <summary>
         /// Returns the total game time at which the message was current.
         /// </summary>
@@ -233,15 +235,15 @@ namespace AW2.Net
                             Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
                         }
                     }));
-        }        
+        }
 
         protected void DetectSilentConnections()
         {
             foreach (var conn in AllConnections)
                 if (conn.PingInfo.IsMissingReplies)
                     conn.QueueError("Ping replies missing.");
-        }        
-    
+        }
+
         public abstract byte[] GetAssaultWingInstanceKey();
 
         protected void RemoveDisposedMessageHandlers()
@@ -285,6 +287,6 @@ namespace AW2.Net
             conn.ConnectionStatus.CurrentArenaName = null;
         }
 
-        public abstract  string GetPilotId(int connectionID);
+        public abstract string GetPilotId(int connectionID);
     }
 }

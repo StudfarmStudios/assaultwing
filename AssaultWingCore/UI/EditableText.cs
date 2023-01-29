@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
@@ -49,15 +49,18 @@ namespace AW2.UI
                 KeyPressHandler);
         }
 
-        private static void RegisterKeyPressHandler(Window window, Action<Object, char>  handler) {
+        private static void RegisterKeyPressHandler(Window window, Action<Object, char> handler)
+        {
             window.KeyPress += handler;
         }
 
-        private static void UnRegisterKeyPressHandler(Window window, Action<Object, char> handler) {
+        private static void UnRegisterKeyPressHandler(Window window, Action<Object, char> handler)
+        {
             window.KeyPress -= handler;
         }
 
-        private static void KeyPressHandler(EditableText self, object sender, char arg) {
+        private static void KeyPressHandler(EditableText self, object sender, char arg)
+        {
             self.KeyPressHandler(sender, arg);
         }
 

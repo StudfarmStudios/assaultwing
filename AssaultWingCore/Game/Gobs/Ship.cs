@@ -260,7 +260,9 @@ namespace AW2.Game.Gobs
         /// Name of the type of main weapon the ship is using. Same as
         /// <c>Weapon1.TypeName</c> but works even when <see cref="Weapon1"/> is null.
         /// </summary>
-        public CanonicalString Weapon1Name { get { return _weapon1TypeName; }
+        public CanonicalString Weapon1Name
+        {
+            get { return _weapon1TypeName; }
             set
             {
                 if (value != _weapon1TypeName)

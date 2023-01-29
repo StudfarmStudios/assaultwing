@@ -16,7 +16,7 @@ namespace AW2.Graphics.OverlayComponents
     {
         private const float OPAQUE_DURATION = 2; // component's opaque state duration in seconds
         private const float FADEOUT_DURATION = 1; // component's transparent fadeout duration in seconds
-        
+
         private float _lastRelativeHealth;
         private TimeSpan _fadeoutFinishTime; // in game time
         private Player _player;
@@ -29,7 +29,7 @@ namespace AW2.Graphics.OverlayComponents
         {
             get { return new Point(_barBackgroundTexture.Width, _barBackgroundTexture.Height + _healthFont.LineSpacing); }
         }
-        
+
         public MiniStatusOverlay(PlayerViewport viewport)
             : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Center)
         {

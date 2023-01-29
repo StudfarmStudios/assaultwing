@@ -1,4 +1,4 @@
-﻿
+
 namespace AW2
 {
     public class AssaultWingCoreContent

@@ -1,4 +1,4 @@
-﻿namespace AW2.UI
+namespace AW2.UI
 {
     /// <summary>
     /// Represents a one-direction control on an input device.

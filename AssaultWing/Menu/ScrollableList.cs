@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AW2.Helpers;
 
 namespace AW2.Menu

@@ -1,4 +1,4 @@
-﻿namespace AW2.Menu
+namespace AW2.Menu
 {
     /// <summary>
     /// Type of menu component, one for each subclass of <see cref="MenuComponent"/>.

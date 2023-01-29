@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Helpers;

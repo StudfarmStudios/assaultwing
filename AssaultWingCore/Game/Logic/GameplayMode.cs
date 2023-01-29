@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using AW2.Game.Players;
 using AW2.Helpers;
 using AW2.Settings;

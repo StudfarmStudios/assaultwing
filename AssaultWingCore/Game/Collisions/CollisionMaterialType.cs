@@ -1,4 +1,4 @@
-﻿namespace AW2.Game.Collisions
+namespace AW2.Game.Collisions
 {
     /// <summary>
     /// Type of material of a collision area.

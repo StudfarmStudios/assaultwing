@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AW2.Core;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -43,7 +43,7 @@ namespace AW2.Settings
         public bool BotsEnabled { get; set; }
         public string BotsPassword { get; set; }
         public TimeSpan TeamRebalancingInterval { get; set; }
-        public string DefaultPlayerName {get; set; }
+        public string DefaultPlayerName { get; set; }
 
         public PlayerSettings()
         {
@@ -66,17 +66,21 @@ namespace AW2.Settings
             UpdateFromSteam(game);
         }
 
-        public void UpdateFromSteam(AssaultWingCore game) {
-            if (!GetPlayerNameCustomized()) {
+        public void UpdateFromSteam(AssaultWingCore game)
+        {
+            if (!GetPlayerNameCustomized())
+            {
                 var steamApiService = game.Services.GetService<SteamApiService>();
-                if (steamApiService != null && steamApiService.Initialized) {
+                if (steamApiService != null && steamApiService.Initialized)
+                {
                     Player1.Name = steamApiService.UserNick;
                     DefaultPlayerName = Player1.Name;
                 }
             }
         }
 
-        public bool GetPlayerNameCustomized() {
+        public bool GetPlayerNameCustomized()
+        {
             return DefaultPlayerName != Player1.Name;
         }
 

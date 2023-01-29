@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -73,9 +73,9 @@ namespace AW2.Helpers
                     epsilon = Math.Abs(averageCount - counts[i]);
                     worstInterval = i;
                 }
-            int[] showIntervals = 
-            { 
-                0, 1, 2, 
+            int[] showIntervals =
+            {
+                0, 1, 2,
                 intervalCount / 2 - 1, intervalCount / 2, intervalCount / 2 + 1,
                 intervalCount - 3, intervalCount - 2, intervalCount - 1
             };

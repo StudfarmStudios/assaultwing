@@ -1,4 +1,4 @@
-﻿using System.Net.Sockets;
+using System.Net.Sockets;
 using AW2.Core;
 using AW2.Net.ConnectionUtils;
 using AW2.Net.Messages;

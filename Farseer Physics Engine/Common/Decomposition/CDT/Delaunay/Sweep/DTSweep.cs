@@ -1,4 +1,4 @@
-﻿/* Poly2Tri
+/* Poly2Tri
  * Copyright (c) 2009-2010, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  *
@@ -54,8 +54,8 @@ namespace Poly2Tri.Triangulation.Delaunay.Sweep
 {
     public static class DTSweep
     {
-        private const double PI_div2 = Math.PI/2;
-        private const double PI_3div4 = 3*Math.PI/4;
+        private const double PI_div2 = Math.PI / 2;
+        private const double PI_3div4 = 3 * Math.PI / 4;
 
         /// <summary>
         /// Triangulate simple polygon with holes
@@ -635,7 +635,7 @@ namespace Poly2Tri.Triangulation.Delaunay.Sweep
                 {
                     if (tcx.IsDebugEnabled)
                         Console.WriteLine("[FLIP] - flipping and continuing with triangle still crossing edge");
-                            // TODO: remove
+                    // TODO: remove
                     Orientation o = TriangulationUtil.Orient2d(eq, op, ep);
                     t = NextFlipTriangle(tcx, o, t, ot, p, op);
                     FlipEdgeEvent(tcx, ep, eq, t, p);
@@ -944,7 +944,7 @@ namespace Poly2Tri.Triangulation.Delaunay.Sweep
             double ay = node.Next.Point.Y - py;
             double bx = node.Prev.Point.X - px;
             double by = node.Prev.Point.Y - py;
-            return Math.Atan2(ax*by - ay*bx, ax*bx + ay*by);
+            return Math.Atan2(ax * by - ay * bx, ax * bx + ay * by);
         }
 
         /// <summary>
@@ -1015,7 +1015,7 @@ namespace Poly2Tri.Triangulation.Delaunay.Sweep
                     if (ot.EdgeIsConstrained[oi] || ot.EdgeIsDelaunay[oi])
                     {
                         t.EdgeIsConstrained[i] = ot.EdgeIsConstrained[oi];
-                            // XXX: have no good way of setting this property when creating new triangles so lets set it here
+                        // XXX: have no good way of setting this property when creating new triangles so lets set it here
                         continue;
                     }
 

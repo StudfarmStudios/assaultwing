@@ -10,6 +10,8 @@ using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.UI;
+using Steamworks;
+using AW2.Stats;
 
 namespace AW2.Game.Players
 {
@@ -19,6 +21,12 @@ namespace AW2.Game.Players
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
+
+        /// <summary>
+        /// Ranking and score in the Steam leaderboards.
+        /// </summary>
+        internal PilotRanking Ranking { get; set; }
+
         /// <summary>
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.
@@ -351,6 +359,13 @@ namespace AW2.Game.Players
                         writer.Write((CanonicalString)Weapon2Name);
                         writer.Write((CanonicalString)ExtraDeviceName);
                     }
+                    // Server determines the ranks and scores of players.
+                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
+                    {
+                        writer.Write(Ranking.Rating);
+                        writer.Write(Ranking.Rank);
+                        writer.Write(Ranking.RatingAwardedTime.Ticks);
+                    }
                 }
             }
         }
@@ -367,6 +382,16 @@ namespace AW2.Game.Players
                 if (Game.DataEngine.GetTypeTemplate(newShipName) is Ship) ShipName = newShipName;
                 if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
                 if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
+            }
+            // Server determines the ranks and scores of players.
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
+            {
+                Ranking = new PilotRanking()
+                {
+                    Rank = reader.ReadInt32(),
+                    Rating = reader.ReadInt32(),
+                    RatingAwardedTime = new DateTime(reader.ReadInt64())
+                };
             }
         }
 

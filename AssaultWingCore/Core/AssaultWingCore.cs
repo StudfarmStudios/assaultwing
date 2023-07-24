@@ -188,7 +188,7 @@ namespace AW2.Core
         public virtual string StartServer() { return ""; }
         public string SelectedArenaName { get; set; }
 
-        public NetworkEngine NetworkEngine { get; protected set; }
+        public NetworkEngine NetworkEngine { get; init; }
 
         /// <summary>
         /// Errors that occurred when establishing or maintaining a network game instance.

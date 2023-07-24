@@ -18,6 +18,8 @@ using AW2.Net.Messages;
 using AW2.UI;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Steamworks;
+using AW2.Stats;
 
 namespace AW2.Core
 {
@@ -67,6 +69,7 @@ namespace AW2.Core
             {
                 Log.Write("AssaultWing is in Steam mode");
                 NetworkEngine = new NetworkEngineSteam(this, 30);
+                Services.AddService(new SteamLeaderboardService(Services.GetService<SteamApiService>()));
             }
             else
             {

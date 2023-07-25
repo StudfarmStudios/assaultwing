@@ -54,7 +54,7 @@ namespace AW2.Settings
         {
             Player1 = PLAYER1DEFAULT;
             Player2 = PLAYER2DEFAULT;
-            BotsEnabled = true;
+            BotsEnabled = false; // Bots disabled by default to support Steam ranking with default settings
             BotsPassword = "";
             TeamRebalancingInterval = TimeSpan.FromSeconds(15);
             DefaultPlayerName = Player1.Name;

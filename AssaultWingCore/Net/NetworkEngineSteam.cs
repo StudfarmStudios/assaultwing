@@ -111,6 +111,8 @@ namespace AW2.Net
             return _GameClientConnections.First(conn => conn.ID == connectionID);
         }
 
+        override public CSteamID? GetSteamId(int connectionId) => AllConnections.First(conn => conn.ID == connectionId)?.SteamId;
+
         public GameClientConnectionSteam? GetGameClientConnectionByHandle(HSteamNetConnection handle)
         {
             return _GameClientConnections.FirstOrDefault(conn => conn.Handle == handle);
@@ -440,7 +442,7 @@ namespace AW2.Net
         {
             var connection = GetConnection(connectionId);
             var steamId = connection.SteamId;
-            var id = secureId.MakeId(steamId);
+            var id = secureId.MakeId(steamId.ToString());
             Log.Write($"steamId: {steamId} hashed to {id}");
             return id;
         }

@@ -1,14 +1,9 @@
 using System;
-using System.Threading;
 using AW2.Core;
-using AW2.Helpers;
 
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Game = Microsoft.Xna.Framework.Game;
 using Microsoft.Xna.Framework;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using AW2.Graphics.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -67,25 +62,11 @@ namespace AW2.UI
             }
             _game = null;
             AW2.Helpers.Log.Written -= AddToLogView;
-            //base.Dispose();
-        }
-        public void SetWindowed()
-        {
-
-        }
-        public void SetFullScreen(int width, int height)
-        {
-
         }
         public void Close()
         {
             Game.EndRun();
-            //Exit();
         }
-        public void ForceCursorShown()
-        {
-        }
-
 
         protected virtual void Dispose(bool disposing)
         {
@@ -98,7 +79,6 @@ namespace AW2.UI
 
         private void InitializeGame(CommandLineOptions commandLineOptions)
         {
-            //if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
             _game = new AssaultWing<DedicatedServerEvent>(Services, commandLineOptions, game => new DedicatedServerLogic<DedicatedServerEvent>(game, consoleServer: true));
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
@@ -107,18 +87,14 @@ namespace AW2.UI
                 SetTitle = (Action<string>)((text) => {; }),
                 GetClientBounds = () => { return new Rectangle(0, 0, 800, 600); },
                 GetFullScreen = () => false,
-                SetWindowed = (Action)(SetWindowed),
-                SetFullScreen = (Action<int, int>)(SetFullScreen),
+                SetWindowed = (Action)(() => { }),
+                SetFullScreen = (Action<int, int>)((w, h) => { }),
                 IsVerticalSynced = () => false,
                 EnableVerticalSync = (Action)(() => { }),
                 DisableVerticalSync = (Action)(() => { }),
                 EnsureCursorHidden = (Action)(() => { }),
                 EnsureCursorShown = (Action)(() => { }),
             });
-
-            //_gameView.Draw += _game.Draw;
-            //_gameView.ExternalWndProc += WndProcImpl;
-            //_gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }
 
         public void Run()
@@ -132,6 +108,5 @@ namespace AW2.UI
         private void AddToLogView(string text)
         {
         }
-
     }
 }

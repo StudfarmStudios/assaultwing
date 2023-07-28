@@ -6,6 +6,7 @@ using Game = Microsoft.Xna.Framework.Game;
 using Microsoft.Xna.Framework;
 using AW2.Graphics.Content;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Core.GameComponents;
 
 namespace AW2.UI
 {
@@ -61,7 +62,6 @@ namespace AW2.UI
                 _game.Dispose();
             }
             _game = null;
-            AW2.Helpers.Log.Written -= AddToLogView;
         }
         public void Close()
         {
@@ -74,12 +74,11 @@ namespace AW2.UI
 
         private void InitializeGameForm()
         {
-            AW2.Helpers.Log.Written += AddToLogView;
         }
 
         private void InitializeGame(CommandLineOptions commandLineOptions)
         {
-            _game = new AssaultWing<DedicatedServerEvent>(Services, commandLineOptions, game => new DedicatedServerLogic<DedicatedServerEvent>(game, consoleServer: true));
+            _game = new AssaultWing<DedicatedServerEvent>(Services, commandLineOptions, game => new DedicatedServerLogicStandalone(game, consoleServer: true));
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {
@@ -97,16 +96,27 @@ namespace AW2.UI
             });
         }
 
+
         public void Run()
         {
-            while (true) // TODO: Peter: exit logic
+            var serverConsole = new ServerConsole(_game);
+
+            serverConsole.Start();
+
+            DateTime? endGameAt = null;
+            while (endGameAt is null || endGameAt.Value > DateTime.Now)
             {
                 _awGameRunner.Update(new GameTime());
-            }
-        }
 
-        private void AddToLogView(string text)
-        {
+                var command = serverConsole.Update();
+
+                if (command?.Type == DedicatedServerEvent.EventType.Stop)
+                {
+                    endGameAt = DateTime.Now + (DedicatedServer.ArenaCommandEndGraceTime + TimeSpan.FromSeconds(2));
+                }
+            }
+
+            serverConsole?.Dispose();
         }
     }
 }

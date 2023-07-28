@@ -6,7 +6,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 if [ $# -lt 4 ]; then
-  echo "This is a bash script build Assault Wing and upload it to Steam."
+  echo "This is a bash script to build Assault Wing and upload it to Steam."
   echo "Usage: $0 [Current Platform] [Target Platform] [App] [Configuration] [Mode]"
   echo "Current Platform:"
   echo "  'windows_wsl2' = Windows drive mounted on WSL2."

@@ -57,7 +57,8 @@ After `dotnet build`, simply run one of the following:
 
 And then run the `AssaultWing` or the `DedicatedServer` executable in that
 folder. Note that on other platforms than Windows you will have to copy
-`Content` and `CoreContent` folders to these folders manually.
+`Content` and `CoreContent` folders to these folders manually (or in some cases
+using the script mentioned below).
 
 With the following the game can be made to quickly connect to a local
 `DedicatedServer` process running in another terminal. This provides a quick way
@@ -77,6 +78,18 @@ With the Steam networking engine using direct connection:
 With Steam networking engine using Steam Relay:
 
     AssaultWing.exe --quickstart --server_name local --server ip:127.0.0.1:16727
+
+## Local Steam Testing
+
+When debugging in an IDE or similar setups, some files need to be copied to the
+default build folders. To help with this there is a script:
+
+    ./scripts/copy_steam_files_to_ide_build.sh mac
+
+(NOTE: replace `mac` with your current platform)
+
+(NOTE: at the moment the copying of content files has a chance of working on Mac
+only, but the SDK files should be copied.)
 
 ## Developer Documentation
 

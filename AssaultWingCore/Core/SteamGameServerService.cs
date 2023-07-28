@@ -39,7 +39,7 @@ namespace AW2.Core
                 }
                 else
                 {
-                    Log.Write("GameServer.Init() failed.");
+                    Log.Write("Steam GameServer.Init() failed.");
                     // Should we throw here? throw new ApplicationException("SteamAPI.Init() failed.")
                     // Throwing is also problematic bc then it seems the error messages from SteamAPI don't have time to
                     // get logged.
@@ -48,7 +48,7 @@ namespace AW2.Core
             }
             catch (Exception e)
             {
-                Log.Write("GameServer.Init() failed with error", e);
+                Log.Write("Steam GameServer.Init() failed with error", e);
                 return false;
             }
         }
@@ -62,7 +62,7 @@ namespace AW2.Core
         {
             if (SteamGameServer.BLoggedOn())
             {
-                Log.Write("SteamGameServer.LogOff()");
+                Log.Write("Steam GameServer.LogOff()");
                 SteamGameServer.LogOff();
             }
             Log.Write("Steam GameServer.Shutdown()");

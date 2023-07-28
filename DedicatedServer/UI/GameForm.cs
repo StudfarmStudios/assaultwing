@@ -29,7 +29,6 @@ namespace AW2.UI
         private AssaultWing<DedicatedServerEvent> _game;
         private IGraphicsDeviceService _graphics;
         private AWGameRunner _awGameRunner;
-        private StringBuilder _logCache;
         private readonly GameServiceContainer Services = new GameServiceContainer();
 
         public AssaultWing<DedicatedServerEvent> Game { get { return _game; } }
@@ -95,7 +94,6 @@ namespace AW2.UI
         private void InitializeGameForm()
         {
             AW2.Helpers.Log.Written += AddToLogView;
-            _logCache = new StringBuilder();
         }
 
         private void InitializeGame(CommandLineOptions commandLineOptions)
@@ -133,7 +131,6 @@ namespace AW2.UI
 
         private void AddToLogView(string text)
         {
-            lock (_logCache) _logCache.Append(text).Append("\r\n");
         }
 
     }

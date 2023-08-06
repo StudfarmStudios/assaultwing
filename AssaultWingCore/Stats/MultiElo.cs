@@ -63,7 +63,8 @@ namespace AW2.Stats
                 {
                     PlayerId = prevRating.PlayerId,
                     Score = 0,
-                    Rating = (int)Math.Round(updatedRatingValue)
+                    // Don't output negative ratings
+                    Rating = (int)Math.Max(0.0, Math.Round(updatedRatingValue))
                 };
             }
 

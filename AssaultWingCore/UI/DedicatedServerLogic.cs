@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
 using AW2.Core.GameComponents;
+using AW2.Stats;
 
 namespace AW2.UI
 {
@@ -22,6 +23,14 @@ namespace AW2.UI
             SteamServerComponent = new SteamServerComponent(game, 0, consoleServer = consoleServer);
             game.Components.Add(SteamServerComponent);
             game.Components.Add(DedicatedServer);
+
+            if (game.IsSteam)
+            {
+                var ratingsUpdater = new PilotRatingsUpdater(game);
+                game.Components.Add(ratingsUpdater);
+                ratingsUpdater.Enabled = true;
+            }
+
             DedicatedServer.Enabled = true;
             SteamServerComponent.Enabled = true;
         }
@@ -31,10 +40,14 @@ namespace AW2.UI
             Game.StartArenaBase();
             GameState = GAMESTATE_GAMEPLAY;
             SteamServerComponent.SendUpdatedServerDetailsToSteam();
+            Game.Components.OfType<PilotRatingsUpdater>()?.First()?.StartArena();
         }
 
         public override void FinishArena()
         {
+            Game.DataEngine.UpdateStandings();
+            var finalStandings = Game.DataEngine.Standings;
+            Game.Components.OfType<PilotRatingsUpdater>()?.First()?.EndArena(finalStandings);
             Game.DataEngine.ClearGameState();
             GameState = GAMESTATE_INITIALIZING;
         }

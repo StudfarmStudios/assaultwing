@@ -210,7 +210,11 @@ namespace AW2.Net
         {
             var result = AllConnections.First(conn => conn.ID == connectionID);
             if (result == null) return $"Unknown connection {connectionID}";
+#if ALLOW_MULTIPLE_CLIENTS_PER_HOST
+            return result.RemoteTCPEndPoint.Address.ToString() + ":" + result.RemoteTCPEndPoint.Port.ToString();
+#else
             return result.RemoteTCPEndPoint.Address.ToString();
+#endif
         }
 
         #endregion Public interface

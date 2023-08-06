@@ -48,7 +48,13 @@ See [steam-deploy.md](devdocs/steam-deploy.md) for more details on Steam builds.
 
 ## Notes on quick local testing
 
-After `dotnet build`, simply run one of the following:
+You can build with the usual `dotnet build`, but building with the
+following command allows connecting multiple clients from same machine
+(remember to enable windowed mode):
+
+    dotnet build -p:DefineConstants="ALLOW_MULTIPLE_CLIENTS_PER_HOST;DEBUG=true"
+
+Then simply run one of the following:
 
 ```bash
   cd DedicatedServer/bin/x64/Debug/netcoreapp6.0

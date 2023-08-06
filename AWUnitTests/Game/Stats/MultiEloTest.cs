@@ -88,6 +88,23 @@ namespace AW2.Stats
         }
 
         [Test]
+        public void TestZeroRatingsNoNegativeResult()
+        {
+            var multiElo = new MultiElo(k: 32, d: 400, logBase: 10);
+
+            // Both players have same rating, but first one completely dominates
+            var inputRatings = new[]
+            {
+                new EloRating<string>() { PlayerId = "A", Rating = 0, Score = 100 },
+                new EloRating<string>() { PlayerId = "B", Rating = 0, Score = 0 },
+            };
+
+            var updated = multiElo.Update(inputRatings);
+
+            Assert.AreEqual(updated.Select(r => r.Rating), new[] { 16, 0 });
+        }
+
+        [Test]
         public void Test3Player()
         {
             var multiElo = new MultiElo(k: 32, d: 400, logBase: 10);

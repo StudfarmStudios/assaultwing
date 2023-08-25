@@ -141,7 +141,7 @@ namespace AW2.Stats
         // Maybe later we will implemented the trusted
         // version of the leaderboard so only verified servers can upload scores.
         // There is a rate limit of 10 updates per 10 minutes.
-        public void UploadCurrentPilotRanking(PilotRanking ranking)
+        public bool UploadCurrentPilotRanking(PilotRanking ranking)
         {
             if (PilotRankingLeaderboard != EmptyLeaderboard && LeaderboardUpdateResult is null)
             {
@@ -156,6 +156,11 @@ namespace AW2.Stats
                 );
                 LeaderboardUpdateResult = CallResult<LeaderboardScoreUploaded_t>.Create(LeaderBoardScoreUploaded);
                 LeaderboardUpdateResult.Set(result);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

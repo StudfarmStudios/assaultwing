@@ -62,7 +62,7 @@ namespace AW2.Stats
                 results[i] = new EloRating<ID>
                 {
                     PlayerId = prevRating.PlayerId,
-                    Score = 0,
+                    Score = prevRating.Score,
                     // Don't output negative ratings
                     Rating = (int)Math.Max(0.0, Math.Round(updatedRatingValue))
                 };

@@ -360,11 +360,12 @@ namespace AW2.Game.Players
                         writer.Write((CanonicalString)ExtraDeviceName);
                     }
                     // Server determines the ranks and scores of players.
-                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
+                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
+                        mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                     {
-                        writer.Write(Ranking.Rating);
-                        writer.Write(Ranking.Rank);
-                        writer.Write(Ranking.RatingAwardedTime.Ticks);
+                        writer.Write((int)Ranking.Rating);
+                        writer.Write((int)Ranking.Rank);
+                        writer.Write((long)Ranking.RatingAwardedTime.Ticks);
                     }
                 }
             }
@@ -372,6 +373,7 @@ namespace AW2.Game.Players
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
+            Log.Write($"Player {ID} deserialize isLocal:{IsLocal} mode:{mode}");
             base.Deserialize(reader, mode, framesAgo);
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
                 mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
@@ -379,19 +381,27 @@ namespace AW2.Game.Players
                 var newShipName = reader.ReadCanonicalString();
                 var newWeapon2Name = reader.ReadCanonicalString();
                 var newExtraDeviceName = reader.ReadCanonicalString();
-                if (Game.DataEngine.GetTypeTemplate(newShipName) is Ship) ShipName = newShipName;
-                if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
-                if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
+                if (!mode.HasFlag(SerializationModeFlags.KeepLocalClientOwnedData))
+                {
+                    if (Game.DataEngine.GetTypeTemplate(newShipName) is Ship) ShipName = newShipName;
+                    if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
+                    if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
+                }
             }
             // Server determines the ranks and scores of players.
-            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer))
+            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
+                mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
             {
+                var rating = reader.ReadInt32();
+                var rank = reader.ReadInt32();
+                var awardedTime = new DateTime(reader.ReadInt64());
                 Ranking = new PilotRanking()
                 {
-                    Rank = reader.ReadInt32(),
-                    Rating = reader.ReadInt32(),
-                    RatingAwardedTime = new DateTime(reader.ReadInt64())
+                    Rank = rank,
+                    Rating = rating,
+                    RatingAwardedTime = awardedTime
                 };
+                Log.Write($"Player {ID} received ranking: {Ranking}");
             }
         }
 

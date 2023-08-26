@@ -206,8 +206,6 @@ namespace AW2.Core
 
         public virtual void AddRemoteSpectator(Spectator newSpectator) { }
 
-        public virtual void UpdateGameServerInfoToManagementServer() { }
-
         public virtual void LoadSelectedArena(byte? arenaIDOnClient = null) { }
 
 

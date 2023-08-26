@@ -17,7 +17,7 @@ namespace AW2.Game.Players
     /// </summary>
     public class Spectator : INetworkSerializable
     {
-        public enum ConnectionStatusType { Local, Remote, Disconnected };
+        private enum ConnectionStatusType { Local, Remote, Disconnected };
         public enum ServerRegistrationType { No, Requested, Yes };
 
         public const int UNINITIALIZED_ID = 0;

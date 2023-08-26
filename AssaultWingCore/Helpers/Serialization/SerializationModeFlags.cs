@@ -34,6 +34,11 @@ namespace AW2.Helpers.Serialization
         VaryingDataFromClient = 0x08,
 
         /// <summary>
+        /// For local client, don't overwrite data as the local client is considered the owner of the data.
+        /// </summary>
+        KeepLocalClientOwnedData = 0x10,
+
+        /// <summary>
         /// Serialise all data from server to client.
         /// </summary>
         AllFromServer = ConstantDataFromServer | VaryingDataFromServer,

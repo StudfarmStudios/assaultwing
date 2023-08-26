@@ -39,7 +39,7 @@ namespace AW2.Net.Connections
         public HSteamNetConnection Handle { get; init; }
         public SteamNetConnectionInfo_t Info { get; set; }
 
-        public string SteamId => Info.m_identityRemote.GetSteamID().ToString();
+        public CSteamID SteamId => Info.m_identityRemote.GetSteamID();
 
         // Implemented by subclass because server and client use separate Steam interfaces to allow for dedicated
         // server to operate without proper Steam user.

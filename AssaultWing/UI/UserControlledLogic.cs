@@ -7,6 +7,7 @@ using AW2.Core.GameComponents;
 using AW2.Core.OverlayComponents;
 using AW2.Helpers;
 using AW2.Menu;
+using AW2.Stats;
 
 namespace AW2.UI
 {
@@ -56,6 +57,14 @@ namespace AW2.UI
             Game.Components.Add(PlayerChat);
             Game.Components.Add(OverlayDialog);
             Game.Components.Add(SteamServerComponent);
+
+            if (game.IsSteam)
+            {
+                var ratingUploader = new PilotRatingUploader(game);
+                Game.Components.Add(ratingUploader);
+                ratingUploader.Enabled = true;
+            }
+
             CreateCustomControls(Game);
             Game.MessageHandlers.GameServerConnectionClosing += Handle_GameServerConnectionClosing;
         }

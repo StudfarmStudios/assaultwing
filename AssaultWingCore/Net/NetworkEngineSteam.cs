@@ -111,6 +111,49 @@ namespace AW2.Net
             return _GameClientConnections.First(conn => conn.ID == connectionID);
         }
 
+#if ALLOW_MULTIPLE_CLIENTS_PER_HOST
+        private Dictionary<int, CSteamID> ConnectionIdToAssignedSteamId = new Dictionary<int, CSteamID>();
+        private uint FakeSteamIdCounter = 1;
+#endif
+
+        override public CSteamID? GetSteamId(int connectionId)
+        {
+            var steamId = AllConnections.FirstOrDefault(conn => conn.ID == connectionId)?.SteamId;
+
+#if ALLOW_MULTIPLE_CLIENTS_PER_HOST
+            if (steamId is not null)
+            {
+                if (ConnectionIdToAssignedSteamId.ContainsKey(connectionId))
+                {
+                    return ConnectionIdToAssignedSteamId[connectionId];
+                }
+                else
+                {
+                    var originalConnection = ConnectionIdToAssignedSteamId
+                        .Where(kvp => kvp.Value == steamId).ToList();
+
+                    if (originalConnection.Count == 0)
+                    {
+                        // Create entry for the first connection with this CSteamID.
+                        ConnectionIdToAssignedSteamId[connectionId] = steamId.Value;
+                    }
+                    else
+                    {
+                        // Assign a fake CSteamID to produce a different PilotId
+                        // for this connection. to allow testing Steam features
+                        // by connecting multiple clients using the same steam
+                        // profile.
+                        steamId = new CSteamID(new AccountID_t(FakeSteamIdCounter++), EUniverse.k_EUniverseInvalid, EAccountType.k_EAccountTypeInvalid);
+                        Log.Write($"Using fake steamId {steamId} for connection {connectionId} to allow testing.");
+                        ConnectionIdToAssignedSteamId[connectionId] = steamId.Value;
+                    }
+                }
+            }
+#endif
+
+            return steamId;
+        }
+
         public GameClientConnectionSteam? GetGameClientConnectionByHandle(HSteamNetConnection handle)
         {
             return _GameClientConnections.FirstOrDefault(conn => conn.Handle == handle);
@@ -436,13 +479,21 @@ namespace AW2.Net
             RemoveClosedConnections();
             PurgeUnhandledMessages();
         }
+
         override public string GetPilotId(int connectionId)
         {
-            var connection = GetConnection(connectionId);
-            var steamId = connection.SteamId;
-            var id = secureId.MakeId(steamId);
-            Log.Write($"steamId: {steamId} hashed to {id}");
-            return id;
+            CSteamID? steamId = GetSteamId(connectionId);
+
+            if (steamId is null)
+            {
+                throw new NullReferenceException("Steam mode connection, but no steam id found!");
+            }
+            else
+            {
+                var id = secureId.MakeId(steamId.Value.ToString());
+                Log.Write($"steamId: {steamId} hashed to {id}");
+                return id;
+            }
         }
 
     }

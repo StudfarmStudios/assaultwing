@@ -82,12 +82,19 @@ namespace AW2.Net.MessageHandling
 
         private void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
-            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer;
             var spectator = Game.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
+            bool isLocal = spectator?.IsLocal ?? false;
+
+            // If the spectator is local, we don't want to overwrite locally owned data like his ship selection,
+            // but we still wan't to deserialize the ranking data from the server. The KeepLocalClientOwnedData
+            // flag protects the locally owned data.
+            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer |
+                (isLocal ? SerializationModeFlags.KeepLocalClientOwnedData : 0);
+
             if (spectator == null)
                 TryCreateAndAddNewSpectatorOnClient(mess, spectatorSerializationMode);
-            else if (spectator.IsRemote)
+            else
                 mess.Read(spectator, spectatorSerializationMode, 0);
         }
 

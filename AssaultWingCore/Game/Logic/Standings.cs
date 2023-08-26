@@ -17,6 +17,8 @@ namespace AW2.Game.Logic
         public Standing this[Team team] { get { return GetTeamStandings(team).Item1; } }
         public Standing this[Spectator spec] { get { return GetTeamStandings(spec.Team).Item2.First(x => x.ID == spec.ID); } }
 
+        public Standing? FindForSpectator(Spectator spec) { return GetTeamStandings(spec.Team).Item2.FirstOrDefault(x => x.ID == spec.ID); }
+
         public Standings(TeamStandings[] standings)
         {
             _standings = standings;

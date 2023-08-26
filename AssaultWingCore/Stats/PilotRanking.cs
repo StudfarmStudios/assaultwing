@@ -1,0 +1,63 @@
+
+using System.Globalization;
+namespace AW2.Stats
+{
+    public struct PilotRanking
+    {
+        /// <summary> The score that defines where in the ranking the player is. </summary>
+        /// <remarks>0 means that the user has no score yet</remarks>
+        public int Rating;
+
+        // https://partner.steamgames.com/doc/api/ISteamUserStats#LeaderboardScoreUploaded_t
+        /// <summary>Up to date rank is obtained from Steam when leaderboard entries are downloaded. </summary>
+        /// <remarks>0 means that the user has no global leaderboard entry yet.</remarks>        
+        public int Rank;
+
+        /// <summary>
+        /// Time when the rating score was awarded. Stored in the Steam leaderboard "UGC" extra data.
+        /// Also used to track when the score needs to be uploaded to the Steam leaderboard 
+        /// by the local player client.
+        /// </summary>
+        public DateTime RatingAwardedTime { get; set; }
+
+        static public PilotRanking FromLeaderboardEntry(LeaderboardEntryAndUgc entryAndUgc)
+        {
+            var awardedTime = DateTime.MinValue;
+            if (entryAndUgc.ugc.Length == 2)
+            {
+                awardedTime = new DateTime(((long)entryAndUgc.ugc[0] << 32) | (uint)entryAndUgc.ugc[1]);
+            }
+            return new PilotRanking
+            {
+                Rating = entryAndUgc.entry.m_nScore,
+                Rank = entryAndUgc.entry.m_nGlobalRank,
+                RatingAwardedTime = awardedTime,
+            };
+        }
+
+        public PilotRanking UpdateRating(int rating, DateTime now)
+        {
+            if (rating == Rating) return this;
+            return new PilotRanking
+            {
+                Rating = rating,
+                Rank = Rank,
+                RatingAwardedTime = now,
+            };
+        }
+
+        public List<int> SteamLeaderboardUGC
+        {
+            get
+            {
+                return new List<int> { (int)(RatingAwardedTime.Ticks >> 32), (int)(RatingAwardedTime.Ticks & 0xFFFFFFFF) };
+            }
+        }
+
+        private static readonly DateTime AwardedTimeSanityCheckLow = DateTime.Parse("2023-07-01T00:00:00Z");
+
+        public bool IsValid { get { return Rating > 0 && RatingAwardedTime > AwardedTimeSanityCheckLow; } }
+
+        public override string ToString() => $"(Rank={Rank}, Rating={Rating}, RatingAwardedTime={RatingAwardedTime.ToString("s", DateTimeFormatInfo.InvariantInfo)})";
+    }
+}

@@ -3,7 +3,6 @@ using Steamworks;
 
 namespace AW2.Core
 {
-
     public class SteamApiService : IDisposable
     {
         // TODO: Move the callback stuff to a separate service bc it is shared with SteamGameServerService
@@ -116,6 +115,11 @@ namespace AW2.Core
         {
             ServerCallback<DebugLoggingBundle, SteamNetConnectionStatusChangedCallback_t>(LogSteamNetConnectionStatusChanged);
             ServerCallback<DebugLoggingBundle, SteamRelayNetworkStatus_t>(LogSteamRelayNetworkStatus);
+        }
+
+        public CSteamID SteamID
+        {
+            get { return SteamUser.GetSteamID(); }
         }
 
         public string UserNick

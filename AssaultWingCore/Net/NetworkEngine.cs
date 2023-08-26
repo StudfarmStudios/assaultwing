@@ -5,6 +5,7 @@ using AW2.Net.Messages;
 using AW2.Helpers;
 using AW2.Net.ConnectionUtils;
 using AW2.Game;
+using Steamworks;
 
 namespace AW2.Net
 {
@@ -190,6 +191,11 @@ namespace AW2.Net
         public abstract string GetConnectionAddressString(int connectionID);
 
         protected abstract IEnumerable<ConnectionBase> AllConnections { get; }
+
+        /// <summary>
+        /// Returns null if the game is in non steam mode. Typically used with Specattor.ConnectionID.
+        /// </summary>
+        public abstract CSteamID? GetSteamId(int connectionID);
 
         /// <summary>
         /// Returns the number of frames elapsed since the message was sent.

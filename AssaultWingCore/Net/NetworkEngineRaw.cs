@@ -7,6 +7,7 @@ using AW2.Net.Connections;
 using AW2.Net.ConnectionUtils;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
+using Steamworks;
 
 namespace AW2.Net
 {
@@ -198,6 +199,8 @@ namespace AW2.Net
         {
             return _GameClientConnections.First(conn => conn.ID == connectionID);
         }
+
+        override public CSteamID? GetSteamId(int connectionId) => null;
 
         override public ConnectionRaw GetConnection(int connectionID)
         {

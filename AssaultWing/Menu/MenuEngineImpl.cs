@@ -361,8 +361,8 @@ namespace AW2.Menu
             var localPlayer = LocalPlayer;
             if (localPlayer == null) return;
             var playerRating = string.Format(CultureInfo.InvariantCulture, "{0} ({1:f0})",
-                localPlayer.StatsData.RatingRank.ToOrdinalString(),
-                localPlayer.StatsData.Rating.ToString("f0"));
+                localPlayer.Ranking.Rank.ToOrdinalString(),
+                localPlayer.Ranking.Rating.ToString());
             var nameSize = MenuContent.FontSmall.MeasureString(localPlayer.Name);
             var ratingSize = MenuContent.FontBig.MeasureString(playerRating);
             var backgroundPos = new Vector2(ViewportWidth - _loggedInPilot.Width + 4, -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier()));

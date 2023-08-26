@@ -473,7 +473,7 @@ namespace AW2.Core
 
         private void SpectatorAddedHandler(Spectator spectator)
         {
-            spectator.ArenaStatistics.Rating = () => spectator.StatsData.Rating;
+            spectator.ArenaStatistics.Ranking = () => spectator.Ranking;
             spectator.ResetForArena();
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;

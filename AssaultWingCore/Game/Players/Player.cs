@@ -21,12 +21,6 @@ namespace AW2.Game.Players
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
-
-        /// <summary>
-        /// Ranking and score in the Steam leaderboards.
-        /// </summary>
-        internal PilotRanking Ranking { get; set; }
-
         /// <summary>
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.

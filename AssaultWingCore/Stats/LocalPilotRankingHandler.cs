@@ -7,7 +7,7 @@ namespace AW2.Stats
     /// <summary>
     /// Runs on client and check to see if local player's PilotRanking needs to be uploaded to steam leaderboard
     /// </summary>
-    public class PilotRatingUploader : AWGameComponent
+    public class LocalPilotRankingHandler : AWGameComponent
     {
 
         private SteamLeaderboardService SteamLeaderboardService => Game.Services.GetService<SteamLeaderboardService>();
@@ -17,7 +17,7 @@ namespace AW2.Stats
         /// </summary>
         private PilotRanking LocalClientLastUploadedRanking;
 
-        public PilotRatingUploader(AssaultWingCore game) : base(game, 100)
+        public LocalPilotRankingHandler(AssaultWingCore game) : base(game, 100)
         {
         }
 
@@ -42,11 +42,11 @@ namespace AW2.Stats
                 LocalClientLastUploadedRanking = localRanking;
                 if (SteamLeaderboardService.UploadCurrentPilotRanking(localRanking))
                 {
-                    Log.Write($"PilotRatingUploader: Uploading ranking {localRanking}");
+                    Log.Write($"LocalPilotRankingHandler: Uploading ranking {localRanking}");
                 }
                 else
                 {
-                    Log.Write($"PilotRatingUploader: Rating upload not possible. {localRanking}");
+                    Log.Write($"LocalPilotRankingHandler: Rating upload not possible. {localRanking}");
                 }
             }
         }

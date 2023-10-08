@@ -9,6 +9,8 @@ using AW2.Game.Players;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Sound;
+using AW2.Stats;
+using System.Linq;
 
 namespace AW2.Menu
 {
@@ -63,15 +65,7 @@ namespace AW2.Menu
         public MainMenuComponent MainMenu { get { return (MainMenuComponent)_components[(int)MenuComponentType.Main]; } }
         public EquipMenuComponent EquipMenu { get { return (EquipMenuComponent)_components[(int)MenuComponentType.Equip]; } }
         public ArenaMenuComponent ArenaMenu { get { return (ArenaMenuComponent)_components[(int)MenuComponentType.Arena]; } }
-        private Player LocalPlayer
-        {
-            get
-            {
-                var localPlayer = Game.DataEngine.LocalPlayer;
-                if (localPlayer == null || !localPlayer.IsLoggedIn) return null;
-                return localPlayer;
-            }
-        }
+
         private static Curve g_loggedInPilot;
 
         static MenuEngineImpl()
@@ -358,20 +352,39 @@ namespace AW2.Menu
 
         private void DrawLoggedInPilot()
         {
-            var localPlayer = LocalPlayer;
-            if (localPlayer == null) return;
-            var playerRating = string.Format(CultureInfo.InvariantCulture, "{0} ({1:f0})",
-                localPlayer.Ranking.Rank.ToOrdinalString(),
-                localPlayer.Ranking.Rating.ToString());
-            var nameSize = MenuContent.FontSmall.MeasureString(localPlayer.Name);
-            var ratingSize = MenuContent.FontBig.MeasureString(playerRating);
+            var localPlayer = Game.DataEngine.LocalPlayer;
+
+            if (localPlayer is null)
+            {
+                return;
+            }
+
+            var ranking = Game.Components.OfType<LocalPilotRankingHandler>()?.First()?.LocalPilotRanking ?? new PilotRanking();
+
+            var playerRank = ranking.RankString;
+
+            var playerRating = string.Format(CultureInfo.InvariantCulture, "rating {0}", ranking.Rating.ToString());
+
             var backgroundPos = new Vector2(ViewportWidth - _loggedInPilot.Width + 4, -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier()));
+
+            var nameSize = MenuContent.FontSmall.MeasureString(localPlayer.Name);
+            var rankSize = MenuContent.FontBig.MeasureString(playerRank);
+            var ratingSize = MenuContent.FontSmall.MeasureString(playerRating);
+
             var namePos = backgroundPos + new Vector2((_loggedInPilot.Width - nameSize.X) / 2 + 12, 10);
-            var ratingPos = backgroundPos + new Vector2((_loggedInPilot.Width - ratingSize.X) / 2 + 12, 28);
+            var rankPos = backgroundPos + new Vector2((_loggedInPilot.Width - rankSize.X) / 2 + 12, 25);
+            var ratingPos = backgroundPos + new Vector2((_loggedInPilot.Width - ratingSize.X) / 2 + 12, 54);
+
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
             _spriteBatch.Draw(_loggedInPilot, backgroundPos, Color.White);
+
             ModelRenderer.DrawBorderedText(_spriteBatch, MenuContent.FontSmall, localPlayer.Name, namePos, Color.White, 1, 1);
-            ModelRenderer.DrawBorderedText(_spriteBatch, MenuContent.FontBig, playerRating, ratingPos, Color.White, 1, 1);
+
+            ModelRenderer.DrawBorderedText(_spriteBatch, MenuContent.FontBig, playerRank, rankPos, Color.White, 1, 1);
+
+            ModelRenderer.DrawBorderedText(_spriteBatch, MenuContent.FontSmall, playerRating, ratingPos, Color.White, 1, 1);
+
             _spriteBatch.End();
         }
     }

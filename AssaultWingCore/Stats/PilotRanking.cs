@@ -2,7 +2,7 @@
 using System.Globalization;
 namespace AW2.Stats
 {
-    public struct PilotRanking
+    public struct PilotRanking : IEquatable<PilotRanking>
     {
         /// <summary> The score that defines where in the ranking the player is. </summary>
         /// <remarks>0 means that the user has no score yet</remarks>
@@ -59,5 +59,33 @@ namespace AW2.Stats
         public bool IsValid { get { return Rating > 0 && RatingAwardedTime > AwardedTimeSanityCheckLow; } }
 
         public override string ToString() => $"(Rank={Rank}, Rating={Rating}, RatingAwardedTime={RatingAwardedTime.ToString("s", DateTimeFormatInfo.InvariantInfo)})";
+
+        public bool Equals(PilotRanking other)
+        {
+            return Rating == other.Rating && Rank == other.Rank && RatingAwardedTime == other.RatingAwardedTime;
+        }
+
+        public static bool operator ==(PilotRanking left, PilotRanking right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PilotRanking left, PilotRanking right)
+        {
+            return !(left == right);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is PilotRanking other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = Rating;
+            hashCode = (hashCode * 397) ^ Rank;
+            hashCode = (hashCode * 397) ^ RatingAwardedTime.GetHashCode();
+            return hashCode;
+        }
     }
 }

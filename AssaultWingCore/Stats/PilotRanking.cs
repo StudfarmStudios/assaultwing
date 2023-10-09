@@ -1,5 +1,7 @@
 
 using System.Globalization;
+using AW2.Helpers;
+
 namespace AW2.Stats
 {
     public struct PilotRanking : IEquatable<PilotRanking>
@@ -41,6 +43,7 @@ namespace AW2.Stats
             return new PilotRanking
             {
                 Rating = rating,
+                // note that the rank is not accurate at this point, but it is still better than nothing.
                 Rank = Rank,
                 RatingAwardedTime = now,
             };
@@ -58,7 +61,29 @@ namespace AW2.Stats
 
         public bool IsValid { get { return Rating > 0 && RatingAwardedTime > AwardedTimeSanityCheckLow; } }
 
-        public override string ToString() => $"(Rank={Rank}, Rating={Rating}, RatingAwardedTime={RatingAwardedTime.ToString("s", DateTimeFormatInfo.InvariantInfo)})";
+        public string RankString
+        {
+            get
+            {
+                if (IsRankValid)
+                {
+                    return Rank.ToOrdinalString();
+                }
+                else
+                {
+                    return "n/a";
+                }
+            }
+        }
+
+        public bool IsRankValid => IsValid && Rank > 0; // Default value of 0 before we have downloaded a value back from the Steam leaderboard.
+
+        public override string ToString()
+        {
+            var playerRating = string.Format(CultureInfo.InvariantCulture, "rating {0}", Rating.ToString());
+            var awardedTime = RatingAwardedTime.ToString("s", DateTimeFormatInfo.InvariantInfo);
+            return $"rank:{RankString} rating:{playerRating} awarded:{awardedTime}";
+        }
 
         public bool Equals(PilotRanking other)
         {

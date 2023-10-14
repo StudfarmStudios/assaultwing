@@ -367,7 +367,6 @@ namespace AW2.Game.Players
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            Log.Write($"Player {ID} deserialize isLocal:{IsLocal} mode:{mode}");
             base.Deserialize(reader, mode, framesAgo);
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
                 mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
@@ -395,7 +394,6 @@ namespace AW2.Game.Players
                     Rating = rating,
                     RatingAwardedTime = awardedTime
                 };
-                Log.Write($"Player {ID} received ranking: {Ranking}");
             }
         }
 

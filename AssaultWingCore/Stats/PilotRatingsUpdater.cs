@@ -43,12 +43,15 @@ namespace AW2.Stats
         {
             List<CSteamID> steamIds = Game.DataEngine.Players.Select(GetSteamId).OfType<CSteamID>().ToList();
 
+            // Clear state about which players have had their ranking downloaded. A rankings query could be
+            // ongoing if the round ended while previous download was ongoing, but that does not cause any
+            // confusion, because RatingFetchOngoing is cleared here and the results will be ignored.
             RatingFetchStarted.Clear();
             RatingFetchOngoing.Clear();
             RatingFetchFinished.Clear();
             BlockRatingUpdateForPlayers.Clear();
 
-            SteamLeaderboardService.GetRankings(steamIds, HandlePilotRankings);
+            Update();
         }
 
         /// <summary>

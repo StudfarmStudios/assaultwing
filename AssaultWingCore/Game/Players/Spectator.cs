@@ -65,11 +65,6 @@ namespace AW2.Game.Players
         public string PilotId { get; set; }
 
         /// <summary>
-        /// This is true in Steam mode and false in raw networking mode.
-        /// </summary>
-        public bool IsLoggedIn { get; set; }
-
-        /// <summary>
         /// Identifier of the connection behind which this spectator lives,
         /// or negative if the spectator lives at the local game instance.
         /// </summary>

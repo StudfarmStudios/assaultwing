@@ -11,9 +11,14 @@ namespace AW2.Stats
     /// https://steamworks.github.io/gettingstarted/#steam-callresults
     public class SteamLeaderboardService : IDisposable
     {
+
+        public delegate void RankingUploadDelegateType(PilotRanking updatedRanking, bool errors);
+
         public delegate void LeaderboardResultDelegate(LeaderboardEntryAndUgc[] entries, bool errors);
 
         public delegate void RankingsResultDelegate(Dictionary<CSteamID, PilotRanking> entries, bool errors);
+
+        public delegate void PlayerRankingResultDelegate(PilotRanking ranking, bool errors);
 
         private static readonly SteamLeaderboard_t EmptyLeaderboard;
         private SteamApiService SteamApiService;
@@ -25,6 +30,10 @@ namespace AW2.Stats
         private CallResult<LeaderboardScoreUploaded_t>? LeaderboardUpdateResult;
 
         private LeaderboardResultDelegate? DownloadLeaderboardEntriesResultDelegate;
+
+        private RankingUploadDelegateType? RankingUploadDelegate;
+
+        public PilotRanking UploadedRanking { get; private set; }
 
         public SteamLeaderboardService(SteamApiService steamApiService)
         {
@@ -57,20 +66,24 @@ namespace AW2.Stats
             }
         }
 
-        private void LeaderBoardScoreUploaded(LeaderboardScoreUploaded_t downloaded, bool ioFailure)
+        private void LeaderBoardScoreUploaded(LeaderboardScoreUploaded_t uploaded, bool ioFailure)
         {
-            if (ioFailure)
+            var delegateToCall = RankingUploadDelegate;
+
+            if (delegateToCall is not null && UploadedRanking.IsValid)
             {
-                Log.Write($"Failed to upload score to Steam Leaderboard {RankingLeaderboardName} ioFailure:{ioFailure}");
-            }
-            else
-            {
-                Log.Write($"Uploaded score to Steam Leaderboard {RankingLeaderboardName}");
+                var updatedRanking = UploadedRanking;
+                RankingUploadDelegate = null;
+                UploadedRanking = new PilotRanking();
+                updatedRanking.Rank = uploaded.m_nGlobalRankNew;
+                delegateToCall(updatedRanking, errors: ioFailure);
             }
 
             LeaderboardUpdateResult?.Dispose();
             LeaderboardUpdateResult = null;
         }
+
+        public bool IsUploadingRanking => RankingUploadDelegate is not null;
 
         private const int MaxLeaderboardDetails = 2; // currently timestamp is stored in the extra data
 
@@ -96,6 +109,9 @@ namespace AW2.Stats
             DownloadLeaderboardEntriesCallResult = null;
         }
 
+        /// <summary>
+        /// Note that this method can't called multiple times in parallel or in parallel with GetCurrentPlayerRanking.
+        /// </summary>
         public void GetRankings(List<CSteamID> steamIds, RankingsResultDelegate resultDelegate)
         {
             if (PilotRankingLeaderboard != EmptyLeaderboard)
@@ -112,7 +128,32 @@ namespace AW2.Stats
             }
         }
 
-        public void DownloadLeaderboard(SteamLeaderboard_t leaderboard, List<CSteamID> steamIds, LeaderboardResultDelegate resultDelegate)
+        /// <summary>
+        /// Note that this method can't called multiple times in parallel or in parallel with GetRankings.
+        /// </summary>
+        public void GetCurrentPlayerRanking(PlayerRankingResultDelegate resultDelegate)
+        {
+            if (PilotRankingLeaderboard != EmptyLeaderboard)
+            {
+                var call = SteamUserStats.DownloadLeaderboardEntries(PilotRankingLeaderboard, ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobalAroundUser, 0, 0);
+                DownloadLeaderboardEntriesResultDelegate = (entries, errors) =>
+                {
+                    if (entries.Count() == 0)
+                    {
+                        resultDelegate(new PilotRanking(), errors: true);
+                    }
+                    else
+                    {
+                        var ranking = PilotRanking.FromLeaderboardEntry(entries.First());
+                        resultDelegate(ranking, errors: errors);
+                    }
+                };
+                DownloadLeaderboardEntriesCallResult = new CallResult<LeaderboardScoresDownloaded_t>(DownloadedLeaderBoardEntriesResult);
+                DownloadLeaderboardEntriesCallResult?.Set(call, DownloadedLeaderBoardEntriesResult);
+            }
+        }
+
+        private void DownloadLeaderboard(SteamLeaderboard_t leaderboard, List<CSteamID> steamIds, LeaderboardResultDelegate resultDelegate)
         {
             var call = SteamUserStats.DownloadLeaderboardEntriesForUsers(
                 leaderboard,
@@ -141,7 +182,7 @@ namespace AW2.Stats
         // Maybe later we will implemented the trusted
         // version of the leaderboard so only verified servers can upload scores.
         // There is a rate limit of 10 updates per 10 minutes.
-        public bool UploadCurrentPilotRanking(PilotRanking ranking)
+        public bool UploadCurrentPilotRanking(PilotRanking ranking, RankingUploadDelegateType resultDelegate)
         {
             if (PilotRankingLeaderboard != EmptyLeaderboard && LeaderboardUpdateResult is null)
             {
@@ -154,6 +195,8 @@ namespace AW2.Stats
                     extraData.ToArray(),
                     extraData.Count
                 );
+                RankingUploadDelegate = resultDelegate;
+                UploadedRanking = ranking;
                 LeaderboardUpdateResult = CallResult<LeaderboardScoreUploaded_t>.Create(LeaderBoardScoreUploaded);
                 LeaderboardUpdateResult.Set(result);
                 return true;

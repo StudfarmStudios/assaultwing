@@ -473,8 +473,7 @@ namespace AW2.Core
 
         private void SpectatorAddedHandler(Spectator spectator)
         {
-            if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
-            spectator.ArenaStatistics.Rating = () => spectator.StatsData.Rating;
+            spectator.ArenaStatistics.Ranking = () => spectator.Ranking;
             spectator.ResetForArena();
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;
@@ -507,7 +506,6 @@ namespace AW2.Core
         private void SpectatorRemovedHandler(Spectator spectator)
         {
             if (NetworkMode != NetworkMode.Server) return;
-            UpdateGameServerInfoToManagementServer();
             NetworkEngine.SendToGameClients(new SpectatorOrTeamDeletionMessage { SpectatorOrTeamID = spectator.ID });
         }
 
@@ -530,11 +528,6 @@ namespace AW2.Core
                 };
                 NetworkEngine.GameServerConnection.Send(joinRequest);
             }
-        }
-
-        override public void UpdateGameServerInfoToManagementServer()
-        {
-            // TODO: Peter: update DataEngine.Players.Count() to Steam
         }
 
         private void AfterEveryFrame()

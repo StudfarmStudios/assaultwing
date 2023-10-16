@@ -1,8 +1,10 @@
 
 using System.Globalization;
+using AW2.Helpers;
+
 namespace AW2.Stats
 {
-    public struct PilotRanking
+    public struct PilotRanking : IEquatable<PilotRanking>
     {
         /// <summary> The score that defines where in the ranking the player is. </summary>
         /// <remarks>0 means that the user has no score yet</remarks>
@@ -41,6 +43,7 @@ namespace AW2.Stats
             return new PilotRanking
             {
                 Rating = rating,
+                // note that the rank is not accurate at this point, but it is still better than nothing.
                 Rank = Rank,
                 RatingAwardedTime = now,
             };
@@ -58,6 +61,56 @@ namespace AW2.Stats
 
         public bool IsValid { get { return Rating > 0 && RatingAwardedTime > AwardedTimeSanityCheckLow; } }
 
-        public override string ToString() => $"(Rank={Rank}, Rating={Rating}, RatingAwardedTime={RatingAwardedTime.ToString("s", DateTimeFormatInfo.InvariantInfo)})";
+        public string RankString
+        {
+            get
+            {
+                if (IsRankValid)
+                {
+                    return Rank.ToOrdinalString();
+                }
+                else
+                {
+                    return "n/a";
+                }
+            }
+        }
+
+        public bool IsRankValid => IsValid && Rank > 0; // Default value of 0 before we have downloaded a value back from the Steam leaderboard.
+
+        public override string ToString()
+        {
+            var playerRating = string.Format(CultureInfo.InvariantCulture, "rating {0}", Rating.ToString());
+            var awardedTime = RatingAwardedTime.ToString("s", DateTimeFormatInfo.InvariantInfo);
+            return $"rank:{RankString} rating:{playerRating} awarded:{awardedTime}";
+        }
+
+        public bool Equals(PilotRanking other)
+        {
+            return Rating == other.Rating && Rank == other.Rank && RatingAwardedTime == other.RatingAwardedTime;
+        }
+
+        public static bool operator ==(PilotRanking left, PilotRanking right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PilotRanking left, PilotRanking right)
+        {
+            return !(left == right);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is PilotRanking other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = Rating;
+            hashCode = (hashCode * 397) ^ Rank;
+            hashCode = (hashCode * 397) ^ RatingAwardedTime.GetHashCode();
+            return hashCode;
+        }
     }
 }

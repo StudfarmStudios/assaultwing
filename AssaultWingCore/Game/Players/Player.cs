@@ -21,12 +21,6 @@ namespace AW2.Game.Players
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
-
-        /// <summary>
-        /// Ranking and score in the Steam leaderboards.
-        /// </summary>
-        internal PilotRanking Ranking { get; set; }
-
         /// <summary>
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.
@@ -373,7 +367,6 @@ namespace AW2.Game.Players
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            Log.Write($"Player {ID} deserialize isLocal:{IsLocal} mode:{mode}");
             base.Deserialize(reader, mode, framesAgo);
             if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
                 mode.HasFlag(SerializationModeFlags.ConstantDataFromClient))
@@ -401,7 +394,6 @@ namespace AW2.Game.Players
                     Rating = rating,
                     RatingAwardedTime = awardedTime
                 };
-                Log.Write($"Player {ID} received ranking: {Ranking}");
             }
         }
 

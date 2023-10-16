@@ -11,6 +11,7 @@ using AW2.Helpers;
 using AW2.Settings;
 using AW2.Game.Players;
 using AW2.Core;
+using System.Globalization;
 
 namespace AW2.UI
 {
@@ -63,6 +64,7 @@ namespace AW2.UI
             {
                 string teamName = Spectator.Team.Name;
                 string ping = "-";
+                string ranking = "rank: - rating: -";
                 if (Spectator.IsRemote)
                 {
                     ping = $"{Ping?.TotalMilliseconds:0.#}ms";
@@ -71,7 +73,11 @@ namespace AW2.UI
                 {
                     teamName = "-";
                 }
-                return $"{Number} name:{Spectator.Name} team:{teamName} ping:{ping}";
+                if (Spectator.Ranking.IsValid)
+                {
+                    ranking = Spectator.Ranking.ToString();
+                }
+                return $"{Number} name:{Spectator.Name} team:{teamName} ping:{ping} deaths:{Spectator.ArenaStatistics.Deaths} kills:{Spectator.ArenaStatistics.Kills} deaths:{Spectator.ArenaStatistics.Deaths} {ranking}";
             }
         }
 

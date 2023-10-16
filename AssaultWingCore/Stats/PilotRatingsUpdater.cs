@@ -43,12 +43,15 @@ namespace AW2.Stats
         {
             List<CSteamID> steamIds = Game.DataEngine.Players.Select(GetSteamId).OfType<CSteamID>().ToList();
 
+            // Clear state about which players have had their ranking downloaded. A rankings query could be
+            // ongoing if the round ended while previous download was ongoing, but that does not cause any
+            // confusion, because RatingFetchOngoing is cleared here and the results will be ignored.
             RatingFetchStarted.Clear();
             RatingFetchOngoing.Clear();
             RatingFetchFinished.Clear();
             BlockRatingUpdateForPlayers.Clear();
 
-            SteamLeaderboardService.GetRankings(steamIds, HandlePilotRankings);
+            Update();
         }
 
         /// <summary>
@@ -153,14 +156,14 @@ namespace AW2.Stats
             CSteamID? steamId = GetSteamId(player);
             if (steamId is null)
             {
-                Log.Write("Player {player.Name} has no Steam ID. Not updating ratings.");
+                Log.Write($"Player {player.Name} has no Steam ID. Not updating ratings.");
                 // Returning null from this function causes the rating work as if this player didn't exist.
                 // Also the rating of this player will not be updated.
                 return null;
             }
             if (standing is null)
             {
-                Log.Write("Player {player.Name} has no standing information. Not updating ratings.");
+                Log.Write($"Player {player.Name} has no standing information. Not updating ratings.");
                 return null;
             }
 
@@ -196,41 +199,52 @@ namespace AW2.Stats
         private void HandlePilotRankings(Dictionary<CSteamID, PilotRanking> rankings, bool errors)
         {
             // Fresh players won't have a rating.
-            Log.Write($"Received {rankings.Count} pilot rankings from Steam leaderboard. Requested {RatingFetchOngoing.Count}.");
+            Log.Write($"Received {rankings.Count} pilot rankings from Steam leaderboard. Requested during this round {RatingFetchOngoing.Count}.");
 
             foreach (var ranking in rankings)
             {
                 var steamId = ranking.Key;
                 var pilotRanking = ranking.Value;
                 var player = Game.DataEngine.Players.FirstOrDefault(p => GetSteamId(p) == steamId);
-                if (player is not null && pilotRanking.IsValid)
+                if (RatingFetchOngoing.Contains(steamId))
                 {
-                    // If the update of new rankings to steam is lagging, the server may have newer data than
-                    // what can be downloaded from Steam. In that case, don't overwrite the server data.
-                    // However note, that the AwardedTime can be the same, but the rank may be updated.
-                    if (player.Ranking.RatingAwardedTime < pilotRanking.RatingAwardedTime)
+                    if (player is not null && pilotRanking.IsValid)
                     {
-                        player.Ranking = pilotRanking;
-                        Log.Write($"Pilot {player.Name} received updated rating and ranking information {player.Ranking}");
-                    }
-                    else if (player.Ranking.RatingAwardedTime == pilotRanking.RatingAwardedTime && pilotRanking.Rank != player.Ranking.Rank)
-                    {
-                        Log.Write($"Pilot {player.Name} has the latest rating, but rank is updated {player.Ranking.Rank} -> {pilotRanking.Rank}");
-                        player.Ranking = pilotRanking;
+                        // If the update of new rankings to steam is lagging, the server may have newer data than
+                        // what can be downloaded from Steam. In that case, don't overwrite the server data.
+                        // However note, that the AwardedTime can be the same, but the rank may be updated.
+                        if (player.Ranking.RatingAwardedTime < pilotRanking.RatingAwardedTime)
+                        {
+                            player.Ranking = pilotRanking;
+                            Log.Write($"Pilot {player.Name} received updated rating and ranking information: {player.Ranking}");
+                        }
+                        else if (player.Ranking.RatingAwardedTime == pilotRanking.RatingAwardedTime && pilotRanking.Rank != player.Ranking.Rank)
+                        {
+                            Log.Write($"Pilot {player.Name} has the latest rating, but rank is updated {player.Ranking.Rank} -> {pilotRanking.Rank}");
+                            player.Ranking = pilotRanking;
+                        }
+                        else
+                        {
+                            Log.Write($"Pilot {player.Name} ranking information is already up to date: {pilotRanking}");
+                        }
                     }
                     else
                     {
-                        Log.Write($"Pilot {player.Name} ranking information is already up to date");
+                        Log.Write($"Pilot {player?.Name}, failed to apply received ranking information {pilotRanking}. Blocking the update of rating for this player for this round.");
+                        BlockRatingUpdateForPlayers.Add(steamId);
                     }
                 }
                 else
                 {
-                    Log.Write($"Pilot {player?.Name}, failed to apply received ranking information {pilotRanking}");
+                    Log.Write($"Pilot {player?.Name}, ignoring rating fetch result because it was not requested during this round.");
                 }
+
             }
 
             foreach (var steamId in RatingFetchOngoing)
             {
+                // Record all players who had their rating download attempted. If no valid ranking is available at the end, these 
+                // will be considered rating 1000 to allow other ratings to be updated.
                 RatingFetchFinished.Add(steamId);
             }
 

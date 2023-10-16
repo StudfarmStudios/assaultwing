@@ -305,16 +305,12 @@ namespace AW2.Net.MessageHandling
         {
             var newSpectator = GetSpectator(mess, mode);
             newSpectator.LocalID = mess.SpectatorID;
-            var newStats = newSpectator.StatsData;
-            // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotData was here)
             Game.DataEngine.AddPendingRemoteSpectatorOnServer(newSpectator);
         }
 
         private void TryCreateAndAddNewSpectatorOnClient(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
             var newSpectator = GetSpectator(mess, mode);
-            var newStats = newSpectator.StatsData;
-            // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotData was here)
             Game.AddRemoteSpectator(newSpectator);
             newSpectator.ID = mess.SpectatorID;
             newSpectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;

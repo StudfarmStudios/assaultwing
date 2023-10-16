@@ -5,7 +5,6 @@ namespace AW2.Settings
 {
     public class NetSettings
     {
-        public string ManagementServerAddress { get; set; }
         public string DataServerAddress { get; set; }
         public string StatsServerAddress { get; set; }
         public int StatsHttpsPort { get; set; }
@@ -31,7 +30,6 @@ namespace AW2.Settings
 
         public void Reset()
         {
-            ManagementServerAddress = IsDevPublish ? "assaultwing.com:16728" : "assaultwing.com";
             DataServerAddress = "http://www.assaultwing.com";
             StatsServerAddress = "assaultwing.com";
             StatsHttpsPort = IsDevPublish ? 4002 : 3002;

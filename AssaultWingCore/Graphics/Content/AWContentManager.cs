@@ -53,6 +53,13 @@ namespace AW2.Graphics.Content
                 item = ReadAsset<T>(assetFullName, null);
                 _loadedContent.Add(assetName, item);
             }
+
+            if (typeof(T) == typeof(SpriteFont))
+            {
+                // For some reason setting this in the spritefont files didn't work.
+                ((SpriteFont)item).DefaultCharacter = '?';
+            }
+
             return (T)item;
         }
 

@@ -25,6 +25,12 @@ dependencies are fetched from NuGet, except the optional Steamworks SDK.
 
 As an IDE either a recent Visual Studio or Visual Studio Code can be used.
 
+Note that if you previously had Dotnet tool MGCB installed globally, you
+may have to remove the global install:
+
+    dotnet tool uninstall -g dotnet-mgcb
+
+
 ## Building
 
 CI Build Status: ![CI status badge](https://github.com/StudfarmStudios/assaultwing/actions/workflows/dotnet.yml/badge.svg "GitHub Actions build status")

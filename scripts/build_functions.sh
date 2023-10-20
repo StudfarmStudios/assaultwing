@@ -149,7 +149,7 @@ set_common_variables() {
   ROOT=.
   SOLUTION="AssaultWing.sln"
   DOTNET_PLATFORM="x64"
-  DOTNET_FRAMEWORK=netcoreapp6.0
+  DOTNET_FRAMEWORK=netcoreapp7.0
 }
 
 echo_common_variables() {

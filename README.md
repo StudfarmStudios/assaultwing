@@ -20,10 +20,17 @@ implementation of the Microsoft XNA 4 Framework. Assault Wing is currently using
 the OpenGL backend of the MonoGame on all platforms. Assault Wing builds and
 runs at least on Windows, Linux and Mac.
 
-To compile, use the .NET 6 or later (6 is the current LTS version). Other
+To compile, use the .NET 7 or later (7 not an LTS version, but at the time of
+this writing it has the support deadline beyond the current LTS version). Other
 dependencies are fetched from NuGet, except the optional Steamworks SDK.
 
 As an IDE either a recent Visual Studio or Visual Studio Code can be used.
+
+Note that if you previously had Dotnet tool MGCB installed globally, you
+may have to remove the global install:
+
+    dotnet tool uninstall -g dotnet-mgcb
+
 
 ## Building
 
@@ -57,8 +64,8 @@ following command allows connecting multiple clients from same machine
 Then simply run one of the following:
 
 ```bash
-  cd DedicatedServer/bin/x64/Debug/netcoreapp6.0
-  cd AssaultWing/bin/x64/Debug/netcoreapp6.0
+  cd DedicatedServer/bin/x64/Debug/netcoreapp7.0
+  cd AssaultWing/bin/x64/Debug/netcoreapp7.0
 ```
 
 And then run the `AssaultWing` or the `DedicatedServer` executable in that

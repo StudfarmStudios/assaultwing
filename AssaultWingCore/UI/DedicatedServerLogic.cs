@@ -40,14 +40,17 @@ namespace AW2.UI
             Game.StartArenaBase();
             GameState = GAMESTATE_GAMEPLAY;
             SteamServerComponent.SendUpdatedServerDetailsToSteam();
-            Game.Components.OfType<PilotRatingsUpdater>()?.First()?.StartArena();
         }
 
         public override void FinishArena()
         {
             Game.DataEngine.UpdateStandings();
             var finalStandings = Game.DataEngine.Standings;
+
+            // Update pilot ratings and send updates to clients
             Game.Components.OfType<PilotRatingsUpdater>()?.FirstOrDefault()?.EndArena(finalStandings);
+            Game.SendPilotRankingsToClientsOnServer();
+
             Game.DataEngine.ClearGameState();
             GameState = GAMESTATE_INITIALIZING;
         }

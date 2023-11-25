@@ -30,6 +30,14 @@ namespace AW2.Stats
         /// </summary>
         private DateTime ScheduledRankingFetch = DateTime.MaxValue;
 
+        /// <summary>
+        /// Track whether the latest rating is uploaded to steam. This is used to avoid uploading the same rating
+        /// multiple times.
+        /// </summary>
+        private PilotRanking LastKnownSteamRanking;
+
+        private int fetchErrorCount = 0;
+
         public LocalPilotRankingHandler(AssaultWingCore game) : base(game, 100)
         {
         }
@@ -47,53 +55,76 @@ namespace AW2.Stats
                 return; // A stand in local player is attempted to be created in UserControlledLogic, but safer to check anyway.
             }
 
-            var localPlayerRanking = localPlayer.Ranking;
+            // Sync both ways. In some corner case we may have downloade up to
+            // date ranking, but the server may also have computed a new rating
+            // at the same time.
+            LocalPilotRanking = LocalPilotRanking.Merge(localPlayer.Ranking);
 
-            if (!SteamLeaderboardService.IsUploadingRanking && localPlayerRanking.IsValid &&
-               localPlayerRanking.RatingAwardedTime > LocalPilotRanking.RatingAwardedTime)
+            // Note: Keep the UpToDate flags separate by merging separately both ways.
+            localPlayer.Ranking = localPlayer.Ranking.Merge(LocalPilotRanking);
+
+            if (!SteamLeaderboardService.IsDownloadingOrUploadingRanking &&
+                LocalPilotRanking.IsValid &&
+                LastKnownSteamRanking.RatingAwardedTime < LocalPilotRanking.RatingAwardedTime &&
+                LocalPilotRanking.State == PilotRanking.StateType.RatingCalculated)
             {
-                Log.Write($"LocalPilotRankingHandler: Ranking update from Server {LocalPilotRanking} -> {localPlayerRanking}. Uploading to steam.");
-                LocalPilotRanking = localPlayerRanking;
-                var uploadResult = SteamLeaderboardService.UploadCurrentPilotRanking(localPlayerRanking, (updatedRanking, errors) =>
-                {
-                    if (errors)
-                    {
-                        Log.Write($"LocalPilotRankingHandler: Tried to upload rating, but error occured.");
-                    }
-                    else
-                    {
-                        // Schedule a "fetch" around 3 seconds after rating was awarded to have a good chance of getting fresh ranking from Steam
-                        // that includes the updates from other clients also.
-                        ScheduledRankingFetch = DateTime.UtcNow.AddSeconds(3);
-
-                        if (LocalPilotRanking == localPlayerRanking)
-                        {
-                            Log.Write($"LocalPilotRankingHandler: Rating uploaded and rank updated: {LocalPilotRanking.RankString} -> {updatedRanking.RankString}");
-                            LocalPilotRanking = updatedRanking; // We may have gotten a new rank from Steam.
-                        }
-                        else
-                        {
-                            Log.Write($"LocalPilotRankingHandler: Rating uploaded but ranking information changed simultaneously.");
-                        }
-                    }
-                });
-                if (!uploadResult)
-                {
-                    Log.Write("LocalPilotRankingHandler: Rating upload not possible.");
-                }
+                Log.Write($"LocalPilotRankingHandler: Uploading new rating {LastKnownSteamRanking} -> {LocalPilotRanking} to Steam.");
+                UploadPilotRating();
             }
-            else if (!LocalPilotRanking.IsValid && LastFetchAttempted.AddSeconds(360) < DateTime.UtcNow)
+
+            if (!SteamLeaderboardService.IsDownloadingOrUploadingRanking && !LocalPilotRanking.IsRankValid && LastFetchAttempted.AddSeconds(360) < DateTime.UtcNow)
             {
-                Log.Write($"LocalPilotRankingHandler: No valid local pilot ranking. Attempting to fetch.");
+                Log.Write($"LocalPilotRankingHandler: No valid pilot ranking. Attempting to fetch.");
                 FetchLocalPlayerRanking();
             }
-            else if (!SteamLeaderboardService.IsUploadingRanking &&
-                !SteamLeaderboardService.IsGettingRankings &&
-                ScheduledRankingFetch < DateTime.UtcNow)
+
+            if (!SteamLeaderboardService.IsDownloadingOrUploadingRanking && ScheduledRankingFetch < DateTime.UtcNow)
             {
                 ScheduledRankingFetch = DateTime.MaxValue;
                 Log.Write($"LocalPilotRankingHandler: Scheduled ranking fetch.");
                 FetchLocalPlayerRanking();
+            }
+        }
+
+        private void UploadPilotRating()
+        {
+            var uploadedRanking = LocalPilotRanking;
+            var lastKnownSteamRanking = LastKnownSteamRanking;
+            var uploadTime = DateTime.UtcNow;
+
+            var uploadResult = SteamLeaderboardService.UploadCurrentPilotRanking(uploadedRanking, (updatedRanking, errors) =>
+            {
+                if (errors)
+                {
+                    Log.Write($"LocalPilotRankingHandler: Tried to upload rating, but error occured.");
+                }
+                else
+                {
+
+                    if (lastKnownSteamRanking == LastKnownSteamRanking)
+                    {
+                        LastKnownSteamRanking = LastKnownSteamRanking.Merge(updatedRanking).WithUpToDate(true);
+                    }
+
+                    if (LocalPilotRanking == uploadedRanking)
+                    {
+                        LocalPilotRanking = LocalPilotRanking.Merge(updatedRanking).WithUpToDate(true);
+                        LastKnownSteamRanking = LocalPilotRanking;
+                        Log.Write($"LocalPilotRankingHandler: Rating uploaded and rank updated: {uploadedRanking} -> {LocalPilotRanking}");
+                    }
+                    else
+                    {
+                        Log.Write("LocalPilotRankingHandler: Local ranking updated otherwise while uploading to Steam");
+                    }
+
+                    // Schedule a "fetch" around 3 seconds after rating was awarded to have a good chance of getting fresh ranking from Steam
+                    // that includes the updates from other clients also.
+                    ScheduledRankingFetch = DateTime.UtcNow.AddSeconds(3);
+                }
+            });
+            if (!uploadResult)
+            {
+                Log.Write("LocalPilotRankingHandler: Rating upload not possible.");
             }
         }
 
@@ -104,9 +135,9 @@ namespace AW2.Stats
                 return;
             }
 
-            if (SteamLeaderboardService.IsGettingRankings)
+            if (SteamLeaderboardService.IsDownloadingOrUploadingRanking)
             {
-                Log.Write($"LocalPilotRankingHandler: Skip fetch. Already getting rankings from Steam. Previous attempt {LastFetchAttempted.ToString("s", DateTimeFormatInfo.InvariantInfo)}");
+                Log.Write($"LocalPilotRankingHandler: Skip fetch. Already uploading or getting rankings from Steam. Previous attempt {LastFetchAttempted.ToString("s", DateTimeFormatInfo.InvariantInfo)}");
                 return;
             }
             else
@@ -117,25 +148,24 @@ namespace AW2.Stats
 
             var localRankingOriginal = LocalPilotRanking;
 
+            var fetchTime = DateTime.UtcNow;
+
             SteamLeaderboardService.GetCurrentPlayerRanking((SteamLeaderboardService.PlayerRankingResultDelegate)((ranking, errors) =>
             {
                 if (errors)
                 {
                     Log.Write("LocalPilotRankingHandler: Error getting Ranking from Steam");
+                    // Attempt fetch again with increasing delay
+                    fetchErrorCount++;
+                    ScheduledRankingFetch = DateTime.UtcNow.AddSeconds(3 * fetchErrorCount);
                 }
                 else
                 {
-                    if (this.LocalPilotRanking == localRankingOriginal)
+                    if (LocalPilotRanking == localRankingOriginal)
                     {
-                        if (localRankingOriginal == ranking)
-                        {
-                            Log.Write($"LocalPilotRankingHandler: Fresh ranking from Steam is same: {ranking}");
-                        }
-                        else
-                        {
-                            Log.Write($"LocalPilotRankingHandler: Fresh ranking from Steam: {ranking}");
-                            this.LocalPilotRanking = ranking; // Don't upload the ranking if we already got it from Steam.
-                        }
+                        LocalPilotRanking = LocalPilotRanking.Merge(ranking).WithUpToDate(true);
+                        LastKnownSteamRanking = LocalPilotRanking;
+                        Log.Write($"LocalPilotRankingHandler: Fresh ranking update from Steam: {localRankingOriginal} -> {LocalPilotRanking}");
                     }
                     else
                     {

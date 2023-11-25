@@ -27,13 +27,9 @@ namespace AW2.Stats
         private CallResult<LeaderboardFindResult_t>? FindLeaderBoardCallResult;
 
         private CallResult<LeaderboardScoresDownloaded_t>? DownloadLeaderboardEntriesCallResult;
-        private CallResult<LeaderboardScoreUploaded_t>? LeaderboardUpdateResult;
+        private (CallResult<LeaderboardScoreUploaded_t>, PilotRanking, RankingUploadDelegateType)? LeaderboardUpdateResult;
 
         private LeaderboardResultDelegate? DownloadLeaderboardEntriesResultDelegate;
-
-        private RankingUploadDelegateType? RankingUploadDelegate;
-
-        public PilotRanking UploadedRanking { get; private set; }
 
         public SteamLeaderboardService(SteamApiService steamApiService)
         {
@@ -68,22 +64,23 @@ namespace AW2.Stats
 
         private void LeaderBoardScoreUploaded(LeaderboardScoreUploaded_t uploaded, bool ioFailure)
         {
-            var delegateToCall = RankingUploadDelegate;
+            var delegateToCall = LeaderboardUpdateResult?.Item3;
 
-            if (delegateToCall is not null && UploadedRanking.IsValid)
+            if (delegateToCall is not null)
             {
-                var updatedRanking = UploadedRanking;
-                RankingUploadDelegate = null;
-                UploadedRanking = new PilotRanking();
-                updatedRanking.Rank = uploaded.m_nGlobalRankNew;
-                delegateToCall(updatedRanking, errors: ioFailure);
+                var ranking = new PilotRanking() { State = PilotRanking.StateType.RankingDownloaded, Rank = uploaded.m_nGlobalRankNew, RankDownloadedTime = DateTime.Now };
+                delegateToCall(ranking, errors: ioFailure);
             }
 
-            LeaderboardUpdateResult?.Dispose();
+            LeaderboardUpdateResult?.Item1.Dispose();
             LeaderboardUpdateResult = null;
         }
 
-        public bool IsUploadingRanking => RankingUploadDelegate is not null;
+        public bool IsUploadingRanking => LeaderboardUpdateResult is not null;
+
+        public bool IsDownloadingRankings => DownloadLeaderboardEntriesResultDelegate is not null;
+
+        public bool IsDownloadingOrUploadingRanking => IsUploadingRanking || IsDownloadingRankings;
 
         private const int MaxLeaderboardDetails = 2; // currently timestamp is stored in the extra data
 
@@ -138,18 +135,26 @@ namespace AW2.Stats
                 var call = SteamUserStats.DownloadLeaderboardEntries(PilotRankingLeaderboard, ELeaderboardDataRequest.k_ELeaderboardDataRequestGlobalAroundUser, 0, 0);
                 DownloadLeaderboardEntriesResultDelegate = (entries, errors) =>
                 {
-                    if (entries.Count() == 0)
+                    if (!errors && entries.Length == 0)
                     {
-                        resultDelegate(new PilotRanking(), errors: true);
+                        resultDelegate(new PilotRanking() { State = PilotRanking.StateType.NotRatedYet, RankDownloadedTime = DateTime.Now }, errors: false);
+                    }
+                    else if (!errors && entries.Length == 1)
+                    {
+                        var ranking = PilotRanking.FromLeaderboardEntry(entries.First());
+                        resultDelegate(ranking, errors: false);
                     }
                     else
                     {
-                        var ranking = PilotRanking.FromLeaderboardEntry(entries.First());
-                        resultDelegate(ranking, errors: errors);
+                        resultDelegate(new PilotRanking() { State = PilotRanking.StateType.DownloadFailed, RankDownloadedTime = DateTime.Now }, errors: true);
                     }
                 };
                 DownloadLeaderboardEntriesCallResult = new CallResult<LeaderboardScoresDownloaded_t>(DownloadedLeaderBoardEntriesResult);
                 DownloadLeaderboardEntriesCallResult?.Set(call, DownloadedLeaderBoardEntriesResult);
+            }
+            else
+            {
+                resultDelegate(new PilotRanking() { State = PilotRanking.StateType.DownloadFailed, RankDownloadedTime = DateTime.Now }, errors: true);
             }
         }
 
@@ -164,14 +169,6 @@ namespace AW2.Stats
             DownloadLeaderboardEntriesResultDelegate = resultDelegate;
             DownloadLeaderboardEntriesCallResult = new CallResult<LeaderboardScoresDownloaded_t>(DownloadedLeaderBoardEntriesResult);
             DownloadLeaderboardEntriesCallResult?.Set(call, DownloadedLeaderBoardEntriesResult);
-        }
-
-        public bool IsGettingRankings
-        {
-            get
-            {
-                return DownloadLeaderboardEntriesResultDelegate != null;
-            }
         }
 
         // https://partner.steamgames.com/doc/api/ISteamUserStats#UploadLeaderboardScore
@@ -195,10 +192,9 @@ namespace AW2.Stats
                     extraData.ToArray(),
                     extraData.Count
                 );
-                RankingUploadDelegate = resultDelegate;
-                UploadedRanking = ranking;
-                LeaderboardUpdateResult = CallResult<LeaderboardScoreUploaded_t>.Create(LeaderBoardScoreUploaded);
-                LeaderboardUpdateResult.Set(result);
+                var callResult = CallResult<LeaderboardScoreUploaded_t>.Create(LeaderBoardScoreUploaded);
+                callResult.Set(result);
+                LeaderboardUpdateResult = (callResult, ranking, resultDelegate);
                 return true;
             }
             else
@@ -213,7 +209,7 @@ namespace AW2.Stats
             FindLeaderBoardCallResult = null;
             DownloadLeaderboardEntriesResultDelegate = null;
 
-            LeaderboardUpdateResult?.Dispose();
+            LeaderboardUpdateResult?.Item1.Dispose();
             LeaderboardUpdateResult = null;
 
             DownloadLeaderboardEntriesCallResult?.Dispose();

@@ -47,7 +47,7 @@ namespace AW2.UI
         {
             Game.DataEngine.UpdateStandings();
             var finalStandings = Game.DataEngine.Standings;
-            Game.Components.OfType<PilotRatingsUpdater>()?.First()?.EndArena(finalStandings);
+            Game.Components.OfType<PilotRatingsUpdater>()?.FirstOrDefault()?.EndArena(finalStandings);
             Game.DataEngine.ClearGameState();
             GameState = GAMESTATE_INITIALIZING;
         }

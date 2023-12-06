@@ -359,7 +359,7 @@ namespace AW2.Menu
                 return;
             }
 
-            var ranking = Game.Components.OfType<LocalPilotRankingHandler>()?.First()?.LocalPilotRanking ?? new PilotRanking();
+            var ranking = Game.Components.OfType<LocalPilotRankingHandler>()?.FirstOrDefault()?.LocalPilotRanking ?? new PilotRanking();
 
             var playerRank = ranking.RankString;
 

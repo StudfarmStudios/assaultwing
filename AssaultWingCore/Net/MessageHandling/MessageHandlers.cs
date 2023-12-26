@@ -51,6 +51,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<GameSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleGameSettingsRequest);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerMessageMessageOnClient);
             yield return new MessageHandler<ArenaFinishMessage>(MessageHandlerBase.SourceType.Server, HandleArenaFinishMessage);
+            yield return new MessageHandler<PilotRankingMessage>(MessageHandlerBase.SourceType.Server, HandlePilotRankingMessageOnClient);
         }
 
         public IEnumerable<MessageHandlerBase> GetClientGameplayHandlers()
@@ -68,6 +69,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<GameServerHandshakeRequestTCP>(MessageHandlerBase.SourceType.Client, HandleGameServerHandshakeRequestTCP);
             yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Client, HandleSpectatorSettingsRequestOnServer);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerMessageMessageOnServer);
+            yield return new MessageHandler<PilotRankingMessage>(MessageHandlerBase.SourceType.Client, HandlePilotRankingMessageOnServer);
         }
 
         public IEnumerable<MessageHandlerBase> GetServerGameplayHandlers()
@@ -200,11 +202,36 @@ namespace AW2.Net.MessageHandling
             }
         }
 
+        private void HandlePilotRankingMessageOnServer(PilotRankingMessage mess)
+        {
+            var player = Game.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
+            if (player == null || player.ConnectionID != mess.ConnectionID)
+            {
+                // A client sent ranking for a nonexisting player or some other player.
+                // Players are only expected to send updates for them selves.
+                return;
+            }
+            var merged = player.Ranking.Merge(mess.PilotRanking); // Do a merge algorithm because both clients and the server may update it.
+            if (!merged.UpToDate)
+                Log.Write($"Player {player.Name} PilotRanking: {player.Ranking} -> {merged}");
+            player.Ranking = merged; // Needs to be done like this because PilotRanking is a struct.
+        }
+
         private void HandlePlayerMessageMessageOnClient(PlayerMessageMessage mess)
         {
             if (mess.AllPlayers) throw new NotImplementedException("Client cannot broadcast player text messages");
             var player = Game.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
             if (player != null) player.Messages.Add(mess.Message);
+        }
+
+        private void HandlePilotRankingMessageOnClient(PilotRankingMessage mess)
+        {
+            var player = Game.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
+            if (player == null) return;
+            var merged = player.Ranking.Merge(mess.PilotRanking); // Do a merge algorithm because both clients and the server may update it.
+            if (!merged.UpToDate)
+                Log.Write($"Player {player.Name} PilotRanking: {player.Ranking} -> {merged}");
+            player.Ranking = merged; // Needs to be done like this because PilotRanking is a struct.
         }
 
         private void HandleSpectatorOrTeamUpdateMessage(SpectatorOrTeamUpdateMessage mess)

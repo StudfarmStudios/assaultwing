@@ -363,7 +363,7 @@ namespace AW2.Menu
 
             var playerRank = ranking.RankString;
 
-            var playerRating = string.Format(CultureInfo.InvariantCulture, "rating {0}", ranking.Rating.ToString());
+            var playerRating = $"rating {ranking.RatingString}";
 
             var backgroundPos = new Vector2(ViewportWidth - _loggedInPilot.Width + 4, -_loggedInPilot.Height * (1 - GetLoggedInPlayerAnimationMultiplier()));
 

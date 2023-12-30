@@ -18,71 +18,12 @@ namespace AW2.Stats
         /// </summary>
         private static readonly MultiElo multiElo = new MultiElo(k: 32, d: 400, logBase: 10);
 
-        private SteamLeaderboardService SteamLeaderboardService => Game.Services.GetService<SteamLeaderboardService>();
-
-        /// <summary>
-        /// Used on server to keep track of which players have had their ranking downloaded.
-        /// </summary>
-        private HashSet<CSteamID> RatingFetchStarted = new HashSet<CSteamID>();
-        private List<CSteamID> RatingFetchOngoing = new List<CSteamID>();
-        private HashSet<CSteamID> RatingFetchFinished = new HashSet<CSteamID>();
-        private HashSet<CSteamID> BlockRatingUpdateForPlayers = new HashSet<CSteamID>();
-
         public PilotRatingsUpdater(AssaultWingCore game) : base(game, 100)
         {
         }
 
-
         private CSteamID? GetSteamId(Player player) => Game.NetworkEngine.GetSteamId(player.ConnectionID);
 
-        /// <summary>
-        /// At the start of each round server initiates the fetching of fresh ranking information from the Steam for
-        /// the players connected at that time.
-        /// </summary>
-        public void StartArena()
-        {
-            List<CSteamID> steamIds = Game.DataEngine.Players.Select(GetSteamId).OfType<CSteamID>().ToList();
-
-            // Clear state about which players have had their ranking downloaded. A rankings query could be
-            // ongoing if the round ended while previous download was ongoing, but that does not cause any
-            // confusion, because RatingFetchOngoing is cleared here and the results will be ignored.
-            RatingFetchStarted.Clear();
-            RatingFetchOngoing.Clear();
-            RatingFetchFinished.Clear();
-            BlockRatingUpdateForPlayers.Clear();
-
-            Update();
-        }
-
-        /// <summary>
-        /// Handle new players joining the game during the arena.
-        /// </summary>
-        override public void Update()
-        {
-            if (!SteamLeaderboardService.IsGettingRankings)
-            {
-                // Only 1 call allowed in progress at a time.
-
-                // Players who have joined since the start of the round.
-                List<CSteamID> steamIds =
-                    Game.DataEngine.Players
-                    .Select(GetSteamId)
-                    .OfType<CSteamID>()
-                    .Where(id => !RatingFetchStarted.Contains(id)).ToList();
-
-                if (steamIds.Count == 0) return;
-
-                RatingFetchOngoing = steamIds;
-
-                foreach (var steamId in steamIds)
-                {
-                    RatingFetchStarted.Add(steamId); // Only try to fetch once per arena per player.
-                }
-
-                Log.Write($"Downloading ranking information for {steamIds.Count} new players.");
-                SteamLeaderboardService.GetRankings(steamIds, HandlePilotRankings);
-            }
-        }
 
         /// <summary>
         /// At end of round on the server, compute new rating scores. These will
@@ -116,7 +57,10 @@ namespace AW2.Stats
 
             var ratingInputs = players
                 .Select(p => GetEloRatingInput(p, standings))
-                .OfType<EloRating<CSteamID>>().ToArray();
+                .OfType<(EloRating<CSteamID> Input, bool Update)>().ToArray();
+
+            HashSet<CSteamID> updateRating =
+                ratingInputs.Where(p => p.Update).Select(p => p.Input.PlayerId).ToHashSet();
 
             if (ratingInputs.Length < 2)
             {
@@ -126,7 +70,7 @@ namespace AW2.Stats
 
             Dictionary<CSteamID, EloRating<CSteamID>> updatedRatings =
                 multiElo
-                .Update<CSteamID>(ratingInputs)
+                .Update<CSteamID>(ratingInputs.Select(p => p.Input).ToArray())
                 .ToDictionary(r => r.PlayerId);
 
             List<String> updateLogMessages = new List<String>();
@@ -136,12 +80,19 @@ namespace AW2.Stats
                 var steamId = GetSteamId(player);
                 if (steamId is not null)
                 {
-                    if (updatedRatings.ContainsKey(steamId.Value) && !BlockRatingUpdateForPlayers.Contains(steamId.Value))
+                    if (updatedRatings.ContainsKey(steamId.Value) && updateRating.Contains(steamId.Value))
                     {
                         var updatedRating = updatedRatings[steamId.Value];
                         var prevRanking = player.Ranking;
-                        player.Ranking = player.Ranking.UpdateRating(updatedRating.Rating, now);
-                        updateLogMessages.Add($"[{player.Name}: {prevRanking.Rating} -> {player.Ranking.Rating}, score: {updatedRating.Score}, old awarded: {prevRanking.RatingAwardedTime.ToString("s", DateTimeFormatInfo.InvariantInfo)}]");
+                        // note that the rank is not accurate at this point, but it is still better than nothing.
+                        var newRating = new PilotRanking
+                        {
+                            State = PilotRanking.StateType.RatingCalculated,
+                            Rating = updatedRating.Rating,
+                            RatingAwardedTime = now,
+                        };
+                        player.Ranking = player.Ranking.Merge(newRating);
+                        updateLogMessages.Add($"[{player.Name}: {prevRanking} -> {player.Ranking}");
                     }
                 }
             }
@@ -149,7 +100,7 @@ namespace AW2.Stats
             Log.Write($"Updated {updateLogMessages.Count} pilot ratings: {String.Join(", ", updateLogMessages)}");
         }
 
-        private EloRating<CSteamID>? GetEloRatingInput(Player player, Standings standings)
+        private (EloRating<CSteamID> Input, bool Update)? GetEloRatingInput(Player player, Standings standings)
         {
             var standing = standings.FindForSpectator(player);
 
@@ -169,92 +120,26 @@ namespace AW2.Stats
 
             var currentRanking = player.Ranking;
 
-            int currentRating = 0;
-
-            if (currentRanking.IsValid)
+            (int current, bool update, string? message) = currentRanking.State switch
             {
-                currentRating = currentRanking.Rating;
-            }
-            else
-            {
-                if (RatingFetchFinished.Contains(steamId.Value))
-                {
-                    // Fresh players start with 1000 rating. 
-                    currentRating = 1000;
-                    Log.Write($"Player {player.Name} has no valid rating/ranking information. Starting with rating of 1000.");
-                }
-                else
-                {
-                    // In case of failure to download rating we can update others rating assuming this 
+                PilotRanking.StateType.RatingCalculated =>
+                    (currentRanking.Rating, true, null),
+                PilotRanking.StateType.RankingDownloaded =>
+                    (currentRanking.Rating, true, null),
+                PilotRanking.StateType.NotRatedYet =>
+                    (1000, true, $"Player {player.Name} has no rating/ranking information yet. Starting with rating of 1000."),
+                _ =>
+                    // In case of failure to download rating or similar we can update others rating assuming this 
                     // player has 0 rating, but we shouldn't update this players rating.
-                    Log.Write($"Player {player.Name} has no valid previously known rating and no rating information downloaded. Assuming rating 0 and not updating rating for this player.");
-                    currentRating = 0;
-                    BlockRatingUpdateForPlayers.Add(steamId.Value);
-                }
-            }
+                    (0, false, $"Player {player.Name} has invalid rating/ranking information. Assuming rating 0. Not updating rating for this player. {currentRanking}")
+            };
 
-            return new EloRating<CSteamID>() { PlayerId = steamId.Value, Rating = currentRating, Score = standing.Score };
-        }
-
-        private void HandlePilotRankings(Dictionary<CSteamID, PilotRanking> rankings, bool errors)
-        {
-            // Fresh players won't have a rating.
-            Log.Write($"Received {rankings.Count} pilot rankings from Steam leaderboard. Requested during this round {RatingFetchOngoing.Count}.");
-
-            foreach (var ranking in rankings)
+            if (message is not null)
             {
-                var steamId = ranking.Key;
-                var pilotRanking = ranking.Value;
-                var player = Game.DataEngine.Players.FirstOrDefault(p => GetSteamId(p) == steamId);
-                if (RatingFetchOngoing.Contains(steamId))
-                {
-                    if (player is not null && pilotRanking.IsValid)
-                    {
-                        // If the update of new rankings to steam is lagging, the server may have newer data than
-                        // what can be downloaded from Steam. In that case, don't overwrite the server data.
-                        // However note, that the AwardedTime can be the same, but the rank may be updated.
-                        if (player.Ranking.RatingAwardedTime < pilotRanking.RatingAwardedTime)
-                        {
-                            player.Ranking = pilotRanking;
-                            Log.Write($"Pilot {player.Name} received updated rating and ranking information: {player.Ranking}");
-                        }
-                        else if (player.Ranking.RatingAwardedTime == pilotRanking.RatingAwardedTime && pilotRanking.Rank != player.Ranking.Rank)
-                        {
-                            Log.Write($"Pilot {player.Name} has the latest rating, but rank is updated {player.Ranking.Rank} -> {pilotRanking.Rank}");
-                            player.Ranking = pilotRanking;
-                        }
-                        else
-                        {
-                            Log.Write($"Pilot {player.Name} ranking information is already up to date: {pilotRanking}");
-                        }
-                    }
-                    else
-                    {
-                        Log.Write($"Pilot {player?.Name}, failed to apply received ranking information {pilotRanking}. Blocking the update of rating for this player for this round.");
-                        BlockRatingUpdateForPlayers.Add(steamId);
-                    }
-                }
-                else
-                {
-                    Log.Write($"Pilot {player?.Name}, ignoring rating fetch result because it was not requested during this round.");
-                }
-
+                Log.Write(message);
             }
 
-            foreach (var steamId in RatingFetchOngoing)
-            {
-                // Record all players who had their rating download attempted. If no valid ranking is available at the end, these 
-                // will be considered rating 1000 to allow other ratings to be updated.
-                RatingFetchFinished.Add(steamId);
-            }
-
-            if (errors)
-            {
-                Log.Write($"Errors occured while fetching pilot rankings for {RatingFetchOngoing.Count} players. As a safety precaution, their ratings won't be updated.");
-                BlockRatingUpdateForPlayers.UnionWith(RatingFetchOngoing);
-            }
-
-            RatingFetchOngoing.Clear();
+            return (new EloRating<CSteamID>() { PlayerId = steamId.Value, Rating = current, Score = standing.Score }, update);
         }
     }
 }

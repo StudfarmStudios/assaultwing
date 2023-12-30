@@ -29,6 +29,7 @@ namespace AW2.Core
         private AWTimer _gameSettingsSendTimer;
         private AWTimer _arenaStateSendTimer;
         private AWTimer _frameNumberSynchronizationTimer;
+
         private byte _nextArenaID;
         private GobDeletionMessage _pendingGobDeletionMessage;
         private ClientGameStateUpdateMessage _pendingClientGameStateUpdateMessage;
@@ -207,6 +208,11 @@ namespace AW2.Core
                     break;
                 case NetworkMode.Client:
                     _pendingClientGameStateUpdateMessage = new ClientGameStateUpdateMessage();
+                    var player = DataEngine.LocalPlayer;
+                    if (player is not null)
+                    {
+                        player.Ranking = player.Ranking.WithUpToDate(false); // Force fresh ranking to be sent to server.
+                    }
                     break;
             }
             Logic.StartArena();
@@ -581,6 +587,18 @@ namespace AW2.Core
             NetworkEngine.SendToGameClients(message);
         }
 
+        public void SendPilotRankingsToClientsOnServer()
+        {
+            var message = new PilotRankingMessage();
+            foreach (var spec in DataEngine.Spectators.Where(s => !s.Ranking.UpToDate))
+            {
+                message.PlayerID = spec.ID;
+                message.PilotRanking = spec.Ranking;
+                spec.Ranking = spec.Ranking.WithUpToDate(true);
+                NetworkEngine.SendToGameClients(message);
+            }
+        }
+
         private void SetPlayerControls(ClientGameStateUpdateMessage message)
         {
             var player = DataEngine.LocalPlayer;
@@ -614,6 +632,15 @@ namespace AW2.Core
             var gobUpdateMessage = new GobUpdateMessage();
             PopulateGobUpdateMessage(gobUpdateMessage, DataEngine.Arena.GobsInRelevantLayers, SerializationModeFlags.VaryingDataFromServer);
             if (gobUpdateMessage.HasContent) foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(gobUpdateMessage);
+        }
+
+        private void SendPilotRankingToServerOnClient()
+        {
+            var player = DataEngine.LocalPlayer;
+            if ((player?.Ranking.UpToDate ?? true) || player.ID == Spectator.UNINITIALIZED_ID) return;
+            var message = new PilotRankingMessage() { PlayerID = player.ID, PilotRanking = player.Ranking };
+            player.Ranking = player.Ranking.WithUpToDate(true);
+            NetworkEngine.GameServerConnection.Send(message);
         }
 
         private void SendGobUpdateMessageOnClient()
@@ -663,6 +690,7 @@ namespace AW2.Core
             if (!_gameSettingsSendTimer.IsElapsed) return;
             SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
             SendTeamSettingsToGameClients();
+            SendPilotRankingsToClientsOnServer();
             var mess = new GameSettingsRequest { ArenaToPlay = SelectedArenaName, GameplayMode = DataEngine.GameplayMode.Name };
             foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(mess);
         }
@@ -670,6 +698,7 @@ namespace AW2.Core
         private void SendGameSettingsOnClient()
         {
             if (!_gameSettingsSendTimer.IsElapsed) return;
+            SendPilotRankingToServerOnClient();
             SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
         }
 

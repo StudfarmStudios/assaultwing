@@ -10,7 +10,6 @@ using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.UI;
-using Steamworks;
 using AW2.Stats;
 
 namespace AW2.Game.Players
@@ -353,14 +352,6 @@ namespace AW2.Game.Players
                         writer.Write((CanonicalString)Weapon2Name);
                         writer.Write((CanonicalString)ExtraDeviceName);
                     }
-                    // Server determines the ranks and scores of players.
-                    if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
-                        mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
-                    {
-                        writer.Write((int)Ranking.Rating);
-                        writer.Write((int)Ranking.Rank);
-                        writer.Write((long)Ranking.RatingAwardedTime.Ticks);
-                    }
                 }
             }
         }
@@ -380,20 +371,6 @@ namespace AW2.Game.Players
                     if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
                     if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
                 }
-            }
-            // Server determines the ranks and scores of players.
-            if (mode.HasFlag(SerializationModeFlags.ConstantDataFromServer) ||
-                mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
-            {
-                var rating = reader.ReadInt32();
-                var rank = reader.ReadInt32();
-                var awardedTime = new DateTime(reader.ReadInt64());
-                Ranking = new PilotRanking()
-                {
-                    Rank = rank,
-                    Rating = rating,
-                    RatingAwardedTime = awardedTime
-                };
             }
         }
 

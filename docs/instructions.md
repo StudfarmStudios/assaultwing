@@ -61,6 +61,8 @@ pilot, you can also enter your name as the topmost selection. Pressing `Tab` or
 game pad Shoulders will cycle through the menu tabs: Equipment, Players, Chat,
 Game Settings.
 
+Please see the [Gameplay guide for more tips and information.](gameplay.md)
+
 # Playing at the Battlefront — Multiplayer over the Internet
 
 Assault Wing is the most fun when many players play over the Internet. Use

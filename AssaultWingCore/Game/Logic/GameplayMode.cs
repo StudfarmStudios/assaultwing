@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using AW2.Game.Players;
 using AW2.Helpers;
 using AW2.Settings;
+using AW2.Stats;
 
 namespace AW2.Game.Logic
 {
@@ -91,7 +92,7 @@ namespace AW2.Game.Logic
                 let stats = spec.ArenaStatistics
                 let score = CalculateScore(stats)
                 orderby score descending, stats.Kills descending, spec.Name
-                select new Standing(spec.ID, spec.Name, spec.Color, score, spec.ArenaStatistics, spec.StatsData,
+                select new Standing(spec.ID, spec.Name, spec.Color, score, spec.ArenaStatistics, spec.Ranking,
                     isActive: spec.IsLocal || !spec.IsDisconnected)).ToArray();
         }
 
@@ -109,7 +110,7 @@ namespace AW2.Game.Logic
                 let stats = team.ArenaStatistics
                 let score = CalculateScore(stats)
                 orderby score descending, stats.Kills descending, team.Name
-                let entry = new Standing(team.ID, team.Name, team.Color, score, team.ArenaStatistics, statsData: null, isActive: true)
+                let entry = new Standing(team.ID, team.Name, team.Color, score, team.ArenaStatistics, new PilotRanking(), isActive: true)
                 select Tuple.Create(entry, GetStandings(team.Members))).ToArray();
             return new Standings(standings);
         }

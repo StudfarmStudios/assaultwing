@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using AW2.Game.BonusActions;
 using AW2.Game.Collisions;

@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
 using AW2.Core.GameComponents;
+using AW2.Stats;
 
 namespace AW2.UI
 {
@@ -11,16 +12,26 @@ namespace AW2.UI
         private const int GAMESTATE_INITIALIZING = 0;
         private const int GAMESTATE_GAMEPLAY = 1;
 
-        private SteamServerComponent SteamServerComponent {get; init;}
+        protected SteamServerComponent SteamServerComponent { get; init; }
+
+        protected DedicatedServer DedicatedServer { get; init; }
 
         public DedicatedServerLogic(AssaultWing<E> game, bool consoleServer)
             : base(game)
         {
-            var dedicatedServer = new DedicatedServer(game, 13);
+            DedicatedServer = new DedicatedServer(game, 13);
             SteamServerComponent = new SteamServerComponent(game, 0, consoleServer = consoleServer);
             game.Components.Add(SteamServerComponent);
-            game.Components.Add(dedicatedServer);
-            dedicatedServer.Enabled = true;
+            game.Components.Add(DedicatedServer);
+
+            if (game.IsSteam)
+            {
+                var ratingsUpdater = new PilotRatingsUpdater(game);
+                game.Components.Add(ratingsUpdater);
+                ratingsUpdater.Enabled = true;
+            }
+
+            DedicatedServer.Enabled = true;
             SteamServerComponent.Enabled = true;
         }
 
@@ -33,6 +44,13 @@ namespace AW2.UI
 
         public override void FinishArena()
         {
+            Game.DataEngine.UpdateStandings();
+            var finalStandings = Game.DataEngine.Standings;
+
+            // Update pilot ratings and send updates to clients
+            Game.Components.OfType<PilotRatingsUpdater>()?.FirstOrDefault()?.EndArena(finalStandings);
+            Game.SendPilotRankingsToClientsOnServer();
+
             Game.DataEngine.ClearGameState();
             GameState = GAMESTATE_INITIALIZING;
         }

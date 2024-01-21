@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AW2.Core;
 using AW2.Net.Connections;
 
@@ -38,7 +38,7 @@ namespace AW2.Net.MessageHandling
                     var errorText = "Error while handling message " + message + " with read buffer " + message.ReadBufferToString();
                     // Note: Print outer exception details to log because the outer exception will be peeled off
                     // by Forms. Only the innermost exception is handed to the Application.ThreadException event.
-                    AW2.Helpers.Log.Write("Details about {0}: {1}", e.GetType().Name , errorText);
+                    AW2.Helpers.Log.Write("Details about {0}: {1}", e.GetType().Name, errorText);
                     throw new NetworkException(errorText, e);
                 }
             }

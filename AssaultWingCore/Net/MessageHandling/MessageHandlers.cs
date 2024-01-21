@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -51,6 +51,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<GameSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleGameSettingsRequest);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerMessageMessageOnClient);
             yield return new MessageHandler<ArenaFinishMessage>(MessageHandlerBase.SourceType.Server, HandleArenaFinishMessage);
+            yield return new MessageHandler<PilotRankingMessage>(MessageHandlerBase.SourceType.Server, HandlePilotRankingMessageOnClient);
         }
 
         public IEnumerable<MessageHandlerBase> GetClientGameplayHandlers()
@@ -68,6 +69,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<GameServerHandshakeRequestTCP>(MessageHandlerBase.SourceType.Client, HandleGameServerHandshakeRequestTCP);
             yield return new MessageHandler<SpectatorSettingsRequest>(MessageHandlerBase.SourceType.Client, HandleSpectatorSettingsRequestOnServer);
             yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerMessageMessageOnServer);
+            yield return new MessageHandler<PilotRankingMessage>(MessageHandlerBase.SourceType.Client, HandlePilotRankingMessageOnServer);
         }
 
         public IEnumerable<MessageHandlerBase> GetServerGameplayHandlers()
@@ -79,15 +81,22 @@ namespace AW2.Net.MessageHandling
         #region Handler implementations
 
         // TODO: Peter: Steam network, connecting to selected server
-        
+
         private void HandleSpectatorSettingsRequestOnClient(SpectatorSettingsRequest mess)
         {
-            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer;
             var spectator = Game.DataEngine.Spectators.FirstOrDefault(
                 spec => spec.ID == mess.SpectatorID && spec.ServerRegistration != Spectator.ServerRegistrationType.No);
+            bool isLocal = spectator?.IsLocal ?? false;
+
+            // If the spectator is local, we don't want to overwrite locally owned data like his ship selection,
+            // but we still wan't to deserialize the ranking data from the server. The KeepLocalClientOwnedData
+            // flag protects the locally owned data.
+            var spectatorSerializationMode = SerializationModeFlags.ConstantDataFromServer |
+                (isLocal ? SerializationModeFlags.KeepLocalClientOwnedData : 0);
+
             if (spectator == null)
                 TryCreateAndAddNewSpectatorOnClient(mess, spectatorSerializationMode);
-            else if (spectator.IsRemote)
+            else
                 mess.Read(spectator, spectatorSerializationMode, 0);
         }
 
@@ -193,11 +202,36 @@ namespace AW2.Net.MessageHandling
             }
         }
 
+        private void HandlePilotRankingMessageOnServer(PilotRankingMessage mess)
+        {
+            var player = Game.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
+            if (player == null || player.ConnectionID != mess.ConnectionID)
+            {
+                // A client sent ranking for a nonexisting player or some other player.
+                // Players are only expected to send updates for them selves.
+                return;
+            }
+            var merged = player.Ranking.Merge(mess.PilotRanking); // Do a merge algorithm because both clients and the server may update it.
+            if (!merged.UpToDate)
+                Log.Write($"Player {player.Name} PilotRanking: {player.Ranking} -> {merged}");
+            player.Ranking = merged; // Needs to be done like this because PilotRanking is a struct.
+        }
+
         private void HandlePlayerMessageMessageOnClient(PlayerMessageMessage mess)
         {
             if (mess.AllPlayers) throw new NotImplementedException("Client cannot broadcast player text messages");
             var player = Game.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
             if (player != null) player.Messages.Add(mess.Message);
+        }
+
+        private void HandlePilotRankingMessageOnClient(PilotRankingMessage mess)
+        {
+            var player = Game.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
+            if (player == null) return;
+            var merged = player.Ranking.Merge(mess.PilotRanking); // Do a merge algorithm because both clients and the server may update it.
+            if (!merged.UpToDate)
+                Log.Write($"Player {player.Name} PilotRanking: {player.Ranking} -> {merged}");
+            player.Ranking = merged; // Needs to be done like this because PilotRanking is a struct.
         }
 
         private void HandleSpectatorOrTeamUpdateMessage(SpectatorOrTeamUpdateMessage mess)
@@ -298,16 +332,12 @@ namespace AW2.Net.MessageHandling
         {
             var newSpectator = GetSpectator(mess, mode);
             newSpectator.LocalID = mess.SpectatorID;
-            var newStats = newSpectator.StatsData;
-            // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotData was here)
             Game.DataEngine.AddPendingRemoteSpectatorOnServer(newSpectator);
         }
 
         private void TryCreateAndAddNewSpectatorOnClient(SpectatorSettingsRequest mess, SerializationModeFlags mode)
         {
             var newSpectator = GetSpectator(mess, mode);
-            var newStats = newSpectator.StatsData;
-            // TODO: Peter: steam achievements and stats would be updated here? (old WebData.UpdatePilotData was here)
             Game.AddRemoteSpectator(newSpectator);
             newSpectator.ID = mess.SpectatorID;
             newSpectator.ServerRegistration = Spectator.ServerRegistrationType.Yes;
@@ -319,12 +349,12 @@ namespace AW2.Net.MessageHandling
             switch (mess.Subclass)
             {
                 case SpectatorSettingsRequest.SubclassType.Player:
-                    newSpectator = new Player(Game, 
+                    newSpectator = new Player(Game,
                         pilotId: "<uninitialised pilotId>",
-                        name: "<uninitialised>", 
-                        shipTypeName: CanonicalString.Null, 
+                        name: "<uninitialised>",
+                        shipTypeName: CanonicalString.Null,
                         weapon2Name: CanonicalString.Null,
-                        extraDeviceName: CanonicalString.Null, 
+                        extraDeviceName: CanonicalString.Null,
                         connectionId: mess.ConnectionID);
                     break;
                 case SpectatorSettingsRequest.SubclassType.BotPlayer:

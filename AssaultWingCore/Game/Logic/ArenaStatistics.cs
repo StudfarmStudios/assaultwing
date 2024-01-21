@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using AW2.Helpers.Serialization;
+using AW2.Stats;
 
 namespace AW2.Game.Logic
 {
@@ -24,19 +25,19 @@ namespace AW2.Game.Logic
         public int KillsWithoutDying { get; set; }
         public float DamageInflictedToMinions { get { return _damageInflictedToMinions; } set { _damageInflictedToMinions = value; } }
         public int BonusesCollected { get { return _bonusesCollected; } set { _bonusesCollected = value; } }
-        public Func<float> Rating { get; set; }
+        public Func<PilotRanking> Ranking { get; set; }
 
         public bool IsEmpty { get { return Kills == 0 && Deaths == 0 && DamageInflictedToMinions == 0 && BonusesCollected == 0; } }
 
         public ArenaStatistics()
         {
             Lives = -1;
-            Rating = () => 0;
+            Ranking = () => new PilotRanking();
         }
 
         public ArenaStatistics Clone()
         {
-            var currentRating = Rating();
+            var currentRanking = new PilotRanking();
             return new ArenaStatistics
             {
                 Lives = Lives,
@@ -45,7 +46,7 @@ namespace AW2.Game.Logic
                 KillsWithoutDying = KillsWithoutDying,
                 DamageInflictedToMinions = DamageInflictedToMinions,
                 BonusesCollected = BonusesCollected,
-                Rating = () => currentRating,
+                Ranking = () => currentRanking,
             };
         }
 

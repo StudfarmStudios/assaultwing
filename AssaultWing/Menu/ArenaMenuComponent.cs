@@ -56,9 +56,9 @@ namespace AW2.Menu
                 if (value)
                     ArenaInfos =
                         (from arenaTemplate in MenuEngine.Game.DataEngine.GetTypeTemplates<Arena>()
-                        join gameModeArena in MenuEngine.Game.DataEngine.GameplayMode.Arenas
-                        on arenaTemplate.Info.Name equals gameModeArena
-                        select arenaTemplate.Info).ToArray();
+                         join gameModeArena in MenuEngine.Game.DataEngine.GameplayMode.Arenas
+                         on arenaTemplate.Info.Name equals gameModeArena
+                         select arenaTemplate.Info).ToArray();
             }
         }
 

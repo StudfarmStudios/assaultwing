@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,6 +18,8 @@ using AW2.Net.Messages;
 using AW2.UI;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Steamworks;
+using AW2.Stats;
 
 namespace AW2.Core
 {
@@ -27,6 +29,7 @@ namespace AW2.Core
         private AWTimer _gameSettingsSendTimer;
         private AWTimer _arenaStateSendTimer;
         private AWTimer _frameNumberSynchronizationTimer;
+
         private byte _nextArenaID;
         private GobDeletionMessage _pendingGobDeletionMessage;
         private ClientGameStateUpdateMessage _pendingClientGameStateUpdateMessage;
@@ -48,7 +51,7 @@ namespace AW2.Core
         public Control ChatStartControl { get; set; }
 
         private ProgramLogic<E> Logic { get; set; }
-        public override bool UpdateNeeded { get { return Logic.GameStateChanged;} set { Logic.GameStateChanged = value; }}
+        public override bool UpdateNeeded { get { return Logic.GameStateChanged; } set { Logic.GameStateChanged = value; } }
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public List<Tuple<Control, Action>> CustomControls { get; private set; }
         public BackgroundTask ArenaLoadTask { get; private set; }
@@ -63,10 +66,14 @@ namespace AW2.Core
         {
             // If either steam server APIs or the regular APIs are initialized, we consider us being in the Steam mode.
             IsSteam = Services.GetService<SteamApiService>().Initialized || (Services.GetService<SteamGameServerService>()?.Initialized ?? false);
-            if (IsSteam) {
+            if (IsSteam)
+            {
                 Log.Write("AssaultWing is in Steam mode");
                 NetworkEngine = new NetworkEngineSteam(this, 30);
-            } else {
+                Services.AddService(new SteamLeaderboardService(Services.GetService<SteamApiService>()));
+            }
+            else
+            {
                 Log.Write("AssaultWing is not in SteamMode, due to neither SteamAPI nor SteamGameServer being initialized. Creating NetworkEngineRaw (instead of NetworkEngineSteam).");
                 NetworkEngine = new NetworkEngineRaw(this, 30);
             }
@@ -108,10 +115,19 @@ namespace AW2.Core
         {
             try
             {
-                System.Diagnostics.Process.Start(url);
+                if (IsSteam)
+                {
+                    Services.GetService<SteamApiService>().ActivateGameOverlayToWebPage(url);
+                }
+                else
+                {
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo { FileName = url, UseShellExecute = true };
+                    Process.Start(processStartInfo);
+                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.Write("Failed to open URL", e);
                 Logic.ShowInfoDialog("Couldn't open browser.\nPlease open this URL manually:\n" + url);
             }
         }
@@ -192,6 +208,11 @@ namespace AW2.Core
                     break;
                 case NetworkMode.Client:
                     _pendingClientGameStateUpdateMessage = new ClientGameStateUpdateMessage();
+                    var player = DataEngine.LocalPlayer;
+                    if (player is not null)
+                    {
+                        player.Ranking = player.Ranking.WithUpToDate(false); // Force fresh ranking to be sent to server.
+                    }
                     break;
             }
             Logic.StartArena();
@@ -452,14 +473,13 @@ namespace AW2.Core
         private void GobRemovedFromArenaHandler(Gob gob)
         {
             if (!gob.IsRelevant) return;
-            _pendingGobDeletionMessage =_pendingGobDeletionMessage ?? new GobDeletionMessage();
+            _pendingGobDeletionMessage = _pendingGobDeletionMessage ?? new GobDeletionMessage();
             _pendingGobDeletionMessage.GobIDs.Add(gob.ID);
         }
 
         private void SpectatorAddedHandler(Spectator spectator)
         {
-            if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
-            spectator.ArenaStatistics.Rating = () => spectator.StatsData.Rating;
+            spectator.ArenaStatistics.Ranking = () => spectator.Ranking;
             spectator.ResetForArena();
             if (NetworkMode != NetworkMode.Server || spectator.IsLocal) return;
             var player = spectator as Player;
@@ -492,7 +512,6 @@ namespace AW2.Core
         private void SpectatorRemovedHandler(Spectator spectator)
         {
             if (NetworkMode != NetworkMode.Server) return;
-            UpdateGameServerInfoToManagementServer();
             NetworkEngine.SendToGameClients(new SpectatorOrTeamDeletionMessage { SpectatorOrTeamID = spectator.ID });
         }
 
@@ -515,11 +534,6 @@ namespace AW2.Core
                 };
                 NetworkEngine.GameServerConnection.Send(joinRequest);
             }
-        }
-
-        override public void UpdateGameServerInfoToManagementServer()
-        {
-            // TODO: Peter: update DataEngine.Players.Count() to Steam
         }
 
         private void AfterEveryFrame()
@@ -573,6 +587,18 @@ namespace AW2.Core
             NetworkEngine.SendToGameClients(message);
         }
 
+        public void SendPilotRankingsToClientsOnServer()
+        {
+            var message = new PilotRankingMessage();
+            foreach (var spec in DataEngine.Spectators.Where(s => !s.Ranking.UpToDate))
+            {
+                message.PlayerID = spec.ID;
+                message.PilotRanking = spec.Ranking;
+                spec.Ranking = spec.Ranking.WithUpToDate(true);
+                NetworkEngine.SendToGameClients(message);
+            }
+        }
+
         private void SetPlayerControls(ClientGameStateUpdateMessage message)
         {
             var player = DataEngine.LocalPlayer;
@@ -606,6 +632,15 @@ namespace AW2.Core
             var gobUpdateMessage = new GobUpdateMessage();
             PopulateGobUpdateMessage(gobUpdateMessage, DataEngine.Arena.GobsInRelevantLayers, SerializationModeFlags.VaryingDataFromServer);
             if (gobUpdateMessage.HasContent) foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(gobUpdateMessage);
+        }
+
+        private void SendPilotRankingToServerOnClient()
+        {
+            var player = DataEngine.LocalPlayer;
+            if ((player?.Ranking.UpToDate ?? true) || player.ID == Spectator.UNINITIALIZED_ID) return;
+            var message = new PilotRankingMessage() { PlayerID = player.ID, PilotRanking = player.Ranking };
+            player.Ranking = player.Ranking.WithUpToDate(true);
+            NetworkEngine.GameServerConnection.Send(message);
         }
 
         private void SendGobUpdateMessageOnClient()
@@ -655,6 +690,7 @@ namespace AW2.Core
             if (!_gameSettingsSendTimer.IsElapsed) return;
             SendSpectatorSettingsToGameClients(p => p.ID != Spectator.UNINITIALIZED_ID);
             SendTeamSettingsToGameClients();
+            SendPilotRankingsToClientsOnServer();
             var mess = new GameSettingsRequest { ArenaToPlay = SelectedArenaName, GameplayMode = DataEngine.GameplayMode.Name };
             foreach (var conn in NetworkEngine.GameClientConnections) conn.Send(mess);
         }
@@ -662,6 +698,7 @@ namespace AW2.Core
         private void SendGameSettingsOnClient()
         {
             if (!_gameSettingsSendTimer.IsElapsed) return;
+            SendPilotRankingToServerOnClient();
             SendSpectatorSettingsToGameServer(p => p.IsLocal && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
         }
 

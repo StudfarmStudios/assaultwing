@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Core;
@@ -71,7 +71,7 @@ namespace AW2.Menu.Main
         public void Click_NetworkGame()
         {
             Game.InitializePlayers(1);
-            
+
             RefreshNetworkItems(force: true);
             _menuComponent.PushItems(NetworkItems);
             Game.SoundEngine.PlaySound("menuChangeItem");
@@ -95,10 +95,10 @@ namespace AW2.Menu.Main
             StartItems = new MainMenuItemCollection("");
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", Click_LocalGame));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", () => Click_NetworkGame()));
-            StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
-                () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
+            //StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
+            //    () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
-                () => Game.OpenURL("http://www.assaultwing.com/quickinstructions")));
+                () => Game.OpenURL("https://www.assaultwing.com/instructions.html")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Setup",
                 () =>
                 {
@@ -170,8 +170,10 @@ namespace AW2.Menu.Main
             RequestGameServerList();
         }
 
-        private void StopRefreshingNetworkItems() {
-            if (SteamServerBrowser is not null) {
+        private void StopRefreshingNetworkItems()
+        {
+            if (SteamServerBrowser is not null)
+            {
                 SteamServerBrowser.Dispose();
                 SteamServerBrowser = null;
             }
@@ -181,11 +183,13 @@ namespace AW2.Menu.Main
         {
             var steamApiService = SteamApiService;
 
-            if (steamApiService != null && steamApiService.Initialized && SteamServerBrowser is null) {
+            if (steamApiService != null && steamApiService.Initialized && SteamServerBrowser is null)
+            {
                 SteamServerBrowser = new SteamServerBrowser(HandleSteamGameServer);
             }
 
-            if (SteamServerBrowser is not null) {
+            if (SteamServerBrowser is not null)
+            {
                 SteamServerBrowser.RequestInternetServerList();
             }
         }
@@ -201,13 +205,13 @@ namespace AW2.Menu.Main
                 NetworkItems.Insert(1, new MainMenuItem(MenuEngine,
                     () => menuItemText,
                     () => Click_ConnectToGameServer(server)));
-                }
+            }
             else
             {
                 if (!NetworkItems.Any(item => item.Name() == INCOMPATIBLE_SERVERS_FOUND))
                     NetworkItems.Insert(Math.Max(0, NetworkItems.Count - 2), new MainMenuItem(MenuEngine, () => INCOMPATIBLE_SERVERS_FOUND, () => { }));
             }
-        }      
+        }
 
         private MainMenuItemCollection GetControlsItems()
         {
@@ -239,9 +243,11 @@ namespace AW2.Menu.Main
         private MainMenuItem GetControlsItem(string name, Func<IControlType> get, Action<IControlType> set)
         {
             return new MainMenuItem(MenuEngine, () => string.Format("{0}\t\x9{1}", name, get()),
-                () => Game.ExternalProgramLogicEvent( new ClientEvent {
+                () => Game.ExternalProgramLogicEvent(new ClientEvent
+                {
                     dialogData = new ControlSelectionOverlayDialogData(MenuEngine, "Press control for " + name,
-                        control => set(control)) }));
+                        control => set(control))
+                }));
         }
 
         private MainMenuItemCollection GetAudioItems()

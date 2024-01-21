@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,6 +53,13 @@ namespace AW2.Graphics.Content
                 item = ReadAsset<T>(assetFullName, null);
                 _loadedContent.Add(assetName, item);
             }
+
+            if (typeof(T) == typeof(SpriteFont))
+            {
+                // For some reason setting this in the spritefont files didn't work.
+                ((SpriteFont)item).DefaultCharacter = '?';
+            }
+
             return (T)item;
         }
 
@@ -62,9 +69,12 @@ namespace AW2.Graphics.Content
         // TODO: Peter: Make all searches to go through this function. This now works because RootDirectory is usually empty.
         public string ResolveContentPath(string contentPath)
         {
-            if (RootDirectory.Length == 0 && contentPath.Length == 0) {
+            if (RootDirectory.Length == 0 && contentPath.Length == 0)
+            {
                 return Environment.CurrentDirectory;
-            } else {
+            }
+            else
+            {
                 // TODO: Peter: Handle case where contentPath is nonempty AND RootDirectory is nonempty
                 return contentPath;
             }

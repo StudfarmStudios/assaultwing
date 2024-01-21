@@ -135,20 +135,20 @@ namespace AW2.Game.Gobs
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
-                checked
+            checked
+            {
+                // Dock doesn't move, so Pos, Move and Rotation are needed only at creation.
+                var reducedMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
+                    ? SerializationModeFlags.AllFromServer
+                    : SerializationModeFlags.None;
+                base.Serialize(writer, reducedMode);
+                if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
                 {
-                    // Dock doesn't move, so Pos, Move and Rotation are needed only at creation.
-                    var reducedMode = mode.HasFlag(SerializationModeFlags.ConstantDataFromServer)
-                        ? SerializationModeFlags.AllFromServer
-                        : SerializationModeFlags.None;
-                    base.Serialize(writer, reducedMode);
-                    if (mode.HasFlag(SerializationModeFlags.VaryingDataFromServer))
-                    {
-                        writer.Write((byte)_lastRepairTimes.Count);
-                        foreach (var item in _lastRepairTimes)
-                            writer.Write((short)item.Key.ID);
-                    }
+                    writer.Write((byte)_lastRepairTimes.Count);
+                    foreach (var item in _lastRepairTimes)
+                        writer.Write((short)item.Key.ID);
                 }
+            }
         }
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)

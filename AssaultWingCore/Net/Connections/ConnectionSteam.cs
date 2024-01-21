@@ -33,13 +33,13 @@ namespace AW2.Net.Connections
         private GCHandle PinnedBuffer;
 
         private readonly List<string> Errors = new List<string>();
-        
+
         private readonly IntPtr[] ReceiveBuffers = new IntPtr[16];
 
         public HSteamNetConnection Handle { get; init; }
         public SteamNetConnectionInfo_t Info { get; set; }
-        
-        public string SteamId => Info.m_identityRemote.GetSteamID().ToString();
+
+        public CSteamID SteamId => Info.m_identityRemote.GetSteamID();
 
         // Implemented by subclass because server and client use separate Steam interfaces to allow for dedicated
         // server to operate without proper Steam user.
@@ -61,17 +61,21 @@ namespace AW2.Net.Connections
             Errors.Add(message);
         }
 
-        public void HandleErrors() {
-            foreach (var e in Errors) {
+        public void HandleErrors()
+        {
+            foreach (var e in Errors)
+            {
                 Log.Write($"Closing connection {Name} due to error: {e}");
             }
 
-            if (Errors.Count > 0) {
+            if (Errors.Count > 0)
+            {
                 Dispose(true);
             }
         }
 
-        public void ReceiveMessages() {
+        public void ReceiveMessages()
+        {
 
             int messageCount = ReceiveMessages(ReceiveBuffers, ReceiveBuffers.Length);
             for (int i = 0; i < messageCount; i++)
@@ -82,7 +86,8 @@ namespace AW2.Net.Connections
                     byte[] messageBytes = new byte[steamMessage.m_cbSize];
                     Marshal.Copy(steamMessage.m_pData, messageBytes, 0, messageBytes.Length);
                     var message = Message.Deserialize(messageBytes, Game.GameTime.TotalRealTime);
-                    if (message != null) {
+                    if (message != null)
+                    {
                         message.ConnectionID = ID;
                         // Log.Write($"Received message {message.Type} flags:{steamMessage.m_nFlags} num:{steamMessage.m_nMessageNumber} size:{steamMessage.m_cbSize}");
                         HandleMessage(message);
@@ -103,7 +108,7 @@ namespace AW2.Net.Connections
             // Some background on how this could work maybe 
             // https://github.com/rlabrecque/Steamworks.NET/issues/388
             // https://github.com/rlabrecque/Steamworks.NET/issues/411
-            
+
 
             var writer = NetworkBinaryWriter.Create(new MemoryStream(Buffer));
             message.Serialize(writer);
@@ -120,14 +125,17 @@ namespace AW2.Net.Connections
                     break;
                 default: throw new MessageException("Unknown send type " + message.SendType);
             }
-            
+
             var size = writer.GetBaseStream().Position;
             long messageNumber;
             var result = SendMessage((IntPtr)PinnedBuffer.AddrOfPinnedObject(), (uint)size, flags, out messageNumber);
 
-            if (result != EResult.k_EResultOK) {
+            if (result != EResult.k_EResultOK)
+            {
                 Log.Write($"Error {result} sending message {message.Type} flags:{flags} num:{messageNumber} size:{size}");
-            } else {
+            }
+            else
+            {
                 // Log.Write($"Sending message {message.Type} flags:{flags} num:{messageNumber} size:{size}");
             }
         }

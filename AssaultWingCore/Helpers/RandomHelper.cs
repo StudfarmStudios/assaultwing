@@ -20,7 +20,7 @@ namespace AW2.Helpers
                 g_mixers[i] = GetRandomInt();
         }
 
-        
+
         /// <summary>
         /// Get a random int that is at least zero and strictly less than a value.
         /// </summary>
@@ -143,7 +143,7 @@ namespace AW2.Helpers
         /// <param name="position">Random point relative to the circle's center.</param>
         /// <param name="dirUnit">Unit vector pointing from the circle's center to the random point.</param>
         /// <param name="dirAngle">Angle, in radians, of <c>dirUnit</c>.</param>
-        public static void GetRandomCirclePoint(float radius, 
+        public static void GetRandomCirclePoint(float radius,
             out Vector2 position, out Vector2 dirUnit, out float dirAngle)
         {
             GetRandomCirclePoint(radius, 0, MathHelper.TwoPi, out position, out dirUnit, out dirAngle);
@@ -184,4 +184,4 @@ namespace AW2.Helpers
             return result;
         }
     }
-} 
+}

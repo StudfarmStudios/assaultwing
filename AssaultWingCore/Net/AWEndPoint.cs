@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using AW2.Helpers;
 using Steamworks;
 using Microsoft.Xna.Framework;
@@ -6,15 +6,22 @@ using AW2.Core;
 
 namespace AW2.Net
 {
-    public abstract class AWEndPoint {
+    public abstract class AWEndPoint
+    {
         public static AWEndPoint Parse(GameServiceContainer Services, string text)
         {
-            if (text.StartsWith(AWEndPointRaw.RawPrefix)) {
+            if (text.StartsWith(AWEndPointRaw.RawPrefix))
+            {
                 return AWEndPointRaw.ParseRaw(text.Substring(AWEndPointRaw.RawPrefix.Length)); // raw:host:udpport:tcpport
-            } else {
-                if (Services.GetService<SteamApiService>().Initialized) {
+            }
+            else
+            {
+                if (Services.GetService<SteamApiService>().Initialized)
+                {
                     return new AWEndPointSteam(text); // ip:127.0.0.1:1234 steamid:12345671234512345
-                } else {
+                }
+                else
+                {
                     throw new ArgumentException($"SteamAPI is not initialized. Can't attempt parsing endpoint {text} as a Steam Networking endpoint.");
                 }
             }
@@ -51,29 +58,37 @@ namespace AW2.Net
         public static readonly string RawPrefix = "raw:";
     }
 
-    public class AWEndPointSteam : AWEndPoint 
+    public class AWEndPointSteam : AWEndPoint
     {
         public SteamNetworkingIdentity SteamNetworkingIdentity;
         public SteamNetworkingIPAddr DirectIp;
         public readonly bool UseDirectIp;
 
-        public AWEndPointSteam(SteamNetworkingIdentity steamNetworkingIdentity) {
+        public AWEndPointSteam(SteamNetworkingIdentity steamNetworkingIdentity)
+        {
             SteamNetworkingIdentity = steamNetworkingIdentity;
         }
 
-        public AWEndPointSteam(SteamNetworkingIPAddr steamNetworkingIPAddr) {
+        public AWEndPointSteam(SteamNetworkingIPAddr steamNetworkingIPAddr)
+        {
             UseDirectIp = true;
             DirectIp = steamNetworkingIPAddr;
         }
 
-        public AWEndPointSteam(string parsed) {
-            if (parsed.StartsWith(DirectPrefix)) {
-                if (!DirectIp.ParseString(parsed.Substring(DirectPrefix.Length))) {
+        public AWEndPointSteam(string parsed)
+        {
+            if (parsed.StartsWith(DirectPrefix))
+            {
+                if (!DirectIp.ParseString(parsed.Substring(DirectPrefix.Length)))
+                {
                     throw new ArgumentException($"Unknown direct IP address {parsed}. Example: direct:127.0.0.1:1234");
                 }
                 UseDirectIp = true;
-            } else {
-                if (!SteamNetworkingIdentity.ParseString(parsed)) {
+            }
+            else
+            {
+                if (!SteamNetworkingIdentity.ParseString(parsed))
+                {
                     throw new ArgumentException($"Unknown Steam Networking ID {parsed}. Example: ip:127.0.0.1:1234");
                 }
             }
@@ -81,10 +96,12 @@ namespace AW2.Net
 
         public override string ToString()
         {
-            if (UseDirectIp) {
+            if (UseDirectIp)
+            {
                 return DirectPrefix + Steam.IpAddrToString(DirectIp);
             }
-            else {
+            else
+            {
                 return Steam.IdentityToString(SteamNetworkingIdentity);
             }
         }

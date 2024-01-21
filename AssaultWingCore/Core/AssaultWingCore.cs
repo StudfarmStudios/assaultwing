@@ -93,7 +93,7 @@ namespace AW2.Core
             Log.Write("Assault Wing version " + MiscHelper.Version);
             CommandLineOptions = args;
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
-            Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);            
+            Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);
             NetworkMode = NetworkMode.Standalone;
             NetworkingErrors = new Queue<string>();
 
@@ -188,8 +188,8 @@ namespace AW2.Core
         public virtual string StartServer() { return ""; }
         public string SelectedArenaName { get; set; }
 
-        public NetworkEngine NetworkEngine { get; protected set; }
-        
+        public NetworkEngine NetworkEngine { get; init; }
+
         /// <summary>
         /// Errors that occurred when establishing or maintaining a network game instance.
         /// These errors are eventually reported to the user and game state is reset out of networking.
@@ -197,18 +197,16 @@ namespace AW2.Core
         public Queue<string> NetworkingErrors { get; init; }
 
         public MessageHandlers MessageHandlers { get; protected set; }
-        
-        public virtual void GobCreationMessageReceived(GobCreationMessage message, int framesAgo) {}
 
-        public virtual void StartClient(AWEndPoint[] serverEndPoints) {}
+        public virtual void GobCreationMessageReceived(GobCreationMessage message, int framesAgo) { }
 
-        public virtual void PrepareArenaOnClient(CanonicalString gameplayMode, string arenaName, byte arenaIDOnClient, int wallCount) {}
+        public virtual void StartClient(AWEndPoint[] serverEndPoints) { }
 
-        public virtual void AddRemoteSpectator(Spectator newSpectator) {}
+        public virtual void PrepareArenaOnClient(CanonicalString gameplayMode, string arenaName, byte arenaIDOnClient, int wallCount) { }
 
-        public virtual void UpdateGameServerInfoToManagementServer() {}
+        public virtual void AddRemoteSpectator(Spectator newSpectator) { }
 
-        public virtual void LoadSelectedArena(byte? arenaIDOnClient = null) {}
+        public virtual void LoadSelectedArena(byte? arenaIDOnClient = null) { }
 
 
         /// <summary>

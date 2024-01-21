@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;

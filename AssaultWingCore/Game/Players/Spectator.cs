@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,6 +9,7 @@ using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.UI;
 using AW2.Net;
+using AW2.Stats;
 
 namespace AW2.Game.Players
 {
@@ -17,7 +18,12 @@ namespace AW2.Game.Players
     /// </summary>
     public class Spectator : INetworkSerializable
     {
-        public enum ConnectionStatusType { Local, Remote, Disconnected };
+        /// <summary>
+        /// Ranking and score in the Steam leaderboards.
+        /// </summary>
+        public PilotRanking Ranking { get; set; }
+
+        private enum ConnectionStatusType { Local, Remote, Disconnected };
         public enum ServerRegistrationType { No, Requested, Yes };
 
         public const int UNINITIALIZED_ID = 0;
@@ -57,22 +63,12 @@ namespace AW2.Game.Players
         /// to clients of other players.
         /// </summary>
         public string PilotId { get; set; }
-        
-        /// <summary>
-        /// This is true in Steam mode and false in raw networking mode.
-        /// </summary>
-        public bool IsLoggedIn { get; set; }
 
         /// <summary>
         /// Identifier of the connection behind which this spectator lives,
         /// or negative if the spectator lives at the local game instance.
         /// </summary>
         public int ConnectionID { get; private set; }
-
-        /// <summary>
-        /// Data received from the statistics server.
-        /// </summary>
-        public SpectatorStats StatsData { get; set; }
 
         /// <summary>
         /// Is the spectator connected from a remote game instance.
@@ -109,7 +105,7 @@ namespace AW2.Game.Players
         /// </summary>
         public virtual IEnumerable<Gob> Minions { get { yield break; } }
 
-        public Team Team { get{ return TeamProxy != null ? TeamProxy.GetValue() : null; } set { TeamProxy = value; } }
+        public Team Team { get { return TeamProxy != null ? TeamProxy.GetValue() : null; } set { TeamProxy = value; } }
         public LazyProxy<int, Team> TeamProxy { get; set; }
         public ArenaStatistics ArenaStatistics { get; private set; }
         public ArenaStatistics PreviousArenaStatistics { get; private set; }
@@ -131,7 +127,6 @@ namespace AW2.Game.Players
             ConnectionStatus = connectionId == CONNECTION_ID_LOCAL ? ConnectionStatusType.Local : ConnectionStatusType.Remote;
             ArenaStatistics = new ArenaStatistics();
             PreviousArenaStatistics = new ArenaStatistics();
-            StatsData = new SpectatorStats();
         }
 
         /// <param name="onScreen">Location of the viewport on screen.</param>
@@ -175,7 +170,7 @@ namespace AW2.Game.Players
         {
             ConnectionID = newSpectator.ConnectionID;
             ConnectionStatus = ConnectionStatusType.Remote;
-            StatsData = newSpectator.StatsData;
+            Ranking = newSpectator.Ranking;
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -144,7 +144,7 @@ namespace AW2.Helpers.Collections
                 if (Removed != null) Removed(removed);
                 return true;
             }
-            else 
+            else
                 return false;
         }
 

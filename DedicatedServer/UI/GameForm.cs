@@ -1,16 +1,12 @@
-﻿using System;
-using System.Threading;
+using System;
 using AW2.Core;
-using AW2.Helpers;
 
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Game = Microsoft.Xna.Framework.Game;
 using Microsoft.Xna.Framework;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using AW2.Graphics.Content;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Core.GameComponents;
 
 namespace AW2.UI
 {
@@ -29,7 +25,6 @@ namespace AW2.UI
         private AssaultWing<DedicatedServerEvent> _game;
         private IGraphicsDeviceService _graphics;
         private AWGameRunner _awGameRunner;
-        private StringBuilder _logCache;
         private readonly GameServiceContainer Services = new GameServiceContainer();
 
         public AssaultWing<DedicatedServerEvent> Game { get { return _game; } }
@@ -49,7 +44,7 @@ namespace AW2.UI
 
             InitializeGame(commandLineOptions);
             InitializeGameForm();
-            _awGameRunner = new AWGameRunner(_game, () => {}, useParentTime: false, sleepIfEarly: true, graphicsEnabled: false);
+            _awGameRunner = new AWGameRunner(_game, () => { }, useParentTime: false, sleepIfEarly: true, graphicsEnabled: false);
         }
 
         public void FinishGame()
@@ -67,73 +62,61 @@ namespace AW2.UI
                 _game.Dispose();
             }
             _game = null;
-            AW2.Helpers.Log.Written -= AddToLogView;
-            //base.Dispose();
         }
-        public void SetWindowed()
+        public void Close()
         {
-
-        }
-        public void SetFullScreen(int width, int height)
-        {
-        
-        }
-        public void Close() {
             Game.EndRun();
-            //Exit();
         }
-        public void ForceCursorShown()
-        {
-        }
-        
 
         protected virtual void Dispose(bool disposing)
-        {     
+        {
         }
 
         private void InitializeGameForm()
         {
-            AW2.Helpers.Log.Written += AddToLogView;
-            _logCache = new StringBuilder();
         }
 
         private void InitializeGame(CommandLineOptions commandLineOptions)
         {
-            //if (!commandLineOptions.DedicatedServer) _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
-            _game = new AssaultWing<DedicatedServerEvent>(Services, commandLineOptions, game => new DedicatedServerLogic<DedicatedServerEvent>(game, consoleServer: true));
+            _game = new AssaultWing<DedicatedServerEvent>(Services, commandLineOptions, game => new DedicatedServerLogicStandalone(game, consoleServer: true));
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.Window = new Window(new Window.WindowImpl
             {
-                GetTitle = () => {return "AssaultWing";},
-                SetTitle = (Action<string>)((text) => {;}),
+                GetTitle = () => { return "AssaultWing"; },
+                SetTitle = (Action<string>)((text) => {; }),
                 GetClientBounds = () => { return new Rectangle(0, 0, 800, 600); },
                 GetFullScreen = () => false,
-                SetWindowed = (Action)(SetWindowed),
-                SetFullScreen = (Action<int, int>)(SetFullScreen),
+                SetWindowed = (Action)(() => { }),
+                SetFullScreen = (Action<int, int>)((w, h) => { }),
                 IsVerticalSynced = () => false,
-                EnableVerticalSync = (Action)(() => {}),
-                DisableVerticalSync = (Action)(() => {}),
-                EnsureCursorHidden = (Action)(() => {}),
-                EnsureCursorShown = (Action)(() => {}),
+                EnableVerticalSync = (Action)(() => { }),
+                DisableVerticalSync = (Action)(() => { }),
+                EnsureCursorHidden = (Action)(() => { }),
+                EnsureCursorShown = (Action)(() => { }),
             });
-            
-            //_gameView.Draw += _game.Draw;
-            //_gameView.ExternalWndProc += WndProcImpl;
-            //_gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }
+
 
         public void Run()
         {
-            while (true) // TODO: Peter: exit logic
+            var serverConsole = new ServerConsole(_game);
+
+            serverConsole.Start();
+
+            DateTime? endGameAt = null;
+            while (endGameAt is null || endGameAt.Value > DateTime.Now)
             {
                 _awGameRunner.Update(new GameTime());
+
+                var command = serverConsole.Update();
+
+                if (command?.Type == DedicatedServerEvent.EventType.Stop)
+                {
+                    endGameAt = DateTime.Now + (DedicatedServer.ArenaCommandEndGraceTime + TimeSpan.FromSeconds(2));
+                }
             }
-        }
 
-        private void AddToLogView(string text)
-        {
-            lock (_logCache) _logCache.Append(text).Append("\r\n");
+            serverConsole?.Dispose();
         }
-
     }
 }

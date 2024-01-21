@@ -20,10 +20,17 @@ implementation of the Microsoft XNA 4 Framework. Assault Wing is currently using
 the OpenGL backend of the MonoGame on all platforms. Assault Wing builds and
 runs at least on Windows, Linux and Mac.
 
-To compile, use the .NET 6 or later (6 is the current LTS version). Other
+To compile, use the .NET 7 or later (7 not an LTS version, but at the time of
+this writing it has the support deadline beyond the current LTS version). Other
 dependencies are fetched from NuGet, except the optional Steamworks SDK.
 
 As an IDE either a recent Visual Studio or Visual Studio Code can be used.
+
+Note that if you previously had Dotnet tool MGCB installed globally, you
+may have to remove the global install:
+
+    dotnet tool uninstall -g dotnet-mgcb
+
 
 ## Building
 
@@ -48,16 +55,23 @@ See [steam-deploy.md](devdocs/steam-deploy.md) for more details on Steam builds.
 
 ## Notes on quick local testing
 
-After `dotnet build`, simply run one of the following:
+You can build with the usual `dotnet build`, but building with the
+following command allows connecting multiple clients from same machine
+(remember to enable windowed mode):
+
+    dotnet build -p:DefineConstants="ALLOW_MULTIPLE_CLIENTS_PER_HOST;DEBUG=true"
+
+Then simply run one of the following:
 
 ```bash
-  cd DedicatedServer/bin/x64/Debug/netcoreapp6.0
-  cd AssaultWing/bin/x64/Debug/netcoreapp6.0
+  cd DedicatedServer/bin/x64/Debug/netcoreapp7.0
+  cd AssaultWing/bin/x64/Debug/netcoreapp7.0
 ```
 
 And then run the `AssaultWing` or the `DedicatedServer` executable in that
 folder. Note that on other platforms than Windows you will have to copy
-`Content` and `CoreContent` folders to these folders manually.
+`Content` and `CoreContent` folders to these folders manually (or in some cases
+using the script mentioned below).
 
 With the following the game can be made to quickly connect to a local
 `DedicatedServer` process running in another terminal. This provides a quick way
@@ -77,6 +91,18 @@ With the Steam networking engine using direct connection:
 With Steam networking engine using Steam Relay:
 
     AssaultWing.exe --quickstart --server_name local --server ip:127.0.0.1:16727
+
+## Local Steam Testing
+
+When debugging in an IDE or similar setups, some files need to be copied to the
+default build folders. To help with this there is a script:
+
+    ./scripts/copy_steam_files_to_ide_build.sh mac
+
+(NOTE: replace `mac` with your current platform)
+
+(NOTE: at the moment the copying of content files has a chance of working on Mac
+only, but the SDK files should be copied.)
 
 ## Developer Documentation
 

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Sockets;
 using AW2.Core;
 using AW2.Game;
@@ -7,6 +7,7 @@ using AW2.Net.Connections;
 using AW2.Net.ConnectionUtils;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
+using Steamworks;
 
 namespace AW2.Net
 {
@@ -83,7 +84,7 @@ namespace AW2.Net
         /// <summary>
         /// Network connections to game clients. Nonempty only on a game server.
         /// </summary>
-        override public IEnumerable<GameClientConnection> GameClientConnections { get {return _GameClientConnections;} }
+        override public IEnumerable<GameClientConnection> GameClientConnections { get { return _GameClientConnections; } }
 
         private GameServerConnectionRaw _GameServerConnection;
 
@@ -149,8 +150,9 @@ namespace AW2.Net
         {
             var rawEndPoints = serverEndPoints.OfType<AWEndPointRaw>().ToArray() ?? Array.Empty<AWEndPointRaw>();
             var endPointsString = string.Join(", ", serverEndPoints.Select(e => e.ToString()));
-            if (rawEndPoints.Length != serverEndPoints.Length) {
-                throw new ArgumentException("NetworkEngineRaw can only handle end points of the format raw:host:port:port.\n" + 
+            if (rawEndPoints.Length != serverEndPoints.Length)
+            {
+                throw new ArgumentException("NetworkEngineRaw can only handle end points of the format raw:host:port:port.\n" +
                     $"Some of these are not compatible '{endPointsString}'");
             }
             Log.Write($"Client starts connecting to the following end points: {endPointsString}");
@@ -171,11 +173,13 @@ namespace AW2.Net
             FlushUnhandledUDPMessages();
         }
 
-        public override bool IsRemovedClientConnection(GameClientConnection connection) {
+        public override bool IsRemovedClientConnection(GameClientConnection connection)
+        {
             return _removedClientConnections.Contains(connection);
         }
 
-        public override void AddRemovedClientConnection(GameClientConnection connection) {
+        public override void AddRemovedClientConnection(GameClientConnection connection)
+        {
             _removedClientConnections.Add((GameClientConnectionRaw)connection);
         }
 
@@ -184,16 +188,19 @@ namespace AW2.Net
         /// Send dummy UDP packets to probable UDP end points of the client to increase
         /// probability of our NAT forwarding UDP packets from the client to us.
         /// </summary>
-        override public void DoClientUdpHandshake(GameServerHandshakeRequestTCP mess) {
+        override public void DoClientUdpHandshake(GameServerHandshakeRequestTCP mess)
+        {
             var ping = new PingRequestMessage();
             for (int port = NetworkEngineRaw.UDP_CONNECTION_PORT_FIRST; port <= NetworkEngineRaw.UDP_CONNECTION_PORT_LAST; port++)
-                UDPSocket.Send(ping.Serialize, new IPEndPoint(GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address, port));            
+                UDPSocket.Send(ping.Serialize, new IPEndPoint(GetConnection(mess.ConnectionID).RemoteTCPEndPoint.Address, port));
         }
 
         override public GameClientConnectionRaw GetGameClientConnection(int connectionID)
         {
             return _GameClientConnections.First(conn => conn.ID == connectionID);
         }
+
+        override public CSteamID? GetSteamId(int connectionId) => null;
 
         override public ConnectionRaw GetConnection(int connectionID)
         {
@@ -206,7 +213,11 @@ namespace AW2.Net
         {
             var result = AllConnections.First(conn => conn.ID == connectionID);
             if (result == null) return $"Unknown connection {connectionID}";
+#if ALLOW_MULTIPLE_CLIENTS_PER_HOST
+            return result.RemoteTCPEndPoint.Address.ToString() + ":" + result.RemoteTCPEndPoint.Port.ToString();
+#else
             return result.RemoteTCPEndPoint.Address.ToString();
+#endif
         }
 
         #endregion Public interface
@@ -291,7 +302,8 @@ namespace AW2.Net
             }
         }
 
-        private void HandleConnectionResultOnClient(Result<ConnectionRaw> result) {
+        private void HandleConnectionResultOnClient(Result<ConnectionRaw> result)
+        {
             var conn = (GameServerConnectionRaw)result.Value;
 
             if (IsConnectedToGameServer)
@@ -393,7 +405,7 @@ namespace AW2.Net
             UDPSocket.Dispose();
             UDPSocket = null;
         }
-  
+
         private void FlushUnhandledUDPMessages()
         {
             _udpMessagesToHandle.Do(list => list.Clear());
@@ -488,13 +500,14 @@ namespace AW2.Net
             _removedClientConnections.Clear();
             if (_GameServerConnection != null && _GameServerConnection.IsDisposed)
                 _GameServerConnection = null;
-            
+
             ProcessDisposedConnections();
 
             _GameClientConnections.RemoveAll(c => c.IsDisposed);
         }
 
-        override public string GetPilotId(int connectionId) {
+        override public string GetPilotId(int connectionId)
+        {
             var connectionAddressString = GetConnectionAddressString(connectionId);
             var id = secureId.MakeId(connectionAddressString);
             Log.Write($"connectionAddressString: {connectionAddressString} hashed to {id}");

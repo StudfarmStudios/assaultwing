@@ -10,17 +10,19 @@ set_variables_by_app() {
     assault_wing)
       APP_SHORT="AW Game"
       STEAM_APP_ID=1971370
-      PROJECT_FILE=./AssaultWing/AssaultWing.csproj
+      PROJECT_NAME=AssaultWing
       ;;
     dedicated_server)
       APP_SHORT="AW Server"
       STEAM_APP_ID=2103880
-      PROJECT_FILE=./DedicatedServer/DedicatedServer.csproj
+      PROJECT_NAME=DedicatedServer
       ;;
     *)
       echo "Unknown app value '$APP'"
       exit 2
   esac
+
+  PROJECT_FILE="./${PROJECT_NAME}/${PROJECT_NAME}.csproj"
 }
 
 set_variables_by_configuration() {
@@ -147,7 +149,7 @@ set_common_variables() {
   ROOT=.
   SOLUTION="AssaultWing.sln"
   DOTNET_PLATFORM="x64"
-  DOTNET_FRAMEWORK=netcoreapp6.0
+  DOTNET_FRAMEWORK=netcoreapp7.0
 }
 
 echo_common_variables() {
@@ -179,6 +181,16 @@ set_build_variables() {
   STEAM_DEPOT="$(( $STEAM_APP_ID + $STEAM_DEPOT_PLATFORM_OFFSET + $STEAM_DEPOT_CONFIGURATION_OFFSET ))"
   APP_BUILD_FOLDER="scripts/output/${APP}-${TARGET_PLATFORM}-${CONFIGURATION}"  
   STEAM_APP_DEPOT_FILE="${APP}-${TARGET_PLATFORM}-${CONFIGURATION}.vdf"
+  set_app_variables
+}
+
+# For copying steam files to ide builds
+set_ide_build_variables() {
+  set_variables_by_target_platform
+  set_variables_by_app
+  STEAM_DEPOT=""
+  APP_BUILD_FOLDER="${PROJECT_NAME}/bin/${DOTNET_PLATFORM}/${DOTNET_CONFIGURATION}/${DOTNET_FRAMEWORK}"
+  STEAM_APP_DEPOT_FILE=""
   set_app_variables
 }
 

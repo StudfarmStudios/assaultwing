@@ -28,7 +28,7 @@ namespace AW2.Game
 
         private List<GobKillData> _gobsToKillOnClient;
         private Control _helpControl;
- 
+
         public LogicEngine(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {

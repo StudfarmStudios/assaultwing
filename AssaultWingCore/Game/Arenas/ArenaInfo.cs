@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -16,7 +16,7 @@ namespace AW2.Game.Arenas
         public enum ArenaSize { Tiny, Small, Medium, Large, Huge }
         public enum ArenaBonusAmount { None, Little, Average, Good, Crazy }
         public enum ArenaFlightEasiness { Deadly, Hard, Average, Easy, Stoner }
-        
+
         #region Fields
 
         [TypeParameter]

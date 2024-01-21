@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using AW2.Core;
 using AW2.Helpers;

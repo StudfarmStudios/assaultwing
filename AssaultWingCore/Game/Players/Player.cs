@@ -10,6 +10,7 @@ using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.UI;
+using AW2.Stats;
 
 namespace AW2.Game.Players
 {
@@ -364,9 +365,12 @@ namespace AW2.Game.Players
                 var newShipName = reader.ReadCanonicalString();
                 var newWeapon2Name = reader.ReadCanonicalString();
                 var newExtraDeviceName = reader.ReadCanonicalString();
-                if (Game.DataEngine.GetTypeTemplate(newShipName) is Ship) ShipName = newShipName;
-                if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
-                if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
+                if (!mode.HasFlag(SerializationModeFlags.KeepLocalClientOwnedData))
+                {
+                    if (Game.DataEngine.GetTypeTemplate(newShipName) is Ship) ShipName = newShipName;
+                    if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
+                    if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
+                }
             }
         }
 

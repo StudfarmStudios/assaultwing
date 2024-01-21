@@ -1,5 +1,9 @@
 # The Steam deployment of Assault Wing
 
+The version number comes from tag. To tag a version do: ```
+git tag v1.27.0.0
+```
+
 There are 2 scripts to work with Steam builds:
 - The `scripts/build.sh` sets up builds for local development of the Steam features.
 - The `scripts/steam_build.sh` builds and uploads official builds to Steam.

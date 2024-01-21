@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Helpers;

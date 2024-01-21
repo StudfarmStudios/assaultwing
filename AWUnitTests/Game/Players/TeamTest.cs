@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using NUnit.Framework;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -18,9 +18,9 @@ namespace AW2.Graphics
 
         //public AWVideo(Video video, float volume)
         //{
-            //_videoPlayer = new VideoPlayer{ Volume = volume };
-            //_videoPlayer.Play(video);
-            //_videoPlayer.Stop();
+        //_videoPlayer = new VideoPlayer{ Volume = volume };
+        //_videoPlayer.Play(video);
+        //_videoPlayer.Stop();
         //}
 
         public void Play()

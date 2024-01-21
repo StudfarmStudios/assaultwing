@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
@@ -7,6 +7,8 @@ using AW2.Core.GameComponents;
 using AW2.Core.OverlayComponents;
 using AW2.Helpers;
 using AW2.Menu;
+using AW2.Stats;
+using AW2.Game;
 
 namespace AW2.UI
 {
@@ -28,10 +30,14 @@ namespace AW2.UI
         protected MenuEngineImpl MenuEngine { get; init; }
         private OverlayDialog OverlayDialog { get; init; }
         private PlayerChat PlayerChat { get; init; }
-        private SteamServerComponent SteamServerComponent { get; init;}
+        private SteamServerComponent SteamServerComponent { get; init; }
+
+        private LocalPilotRankingHandler LocalPilotRankingHandler { get; init; }
 
         protected bool MainMenuActive { get { return GameState == GAMESTATE_MENU && MenuEngine.MainMenu.Active; } }
         protected bool MainMenuNetworkItemsActive { get { return MainMenuActive && MenuEngine.MainMenu.IsActive(MenuEngine.MainMenu.ItemCollections.NetworkItems); } }
+
+
         protected bool EquipMenuActive
         {
             get
@@ -56,6 +62,14 @@ namespace AW2.UI
             Game.Components.Add(PlayerChat);
             Game.Components.Add(OverlayDialog);
             Game.Components.Add(SteamServerComponent);
+
+            if (game.IsSteam)
+            {
+                LocalPilotRankingHandler = new LocalPilotRankingHandler(game);
+                Game.Components.Add(LocalPilotRankingHandler);
+                LocalPilotRankingHandler.Enabled = true;
+            }
+
             CreateCustomControls(Game);
             Game.MessageHandlers.GameServerConnectionClosing += Handle_GameServerConnectionClosing;
         }
@@ -87,7 +101,7 @@ namespace AW2.UI
         public override void Update()
         {
             HandleNetworkingErrors();
-            if (GameState == GAMESTATE_INTRO && IntroEngine.Mode == IntroEngine.ModeType.Finished) 
+            if (GameState == GAMESTATE_INTRO && IntroEngine.Mode == IntroEngine.ModeType.Finished)
                 ShowMainMenuAndResetGameplay();
             if (EquipMenuActive) CheckArenaStart();
             if (Game.ArenaLoadTask.TaskCompleted) Handle_ArenaLoadingFinished();
@@ -113,7 +127,7 @@ namespace AW2.UI
         }
 
         public override void StartServer()
-        {   
+        {
             SteamServerComponent.Enabled = true;
         }
 
@@ -260,6 +274,15 @@ namespace AW2.UI
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
                     Game.SoundEngine.PlayMusic("menu music", 1);
+
+                    if (Game.IsSteam && Game.DataEngine.Spectators.Count == 0)
+                    {
+                        // Add a stand in for the current player to show rankings.
+                        // When entering local game the Spectators list is cleared by AssaultWing.InitializePlayers.
+                        Game.InitializePlayers(1);
+
+                    }
+
                     break;
                 default:
                     throw new ApplicationException("Unexpected game state " + value);

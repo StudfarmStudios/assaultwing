@@ -42,8 +42,10 @@ namespace AW2.Core
             Log.Write($"RefreshComplete {response} GetServerCount {SteamMatchmakingServers.GetServerCount(request)}");
         }
 
-        public GameServerInfo GameServerInfoForRequest(HServerListRequest request, int serverIndex) {
-            return new GameServerInfo {
+        public GameServerInfo GameServerInfoForRequest(HServerListRequest request, int serverIndex)
+        {
+            return new GameServerInfo
+            {
                 ServerIndex = serverIndex,
                 SteamDetails = SteamMatchmakingServers.GetServerDetails(request, serverIndex),
                 AWVersion = MiscHelper.Version,

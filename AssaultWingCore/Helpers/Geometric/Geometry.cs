@@ -691,7 +691,7 @@ namespace AW2.Helpers.Geometric
                     {
                         // Seek out the closest face strip of those that don't contain the query point.
                         float[] cornerDistsSquared = new float[4]
-                        { 
+                        {
                             Vector2.DistanceSquared(point, new Vector2(strip.BoundingBox.Min.X, strip.BoundingBox.Min.Y)),
                             Vector2.DistanceSquared(point, new Vector2(strip.BoundingBox.Min.X, strip.BoundingBox.Max.Y)),
                             Vector2.DistanceSquared(point, new Vector2(strip.BoundingBox.Max.X, strip.BoundingBox.Min.Y)),

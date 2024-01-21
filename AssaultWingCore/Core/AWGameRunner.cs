@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using Microsoft.Xna.Framework;
@@ -49,7 +49,7 @@ namespace AW2.Core
         {
             if (_debug)
             {
-                Debug.WriteLine($"AWGameRunner: { _now / AssaultWingCore.TargetElapsedTime:0.##}: {message}");
+                Debug.WriteLine($"AWGameRunner: {_now / AssaultWingCore.TargetElapsedTime:0.##}: {message}");
             }
         }
 
@@ -82,7 +82,8 @@ namespace AW2.Core
                 {
                     Waiter.Instance.Sleep(sleep);
                     _now = _timer.Elapsed;
-                } else
+                }
+                else
                 {
                     _nextUpdate = _now;
                 }
@@ -101,7 +102,8 @@ namespace AW2.Core
                 if (_useParentTime)
                 {
                     gameTime = new AWGameTime(parentTime.TotalGameTime, parentTime.ElapsedGameTime, _now);
-                } else
+                }
+                else
                 {
                     gameTime = new AWGameTime(totalGameTime, updateInterval, _now);
                 }

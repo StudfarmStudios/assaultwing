@@ -45,7 +45,7 @@ div#top {
     position: relative;
     background: url(images/top_bg2.png) no-repeat;
     width: 900px;
-    height: 602px;
+    height: 720px;
     z-index: 10;
 }
 
@@ -176,6 +176,17 @@ div#fb_like {
     text-align: left;
     width: 645px;
     z-index: 100;
+}
+
+div#release_text {
+    /* slightly yellowish color to match the ship exhaust */
+    background-color: #360800bb;
+    text-align: center;
+    font-size: larger;
+    font-weight: bold;
+    border: 2px solid #dcc201;
+    box-shadow: 3px 3px #7b5c00;
+    padding: 12px;
 }
 
 div#middle_text {

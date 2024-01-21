@@ -4,20 +4,21 @@ Here's quick instructions on how to play Assault Wing.
 
 ## Installing
 
-**TODO: The Installing section is out of date. The installer is not available and does not
-work anymore. Update with Steam based information for the Steam launch.**
-
-You can install Assault Wing from https://www.assaultwing.com/install. Just click
-on the Install Assault Wing link and click Install, or Allow or Run if it asks
-you questions. The installer will download and install all prerequisites
-automatically. The installer will create an icon on your desktop where you can
-launch Assault Wing. The desktop icon will check for updates each time you
-launch the game, and it is always a good idea to let it do the update.
+You can install Assault Wing from [Steam for free.](https://store.steampowered.com/app/1971370/Assault_Wing/)
 
 ## Starting a Local Game — Quick Play
 
 Once you get Assault Wing running, the easiest way to try it out is to play a
-local game. Just select Play Local and then `F10` to start the game.
+local game.  Use `Up Arrow` and `Down Arrow` to select menu entries and `Enter`
+to activate. (No no mouse support ATM.) Just select `Play
+Local` and then `F10` to start the game.
+
+To play online select `Play at the Battlefront`. Wait a few seconds and at least
+the `Join Official 1` server should appear.
+
+You can also hit `Create server` to create a local server that all other players
+can join. (A terminal based dedicated server is also available as a separate
+installation.)
 
 ## Controls
 
@@ -62,32 +63,28 @@ Game Settings.
 
 # Playing at the Battlefront — Multiplayer over the Internet
 
-**TODO: The Battlefront section is out of date. The matchmaking server does not respond. Update with Steam related information for the Steam launch.**
-
-Assault Wing is the most fun when many players play over the Internet. The
-easiest way is to go to the Battlefront web page. It shows a list of active game
-servers. Just click on Quick Play to join a game server. Please note that in
-order join a game from the web site Assault Wing must already be installed on
-your computer.
+Assault Wing is the most fun when many players play over the Internet. Use
+the `Play at the Battlefront` menu to create and join games.
 
 You can also join a game server from Assault Wing menus. To do this, start
-Assault Wing and choose Play at the Battlefront in the main menu. You will be
-shown a list of available game servers (with current pilot counts). At the
+Assault Wing and choose Play at the Battlefront in the main menu. At the
 bottom of the screen you will also see a countdown to the next scheduled game.
 Scheduled games are casual events that help players join the servers together.
 This way we can have larger battles even if there aren't players online at all
 times.
 
-Before joining a server, you can register yourself a pilot and log in with it.
-If you have done this already previously, the game will remember it and log you
-in automatically each time you enter the Battlefront. In the Battlefront menu
-there is a submenu called Log in with Your Pilot. It contains the Register a New
-Pilot item which links to https://www.assaultwing.com/battlefront/#!/register.
-After registering yourself a pilot, enter its name and password in the Login
-menu and press "Log in!". If the login is successful, you will see your pilot
-name appear next to the "Log in!" item. Playing with a registered pilot is extra
-fun because you can then follow your battle statistics and ranking at
-https://www.assaultwing.com/battlefront
+Your Steam nick name is used as your player name, but it can be customized
+from the Setup menu.
+
+After playing online you will be assigned a _rating_. Rating is calculated
+using a system similar to the one used in Chess. If you win against powerful
+opponents your rating will increase proportionally. The rating starts at 1000
+and will go up and down depending on your placement at the end of matches.
+
+Your _rank_ is simply your position in the global ranking sorted by each
+players' _rating_ number. Your current rank and rating will be visible in the
+yellow area in the top right corner of the screen in menus. The ranking/rating
+is powered by a Steam Leaderboard.
 
 Press `Enter` or game pad `A` on a server that has some players or is otherwise
 to your liking and you'll join the server. You're now presented with the ship
@@ -97,4 +94,3 @@ then re-join the battle by pressing F10 or game pad Start. Your new selections
 will be activated when you die. Note that the battle doesn't stop when you're
 re-equipping!
 
-Keep an eye on the forums for scheduled battles!

@@ -30,9 +30,6 @@ Here are some examples of using the scripts:
 # On Windows perform a clean debug Windows only build of AssaultWing and stop before uploading to steam
 ./scripts/steam_build.sh windows_wsl2 windows assault_wing debug skip_steam
 
-# On Windows perform a clean debug build for both apps and all platforms
-./scripts/steam_build.sh windows_wsl2 all all debug
-
 # On Linux perform a clean debug build uploaded to Steam for both apps and all platforms
 ./scripts/steam_build.sh linux all all debug
 
@@ -42,6 +39,33 @@ Here are some examples of using the scripts:
 # On Linux do a clean debug build of the dedicated server for Linux uploaded to Steam
 ./scripts/build.sh linux linux dedicated_server debug
 ```
+
+Finally these are the "official" build commands:
+```bash
+# On Windows (from WSL2 environment) perform a clean steam debug build for both apps and all platforms
+./scripts/steam_build.sh windows_wsl2 all all debug
+
+# On Windows (from WSL2 environment) perform a clean steam release build for both apps and all platforms
+./scripts/steam_build.sh windows_wsl2 all all release
+```
+
+## About Release and Debug builds and Steam Depots
+
+The Debug and Release builds use _different_ steam depot IDs. (The content depot is always the same.)
+The release binary depots are 1971372, 1971373, 1971374 for Windows, Linux and Mac
+respectively. The debug binary depots are similarly 1971375, 1971376 and 1971377.
+Dedicated server has an identical setup.
+
+There are few things to note:
+  - Unfortunately the steam build script does not build both release and debug builds now at the same time.
+  - If building first debug and then release they appear as separate builds in the steam admin.
+  - They can be merged in steam admin by first setting eg. debug to default branch and then release.
+  - *However*, the _packages_ in steam can be configured to refer either debug or release _depots_ independently.
+    - Care must be taken that:
+      - Either both release and debug are both built and then merged in admin.
+      - _Or_ all packages must be checked that they refer to the release or debug depots depending on which has been built for the version we want to have live.
+  - This setup is a bit complicated, but on the other hand it allows for having a slightly different version of the
+    app live for say just one platform
 
 ## About the Steamworks SDK
 
@@ -91,3 +115,15 @@ The depot id of the binaries is `APP_ID` +
 - 5 is windows debug
 - 6 is linux debug
 - 7 is mac debug
+
+### Logging in to steam command line builder client
+
+This is not necessary, but may help at least to verify that login is possible.
+
+```
+./steambuild/builder/steamcmd.exe
+Redirecting stderr to 'C:\data\limppu_winworkspace\assaultwing\steambuild\builder\logs\stderr.txt'
+...
+
+Steam>login awbuilder PASSWORDHERE
+```

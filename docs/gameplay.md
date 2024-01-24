@@ -41,11 +41,15 @@ to the battle. Your new selections will take effect when your ship is reborn the
 next time.
     
 ## Bots
-    
-All arenas feature computer-controlled bots (new since Assault Wing 1.4.0.1). If
-there are a lot of players, the number of bots will reduce. The purpose of the
+
+Optionally all arenas feature computer-controlled bots (new since Assault Wing 1.4.0.1)
+The bots are disabled by default but can be enabled in the `Setup` menu or using
+a console command in the terminal based dedicated server.
+
+If there are a lot of players, the number of bots will reduce. The purpose of the
 bots is to provide the players some extra distraction and amusement, and also to
 substitute human players if there are not so many online. You can shoot the bots
 or just ignore them. They will try to shoot you but they may not be very good at
 it ;-)
     
+Bots are also useful as practice targets in a local game.

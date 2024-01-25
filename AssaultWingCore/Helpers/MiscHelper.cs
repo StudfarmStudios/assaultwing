@@ -26,6 +26,21 @@ namespace AW2.Helpers
                 return new NameValueCollection();
             }
         }
+
+        public static String OsDescription => System.Runtime.InteropServices.RuntimeInformation.OSDescription;
+
+        public static String ConfigurationDescription
+        {
+            get
+            {
+#if DEBUG
+                return "Debug";
+#else
+                return "Release";
+#endif
+            }
+        }
+
         public static Version Version => System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version ?? new Version();
 
         public static string DataDirectory

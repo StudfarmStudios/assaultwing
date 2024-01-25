@@ -45,6 +45,7 @@ namespace AW2.Core
 
         public AWGame(GameServiceContainer serviceContainer, bool ignoreGraphicsContent)
         {
+            Log.Write($"Assault Wing version {MiscHelper.Version}, {MiscHelper.ConfigurationDescription}, {MiscHelper.OsDescription}");
             _ignoreGraphicsContent = ignoreGraphicsContent;
             GraphicsDeviceService = serviceContainer.GetService<GraphicsDeviceManager>();
             Services = serviceContainer;

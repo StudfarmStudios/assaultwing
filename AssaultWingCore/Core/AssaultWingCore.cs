@@ -90,7 +90,6 @@ namespace AW2.Core
         public AssaultWingCore(GameServiceContainer serviceContainer, CommandLineOptions args)
             : base(serviceContainer, ignoreGraphicsContent: args.DedicatedServer)
         {
-            Log.Write("Assault Wing version " + MiscHelper.Version);
             CommandLineOptions = args;
             Log.Write("Loading settings from " + MiscHelper.DataDirectory);
             Settings = AWSettings.FromFile(this, MiscHelper.DataDirectory);

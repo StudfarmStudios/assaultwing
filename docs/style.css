@@ -158,6 +158,7 @@ div#ships {
     width: 335px;
     height: 107px;
     background: url(images/ships.png) no-repeat;
+    background-size: contain;
     z-index: 50;
 }
 

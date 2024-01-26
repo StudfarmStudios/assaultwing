@@ -55,7 +55,8 @@ namespace AW2.UI
             IntroEngine = new IntroEngine(Game, 11);
             PlayerChat = new PlayerChat(Game, 12);
             OverlayDialog = new OverlayDialog(Game, 20);
-            SteamServerComponent = new SteamServerComponent(Game, 0, consoleServer: false);
+            ushort port = (ushort)game.Settings.Net.GameServerPort;
+            SteamServerComponent = new SteamServerComponent(Game, 0, consoleServer: false, port: port);
             Game.Components.Add(StartupScreen);
             Game.Components.Add(MenuEngine);
             Game.Components.Add(IntroEngine);

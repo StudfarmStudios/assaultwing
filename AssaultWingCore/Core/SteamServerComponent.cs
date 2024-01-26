@@ -14,13 +14,13 @@ namespace AW2.Core
         private bool EnabledMirror;
         private bool ConsoleServer;
 
-        public SteamServerComponent(AssaultWingCore game, int updateOrder, bool consoleServer)
+        public  SteamServerComponent(AssaultWingCore game, int updateOrder, bool consoleServer, ushort port)
             : base(game, updateOrder)
         {
             SteamGameServerService? steamGameServerService = Game.Services.GetService<SteamGameServerService>();
             if (steamGameServerService is null)
             {
-                steamGameServerService = new SteamGameServerService(Game.Services.GetService<SteamApiService>());
+                steamGameServerService = new SteamGameServerService(Game.Services.GetService<SteamApiService>(), port: port);
                 Game.Services.AddService(steamGameServerService);
             }
             ConsoleServer = consoleServer;

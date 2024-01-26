@@ -9,9 +9,9 @@ namespace AW2.Core
         public bool Initialized { get; private set; }
         private SteamAPIWarningMessageHook_t? steamAPIWarningMessageHook;
 
-        public SteamGameServerService(SteamApiService steamApiService)
+        public SteamGameServerService(SteamApiService steamApiService, ushort port)
         {
-            Initialized = InitializeSteamGameServerApi();
+            Initialized = InitializeSteamGameServerApi(port);
             if (Initialized)
             {
                 steamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(DebugTextHook);
@@ -20,14 +20,14 @@ namespace AW2.Core
             }
         }
 
-        private bool InitializeSteamGameServerApi()
+        private bool InitializeSteamGameServerApi(ushort port)
         {
             Log.Write("Initializing Steam GameServer");
             try
             {
                 uint chosenIp = 0;
-                ushort GamePort = 16727;
-                ushort QueryPort = 16726;
+                ushort QueryPort = port;
+                ushort GamePort = (ushort)(port + 1);
                 var serverMode = EServerMode.eServerModeNoAuthentication;
                 var assaultWingVersion = "0.0.0.0";
                 // https://github.com/rlabrecque/Steamworks.NET/blob/master/com.rlabrecque.steamworks.net/Runtime/Steam.cs#L157

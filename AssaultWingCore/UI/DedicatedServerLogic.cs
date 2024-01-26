@@ -20,7 +20,8 @@ namespace AW2.UI
             : base(game)
         {
             DedicatedServer = new DedicatedServer(game, 13);
-            SteamServerComponent = new SteamServerComponent(game, 0, consoleServer = consoleServer);
+            ushort port = (ushort)game.Settings.Net.GameServerPort;
+            SteamServerComponent = new SteamServerComponent(game, 0, consoleServer: consoleServer, port: port);
             game.Components.Add(SteamServerComponent);
             game.Components.Add(DedicatedServer);
 

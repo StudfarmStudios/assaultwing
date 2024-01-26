@@ -35,7 +35,6 @@ namespace AW2.UI
             // we should use NetworkEngineSteam or NetworkEngineRaw.
             var steamApiService = new SteamApiService();
             Services.AddService(steamApiService);
-            Services.AddService(new SteamGameServerService(steamApiService));
 
             _graphics = new DummyGraphicsDeviceService();
             Services.AddService(_graphics);

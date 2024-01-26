@@ -9,6 +9,10 @@ a.page-link:link, a.page-link:visited, a.page-link:hover, a.page-link:active, a.
     color: #bdbdbd;
 }
 
+a:hover {
+    color: #e1e4cc;
+}
+
 a.site-title, a.site-title:visited {
     color: #fff;
 }

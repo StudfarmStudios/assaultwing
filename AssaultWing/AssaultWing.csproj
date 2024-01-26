@@ -36,7 +36,12 @@
     <None Remove="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AssaultWing.ico" />
+    <EmbeddedResource Include="Icon.ico">
+      <LogicalName>Icon.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icon.bmp">
+      <LogicalName>Icon.bmp</LogicalName>
+    </EmbeddedResource>    
     <EmbeddedResource Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>

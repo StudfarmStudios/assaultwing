@@ -58,9 +58,9 @@
 
 | Directory | What | Count | Example filenames |
 |---|---|---|---|
-| `gobdefs/` | Game object type definitions | ~80 | `Ship_Bugger.xml`, `Bot_bazooka bot.xml`, `Explosion_bomb explosion.xml`, `Dock_dock.xml` |
-| `weapondefs/` | Weapon type definitions | ~15 | `ForwardShot_bazooka.xml`, `Blink_blink.xml`, `Cloak_catmoflage.xml` |
-| `particledefs/` | Peng particle definitions | ~95 | `Peng_airstreaks.xml`, `Peng_bonus_collect.xml`, `Peng_ship_explo_center.xml` |
+| `gobdefs/` | Game object type definitions | 58 | `Ship_Bugger.xml`, `Bot_bazooka bot.xml`, `Explosion_bomb explosion.xml`, `Dock_dock.xml` |
+| `weapondefs/` | Weapon type definitions | 23 | `ForwardShot_bazooka.xml`, `Blink_blink.xml`, `Cloak_catmoflage.xml` |
+| `particledefs/` | Peng particle definitions | 97 | `Peng_airstreaks.xml`, `Peng_bonus_collect.xml`, `Peng_ship_explo_center.xml` |
 | `gameplaymodes/` | Match rule definitions | 1 | `GameplayMode_mayhem.xml` |
 | `arenas/` | Arena definitions (XML + BIN pairs) | 5 | `Arena_Junk.xml` + `Arena_Junk.bin`, `Arena_Blood Bowl.xml`, etc. |
 
@@ -78,7 +78,7 @@
 
 | Directory | What | Count | Format | Examples |
 |---|---|---|---|---|
-| `models/` | All 3D models | 135 | DirectX .X | `bugger.X`, `windlord.X`, `berserker.X`, `mine.X`, `dock.X` |
+| `models/` | All 3D models | 136 | DirectX .X | `bugger.X`, `windlord.X`, `plissken.X`, `mine.X`, `dock.X` |
 | `textures/` | Model textures | 87 | PNG | `bugger.png`, `windlord.png`, `bloodbowl_axe.png` |
 
 **Model naming convention by arena theme:**
@@ -90,7 +90,9 @@
 - `snow_*` — Snow arena (unused/cut?)
 - No prefix — gameplay objects (ships, projectiles, pickups)
 
-**Ship models:** `bugger.X`, `windlord.X` (+ `windlord_claw.X`, `windlord_claw2.X`), `berserker.X` (Plissken), `snake.X`
+**Ship models:** `bugger.X`, `windlord.X` (+ `windlord_claw.X`, `windlord_claw2.X`), `plissken.X` (snake ship), `snake.X`
+
+**Note:** `berserker.X` is a projectile model (rocket upgrade), not a ship — there is no Ship_Berserker.xml definition.
 
 **Projectile/weapon models:** `dumbfire.X` (bullet), `missile.X` (rocket), `mine.X`, `bouncefire.X`, `trizooka.X`, `chainend.X`, `straight_chain.X`, `uchain.X`, `snake_bullet.X`, `clustermine.X`
 

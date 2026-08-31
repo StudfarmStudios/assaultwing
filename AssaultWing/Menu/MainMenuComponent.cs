@@ -49,7 +49,11 @@ namespace AW2.Menu
         }
 
         public override Vector2 Center { get { return _pos + new Vector2(700, 455); } }
+#if BROWSER
+        public override string HelpText { get { return "Arrows move, Enter/Space proceeds, Esc cancels"; } }
+#else
         public override string HelpText { get { return "Arrows move, Enter proceeds, Esc cancels"; } }
+#endif
 
         public MainMenuItem CurrentItem { get { return CurrentItems[CurrentItemIndexer.CurrentIndex]; } }
         public bool IsActive(MainMenuItemCollection items) { return CurrentItems == items; }

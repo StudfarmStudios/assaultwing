@@ -1,0 +1,19 @@
+{
+  "name": "aw2-web",
+  "account_id": "abcf9ef5bc3bdc22974818e2e0b79d4e",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-31",
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "play-aw2.assaultwing.com",
+      "custom_domain": true
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ASSETS",
+      "bucket_name": "aw2-web"
+    }
+  ]
+}

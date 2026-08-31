@@ -15,7 +15,7 @@ namespace AW2.Helpers.Serialization
     /// </summary>
     public class TypeLoader
     {
-        private DirectoryInfo _definitionDir;
+        private string _definitionDir;
         private Type _baseClass;
 
         /// <summary>
@@ -32,8 +32,10 @@ namespace AW2.Helpers.Serialization
         public TypeLoader(Type baseClass, string definitionDir)
         {
             _baseClass = baseClass;
-            _definitionDir = new DirectoryInfo(definitionDir);
-            _definitionDir.Create(); // does nothing if the dir exists already
+            _definitionDir = definitionDir;
+#if !BROWSER
+            Directory.CreateDirectory(_definitionDir); // does nothing if the dir exists already
+#endif
         }
 
         #region Public interface
@@ -43,8 +45,13 @@ namespace AW2.Helpers.Serialization
         /// </summary>
         public static object LoadTemplate(string filename, Type baseClass, Type limitationAttribute, bool tolerant)
         {
-            var fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            var xmlReader = Serialization.GetXmlReader(fs);
+            var fs = ContentFileSystem.OpenRead(filename);
+            return LoadTemplate(fs, filename, baseClass, limitationAttribute, tolerant);
+        }
+
+        public static object LoadTemplate(Stream stream, string sourceName, Type baseClass, Type limitationAttribute, bool tolerant)
+        {
+            var xmlReader = Serialization.GetXmlReader(stream);
             object template = null;
             try
             {
@@ -53,18 +60,18 @@ namespace AW2.Helpers.Serialization
             }
             catch (MemberSerializationException e)
             {
-                Log.Write("Error in {0} line {1}: {2}, {3}", filename, e.LineNumber, e.Message, e.MemberName);
+                Log.Write("Error in {0} line {1}: {2}, {3}", sourceName, e.LineNumber, e.Message, e.MemberName);
                 return null;
             }
             catch (Exception e)
             {
-                Log.Write("Error in " + filename + ": " + e.Message);
+                Log.Write("Error in " + sourceName + ": " + e.Message);
                 return null;
             }
             finally
             {
                 xmlReader.Close();
-                fs.Close();
+                stream.Close();
             }
             return template;
         }
@@ -72,6 +79,11 @@ namespace AW2.Helpers.Serialization
         public static void SaveTemplate(object template, string filename, Type baseClass, Type limitationAttribute)
         {
             var writer = new StreamWriter(filename);
+            SaveTemplate(template, writer, baseClass, limitationAttribute);
+        }
+
+        public static void SaveTemplate(object template, TextWriter writer, Type baseClass, Type limitationAttribute)
+        {
             var xmlWriter = Serialization.GetXmlWriter(writer);
             Serialization.SerializeXml(xmlWriter, baseClass.Name + "Type", template, limitationAttribute, baseClass);
             xmlWriter.Close();
@@ -88,9 +100,9 @@ namespace AW2.Helpers.Serialization
             // Note: DirectoryInfo.GetFiles("*.xml") also includes suffixes
             // that extend "xml", for example "blabla.xml~".
             return
-                from fileInfo in _definitionDir.GetFiles("*.xml")
-                where IsTemplateFile(fileInfo)
-                select fileInfo.FullName;
+                from filename in ContentFileSystem.GetFiles(_definitionDir, "*.xml")
+                where IsTemplateFile(filename)
+                select filename;
         }
 
         public IEnumerable<object> LoadTemplates()
@@ -118,7 +130,7 @@ namespace AW2.Helpers.Serialization
         /// </summary>
         public void DeleteTemplates()
         {
-            foreach (var filename in Directory.GetFiles(_definitionDir.FullName))
+            foreach (var filename in ContentFileSystem.GetFiles(_definitionDir, "*"))
                 if (filename.EndsWith("_" + TEMPLATE_FILENAME_SUFFIX + ".xml"))
                 {
                     try
@@ -139,7 +151,7 @@ namespace AW2.Helpers.Serialization
         public void SaveTemplate(object template, Type limitationAttribute, string templateName)
         {
             var filename = GetFilename(template, templateName);
-            string path = System.IO.Path.Combine(_definitionDir.FullName, filename);
+            string path = System.IO.Path.Combine(_definitionDir, filename);
             SaveTemplate(template, path, _baseClass, limitationAttribute);
         }
 
@@ -153,11 +165,11 @@ namespace AW2.Helpers.Serialization
                 .Where(t => !t.IsAbstract && _baseClass.IsAssignableFrom(t));
         }
 
-        private bool IsTemplateFile(FileInfo f)
+        private bool IsTemplateFile(string filename)
         {
-            if (!f.Extension.Equals(".xml", StringComparison.CurrentCultureIgnoreCase))
+            if (!Path.GetExtension(filename).Equals(".xml", StringComparison.CurrentCultureIgnoreCase))
                 return false;
-            if (f.Name.EndsWith(TEMPLATE_FILENAME_SUFFIX, StringComparison.CurrentCultureIgnoreCase))
+            if (Path.GetFileName(filename).EndsWith(TEMPLATE_FILENAME_SUFFIX, StringComparison.CurrentCultureIgnoreCase))
                 return false;
             return true;
         }

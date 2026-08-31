@@ -135,7 +135,13 @@ namespace AW2.Menu
             var tabBack = (Controls.Tab.Pulse && shiftPressed) || (Controls.TabBack.Pulse && !shiftPressed);
             if (tabForward) ChangeTab();
             else if (tabBack) ChangeTab(-1);
-            else if (Controls.StartGame.Pulse) MenuEngine.Game.IsReadyToStartArena = !MenuEngine.Game.IsReadyToStartArena;
+#if BROWSER
+            else if (Controls.StartGame.Pulse || (_tab is EquipTab && Controls.Activate.Pulse))
+                MenuEngine.Game.IsReadyToStartArena = !MenuEngine.Game.IsReadyToStartArena;
+#else
+            else if (Controls.StartGame.Pulse)
+                MenuEngine.Game.IsReadyToStartArena = !MenuEngine.Game.IsReadyToStartArena;
+#endif
         }
 
         private void ChangeTab(int step = 1)

@@ -63,7 +63,11 @@ namespace AW2.Menu
         }
 
         public override Vector2 Center { get { return _pos + new Vector2(560, 475); } }
+#if BROWSER
+        public override string HelpText { get { return "Arrows select, Enter/Space selects, Esc backs out"; } }
+#else
         public override string HelpText { get { return "Arrows select, Enter selects, Esc backs out"; } }
+#endif
 
         public ArenaMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)

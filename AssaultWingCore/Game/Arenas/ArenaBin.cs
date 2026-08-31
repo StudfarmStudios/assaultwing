@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.IO.Compression;
 using AW2.Helpers.Serialization;
+using AW2.Helpers;
 
 namespace AW2.Game.Arenas
 {
@@ -62,7 +63,7 @@ namespace AW2.Game.Arenas
             Clear();
             try
             {
-                var file = File.OpenRead(path);
+                var file = ContentFileSystem.OpenRead(path);
 
                 // Check header
                 var rawReader = new BinaryReader(file);

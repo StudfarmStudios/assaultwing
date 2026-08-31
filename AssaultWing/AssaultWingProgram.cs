@@ -30,6 +30,7 @@ namespace AW2
 
         public static AssaultWingProgram Instance { get; private set; }
 
+#if !BROWSER
         [STAThread]
         public static void Main(string[] args)
         {
@@ -64,8 +65,14 @@ namespace AW2
                 Log.Write("Unhandled exception", e);
             }
         }
+#endif
 
         public AssaultWingProgram()
+            : this(g_commandLineOptions)
+        {
+        }
+
+        public AssaultWingProgram(CommandLineOptions commandLineOptions)
         {
             Log.Write("Assault Wing started");
 
@@ -78,13 +85,24 @@ namespace AW2
             // we know if we should use NetworkEngineSteam or NetworkEngineRaw.
             var steamApiService = new AW2.Core.SteamApiService();
 
-            _form = new GameForm(g_commandLineOptions, steamApiService);
+            _form = new GameForm(commandLineOptions, steamApiService);
+#if BROWSER
+            Instance = this;
+#endif
         }
 
         public void Run()
         {
             _form.Run();
         }
+
+#if BROWSER
+        /// <summary>Advances KNI's game host from requestAnimationFrame.</summary>
+        public void Tick()
+        {
+            _form.Tick();
+        }
+#endif
 
         public void Exit()
         {

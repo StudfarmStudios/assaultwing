@@ -94,7 +94,9 @@ namespace AW2.Menu.Main
         {
             StartItems = new MainMenuItemCollection("");
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play Local", Click_LocalGame));
+#if !BROWSER
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Play at the Battlefront", () => Click_NetworkGame()));
+#endif
             //StartItems.Add(new MainMenuItem(MenuEngine, () => "See Pilot Rankings Online",
             //    () => Game.OpenURL("http://www.assaultwing.com/battlefront")));
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Read Instructions Online",
@@ -105,12 +107,14 @@ namespace AW2.Menu.Main
                     _menuComponent.PushItems(SetupItems);
                     Game.SoundEngine.PlaySound("menuChangeItem");
                 }));
+#if !BROWSER
             StartItems.Add(new MainMenuItem(MenuEngine, () => "Quit",
                 () =>
                 {
                     AssaultWingProgram.Instance.Exit();
                     Game.SoundEngine.PlaySound("menuChangeItem");
                 }));
+#endif
         }
 
         private void InitializeSetupItems()

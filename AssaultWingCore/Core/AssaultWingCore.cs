@@ -72,6 +72,9 @@ namespace AW2.Core
         public static string ArgumentPath { get { return Path.Combine(MiscHelper.DataDirectory, "arguments.txt"); } }
         public static string GetArgumentText()
         {
+#if BROWSER
+            return "";
+#else
             if (!File.Exists(ArgumentPath)) return "";
             var argumentAge = DateTime.Now - File.GetLastWriteTime(ArgumentPath);
             if (argumentAge < ARGUMENT_FILE_AGE_MAX)
@@ -83,6 +86,7 @@ namespace AW2.Core
                 return text;
             }
             return "";
+#endif
         }
 
         #endregion AssaultWing properties

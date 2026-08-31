@@ -47,7 +47,11 @@ namespace AW2.Helpers
         {
             get
             {
+#if BROWSER
+                return ".";
+#else
                 return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+#endif
             }
         }
         /// <summary>

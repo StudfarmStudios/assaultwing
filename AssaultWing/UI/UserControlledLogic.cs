@@ -30,7 +30,9 @@ namespace AW2.UI
         protected MenuEngineImpl MenuEngine { get; init; }
         private OverlayDialog OverlayDialog { get; init; }
         private PlayerChat PlayerChat { get; init; }
+#if !BROWSER
         private SteamServerComponent SteamServerComponent { get; init; }
+#endif
 
         private LocalPilotRankingHandler LocalPilotRankingHandler { get; init; }
 
@@ -55,13 +57,17 @@ namespace AW2.UI
             IntroEngine = new IntroEngine(Game, 11);
             PlayerChat = new PlayerChat(Game, 12);
             OverlayDialog = new OverlayDialog(Game, 20);
+#if !BROWSER
             SteamServerComponent = new SteamServerComponent(Game, 0, consoleServer: false);
+#endif
             Game.Components.Add(StartupScreen);
             Game.Components.Add(MenuEngine);
             Game.Components.Add(IntroEngine);
             Game.Components.Add(PlayerChat);
             Game.Components.Add(OverlayDialog);
+#if !BROWSER
             Game.Components.Add(SteamServerComponent);
+#endif
 
             if (game.IsSteam)
             {
@@ -128,7 +134,11 @@ namespace AW2.UI
 
         public override void StartServer()
         {
+#if BROWSER
+            Game.NetworkingErrors.Enqueue("Network games are disabled in the browser build.");
+#else
             SteamServerComponent.Enabled = true;
+#endif
         }
 
         public override void StopServer()
@@ -139,7 +149,9 @@ namespace AW2.UI
             Game.NetworkEngine.StopServer();
             Game.NetworkMode = NetworkMode.Standalone;
             Game.DataEngine.RemoveAllButLocalSpectators();
+#if !BROWSER
             SteamServerComponent.Enabled = false;
+#endif
         }
 
         public override void StopClient(string errorOrNull)

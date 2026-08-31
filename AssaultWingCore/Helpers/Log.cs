@@ -57,7 +57,7 @@ namespace AW2.Helpers
                     {
                         // Couldn't write to log file, cannot help it!
                     }
-#if DEBUG
+#if DEBUG || BROWSER
                 Console.WriteLine(s);
 #endif
             }

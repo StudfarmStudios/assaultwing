@@ -1,0 +1,103 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>AW2.Browser</RootNamespace>
+    <AssemblyName>AssaultWingBrowser</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>$(DefineConstants);BROWSER;BLAZORGL</DefineConstants>
+    <KniPlatform>BlazorGL</KniPlatform>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+    <!-- KNI's asset compiler uses Windows-native tools. Keep that source build
+         automatic on Windows; macOS/Linux consume prepared DesktopGL XNBs. -->
+    <BuildBrowserContent Condition="'$(BuildBrowserContent)' == '' AND $([MSBuild]::IsOSPlatform('Windows'))">true</BuildBrowserContent>
+    <BuildBrowserContent Condition="'$(BuildBrowserContent)' == ''">false</BuildBrowserContent>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RunAOTCompilation>true</RunAOTCompilation>
+    <WasmEnableSIMD>true</WasmEnableSIMD>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Compile the original game into the browser host. The existing desktop
+         projects remain the authoritative Steam/DesktopGL build path. -->
+    <Compile Include="..\AssaultWing\**\*.cs"
+             Exclude="..\AssaultWing\bin\**;..\AssaultWing\obj\**;..\AssaultWing\Properties\**" />
+    <Compile Include="..\AssaultWingCore\**\*.cs"
+             Exclude="..\AssaultWingCore\bin\**;..\AssaultWingCore\obj\**;..\AssaultWingCore\Properties\**" />
+    <Compile Include="..\Farseer Physics Engine\**\*.cs"
+             Exclude="..\Farseer Physics Engine\bin\**;..\Farseer Physics Engine\obj\**;..\Farseer Physics Engine\Properties\**;..\Farseer Physics Engine\DebugView.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.18" PrivateAssets="all" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Steamworks.NET" Version="20.1.0" />
+
+    <!-- 4.2 targets .NET 8 and runs on the repository's .NET 9 toolchain.
+         KNI 4.3's content builder itself requires the .NET 10 host. -->
+    <PackageReference Include="nkast.Xna.Framework" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.Content" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.Graphics" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.Audio" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.Media" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.Input" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.Game" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.Devices" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.Storage" Version="4.2.9001" />
+    <PackageReference Include="nkast.Xna.Framework.XR" Version="4.2.9001" />
+    <PackageReference Include="nkast.Kni.Platform.Blazor.GL" Version="4.2.9001.2" />
+    <PackageReference Include="nkast.Xna.Framework.Content.Pipeline.Builder" Version="4.2.9001"
+                      Condition="'$(BuildBrowserContent)' == 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- A Link containing a directory of '.' makes KNI emit both content
+         projects directly under wwwroot, preserving Content/ and CoreContent/. -->
+    <KniContentReference Include="..\AssaultWingCoreContent\AssaultWingCoreContent.mgcb"
+                         Condition="'$(BuildBrowserContent)' == 'true'"
+                         Link=".\AssaultWingCoreContent.mgcb" />
+    <KniContentReference Include="..\AssaultWingContent\AssaultWingContent.mgcb"
+                         Condition="'$(BuildBrowserContent)' == 'true'"
+                         Link=".\AssaultWingContent.mgcb" />
+  </ItemGroup>
+
+  <!-- Directory enumeration is not available over HTTP. Generate the compact
+       index used by AW2's template and canonical-string discovery code. -->
+  <Target Name="GenerateBrowserContentManifest" AfterTargets="RunContentBuilder"
+          Condition="'$(BuildBrowserContent)' == 'true'">
+    <ItemGroup>
+      <_CoreContentFile Include="$(MSBuildProjectDirectory)/wwwroot/CoreContent/**/*">
+        <ManifestPath>CoreContent/%(RecursiveDir)%(Filename)%(Extension)</ManifestPath>
+      </_CoreContentFile>
+      <_GameContentFile Include="$(MSBuildProjectDirectory)/wwwroot/Content/**/*">
+        <ManifestPath>Content/%(RecursiveDir)%(Filename)%(Extension)</ManifestPath>
+      </_GameContentFile>
+    </ItemGroup>
+    <WriteLinesToFile File="$(MSBuildProjectDirectory)/wwwroot/content-manifest.txt"
+                      Lines="@(_CoreContentFile->'%(ManifestPath)');@(_GameContentFile->'%(ManifestPath)')"
+                      Overwrite="true" />
+    <!-- Loose content remains a supported fallback for Windows source builds. -->
+    <WriteLinesToFile File="$(MSBuildProjectDirectory)/wwwroot/content-packs.tsv"
+                      Lines=""
+                      Overwrite="true" />
+  </Target>
+
+  <Target Name="RequirePreparedBrowserContent" BeforeTargets="BeforeBuild"
+          Condition="'$(BuildBrowserContent)' != 'true' AND '$(AllowMissingBrowserContent)' != 'true'">
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/content-manifest.txt')"
+           Text="Browser content is missing. Run ./scripts/build_browser.sh (or tools/prepare-browser-content.sh &lt;content-root&gt;) first." />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/content-packs.tsv')"
+           Text="Browser content pack map is missing. Run ./scripts/build_browser.sh first." />
+  </Target>
+
+  <!-- AW2 discovers gameplay types through reflection. Rooting the game host
+       keeps those types intact through the AOT publish trimmer. -->
+  <ItemGroup>
+    <TrimmerRootAssembly Include="$(AssemblyName)" />
+  </ItemGroup>
+</Project>

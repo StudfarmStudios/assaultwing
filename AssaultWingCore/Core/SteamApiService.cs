@@ -48,11 +48,19 @@ namespace AW2.Core
 
         public SteamApiService()
         {
+#if BROWSER
+            // Steamworks' native library does not exist in a browser. Keeping the
+            // service registered but permanently uninitialized preserves the
+            // desktop game's service-based feature checks.
+            Initialized = false;
+            Log.Write("SteamAPI disabled in the browser build.");
+#else
             InitializeSteamApi();
             if (Initialized)
             {
                 SetupCallbacks();
             }
+#endif
         }
         private SteamAPIWarningMessageHook_t? steamAPIWarningMessageHook;
 

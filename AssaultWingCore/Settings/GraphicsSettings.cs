@@ -17,6 +17,11 @@ namespace AW2.Settings
         public static IEnumerable<Tuple<int, int>> GetDisplayModes()
         {
             var currentMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+#if BROWSER
+            // Browsers expose the current canvas/screen mode but don't provide
+            // the desktop display-mode enumeration used by AW2's settings UI.
+            return new[] { Tuple.Create(currentMode.Width, currentMode.Height) };
+#else
             var goodAspectRatio = currentMode.AspectRatio;
             // Note: XNA Reach profile limits texture sizes to 2048x2048. This limits maximum screen size
             // because some display effects require creating a texture that covers the screen.
@@ -28,6 +33,7 @@ namespace AW2.Settings
                 .Select(mode => Tuple.Create(mode.Width, mode.Height));
             if (modes.Any()) return modes;
             return new[] { Tuple.Create(currentMode.Width, currentMode.Height) };
+#endif
         }
 
         public GraphicsSettings(bool graphicsEnabled)
@@ -44,7 +50,11 @@ namespace AW2.Settings
             FullscreenWidth = resolution.Item1;
             FullscreenHeight = resolution.Item2;
             IsVerticalSynced = false;
+#if BROWSER
+            InGameFullscreen = false;
+#else
             InGameFullscreen = true;
+#endif
         }
 
         public void Validate()

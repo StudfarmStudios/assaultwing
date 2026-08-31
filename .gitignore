@@ -14,3 +14,14 @@ steambuild/
 
 # steam build output
 scripts/output
+
+# Local browser-port inputs and generated web content
+.browser-steam/
+AssaultWingBrowser/wwwroot/Content/
+AssaultWingBrowser/wwwroot/CoreContent/
+AssaultWingBrowser/wwwroot/content-manifest.txt
+AssaultWingBrowser/wwwroot/content-packs.tsv
+AssaultWingBrowser/wwwroot/packs/
+
+# Local Cloudflare deployment credential
+tools/webhost/.cf-token

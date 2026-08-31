@@ -64,6 +64,11 @@ namespace AW2.Core
         public AssaultWing(GameServiceContainer serviceContainer, CommandLineOptions args, MakeProgramLogic makeProgramLogic)
             : base(serviceContainer, args)
         {
+#if BROWSER
+            IsSteam = false;
+            Log.Write("AssaultWing browser build: Steam and socket networking are disabled.");
+            NetworkEngine = new NetworkEngineBrowser(this, 30);
+#else
             // If either steam server APIs or the regular APIs are initialized, we consider us being in the Steam mode.
             IsSteam = Services.GetService<SteamApiService>().Initialized || (Services.GetService<SteamGameServerService>()?.Initialized ?? false);
             if (IsSteam)
@@ -77,6 +82,7 @@ namespace AW2.Core
                 Log.Write("AssaultWing is not in SteamMode, due to neither SteamAPI nor SteamGameServer being initialized. Creating NetworkEngineRaw (instead of NetworkEngineSteam).");
                 NetworkEngine = new NetworkEngineRaw(this, 30);
             }
+#endif
 
             CustomControls = new List<Tuple<Control, Action>>();
             MessageHandlers = new Net.MessageHandling.MessageHandlers(this);
@@ -113,6 +119,9 @@ namespace AW2.Core
         /// </summary>
         public void OpenURL(string url)
         {
+#if BROWSER
+            BrowserInterop.OpenUrl(url);
+#else
             try
             {
                 if (IsSteam)
@@ -130,6 +139,7 @@ namespace AW2.Core
                 Log.Write("Failed to open URL", e);
                 Logic.ShowInfoDialog("Couldn't open browser.\nPlease open this URL manually:\n" + url);
             }
+#endif
         }
 
         // TODO !!! Inline >>>

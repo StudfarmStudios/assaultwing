@@ -45,6 +45,52 @@ platforms (Linux, Mac) in the `AssaultWingContent.csproj` and
 and `CoreContent`) must be made accessible in the working directory when the
 application is run.
 
+### Browser build
+
+The additive `AssaultWingBrowser` project runs the original game code through
+KNI's WebGL/WebGL2 backend and publishes a Blazor WebAssembly build with full
+.NET AOT compilation. KNI does not currently provide a WebGPU browser backend.
+Steamworks and network play are disabled in this target; local standalone play
+remains available. Browser audio uses the checked-in WAV sound effects and MP3
+music because the installed DesktopGL sound XNBs target a different decoder.
+Settings are persisted in browser local storage. Browser-only packaging groups
+the content into lazy ZIP packs for graphics, textures, definitions, sounds,
+music, video, and each arena. Music MP3s stay as separate streaming files. The
+game still sees its original paths, and desktop/Steam builds still use the
+normal loose content directories.
+
+On macOS and Linux, install the free Steam version once so its already-compiled
+DesktopGL content can be reused (the upstream content pipeline is Windows-only),
+then run:
+
+    AW_DOTNET=/path/to/dotnet ./scripts/build_browser.sh
+
+The script finds the normal Steam install automatically. A desktop build or a
+different Steam library can be supplied explicitly:
+
+    ./scripts/build_browser.sh "/path/to/Assault Wing"
+
+On Windows the same script builds the browser content directly from the two
+checked-in MGCB projects. The static site is written to
+`AssaultWingBrowser/bin/Release/net9.0/publish/wwwroot` and can be tested with:
+
+    python3 -m http.server 8652 --bind 127.0.0.1 --directory AssaultWingBrowser/bin/Release/net9.0/publish/wwwroot
+
+The existing solution and Steam scripts are intentionally unchanged. A normal
+`dotnet build`, `scripts/build.sh`, or `scripts/steam_build.sh` therefore keeps
+using MonoGame DesktopGL, Steamworks.NET, and the established Steam packaging
+flow without pulling in the browser project.
+
+The browser build can be published to its separate Cloudflare R2 bucket and
+Worker at `https://play-aw2.assaultwing.com` with:
+
+    tools/webhost/deploy.sh
+
+Set `CLOUDFLARE_API_TOKEN` first, or put the token on the first line of
+`tools/webhost/.cf-token`. Each deploy replaces the single build in the AW2
+bucket by emptying it before the upload. It does not alter the AW3 bucket,
+Worker, hostname, or any Steam build input.
+
 ### About Steam builds and the Steamworks SDK
 
 The Steamworks SDK is only needed when developing Steam features or uploading a

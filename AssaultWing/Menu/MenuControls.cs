@@ -91,6 +91,9 @@ namespace AW2.Menu
             Activate = new MultiControl
             {
                 new KeyboardKey(Keys.Enter),
+#if BROWSER
+                new KeyboardKey(Keys.Space),
+#endif
                 new GamePadButton(0, GamePadButtonType.Start),
                 new GamePadButton(0, GamePadButtonType.A),
             };
@@ -112,6 +115,11 @@ namespace AW2.Menu
             StartGame = new MultiControl
             {
                 new KeyboardKey(Keys.F10),
+#if BROWSER
+                // Browsers and laptop keyboards frequently reserve function
+                // keys. Space provides a reliable in-canvas alternative.
+                new KeyboardKey(Keys.Space),
+#endif
                 new GamePadButton(0, GamePadButtonType.Start),
             };
         }

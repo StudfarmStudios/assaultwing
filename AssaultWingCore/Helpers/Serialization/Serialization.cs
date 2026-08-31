@@ -183,11 +183,19 @@ namespace AW2.Helpers.Serialization
             Type writtenType;
             if (!g_typeNameToType.TryGetValue(writtenTypeName, out writtenType))
             {
+#if BROWSER
+                writtenType = Type.GetType(
+                    writtenTypeName,
+                    ResolveBrowserAssembly,
+                    ResolveBrowserType,
+                    throwOnError: false);
+#else
                 writtenType = Type.GetType(writtenTypeName)
                     ?? AppDomain.CurrentDomain.GetAssemblies()
                         .Select(assembly => assembly.GetType(writtenTypeName))
                         .Where(type => type != null)
                         .FirstOrDefault();
+#endif
                 if (writtenType == null)
                     throw new XmlException("XML suggests unknown type " + writtenTypeName,
                         null, reader.LineNumber(), reader.LinePosition());
@@ -198,6 +206,28 @@ namespace AW2.Helpers.Serialization
                     null, reader.LineNumber(), reader.LinePosition());
             return writtenType;
         }
+
+#if BROWSER
+        private static Assembly ResolveBrowserAssembly(AssemblyName assemblyName)
+        {
+            // AW2's XML files were written by .NET Framework and name
+            // mscorlib explicitly. Modern browser .NET stores those types in
+            // System.Private.CoreLib.
+            if (assemblyName.Name == "mscorlib")
+                return typeof(object).Assembly;
+
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(assembly => assembly.GetName().Name == assemblyName.Name);
+        }
+
+        private static Type ResolveBrowserType(Assembly assembly, string typeName, bool ignoreCase)
+        {
+            var resolvedType = assembly?.GetType(typeName, throwOnError: false, ignoreCase: ignoreCase);
+            return resolvedType ?? AppDomain.CurrentDomain.GetAssemblies()
+                .Select(candidate => candidate.GetType(typeName, throwOnError: false, ignoreCase: ignoreCase))
+                .FirstOrDefault(type => type != null);
+        }
+#endif
 
         private static object DeserializeXmlOther(XmlReader reader, Type limitationAttribute, Type writtenType, bool tolerant)
         {
@@ -350,7 +380,7 @@ namespace AW2.Helpers.Serialization
         /// </summary>
         /// <param name="stream">The file stream to base the XML reader on.</param>
         /// <returns>The XML reader.</returns>
-        public static XmlReader GetXmlReader(FileStream stream)
+        public static XmlReader GetXmlReader(Stream stream)
         {
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.IgnoreComments = true;

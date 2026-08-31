@@ -27,7 +27,7 @@ namespace AW2.Graphics.Content
 
         public bool Exists<T>(string assetName)
         {
-            return File.Exists(GetAssetFilename<T>(assetName));
+            return ContentFileSystem.Exists(GetAssetFilename<T>(assetName));
         }
 
         /// <summary>
@@ -63,6 +63,17 @@ namespace AW2.Graphics.Content
             return (T)item;
         }
 
+#if BROWSER
+        /// <summary>
+        /// Keep the normal XNA content API while resolving browser XNBs from
+        /// the lazy content packs used by <see cref="ContentFileSystem"/>.
+        /// </summary>
+        protected override Stream OpenStream(string assetName)
+        {
+            return ContentFileSystem.OpenRead(Path.Combine(RootDirectory, assetName) + ".xnb");
+        }
+#endif
+
         /// <summary>
         /// Resolve a string from Paths using RootDirectory
         /// </summary>
@@ -86,7 +97,7 @@ namespace AW2.Graphics.Content
         /// </summary>
         public IEnumerable<string> GetAssetNames()
         {
-            foreach (var filename in Directory.GetFiles(ResolveContentPath(Paths.CONTENT_ROOT), "*.xnb", SearchOption.AllDirectories))
+            foreach (var filename in ContentFileSystem.GetFiles(ResolveContentPath(Paths.CONTENT_ROOT), "*.xnb", SearchOption.AllDirectories))
             {
                 // Skip texture names that are part of 3D models.
                 if (!IsModelTextureFilename(filename)) yield return Path.GetFileNameWithoutExtension(filename);
@@ -95,13 +106,13 @@ namespace AW2.Graphics.Content
 
         public void LoadAllGraphicsContent()
         {
-            foreach (var filename in Directory.GetFiles(Paths.MODELS, "*.xnb"))
+            foreach (var filename in ContentFileSystem.GetFiles(Paths.MODELS, "*.xnb"))
                 if (!IsModelTextureFilename(filename)) Load<Model>(Path.GetFileNameWithoutExtension(filename));
-            foreach (var filename in Directory.GetFiles(Paths.TEXTURES, "*.xnb"))
+            foreach (var filename in ContentFileSystem.GetFiles(Paths.TEXTURES, "*.xnb"))
                 Load<Texture2D>(Path.GetFileNameWithoutExtension(filename));
-            foreach (var filename in Directory.GetFiles(Paths.FONTS, "*.xnb"))
+            foreach (var filename in ContentFileSystem.GetFiles(Paths.FONTS, "*.xnb"))
                 Load<SpriteFont>(Path.GetFileNameWithoutExtension(filename));
-            foreach (var filename in Directory.GetFiles(Paths.SHADERS, "*.xnb"))
+            foreach (var filename in ContentFileSystem.GetFiles(Paths.SHADERS, "*.xnb"))
                 Load<Effect>(Path.GetFileNameWithoutExtension(filename));
         }
 

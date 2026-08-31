@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AW2.Helpers;
 
 namespace AW2.Graphics.Content
 {
@@ -14,7 +15,7 @@ namespace AW2.Graphics.Content
     {
         public static T Read<T>(string filename)
         {
-            using (var reader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read)))
+            using (var reader = new BinaryReader(ContentFileSystem.OpenRead(filename)))
             {
                 CheckVersion(reader);
                 var typeReaders = ReadTypeReaders(reader);
@@ -38,8 +39,9 @@ namespace AW2.Graphics.Content
         private static void CheckVersion(BinaryReader reader)
         {
             reader.AssertBytes("Not an XNB file", (byte)'X', (byte)'N', (byte)'B');
-            //reader.AssertBytes("Not a Windows XNB file", (byte)'w');
-            reader.AssertBytes("Not a 'd' XNB file", (byte)'d'); // PETER NOTE: Whatever the 'd' stands for... sDl maybe? Too lazy dig now.
+            var platform = reader.ReadByte();
+            if (platform != (byte)'d' && platform != (byte)'b')
+                throw new InvalidDataException("Not a DesktopGL or BlazorGL XNB file");
             reader.AssertBytes("Not an XNA 4.0 XNB file", 5);
             reader.AssertBytes("Not an unpacked Reach profile XNB file", 0);
             var bytes = reader.ReadUInt32();

@@ -64,13 +64,20 @@ namespace AW2.UI
         }
         public void SetWindowed()
         {
+#if BROWSER
+            ApplyBrowserCanvasSize();
+#else
             if (_graphics.IsFullScreen)
             {
                 _graphics.ToggleFullScreen();
             }
+#endif
         }
         public void SetFullScreen(int width, int height)
         {
+#if BROWSER
+            ApplyBrowserCanvasSize();
+#else
             if (!_graphics.IsFullScreen)
             {
                 _graphics.ToggleFullScreen();
@@ -78,6 +85,7 @@ namespace AW2.UI
             _graphics.PreferredBackBufferWidth = width;
             _graphics.PreferredBackBufferHeight = height;
             _graphics.ApplyChanges();
+#endif
         }
         public void Close()
         {
@@ -150,16 +158,29 @@ namespace AW2.UI
 
         private void ApplyInitialInMenuGraphicsSettings()
         {
-            var displayMode = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode;
             var gfxSetup = Game.Settings.Graphics;
 
-
+#if BROWSER
+            ApplyBrowserCanvasSize();
+#else
+            var displayMode = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode;
             _graphics.PreferredBackBufferWidth = Math.Max(800, displayMode.Width / 2);
             _graphics.PreferredBackBufferHeight = Math.Max(600, displayMode.Height / 2);
+#endif
 
             _graphics.SynchronizeWithVerticalRetrace = gfxSetup.IsVerticalSynced;
             _graphics.ApplyChanges();
         }
+
+#if BROWSER
+        private void ApplyBrowserCanvasSize()
+        {
+            var bounds = Window.ClientBounds;
+            _graphics.PreferredBackBufferWidth = Math.Max(1, bounds.Width);
+            _graphics.PreferredBackBufferHeight = Math.Max(1, bounds.Height);
+            _graphics.ApplyChanges();
+        }
+#endif
 
 
         private void AddToLogView(string text)

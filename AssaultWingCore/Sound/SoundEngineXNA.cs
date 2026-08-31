@@ -47,6 +47,9 @@ namespace AW2.Sound
         private object _lock = new object();
         private AudioListener _listener = new AudioListener();
         private AWMusic _music;
+#if BROWSER
+        private bool _loggedFirstSoundPlayback;
+#endif
 
         /// <summary>
         /// Music volume of current track relative to other tracks, as set by sound engineer, between 0 and 1.
@@ -78,7 +81,8 @@ namespace AW2.Sound
             {
                 string filePath = Game.Content.ResolveContentPath(Paths.SOUND_DEFS);
                 var document = new XmlDocument();
-                document.Load(filePath);
+                using (var stream = ContentFileSystem.OpenRead(filePath))
+                    document.Load(stream);
                 var soundNodes = document.SelectNodes("group/sound");
                 var errors = false;
                 foreach (XmlNode sound in soundNodes)
@@ -98,11 +102,19 @@ namespace AW2.Sound
                     float dist = (distAttribute != null ? (float)Double.Parse(distAttribute.Value, CultureInfo.InvariantCulture) : 200.0f);
 
                     // Find all variations for a sound
+#if BROWSER
+                    var effects = Enumerable.Range(1, 99)
+                        .Select(i => string.Format("{0}{1:00}", baseName, i))
+                        .TakeWhile(name => ContentFileSystem.Exists(Path.Combine(Paths.SOUNDS, name + ".wav")))
+                        .Select(LoadBrowserSoundEffect)
+                        .ToArray();
+#else
                     var effects = Enumerable.Range(1, 99)
                         .Select(i => string.Format("{0}{1:00}", baseName, i))
                         .TakeWhile(name => Game.Content.Exists<SoundEffect>(name))
                         .Select(name => Game.Content.Load<SoundEffect>(name))
                         .ToArray();
+#endif
                     if (!effects.Any())
                     {
                         errors = true;
@@ -112,7 +124,8 @@ namespace AW2.Sound
                     _soundCues.Add(baseName, cue);
                 }
                 if (errors) throw new ApplicationException("Couldn't load some sounds");
-                Log.Write("Sound engine initialized.");
+                Log.Write("Sound engine initialized with {0} cues and {1} effects.",
+                    _soundCues.Count, _soundCues.Values.Sum(cue => cue._effects.Length));
             }
             catch (NoAudioHardwareException e)
             {
@@ -120,6 +133,14 @@ namespace AW2.Sound
                 Enabled = false;
             }
         }
+
+#if BROWSER
+        private static SoundEffect LoadBrowserSoundEffect(string name)
+        {
+            using var stream = ContentFileSystem.OpenRead(Path.Combine(Paths.SOUNDS, name + ".wav"));
+            return SoundEffect.FromStream(stream);
+        }
+#endif
 
         private const int RELEASE_DELAY = 500; // 0.5 sec
 
@@ -233,6 +254,13 @@ namespace AW2.Sound
             {
                 var instance = CreateSoundInternal(soundName, getSoundPos, getSoundMove);
                 instance.Play();
+#if BROWSER
+                if (!_loggedFirstSoundPlayback && !instance.IsFinished)
+                {
+                    _loggedFirstSoundPlayback = true;
+                    Log.Write("Browser sound-effect playback started ({0}).", soundName);
+                }
+#endif
                 _playingInstances.Add(instance);
                 return instance;
             }
